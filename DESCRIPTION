@@ -2,7 +2,7 @@ Type: Package
 Package: nflfastR
 Title: Functions to Efficiently Scrape NFL Play by Play and
     Roster Data
-Version: 0.0.0.9000
+Version: 1.0.0
 Authors@R: 
     c(person(given = "Sebastian",
              family = "Carl",
