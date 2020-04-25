@@ -53,7 +53,7 @@ with:
 ``` r
 # If 'devtools' isn't installed run
 # install.packages("devtools")
-devtools::install_github("mrcaseb/fastscraper")
+devtools::install_github("mrcaseb/nflfastR")
 ```
 
 ## Usage

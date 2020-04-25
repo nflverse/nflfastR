@@ -40,7 +40,7 @@ You can load and install nflfastR from [GitHub](https://github.com/) with:
 ``` {r eval = FALSE}
 # If 'devtools' isn't installed run
 # install.packages("devtools")
-devtools::install_github("mrcaseb/fastscraper")
+devtools::install_github("mrcaseb/nflfastR")
 ```
 
 ## Usage
