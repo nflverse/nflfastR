@@ -1,0 +1,178 @@
+---
+title: "nflfastR <img src='man/figures/logo.png' align=\"right\" height=\"250\" />"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+`nflfastR` is a set of functions to efficiently scrape NFL play-by-play and roster data. `nflfastR` expands upon the features of nflscrapR:
+  
+* By incorporating the NFL's RS feed, the package currently supports full play-by-play back to 2000
+* As suggested by the package name, it scrapes games **much** faster
+* Includes completion probability (`cp`) and completion percentage over expected (`cpoe`) in play-by-play going back to 2006
+* The default RS feed includes drive information, including drive starting position and drive result
+* Includes fast functions for roster and highlight scraping
+
+We owe a debt of gratitude to the original [`nflscrapR`](https://github.com/maksimhorowitz/nflscrapR) team, Ronald Yurko, Samuel Ventura, and Maksim Horowitz, without whose contributions and inspiration this package would not exist.
+
+
+## Installation
+
+You can load and install nflfastR from [GitHub](https://github.com/) with:
+
+``` {r eval = FALSE}
+# If 'devtools' isn't installed run
+# install.packages("devtools")
+devtools::install_github("mrcaseb/fastscraper")
+```
+
+## Usage
+
+### Example 1: replicate `nflscrapR` with `fast_scraper`
+
+The functionality of `nflscrapR` can be duplicated by using `fast_scraper` with the 'gc' (for Gamecenter) option specified. This scrapes from the same source as `nflscrapR` but much more quickly. 
+
+Reasons to use the `source = "gc"` option include (a) duplicating the output of `nflscrapR` or (b) when scraping a live or recently-completed game: Gamecenter updates live and the RS feed does not. For scraping old seasons, we recommend not specifying a source option and letting the scraper default to the RS feed (see Example 2 below).
+
+This example also uses the built-in function `clean_pbp` to create a "name' column for the primary player involved (the QB on pass play or ball-carrier on run play).
+
+``` {r ex1-nflscrapR, warning = FALSE, message = FALSE}
+library(nflfastR)
+library(tidyverse)
+library(nflscrapR)
+
+gameId <- 2019111100
+nflscrapR::scrape_json_play_by_play(gameId) %>%
+  select(desc, play_type, epa, home_wp) %>% head(5) %>% 
+  knitr::kable(digits = 3)
+```
+
+``` {r ex1-fs, warning = FALSE, message = FALSE}
+#The 'gc' option specifies scraping gamecenter like nflscrapR does, as opposed to 'rs'
+fast_scraper(gameId, source = "gc") %>%
+  clean_pbp() %>%
+  select(desc, play_type, epa, home_wp, name) %>% head(5) %>% 
+  knitr::kable(digits = 3)
+```
+
+### Example 2: scrape a batch of games very quickly with `fast_scraper` and parallel processing
+``` {r ex2-bigscrape, warning = FALSE, message = FALSE}
+#get list of some games from 2019
+games_2019 <- fast_scraper_schedules(2019) %>% filter(game_type == 'REG') %>% head(16) %>% pull(game_id)
+
+tictoc::tic(glue::glue('{length(games_2019)} games with nflfastR:'))
+f <- fast_scraper(games_2019, pp = TRUE)
+tictoc::toc()
+tictoc::tic(glue::glue('{length(games_2019)} games with nflscrapR:'))
+n <- map_df(games_2019, nflscrapR::scrape_json_play_by_play)
+tictoc::toc()
+```
+
+### Example 3: completion percentage over expected (CPOE)
+
+Let's look at CPOE leaders from the 2009 regular season.
+``` {r ex3-cpoe, warning = FALSE, message = FALSE}
+games <- fast_scraper_schedules(2009) %>% filter(game_type == 'REG') %>% pull(game_id)
+tictoc::tic('scraping all 256 games from 2009')
+games_2009 <- fast_scraper(games, pp = TRUE)
+tictoc::toc()
+games_2009 %>% filter(!is.na(cpoe)) %>% group_by(passer_player_name) %>%
+  summarize(cpoe = mean(cpoe), Atts=n()) %>%
+  filter(Atts > 200) %>%
+  arrange(-cpoe) %>%
+  head(5) %>% 
+  knitr::kable(digits = 1)
+```
+
+### Example 4: using drive information
+When scraping from the default RS feed, drive results are automatically included. Let's look at how much more likely teams were to score starting from 1st & 10 at their own 20 yard line in 2015 (the last year before touchbacks on kickoffs changed to the 25) than in 2006.
+``` {r ex4, warning = FALSE, message = FALSE}
+games_2006 <- fast_scraper_schedules(2006) %>% filter(game_type == 'REG') %>% pull(game_id)
+games_2015 <- fast_scraper_schedules(2015) %>% filter(game_type == 'REG') %>% pull(game_id)
+pbp <- fast_scraper(c(games_2006, games_2015), pp = TRUE)
+pbp %>% filter(down == 1 & ydstogo == 10 & yardline_100 == 80) %>%
+  mutate(drive_score = if_else(drive_how_ended %in% c("Touchdown", "Field_Goal"), 1, 0)) %>%
+  group_by(season) %>%
+  summarize(drive_score = mean(drive_score)) %>% 
+  knitr::kable(digits = 3)
+```
+
+So about 24% of 1st & 10 plays from teams' own 20 would see the drive end up in a score in 2006, compared to 30% in 2015. This has implications for EPA models (see below).
+
+### Example 5: scrape rosters with `fast_scraper_roster`
+``` {r ex5, warning = FALSE, message = FALSE}
+# Roster of Steelers and Seahawks in 2016 & 2019 using parallel processing
+# teams_colors_logos is included in the package
+team_ids <- teams_colors_logos %>% filter(team_abbr %in% c("SEA", "PIT")) %>% pull(team_id)
+fast_scraper_roster(team_ids, c("2016", "2019"), pp = TRUE) %>% 
+  select(2,9:13) %>% head() %>%
+  knitr::kable()
+```
+
+### Example 6: scrape highlight clips with `fast_scraper_clips`
+``` {r ex6, warning = FALSE, message = FALSE}
+#use same week 1 games from above
+vids <- fast_scraper_clips(games_2019)
+vids %>% select(highlight_video_url) %>% head(2) %>% knitr::kable()
+```
+
+### Example 7: Plot offensive and defensive EPA per play for a given season
+Let's build the NFL team tiers using offensive and defensive expected points added per play for the 2019 season including playoffs. The logo urls of the espn logos are integrated into the 'team_colors_logos' data frame which is delivered with the package. 
+
+Let's also use the included helper function `clean_pbp`, which creates "rush" and "pass" columns that (a) properly count sacks and scrambles as pass plays and (b) properly include plays with penalties. Using this, we can keep only rush or pass plays.
+```{r ex7, warning = FALSE, message = FALSE, results = 'hide', fig.keep = 'all', dpi = 600}
+library(ggimage)
+pbp <- fast_scraper_schedules(2019) %>% filter(game_type == 'REG') %>% pull(game_id) %>% fast_scraper(pp = TRUE) %>% clean_pbp() %>% filter(rush == 1 | pass == 1)
+offense <- pbp %>% group_by(posteam) %>% summarise(off_epa = mean(epa, na.rm = TRUE))
+defense <- pbp %>% group_by(defteam) %>% summarise(def_epa = mean(epa, na.rm = TRUE))
+logos <- teams_colors_logos %>% select(team_abbr, team_logo_espn)
+
+offense %>%
+  inner_join(defense, by = c("posteam" = "defteam")) %>%
+  left_join(logos, by = c("posteam" = "team_abbr")) %>%
+  ggplot(aes(x = off_epa, y = def_epa)) +
+  geom_abline(slope = -1.5, intercept = c(.4, .3, .2, .1, 0, -.1, -.2, -.3), alpha = .2) +
+  geom_hline(aes(yintercept = mean(off_epa)), color = "red", linetype = "dashed") +
+  geom_vline(aes(xintercept = mean(def_epa)), color = "red", linetype = "dashed") +
+  geom_image(aes(image = team_logo_espn), size = 0.05, asp = 16 / 9) +
+  labs(
+    x = "Offense EPA/play",
+    y = "Defense EPA/play",
+    title = "2019 NFL Offensive and Defensive EPA per Play"
+  ) +
+  theme_bw() +
+  theme(
+    aspect.ratio = 9 / 16,
+    plot.title = element_text(size = 12, hjust = 0.5, face = "bold")
+  ) +
+  scale_y_reverse()
+```
+
+## More information
+
+`nflfastR` scrapes NFL Gamecenter or RS feeds, defaulting to the RS feed. **Live games are only available from gamecenter so when scraping ongoing or recent games, use `source = 'gc'`**. Columns that exist in both GC and RS are consistent across the two scrapers (e.g., player_id, play_id, etc.) but there are some columns in RS that do not exist in GC (drive_how_ended, roof_type, game_time_eastern, etc.).
+
+`nflfastR` uses the Expected Points and Win Probability models developed by the `nflscrapR` team and provided by the `nflscrapR` package. These models were trained on more recent seasons  and should be used with caution for games in the early 2000s. If you would like to help us extend the EPA model to work better in the early 2000s, we are very open to contributions from others.
+
+## About
+
+`nflfastR` was developed by [Sebastian Carl](https://twitter.com/mrcaseb) and [Ben Baldwin](https://twitter.com/benbbaldwin).
+
+Special thanks to [Florian Schmitt](https://twitter.com/Flosch1006) for the logo design!

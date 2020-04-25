@@ -1,0 +1,39 @@
+Type: Package
+Package: nflfastR
+Title: Functions to Efficiently Scrape NFL Play by Play and
+    Roster Data
+Version: 0.0.0.9000
+Authors@R: 
+    c(person(given = "Sebastian",
+             family = "Carl",
+             role = "aut"),
+      person(given = "Ben",
+             family = "Baldwin",
+             role = c("cre", "aut"),
+             email = "bbaldwin206@gmail.com"))
+Description: nflfastR is a set of functions to efficiently
+    scrape NFL play-by-play and roster data.
+License: MIT + file LICENSE
+Depends: 
+    R (>= 3.5.0),
+    nflscrapR
+Imports: 
+    dplyr,
+    glue,
+    httr,
+    janitor,
+    jsonlite,
+    lubridate,
+    magrittr,
+    mgcv,
+    purrr,
+    stringr,
+    tibble,
+    tidyr,
+    tidyselect
+Suggests: 
+    furrr,
+    future
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.0
