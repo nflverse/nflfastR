@@ -146,7 +146,7 @@ logos <- teams_colors_logos %>% select(team_abbr, team_logo_espn)
 
 offense %>%
   inner_join(defense, by = c("posteam" = "defteam")) %>%
-  left_join(logos, by = c("posteam" = "team_abbr")) %>%
+  inner_join(logos, by = c("posteam" = "team_abbr")) %>%
   ggplot(aes(x = off_epa, y = def_epa)) +
   geom_abline(slope = -1.5, intercept = c(.4, .3, .2, .1, 0, -.1, -.2, -.3), alpha = .2) +
   geom_hline(aes(yintercept = mean(off_epa)), color = "red", linetype = "dashed") +
