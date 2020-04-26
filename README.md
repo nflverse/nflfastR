@@ -118,24 +118,23 @@ games_2019 <- fast_scraper_schedules(2019) %>% filter(game_type == 'REG') %>% he
 tictoc::tic(glue::glue('{length(games_2019)} games with nflfastR:'))
 f <- fast_scraper(games_2019, pp = TRUE)
 tictoc::toc()
-#> 16 games with nflfastR:: 14.28 sec elapsed
+#> 16 games with nflfastR:: 14.772 sec elapsed
 tictoc::tic(glue::glue('{length(games_2019)} games with nflscrapR:'))
 n <- map_df(games_2019, nflscrapR::scrape_json_play_by_play)
 tictoc::toc()
-#> 16 games with nflscrapR:: 439.08 sec elapsed
+#> 16 games with nflscrapR:: 575.813 sec elapsed
 ```
 
 ### Example 3: completion percentage over expected (CPOE)
 
-Let’s look at CPOE leaders from the 2009 regular
-season.
+Let’s look at CPOE leaders from the 2009 regular season.
 
 ``` r
 games <- fast_scraper_schedules(2009) %>% filter(game_type == 'REG') %>% pull(game_id)
 tictoc::tic('scraping all 256 games from 2009')
 games_2009 <- fast_scraper(games, pp = TRUE)
 tictoc::toc()
-#> scraping all 256 games from 2009: 129.9 sec elapsed
+#> scraping all 256 games from 2009: 148.597 sec elapsed
 games_2009 %>% filter(!is.na(cpoe)) %>% group_by(passer_player_name) %>%
   summarize(cpoe = mean(cpoe), Atts=n()) %>%
   filter(Atts > 200) %>%
@@ -157,8 +156,7 @@ games_2009 %>% filter(!is.na(cpoe)) %>% group_by(passer_player_name) %>%
 When scraping from the default RS feed, drive results are automatically
 included. Let’s look at how much more likely teams were to score
 starting from 1st & 10 at their own 20 yard line in 2015 (the last year
-before touchbacks on kickoffs changed to the 25) than in
-2006.
+before touchbacks on kickoffs changed to the 25) than in 2006.
 
 ``` r
 games_2006 <- fast_scraper_schedules(2006) %>% filter(game_type == 'REG') %>% pull(game_id)
@@ -178,8 +176,7 @@ pbp %>% filter(down == 1 & ydstogo == 10 & yardline_100 == 80) %>%
 
 So about 24% of 1st & 10 plays from teams’ own 20 would see the drive
 end up in a score in 2006, compared to 30% in 2015. This has
-implications for EPA models (see
-below).
+implications for EPA models (see below).
 
 ### Example 5: scrape rosters with `fast_scraper_roster`
 
@@ -193,13 +190,13 @@ fast_scraper_roster(team_ids, c("2016", "2019"), pp = TRUE) %>%
 ```
 
 | teamPlayers.displayName | teamPlayers.position | teamPlayers.nflId | teamPlayers.esbId | teamPlayers.gsisId | teamPlayers.birthDate |
-| :---------------------- | :------------------- | ----------------: | :---------------- | :----------------- | :-------------------- |
-| Shamarko Thomas         | SS                   |           2539937 | THO379701         | 00-0030412         | 02/23/1991            |
-| Sean Davis              | SS                   |           2555386 | DAV746549         | 00-0033053         | 10/23/1993            |
-| Javon Hargrave          | NT                   |           2555239 | HAR143881         | 00-0033109         | 02/07/1993            |
-| Mike Hilton             | DB                   |           2556559 | HIL796239         | 00-0032521         | 03/09/1994            |
-| Shaquille Riddick       | LB                   |           2552584 | RID186261         | 00-0032111         | 03/12/1993            |
-| Ricardo Mathews         | DE                   |           1037901 | MAT188704         | 00-0027829         | 07/30/1987            |
+| :---------------------: | :------------------: | ----------------: | :---------------: | :----------------: | :-------------------: |
+|     Shamarko Thomas     |          SS          |           2539937 |     THO379701     |     00-0030412     |      02/23/1991       |
+|       Sean Davis        |          SS          |           2555386 |     DAV746549     |     00-0033053     |      10/23/1993       |
+|     Javon Hargrave      |          NT          |           2555239 |     HAR143881     |     00-0033109     |      02/07/1993       |
+|       Mike Hilton       |          DB          |           2556559 |     HIL796239     |     00-0032521     |      03/09/1994       |
+|    Shaquille Riddick    |          LB          |           2552584 |     RID186261     |     00-0032111     |      03/12/1993       |
+|     Ricardo Mathews     |          DE          |           1037901 |     MAT188704     |     00-0027829     |      07/30/1987       |
 
 ### Example 6: scrape highlight clips with `fast_scraper_clips`
 
@@ -228,7 +225,8 @@ we can keep only rush or pass plays.
 
 ``` r
 library(ggimage)
-pbp <- fast_scraper_schedules(2019) %>% filter(game_type == 'REG') %>% pull(game_id) %>% fast_scraper(pp = TRUE) %>% clean_pbp() %>% filter(rush == 1 | pass == 1)
+pbp <- fast_scraper_schedules(2019) %>% filter(game_type == 'REG') %>% pull(game_id) %>%
+fast_scraper(pp = TRUE) %>% clean_pbp() %>% filter(!is.na(posteam) & (rush == 1 | pass == 1))
 offense <- pbp %>% group_by(posteam) %>% summarise(off_epa = mean(epa, na.rm = TRUE))
 defense <- pbp %>% group_by(defteam) %>% summarise(def_epa = mean(epa, na.rm = TRUE))
 logos <- teams_colors_logos %>% select(team_abbr, team_logo_espn)
@@ -271,6 +269,19 @@ models were trained on more recent seasons and should be used with
 caution for games in the early 2000s. If you would like to help us
 extend the EPA model to work better in the early 2000s, we are very open
 to contributions from others.
+
+Even though the `fast_scraper` of `nflfastR` is really fast, we thought
+it makes sense to offer ready to use data sets for
+[download](https://github.com/guga31bb/nflfastR-data). Those data sets
+include play-by-play data of complete seasons going back to 2000. Each
+season contains both regular season and postseason data, with game\_type
+denoting which. Data are available as either .csv or .rds.
+
+Although it is stated above that the data goes back to 2000, the
+`fast_scraper` can also scrape the 1999 season. However, it should be
+noted that several games of the 1999 season are missing play-by-play
+data completely. `nflfastR` will point this out when trying to scrape
+this season and specify the missing games.
 
 ## About
 

@@ -139,7 +139,7 @@ Let's build the NFL team tiers using offensive and defensive expected points add
 Let's also use the included helper function `clean_pbp`, which creates "rush" and "pass" columns that (a) properly count sacks and scrambles as pass plays and (b) properly include plays with penalties. Using this, we can keep only rush or pass plays.
 ```{r ex7, warning = FALSE, message = FALSE, results = 'hide', fig.keep = 'all', dpi = 600}
 library(ggimage)
-pbp <- fast_scraper_schedules(2019) %>% filter(game_type == 'REG') %>% pull(game_id) %>% fast_scraper(pp = TRUE) %>% clean_pbp() %>% filter(rush == 1 | pass == 1)
+pbp <- fast_scraper_schedules(2019) %>% filter(game_type == 'REG') %>% pull(game_id) %>% fast_scraper(pp = TRUE) %>% clean_pbp() %>% filter(!is.na(posteam) & (rush == 1 | pass == 1))
 offense <- pbp %>% group_by(posteam) %>% summarise(off_epa = mean(epa, na.rm = TRUE))
 defense <- pbp %>% group_by(defteam) %>% summarise(def_epa = mean(epa, na.rm = TRUE))
 logos <- teams_colors_logos %>% select(team_abbr, team_logo_espn)
@@ -170,6 +170,10 @@ offense %>%
 `nflfastR` scrapes NFL Gamecenter or RS feeds, defaulting to the RS feed. **Live games are only available from gamecenter so when scraping ongoing or recent games, use `source = 'gc'`**. Columns that exist in both GC and RS are consistent across the two scrapers (e.g., player_id, play_id, etc.) but there are some columns in RS that do not exist in GC (drive_how_ended, roof_type, game_time_eastern, etc.).
 
 `nflfastR` uses the Expected Points and Win Probability models developed by the `nflscrapR` team and provided by the `nflscrapR` package. These models were trained on more recent seasons  and should be used with caution for games in the early 2000s. If you would like to help us extend the EPA model to work better in the early 2000s, we are very open to contributions from others.
+
+Even though the `fast_scraper` of `nflfastR` is really fast, we thought it makes sense to offer ready to use data sets for [download](https://github.com/guga31bb/nflfastR-data). Those data sets include play-by-play data of complete seasons going back to 2000. Each season contains both regular season and postseason data, with game_type denoting which. Data are available as either .csv or .rds.
+
+Although it is stated above that the data goes back to 2000, the `fast_scraper` can also scrape the 1999 season. However, it should be noted that several games of the 1999 season are missing play-by-play data completely. `nflfastR` will point this out when trying to scrape this season and specify the missing games. 
 
 ## About
 

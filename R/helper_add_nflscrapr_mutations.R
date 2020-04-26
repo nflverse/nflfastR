@@ -7,7 +7,7 @@
 add_nflscrapr_mutations <- function(pbp) {
   out <-
     pbp %>%
-    dplyr::mutate(index = 1:n()) %>% # to re-sort after removing duplicates
+    dplyr::mutate(index = 1 : dplyr::n()) %>% # to re-sort after removing duplicates
     # remove duplicate plays. can't do this with play_id because duplicate plays
     # sometimes have different play_ids
     dplyr::group_by(game_id, quarter, time, play_description) %>%
@@ -475,7 +475,8 @@ add_nflscrapr_mutations <- function(pbp) {
       abs_score_differential_post = abs(posteam_score_post - defteam_score_post),
       # Create a variable for whether or not a touchback occurred, this
       # will apply to any type of play:
-      touchback = as.numeric(stringr::str_detect(tolower(play_description), "touchback"))
+      touchback = as.numeric(stringr::str_detect(tolower(play_description), "touchback")),
+      game_id = as.numeric(game_id)
     ) %>%
     dplyr::rename(
       ydstogo = yards_to_go,
