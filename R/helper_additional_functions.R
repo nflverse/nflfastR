@@ -12,6 +12,8 @@
 #' Loosely based on Ben's nflscrapR guide (https://gist.github.com/guga31bb/5634562c5a2a7b1e9961ac9b6c568701)
 #' but updated to work with the RS data, which has a different player format in
 #' the play description; e.g. 24-M.Lynch instead of M.Lynch.
+#' The function also standardizes team abbreviations so that, for example,
+#' the Chargers are always represented by 'LAC' regardless of which year it was
 #' @export
 clean_pbp <- function(pbp) {
   r <- pbp %>%
@@ -27,11 +29,28 @@ clean_pbp <- function(pbp) {
         stringr::str_extract(desc, "(?<=)[A-Z][a-z]*\\.\\s?[A-Z][A-z]+(\\s(I{2,3})|(IV))?(?=\\s((pass)|(sack)|(scramble)))"),
       name = dplyr::if_else(!is.na(passer_player_name), passer_player_name, rusher_player_name),
       first_down = dplyr::if_else(first_down_rush == 1 | first_down_pass == 1 | first_down_penalty == 1, 1, 0)
-    )
+    ) %>%
+    #standardize team names (eg Chargers are always LAC even when they were playing in SD)
+    dplyr::mutate_at(vars(posteam, defteam, home_team, away_team, timeout_team, td_team, return_team, penalty_team), team_name_fn)
 
   return(r)
 }
 
+#just a function to help with standardizing team abbreviations used in clean_pbp()
+team_name_fn <- function(var) {
+  case_when(
+    var %in% "JAC" ~ "JAX",
+    var %in% "STL" ~ "LA",
+    var %in% "SL" ~ "LA",
+    var %in% "ARZ" ~ "ARI",
+    var %in% "BLT" ~ "BAL",
+    var %in% "CLV" ~ "CLE",
+    var %in% "HST" ~ "HOU",
+    var %in% "SD" ~ "LAC",
+    var %in% "OAK" ~ "LV",
+    TRUE ~ var
+  )
+}
 
 #' Compute QB epa
 #'

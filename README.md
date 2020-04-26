@@ -41,8 +41,8 @@ and roster data. `nflfastR` expands upon the features of nflscrapR:
   - Includes fast functions for roster and highlight scraping
 
 We owe a debt of gratitude to the original
-[`nflscrapR`](https://github.com/maksimhorowitz/nflscrapR) team, Ronald
-Yurko, Samuel Ventura, and Maksim Horowitz, without whose contributions
+[`nflscrapR`](https://github.com/maksimhorowitz/nflscrapR) team, Maksim
+Horowitz, Ronald Yurko, and Samuel Ventura, without whose contributions
 and inspiration this package would not exist.
 
 ## Installation
@@ -118,23 +118,24 @@ games_2019 <- fast_scraper_schedules(2019) %>% filter(game_type == 'REG') %>% he
 tictoc::tic(glue::glue('{length(games_2019)} games with nflfastR:'))
 f <- fast_scraper(games_2019, pp = TRUE)
 tictoc::toc()
-#> 16 games with nflfastR:: 14.772 sec elapsed
+#> 16 games with nflfastR:: 14.94 sec elapsed
 tictoc::tic(glue::glue('{length(games_2019)} games with nflscrapR:'))
 n <- map_df(games_2019, nflscrapR::scrape_json_play_by_play)
 tictoc::toc()
-#> 16 games with nflscrapR:: 575.813 sec elapsed
+#> 16 games with nflscrapR:: 449.06 sec elapsed
 ```
 
 ### Example 3: completion percentage over expected (CPOE)
 
-Let’s look at CPOE leaders from the 2009 regular season.
+Let’s look at CPOE leaders from the 2009 regular
+season.
 
 ``` r
 games <- fast_scraper_schedules(2009) %>% filter(game_type == 'REG') %>% pull(game_id)
 tictoc::tic('scraping all 256 games from 2009')
 games_2009 <- fast_scraper(games, pp = TRUE)
 tictoc::toc()
-#> scraping all 256 games from 2009: 148.597 sec elapsed
+#> scraping all 256 games from 2009: 115.86 sec elapsed
 games_2009 %>% filter(!is.na(cpoe)) %>% group_by(passer_player_name) %>%
   summarize(cpoe = mean(cpoe), Atts=n()) %>%
   filter(Atts > 200) %>%
@@ -158,11 +159,18 @@ included. Let’s look at how much more likely teams were to score
 starting from 1st & 10 at their own 20 yard line in 2015 (the last year
 before touchbacks on kickoffs changed to the 25) than in 2006.
 
+`nflfastR` has a data repository for old seasons, so there’s no need to
+actually scrape them. Let’s use that here (the below reads .rds files,
+but .csv is also
+available).
+
 ``` r
-games_2006 <- fast_scraper_schedules(2006) %>% filter(game_type == 'REG') %>% pull(game_id)
-games_2015 <- fast_scraper_schedules(2015) %>% filter(game_type == 'REG') %>% pull(game_id)
-pbp <- fast_scraper(c(games_2006, games_2015), pp = TRUE)
-pbp %>% filter(down == 1 & ydstogo == 10 & yardline_100 == 80) %>%
+games_2000 <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2000.rds'))
+games_2015 <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2015.rds'))
+
+pbp <- rbind(games_2000, games_2015)
+
+pbp %>% filter(game_type == 'REG' & down == 1 & ydstogo == 10 & yardline_100 == 80) %>%
   mutate(drive_score = if_else(drive_how_ended %in% c("Touchdown", "Field_Goal"), 1, 0)) %>%
   group_by(season) %>%
   summarize(drive_score = mean(drive_score)) %>% 
@@ -171,12 +179,13 @@ pbp %>% filter(down == 1 & ydstogo == 10 & yardline_100 == 80) %>%
 
 | season | drive\_score |
 | -----: | -----------: |
-|   2006 |        0.241 |
+|   2000 |        0.233 |
 |   2015 |        0.305 |
 
-So about 24% of 1st & 10 plays from teams’ own 20 would see the drive
-end up in a score in 2006, compared to 30% in 2015. This has
-implications for EPA models (see below).
+So about 23% of 1st & 10 plays from teams’ own 20 would see the drive
+end up in a score in 2000, compared to 30% in 2015. This has
+implications for EPA models (see
+below).
 
 ### Example 5: scrape rosters with `fast_scraper_roster`
 
@@ -190,13 +199,13 @@ fast_scraper_roster(team_ids, c("2016", "2019"), pp = TRUE) %>%
 ```
 
 | teamPlayers.displayName | teamPlayers.position | teamPlayers.nflId | teamPlayers.esbId | teamPlayers.gsisId | teamPlayers.birthDate |
-| :---------------------: | :------------------: | ----------------: | :---------------: | :----------------: | :-------------------: |
-|     Shamarko Thomas     |          SS          |           2539937 |     THO379701     |     00-0030412     |      02/23/1991       |
-|       Sean Davis        |          SS          |           2555386 |     DAV746549     |     00-0033053     |      10/23/1993       |
-|     Javon Hargrave      |          NT          |           2555239 |     HAR143881     |     00-0033109     |      02/07/1993       |
-|       Mike Hilton       |          DB          |           2556559 |     HIL796239     |     00-0032521     |      03/09/1994       |
-|    Shaquille Riddick    |          LB          |           2552584 |     RID186261     |     00-0032111     |      03/12/1993       |
-|     Ricardo Mathews     |          DE          |           1037901 |     MAT188704     |     00-0027829     |      07/30/1987       |
+| :---------------------- | :------------------- | ----------------: | :---------------- | :----------------- | :-------------------- |
+| Shamarko Thomas         | SS                   |           2539937 | THO379701         | 00-0030412         | 02/23/1991            |
+| Sean Davis              | SS                   |           2555386 | DAV746549         | 00-0033053         | 10/23/1993            |
+| Javon Hargrave          | NT                   |           2555239 | HAR143881         | 00-0033109         | 02/07/1993            |
+| Mike Hilton             | DB                   |           2556559 | HIL796239         | 00-0032521         | 03/09/1994            |
+| Shaquille Riddick       | LB                   |           2552584 | RID186261         | 00-0032111         | 03/12/1993            |
+| Ricardo Mathews         | DE                   |           1037901 | MAT188704         | 00-0027829         | 07/30/1987            |
 
 ### Example 6: scrape highlight clips with `fast_scraper_clips`
 
@@ -214,9 +223,9 @@ vids %>% select(highlight_video_url) %>% head(2) %>% knitr::kable()
 ### Example 7: Plot offensive and defensive EPA per play for a given season
 
 Let’s build the NFL team tiers using offensive and defensive expected
-points added per play for the 2019 season including playoffs. The logo
-urls of the espn logos are integrated into the ‘team\_colors\_logos’
-data frame which is delivered with the package.
+points added per play for the 2005 regular season. The logo urls of the
+espn logos are integrated into the ‘team\_colors\_logos’ data frame
+which is delivered with the package.
 
 Let’s also use the included helper function `clean_pbp`, which creates
 “rush” and “pass” columns that (a) properly count sacks and scrambles
@@ -225,8 +234,8 @@ we can keep only rush or pass plays.
 
 ``` r
 library(ggimage)
-pbp <- fast_scraper_schedules(2019) %>% filter(game_type == 'REG') %>% pull(game_id) %>%
-fast_scraper(pp = TRUE) %>% clean_pbp() %>% filter(!is.na(posteam) & (rush == 1 | pass == 1))
+pbp <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2005.rds')) %>%
+  filter(game_type == 'REG') %>% clean_pbp() %>% filter(!is.na(posteam) & (rush == 1 | pass == 1))
 offense <- pbp %>% group_by(posteam) %>% summarise(off_epa = mean(epa, na.rm = TRUE))
 defense <- pbp %>% group_by(defteam) %>% summarise(def_epa = mean(epa, na.rm = TRUE))
 logos <- teams_colors_logos %>% select(team_abbr, team_logo_espn)
@@ -242,7 +251,8 @@ offense %>%
   labs(
     x = "Offense EPA/play",
     y = "Defense EPA/play",
-    title = "2019 NFL Offensive and Defensive EPA per Play"
+    caption = "Data: @nflfastR | EPA model: @nflscrapR",
+    title = "2005 NFL Offensive and Defensive EPA per Play"
   ) +
   theme_bw() +
   theme(
@@ -257,31 +267,38 @@ offense %>%
 ## More information
 
 `nflfastR` scrapes NFL Gamecenter or RS feeds, defaulting to the RS
-feed. **Live games are only available from gamecenter so when scraping
-ongoing or recent games, use `source = 'gc'`**. Columns that exist in
-both GC and RS are consistent across the two scrapers (e.g., player\_id,
-play\_id, etc.) but there are some columns in RS that do not exist in GC
-(drive\_how\_ended, roof\_type, game\_time\_eastern, etc.).
+feed. **Live games are only available from Gamecenter (we think) so when
+scraping ongoing or recent games, use `source = 'gc'`**. Columns that
+exist in both GC and RS are consistent across the two scrapers (e.g.,
+player\_id, play\_id, etc.) but there are some columns in RS that do not
+exist in GC (drive\_how\_ended, roof\_type, game\_time\_eastern, etc.).
 
 `nflfastR` uses the Expected Points and Win Probability models developed
-by the `nflscrapR` team and provided by the `nflscrapR` package. These
-models were trained on more recent seasons and should be used with
-caution for games in the early 2000s. If you would like to help us
+by the `nflscrapR` team and provided by the `nflscrapR` package. For a
+description of the models, please see the paper
+[here](https://arxiv.org/pdf/1802.00998.pdf). When using EP or WP from
+this package, please cite `nflscrapR` as it is their work behind the
+models (see the example in the caption of the figure above). Because
+these models were trained on more recent seasons, they should be used
+with caution for games in the early 2000s (note the means being not
+centered at zero in the figure above). If you would like to help us
 extend the EPA model to work better in the early 2000s, we are very open
 to contributions from others.
 
-Even though the `fast_scraper` of `nflfastR` is really fast, we thought
-it makes sense to offer ready to use data sets for
-[download](https://github.com/guga31bb/nflfastR-data). Those data sets
-include play-by-play data of complete seasons going back to 2000. Each
-season contains both regular season and postseason data, with game\_type
-denoting which. Data are available as either .csv or .rds.
+Even though `nflfastR` is very fast, for completed seasons we recommend
+downloading the data from
+[here](https://github.com/guga31bb/nflfastR-data) as in Examples 4 and
+7. These data sets include play-by-play data of complete seasons going
+back to 2000 and we will update them in 2020 once the season starts. The
+files contain both regular season and postseason data, and one can use
+game\_type or week to figure out which games occurred in the postseason.
+Data are available as either .csv or .rds, but if you’re using R, the
+.rds files are much smaller and thus faster to download.
 
-Although it is stated above that the data goes back to 2000, the
-`fast_scraper` can also scrape the 1999 season. However, it should be
-noted that several games of the 1999 season are missing play-by-play
-data completely. `nflfastR` will point this out when trying to scrape
-this season and specify the missing games.
+`fast_scraper` can also scrape the 1999 season. However, several games
+of the 1999 season are missing play-by-play data completely. `nflfastR`
+will point this out when trying to scrape this season and specify the
+missing games.
 
 ## About
 
