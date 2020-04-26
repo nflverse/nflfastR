@@ -38,7 +38,7 @@ clean_pbp <- function(pbp) {
 
 #just a function to help with standardizing team abbreviations used in clean_pbp()
 team_name_fn <- function(var) {
-  case_when(
+  dplyr::case_when(
     var %in% "JAC" ~ "JAX",
     var %in% "STL" ~ "LA",
     var %in% "SL" ~ "LA",
