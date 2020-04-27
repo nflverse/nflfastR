@@ -78,7 +78,36 @@ get_pbp_rs <- function(gameId) {
           scoring_team_abbr = scoring_team_id,
           scoring_team_id = scoring_team_eid,
           quarter_end = end_quarter
+        ) %>%
+        dplyr::mutate(
+          # Fill in the rows with missing posteam with the lag:
+          posteam = dplyr::if_else(
+            (quarter_end == 1 | play_type == "TIMEOUT"),
+            dplyr::lag(posteam),
+            posteam),
+          posteam_id = dplyr::if_else(
+            (quarter_end == 1 | play_type == "TIMEOUT"),
+            dplyr::lag(posteam_id),
+            posteam_id),
+          yardline = dplyr::if_else(
+            ((quarter_end == 1 | play_type == "TIMEOUT") & is.na(yardline)),
+            dplyr::lag(yardline),
+            yardline),
+          yardline_side = dplyr::if_else(
+            ((quarter_end == 1 | play_type == "TIMEOUT") & is.na(yardline_side)),
+            dplyr::lag(yardline_side),
+            yardline_side),
+          yardline_number = dplyr::if_else(
+            ((quarter_end == 1 | play_type == "TIMEOUT") & is.na(yardline_number)),
+            dplyr::lag(yardline_number),
+            yardline_number),
+          yardline_side = dplyr::if_else(
+            yardline_number == 50,
+            "MID",
+            yardline_side
+          )
         )
+
 
       # fix for missing quarter in these games
       if (gameId == 2002090803 | game_info$season[1] == 2000) {

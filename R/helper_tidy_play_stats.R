@@ -318,8 +318,6 @@ sum_play_stats <- function(play_Id, stats) {
       row$kickoff_out_of_bounds <- 1
       row$kickoff_attempt <- 1
       row$return_team <- play_stats$teamAbbr[index]
-      row$kicker_player_id <- play_stats$player.esbId[index]
-      row$kicker_player_name <- play_stats$player.displayName[index]
     } else if (play_stats$statId[index] == 50) {
       row$kickoff_fair_catch <- 1
       row$kickoff_attempt <- 1
