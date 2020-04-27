@@ -21,7 +21,8 @@ get_pbp_rs <- function(gameId) {
         httr::content(as = "text", encoding = "UTF-8") %>%
         jsonlite::fromJSON(flatten = TRUE)
 
-      if (is.null(raw_data %>% purrr::pluck("drives"))) {
+      if (is.null(raw_data %>% purrr::pluck("drives")) |
+          !is.list(raw_data %>% purrr::pluck("drives", "plays"))) {
         warning(warn <- 2)
       }
 
@@ -52,16 +53,6 @@ get_pbp_rs <- function(gameId) {
           away_nickname = visitor_nickname
         )
 
-      # if (game_info$season[1] < 2006) {
-      #   message(
-      #     glue::glue(
-      #       "Note: Since there are no airyards or yards after catch data in the
-      #        NFL datasets before the 2006 season the corresponding ep and wp
-      #       variables ares set to 'NA'"
-      #     )
-      #   )
-      # }
-
       drives <- raw_data$drives %>%
         dplyr::rename_all(function(x) paste0("drive_", x)) %>%
         dplyr::mutate(
@@ -73,8 +64,7 @@ get_pbp_rs <- function(gameId) {
 
       plays <-
         purrr::map_df(raw_data$drives$sequence, function(x) {
-          plays <- raw_data$drives$plays[[x]] %>%
-            dplyr::select(-sequence)
+          plays <- raw_data$drives$plays[[x]] %>% dplyr::select(-sequence)
           plays$drive_number <- x
           return(plays)
         }) %>%
@@ -142,7 +132,7 @@ get_pbp_rs <- function(gameId) {
       if (warn == 1) {
         message(glue::glue("Warning: The requested GameID {gameId} is invalid!"))
       } else if (warn == 2) {
-        message(glue::glue("Warning: Drive data for GameID {gameId} is missing completely!"))
+        message(glue::glue("Warning: Drive or play data for GameID {gameId} missing completely!"))
       } else {
         message("The following warning has occured:")
         message(w)

@@ -476,7 +476,10 @@ add_nflscrapr_mutations <- function(pbp) {
       # Create a variable for whether or not a touchback occurred, this
       # will apply to any type of play:
       touchback = as.numeric(stringr::str_detect(tolower(play_description), "touchback")),
-      game_id = as.numeric(game_id)
+      game_id = as.numeric(game_id),
+      # There are a few plays with air_yards prior 2006 (most likely accidently)
+      # To not crash the air_yac ep and wp calculation they are being set to NA
+      air_yards = dplyr::if_else(season < 2006, NA_real_, air_yards)
     ) %>%
     dplyr::rename(
       ydstogo = yards_to_go,

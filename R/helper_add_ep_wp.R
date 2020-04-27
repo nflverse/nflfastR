@@ -43,15 +43,9 @@ add_air_yac_ep <- function(pbp) {
       )
     message("No non-NA air_yards detected. air_yac_ep variables set to NA")
   } else {
-    calc <-
-      pbp %>%
-      dplyr::filter(!is.na(air_yards)) %>%
-      nflscrapR::add_air_yac_ep_variables() %>%
-      dplyr::select(game_id, play_id, air_epa:total_away_raw_yac_epa)
-    out <-
-      pbp %>%
-      dplyr::left_join(calc, by = c("game_id", "play_id"))
-    message("added air_yac_ep variables")
+    out <- pbp %>%
+      nflscrapR::add_air_yac_ep_variables()
+      message("added air_yac_ep variables")
   }
   return(out)
 }
@@ -91,15 +85,9 @@ add_air_yac_wp <- function(pbp) {
       )
     message("No non-NA air_yards detected. air_yac_wp variables set to NA")
   } else {
-    calc <-
-      pbp %>%
-      dplyr::filter(!is.na(air_yards)) %>%
-      nflscrapR::add_air_yac_wp_variables() %>%
-      dplyr::select(game_id, play_id, air_wpa:total_away_raw_yac_wpa)
-    out <-
-      pbp %>%
-      dplyr::left_join(calc, by = c("game_id", "play_id"))
-    message("added air_yac_wp variables")
+    out <- pbp %>%
+      nflscrapR::add_air_yac_wp_variables()
+      message("added air_yac_wp variables")
   }
   return(out)
 }

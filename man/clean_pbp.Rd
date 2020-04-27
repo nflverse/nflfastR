@@ -19,4 +19,6 @@ column denotes the dropback player on dropbacks or the rusher on rush attempts.
 Loosely based on Ben's nflscrapR guide (https://gist.github.com/guga31bb/5634562c5a2a7b1e9961ac9b6c568701)
 but updated to work with the RS data, which has a different player format in
 the play description; e.g. 24-M.Lynch instead of M.Lynch.
+The function also standardizes team abbreviations so that, for example,
+the Chargers are always represented by 'LAC' regardless of which year it was
 }

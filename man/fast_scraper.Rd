@@ -275,7 +275,7 @@ detailed information (description mostly extracted from nflscrapR):
 \item{defensive_extra_point_attempt} - Binary indicator whether or not the defense was able to have an attempt on an extra point attempt, this results following a blocked attempt that the defense recovers the ball.
 \item{defensive_extra_point_conv} - Binary indicator whether or not the defense successfully scored on an extra point attempt.
 \item{season} - 4 digit number indicating to which season the game belongs to.
-\item{cp} - Numeric value indicationg the probability for a complete pass based on air yards, field position, down, yards to go and pass location based on the completion probability of the previous 3 seasons in comparable game situations.
+\item{cp} - Numeric value indicationg the probability for a complete pass based on air yards, field position, down, yards to go, pass location, and season based on comparable game situations.
 \item{cpoe} - For a single pass play this is 1 - cp when the pass was completed or 0 - cp when the pass was incomplete. Analyzed for a whole game or season an indicator for the passer how much over or under expectation his completion percentage was.
 \item{season_type} - 'REG' or 'POST' indicating if the game belongs to regular or post season.
 \item{week} - Season week.
