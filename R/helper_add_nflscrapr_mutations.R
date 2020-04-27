@@ -350,12 +350,13 @@ add_nflscrapr_mutations <- function(pbp) {
     ) %>%
     # Group by the game_half to then create cumulative timeouts used for both
     # the home and away teams:
-    dplyr::group_by(game_half) %>%
+    dplyr::group_by(game_id, game_half) %>%
     dplyr::mutate(
       total_home_timeouts_used = cumsum(home_timeout_used),
       total_away_timeouts_used = cumsum(away_timeout_used)
     ) %>%
     dplyr::ungroup() %>%
+    dplyr::group_by(game_id) %>%
     # Now just take the difference between the timeouts remaining
     # columns and the total timeouts used, and create the columns for both
     # the pos and def team timeouts remaining:
@@ -476,7 +477,6 @@ add_nflscrapr_mutations <- function(pbp) {
       # Create a variable for whether or not a touchback occurred, this
       # will apply to any type of play:
       touchback = as.numeric(stringr::str_detect(tolower(play_description), "touchback")),
-      game_id = as.numeric(game_id),
       # There are a few plays with air_yards prior 2006 (most likely accidently)
       # To not crash the air_yac ep and wp calculation they are being set to NA
       air_yards = dplyr::if_else(season < 2006, NA_real_, air_yards)
@@ -487,7 +487,9 @@ add_nflscrapr_mutations <- function(pbp) {
       yrdln = yardline,
       side_of_field = yardline_side,
       qtr = quarter
-    )
+    ) %>%
+    dplyr::ungroup() %>%
+    dplyr::mutate(game_id = as.numeric(game_id))
   message("added nflscrapR variables")
   return(out)
 }
