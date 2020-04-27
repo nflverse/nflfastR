@@ -1,4 +1,4 @@
-nflfastR <img src='man/figures/logo.png' align="right" width=25% height=auto />
+nflfastR <img src='man/figures/logo.png' align="right" height="250" />
 ================
 
   - [Installation](#installation)
