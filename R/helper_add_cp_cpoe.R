@@ -7,8 +7,11 @@
 add_cp <- function(pbp) {
   passes <- pbp %>%
     dplyr::filter(complete_pass == 1 | incomplete_pass == 1 | interception == 1) %>%
+    #this step is necessary because NFL doesn't record receiver on incomplete passes prior to 2009
+    dplyr::mutate(receiver_player_name =
+                    stringr::str_extract(desc, "(?<=((to)|(for))\\s[:digit:]{0,2}\\-{0,1})[A-Z][A-z]*\\.\\s?[A-Z][A-z]+(\\s(I{2,3})|(IV))?")) %>%
     dplyr::filter(
-      !is.na(air_yards) & air_yards >= -15 & air_yards < 70 & !is.na(receiver_player_id) &
+      !is.na(air_yards) & air_yards >= -15 & air_yards < 70 & !is.na(receiver_player_name) &
         !is.na(pass_location) & season >= 2006
     ) %>%
     dplyr::mutate(air_is_zero = dplyr::if_else(air_yards == 0, 1, 0)) %>%
