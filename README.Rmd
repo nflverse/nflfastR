@@ -1,5 +1,5 @@
 ---
-title: "nflfastR <img src='man/figures/logo.png' align=\"right\" height=\"250\" />"
+title: "nflfastR <img src='man/figures/logo.png' align=\"right\" width=\"25%\" />"
 output:
   github_document:
     toc: true
@@ -40,6 +40,9 @@ You can load and install nflfastR from [GitHub](https://github.com/) with:
 ``` {r eval = FALSE}
 # If 'devtools' isn't installed run
 # install.packages("devtools")
+
+# If 'nflscrapR' isn't installed run
+# devtools::install_github("maksimhorowitz/nflscrapR")
 devtools::install_github("mrcaseb/nflfastR")
 ```
 

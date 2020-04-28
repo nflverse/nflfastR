@@ -53,6 +53,9 @@ with:
 ``` r
 # If 'devtools' isn't installed run
 # install.packages("devtools")
+
+# If 'nflscrapR' isn't installed run
+# devtools::install_github("maksimhorowitz/nflscrapR")
 devtools::install_github("mrcaseb/nflfastR")
 ```
 
@@ -118,24 +121,23 @@ games_2019 <- fast_scraper_schedules(2019) %>% filter(game_type == 'REG') %>% he
 tictoc::tic(glue::glue('{length(games_2019)} games with nflfastR:'))
 f <- fast_scraper(games_2019, pp = TRUE)
 tictoc::toc()
-#> 16 games with nflfastR:: 14.94 sec elapsed
+#> 16 games with nflfastR:: 13.88 sec elapsed
 tictoc::tic(glue::glue('{length(games_2019)} games with nflscrapR:'))
 n <- map_df(games_2019, nflscrapR::scrape_json_play_by_play)
 tictoc::toc()
-#> 16 games with nflscrapR:: 449.06 sec elapsed
+#> 16 games with nflscrapR:: 535.89 sec elapsed
 ```
 
 ### Example 3: completion percentage over expected (CPOE)
 
-Let’s look at CPOE leaders from the 2009 regular
-season.
+Let’s look at CPOE leaders from the 2009 regular season.
 
 ``` r
 games <- fast_scraper_schedules(2009) %>% filter(game_type == 'REG') %>% pull(game_id)
 tictoc::tic('scraping all 256 games from 2009')
 games_2009 <- fast_scraper(games, pp = TRUE)
 tictoc::toc()
-#> scraping all 256 games from 2009: 115.86 sec elapsed
+#> scraping all 256 games from 2009: 150.526 sec elapsed
 games_2009 %>% filter(!is.na(cpoe)) %>% group_by(passer_player_name) %>%
   summarize(cpoe = mean(cpoe), Atts=n()) %>%
   filter(Atts > 200) %>%
@@ -161,12 +163,11 @@ before touchbacks on kickoffs changed to the 25) than in 2006.
 
 `nflfastR` has a data repository for old seasons, so there’s no need to
 actually scrape them. Let’s use that here (the below reads .rds files,
-but .csv is also
-available).
+but .csv is also available).
 
 ``` r
 games_2000 <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2000.rds'))
-games_2015 <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2015.rds'))
+games_2015 <-readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2015.rds'))
 
 pbp <- rbind(games_2000, games_2015)
 
@@ -184,8 +185,7 @@ pbp %>% filter(game_type == 'REG' & down == 1 & ydstogo == 10 & yardline_100 == 
 
 So about 23% of 1st & 10 plays from teams’ own 20 would see the drive
 end up in a score in 2000, compared to 30% in 2015. This has
-implications for EPA models (see
-below).
+implications for EPA models (see below).
 
 ### Example 5: scrape rosters with `fast_scraper_roster`
 
@@ -199,13 +199,13 @@ fast_scraper_roster(team_ids, c("2016", "2019"), pp = TRUE) %>%
 ```
 
 | teamPlayers.displayName | teamPlayers.position | teamPlayers.nflId | teamPlayers.esbId | teamPlayers.gsisId | teamPlayers.birthDate |
-| :---------------------- | :------------------- | ----------------: | :---------------- | :----------------- | :-------------------- |
-| Shamarko Thomas         | SS                   |           2539937 | THO379701         | 00-0030412         | 02/23/1991            |
-| Sean Davis              | SS                   |           2555386 | DAV746549         | 00-0033053         | 10/23/1993            |
-| Javon Hargrave          | NT                   |           2555239 | HAR143881         | 00-0033109         | 02/07/1993            |
-| Mike Hilton             | DB                   |           2556559 | HIL796239         | 00-0032521         | 03/09/1994            |
-| Shaquille Riddick       | LB                   |           2552584 | RID186261         | 00-0032111         | 03/12/1993            |
-| Ricardo Mathews         | DE                   |           1037901 | MAT188704         | 00-0027829         | 07/30/1987            |
+| :---------------------: | :------------------: | ----------------: | :---------------: | :----------------: | :-------------------: |
+|     Shamarko Thomas     |          SS          |           2539937 |     THO379701     |     00-0030412     |      02/23/1991       |
+|       Sean Davis        |          SS          |           2555386 |     DAV746549     |     00-0033053     |      10/23/1993       |
+|     Javon Hargrave      |          NT          |           2555239 |     HAR143881     |     00-0033109     |      02/07/1993       |
+|       Mike Hilton       |          DB          |           2556559 |     HIL796239     |     00-0032521     |      03/09/1994       |
+|    Shaquille Riddick    |          LB          |           2552584 |     RID186261     |     00-0032111     |      03/12/1993       |
+|     Ricardo Mathews     |          DE          |           1037901 |     MAT188704     |     00-0027829     |      07/30/1987       |
 
 ### Example 6: scrape highlight clips with `fast_scraper_clips`
 
