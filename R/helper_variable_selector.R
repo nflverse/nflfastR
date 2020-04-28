@@ -6,14 +6,24 @@
 
 select_variables <- function(pbp) {
   if (!"game_key" %in% colnames(pbp)) {
-    cols <- c(nflscrapr_cols, new_cols)
+    out <-
+      pbp %>%
+      dplyr::select(
+        tidyselect::any_of(
+          c(nflscrapr_cols, new_cols)
+        )
+      )
   } else {
-    cols <- c(nflscrapr_cols, new_cols, rs_cols)
+    out <-
+      pbp %>%
+      dplyr::select(
+        tidyselect::any_of(
+          c(nflscrapr_cols, new_cols, rs_cols)
+        )
+      )
   }
 
-  pbp <- pbp[cols]
-
-  return(pbp)
+  return(out)
 }
 
 # columns that are not in gamecenter that we created
@@ -111,3 +121,4 @@ rs_cols <- c(
   "alert_play_type", "play_type_nfl", "time_of_day",
   "yards", "end_yardline_side", "end_yardline_number"
 )
+
