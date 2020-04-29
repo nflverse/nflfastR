@@ -317,6 +317,8 @@
 #' \item{yards} - Analogue yards_gained but with the kicking team being the possession team (which means that there are many yards gained through kickoffs and punts).
 #' \item{end_yardline_side} - String indicating the side of the field at the end of the given play.
 #' \item{end_yardline_number} - Yardline number within the above given side at the end of the given play.
+#' \item{series} - Starts at 1, each new first down increments, numbers shared across both teams. Is NA for: kickoffs, extra point/two point conversion attempts, no posteam.
+#' \item{series_success} - 1 when scored touchdown, gained enough yards for first down. 0 when punt, interception, fumble lost, turnover on downs, 4th down FG attempt. NA when series is NA, series contains QB spike/kneel.
 #' }
 #' @export
 #' @examples
@@ -352,6 +354,7 @@ fast_scraper <- function(game_ids, source = "rs", pp = FALSE) {
           add_wp() %>%
           add_air_yac_wp() %>%
           add_cp() %>%
+          add_series_data() %>%
           select_variables()
       }
     })
@@ -379,6 +382,7 @@ fast_scraper <- function(game_ids, source = "rs", pp = FALSE) {
           add_wp() %>%
           add_air_yac_wp() %>%
           add_cp() %>%
+          add_series_data() %>%
           select_variables()
       }
     })
