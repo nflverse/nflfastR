@@ -6,21 +6,25 @@
 
 select_variables <- function(pbp) {
   if (!"game_key" %in% colnames(pbp)) {
-    out <-
-      pbp %>%
-      dplyr::select(
-        tidyselect::any_of(
-          c(nflscrapr_cols, new_cols)
+    suppressWarnings(
+      out <-
+        pbp %>%
+        dplyr::select(
+          tidyselect::one_of(
+            c(nflscrapr_cols, new_cols)
+          )
         )
-      )
+    )
   } else {
-    out <-
-      pbp %>%
-      dplyr::select(
-        tidyselect::any_of(
-          c(nflscrapr_cols, new_cols, rs_cols)
+    suppressWarnings(
+      out <-
+        pbp %>%
+        dplyr::select(
+          tidyselect::one_of(
+            c(nflscrapr_cols, new_cols, rs_cols)
+          )
         )
-      )
+    )
   }
 
   return(out)
