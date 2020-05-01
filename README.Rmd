@@ -29,6 +29,7 @@ knitr::opts_chunk$set(
 * Includes completion probability (`cp`) and completion percentage over expected (`cpoe`) in play-by-play going back to 2006
 * The default RS feed includes drive information, including drive starting position and drive result
 * Includes fast functions for roster and highlight scraping
+* Hosts [a repository of play-by-play data going back to 2000](https://github.com/guga31bb/nflfastR-data) for very quick access
 
 We owe a debt of gratitude to the original [`nflscrapR`](https://github.com/maksimhorowitz/nflscrapR) team, Maksim Horowitz, Ronald Yurko, and Samuel Ventura, without whose contributions and inspiration this package would not exist.
 
@@ -180,7 +181,9 @@ offense %>%
 
 `nflfastR` uses the Expected Points and Win Probability models developed by the `nflscrapR` team and provided by the `nflscrapR` package. For a description of the models, please see the paper [here](https://arxiv.org/pdf/1802.00998.pdf). When using EP or WP from this package, please cite `nflscrapR` as it is their work behind the models (see the example in the caption of the figure above). Because these models were trained on more recent seasons, they should be used with caution for games in the early 2000s (note the means being not centered at zero in the figure above). If you would like to help us extend the EPA model to work better in the early 2000s, we are very open to contributions from others.
 
-Even though `nflfastR` is very fast, for completed seasons we recommend downloading the data from [here](https://github.com/guga31bb/nflfastR-data) as in Examples 4 and 7. These data sets include play-by-play data of complete seasons going back to 2000 and we will update them in 2020 once the season starts. The files contain both regular season and postseason data, and one can use game_type or week to figure out which games occurred in the postseason. Data are available as either .csv or .rds, but if you're using R, the .rds files are much smaller and thus faster to download.
+## Data repository
+
+Even though `nflfastR` is very fast, **for completed seasons we recommend downloading the data from [here](https://github.com/guga31bb/nflfastR-data) as in Examples 4 and 7 above**. These data sets include play-by-play data of complete seasons going back to 2000 and we will update them in 2020 once the season starts. The files contain both regular season and postseason data, and one can use game_type or week to figure out which games occurred in the postseason. Data are available as either .csv or .rds, but if you're using R, the .rds files are much smaller and thus faster to download.
 
 `fast_scraper` can also scrape the 1999 season. However, several games of the 1999 season are missing play-by-play data completely. `nflfastR` will point this out when trying to scrape this season and specify the missing games. 
 
