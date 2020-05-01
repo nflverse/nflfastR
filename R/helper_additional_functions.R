@@ -13,7 +13,8 @@
 #' but updated to work with the RS data, which has a different player format in
 #' the play description; e.g. 24-M.Lynch instead of M.Lynch.
 #' The function also standardizes team abbreviations so that, for example,
-#' the Chargers are always represented by 'LAC' regardless of which year it was
+#' the Chargers are always represented by 'LAC' regardless of which year it was.
+#' Also creates a 'play' column denoting 'normal' plays (Ie pass play or run play)
 #' @export
 clean_pbp <- function(pbp) {
   r <- pbp %>%
@@ -28,7 +29,13 @@ clean_pbp <- function(pbp) {
       passer_player_name =
         stringr::str_extract(desc, "(?<=)[A-Z][a-z]*\\.\\s?[A-Z][A-z]+(\\s(I{2,3})|(IV))?(?=\\s((pass)|(sack)|(scramble)))"),
       name = dplyr::if_else(!is.na(passer_player_name), passer_player_name, rusher_player_name),
-      first_down = dplyr::if_else(first_down_rush == 1 | first_down_pass == 1 | first_down_penalty == 1, 1, 0)
+      first_down = dplyr::if_else(first_down_rush == 1 | first_down_pass == 1 | first_down_penalty == 1, 1, 0),
+      # easy filter: play is 1 if a "normal" play (including penalties), or 0 otherwise
+      # with thanks to Lee Sharp for the code
+      play=dplyr::if_else(!is.na(epa) & !is.na(posteam) &
+                    desc != "*** play under review ***" &
+                    substr(desc,1,8) != "Timeout " &
+                    play_type %in% c("no_play","pass","run"),1,0)
     ) %>%
     #standardize team names (eg Chargers are always LAC even when they were playing in SD)
     dplyr::mutate_at(vars(posteam, defteam, home_team, away_team, timeout_team, td_team, return_team, penalty_team), team_name_fn)
@@ -98,3 +105,4 @@ fix_fumbles <- function(d) {
 
   return(d)
 }
+

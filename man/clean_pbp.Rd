@@ -20,5 +20,6 @@ Loosely based on Ben's nflscrapR guide (https://gist.github.com/guga31bb/5634562
 but updated to work with the RS data, which has a different player format in
 the play description; e.g. 24-M.Lynch instead of M.Lynch.
 The function also standardizes team abbreviations so that, for example,
-the Chargers are always represented by 'LAC' regardless of which year it was
+the Chargers are always represented by 'LAC' regardless of which year it was.
+Also creates a 'play' column denoting 'normal' plays (Ie pass play or run play)
 }
