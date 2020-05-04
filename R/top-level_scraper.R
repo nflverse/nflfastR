@@ -505,7 +505,7 @@ fast_scraper_roster <- function(team_ids, seasons, pp = FALSE) {
         purrr::pmap_df(
           # pmap needs a list of lists. It is generated as all combinations of
           # team_ids and seasons by cross2 but needs to be transposed for pmap
-          purrr::transpose(purrr::cross2(team_ids, seasons)),
+          purrr::transpose(purrr::cross2(unique(team_ids), unique(seasons))),
           function(teamId, season) {
             grab_roster(teamId, season)
           }
@@ -526,7 +526,7 @@ fast_scraper_roster <- function(team_ids, seasons, pp = FALSE) {
         furrr::future_pmap_dfr(
           # pmap needs a list of lists. It is generated as all combinations of
           # team_ids and seasons by cross2 but needs to be transposed for pmap
-          purrr::transpose(purrr::cross2(team_ids, seasons)),
+          purrr::transpose(purrr::cross2(unique(team_ids), unique(seasons))),
           function(teamId, season) {
             grab_roster(teamId, season)
           },
