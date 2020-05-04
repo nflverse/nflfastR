@@ -61,7 +61,8 @@ add_roster_mutations <- function(pbp) {
     ) %>%
 
     # Some Variables have empty observations. Replace them with 'NA'
-    dplyr::mutate_all(dplyr::na_if, "")
+    dplyr::mutate_all(dplyr::na_if, "") %>%
+    dplyr::mutate(team.abbr = dplyr::if_else(team.abbr == "JAC", "JAX", team.abbr))
 
   # add the two new variables headshot_url and profile_url
   # since this only works if the variables esbId and nflId are available

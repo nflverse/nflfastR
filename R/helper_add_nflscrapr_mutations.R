@@ -352,8 +352,8 @@ add_nflscrapr_mutations <- function(pbp) {
     # the home and away teams:
     dplyr::group_by(game_id, game_half) %>%
     dplyr::mutate(
-      total_home_timeouts_used = cumsum(home_timeout_used),
-      total_away_timeouts_used = cumsum(away_timeout_used)
+      total_home_timeouts_used = dplyr::if_else(cumsum(home_timeout_used) > 3, 3, cumsum(home_timeout_used)),
+      total_away_timeouts_used = dplyr::if_else(cumsum(away_timeout_used) > 3, 3, cumsum(away_timeout_used))
     ) %>%
     dplyr::ungroup() %>%
     dplyr::group_by(game_id) %>%
