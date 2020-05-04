@@ -110,7 +110,7 @@ get_pbp_rs <- function(gameId) {
 
 
       # fix for missing quarter in these games
-      if (gameId == 2002090803 | game_info$season[1] == 2000) {
+      if (game_info$season[1] <= 2002) {
         plays <- plays %>% dplyr::mutate(
           quarter = 1 + cumsum(quarter_end) - quarter_end
         )
@@ -132,7 +132,10 @@ get_pbp_rs <- function(gameId) {
             player.lastName
           )
         ) %>%
-        dplyr::arrange(playStatSeq)
+        dplyr::arrange(playStatSeq) %>%
+        #for for td team not using abbreviations
+        dplyr::mutate(teamAbbr = as.character(teamAbbr)) %>%
+        fix_team_abbr()
 
       # if I don't put this here it breaks
       suppressWarnings(
@@ -172,3 +175,140 @@ get_pbp_rs <- function(gameId) {
   )
   return(combined)
 }
+
+
+fix_team_abbr <- function(pbp) {
+
+  r <- pbp %>%
+    dplyr::mutate(
+    teamAbbr =
+      dplyr::case_when(
+        teamAbbr == '1086' ~ 'ARI',
+        teamAbbr == '1087' ~ 'ATL',
+        teamAbbr == '1088' ~ 'BAL',
+        teamAbbr == '1089' ~ 'BUF',
+        teamAbbr == '1090' ~ 'CAR',
+        teamAbbr == '1091' ~ 'CHI',
+        teamAbbr == '1092' ~ 'CIN',
+        teamAbbr == '1093' ~ 'CLE',
+        teamAbbr == '1094' ~ 'DAL',
+        teamAbbr == '1095' ~ 'DEN',
+        teamAbbr == '1096' ~ 'DET',
+        teamAbbr == '1097' ~ 'GB',
+        teamAbbr == '1098' ~ 'IND',
+        teamAbbr == '1099' ~ 'JAC',
+        teamAbbr == '1100' ~ 'KC',
+        teamAbbr == '1101' ~ 'MIA',
+        teamAbbr == '1102' ~ 'MIN',
+        teamAbbr == '1103' ~ 'NE',
+        teamAbbr == '1105' ~ 'NO',
+        teamAbbr == '1106' ~ 'NYG',
+        teamAbbr == '1107' ~ 'NYJ',
+        teamAbbr == '1108' ~ 'OAK',
+        teamAbbr == '1109' ~ 'PHI',
+        teamAbbr == '1110' ~ 'PIT',
+        teamAbbr == '1111' ~ 'SD',
+        teamAbbr == '1112' ~ 'SEA',
+        teamAbbr == '1113' ~ 'SF',
+        teamAbbr == '1114' ~ 'STL',
+        teamAbbr == '1115' ~ 'TB',
+        teamAbbr == '1116' ~ 'TEN',
+        teamAbbr == '1117' ~ 'WAS',
+        teamAbbr == '1118' ~ 'HOU',
+        teamAbbr == '127' ~ 'ARI',
+        teamAbbr == '128' ~ 'ATL',
+        teamAbbr == '129' ~ 'BAL',
+        teamAbbr == '130' ~ 'BUF',
+        teamAbbr == '131' ~ 'CAR',
+        teamAbbr == '132' ~ 'CHI',
+        teamAbbr == '133' ~ 'CIN',
+        teamAbbr == '134' ~ 'CLE',
+        teamAbbr == '135' ~ 'DAL',
+        teamAbbr == '136' ~ 'DEN',
+        teamAbbr == '137' ~ 'DET',
+        teamAbbr == '138' ~ 'GB',
+        teamAbbr == '139' ~ 'IND',
+        teamAbbr == '140' ~ 'JAC',
+        teamAbbr == '141' ~ 'KC',
+        teamAbbr == '142' ~ 'MIA',
+        teamAbbr == '143' ~ 'MIN',
+        teamAbbr == '144' ~ 'NE',
+        teamAbbr == '145' ~ 'NO',
+        teamAbbr == '146' ~ 'NYG',
+        teamAbbr == '147' ~ 'NYJ',
+        teamAbbr == '148' ~ 'OAK',
+        teamAbbr == '149' ~ 'PHI',
+        teamAbbr == '150' ~ 'PIT',
+        teamAbbr == '151' ~ 'SD',
+        teamAbbr == '152' ~ 'SEA',
+        teamAbbr == '153' ~ 'SF',
+        teamAbbr == '154' ~ 'STL',
+        teamAbbr == '155' ~ 'TB',
+        teamAbbr == '156' ~ 'TEN',
+        teamAbbr == '157' ~ 'WAS',
+        teamAbbr == '162' ~ 'ARI',
+        teamAbbr == '163' ~ 'ATL',
+        teamAbbr == '164' ~ 'BAL',
+        teamAbbr == '165' ~ 'BUF',
+        teamAbbr == '166' ~ 'CAR',
+        teamAbbr == '167' ~ 'CHI',
+        teamAbbr == '168' ~ 'CIN',
+        teamAbbr == '169' ~ 'CLE',
+        teamAbbr == '170' ~ 'DAL',
+        teamAbbr == '171' ~ 'DEN',
+        teamAbbr == '172' ~ 'DET',
+        teamAbbr == '173' ~ 'GB',
+        teamAbbr == '174' ~ 'IND',
+        teamAbbr == '175' ~ 'JAC',
+        teamAbbr == '176' ~ 'KC',
+        teamAbbr == '177' ~ 'MIA',
+        teamAbbr == '178' ~ 'MIN',
+        teamAbbr == '179' ~ 'NE',
+        teamAbbr == '181' ~ 'MIN',
+        teamAbbr == '182' ~ 'NYG',
+        teamAbbr == '183' ~ 'NYJ',
+        teamAbbr == '184' ~ 'OAK',
+        teamAbbr == '185' ~ 'PHI',
+        teamAbbr == '187' ~ 'SD',
+        teamAbbr == '188' ~ 'SEA',
+        teamAbbr == '189' ~ 'SF',
+        teamAbbr == '190' ~ 'STL',
+        teamAbbr == '191' ~ 'TB',
+        teamAbbr == '192' ~ 'TEN',
+        teamAbbr == '193' ~ 'WAS',
+        teamAbbr == '2441' ~ 'ARI',
+        teamAbbr == '2442' ~ 'ATL',
+        teamAbbr == '2444' ~ 'BUF',
+        teamAbbr == '2445' ~ 'CAR',
+        teamAbbr == '2446' ~ 'CHI',
+        teamAbbr == '2447' ~ 'CIN',
+        teamAbbr == '2448' ~ 'SEA',
+        teamAbbr == '2449' ~ 'DAL',
+        teamAbbr == '2451' ~ 'DET',
+        teamAbbr == '2452' ~ 'GB',
+        teamAbbr == '2453' ~ 'HOU',
+        teamAbbr == '2454' ~ 'IND',
+        teamAbbr == '2456' ~ 'KC',
+        teamAbbr == '2457' ~ 'MIA',
+        teamAbbr == '2458' ~ 'MIN',
+        teamAbbr == '2461' ~ 'NO',
+        teamAbbr == '2462' ~ 'NYG',
+        teamAbbr == '2463' ~ 'NYJ',
+        teamAbbr == '2464' ~ 'OAK',
+        teamAbbr == '2465' ~ 'PHI',
+        teamAbbr == '2466' ~ 'PIT',
+        teamAbbr == '2468' ~ 'SEA',
+        teamAbbr == '2469' ~ 'SF',
+        teamAbbr == '2470' ~ 'STL',
+        teamAbbr == '2471' ~ 'TB',
+        teamAbbr == '2472' ~ 'TEN',
+        teamAbbr == '2473' ~ 'WAS',
+      TRUE ~ teamAbbr
+    )
+  )
+
+  return(r)
+
+}
+
+

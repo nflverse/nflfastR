@@ -21,7 +21,8 @@ clean_pbp <- function(pbp) {
   r <- pbp %>%
     dplyr::mutate(
       #get rid of extraneous spaces that mess with player name finding
-      desc = stringr::str_replace_all(desc, "([A-Z]\\.)\\s", "\\1"),
+      #if there is a space or dash, and then a capital letter, and then a period, and then a space, take out the space
+      desc = stringr::str_replace_all(desc, "(((\\s)|(\\-))[A-Z]\\.)\\s+", "\\1"),
       success = dplyr::if_else(is.na(epa), NA_real_, dplyr::if_else(epa > 0, 1, 0)),
       passer = stringr::str_extract(desc, glue::glue('{big_parser}{pass_finder}')),
       rusher = stringr::str_extract(desc, glue::glue('{big_parser}{rush_finder}')),
@@ -45,10 +46,14 @@ clean_pbp <- function(pbp) {
         passer == "Alex Smith" | passer == "Ale.Smith" ~ "A.Smith",
         passer == "Ryan" & posteam == "ATL" ~ "M.Ryan",
         passer == "Tr.Brown" ~ "T.Brown",
-        passer == "Matt.Moore" ~ "M.Moore",
+        passer == "Sh.Hill" ~ "S.Hill",
+        passer == "Matt.Moore" | passer == "Mat.Moore" ~ "M.Moore",
         passer == "Jo.Freeman" ~ "J.Freeman",
         passer == "G.Minshew" ~ "G.Minshew II",
         passer == "R.Griffin" ~ "R.Griffin III",
+        passer == "Randel El" ~ "A.Randel El",
+        passer == "Van Pelt" ~ "A.Van Pelt",
+        passer == "Dom.Davis" ~ "D.Davis",
         TRUE ~ passer
       ),
       rusher = dplyr::case_when(
@@ -56,10 +61,14 @@ clean_pbp <- function(pbp) {
         rusher == "Alex Smith" | passer == "Ale.Smith" ~ "A.Smith",
         rusher == "Ryan" & posteam == "ATL" ~ "M.Ryan",
         rusher == "Tr.Brown" ~ "T.Brown",
-        rusher == "Matt.Moore" ~ "M.Moore",
+        rusher == "Sh.Hill" ~ "S.Hill",
+        rusher == "Matt.Moore" | rusher == "Mat.Moore" ~ "M.Moore",
         rusher == "Jo.Freeman" ~ "J.Freeman",
         rusher == "G.Minshew" ~ "G.Minshew II",
         rusher == "R.Griffin" ~ "R.Griffin III",
+        rusher == "Randel El" ~ "A.Randel El",
+        rusher == "Van Pelt" ~ "A.Van Pelt",
+        rusher == "Dom.Davis" ~ "D.Davis",
         TRUE ~ rusher
       ),
       name = dplyr::if_else(!is.na(passer), passer, rusher),
@@ -72,7 +81,18 @@ clean_pbp <- function(pbp) {
                     play_type %in% c("no_play","pass","run"),1,0)
     ) %>%
     #standardize team names (eg Chargers are always LAC even when they were playing in SD)
-    dplyr::mutate_at(dplyr::vars(posteam, defteam, home_team, away_team, timeout_team, td_team, return_team, penalty_team), team_name_fn)
+    dplyr::mutate_at(dplyr::vars(posteam, defteam, home_team, away_team, timeout_team, td_team, return_team, penalty_team), team_name_fn) %>%
+    #Seb's stuff for fixing player ids
+    dplyr::group_by(passer, posteam, season) %>%
+    dplyr::arrange(passer_player_id) %>%
+    dplyr::mutate(passer_id = dplyr::if_else(is.na(passer), NA_character_, dplyr::first(passer_player_id))) %>%
+    dplyr::group_by(rusher, posteam, season) %>%
+    dplyr::arrange(rusher_player_id) %>%
+    dplyr::mutate(rusher_id = dplyr::if_else(is.na(rusher), NA_character_, dplyr::first(rusher_player_id))) %>%
+    dplyr::group_by(receiver, posteam, season) %>%
+    dplyr::arrange(receiver_player_id) %>%
+    dplyr::mutate(receiver_id = dplyr::if_else(is.na(receiver), NA_character_, dplyr::first(receiver_player_id))) %>%
+    dplyr::ungroup()
 
   return(r)
 }
