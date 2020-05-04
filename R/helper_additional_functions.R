@@ -39,9 +39,9 @@ clean_pbp <- function(pbp) {
       pass = dplyr::if_else(stringr::str_detect(desc, "( pass)|(sacked)|(scramble)"), 1, 0),
       #if there's a rusher and it wasn't a QB kneel or pass play, it's a run play
       rush = dplyr::if_else(!is.na(rusher) & qb_kneel == 0 & pass == 0, 1, 0),
-      #fix some common passers with inconsistent names
+      #fix some common QBs with inconsistent names
       passer = dplyr::case_when(
-        passer == "Jos.Allen" & posteam == "BUF" ~ "J.Allen",
+        passer == "Jos.Allen" ~ "J.Allen",
         passer == "Alex Smith" | passer == "Ale.Smith" ~ "A.Smith",
         passer == "Ryan" & posteam == "ATL" ~ "M.Ryan",
         passer == "Tr.Brown" ~ "T.Brown",
@@ -51,7 +51,18 @@ clean_pbp <- function(pbp) {
         passer == "R.Griffin" ~ "R.Griffin III",
         TRUE ~ passer
       ),
-      name = dplyr::if_else(!is.na(passer_player_name), passer_player_name, rusher_player_name),
+      rusher = dplyr::case_when(
+        rusher == "Jos.Allen" ~ "J.Allen",
+        rusher == "Alex Smith" | passer == "Ale.Smith" ~ "A.Smith",
+        rusher == "Ryan" & posteam == "ATL" ~ "M.Ryan",
+        rusher == "Tr.Brown" ~ "T.Brown",
+        rusher == "Matt.Moore" ~ "M.Moore",
+        rusher == "Jo.Freeman" ~ "J.Freeman",
+        rusher == "G.Minshew" ~ "G.Minshew II",
+        rusher == "R.Griffin" ~ "R.Griffin III",
+        TRUE ~ rusher
+      ),
+      name = dplyr::if_else(!is.na(passer), passer, rusher),
       first_down = dplyr::if_else(first_down_rush == 1 | first_down_pass == 1 | first_down_penalty == 1, 1, 0),
       # easy filter: play is 1 if a "normal" play (including penalties), or 0 otherwise
       # with thanks to Lee Sharpe for the code
