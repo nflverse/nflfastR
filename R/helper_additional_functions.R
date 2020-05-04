@@ -84,7 +84,7 @@ clean_pbp <- function(pbp) {
 #maybe some spaces and letters, and then a rush direction unless they fumbled
   rush_finder = '(?=\\s*[a-z]*\\s*((FUMBLES) | (left end)|(left tackle)|(left guard)|(up the middle)|(right guard)|(right tackle)|(right end)))'
 #maybe some spaces and leters, and then pass / sack / scramble
-  pass_finder = "(?=\\s*[a-z]*\\s*((pass)|(sack)|(scramble)))"
+  pass_finder = "(?=\\s*[a-z]*\\s*(( pass)|(sack)|(scramble)))"
 #to or for, maybe a jersey number and a dash
   receiver_finder = "(?<=((to)|(for))\\s[:digit:]{0,2}\\-{0,1})"
 
