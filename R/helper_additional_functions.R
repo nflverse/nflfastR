@@ -13,28 +13,70 @@
 #' but updated to work with the RS data, which has a different player format in
 #' the play description; e.g. 24-M.Lynch instead of M.Lynch.
 #' The function also standardizes team abbreviations so that, for example,
-#' the Chargers are always represented by 'LAC' regardless of which year it was
+#' the Chargers are always represented by 'LAC' regardless of which year it was.
+#' Also creates a 'play' column denoting 'normal' plays (Ie pass play or run play)
 #' @export
 clean_pbp <- function(pbp) {
+  message('Cleaning up play-by-play. If you run this with a lot of seasons this could take a few minutes.')
   r <- pbp %>%
     dplyr::mutate(
-      pass = dplyr::if_else(stringr::str_detect(desc, "( pass)|(sacked)|(scramble)"), 1, 0),
-      rush = dplyr::if_else(stringr::str_detect(desc, "(left end)|(left tackle)|(left guard)|(up the middle)|(right guard)|(right tackle)|(right end)") & pass == 0, 1, 0),
+      #get rid of extraneous spaces that mess with player name finding
+      desc = stringr::str_replace_all(desc, "([A-Z]\\.)\\s", "\\1"),
       success = dplyr::if_else(is.na(epa), NA_real_, dplyr::if_else(epa > 0, 1, 0)),
-      rusher_player_name =
-        stringr::str_extract(desc, "(?<=)[A-Z][a-z]*\\.\\s?[A-Z][A-z]+(\\s(I{2,3})|(IV))?(?=\\s((left end)|(left tackle)|(left guard)|(up the middle)|(right guard)|(right tackle)|(right end)))"),
-      receiver_player_name =
-        stringr::str_extract(desc, "(?<=((to)|(for))\\s[:digit:]{0,2}\\-{0,1})[A-Z][A-z]*\\.\\s?[A-Z][A-z]+(\\s(I{2,3})|(IV))?"),
-      passer_player_name =
-        stringr::str_extract(desc, "(?<=)[A-Z][a-z]*\\.\\s?[A-Z][A-z]+(\\s(I{2,3})|(IV))?(?=\\s((pass)|(sack)|(scramble)))"),
+      passer = stringr::str_extract(desc, glue::glue('{big_parser}{pass_finder}')),
+      rusher = stringr::str_extract(desc, glue::glue('{big_parser}{rush_finder}')),
+      #get rusher_player_name as a measure of last resort
+      #finds things like aborted snaps and "F.Last to NYG 44."
+      rusher = dplyr::if_else(
+        is.na(rusher) & is.na(passer) & !is.na(rusher_player_name), rusher_player_name, rusher
+      ),
+      #finally, for rusher, if there was already a passer (eg from scramble), set rusher to NA
+      rusher = dplyr::if_else(
+        !is.na(passer), NA_character_, rusher
+      ),
+      receiver = stringr::str_extract(desc, glue::glue('{receiver_finder}{big_parser}')),
+      #if there's a pass, sack, or scramble, it's a pass play
+      pass = dplyr::if_else(stringr::str_detect(desc, "( pass)|(sacked)|(scramble)"), 1, 0),
+      #if there's a rusher and it wasn't a QB kneel or pass play, it's a run play
+      rush = dplyr::if_else(!is.na(rusher) & qb_kneel == 0 & pass == 0, 1, 0),
+      #fix some common passers with inconsistent names
+      passer = dplyr::case_when(
+        passer == "Jos.Allen" & posteam == "BUF" ~ "J.Allen",
+        passer == "Alex Smith" | passer == "Ale.Smith" ~ "A.Smith",
+        passer == "Ryan" & posteam == "ATL" ~ "M.Ryan",
+        passer == "Tr.Brown" ~ "T.Brown",
+        passer == "Matt.Moore" ~ "M.Moore",
+        passer == "Jo.Freeman" ~ "J.Freeman",
+        passer == "G.Minshew" ~ "G.Minshew II",
+        passer == "R.Griffin" ~ "R.Griffin III",
+        TRUE ~ passer
+      ),
       name = dplyr::if_else(!is.na(passer_player_name), passer_player_name, rusher_player_name),
-      first_down = dplyr::if_else(first_down_rush == 1 | first_down_pass == 1 | first_down_penalty == 1, 1, 0)
+      first_down = dplyr::if_else(first_down_rush == 1 | first_down_pass == 1 | first_down_penalty == 1, 1, 0),
+      # easy filter: play is 1 if a "normal" play (including penalties), or 0 otherwise
+      # with thanks to Lee Sharpe for the code
+      play=dplyr::if_else(!is.na(epa) & !is.na(posteam) &
+                    desc != "*** play under review ***" &
+                    substr(desc,1,8) != "Timeout " &
+                    play_type %in% c("no_play","pass","run"),1,0)
     ) %>%
     #standardize team names (eg Chargers are always LAC even when they were playing in SD)
-    dplyr::mutate_at(vars(posteam, defteam, home_team, away_team, timeout_team, td_team, return_team, penalty_team), team_name_fn)
+    dplyr::mutate_at(dplyr::vars(posteam, defteam, home_team, away_team, timeout_team, td_team, return_team, penalty_team), team_name_fn)
 
   return(r)
 }
+
+#these things are used in clean_pbp() above
+
+#look for First[period or space]Last[maybe - or ' in last][maybe more letters in last][maybe Jr. or II or IV]
+  big_parser = "(?<=)[A-Z][A-z]*(\\.|\\s)+[A-Z][A-z]*\\'*\\-*[A-Z]*[a-z]*(\\s((Jr.)|(Sr.)|I{2,3})|(IV))?"
+#maybe some spaces and letters, and then a rush direction unless they fumbled
+  rush_finder = '(?=\\s*[a-z]*\\s*((FUMBLES) | (left end)|(left tackle)|(left guard)|(up the middle)|(right guard)|(right tackle)|(right end)))'
+#maybe some spaces and leters, and then pass / sack / scramble
+  pass_finder = "(?=\\s*[a-z]*\\s*((pass)|(sack)|(scramble)))"
+#to or for, maybe a jersey number and a dash
+  receiver_finder = "(?<=((to)|(for))\\s[:digit:]{0,2}\\-{0,1})"
+
 
 #just a function to help with standardizing team abbreviations used in clean_pbp()
 team_name_fn <- function(var) {
@@ -98,3 +140,4 @@ fix_fumbles <- function(d) {
 
   return(d)
 }
+
