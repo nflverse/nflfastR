@@ -110,7 +110,7 @@ get_pbp_rs <- function(gameId) {
 
 
       # fix for missing quarter in these games
-      if (gameId == 2002090803 | game_info$season[1] == 2000) {
+      if (game_info$season[1] <= 2002) {
         plays <- plays %>% dplyr::mutate(
           quarter = 1 + cumsum(quarter_end) - quarter_end
         )

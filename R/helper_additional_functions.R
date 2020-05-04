@@ -22,7 +22,7 @@ clean_pbp <- function(pbp) {
     dplyr::mutate(
       #get rid of extraneous spaces that mess with player name finding
       #if there is a space or dash, and then a capital letter, and then a period, and then a space, take out the space
-      desc = stringr::str_replace_all(desc, "((\\s)|(\\-)[A-Z]\\.)\\s+", "\\1"),
+      desc = stringr::str_replace_all(desc, "(((\\s)|(\\-))[A-Z]\\.)\\s+", "\\1"),
       success = dplyr::if_else(is.na(epa), NA_real_, dplyr::if_else(epa > 0, 1, 0)),
       passer = stringr::str_extract(desc, glue::glue('{big_parser}{pass_finder}')),
       rusher = stringr::str_extract(desc, glue::glue('{big_parser}{rush_finder}')),
