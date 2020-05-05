@@ -19,6 +19,8 @@ nflfastR <img src='man/figures/logo.png' align="right" width="25%" />
       - [Example 7: Plot offensive and defensive EPA per play for a
         given
         season](#example-7-plot-offensive-and-defensive-epa-per-play-for-a-given-season)
+      - [Example 8: Working with roster and position
+        data](#example-8-working-with-roster-and-position-data)
   - [More information](#more-information)
   - [Data repository](#data-repository)
   - [About](#about)
@@ -120,29 +122,32 @@ fast_scraper(gameId, source = "gc") %>%
 
 ``` r
 #get list of some games from 2019
-games_2019 <- fast_scraper_schedules(2019) %>% filter(game_type == 'REG') %>% head(16) %>% pull(game_id)
+games_2019 <- fast_scraper_schedules(2019) %>% filter(season_type == 'REG') %>% head(5) %>% pull(game_id)
 
 tictoc::tic(glue::glue('{length(games_2019)} games with nflfastR:'))
 f <- fast_scraper(games_2019, pp = TRUE)
+#>  Progress: ----------------------------------------------------- 100%
 tictoc::toc()
-#> 16 games with nflfastR:: 16.27 sec elapsed
+#> 5 games with nflfastR:: 9.75 sec elapsed
 tictoc::tic(glue::glue('{length(games_2019)} games with nflscrapR:'))
 n <- map_df(games_2019, nflscrapR::scrape_json_play_by_play)
 tictoc::toc()
-#> 16 games with nflscrapR:: 441.1 sec elapsed
+#> 5 games with nflscrapR:: 139.58 sec elapsed
 ```
 
 ### Example 3: completion percentage over expected (CPOE)
 
-Let’s look at CPOE leaders from the 2009 regular
-season.
+Let’s look at CPOE leaders from the 2009 regular season.
+
+`nflfastR` has a data repository for old seasons, so there’s no need to
+actually scrape them. Let’s use that here (the below reads .rds files,
+but .csv is also available).
 
 ``` r
-games <- fast_scraper_schedules(2009) %>% filter(game_type == 'REG') %>% pull(game_id)
-tictoc::tic('scraping all 256 games from 2009')
-games_2009 <- fast_scraper(games, pp = TRUE)
+tictoc::tic('loading all games from 2009')
+games_2009 <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2009.rds')) %>% filter(season_type == 'REG')
 tictoc::toc()
-#> scraping all 256 games from 2009: 126.16 sec elapsed
+#> loading all games from 2009: 3.24 sec elapsed
 games_2009 %>% filter(!is.na(cpoe)) %>% group_by(passer_player_name) %>%
   summarize(cpoe = mean(cpoe), Atts=n()) %>%
   filter(Atts > 200) %>%
@@ -164,12 +169,8 @@ games_2009 %>% filter(!is.na(cpoe)) %>% group_by(passer_player_name) %>%
 When scraping from the default RS feed, drive results are automatically
 included. Let’s look at how much more likely teams were to score
 starting from 1st & 10 at their own 20 yard line in 2015 (the last year
-before touchbacks on kickoffs changed to the 25) than in 2006.
-
-`nflfastR` has a data repository for old seasons, so there’s no need to
-actually scrape them. Let’s use that here (the below reads .rds files,
-but .csv is also
-available).
+before touchbacks on kickoffs changed to the 25) than in
+2006.
 
 ``` r
 games_2000 <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2000.rds'))
@@ -177,7 +178,7 @@ games_2015 <-readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-da
 
 pbp <- rbind(games_2000, games_2015)
 
-pbp %>% filter(game_type == 'REG' & down == 1 & ydstogo == 10 & yardline_100 == 80) %>%
+pbp %>% filter(season_type == 'REG' & down == 1 & ydstogo == 10 & yardline_100 == 80) %>%
   mutate(drive_score = if_else(drive_how_ended %in% c("Touchdown", "Field_Goal"), 1, 0)) %>%
   group_by(season) %>%
   summarize(drive_score = mean(drive_score)) %>% 
@@ -242,7 +243,7 @@ we can keep only rush or pass plays.
 ``` r
 library(ggimage)
 pbp <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2005.rds')) %>%
-  filter(game_type == 'REG') %>% clean_pbp() %>% filter(!is.na(posteam) & (rush == 1 | pass == 1))
+  filter(season_type == 'REG') %>% clean_pbp() %>% filter(!is.na(posteam) & (rush == 1 | pass == 1))
 offense <- pbp %>% group_by(posteam) %>% summarise(off_epa = mean(epa, na.rm = TRUE))
 defense <- pbp %>% group_by(defteam) %>% summarise(def_epa = mean(epa, na.rm = TRUE))
 logos <- teams_colors_logos %>% select(team_abbr, team_logo_espn)
@@ -270,6 +271,74 @@ offense %>%
 ```
 
 <img src="man/figures/README-ex7-1.png" width="100%" />
+
+### Example 8: Working with roster and position data
+
+The `clean_pbp()` function does a lot of work cleaning up player names
+and IDs for the purpose of joining them to roster data. We recommend
+doing the join on `passer_id`, `rusher_id`, or `receiver_id`. Below we
+used `receiver_id` to figure out the position of targeted players, and
+then measure the top 5 at each position in terms of total EPA gained on
+pass targets.
+
+``` r
+#this file contains all roster data from 1999 through present
+rosters <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/roster-data/roster.rds')) %>%
+  select(team.season, teamPlayers.gsisId, teamPlayers.displayName, team.abbr, teamPlayers.position) %>%
+  as_tibble()
+
+pbp <- 
+  bind_rows(
+    readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2017.rds')),
+    readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2018.rds')),
+    readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2019.rds'))
+  ) %>%
+  filter(season_type == 'REG') %>%
+  clean_pbp() %>%
+  filter(!is.na(posteam) & !is.na(epa) & (rush == 1 | pass == 1))
+
+joined <- pbp %>% 
+  filter(!is.na(receiver_id)) %>%
+  select(posteam, season, desc, receiver, receiver_id, epa) %>%
+  left_join(rosters, by = c('receiver_id' = 'teamPlayers.gsisId', 'season' = 'team.season'))
+
+#the real work is done, this just makes a table and has it look nice
+joined %>%
+  filter(teamPlayers.position %in% c('WR', 'TE', 'RB')) %>%
+  group_by(receiver_id, receiver, teamPlayers.position) %>%
+  summarize(tot_epa = sum(epa), n=n()) %>%
+  arrange(-tot_epa) %>%
+  ungroup() %>%
+  group_by(teamPlayers.position) %>%
+  mutate(position_rank = 1:n()) %>%
+  filter(position_rank <= 5) %>%
+  dplyr::rename(Pos_Rank = position_rank, Player = receiver, Pos = teamPlayers.position, Tgt = n, EPA = tot_epa) %>%
+  select(Player, Pos, Pos_Rank, Tgt, EPA) %>%
+  knitr::kable(digits = 0)
+```
+
+| Player       | Pos | Pos\_Rank | Tgt | EPA |
+| :----------- | :-- | --------: | --: | --: |
+| M.Thomas     | WR  |         1 | 505 | 291 |
+| D.Adams      | WR  |         2 | 435 | 207 |
+| D.Hopkins    | WR  |         3 | 535 | 203 |
+| K.Allen      | WR  |         4 | 477 | 198 |
+| T.Kelce      | TE  |         1 | 438 | 198 |
+| T.Hill       | WR  |         5 | 341 | 183 |
+| G.Kittle     | TE  |         2 | 327 | 140 |
+| R.Gronkowski | TE  |         3 | 196 | 121 |
+| Z.Ertz       | TE  |         4 | 413 | 109 |
+| C.McCaffrey  | RB  |         1 | 390 | 106 |
+| J.Cook       | TE  |         5 | 265 |  99 |
+| A.Kamara     | RB  |         2 | 320 |  75 |
+| J.White      | RB  |         3 | 298 |  70 |
+| A.Ekeler     | RB  |         4 | 199 |  67 |
+| K.Hunt       | RB  |         5 | 149 |  60 |
+
+Not surprisingly, all 5 of the top 5 WRs and 4 of the top 5 TEs in terms
+of EPA added come in ahead of the top RB. Note that the number of
+targets won’t match official stats because we’re including plays with
+penalties.
 
 ## More information
 
