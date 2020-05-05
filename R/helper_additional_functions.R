@@ -31,11 +31,28 @@ clean_pbp <- function(pbp) {
       rusher = dplyr::if_else(
         is.na(rusher) & is.na(passer) & !is.na(rusher_player_name), rusher_player_name, rusher
       ),
+      receiver = stringr::str_extract(desc, glue::glue('{receiver_finder}{big_parser}')),
+      #overwrite all these weird plays messing with the parser
+      receiver = dplyr::case_when(
+        stringr::str_detect(desc, glue::glue('{abnormal_play}')) ~ receiver_player_name,
+        TRUE ~ receiver
+      ),
+      rusher = dplyr::case_when(
+        stringr::str_detect(desc, glue::glue('{abnormal_play}')) ~ rusher_player_name,
+        TRUE ~ rusher
+      ),
+      passer = dplyr::case_when(
+        stringr::str_detect(desc, glue::glue('{abnormal_play}')) ~ passer_player_name,
+        TRUE ~ passer
+      ),
       #finally, for rusher, if there was already a passer (eg from scramble), set rusher to NA
       rusher = dplyr::if_else(
         !is.na(passer), NA_character_, rusher
       ),
-      receiver = stringr::str_extract(desc, glue::glue('{receiver_finder}{big_parser}')),
+      #if no pass is thrown, there shouldn't be a receiver
+      receiver = dplyr::if_else(
+        stringr::str_detect(desc, ' pass'), receiver, NA_character_
+      ),
       #if there's a pass, sack, or scramble, it's a pass play
       pass = dplyr::if_else(stringr::str_detect(desc, "( pass)|(sacked)|(scramble)"), 1, 0),
       #if there's a rusher and it wasn't a QB kneel or pass play, it's a run play
@@ -51,7 +68,8 @@ clean_pbp <- function(pbp) {
         passer == "Jo.Freeman" ~ "J.Freeman",
         passer == "G.Minshew" ~ "G.Minshew II",
         passer == "R.Griffin" ~ "R.Griffin III",
-        passer == "Randel El" ~ "A.Randel El",
+        passer == "Randel El" ~ "A.Randle El",
+        passer == "Randle El" ~ "A.Randle El",
         passer == "Van Pelt" ~ "A.Van Pelt",
         passer == "Dom.Davis" ~ "D.Davis",
         TRUE ~ passer
@@ -66,10 +84,15 @@ clean_pbp <- function(pbp) {
         rusher == "Jo.Freeman" ~ "J.Freeman",
         rusher == "G.Minshew" ~ "G.Minshew II",
         rusher == "R.Griffin" ~ "R.Griffin III",
-        rusher == "Randel El" ~ "A.Randel El",
+        rusher == "Randel El" ~ "A.Randle El",
+        rusher == "Randle El" ~ "A.Randle El",
         rusher == "Van Pelt" ~ "A.Van Pelt",
         rusher == "Dom.Davis" ~ "D.Davis",
         TRUE ~ rusher
+      ),
+      receiver = dplyr::case_when(
+        receiver == "F.R" ~ "F.Jones",
+        TRUE ~ receiver
       ),
       name = dplyr::if_else(!is.na(passer), passer, rusher),
       first_down = dplyr::if_else(first_down_rush == 1 | first_down_pass == 1 | first_down_penalty == 1, 1, 0),
@@ -83,16 +106,16 @@ clean_pbp <- function(pbp) {
     #standardize team names (eg Chargers are always LAC even when they were playing in SD)
     dplyr::mutate_at(dplyr::vars(posteam, defteam, home_team, away_team, timeout_team, td_team, return_team, penalty_team), team_name_fn) %>%
     #Seb's stuff for fixing player ids
+    dplyr::mutate(index = 1 : dplyr::n()) %>% # to re-sort after all the group_bys
     dplyr::group_by(passer, posteam, season) %>%
-    dplyr::arrange(passer_player_id) %>%
-    dplyr::mutate(passer_id = dplyr::if_else(is.na(passer), NA_character_, dplyr::first(passer_player_id))) %>%
+    dplyr::mutate(passer_id = dplyr::if_else(is.na(passer), NA_character_, custom_mode(passer_player_id))) %>%
     dplyr::group_by(rusher, posteam, season) %>%
-    dplyr::arrange(rusher_player_id) %>%
-    dplyr::mutate(rusher_id = dplyr::if_else(is.na(rusher), NA_character_, dplyr::first(rusher_player_id))) %>%
+    dplyr::mutate(rusher_id = dplyr::if_else(is.na(rusher), NA_character_, custom_mode(rusher_player_id))) %>%
     dplyr::group_by(receiver, posteam, season) %>%
-    dplyr::arrange(receiver_player_id) %>%
-    dplyr::mutate(receiver_id = dplyr::if_else(is.na(receiver), NA_character_, dplyr::first(receiver_player_id))) %>%
-    dplyr::ungroup()
+    dplyr::mutate(receiver_id = dplyr::if_else(is.na(receiver), NA_character_, custom_mode(receiver_player_id))) %>%
+    dplyr::ungroup() %>%
+    dplyr::arrange(index) %>%
+    dplyr::select(-index)
 
   return(r)
 }
@@ -107,7 +130,15 @@ clean_pbp <- function(pbp) {
   pass_finder = "(?=\\s*[a-z]*\\s*(( pass)|(sack)|(scramble)))"
 #to or for, maybe a jersey number and a dash
   receiver_finder = "(?<=((to)|(for))\\s[:digit:]{0,2}\\-{0,1})"
+#weird play finder
+  abnormal_play = "(Lateral)|(lateral)|(pitches to)|(Direct snap to)|(New quarterback for)|(Aborted)|(backwards pass)|(Pass back to)|(Flea-flicker)"
 
+# custom mode function from https://stackoverflow.com/questions/2547402/is-there-a-built-in-function-for-finding-the-mode/8189441
+custom_mode <- function(x, na.rm = TRUE) {
+  if(na.rm){x = x[!is.na(x)]}
+  ux <- unique(x)
+  return(ux[which.max(tabulate(match(x, ux)))])
+}
 
 #just a function to help with standardizing team abbreviations used in clean_pbp()
 team_name_fn <- function(var) {
@@ -123,6 +154,13 @@ team_name_fn <- function(var) {
     var %in% "OAK" ~ "LV",
     TRUE ~ var
   )
+}
+
+# custom mode function from https://stackoverflow.com/questions/2547402/is-there-a-built-in-function-for-finding-the-mode/8189441
+custom_mode <- function(x, na.rm = TRUE) {
+  if(na.rm){x = x[!is.na(x)]}
+  ux <- unique(x)
+  return(ux[which.max(tabulate(match(x, ux)))])
 }
 
 #' Compute QB epa
