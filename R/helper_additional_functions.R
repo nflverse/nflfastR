@@ -76,7 +76,7 @@ clean_pbp <- function(pbp) {
       ),
       rusher = dplyr::case_when(
         rusher == "Jos.Allen" ~ "J.Allen",
-        rusher == "Alex Smith" | passer == "Ale.Smith" ~ "A.Smith",
+        rusher == "Alex Smith" | rusher == "Ale.Smith" ~ "A.Smith",
         rusher == "Ryan" & posteam == "ATL" ~ "M.Ryan",
         rusher == "Tr.Brown" ~ "T.Brown",
         rusher == "Sh.Hill" ~ "S.Hill",

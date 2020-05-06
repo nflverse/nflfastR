@@ -54,7 +54,8 @@ get_season_schedule <- function(season) {
           site_state = site_site_state,
           site_roof_type
           #network_channel
-        )
+        ) %>%
+        dplyr::arrange(game_id)
     },
     error = function(e) {
       message("The following error has occured:")
