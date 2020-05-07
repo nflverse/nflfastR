@@ -107,12 +107,25 @@ clean_pbp <- function(pbp) {
     dplyr::mutate_at(dplyr::vars(posteam, defteam, home_team, away_team, timeout_team, td_team, return_team, penalty_team), team_name_fn) %>%
     #Seb's stuff for fixing player ids
     dplyr::mutate(index = 1 : dplyr::n()) %>% # to re-sort after all the group_bys
+
     dplyr::group_by(passer, posteam, season) %>%
     dplyr::mutate(passer_id = dplyr::if_else(is.na(passer), NA_character_, custom_mode(passer_player_id))) %>%
+
+    dplyr::group_by(passer_id) %>%
+    dplyr::mutate(passer = dplyr::if_else(is.na(passer_id), NA_character_, custom_mode(passer))) %>%
+
     dplyr::group_by(rusher, posteam, season) %>%
     dplyr::mutate(rusher_id = dplyr::if_else(is.na(rusher), NA_character_, custom_mode(rusher_player_id))) %>%
+
+    dplyr::group_by(rusher_id) %>%
+    dplyr::mutate(rusher = dplyr::if_else(is.na(rusher_id), NA_character_, custom_mode(rusher))) %>%
+
     dplyr::group_by(receiver, posteam, season) %>%
     dplyr::mutate(receiver_id = dplyr::if_else(is.na(receiver), NA_character_, custom_mode(receiver_player_id))) %>%
+
+    dplyr::group_by(receiver_id) %>%
+    dplyr::mutate(receiver = dplyr::if_else(is.na(receiver_id), NA_character_, custom_mode(receiver))) %>%
+
     dplyr::ungroup() %>%
     dplyr::arrange(index) %>%
     dplyr::select(-index)
