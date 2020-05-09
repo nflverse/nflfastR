@@ -208,17 +208,21 @@ fix_fumbles <- function(d) {
     ) %>%
     dplyr::select(-ep, -epa)
 
-  new_ep_df <- nflscrapR::calculate_expected_points(
-    fumbles_df, "half_seconds_remaining", "yardline_100",
-    "down", "ydstogo", "goal_to_go"
-  ) %>%
-    dplyr::mutate(ep = dplyr::if_else(change == 1, -ep, ep), fixed_epa = ep - ep_old) %>%
-    dplyr::select(game_id, play_id, fixed_epa)
+  if (nrow(fumbles_df) > 0) {
+    new_ep_df <- nflscrapR::calculate_expected_points(
+      fumbles_df, "half_seconds_remaining", "yardline_100",
+      "down", "ydstogo", "goal_to_go"
+    ) %>%
+      dplyr::mutate(ep = dplyr::if_else(change == 1, -ep, ep), fixed_epa = ep - ep_old) %>%
+      dplyr::select(game_id, play_id, fixed_epa)
 
-  d <- d %>%
-    dplyr::left_join(new_ep_df, by = c("game_id", "play_id")) %>%
-    dplyr::mutate(qb_epa = dplyr::if_else(!is.na(fixed_epa), fixed_epa, epa)) %>%
-    dplyr::select(-fixed_epa)
+    d <- d %>%
+      dplyr::left_join(new_ep_df, by = c("game_id", "play_id")) %>%
+      dplyr::mutate(qb_epa = dplyr::if_else(!is.na(fixed_epa), fixed_epa, epa)) %>%
+      dplyr::select(-fixed_epa)
+  } else {
+    d <- d %>% dplyr::mutate(qb_epa = epa)
+  }
 
   return(d)
 }
