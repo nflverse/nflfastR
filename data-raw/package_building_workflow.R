@@ -19,6 +19,7 @@ usethis::use_package("stringr", type = "Imports", min_version = NULL)
 usethis::use_package("tibble", type = "Imports", min_version = NULL)
 usethis::use_package("tidyr", type = "Imports", min_version = NULL)
 usethis::use_package("tidyselect", type = "Imports", min_version = NULL)
+usethis::use_package("xml2", type = "Imports", min_version = NULL)
 usethis::use_tidy_description()
 
 # add license
@@ -28,4 +29,5 @@ usethis::use_mit_license("Sebastian Carl; Ben Baldwin")
 usethis::use_dev_version()
 
 # change version number to release version
+# run this after every update and choose interactively the level of increment
 usethis::use_version()

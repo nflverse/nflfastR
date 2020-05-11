@@ -2,7 +2,7 @@ Type: Package
 Package: nflfastR
 Title: Functions to Efficiently Scrape NFL Play by Play and
     Roster Data
-Version: 1.1.9
+Version: 1.1.10
 Authors@R: 
     c(person(given = "Sebastian",
              family = "Carl",
@@ -30,7 +30,8 @@ Imports:
     stringr,
     tibble,
     tidyr,
-    tidyselect
+    tidyselect,
+    xml2
 Suggests: 
     furrr,
     future
