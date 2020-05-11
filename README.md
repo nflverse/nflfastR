@@ -134,7 +134,6 @@ games_2019 <- fast_scraper_schedules(2019) %>% filter(season_type == 'REG') %>% 
 
 tictoc::tic(glue::glue('{length(games_2019)} games with nflfastR:'))
 f <- fast_scraper(games_2019, pp = TRUE)
-#>  Progress: ------------------------------------------------------------------------------------------------ 100% Progress: ------------------------------------------------------------------------------------------------ 100%
 tictoc::toc()
 #> 3 games with nflfastR:: 8.64 sec elapsed
 tictoc::tic(glue::glue('{length(games_2019)} games with nflscrapR:'))
