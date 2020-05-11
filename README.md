@@ -120,34 +120,42 @@ fast_scraper(gameId, source = "gc") %>%
 
 ### Example 2: scrape a batch of games very quickly with `fast_scraper` and parallel processing
 
+This is a demonstration of `nflfastR`’s capabilities. While `nflfastR`
+can scrape a batch of games very quickly, **please be respectful of the
+NFL’s servers and use the [data
+repository](https://github.com/guga31bb/nflfastR-data) which hosts all
+the scraped and cleaned data**. The only reason to ever actually use the
+scraper is if it’s in the middle of the season and we haven’t updated
+the repository with recent games (but we will try to keep it updated).
+
 ``` r
 #get list of some games from 2019
-games_2019 <- fast_scraper_schedules(2019) %>% filter(season_type == 'REG') %>% head(5) %>% pull(game_id)
+games_2019 <- fast_scraper_schedules(2019) %>% filter(season_type == 'REG') %>% head(3) %>% pull(game_id)
 
 tictoc::tic(glue::glue('{length(games_2019)} games with nflfastR:'))
 f <- fast_scraper(games_2019, pp = TRUE)
-#>  Progress: ----------------------------------------------------- 100%
+#>  Progress: ------------------------------------------------------------------------------------------------ 100% Progress: ------------------------------------------------------------------------------------------------ 100%
 tictoc::toc()
-#> 5 games with nflfastR:: 9.75 sec elapsed
+#> 3 games with nflfastR:: 8.64 sec elapsed
 tictoc::tic(glue::glue('{length(games_2019)} games with nflscrapR:'))
 n <- map_df(games_2019, nflscrapR::scrape_json_play_by_play)
 tictoc::toc()
-#> 5 games with nflscrapR:: 139.58 sec elapsed
+#> 3 games with nflscrapR:: 90.06 sec elapsed
 ```
 
 ### Example 3: completion percentage over expected (CPOE)
 
 Let’s look at CPOE leaders from the 2009 regular season.
 
-`nflfastR` has a data repository for old seasons, so there’s no need to
-actually scrape them. Let’s use that here (the below reads .rds files,
-but .csv is also available).
+As discussed above, `nflfastR` has a data repository for old seasons, so
+there’s no need to actually scrape them. Let’s use that here (the below
+reads .rds files, but .csv is also available).
 
 ``` r
 tictoc::tic('loading all games from 2009')
 games_2009 <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2009.rds')) %>% filter(season_type == 'REG')
 tictoc::toc()
-#> loading all games from 2009: 3.24 sec elapsed
+#> loading all games from 2009: 3.2 sec elapsed
 games_2009 %>% filter(!is.na(cpoe)) %>% group_by(passer_player_name) %>%
   summarize(cpoe = mean(cpoe), Atts=n()) %>%
   filter(Atts > 200) %>%
@@ -243,7 +251,7 @@ we can keep only rush or pass plays.
 ``` r
 library(ggimage)
 pbp <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2005.rds')) %>%
-  filter(season_type == 'REG') %>% clean_pbp() %>% filter(!is.na(posteam) & (rush == 1 | pass == 1))
+  filter(season_type == 'REG') %>% filter(!is.na(posteam) & (rush == 1 | pass == 1))
 offense <- pbp %>% group_by(posteam) %>% summarise(off_epa = mean(epa, na.rm = TRUE))
 defense <- pbp %>% group_by(defteam) %>% summarise(def_epa = mean(epa, na.rm = TRUE))
 logos <- teams_colors_logos %>% select(team_abbr, team_logo_espn)
@@ -275,11 +283,12 @@ offense %>%
 ### Example 8: Working with roster and position data
 
 The `clean_pbp()` function does a lot of work cleaning up player names
-and IDs for the purpose of joining them to roster data. We recommend
-doing the join on `passer_id`, `rusher_id`, or `receiver_id`. Below we
-used `receiver_id` to figure out the position of targeted players, and
-then measure the top 5 at each position in terms of total EPA gained on
-pass targets.
+and IDs for the purpose of joining them to roster data, and has already
+been performed on the data hosted in the repository. We recommend doing
+the join on `passer_id`, `rusher_id`, or `receiver_id`. Below we used
+`receiver_id` to figure out the position of targeted players, and then
+measure the top 5 at each position in terms of total EPA gained on pass
+targets.
 
 ``` r
 #this file contains all roster data from 1999 through present
@@ -294,7 +303,6 @@ pbp <-
     readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2019.rds'))
   ) %>%
   filter(season_type == 'REG') %>%
-  clean_pbp() %>%
   filter(!is.na(posteam) & !is.na(epa) & (rush == 1 | pass == 1))
 
 joined <- pbp %>% 

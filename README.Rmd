@@ -77,9 +77,10 @@ fast_scraper(gameId, source = "gc") %>%
 ```
 
 ### Example 2: scrape a batch of games very quickly with `fast_scraper` and parallel processing
+This is a demonstration of `nflfastR`'s capabilities. While `nflfastR` can scrape a batch of games very quickly, **please be respectful of the NFL's servers and use the [data repository](https://github.com/guga31bb/nflfastR-data) which hosts all the scraped and cleaned data**. The only reason to ever actually use the scraper is if it's in the middle of the season and we haven't updated the repository with recent games (but we will try to keep it updated).
 ``` {r ex2-bigscrape, warning = FALSE, message = FALSE}
 #get list of some games from 2019
-games_2019 <- fast_scraper_schedules(2019) %>% filter(season_type == 'REG') %>% head(5) %>% pull(game_id)
+games_2019 <- fast_scraper_schedules(2019) %>% filter(season_type == 'REG') %>% head(3) %>% pull(game_id)
 
 tictoc::tic(glue::glue('{length(games_2019)} games with nflfastR:'))
 f <- fast_scraper(games_2019, pp = TRUE)
@@ -93,7 +94,7 @@ tictoc::toc()
 
 Let's look at CPOE leaders from the 2009 regular season.
 
-`nflfastR` has a data repository for old seasons, so there's no need to actually scrape them. Let's use that here (the below reads .rds files, but .csv is also available).
+As discussed above, `nflfastR` has a data repository for old seasons, so there's no need to actually scrape them. Let's use that here (the below reads .rds files, but .csv is also available).
 ``` {r ex3-cpoe, warning = FALSE, message = FALSE}
 tictoc::tic('loading all games from 2009')
 games_2009 <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2009.rds')) %>% filter(season_type == 'REG')
@@ -147,7 +148,7 @@ Let's also use the included helper function `clean_pbp`, which creates "rush" an
 ```{r ex7, warning = FALSE, message = FALSE, results = 'hide', fig.keep = 'all', dpi = 600}
 library(ggimage)
 pbp <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2005.rds')) %>%
-  filter(season_type == 'REG') %>% clean_pbp() %>% filter(!is.na(posteam) & (rush == 1 | pass == 1))
+  filter(season_type == 'REG') %>% filter(!is.na(posteam) & (rush == 1 | pass == 1))
 offense <- pbp %>% group_by(posteam) %>% summarise(off_epa = mean(epa, na.rm = TRUE))
 defense <- pbp %>% group_by(defteam) %>% summarise(def_epa = mean(epa, na.rm = TRUE))
 logos <- teams_colors_logos %>% select(team_abbr, team_logo_espn)
@@ -175,7 +176,7 @@ offense %>%
 ```
 
 ### Example 8: Working with roster and position data
-The `clean_pbp()` function does a lot of work cleaning up player names and IDs for the purpose of joining them to roster data. We recommend doing the join on `passer_id`, `rusher_id`, or `receiver_id`. Below we used `receiver_id` to figure out the position of targeted players, and then measure the top 5 at each position in terms of total EPA gained on pass targets.
+The `clean_pbp()` function does a lot of work cleaning up player names and IDs for the purpose of joining them to roster data, and has already been performed on the data hosted in the repository. We recommend doing the join on `passer_id`, `rusher_id`, or `receiver_id`. Below we used `receiver_id` to figure out the position of targeted players, and then measure the top 5 at each position in terms of total EPA gained on pass targets.
 ``` {r ex8-position, warning = FALSE, message = FALSE}
 #this file contains all roster data from 1999 through present
 rosters <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/roster-data/roster.rds')) %>%
@@ -189,7 +190,6 @@ pbp <-
     readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2019.rds'))
   ) %>%
   filter(season_type == 'REG') %>%
-  clean_pbp() %>%
   filter(!is.na(posteam) & !is.na(epa) & (rush == 1 | pass == 1))
 
 joined <- pbp %>% 
