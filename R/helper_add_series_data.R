@@ -56,7 +56,7 @@ add_series_data <- function(pbp) {
     ) %>%
     dplyr::group_by(game_id, series) %>%
     # set series_success value for the whole series
-    dplyr::mutate(series_success = last(series_success)) %>%
+    dplyr::mutate(series_success = dplyr::last(series_success)) %>%
     dplyr::ungroup() %>%
     dplyr::select(-first_down, -trigger)
 

@@ -1,20 +1,36 @@
 ################################################################################
-# Author: Ben Baldwin
+# Author: Ben Baldwin, Sebastian Carl
 # Stlyeguide: styler::tidyverse_style()
 ################################################################################
 
 #' Clean Play by Play Data
 #'
-#' @param pbp is a dataframe of play-by-play data scraped using \code{\link{fast_scraper}}.
+#' @param pbp is a Data frame of play-by-play data scraped using \code{\link{fast_scraper}}.
 #' @details Build columns that capture what happens on all plays, including
-#' penalties, using string extraction from play description. The created 'name'
-#' column denotes the dropback player on dropbacks or the rusher on rush attempts.
+#' penalties, using string extraction from play description.
 #' Loosely based on Ben's nflscrapR guide (https://gist.github.com/guga31bb/5634562c5a2a7b1e9961ac9b6c568701)
 #' but updated to work with the RS data, which has a different player format in
 #' the play description; e.g. 24-M.Lynch instead of M.Lynch.
 #' The function also standardizes team abbreviations so that, for example,
 #' the Chargers are always represented by 'LAC' regardless of which year it was.
-#' Also creates a 'play' column denoting 'normal' plays (Ie pass play or run play)
+#' @return The input Data Frame of the paramter 'pbp' with the following columns
+#' added:
+#' \itemize{
+#' \item{success} - Binary indicator wheter epa > 0 in the given play.
+#' \item{passer} - Name of the dropback player (scrambles included) including plays with penalties.
+#' \item{rusher} - Name of the rusher (no scrambles) including plays with penalties.
+#' \item{receiver} - Name of the receiver including plays with penalties.
+#' \item{pass} - Binary indicator if the play was a pass play (sacks and scrambles included).
+#' \item{rush} - Binary indicator if the play was a rushing play.
+#' \item{special} - Binary indicator if the play was a special teams play.
+#' \item{first_down} - Binary indicator if the play ended in a first down.
+#' \item{play} - Binary indicator: 1 if the play was a 'normal' play (including penalties), 0 otherwise.
+#' \item{passer_id} - ID of the player in the 'passer' column (NOTE: ids vary pre and post 2011)
+#' \item{rusher_id} - ID of the player in the 'rusher' column (NOTE: ids vary pre and post 2011)
+#' \item{receiver_id} - ID of the player in the 'receiver' column (NOTE: ids vary pre and post 2011)
+#' \item{name} - Name of the 'passer' if it is not 'NA', or name of the 'rusher' otherwise.
+#' \item{id} - ID of the player in the 'name' column.
+#' }
 #' @export
 clean_pbp <- function(pbp) {
   message('Cleaning up play-by-play. If you run this with a lot of seasons this could take a few minutes.')
@@ -94,8 +110,11 @@ clean_pbp <- function(pbp) {
         receiver == "F.R" ~ "F.Jones",
         TRUE ~ receiver
       ),
-      name = dplyr::if_else(!is.na(passer), passer, rusher),
       first_down = dplyr::if_else(first_down_rush == 1 | first_down_pass == 1 | first_down_penalty == 1, 1, 0),
+      # easy filter: play is 1 if a "special teams" play, or 0 otherwise
+      # with thanks to Lee Sharpe for the code
+      special=dplyr::if_else(play_type %in%
+                       c("extra_point","field_goal","kickoff","punt"), 1, 0),
       # easy filter: play is 1 if a "normal" play (including penalties), or 0 otherwise
       # with thanks to Lee Sharpe for the code
       play=dplyr::if_else(!is.na(epa) & !is.na(posteam) &
@@ -127,6 +146,10 @@ clean_pbp <- function(pbp) {
     dplyr::mutate(receiver = dplyr::if_else(is.na(receiver_id), NA_character_, custom_mode(receiver))) %>%
 
     dplyr::ungroup() %>%
+    dplyr::mutate(
+      name = dplyr::if_else(!is.na(passer), passer, rusher),
+      id = dplyr::if_else(!is.na(passer_id), passer_id, rusher_id)
+    ) %>%
     dplyr::arrange(index) %>%
     dplyr::select(-index)
 
@@ -178,15 +201,15 @@ custom_mode <- function(x, na.rm = TRUE) {
 
 #' Compute QB epa
 #'
-#' @param d is a dataframe of play-by-play data scraped using \code{\link{fast_scraper}}.
+#' @param d is a Data frame of play-by-play data scraped using \code{\link{fast_scraper}}.
 #' @details Add the variable 'qb_epa', which gives QB credit for EPA for up to the point where
 #' a receiver lost a fumble after a completed catch and makes EPA work more
 #' like passing yards on plays with fumbles
 #' @export
-fix_fumbles <- function(d) {
+add_qb_epa <- function(d) {
+
   fumbles_df <- d %>%
     dplyr::filter(complete_pass == 1 & fumble_lost == 1 & !is.na(epa)) %>%
-    dplyr::select(desc, game_id, play_id, epa, posteam, half_seconds_remaining, yardline_100, down, ydstogo, yards_gained, goal_to_go, ep) %>%
     dplyr::mutate(
       down = as.numeric(down),
       # save old stuff for testing/checking
@@ -203,16 +226,12 @@ fix_fumbles <- function(d) {
       ydstogo = dplyr::if_else(change == 1, 10, ydstogo),
       # flip field for possession change
       yardline_100 = dplyr::if_else(change == 1, 100 - yardline_100, yardline_100),
-      goal_to_go = dplyr::if_else(yardline_100 == ydstogo, 1, 0),
       ep_old = ep
     ) %>%
     dplyr::select(-ep, -epa)
 
   if (nrow(fumbles_df) > 0) {
-    new_ep_df <- nflscrapR::calculate_expected_points(
-      fumbles_df, "half_seconds_remaining", "yardline_100",
-      "down", "ydstogo", "goal_to_go"
-    ) %>%
+    new_ep_df <- calculate_expected_points(fumbles_df) %>%
       dplyr::mutate(ep = dplyr::if_else(change == 1, -ep, ep), fixed_epa = ep - ep_old) %>%
       dplyr::select(game_id, play_id, fixed_epa)
 

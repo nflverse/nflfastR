@@ -5,38 +5,29 @@
 ################################################################################
 
 select_variables <- function(pbp) {
-  if (!"game_key" %in% colnames(pbp)) {
+
     suppressWarnings(
       out <-
         pbp %>%
         dplyr::select(
           tidyselect::one_of(
-            c(nflscrapr_cols, new_cols)
+            c(nflscrapr_cols, new_cols, api_cols)
           )
         )
     )
-  } else {
-    suppressWarnings(
-      out <-
-        pbp %>%
-        dplyr::select(
-          tidyselect::one_of(
-            c(nflscrapr_cols, new_cols, rs_cols)
-          )
-        )
-    )
-  }
 
   return(out)
 }
 
 # columns that are not in gamecenter that we created
-new_cols <- c("season", "cp", "cpoe")
+new_cols <- c("season", "cp", "cpoe", "series", "series_success")
 
 # original nflscrapr columns
 nflscrapr_cols <-
   c(
     "play_id", "game_id", "home_team", "away_team",
+    #added these to new gc scraper
+    "season_type", "week",
     "posteam", "posteam_type", "defteam", "side_of_field", "yardline_100",
     "game_date", "quarter_seconds_remaining", "half_seconds_remaining",
     "game_seconds_remaining", "game_half", "quarter_end", "drive", "sp", "qtr", "down", "goal_to_go", "time", "yrdln", "ydstogo", "ydsnet",
@@ -57,8 +48,10 @@ nflscrapr_cols <-
     "comp_yac_epa", "total_home_comp_air_epa", "total_away_comp_air_epa",
     "total_home_comp_yac_epa", "total_away_comp_yac_epa",
     "total_home_raw_air_epa", "total_away_raw_air_epa", "total_home_raw_yac_epa",
-    "total_away_raw_yac_epa", "wp", "def_wp", "home_wp", "away_wp", "wpa", "home_wp_post",
-    "away_wp_post", "total_home_rush_wpa", "total_away_rush_wpa",
+    "total_away_raw_yac_epa",
+    "wp", "def_wp", "home_wp", "away_wp", "wpa", "home_wp_post", "away_wp_post",
+    "vegas_wp", "vegas_home_wp",
+    "total_home_rush_wpa", "total_away_rush_wpa",
     "total_home_pass_wpa", "total_away_pass_wpa", "air_wpa", "yac_wpa", "comp_air_wpa", "comp_yac_wpa",
     "total_home_comp_air_wpa", "total_away_comp_air_wpa",
     "total_home_comp_yac_wpa", "total_away_comp_yac_wpa",
@@ -123,6 +116,33 @@ rs_cols <- c(
   "drive_time_of_possession", "drive_inside20", "drive_first_downs",
   "drive_possession_team_abbr", "scoring_team_abbr", "scoring_type",
   "alert_play_type", "play_type_nfl", "time_of_day",
-  "yards", "end_yardline_side", "end_yardline_number", "series", "series_success"
+  "yards", "end_yardline_side", "end_yardline_number"
 )
+
+
+# these are columns in the new API that aren't in nflscrapR
+api_cols <- c(
+  "start_time",
+  "stadium", "weather", "nfl_api_id",
+  "play_clock", "play_deleted",
+  "play_type_nfl",
+  "end_clock_time", "end_yard_line",
+  "drive_real_start_time",
+
+  "drive_play_count", "drive_time_of_possession",
+  "drive_first_downs", "drive_inside20", "drive_ended_with_score",
+  "drive_quarter_start", "drive_quarter_end",
+  "drive_yards_penalized",
+
+  "drive_start_transition", "drive_end_transition",
+
+  "drive_game_clock_start", "drive_game_clock_end",
+  "drive_start_yard_line", "drive_end_yard_line",
+  "drive_play_id_started", "drive_play_id_ended",
+  "away_score", "home_score", "location", "result",
+  "total", "spread_line", "total_line", "div_game", "roof",
+  "surface", "temp", "wind", "home_coach", "away_coach",
+  "stadium_id", "game_stadium"
+)
+
 

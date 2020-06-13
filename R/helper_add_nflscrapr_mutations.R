@@ -5,6 +5,10 @@
 ################################################################################
 
 add_nflscrapr_mutations <- function(pbp) {
+
+  #testing only
+  #pbp <- combined
+
   out <-
     pbp %>%
     dplyr::mutate(index = 1 : dplyr::n()) %>% # to re-sort after removing duplicates
@@ -62,6 +66,9 @@ add_nflscrapr_mutations <- function(pbp) {
       yardline = dplyr::if_else(
         nchar(yardline) == 0 | is.null(yardline) | yardline == "NULL" | is.na(yardline),
         dplyr::lag(yardline), yardline
+      ),
+      yardline_number = dplyr::if_else(
+        yardline == "MID 50", 50, yardline_number
       ),
       yardline_100 = dplyr::if_else(
         yardline_side == posteam | yardline == "MID 50",
@@ -489,7 +496,50 @@ add_nflscrapr_mutations <- function(pbp) {
       qtr = quarter
     ) %>%
     dplyr::ungroup() %>%
-    dplyr::mutate(game_id = as.numeric(game_id))
+    dplyr::mutate(game_id = as.character(game_id), drive_real_start_time = as.character(drive_real_start_time)) %>%
+    make_model_mutations()
+
+
   message("added nflscrapR variables")
   return(out)
 }
+
+
+##some steps to prepare the data for the EP/WP/CP/FG models
+make_model_mutations <- function(pbp) {
+
+  pbp <- pbp %>%
+    dplyr::mutate(
+      #for EP, CP, and WP model, xgb needs 0/1 for eras
+      era0 = dplyr::if_else(season <= 2001, 1, 0),
+      era1 = dplyr::if_else(season > 2001 & season <= 2005, 1, 0),
+      era2 = dplyr::if_else(season > 2005 & season <= 2013, 1, 0),
+      era3 = dplyr::if_else(season > 2013 & season <= 2017, 1, 0),
+      era4 = dplyr::if_else(season > 2017, 1, 0),
+      #for fg model, an era factor
+      era = dplyr::case_when(
+        era0 == 1 ~ 0,
+        era1 == 1 ~ 1,
+        era2 == 1 ~ 2,
+        era3 | era4 == 1 ~ 3
+      ),
+      era = as.factor(era),
+      #treat playoff games as week 17 as they aren't used for training
+      model_week = dplyr::if_else(week > 17, as.integer(17), as.integer(week)),
+      down1 = dplyr::if_else(down == 1, 1, 0),
+      down2 = dplyr::if_else(down == 2, 1, 0),
+      down3 = dplyr::if_else(down == 3, 1, 0),
+      down4 = dplyr::if_else(down == 4, 1, 0),
+      home = dplyr::if_else(posteam == home_team, 1, 0),
+      model_roof = dplyr::if_else(is.na(roof) | roof == 'open' | roof == 'closed', as.character('retractable'), as.character(roof)),
+      model_roof = as.factor(model_roof),
+      retractable = dplyr::if_else(model_roof == 'retractable', 1, 0),
+      dome = dplyr::if_else(model_roof == 'dome', 1, 0),
+      outdoors = dplyr::if_else(model_roof == 'outdoors', 1, 0)
+    )
+
+  return(pbp)
+}
+
+
+

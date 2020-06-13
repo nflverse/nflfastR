@@ -6,30 +6,27 @@
 
 #' Get NFL Play by Play Data
 #'
-#' @param game_ids Vector of numeric or character ids (see details for further information)
-#' @param source Character - either "rs" or "gc" (see details for further information)
+#' @param game_ids Vector of character ids (see details for further information)
+#' @param source Character - must now be \code{nfl} or unspecified (see details for further information)
 #' @param pp Logical - either \code{TRUE} or \code{FALSE} (see details for further information)
 #' @details To load valid game_ids please use the package function \code{\link{fast_scraper_schedules}}.
 #'
 #' The \code{source} parameter controls from which source the data is being
-#' scraped. The following sources are available:
-#' \itemize{
-#' \item{\code{rs}} - the RS Feed on NFL.com. It is being considered the more complete
-#'  source (data available back to 2000) but is not able to scrape live games.
-#' \item{\code{gc}} - the gamecenter. It is less complete (back to 2009) and includes
-#' less variables but is able to scrape live games.
-#' }
+#' scraped. The old parameters \code{rs} as well as \code{gc}
+#' are not valid anymore. Please use \code{nfl} or leave unspecified.
 #' The \code{pp} parameter controls if the scraper should use parallel processing.
 #' Please note that the initiating process takes a few seconds which means it
 #' may be better to set \code{pp = FALSE} if you are scraping just a few games.
 #' @return Data frame where each individual row represents a single play for
-#' all passed game_ids scraped from the choosen source containing the following
-#' detailed information (description mostly extracted from nflscrapR):
+#' all passed game_ids containing the following
+#' detailed information (description partly extracted from nflscrapR):
 #' \itemize{
 #' \item{play_id} - Numeric play id that when used with game_id and drive provides the unique identifier for a single play.
 #' \item{game_id} - Ten digit identifier for NFL game.
 #' \item{home_team} - String abbreviation for the home team.
 #' \item{away_team} - String abbreviation for the away team.
+#' \item{season_type} - 'REG' or 'POST' indicating if the game belongs to regular or post season.
+#' \item{week} - Season week.
 #' \item{posteam} - String abbreviation for the team with possession.
 #' \item{posteam_type} - String indicating whether the posteam team is home or away.
 #' \item{defteam} - String abbreviation for the team on defense.
@@ -120,6 +117,8 @@
 #' \item{wpa} - Win probability added (WPA) for the posteam.
 #' \item{home_wp_post} - Estimated win probability for the home team at the start of the play.
 #' \item{away_wp_post} - Estimated win probability for the away team at the start of the play.
+#' \item{vegas_wp} - Estimated win probabiity for the posteam given the current situation at the start of the given play, incorporating pre-game Vegas line.
+#' \item{vegas_home_wp} - Estimated win probability for the home team incorporating pre-game Vegas line.
 #' \item{total_home_rush_wpa} - Cumulative total rushing WPA for the home team in the game so far.
 #' \item{total_away_rush_wpa} - Cumulative total rushing WPA for the away team in the game so far.
 #' \item{total_home_pass_wpa} - Cumulative total passing WPA for the home team in the game so far.
@@ -145,8 +144,8 @@
 #' \item{fourth_down_converted} - Binary indicator for if the first down was converted on fourth down.
 #' \item{fourth_down_failed} - Binary indicator for if the posteam failed to convert first down on fourth down.
 #' \item{incomplete_pass} - Binary indicator for if the pass was incomplete.
-#' \item{interception} - Binary indicator for if the pass was intercepted.
 #' \item{touchback} - Binary indicator for if a touchback occurred on the play.
+#' \item{interception} - Binary indicator for if the pass was intercepted.
 #' \item{punt_inside_twenty} - Binary indicator for if the punt ended inside the twenty yard line.
 #' \item{punt_in_endzone} - Binary indicator for if the punt was in the endzone.
 #' \item{punt_out_of_bounds} - Binary indicator for if the punt went out of bounds.
@@ -283,71 +282,87 @@
 #' \item{defensive_extra_point_attempt} - Binary indicator whether or not the defense was able to have an attempt on an extra point attempt, this results following a blocked attempt that the defense recovers the ball.
 #' \item{defensive_extra_point_conv} - Binary indicator whether or not the defense successfully scored on an extra point attempt.
 #' \item{season} - 4 digit number indicating to which season the game belongs to.
-#' \item{cp} - Numeric value indicationg the probability for a complete pass based on air yards, field position, down, yards to go, pass location, and season based on comparable game situations.
+#' \item{cp} - Numeric value indicating the probability for a complete pass based on comparable game situations.
 #' \item{cpoe} - For a single pass play this is 1 - cp when the pass was completed or 0 - cp when the pass was incomplete. Analyzed for a whole game or season an indicator for the passer how much over or under expectation his completion percentage was.
-#' \item{season_type} - 'REG' or 'POST' indicating if the game belongs to regular or post season.
-#' \item{week} - Season week.
-#' \item{game_key} - RS feed game identifier.
-#' \item{game_time_eastern} - Kickoff time in eastern time zone.
-#' \item{game_time_local} - Kickoff time in local time zone.
-#' \item{iso_time} - Kickoff time according ISO 8601.
-#' \item{game_type} - One of 'REG', 'WC', 'DIV', 'CON', 'SB' indicating if a game was a regular season game or one of the playoff rounds.
-#' \item{site_id} - RS feed id for game site.
-#' \item{site_city} - Game site city.
-#' \item{site_fullname} - Game site name.
-#' \item{site_state} - Game site state.
-#' \item{roof_type} - Game site roof type.
-#' \item{drive_start_time} - Game time at the beginning of a given drive.
-#' \item{drive_end_time} - Game time at the end of a given drive.
-#' \item{drive_start_yardline} - String indicating where a given drive started consisting of team half and yard line number.
-#' \item{drive_end_yardline} - String indicating where a given drive ended consisting of team half and yard line number.
-#' \item{drive_how_started} - String indicating how the offense got the ball.
-#' \item{drive_how_ended} - String indicating how the offense lost the ball.
+#' \item{series} - Starts at 1, each new first down increments, numbers shared across both teams NA: kickoffs, extra point/two point conversion attempts, non-plays, no posteam
+#' \item{series_success} - 1: scored touchdown, gained enough yards for first down 0: punt, interception, fumble lost, turnover on downs, FG attempt NA: series is NA, series contains QB spike/kneel
+#' \item{start_time} - Kickoff time in eastern time zone.
+#' \item{stadium} - Game site name.
+#' \item{weather} - String describing the weather including temperature, humidity and wind (direction and speed). Doesn't change during the game!
+#' \item{nfl_api_id} - UUID of the game in the new NFL API.
+#' \item{play_clock} - Time on the playclock when the ball was snapped.
+#' \item{play_deleted} - Binary indicator for deleted plays.
+#' \item{play_type_nfl} - Play type as listed in the NFL source. Slightly different to the regular play_type variable.
+#' \item{end_clock_time} - Game time at the end of a given play.
+#' \item{end_yard_line} - String indicating the yardline at the end of the given play consisting of team half and yard line number.
+#' \item{drive_real_start_time} - Local day time when the drive started (currently not used by the NFL and therefore mostly 'NA').
 #' \item{drive_play_count} - Numeric value of how many regular plays happened in a given drive.
-#' \item{drive_yards_penalized} - Numeric value of how many yards the offense gained or lost through penalties.
 #' \item{drive_time_of_possession} - Time of possession in a given drive.
-#' \item{drive_inside20} - Binary indicator if the offense was able to get inside the opponents 20 yard line.
 #' \item{drive_first_downs} - Number of forst downs in a given drive.
-#' \item{drive_possession_team_abbr} - Abbreviation of the possession team in a given drive.
-#' \item{scoring_team_abbr} - Abbreviation of the scoring team if the play was a scoring play.
-#' \item{scoring_type} - String indicating the scoring type. One of 'FG', 'TD', 'PAT', 'SFTY', 'PAT2'.
-#' \item{alert_play_type} - String describing the play type of a play the NFL has listed as alert play. For most of those plays there are highlight clips available through \code{\link{fast_scraper_clips}}.
-#' \item{play_type_nfl} - Play type as listed in the rs feed. Slightly different to the regular play_type variable.
-#' \item{time_of_day} - Local time at the beginning of the play.
-#' \item{yards} - Analogue yards_gained but with the kicking team being the possession team (which means that there are many yards gained through kickoffs and punts).
-#' \item{end_yardline_side} - String indicating the side of the field at the end of the given play.
-#' \item{end_yardline_number} - Yardline number within the above given side at the end of the given play.
-#' \item{series} - Starts at 1, each new first down increments, numbers shared across both teams. Is NA for: kickoffs, extra point/two point conversion attempts, no posteam.
-#' \item{series_success} - 1 when scored touchdown, gained enough yards for first down. 0 when punt, interception, fumble lost, turnover on downs, 4th down FG attempt. NA when series is NA, series contains QB spike/kneel.
+#' \item{drive_inside20} - Binary indicator if the offense was able to get inside the opponents 20 yard line.
+#' \item{drive_ended_with_score} - Binary indicator the drive ended with a score.
+#' \item{drive_quarter_start} - Numeric value indicating in which quarter the given drive has started.
+#' \item{drive_quarter_end} - Numeric value indicating in which quarter the given drive has ended.
+#' \item{drive_yards_penalized} - Numeric value of how many yards the offense gained or lost through penalties in the given drive.
+#' \item{drive_start_transition} - String indicating how the offense got the ball.
+#' \item{drive_end_transition} - String indicating how the offense lost the ball.
+#' \item{drive_game_clock_start} - Game time at the beginning of a given drive.
+#' \item{drive_game_clock_end} - Game time at the end of a given drive.
+#' \item{drive_start_yard_line} - String indicating where a given drive started consisting of team half and yard line number.
+#' \item{drive_end_yard_line} - String indicating where a given drive ended consisting of team half and yard line number.
+#' \item{drive_play_id_started} - Play_id of the first play in the given drive.
+#' \item{drive_play_id_ended} - Play_id of the last play in the given drive.
+#' \item{away_score} - Total points scored by the away team.
+#' \item{home_score} - Total points scored by the home team.
+#' \item{location} - Either 'Home' o 'Neutral' indicating if the home team played at home or at a neutral site.
+#' \item{result} - Equals home_score - away_score and means the game outcome from the perspective of the home team.
+#' \item{total} - Equals home_score + away_score and means the total points scored in the given game.
+#' \item{spread_line} - The closing spread line for the game. A positive number means the home team was favored by that many points, a negative number means the away team was favored by that many points. (Source: Pro-Football-Reference)
+#' \item{total_line} - The closing total line for the game. (Source: Pro-Football-Reference)
+#' \item{div_game} - Binary indicator for if the given game was a division game.
+#' \item{roof} - One of 'dome', 'outdoors', 'closed', 'open' indicating indicating the roof status of the stadium the game was played in. (Source: Pro-Football-Reference)
+#' \item{surface} - What type of ground the game was played on. (Source: Pro-Football-Reference)
+#' \item{temp} - The temperature at the stadium only for 'roof' = 'outdoors' or 'open'.(Source: Pro-Football-Reference)
+#' \item{wind} - The speed of the wind in miles/hour only for 'roof' = 'outdoors' or 'open'. (Source: Pro-Football-Reference)
+#' \item{home_coach} - First and last name of the home team coach. (Source: Pro-Football-Reference)
+#' \item{away_coach} - First and last name of the away team coach. (Source: Pro-Football-Reference)
+#' \item{stadium_id} - ID of the stadium the game was played in. (Source: Pro-Football-Reference)
+#' \item{game_stadium} - Name of the stadium the game was played in. (Source: Pro-Football-Reference)
 #' }
 #' @export
 #' @examples
-#' # Get pbp data for two 2006 games using the rs feed and parallel processing
-#' # game_ids <- c("2006091009", "2006123103")
-#' # pbp <- fast_scraper(game_ids, source = "rs", pp = TRUE)
-#'
-#' # Get pbp data for two 2019 games using gamecenter and no parallel processing
-#' # game_ids <- c("2019090804", "2019101700")
-#' # pbp <- fast_scraper(game_ids, source = "gc", pp = FALSE)
-fast_scraper <- function(game_ids, source = "rs", pp = FALSE) {
+#' \dontrun{
+#' # Get pbp data for two games using parallel processing
+#' game_ids <- c("2019_01_GB_CHI", "2013_21_SEA_DEN")
+#' pbp <- fast_scraper(game_ids, pp = TRUE)
+#' }
+fast_scraper <- function(game_ids, source = "nfl", pp = FALSE) {
 
   # Error handling to correct source type
-  if (!source %in% c("rs", "gc")) {
-    stop("Please choose source of 'rs' or 'gc'")
-  } else if (source == "rs") {
-    scraper_func <- get_pbp_rs
-  } else {
-    scraper_func <- get_pbp_gc
+  if (source != "nfl") {
+    stop("You tried to specify a source that isn't the new NFL web page. Please remove source from your request or use source = 'nfl'. The 'source' option will soon be deprecated.")
   }
 
   # No parallel processing demanded -> use purrr
   if (pp == FALSE) {
     suppressWarnings({
-      pbp <- purrr::map_dfr(game_ids, scraper_func)
+      progressr::with_progress({
+        p <- progressr::progressor(along = game_ids)
+        pbp <- purrr::map_dfr(game_ids, function(x){
+          if (substr(x, 1, 4) < 2011) {
+            plays <- get_pbp_gc(x)
+          } else {
+            plays <- get_pbp_nfl(x)
+          }
+          p(sprintf("x=%s", as.character(x)))
+          return(plays)
+        })
+      })
 
       if(purrr::is_empty(pbp) == FALSE) {
         message("Download finished. Adding variables...")
-        pbp <- pbp %>%
+        pbp <- pbp  %>%
+          add_game_data() %>%
           add_nflscrapr_mutations() %>%
           add_ep() %>%
           add_air_yac_ep() %>%
@@ -370,12 +385,24 @@ fast_scraper <- function(game_ids, source = "rs", pp = FALSE) {
       message(glue::glue("You have passed only {length(game_ids)} GameIDs to parallel processing.\nPlease note that the initiating process takes a few seconds\nand consider using pp=FALSE for a small number of games."))
     }
     suppressWarnings({
-      future::plan("multiprocess")
-      pbp <- furrr::future_map_dfr(game_ids, scraper_func, .progress = TRUE)
+      progressr::with_progress({
+        p <- progressr::progressor(along = game_ids)
+        future::plan("multiprocess")
+        pbp <- furrr::future_map_dfr(game_ids,  function(x){
+          if (substr(x, 1, 4) < 2011) {
+            plays <- get_pbp_gc(x)
+          } else {
+            plays <- get_pbp_nfl(x)
+          }
+          p(sprintf("x=%s", as.character(x)))
+          return(plays)
+        })
+      })
 
       if(purrr::is_empty(pbp) == FALSE) {
         message("Download finished. Adding variables...")
         pbp <- pbp %>%
+          add_game_data() %>%
           add_nflscrapr_mutations() %>%
           add_ep() %>%
           add_air_yac_ep() %>%
@@ -402,13 +429,16 @@ fast_scraper <- function(game_ids, source = "rs", pp = FALSE) {
 #' may be better to set \code{pp = FALSE} if you are scraping just a few games.
 #' @return Data frame containing game_id, play_id for all plays with available
 #' highlightclip and the clip url
-#' @export
+# @export
+#' @noRd
 #' @examples
 #'
 #' # Get highlight clips for two 2019 games using parallel processing
 #' # game_ids <- c("2019090804", "2019101700")
 #' # clips <- fast_scraper_clips(game_ids, pp = TRUE)
 fast_scraper_clips <- function(game_ids, pp = FALSE) {
+  stop("The NFL removed the public available data feed. We are working on a new solution.\n Meanwhile please check https://github.com/guga31bb/nflfastR-data/tree/master/legacy-data for data of the seasons 2000-2019")
+
   scraper_func <- get_pbp_highlights
 
   # No parallel processing demanded -> use purrr
@@ -489,14 +519,17 @@ fast_scraper_clips <- function(game_ids, pp = FALSE) {
 #' \item{teamPlayers.profile_url}
 #' }
 #' @examples
+#' \dontrun{
 #' # Roster of Steelers in 2018, no parallel processing
-#' # rosters <- fast_scraper_roster("3900", 2018, pp = FALSE)
+#' rosters <- fast_scraper_roster("3900", 2018, pp = FALSE)
 #'
 #' # Roster of Steelers and Seahawks in 2016 & 2019 using parallel processing
-#' # rosters <- fast_scraper_roster(c("3900", "4600"), c("2016", "2019"), pp = TRUE)
-#' @export
-#'
+#' rosters <- fast_scraper_roster(c("3900", "4600"), c("2016", "2019"), pp = TRUE)
+#' }
+# @export
+#' @noRd
 fast_scraper_roster <- function(team_ids, seasons, pp = FALSE) {
+  stop("The NFL removed the public available data feed. We are working on a new solution.\n Meanwhile please check https://github.com/guga31bb/nflfastR-data/tree/master/roster-data for data of the seasons 2000-2019")
 
   # No parallel processing demanded -> use purrr
   if (pp == FALSE) {
@@ -542,49 +575,52 @@ fast_scraper_roster <- function(team_ids, seasons, pp = FALSE) {
 #'
 #' @param seasons Vector of numeric or character 4 digit seasons
 #' @param pp Logical - either \code{TRUE} or \code{FALSE} (see details for further information)
-#' @details The \code{pp} parameter controls if the scraper should use parallel processing.
+#' @details This functions now incorporates the games file provided and maintained
+#' by Lee Sharpe.
+#'
+#' The \code{pp} parameter controls if the scraper should use parallel processing.
 #' Please note that the initiating process takes a few seconds which means it
 #' may be better to set \code{pp = FALSE} if you are scraping less than 10 seasons.
-#' @return Data frame containing the follwoing detailed game information:
+#' @return Data frame containing the following detailed game information:
 #' \itemize{
+#' \item{game_id} - Character identifier including season, week, away team and home team
 #' \item{season} - 4 digit season year.
-#' \item{season_type} - Either 'PRE', 'REG', 'POST', 'PRO'.
-#' \item{week} - Numeric week number.
-#' \item{game_id} - Unique game identifier.
-#' \item{alt_game_id} - Alternative and much more intuitive identifier introduced by Lee Sharpe and set to \code{NA} for Hall of Fame Week, Preseason and Pro Bowl
-#' \item{game_date} - Game date in format dd/mm/yyyy.
-#' \item{game_time_eastern} - Kickoff time in eastern time zone.
-#' \item{game_time_local} - Kickoff time in local time zone.
-#' \item{iso_time} - Kickoff time according ISO 8601.
-#' \item{home_team} - Home team abbreviation
-#' \item{away_team} - Away team abbreviation
-#' \item{home_team_name} - Home team full name
-#' \item{away_team_name} - Away team full name
-#' \item{home_nickname} - Home team nick name
-#' \item{away_nickname} - Away team nick name
-#' \item{home_team_id} - Home team id (can be used with the package function \code{\link{fast_scraper_roster}}).
-#' \item{away_team_id} - Away team id (can be used with the package function \code{\link{fast_scraper_roster}}).
 #' \item{game_type} - One of 'REG', 'WC', 'DIV', 'CON', 'SB' indicating if a game was a regular season game or one of the playoff rounds.
-#' \item{week_name} - Full description of week
-#' \item{site_city} - Game site city.
-#' \item{site_fullname} - Game site name.
-#' \item{site_state} - Game site state.
-#' \item{site_roof_type} - Game site roof type.
-#' \item{network_channel} - Name of broadcasting network channel.
+#' \item{week} - Numeric week number.
+#' \item{gameday} - Game date in format yyyy/mm/dd.
+#' \item{weekday} - The day of the week on which the game occcured.
+#' \item{gametime} - The kickoff time of the game. This is represented in 24-hour time and the Eastern time zone, regardless of what time zone the game was being played in.
+#' \item{away_team} - Away team abbreviation.
+#' \item{home_team} - Home team abbreviation.
+#' \item{away_score} - The number of points the away team scored. Is 'NA' for games which haven't yet been played.
+#' \item{home_score} - The number of points the home team scored. Is 'NA' for games which haven't yet been played.
+#' \item{home_result} - Equals home_score - away_score and means the game outcome from the perspective of the home team.
+#' \item{stadium} - Name of the stadium the game was or will be played in. (Source: Pro-Football-Reference)
+#' \item{location} - Either 'Home' o 'Neutral' indicating if the home team played at home or at a neutral site.
+#' \item{roof} - One of 'dome', 'outdoors', 'closed', 'open' indicating indicating the roof status of the stadium the game was played in. (Source: Pro-Football-Reference)
+#' \item{surface} - What type of ground the game was played on. (Source: Pro-Football-Reference)
+#' \item{old_game_id} - Unique game identifier of the old NFL API.
 #' }
 #' @export
 #' @examples
-#'
+#'\dontrun{
 #' # Get schedules for the whole 2015 - 2018 seasons
-#' # seasons <- 2015:2018
-#' # schedules <- fast_scraper_schedules(seasons)
+#' seasons <- 2015:2018
+#' schedules <- fast_scraper_schedules(seasons)
+#' }
 fast_scraper_schedules <- function(seasons, pp = FALSE) {
-  scraper_func <- get_season_schedule
 
   # No parallel processing demanded -> use purrr
   if (pp == FALSE) {
     suppressWarnings(
-      schedules <- purrr::map_dfr(seasons, scraper_func)
+      progressr::with_progress({
+        p <- progressr::progressor(along = seasons)
+        schedules <- purrr::map_dfr(seasons, function(x){
+          sched <- get_season_schedule(x)
+          p(sprintf("x=%s", as.integer(x)))
+          return(sched)
+        })
+      })
     )
   }
 
@@ -598,8 +634,15 @@ fast_scraper_schedules <- function(seasons, pp = FALSE) {
       message(glue::glue("You have passed only {length(seasons)} season(s) to parallel processing.\nPlease note that the initiating process takes a few seconds\nand consider using pp=FALSE for a small number of seasons."))
     }
     suppressWarnings({
-      future::plan("multiprocess")
-      schedules <- furrr::future_map_dfr(seasons, scraper_func, .progress = TRUE)
+      progressr::with_progress({
+        p <- progressr::progressor(along = seasons)
+        future::plan("multiprocess")
+        schedules <- furrr::future_map_dfr(seasons, function(x){
+          sched <- get_season_schedule(x)
+          p(sprintf("x=%s", as.integer(x)))
+          return(sched)
+        })
+      })
     })
   }
   return(schedules)

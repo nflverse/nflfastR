@@ -1228,9 +1228,13 @@ sum_play_stats <- function(play_Id, stats) {
     } else if (play_stats$statId[index] == 113) {
       row$pass_attempt <- 1
       row$complete_pass <- 1
-      row$receiver_player_id <- play_stats$player.esbId[index]
-      row$receiver_player_name <- play_stats$player.displayName[index]
-      row$yards_after_catch <- play_stats$yards[index]
+      if (is.na(row$receiver_player_id)) {
+        row$receiver_player_id <- play_stats$player.esbId[index]
+        row$receiver_player_name <- play_stats$player.displayName[index]
+      }
+      if (is.na(row$yards_after_catch)) {
+        row$yards_after_catch <- play_stats$yards[index]
+      }
     } else if (play_stats$statId[index] == 115) {
       row$pass_attempt <- 1
       row$receiver_player_id <- play_stats$player.esbId[index]

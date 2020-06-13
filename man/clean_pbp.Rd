@@ -7,19 +7,37 @@
 clean_pbp(pbp)
 }
 \arguments{
-\item{pbp}{is a dataframe of play-by-play data scraped using \code{\link{fast_scraper}}.}
+\item{pbp}{is a Data frame of play-by-play data scraped using \code{\link{fast_scraper}}.}
+}
+\value{
+The input Data Frame of the paramter 'pbp' with the following columns
+added:
+\itemize{
+\item{success} - Binary indicator wheter epa > 0 in the given play.
+\item{passer} - Name of the dropback player (scrambles included) including plays with penalties.
+\item{rusher} - Name of the rusher (no scrambles) including plays with penalties.
+\item{receiver} - Name of the receiver including plays with penalties.
+\item{pass} - Binary indicator if the play was a pass play (sacks and scrambles included).
+\item{rush} - Binary indicator if the play was a rushing play.
+\item{special} - Binary indicator if the play was a special teams play.
+\item{first_down} - Binary indicator if the play ended in a first down.
+\item{play} - Binary indicator: 1 if the play was a 'normal' play (including penalties), 0 otherwise.
+\item{passer_id} - ID of the player in the 'passer' column (NOTE: ids vary pre and post 2011)
+\item{rusher_id} - ID of the player in the 'rusher' column (NOTE: ids vary pre and post 2011)
+\item{receiver_id} - ID of the player in the 'receiver' column (NOTE: ids vary pre and post 2011)
+\item{name} - Name of the 'passer' if it is not 'NA', or name of the 'rusher' otherwise.
+\item{id} - ID of the player in the 'name' column.
+}
 }
 \description{
 Clean Play by Play Data
 }
 \details{
 Build columns that capture what happens on all plays, including
-penalties, using string extraction from play description. The created 'name'
-column denotes the dropback player on dropbacks or the rusher on rush attempts.
+penalties, using string extraction from play description.
 Loosely based on Ben's nflscrapR guide (https://gist.github.com/guga31bb/5634562c5a2a7b1e9961ac9b6c568701)
 but updated to work with the RS data, which has a different player format in
 the play description; e.g. 24-M.Lynch instead of M.Lynch.
 The function also standardizes team abbreviations so that, for example,
 the Chargers are always represented by 'LAC' regardless of which year it was.
-Also creates a 'play' column denoting 'normal' plays (Ie pass play or run play)
 }

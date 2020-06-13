@@ -21,5 +21,8 @@
 #'   \item{team_logo_wikipedia}{Url to Team logo on wikipedia}
 #'   \item{team_logo_espn}{Url to higher quality logo on espn}
 #' }
+#' The colors are taken from Lee Sharpe's teamcolors.csv who has taken them from the
+#' `teamcolors` package created by Ben Baumer and Gregory Matthews.
+#' The Wikipeadia logo urls are taken from Lee Sharpe's logos.csv
 #'
 "teams_colors_logos"

@@ -12,45 +12,42 @@ fast_scraper_schedules(seasons, pp = FALSE)
 \item{pp}{Logical - either \code{TRUE} or \code{FALSE} (see details for further information)}
 }
 \value{
-Data frame containing the follwoing detailed game information:
+Data frame containing the following detailed game information:
 \itemize{
+\item{game_id} - Character identifier including season, week, away team and home team
 \item{season} - 4 digit season year.
-\item{season_type} - Either 'PRE', 'REG', 'POST', 'PRO'.
-\item{week} - Numeric week number.
-\item{game_id} - Unique game identifier.
-\item{alt_game_id} - Alternative and much more intuitive identifier introduced by Lee Sharpe and set to \code{NA} for Hall of Fame Week, Preseason and Pro Bowl
-\item{game_date} - Game date in format dd/mm/yyyy.
-\item{game_time_eastern} - Kickoff time in eastern time zone.
-\item{game_time_local} - Kickoff time in local time zone.
-\item{iso_time} - Kickoff time according ISO 8601.
-\item{home_team} - Home team abbreviation
-\item{away_team} - Away team abbreviation
-\item{home_team_name} - Home team full name
-\item{away_team_name} - Away team full name
-\item{home_nickname} - Home team nick name
-\item{away_nickname} - Away team nick name
-\item{home_team_id} - Home team id (can be used with the package function \code{\link{fast_scraper_roster}}).
-\item{away_team_id} - Away team id (can be used with the package function \code{\link{fast_scraper_roster}}).
 \item{game_type} - One of 'REG', 'WC', 'DIV', 'CON', 'SB' indicating if a game was a regular season game or one of the playoff rounds.
-\item{week_name} - Full description of week
-\item{site_city} - Game site city.
-\item{site_fullname} - Game site name.
-\item{site_state} - Game site state.
-\item{site_roof_type} - Game site roof type.
-\item{network_channel} - Name of broadcasting network channel.
+\item{week} - Numeric week number.
+\item{gameday} - Game date in format yyyy/mm/dd.
+\item{weekday} - The day of the week on which the game occcured.
+\item{gametime} - The kickoff time of the game. This is represented in 24-hour time and the Eastern time zone, regardless of what time zone the game was being played in.
+\item{away_team} - Away team abbreviation.
+\item{home_team} - Home team abbreviation.
+\item{away_score} - The number of points the away team scored. Is 'NA' for games which haven't yet been played.
+\item{home_score} - The number of points the home team scored. Is 'NA' for games which haven't yet been played.
+\item{home_result} - Equals home_score - away_score and means the game outcome from the perspective of the home team.
+\item{stadium} - Name of the stadium the game was or will be played in. (Source: Pro-Football-Reference)
+\item{location} - Either 'Home' o 'Neutral' indicating if the home team played at home or at a neutral site.
+\item{roof} - One of 'dome', 'outdoors', 'closed', 'open' indicating indicating the roof status of the stadium the game was played in. (Source: Pro-Football-Reference)
+\item{surface} - What type of ground the game was played on. (Source: Pro-Football-Reference)
+\item{old_game_id} - Unique game identifier of the old NFL API.
 }
 }
 \description{
 Get NFL Season Schedules
 }
 \details{
+This functions now incorporates the games file provided and maintained
+by Lee Sharpe.
+
 The \code{pp} parameter controls if the scraper should use parallel processing.
 Please note that the initiating process takes a few seconds which means it
 may be better to set \code{pp = FALSE} if you are scraping less than 10 seasons.
 }
 \examples{
-
+\dontrun{
 # Get schedules for the whole 2015 - 2018 seasons
-# seasons <- 2015:2018
-# schedules <- fast_scraper_schedules(seasons)
+seasons <- 2015:2018
+schedules <- fast_scraper_schedules(seasons)
+}
 }
