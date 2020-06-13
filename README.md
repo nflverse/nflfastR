@@ -122,7 +122,7 @@ repository](https://github.com/guga31bb/nflfastR-data) which hosts all
 the scraped and cleaned data** whenever possible. The only reason to
 ever actually use the scraper is if it’s in the middle of the season and
 we haven’t updated the repository with recent games (but we will try to
-keep it updated).
+keep it updated). 
 
 ``` r
 #get list of some games from 2019
