@@ -188,6 +188,7 @@ get_pbp_gc <- function(gameId) {
           play_clock = NA_character_,
           play_deleted = NA_real_,
           play_type_nfl = NA_character_,
+          drive_yards_penalized = NA_real_,
           end_clock_time = NA_character_,
           end_yard_line = NA_character_
         ) %>%

@@ -26,10 +26,12 @@ Imports:
     mgcv,
     progressr,
     purrr,
+    stats,
     stringr,
     tibble,
     tidyr,
-    tidyselect
+    tidyselect,
+    xgboost
 Suggests: 
     furrr,
     future

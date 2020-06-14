@@ -97,7 +97,6 @@ read_csv(url('https://github.com/ryurko/nflscrapR-data/blob/master/play_by_play_
 | (12:58) PENALTY on SEA-J.Reed, Encroachment, 5 yards, enforced at SF 41 - No Play.                                  | no\_play   |   2.286 |   0.774 |    0.551 |
 
 ``` r
-#The 'gc' option specifies scraping gamecenter like nflscrapR does, as opposed to 'rs'
 fast_scraper('2019_10_SEA_SF') %>%
   clean_pbp() %>%
   select(desc, play_type, ep, epa, home_wp, name) %>% head(6) %>% 
@@ -122,7 +121,7 @@ repository](https://github.com/guga31bb/nflfastR-data) which hosts all
 the scraped and cleaned data** whenever possible. The only reason to
 ever actually use the scraper is if it’s in the middle of the season and
 we haven’t updated the repository with recent games (but we will try to
-keep it updated). 
+keep it updated).
 
 ``` r
 #get list of some games from 2019
@@ -131,7 +130,7 @@ games_2019 <- fast_scraper_schedules(2019) %>% head(10) %>% pull(game_id)
 tictoc::tic(glue::glue('{length(games_2019)} games with nflfastR:'))
 f <- fast_scraper(games_2019, pp = TRUE)
 tictoc::toc()
-#> 10 games with nflfastR:: 12.35 sec elapsed
+#> 10 games with nflfastR:: 14.46 sec elapsed
 ```
 
 ### Example 3: completion percentage over expected (CPOE)
@@ -146,7 +145,7 @@ reads .rds files, but .csv is also available).
 tictoc::tic('loading all games from 2009')
 games_2009 <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2009.rds')) %>% filter(season_type == 'REG')
 tictoc::toc()
-#> loading all games from 2009: 2.65 sec elapsed
+#> loading all games from 2009: 2.8 sec elapsed
 games_2009 %>% filter(!is.na(cpoe)) %>% group_by(passer_player_name) %>%
   summarize(cpoe = mean(cpoe), Atts=n()) %>%
   filter(Atts > 200) %>%
@@ -158,10 +157,10 @@ games_2009 %>% filter(!is.na(cpoe)) %>% group_by(passer_player_name) %>%
 | passer\_player\_name | cpoe | Atts |
 | :------------------- | ---: | ---: |
 | D.Brees              |  7.4 |  509 |
-| P.Rivers             |  6.5 |  474 |
-| P.Manning            |  6.3 |  569 |
-| B.Favre              |  6.1 |  527 |
-| B.Roethlisberger     |  5.4 |  503 |
+| P.Manning            |  6.7 |  569 |
+| P.Rivers             |  6.6 |  474 |
+| B.Favre              |  6.0 |  527 |
+| M.Schaub             |  5.3 |  571 |
 
 ### Example 4: using drive information
 
@@ -309,11 +308,16 @@ Baldwin](https://twitter.com/benbbaldwin).
     this source for 1999-2010)
   - To [Lee Sharpe](https://twitter.com/LeeSharpeNFL) for curating a
     resource for game information
+  - To [Timo Riske](https://twitter.com/PFF_Moo), [Lau Sze
+    Yui](https://twitter.com/903124S), [Sean
+    Clement](https://twitter.com/SeanfromSeabeck), and [Daniel
+    Houston](https://twitter.com/CowboysStats) for many helpful
+    discussions regarding the development of the new `nflfastR` models
+  - To [Zach Feldman](https://twitter.com/ZachFeldman3) and [Josh
+    Hermsmeyer](https://twitter.com/friscojosh) for many helpful
+    discussions about CPOE models
   - To [Florian Schmitt](https://twitter.com/Flosch1006) for the logo
     design
-  - To [Zach Feldman](https://twitter.com/ZachFeldman3) for developing
-    the CP model and recommending xgboost to us (which now drives the EP
-    and WP models as well)
   - To [Peter Owen](https://twitter.com/JSmoovesBrekkie) for [many
     helpful suggestions for the CP
     model](https://twitter.com/JSmoovesBrekkie/status/1268885950626623490)
