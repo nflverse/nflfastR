@@ -203,7 +203,7 @@ prepare_wp_data <- function(pbp) {
   pbp <- pbp %>%
     dplyr::group_by(game_id) %>%
     dplyr::mutate(
-      receive_2h_ko = dplyr::if_else(qtr <= 2 & posteam == dplyr::first(na.omit(defteam)), 1, 0)
+      receive_2h_ko = dplyr::if_else(qtr <= 2 & posteam == dplyr::first(stats::na.omit(defteam)), 1, 0)
     ) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(
@@ -632,47 +632,12 @@ add_wp_variables <- function(pbp_data) {
     prepare_wp_data()
 
   # First check if there's any overtime plays:
-  if (any(pbp_data$qtr == 5 | pbp_data$qtr == 6)){
+  if (any(pbp_data$qtr > 4)){
     # Find the rows that are overtime:
-    overtime_i <- which(pbp_data$qtr == 5 | pbp_data$qtr == 6)
+    overtime_i <- which(pbp_data$qtr > 4)
 
     # Separate the dataset into regular_df and overtime_df:
-    regular_df <- pbp_data[-overtime_i,]
     overtime_df <- pbp_data[overtime_i,]
-
-    # Use the win prob model to predict the win probability for
-    # regulation time plays:
-    OffWinProb[-overtime_i] <- get_preds_wp(regular_df)
-    OffWinProb_spread[-overtime_i] <- get_preds_wp_spread(regular_df)
-
-    ## now we need to fix WP on kickoffs
-    kickoff_data <- regular_df
-
-    # Change the yard line to be 80 for 2009-2015 and 75 otherwise
-    kickoff_data$yardline_100 <- with(kickoff_data,
-                                      ifelse(season < 2016,
-                                             80, 75))
-    # Now first down:
-    kickoff_data$down1 <- rep(1,nrow(regular_df))
-    kickoff_data$down2 <- rep(0,nrow(regular_df))
-    kickoff_data$down3 <- rep(0,nrow(regular_df))
-    kickoff_data$down4 <- rep(0,nrow(regular_df))
-    # 10 ydstogo:
-    kickoff_data$ydstogo <- rep(10,nrow(regular_df))
-
-    # Get the new predicted probabilites:
-    kickoff_preds <- get_preds_wp(kickoff_data)
-    kickoff_preds_spread <- get_preds_wp_spread(kickoff_data)
-
-    # Find the kickoffs:
-    kickoff_i <- which(regular_df$play_type == "kickoff")
-
-    # Now update the probabilities:
-    OffWinProb[kickoff_i] <- kickoff_preds[kickoff_i]
-    OffWinProb_spread[kickoff_i] <- kickoff_preds_spread[kickoff_i]
-
-    ## end fix for kickoffs
-
 
     # Separate routine for overtime:
 
@@ -723,41 +688,45 @@ add_wp_variables <- function(pbp_data) {
                                      overtime_df$One_FG_WP, overtime_df$Sudden_Death_WP)
     OffWinProb_spread[overtime_i] <-  OffWinProb[overtime_i]
 
-
-  } else {
-
-    OffWinProb <- get_preds_wp(pbp_data)
-    OffWinProb_spread <- get_preds_wp_spread(pbp_data)
-
-    ## now we need to fix WP on kickoffs
-    kickoff_data <- pbp_data
-
-    # Change the yard line to be 80 for 2009-2015 and 75 otherwise
-    kickoff_data$yardline_100 <- with(kickoff_data,
-                                      ifelse(season < 2016,
-                                             80, 75))
-    # Now first down:
-    kickoff_data$down1 <- rep(1,nrow(pbp_data))
-    kickoff_data$down2 <- rep(0,nrow(pbp_data))
-    kickoff_data$down3 <- rep(0,nrow(pbp_data))
-    kickoff_data$down4 <- rep(0,nrow(pbp_data))
-    # 10 ydstogo:
-    kickoff_data$ydstogo <- rep(10,nrow(pbp_data))
-
-    # Get the new predicted probabilites:
-    kickoff_preds <- get_preds_wp(kickoff_data)
-    kickoff_preds_spread <- get_preds_wp_spread(kickoff_data)
-
-    # Find the kickoffs:
-    kickoff_i <- which(pbp_data$play_type == "kickoff")
-
-    # Now update the probabilities:
-    OffWinProb[kickoff_i] <- kickoff_preds[kickoff_i]
-    OffWinProb_spread[kickoff_i] <- kickoff_preds_spread[kickoff_i]
-
-    ## end fix
-
   }
+
+  #regulation plays
+  regular_i <- which(pbp_data$qtr <= 4)
+
+  # df of just the regulation plays:
+  regular_df <- pbp_data[regular_i,]
+
+  # do predictions for the regular df
+  OffWinProb[regular_i] <- get_preds_wp(regular_df)
+  OffWinProb_spread[regular_i] <- get_preds_wp_spread(regular_df)
+
+  ## now we need to fix WP on kickoffs
+  kickoff_data <- pbp_data
+
+  # Change the yard line to be 80 for 2009-2015 and 75 otherwise
+  kickoff_data$yardline_100 <- with(kickoff_data,
+                                    ifelse(season < 2016,
+                                           80, 75))
+  # Now first down:
+  kickoff_data$down1 <- rep(1,nrow(pbp_data))
+  kickoff_data$down2 <- rep(0,nrow(pbp_data))
+  kickoff_data$down3 <- rep(0,nrow(pbp_data))
+  kickoff_data$down4 <- rep(0,nrow(pbp_data))
+  # 10 ydstogo:
+  kickoff_data$ydstogo <- rep(10,nrow(pbp_data))
+
+  # Get the new predicted probabilites:
+  kickoff_preds <- get_preds_wp(kickoff_data)
+  kickoff_preds_spread <- get_preds_wp_spread(kickoff_data)
+
+  # Find the kickoffs in regulation:
+  kickoff_i <- which(pbp_data$play_type == "kickoff" & pbp_data$qtr <= 4)
+
+  # Now update the probabilities:
+  OffWinProb[kickoff_i] <- kickoff_preds[kickoff_i]
+  OffWinProb_spread[kickoff_i] <- kickoff_preds_spread[kickoff_i]
+
+  ## end fix for kickoffs
 
 
   # Now create the win probability columns and return:
