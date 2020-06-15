@@ -700,6 +700,15 @@ add_wp_variables <- function(pbp_data) {
   OffWinProb[regular_i] <- get_preds_wp(regular_df)
   OffWinProb_spread[regular_i] <- get_preds_wp_spread(regular_df)
 
+  ## PATs are messed up, set to NA WP for plays down is missing
+  # for kickoffs, this will get overwritten by the fix after this
+
+  down_na <- which(is.na(pbp_data$down))
+  OffWinProb[down_na] <- NA_real_
+  OffWinProb_spread[down_na] <- NA_real_
+
+  ## end PAT fix
+
   ## now we need to fix WP on kickoffs
   kickoff_data <- pbp_data
 
@@ -733,6 +742,16 @@ add_wp_variables <- function(pbp_data) {
   pbp_data <- pbp_data %>%
     dplyr::mutate(
       wp = OffWinProb,
+      vegas_wp = OffWinProb_spread) %>%
+    tidyr::fill(
+      wp, .direction = "up"
+    ) %>%
+    tidyr::fill(
+      vegas_wp, .direction = "up"
+    ) %>%
+    dplyr::mutate(
+      wp = dplyr::if_else(stringr::str_detect(desc, 'extra point') | !is.na(two_point_conv_result) | !is.na(extra_point_result), 1 - wp, wp),
+      vegas_wp = dplyr::if_else(stringr::str_detect(desc, 'extra point') | !is.na(two_point_conv_result) | !is.na(extra_point_result), 1 - vegas_wp, vegas_wp),
       wp = dplyr::if_else(is.na(posteam), NA_real_, wp),
       def_wp = 1 - wp,
       home_wp = dplyr::if_else(posteam == home_team,
@@ -740,7 +759,6 @@ add_wp_variables <- function(pbp_data) {
       away_wp = dplyr::if_else(posteam == away_team,
                                wp, def_wp),
       #add columns for WP taking into account spread
-      vegas_wp = OffWinProb_spread,
       vegas_wp = dplyr::if_else(is.na(posteam), NA_real_, vegas_wp),
       vegas_home_wp = dplyr::if_else(posteam == home_team,
                                      vegas_wp, 1 - vegas_wp),
@@ -787,21 +805,18 @@ add_wp_variables <- function(pbp_data) {
 
   pbp_data$WPA_base_nxt_ind <- with(pbp_data,
                                     ifelse(posteam == dplyr::lead(posteam, 2) &
-                                             #drive == dplyr::lead(drive, 2) &
                                              (is.na(dplyr::lead(play_type)) |
                                                 (dplyr::lead(timeout) == 1 &
                                                    dplyr::lead(play_type) == "no_play")), 1, 0))
 
   pbp_data$WPA_change_nxt_ind <- with(pbp_data,
                                       ifelse(posteam != dplyr::lead(posteam, 2) &
-                                               #drive != dplyr::lead(drive, 2) &
                                                (is.na(dplyr::lead(play_type)) |
                                                   (dplyr::lead(timeout) == 1 &
                                                      dplyr::lead(play_type) == "no_play")), 1, 0))
 
   pbp_data$WPA_change_ind <- with(pbp_data,
                                   ifelse(posteam != dplyr::lead(posteam) &
-                                           #drive != dplyr::lead(drive) &
                                            !is.na(dplyr::lead(play_type)) &
                                            (dplyr::lead(timeout) == 0 |
                                               (dplyr::lead(timeout) == 1 &
@@ -828,6 +843,8 @@ add_wp_variables <- function(pbp_data) {
                                             ifelse(WPA_base_nxt_ind == 1, WPA_base_nxt,
                                                    ifelse(WPA_change_ind == 1, WPA_change,
                                                           WPA_base))))))
+
+
   # Home and Away post:
 
   pbp_data$home_wp_post <- ifelse(pbp_data$posteam == pbp_data$home_team,
@@ -858,7 +875,7 @@ add_wp_variables <- function(pbp_data) {
                            ifelse(stringr::str_detect(tolower(desc),
                                                       "(end of game)|(end game)"),
                                   dplyr::lag(home_wp_post),
-                                  ifelse(dplyr::lag(play_type) == "no_play" & play_type == "no_play", dplyr::lag(home_wp),home_wp)))
+                                  home_wp))
 
   pbp_data$home_wp_post <- with(pbp_data,
                                 ifelse(stringr::str_detect(tolower(desc),
@@ -868,7 +885,7 @@ add_wp_variables <- function(pbp_data) {
                            ifelse(stringr::str_detect(tolower(desc),
                                                       "(end of game)|(end game)"),
                                   dplyr::lag(away_wp_post),
-                                  ifelse(dplyr::lag(play_type) == "no_play" & play_type == "no_play", dplyr::lag(away_wp),away_wp)))
+                                  away_wp))
 
   pbp_data$away_wp_post <- with(pbp_data,
                                 ifelse(stringr::str_detect(tolower(desc),

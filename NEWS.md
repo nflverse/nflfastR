@@ -1,7 +1,13 @@
+# nflfastR 2.0.2
+
+* Fixed a bug in the series and series success calculations caused by timeouts
+following a possession change
+* Fixed win probability on PATs
+
 # nflfastR 2.0.1
 
 * Added minimum version requirement on `xgboost` (>= 1.1) as the recent `xgboost` update 
-caused a breaking change leading to failure in adding model results to data.
+caused a breaking change leading to failure in adding model results to data
 
 # nflfastR 2.0.0
 

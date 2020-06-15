@@ -24,11 +24,13 @@ add_series_data <- function(pbp) {
       # we don't want a first down being indicated for XP, 2P, KO
       first_down = dplyr::if_else(
         (first_down_rush == 1 | first_down_pass == 1 |
-           first_down_penalty == 1 | drive < dplyr::lead(drive)) &
+           first_down_penalty == 1 |
+           (drive < dplyr::lead(drive) | (drive < dplyr::lead(drive, 2) & is.na(dplyr::lead(drive))))
+         ) &
           (extra_point_attempt == 0 & two_point_attempt == 0 & kickoff_attempt == 0),
         1, 0
       ),
-      # after setting the first down indicator we modificate it for the end of a half
+      # after setting the first down indicator we modify it for the end of a half
       first_down = dplyr::if_else(game_half != dplyr::lead(game_half), 1, first_down),
       # the 'trigger' is being used for calculatung cumsum because we don't want the
       # series number to increase in the play the first down occured but in the next play
