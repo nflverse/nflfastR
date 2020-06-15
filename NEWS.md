@@ -1,3 +1,8 @@
+# nflfastR 2.0.1
+
+* Added minimum version requirement on `xgboost` (>= 1.1) as the recent `xgboost` update 
+caused a breaking change leading to failure in adding model results to data.
+
 # nflfastR 2.0.0
 
 ### Models

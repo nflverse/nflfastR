@@ -1,7 +1,7 @@
 Type: Package
 Package: nflfastR
 Title: Functions to Efficiently Scrape NFL Play by Play Data
-Version: 2.0.0
+Version: 2.0.1
 Authors@R: 
     c(person(given = "Sebastian",
              family = "Carl",
@@ -31,7 +31,7 @@ Imports:
     tibble,
     tidyr,
     tidyselect,
-    xgboost
+    xgboost (>= 1.1)
 Suggests: 
     furrr,
     future
