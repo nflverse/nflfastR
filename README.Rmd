@@ -17,9 +17,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-
-
 <!-- badges: start -->
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/mrcaseb/nflfastR?label=latest%20release)
+[![Twitter Follow](https://img.shields.io/twitter/follow/nflfastR.svg?style=social)](https://twitter.com/nflfastR)
 <!-- badges: end -->
 
 `nflfastR` is a set of functions to efficiently scrape NFL play-by-play data. `nflfastR` expands upon the features of nflscrapR:
@@ -56,7 +56,7 @@ library(tidyverse)
 
 The functionality of `nflscrapR` can be duplicated by using `fast_scraper` This obtains the same information contained in `nflscrapR` (plus some extra) but much more quickly. To compare to `nflscrapR`, we use their data repository as the program no longer functions now that the NFL has taken down the old Gamecenter feed. Note that EP differs from nflscrapR as we use a newer era-adjusted model (more on this below).
 
-This example also uses the built-in function `clean_pbp` to create a "name' column for the primary player involved (the QB on pass play or ball-carrier on run play).
+This example also uses the built-in function `clean_pbp` to create a 'name' column for the primary player involved (the QB on pass play or ball-carrier on run play).
 
 ``` {r ex1-nflscrapR, warning = FALSE, message = FALSE}
 read_csv(url('https://github.com/ryurko/nflscrapR-data/blob/master/play_by_play_data/regular_season/reg_pbp_2019.csv?raw=true')) %>%
@@ -104,7 +104,7 @@ games_2009 %>% filter(!is.na(cpoe)) %>% group_by(passer_player_name) %>%
 When scraping from the default RS feed, drive results are automatically included. Let's look at how much more likely teams were to score starting from 1st & 10 at their own 20 yard line in 2015 (the last year before touchbacks on kickoffs changed to the 25) than in 2000.
 ``` {r ex4, warning = FALSE, message = FALSE}
 games_2000 <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2000.rds'))
-games_2015 <-readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2015.rds'))
+games_2015 <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2015.rds'))
 
 pbp <- bind_rows(games_2000, games_2015)
 
@@ -159,7 +159,7 @@ The `clean_pbp()` function does a lot of work cleaning up player names and IDs f
 
 ## `nflfastR` models
 
-`nflfastR` uses its own models for Expected Points, Win Probability, and Completion Percentage. To read about the models, [please see here](https://github.com/mrcaseb/nflfastR/blob/master/data-raw/MODEL-README.md). For a more detailed description of Expected Points models, we highly recommend this paper [from the nflscrapR team located here](https://arxiv.org/pdf/1802.00998.pdf). 
+`nflfastR` uses its own models for Expected Points, Win Probability, and Completion Probability. To read about the models, [please see here](https://github.com/mrcaseb/nflfastR/blob/master/data-raw/MODEL-README.md). For a more detailed description of Expected Points models, we highly recommend this paper [from the nflscrapR team located here](https://arxiv.org/pdf/1802.00998.pdf). 
 
 `nflfastR` includes two win probability models: one with and one without incorporating the pre-game spread.
 
@@ -184,10 +184,10 @@ Even though `nflfastR` is very fast, **for historical games we recommend downloa
 ## Special thanks
 
 * To [Nick Shoemaker](https://twitter.com/WeightRoomShoe) for [finding and making available JSON-formatted NFL play-by-play back to 1999](https://github.com/CroppedClamp/nfl_pbps) (`nflfastR` uses this source for 1999-2010)
+* To [Lau Sze Yui](https://twitter.com/903124S) for developing a scraping function to access JSON-formatted NFL play-by-play beginning in 2011.
 * To [Lee Sharpe](https://twitter.com/LeeSharpeNFL) for curating a resource for game information
 * To [Timo Riske](https://twitter.com/PFF_Moo), [Lau Sze Yui](https://twitter.com/903124S), [Sean Clement](https://twitter.com/SeanfromSeabeck), and [Daniel Houston](https://twitter.com/CowboysStats) for many helpful discussions regarding the development of the new `nflfastR` models
-* To [Zach Feldman](https://twitter.com/ZachFeldman3) and [Josh Hermsmeyer](https://twitter.com/friscojosh) for many helpful discussions about CPOE models
+* To [Zach Feldman](https://twitter.com/ZachFeldman3) and [Josh Hermsmeyer](https://twitter.com/friscojosh) for many helpful discussions about CPOE models as well as [Peter Owen](https://twitter.com/JSmoovesBrekkie) for [many helpful suggestions for the CP model](https://twitter.com/JSmoovesBrekkie/status/1268885950626623490)
 * To [Florian Schmitt](https://twitter.com/Flosch1006) for the logo design
-* To [Peter Owen](https://twitter.com/JSmoovesBrekkie) for [many helpful suggestions for the CP model](https://twitter.com/JSmoovesBrekkie/status/1268885950626623490)
 * The many users who found and reported bugs in `nflfastR` 1.0
 * And of course, the original [`nflscrapR`](https://github.com/maksimhorowitz/nflscrapR) team, Maksim Horowitz, Ronald Yurko, and Samuel Ventura, whose work represented a dramatic step forward for the state of public NFL research

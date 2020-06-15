@@ -11,13 +11,23 @@ add_nflscrapr_mutations <- function(pbp) {
 
   out <-
     pbp %>%
-    dplyr::mutate(index = 1 : dplyr::n()) %>% # to re-sort after removing duplicates
+    dplyr::mutate(index = 1 : dplyr::n()) %>%
     # remove duplicate plays. can't do this with play_id because duplicate plays
     # sometimes have different play_ids
     dplyr::group_by(game_id, quarter, time, play_description) %>%
     dplyr::slice(1) %>%
     dplyr::ungroup() %>%
-    dplyr::arrange(index) %>%
+    dplyr::mutate(
+      # Modify the time column for the quarter end:
+      time = dplyr::if_else(quarter_end == 1, "00:00", time),
+      time = dplyr::if_else(play_description == 'GAME', "15:00", time),
+      # Create a column with the time in seconds remaining for the quarter:
+      quarter_seconds_remaining = lubridate::period_to_seconds(lubridate::ms(time))
+    ) %>%
+    #put plays in the right order
+    dplyr::group_by(game_id) %>%
+    dplyr::arrange(quarter, -quarter_seconds_remaining, index) %>%
+    dplyr::ungroup() %>%
     dplyr::mutate(
       # Fill in the rows with missing posteam with the lag:
       posteam = dplyr::if_else(
@@ -74,10 +84,6 @@ add_nflscrapr_mutations <- function(pbp) {
         yardline_side == posteam | yardline == "MID 50",
         100 - yardline_number, yardline_number
       ),
-      # Modify the time column for the quarter end:
-      time = dplyr::if_else(quarter_end == 1, "00:00", time),
-      # Create a column with the time in seconds remaining for the quarter:
-      quarter_seconds_remaining = lubridate::period_to_seconds(lubridate::ms(time)),
       # Create a column with the time in seconds remaining for each half:
       half_seconds_remaining = dplyr::if_else(
         quarter %in% c(1, 3),

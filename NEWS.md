@@ -1,3 +1,8 @@
+# nflfastR 2.0.3
+
+* Fix for NFL providing plays out of order
+* Fix for series not incrementing following defensive TD
+
 # nflfastR 2.0.2
 
 * Fixed a bug in the series and series success calculations caused by timeouts

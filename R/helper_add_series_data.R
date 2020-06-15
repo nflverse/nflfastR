@@ -23,8 +23,11 @@ add_series_data <- function(pbp) {
       # AND first down after change of possesion (-> drivenumber increases)
       # we don't want a first down being indicated for XP, 2P, KO
       first_down = dplyr::if_else(
-        (first_down_rush == 1 | first_down_pass == 1 |
-           first_down_penalty == 1 |
+        #earn first down
+        (first_down_rush == 1 | first_down_pass == 1 | first_down_penalty == 1 |
+        #defensive TD
+          (touchdown == 1 & td_team != posteam) |
+        #drive changes
            (drive < dplyr::lead(drive) | (drive < dplyr::lead(drive, 2) & is.na(dplyr::lead(drive))))
          ) &
           (extra_point_attempt == 0 & two_point_attempt == 0 & kickoff_attempt == 0),
@@ -49,7 +52,7 @@ add_series_data <- function(pbp) {
       ),
       series_success = dplyr::case_when(
         is.na(series) | qb_kneel == 1 | qb_spike == 1 ~ NA_real_,
-        touchdown == 1 | first_down_rush == 1 | first_down_pass == 1 |
+        (touchdown == 1 & td_team == posteam) | first_down_rush == 1 | first_down_pass == 1 |
           first_down_penalty == 1 ~ 1,
         punt_attempt == 1 | interception == 1 | fumble_lost == 1 |
           fourth_down_failed == 1 | field_goal_attempt == 1 ~ 0,
