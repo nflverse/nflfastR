@@ -1,0 +1,9 @@
+pandoc: 2.7.3
+pkgdown: 1.5.1
+pkgdown_sha: ~
+articles:
+  beginners_guide: beginners_guide.html
+  examples: examples.html
+  nflfastR-models: nflfastR-models.html
+last_built: 2020-06-23T16:19Z
+
