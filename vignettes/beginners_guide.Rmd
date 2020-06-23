@@ -1,0 +1,762 @@
+---
+title: "A beginner's guide to nflfastR"
+author: "Ben Baldwin"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  out.width = "100%"
+)
+```
+
+## Introduction
+
+The following guide will assume you have R installed. I also highly recommend working in RStudio. If you need help getting those installed or are unfamiliar with how RStudio is laid out, [please see this section of Lee Sharpe's guide](https://github.com/leesharpe/nfldata/blob/master/RSTUDIO-INTRO.md#r-and-rstudio-introduction).
+
+A quick word if you're new to programming: all of this is happening in R. Obviously, you need to install R on your computer to do any of this. Make sure you save what you're doing in a script (in RStudio, File --> New File --> R script) so you can save your work and run multiple lines of code at once. To run code from a script, highlight what you want, and press control + enter or press the Run button in the top of the editor (see Lee's guide). If you don't highlight anything and press control + enter, the currently selected line will run. As you go through your R journey, you might get stuck and have to google a bunch of things, but that's totally okay and normal. That's how I got started!
+
+## Setup
+
+First, you need to install the magic packages. You only need to run this step once on a given computer. For these you can just type them into the RStudio console (look for the Console pane in RStudio) directly since you're never going to be doing this again.
+
+### Install packages
+
+``` {r eval = FALSE}
+install.packages("tidyverse")
+install.packages("ggrepel")
+install.packages("ggimage")
+
+#needed to install `nflfastR`
+install.packages("devtools")
+devtools::install_github("mrcaseb/nflfastR")
+```
+
+### Load packages
+
+Okay, now here's the stuff you're going to want to start putting into your R script. The following loads `tidyverse`, which contains a lot of helper functions for working with data, and `ggrepel` and `ggimage` for making figures, along with `nflfastR`.
+``` {r, results = 'hide', message = FALSE }
+library(tidyverse)
+library(ggrepel)
+library(ggimage)
+library(nflfastR)
+```
+
+This one is optional but makes R prefer not to display numbers in scientific notation, which I find very annoying:
+``` {r}
+options(scipen = 9999)
+```
+
+### Load data
+
+This will load the full play by play for the 2019 season (including playoffs). We'll get to how to get more seasons later. Note that this is not actually using the `nflfastR` package, but downloading pre-cleaned data from its data repository, which is much faster.
+``` {r}
+data <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2019.rds'))
+```
+
+## Basics: how to look at your data
+
+### Dimensions
+
+Before moving forward, here are a few ways to get a sense of what's in a dataframe. We can check the **dim**ensions of the data, and this tells us that there are 48,034 rows (i.e., plays) in the data and 322 columns (variables):
+``` {r}
+dim(data)
+```
+
+`str` displays the **str**ucture of the dataframe:
+``` {r}
+str(data[1:10])
+```
+
+In the above, I've added in the `[1:10]`, which selects only the first 10 columns, otherwise the list is extremely long (remember from above that there are 322 columns!).
+
+### Variable names
+
+Another very useful command is to get the `names` of the variables in the data:
+
+``` {r}
+names(data)
+```
+
+That is a lot to work with!
+
+### Viewer
+
+One more way to look at your data is with the `View()` function. If you're coming from an Excel background, this will help you feel more at home as a way to see what's in the data.
+
+``` {r eval = FALSE}
+View(data)
+```
+This will open the viewer in RStudio in a new panel. Try it out yourself! Since there are so many columns, the Viewer won't show them all. To pick which columns to view, you can **select** some:
+
+``` {r eval = FALSE}
+data %>%
+  select(home_team, away_team, posteam, desc) %>%
+  View()
+```
+
+The `%>%` thing lets you pipe together a bunch of different commands. So we're taking our data, "`select`"ing a few variables we want to look at, and then Viewing. Again, I can't display the results of that here, but try it out yourself!
+
+### Head + manipulation
+
+To start, let's just look at the first few rows (the "head") of the data.
+
+``` {r}
+data %>% 
+  select(posteam, defteam, desc, rush, pass) %>% 
+  head()
+```
+A couple things. "`desc`" is the important variable that lists the description of what happened on the play, and `head` says to show the first few rows (the "head" of the data). Since this is already sorted by game, these are the first 6 rows from a week 1 game, ATL @ MIN. To make code easier to read, people often put each part of a pipe on a new line, which is useful when working with more complicated functions. We could run:
+
+``` {r eval = FALSE}
+data %>% select(posteam, defteam, desc, rush, pass) %>% head()
+```
+
+And it would return the exact same output as the one written out in multiple lines, but the code isn't as easy to read.
+
+We've covered `select`, and the next important function to learn is `filter`, which lets you filter the data to what you want. The following returns only plays that are run plays and pass plays; i.e., no punts, kickoffs, field goals, or dead ball penalties (e.g. false starts) where we don't know what the attempted play was.
+
+``` {r}
+data %>% 
+  filter(rush == 1 | pass == 1) %>%
+  select(posteam, desc, rush, pass, name, passer, rusher, receiver) %>% 
+  head()
+```
+
+Compared to the first time we did this, the opening line for the start of the game, the kickoff, and the punt are now gone. Note that if you're checking whether a variable is equal to something, we need to use the double equals sign `==` like above. There's probably some technical reason for this [shrug emoji]. Also, the character `|` is used for "or", and `&` for "and". So `rush == 1 | pass == 1` means "rush or pass".
+
+Note that the `rush`, `pass`, `name`, `passer`, `rusher`, and `receiver` columns are all `nflfastR` creations, where we have provided these to make working with the data easier. As we can see above, `passer` is filled in for all dropbacks (including sacks and scrambles, which also have `pass` = 1), and `name` is equal to the passer on pass plays and the rusher on rush plays. Think of this as the primary player involved on a play.
+
+What if we wanted to view special teams plays? Again, we can use `filter`:
+
+``` {r}
+data %>% 
+  filter(special == 1) %>%
+  select(down, ydstogo, desc) %>% 
+  head()
+```
+
+Fourth down plays?
+
+``` {r}
+data %>% 
+  filter(down == 4) %>%
+  select(down, ydstogo, desc) %>% 
+  head()
+```
+
+Fourth down plays that aren't special teams plays?
+
+``` {r}
+data %>% 
+  filter(down == 4 & special == 0) %>%
+  select(down, ydstogo, desc) %>% 
+  head()
+```
+
+So far, we've just been taking a look at the initial dataset we downloaded, but none of our results are preserved. To save a new dataframe of just the plays we want, we need to use `<-` to assign a new dataframe. Let's save a new dataframe that's just run plays and pass plays with non-missing EPA, called `pbp_rp`.
+
+``` {r}
+pbp_rp <- data %>%
+  filter(rush == 1 | pass == 1, !is.na(epa))
+```
+
+In the above, `!is.na(epa)` means to exclude plays with missing (`na`) EPA. The `!` symbol is often used by computer folk to negate something, so `is.na(epa)` means "EPA is missing" and `!is.na(epa)` means "EPA is not missing", which we have used above.
+
+## Some basic stuff: Part 1
+
+Okay, we have a big dataset where we call dropbacks pass plays and non-dropbacks rush plays. Now we actually want to, like, do stuff.
+
+### Group by and Summarize
+
+Let's take a look at how various Cowboys' running backs fared on run plays in 2019:
+
+``` {r}
+pbp_rp %>%
+	filter(posteam == "DAL", rush == 1) %>%
+	group_by(rusher) %>%
+	summarize(
+	  mean_epa = mean(epa), success_rate = mean(success), ypc=mean(yards_gained), plays=n()
+	  ) %>%
+	arrange(-mean_epa) %>%
+	filter(plays > 20)
+```
+
+There's a lot going on here. We've covered `filter` already. The `group_by` function is an *extremely* useful function that, well, groups by what you tell it -- in this case the rusher. Summarize is useful for collapsing the data down to a summary of what you're looking at, and here, while grouping by player, we're summarizing the mean of EPA, success, yardage (a bad rushing stat, but since we're here), and getting the number of plays using `n()`, which returns the number in a group. Unsurprisingly, Prescott was much more effective as a rusher in 2019 than the running backs, and there was no meaningful difference between Pollard and Elliott in efficiency.
+
+If you check the [PFR team stats page](https://www.pro-football-reference.com/teams/dal/2019.htm), you'll notice that the above doesn't match up with the official stats. This is because `nflfastR` computes EPA and provides player names on plays with penalties and on two-point conversions. So if wanting to match the official stats, we need to restrict to `down <= 4` (to excluded two-point conversions, which have down listed as `NA`) and `play_type = run` (to exclude penalties, which are `play_type = no_play`):
+
+``` {r}
+pbp_rp %>%
+	filter(posteam == "DAL", down <=4, play_type == 'run') %>%
+	group_by(rusher) %>%
+	summarize(
+	  mean_epa = mean(epa), success_rate = mean(success), ypc=mean(yards_gained), plays=n()
+	  ) %>%
+	filter(plays > 20)
+```
+
+Now we exactly match PFR: Zeke has 301 carries at 4.5 yards/carry, and Pollard has 86 carries for 5.3 yards/carry. Note that we still aren't matching Dak's stats to PFR because the NFL classifies scrambles as rush attempts and `nflfastR` does not.
+
+### Manipulating columns: mutate, if_else, and case_when
+
+Let's say we want to make a new column, named `home`, which is equal to 1 if the team with the ball is the home team. Let's introduce another extremely useful function, `if_else`:
+
+``` {r}
+pbp_rp %>%
+  mutate(
+    home = if_else(posteam == home_team, 1, 0)
+  ) %>%
+  select(posteam, home_team, home) %>%
+  head(10)
+```
+
+`mutate` is R's word for creating a new column (or overwriting an existing one); in this case, we've created a new column called `home`. The above uses `if_else`, which uses the following pattern: condition (in this case, `posteam == home_team`), value if condition is true (in this case, if `posteam == home_team`, it is 1), and value if the condition is false (0). So we could use this to, for example, look at average EPA/play by home and road teams:
+
+``` {r}
+pbp_rp %>%
+  mutate(
+    home = if_else(posteam == home_team, 1, 0)
+  ) %>%
+  group_by(home) %>%
+  summarize(epa = mean(epa))
+```
+Note that EPA/play is similar for home teams and away teams because `home` is already built into the `nflfastR` EPA model, so this result is expected. Actually, away EPA/play is actually somewhat higher, presumably because away teams out-performed their usual in 2019 as homefield advantage continues to decline generally.
+
+`if_else` is nice if you're creating a new column based on a simple condition. But what if you need to do something more complicated? `case_when` is a good option. Here's how it works:
+
+``` {r}
+pbp_rp %>%
+  filter(!is.na(cp)) %>%
+  mutate(
+    depth = case_when(
+      air_yards < 0 ~ "Negative",
+      air_yards >= 0 & air_yards < 10 ~ "Short",
+      air_yards >= 10 & air_yards < 20 ~ "Medium",
+      air_yards >= 20 ~ "Deep"
+    )
+  ) %>%
+  group_by(depth) %>%
+  summarize(cp = mean(cp))
+```
+Note the new syntax for `case_when`: we have condition (for the first one, air yards less than 0), followed by `~`, followed by assignment (for the first one, "Negative"). In the above, we created 4 bins based on air yards and got average completion probability (`cp`) based on the `nflfastR` model. Unsurprisingly, `cp` is lower the longer downfield a throw goes.
+
+### A basic figure
+
+Now that we've gained some skills at manipulating data, let's put it to use by making things. Which teams were the most pass-heavy in the first half on early downs with win probability between 20 and 80, excluding the final 2 minutes of the half when everyone is pass-happy?
+
+``` {r}
+schotty <- pbp_rp %>%
+	filter(wp > .20 & wp < .80 & down <= 2 & qtr <= 2 & half_seconds_remaining > 120) %>%
+	group_by(posteam) %>%
+	summarize(mean_pass = mean(pass), plays = n()) %>%
+	arrange(-mean_pass)
+schotty
+```
+
+Again, we've already used `filter`, `group_by`, and `summarize`. The new function we are using here is `arrange`, which sorts the data by the variable(s) given. The minus sign in front of `mean_pass` means to sort in descending order.
+
+Let's make our first figure:
+
+```{r fig1, warning = FALSE, message = FALSE, results = 'hide', fig.keep = 'all', dpi = 600}
+ggplot(schotty, aes(x=reorder(posteam,-mean_pass), y=mean_pass)) +
+	    geom_text(aes(label=posteam))
+```
+
+This image is kind of a mess -- we still need a title, axis labels, etc -- but gets the point across. We'll get to that other stuff later. But more importantly, we made something interesting using `nflfastR` data! The "reorder" sorts the teams according to pass rate, with the "-" again saying to do it in descending order. "aes" is short for "aesthetic", which is R's weird way of asking which variables should go on the x and y axes.
+
+Looking at the figure, the Chiefs will never have playoff success until they establish the run.
+
+## Loading multiple seasons
+
+Because all the data is stored in the data repository, it is very easy to use data from multiple seasons. [The repository page](https://github.com/guga31bb/nflfastR-data) has instructions for loading multiple seasons:
+
+``` {r}
+seasons <- 2015:2019
+pbp <- map_df(seasons, function(x) {
+  readRDS(
+    url(
+      paste0("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_",x,".rds")
+    )
+  )
+})
+```
+
+You don't need to understand this one yet, but if you're curious, `map_df` stitches together the output from running a function repeatedly with different inputs. In this case, the function is simply reading one season's data, and the inputs are the list of seasons we want: in the above, 2015 through 2019. But all you need to know how to do is change the range of seasons to get whichever seasons you want.
+
+Let's make sure we got it all. By now, you should understand what this is doing:
+``` {r}
+pbp %>%
+  group_by(season) %>%
+  summarize(n = n())
+```
+
+So each season has about 48,000 plays. Just for fun, let's look at the various play types:
+
+``` {r}
+pbp %>%
+  group_by(play_type) %>%
+  summarize(n = n())
+```
+
+## Figures with QB stats
+
+Let's do some stuff with quarterbacks:
+
+``` {r}
+qbs <- pbp %>%
+  filter(week <= 17, !is.na(epa)) %>%
+  group_by(id, name) %>%
+  summarize(
+    epa = mean(qb_epa),
+    cpoe = mean(cpoe, na.rm = T),
+    n_dropbacks = sum(pass),
+    n_plays = n(),
+    team = last(posteam)
+  ) %>%
+  ungroup() %>%
+  filter(n_dropbacks > 100 & n_plays > 1000)
+```
+
+Lots of new stuff here. First, we're grouping by `id` and `name` to make sure we're getting unique players; i.e., if two players have the same name (like Javorius Allen and Josh Allen both being J.Allen), we are also using their id to differntiate them. **Note that this use of id only works if you are not mixing data from before and after 2011: the IDs are different prior to 2011**. `qb_epa` is an `nflfastR` creation that is equal to EPA in all instances except for when a pass is completed and a fumble is lost, in which case a QB gets "credit" for the play up to the spot the fumble was lost (making EPA function like passing yards). The `last` part in the `summarize` comment gets the last team that a player was observed playing with.
+
+Because there's no way to join to rosters (yet?), my way of getting a dataset with only quarterbacks is to make sure they hit some number of dropbacks. In this case, filtering with `n_dropbacks > 100` makes sure we're only including quarterbacks. The `ungroup()` near the end is good practice after grouping to make sure you don't get weird behavior with the data you created down the line.
+
+Let's make some more figures. The `team_colors_logos` dataframe is provided in the `nflfastR` package, so since we have already loaded the package, it's ready to use.
+
+``` {r}
+head(teams_colors_logos)
+```
+
+Let's join this to the `qbs` dataframe we created:
+
+``` {r}
+qbs <- qbs %>%
+  left_join(teams_colors_logos, by = c('team' = 'team_abbr'))
+```
+
+`left_join` means keep all the rows from the left dataframe (the first one provided, `qbs`), and join those rows to available rows in the other dataframe. We also need to provide the joining variables, `team` from `qbs` and `team_abbr` from `team_colors_logos`. Why do we have to type `by = c('team' = 'team_abbr')`? Who knows, but it's what `left_join` requires as instructions for how to match.
+
+### With team color dots
+
+Now we can make a figure!
+
+```{r fig2, warning = FALSE, message = FALSE, results = 'hide', fig.keep = 'all', dpi = 600}
+qbs %>%
+  ggplot(aes(x = cpoe, y = epa)) +
+  #horizontal line with mean EPA
+  geom_hline(yintercept = mean(qbs$epa), color = "red", linetype = "dashed", alpha=0.5) +
+  #vertical line with mean CPOE
+  geom_vline(xintercept =  mean(qbs$cpoe), color = "red", linetype = "dashed", alpha=0.5) +
+  #add points for the QBs with the right colors
+  #cex controls point size and alpha the transparency (alpha = 1 is normal)
+  geom_point(color = qbs$team_color, cex=qbs$n_plays / 350, alpha = .6) +
+  #add names using ggrepel, which tries to make them not overlap
+  geom_text_repel(aes(label=name)) +
+  #add a smooth line fitting cpoe + epa
+  stat_smooth(geom='line', alpha=0.5, se=FALSE, method='lm')+
+  #titles and caption
+  labs(x = "Completion % above expected (CPOE)",
+       y = "EPA per play (passes, rushes, and penalties)",
+       title = "Quarterback Efficiency, 2015 - 2019",
+       caption = "Data: @nflfastR") +
+  #uses the black and white ggplot theme
+  theme_bw() +
+  #center title with hjust = 0.5
+  theme(
+    plot.title = element_text(size = 14, hjust = 0.5, face = "bold")
+  ) +
+  #make ticks look nice
+  #if this doesn't work, `install.packages('scales')`
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 10)) +
+  scale_x_continuous(breaks = scales::pretty_breaks(n = 10))
+
+```
+
+This looks complicated, but is just a way of getting a bunch of different stuff on the same plot: we have lines for averages, dots, names, etc. I added comments above to explain what is going on, but in practice for making figures I usually just copy and paste stuff and/or google what I need.
+
+### With team logos
+
+We could also make the same plot with team logos:
+
+```{r fig3, warning = FALSE, message = FALSE, results = 'hide', fig.keep = 'all', dpi = 600}
+qbs %>%
+  ggplot(aes(x = cpoe, y = epa)) +
+  #horizontal line with mean EPA
+  geom_hline(yintercept = mean(qbs$epa), color = "red", linetype = "dashed", alpha=0.5) +
+  #vertical line with mean CPOE
+  geom_vline(xintercept =  mean(qbs$cpoe), color = "red", linetype = "dashed", alpha=0.5) +
+  #add points for the QBs with the logos
+  geom_image(aes(image = team_logo_espn), size = qbs$n_plays / 45000, asp = 16 / 9) +
+  #add names using ggrepel, which tries to make them not overlap
+  geom_text_repel(aes(label=name)) +
+  #add a smooth line fitting cpoe + epa
+  stat_smooth(geom='line', alpha=0.5, se=FALSE, method='lm')+
+  #titles and caption
+  labs(x = "Completion % above expected (CPOE)",
+       y = "EPA per play (passes, rushes, and penalties)",
+       title = "Quarterback Efficiency, 2015 - 2019",
+       caption = "Data: @nflfastR") +
+  theme_bw() +
+  #center title
+  theme(
+    aspect.ratio = 9 / 16,
+    plot.title = element_text(size = 14, hjust = 0.5, face = "bold")
+  ) +
+  #make ticks look nice
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 10)) +
+  scale_x_continuous(breaks = scales::pretty_breaks(n = 10))
+
+```
+
+The only changes we've made are to use `geom_image` instead of `geom_point`, and to put `aspect.ratio = 9 / 16` in the `theme()` part. This makes the plot output dimensions consistent with the provided images and leads to the images not looking squished (how to figure out the right size for the images? Trial and error).
+
+This figure would look better with transparent logos or fewer players shown, but the point of this is explaining how to do stuff, so let's call this good enough.
+
+## Real life example: let's make a win total model
+
+I'm going to try to go through the process of cleaning and joining multiple data sets to try to get a sense of how I would approach something like this, step-by-step.
+
+### Get team wins each season
+
+We're going to cheat a little and take advantage of Lee Sharpe's famous `games` file. Most of this stuff has been added into `nflfastR`, but it's easier working with this file where each game is one row.
+
+``` {r}
+games <- readRDS(url("http://www.habitatring.com/games.rds"))
+str(games)
+```
+
+To start, we want to create a dataframe where each row is a team-season observation, listing how many games they won. There are multiple ways to do this, but I'm going to just take the home and away results and bind together. As an example, here's what the `home` results look like:
+
+``` {r}
+home <- games %>%
+  filter(game_type == 'REG') %>%
+  select(season, week, home_team, result) %>%
+  rename(team = home_team)
+home %>% head(5)
+```
+Note that we used `rename` to change `home_team` to `team`.
+
+``` {r}
+away <- games %>%
+  filter(game_type == 'REG') %>%
+  select(season, week, away_team, result) %>%
+  rename(team = away_team) %>%
+  mutate(result = -result)
+away %>% head(5)
+```
+For away teams, we need to flip the result since result is given from the perspective of the home team. Now let's make a columns called `win` based on the result.
+
+``` {r}
+results <- bind_rows(home, away) %>%
+  arrange(week) %>%
+  mutate(
+    win = case_when(
+      result > 0 ~ 1,
+      result < 0 ~ 0,
+      result == 0 ~ 0.5
+    )
+  )
+
+results %>% filter(season == 2019 & team == 'SEA')
+```
+
+Doing the `results %>% filter(season == 2019 & team == 'SEA')` part at the end isn't actually for saving the data in a new form, but just making sure the previous step did what I wanted. This is a good habit to get into: frequently inspect your data and make sure it looks like you think it should.
+
+Now that we have the dataframe we wanted, we can get team wins by season easily:
+
+``` {r}
+team_wins <- results %>%
+  group_by(team, season) %>%
+  summarize(
+    wins = sum(win),
+    point_diff = sum(result)) %>%
+  ungroup()
+
+team_wins %>%
+  arrange(-wins) %>%
+  head(5)
+```
+
+Again, we're making sure the data looks like it "should" by checking the 5 seasons with the most wins, and making sure it looks right.
+
+Now that the team-season win and point differential data is ready, we need to go back to the `nflfastR` data to get EPA/play.
+
+### Get team EPA by season
+
+Let's start by getting data from every season from the `nflfastR` data repository:
+``` {r}
+seasons <- 1999:2019
+pbp <- map_df(seasons, function(x) {
+  readRDS(
+    url(
+      paste0("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_",x,".rds")
+    )
+  ) %>%
+    filter(rush == 1 | pass == 1, week <= 17, !is.na(epa), !is.na(posteam), posteam != "") %>%
+    select(season, posteam, pass, defteam, epa)
+})
+```
+
+I'm being pretty aggressive with dropping rows and columns (`filter` and `select`) because otherwise loading this all into memory can be painful on the computer. But this is all we need for what we're doing. Note that I'm only keeping regular season games here (`week <= 17`) since this is how this analysis is usually done.
+
+Now we can get EPA/play on offense and defense. Let's break it out by pass and rush too. I don't remember how to do some of this so let's do it in steps. We know we need to group by team, season, and pass, so there's the beginning:
+
+``` {r}
+pbp %>%
+  group_by(posteam, season, pass) %>% 
+  summarize(epa = mean(epa)) %>%
+  head(4)
+```
+
+But this makes two rows per team-season. How to get each team-season on the same row? `pivot_wider` is what we need:
+``` {r}
+pbp %>%
+  group_by(posteam, season, pass) %>% 
+  summarize(epa = mean(epa)) %>%
+  pivot_wider(names_from = pass, values_from = epa) %>%
+  head(4)
+```
+
+This one is hard to wrap my head around so I usually open up the [reference page](https://tidyr.tidyverse.org/reference/pivot_wider.html), read the example, and pray that what I try works. In this case it did. Hooray! This turned our two-lines-per-team dataframe into one, with the 0 column being pass == 0 (run plays) and the 1 column pass == 1. 
+
+Now let's rename to something more sensible and save:
+
+``` {r}
+offense <- pbp %>%
+  group_by(posteam, season, pass) %>% 
+  summarize(epa = mean(epa)) %>%
+  pivot_wider(names_from = pass, values_from = epa) %>%
+  rename(off_pass_epa = `1`, off_rush_epa = `0`)
+```
+
+Note that variable names that are numbers need to be surrounded in tick marks for this to work.
+
+Now we can repeat the same process for defense:
+
+``` {r}
+defense <- pbp %>%
+  group_by(defteam, season, pass) %>% 
+  summarize(epa = mean(epa)) %>%
+  pivot_wider(names_from = pass, values_from = epa) %>%
+  rename(def_pass_epa = `1`, def_rush_epa = `0`)
+```
+
+Let's do another sanity check looking at the top 5 pass offenses and defenses:
+``` {r}
+#top 5 offenses
+offense %>%
+  arrange(-off_pass_epa) %>%
+  head(5)
+
+#top 5 defenses
+defense %>%
+  arrange(def_pass_epa) %>%
+  head(5)
+```
+
+The top pass defenses (2002 TB, 2017 JAX, 2019 NE) and offenses (2007 Pats, 2004 Colts, 2011 Packers) definitely check out! 
+
+### Fix team names and join
+
+Now we're ready to bind it all together. Actually, let's make sure all the team names are ready too.
+
+``` {r}
+team_wins %>%
+  group_by(team) %>%
+  summarize(n=n()) %>%
+  arrange(n)
+```
+
+Nope, not yet, we need to fix the Raiders, Rams, and Chargers, which are LV, LA, and LAC in `nflfastR`.
+
+``` {r}
+team_wins <- team_wins %>%
+  mutate(
+    team = case_when(
+      team == 'OAK' ~ 'LV',
+      team == 'SD' ~ 'LAC',
+      team == 'STL' ~ 'LA',
+      TRUE ~ team
+    )
+  )
+```
+
+The `TRUE` statement at the bottom says that if none of the above cases are found, keep team the same. Let's make sure this worked:
+
+``` {r}
+team_wins %>%
+  group_by(team) %>%
+  summarize(n=n()) %>%
+  arrange(n)
+```
+
+HOU has 3 fewer seasons because it didn't exist from 1999 through 2001, which is fine, and all the other team names have 22 seasons like they should. Okay NOW we can join:
+
+``` {r}
+data <- team_wins %>%
+  left_join(offense, by = c('team' = 'posteam', 'season')) %>%
+  left_join(defense, by = c('team' = 'defteam', 'season'))
+
+data %>%
+  filter(team == 'SEA' & season >= 2012)
+```
+
+Now we're getting really close to doing what we want! Next we need to create new columns for prior year EPA, and let's do point differential too.
+
+``` {r}
+data <- data %>% 
+  arrange(team, season) %>%
+  mutate(
+    prior_off_rush_epa = lag(off_rush_epa),
+    prior_off_pass_epa = lag(off_pass_epa),
+    prior_def_rush_epa = lag(def_rush_epa),
+    prior_def_pass_epa = lag(def_pass_epa),
+    prior_point_diff = lag(point_diff)
+  )
+
+data %>%
+  head(5)
+```
+Finally! Now we have the data in place and can start doing things with it.
+
+### Correlations and regressions
+
+``` {r}
+data %>% 
+  select(-team, -season) %>%
+  cor(use="complete.obs") %>%
+  round(2)
+```
+
+We've covered `select`, but here we see a new use where a minus sign de-selects variables (we need to de-select team name for correlation to work because it doesn't work for character strings, and correlation with the season number itself is meaningless). We've run the correlation on this dataframe, removing missing values, and then rounding to 2 digits. Not surprisingly, we see that wins in the current season are more strongly related to passing offense EPA than rushing EPA or defense EPA, and prior offense carries more predictive power than prior defense. Pass offense is more stable year to year (0.47) than rush offense (0.33), pass defense (0.28), or rush defense (0.26).
+
+I'm actually surprised that the values for passing offense aren't higher relative to the others. Maybe it was because most of our prior results come from the `nflscrapR` era (2009 - 2019)? Let's check what this looks like since 2009 relative to earlier seasons:
+
+``` {r}
+message("2009 through 2019")
+data %>% 
+  filter(season >= 2009) %>%
+  select(wins, point_diff, off_pass_epa, off_rush_epa, prior_point_diff, prior_off_pass_epa, prior_off_rush_epa) %>%
+  cor(use="complete.obs") %>%
+  round(2)
+```
+
+``` {r}
+message("1999 through 2008")
+data %>% 
+  filter(season < 2009) %>%
+  select(wins, point_diff, off_pass_epa, off_rush_epa, prior_point_diff, prior_off_pass_epa, prior_off_rush_epa) %>%
+  cor(use="complete.obs") %>%
+  round(2)
+```
+
+Yep, that seems to be the case. So in the more recent period, passing offense has become slightly more stable (from 0.45 to 0.46) but more predictive of following-year success (from 0.67 to 0.72), while at the same time rushing offense has become substantially less stable (from 0.43 to 0.24) and less predictive of future team success (from 0.48 to 0.42).
+
+Now let's do a basic regression of wins on prior offense and defense EPA/play. Maybe we should only look at this more recent period to fit our model since it's more relevant for 2020. In the real world, we would be more rigorous about making decisions like this, but let's proceed anyway.
+
+``` {r}
+data <- data %>% filter(season >= 2009)
+
+fit <- lm(wins ~ prior_off_pass_epa  + prior_off_rush_epa + prior_def_pass_epa + prior_def_rush_epa, data = data)
+
+summary(fit)
+```
+
+I'm actually pretty surprised passing offense isn't higher here. How does this compare to simply using point differential?
+
+``` {r}
+fit2 <- lm(wins ~ prior_point_diff, data = data)
+
+summary(fit2)
+```
+
+So R2 is somewhat higher for just point differential. This isn't surprising as we've thrown away special teams plays and haven't attempted to make any adjustments for things like fumble luck that we know can improve EPA's predictive power.
+
+### Predictions
+
+Now let's get the predictions from the EPA model:
+
+``` {r}
+preds <- predict(fit, data %>% filter(season == 2020)) %>%
+  #was just a vector, need a tibble to bind
+  as_tibble() %>%
+  #make the column name make sense
+  rename(prediction = value) %>%
+  round(1) %>%
+  #get names
+  bind_cols(
+    data %>% filter(season == 2020) %>% select(team)
+  )
+
+preds %>%
+  arrange(-prediction) %>%
+  head(5)
+```
+
+This mostly checks out. 
+
+What if we just used simple point differential to predict?
+
+``` {r}
+preds2 <- predict(fit2, data %>% filter(season == 2020)) %>%
+  #was just a vector, need a tibble to bind
+  as_tibble() %>%
+  #make the column name make sense
+  rename(prediction = value) %>%
+  round(1) %>%
+  #get names
+  bind_cols(
+    data %>% filter(season == 2020) %>% select(team)
+  )
+
+preds2 %>%
+  arrange(-prediction) %>%
+  head(5)
+```
+
+Not surprisingly, this looks pretty similar. These are very basic models that don't incorporate schedule, roster changes, etc. For example, a better model would take into account Tom Brady no longer playing for the Patriots. But hopefully this has been useful!
+
+## Next Steps
+
+You now should know enough to be able to tackle a great deal of questions using `nflfastR` data. A good way to build up skills is to take interesting things you see and try to replicate them (for making figures, this will also involve a heavy dose of googling stuff).
+
+Looking at others' code is also a good way to learn. One option is to look through the `nflfastR` code base, much of which you should now understand what it's doing. For example, [here is the function that cleans up the data and prepares it for later stages](https://github.com/mrcaseb/nflfastR/blob/master/R/helper_add_nflscrapr_mutations.R): there's a heavy dose of `mutate`, `group_by`, `arrange`, `lag`, `if_else`, and `case_when`. 
+
+### Other code examples: R
+
+* [Introduction to R (**recommended**)](https://r4ds.had.co.nz/explore-intro.html)
+* [Lee Sharpe: basic intro to R and RStudio](https://github.com/leesharpe/nfldata/blob/master/RSTUDIO-INTRO.md)
+* [Lee Sharpe: lots of useful NFL / nflscrapR code](https://github.com/leesharpe/nfldata)
+* [Lee Sharpe: how to update current season games](https://github.com/leesharpe/nfldata/blob/master/UPDATING-NFLSCRAPR.md)
+* [Thomas Mock: pretty #viz with nflscrapR](https://jthomasmock.github.io/nfl_plotting_cookbook/)
+* [Thomas Mock: biggest comebacks](https://gist.github.com/jthomasmock/7d489f04e53812eacca8b94b6c8ee84a)
+* [Josh Hermsmeyer: Getting Started with R for NFL Analysis](https://t.co/gxDDhOYhcI)
+* [Slavin: visualizing positional tiers in SFB9](https://slavin22.github.io/SFB9-Positional-Tiers/Guide.nb)
+* [Ron Yurko: assorted examples](https://github.com/ryurko/nflscrapR-data/tree/master/R)
+* [CowboysStats: defensive playmaking EPA](https://github.com/dhouston890/cowboys-stats/blob/master/playmaking_epa_pbp.R)
+* [Michael Lopez: function to sample plays](https://github.com/statsbylopez/BlogPosts/blob/master/scrapr-data.R)
+* [Michael Lopez: R for NFL analysis (presentation to club staffers)](https://statsbylopez.netlify.com/post/r-for-nfl-analysis/)
+* [Mitchell Wesson: QB hits investigation](https://gist.github.com/wessonmo/45781bd25a74e8097e0c8bc8fbacf796)
+* [Mitchell Wesson: Investigation of the nflscrapR EP model](https://gist.github.com/wessonmo/ef44ea9873d70f816454cb88b86dcce6)
+* [WHoffman: graphs for receivers (aDoT, success rate, and more)](https://github.com/whoffman21279/Steelers/blob/master/receiving_stats)
+* [ChiBearsStats: investigation of 3rd downs vs offensive efficiency](https://gist.github.com/ChiBearsStats/dac3266037797032a23f38fd9d64d6a8#file-adjustedthirddowns-txt)
+* [ChiBearsStats: the insignificance of field goal kicking](https://gist.github.com/ChiBearsStats/78e33baeed3cd6d3cac0040b47d4ec69)
+
+### More data sources
+
+* [Lee Sharpe: Draft Picks, Draft Values, Games, Logos, Rosters, Standings](https://github.com/leesharpe/nfldata/blob/master/DATASETS.md)
+* [greerre: how to get .csv file of weather & stadium data from PFR in python](https://github.com/greerre/pfr_metadata_pull)
+* [Parker Fleming: Introduction to College Football Data with R and cfbscrapR](https://gist.github.com/spfleming/2527a6ca2b940af2a8aa1fee9320171d)
+
+### Other code examples: Python
+
+* [Deryck97: nflfastR Python Guide](https://gist.github.com/Deryck97/dff8d33e9f841568201a2a0d5519ac5e)
+* [Nick Wan: nflfastR Python Colab Guide](https://colab.research.google.com/github/nickwan/colab_nflfastR/blob/master/nflfastR_starter.ipynb)
+* [Cory Jez: animated plot](https://github.com/jezlax/sports_analytics/blob/master/animated_nfl_scatter.py)
+* [903124S: Sampling EP](https://gist.github.com/903124/6693fdf6b991437a6d6ef9c5d935c83b)
+* [903124S: estimating EPA using nfldb](https://gist.github.com/903124/d304f76688b0699497a35b61b6d1e267)
+* [903124S: estimate EPA for college football](https://gist.github.com/903124/3c6f0dc0a100d78b8622573ef4c504f5)
+* Blake Atkinson: explosiveness [blog post](https://medium.com/@BlakeAtkinson/the-2018-kansas-city-chiefs-and-an-explosiveness-metric-in-football-c3b3fd447d73) and [python code](https://github.com/btatkinson/yard_value/blob/master/yard_value.ipynb)
+* Blake Atkinson: player type visualizations [blog post](https://medium.com/@BlakeAtkinson/visualizing-different-nfl-player-styles-88ef31420539) and [python code](https://github.com/btatkinson/player_vectors/blob/master/player_vectors.ipynb)

@@ -333,6 +333,14 @@ add_ep_variables <- function(pbp_data) {
   extrapoint_i <- which(pbp_data$play_type == "extra_point")
   twopoint_i <- which(pbp_data$two_point_attempt == 1)
 
+  #new: special case for PAT or kickoff with penalty
+  st_penalty_i <- which(
+    # pat
+    (dplyr::lag(pbp_data$touchdown == 1) & (dplyr::lead(pbp_data$two_point_attempt)==1 | dplyr::lead(pbp_data$extra_point_attempt)==1)) |
+      #kickoff
+      ((dplyr::lag(pbp_data$two_point_attempt)==1 | dplyr::lag(pbp_data$extra_point_attempt)==1) & dplyr::lead(pbp_data$kickoff_attempt == 1))
+    )
+
   # Assign the make_fg_probs of the extra-point PATs:
   base_ep_preds$ExPoint_Prob[extrapoint_i] <- make_fg_prob[extrapoint_i]
 
@@ -344,13 +352,13 @@ add_ep_variables <- function(pbp_data) {
   missing_i <- which((pbp_data$timeout == 1 & pbp_data$play_type == "no_play") | is.na(pbp_data$play_type))
 
   # Now update the probabilities for missing and PATs:
-  base_ep_preds$Field_Goal[c(missing_i, extrapoint_i, twopoint_i)] <- 0
-  base_ep_preds$Touchdown[c(missing_i, extrapoint_i, twopoint_i)] <- 0
-  base_ep_preds$Opp_Field_Goal[c(missing_i, extrapoint_i, twopoint_i)] <- 0
-  base_ep_preds$Opp_Touchdown[c(missing_i, extrapoint_i, twopoint_i)] <- 0
-  base_ep_preds$Safety[c(missing_i, extrapoint_i, twopoint_i)] <- 0
-  base_ep_preds$Opp_Safety[c(missing_i, extrapoint_i, twopoint_i)] <- 0
-  base_ep_preds$No_Score[c(missing_i, extrapoint_i, twopoint_i)] <- 0
+  base_ep_preds$Field_Goal[c(missing_i, extrapoint_i, twopoint_i, st_penalty_i)] <- 0
+  base_ep_preds$Touchdown[c(missing_i, extrapoint_i, twopoint_i, st_penalty_i)] <- 0
+  base_ep_preds$Opp_Field_Goal[c(missing_i, extrapoint_i, twopoint_i, st_penalty_i)] <- 0
+  base_ep_preds$Opp_Touchdown[c(missing_i, extrapoint_i, twopoint_i, st_penalty_i)] <- 0
+  base_ep_preds$Safety[c(missing_i, extrapoint_i, twopoint_i, st_penalty_i)] <- 0
+  base_ep_preds$Opp_Safety[c(missing_i, extrapoint_i, twopoint_i, st_penalty_i)] <- 0
+  base_ep_preds$No_Score[c(missing_i, extrapoint_i, twopoint_i, st_penalty_i)] <- 0
 
   # Rename the events to all have _Prob at the end of them:
   base_ep_preds <- dplyr::rename(base_ep_preds,
@@ -373,6 +381,9 @@ add_ep_variables <- function(pbp_data) {
                                  (-7 * Opp_Touchdown_Prob) + (3 * Field_Goal_Prob) +
                                  (2 * Safety_Prob) + (7 * Touchdown_Prob) +
                                  (1 * ExPoint_Prob) + (2 * TwoPoint_Prob))
+
+  #just going to set these to NA bc we have no way of calculating EPA for them
+  pbp_data_ep$ExpPts[st_penalty_i] <- NA_real_
 
   #################################################################
   # Calculate EPA:
@@ -448,7 +459,6 @@ add_ep_variables <- function(pbp_data) {
                              two_point_pass_good == 0 &
                              two_point_pass_reception_good == 0 &
                              safety == 0 &
-                             drive != dplyr::lead(drive) &
                              posteam != dplyr::lead(posteam) &
                              !is.na(dplyr::lead(play_type)) &
                              (dplyr::lead(timeout) == 0 |
@@ -471,7 +481,6 @@ add_ep_variables <- function(pbp_data) {
                              (is.na(dplyr::lead(play_type)) |
                                 (dplyr::lead(timeout) == 1 &
                                    dplyr::lead(play_type) == "no_play")) &
-                             drive != dplyr::lead(drive, 2) &
                              posteam != dplyr::lead(posteam, 2),
                            -dplyr::lead(ExpPts, 2) - ExpPts, EPA),
       # Same thing except for when back to back rows of end of
@@ -491,7 +500,6 @@ add_ep_variables <- function(pbp_data) {
                              safety == 0 &
                              (is.na(dplyr::lead(play_type)) &
                                 is.na(dplyr::lead(play_type, 2))) &
-                             drive != dplyr::lead(drive, 3) &
                              posteam != dplyr::lead(posteam, 3),
                            -dplyr::lead(ExpPts, 3) - ExpPts, EPA),
       # Team keeps possession and no timeout or end of play follows:
@@ -576,7 +584,8 @@ add_ep_variables <- function(pbp_data) {
                                               dplyr::lead(desc) == "END QUARTER 2")) |
                                           (qtr == 4 &
                                              (dplyr::lead(qtr) == 5 |
-                                                dplyr::lead(desc) == "END QUARTER 4"))) &
+                                                dplyr::lead(desc) == "END QUARTER 4" |
+                                                dplyr::lead(desc) == "END GAME"))) &
                                          sp == 0 &
                                          !is.na(play_type),
                                        0 - ep, epa),
@@ -709,7 +718,7 @@ add_wp_variables <- function(pbp_data) {
 
   ## end PAT fix
 
-  ## now we need to fix WP on kickoffs
+  ## now we need to fix WP on kickoffs, which will be WP associated with touchback
   kickoff_data <- pbp_data
 
   # Change the yard line to be 80 for 2009-2015 and 75 otherwise
@@ -729,7 +738,7 @@ add_wp_variables <- function(pbp_data) {
   kickoff_preds_spread <- get_preds_wp_spread(kickoff_data)
 
   # Find the kickoffs in regulation:
-  kickoff_i <- which(pbp_data$play_type == "kickoff" & pbp_data$qtr <= 4)
+  kickoff_i <- which((pbp_data$play_type == "kickoff" | pbp_data$kickoff_attempt == 1) & pbp_data$qtr <= 4)
 
   # Now update the probabilities:
   OffWinProb[kickoff_i] <- kickoff_preds[kickoff_i]
@@ -750,8 +759,9 @@ add_wp_variables <- function(pbp_data) {
       vegas_wp, .direction = "up"
     ) %>%
     dplyr::mutate(
-      wp = dplyr::if_else(stringr::str_detect(desc, 'extra point') | !is.na(two_point_conv_result) | !is.na(extra_point_result), 1 - wp, wp),
-      vegas_wp = dplyr::if_else(stringr::str_detect(desc, 'extra point') | !is.na(two_point_conv_result) | !is.na(extra_point_result), 1 - vegas_wp, vegas_wp),
+      #because other team will have the ball so WP from their perspective
+      wp = dplyr::if_else((stringr::str_detect(desc, 'Kick formation') & is.na(down)) | stringr::str_detect(desc, 'extra point') | !is.na(two_point_conv_result) | !is.na(extra_point_result), 1 - wp, wp),
+      vegas_wp = dplyr::if_else((stringr::str_detect(desc, 'Kick formation') & is.na(down)) | stringr::str_detect(desc, 'extra point') | !is.na(two_point_conv_result) | !is.na(extra_point_result), 1 - vegas_wp, vegas_wp),
       wp = dplyr::if_else(is.na(posteam), NA_real_, wp),
       def_wp = 1 - wp,
       home_wp = dplyr::if_else(posteam == home_team,
@@ -900,6 +910,7 @@ add_wp_variables <- function(pbp_data) {
                                 WPA_base_nxt_ind, WPA_change_nxt_ind,
                                 WPA_change_ind, WPA_halfend_to_ind, WPA_final_ind
                                 )) %>%
+    dplyr::group_by(game_id) %>%
     dplyr::mutate(
                   # Generate columns to keep track of cumulative rushing and
                   # passing WPA values:
@@ -932,6 +943,7 @@ add_wp_variables <- function(pbp_data) {
                                                       0, away_team_pass_wpa),
                   total_home_pass_wpa = cumsum(home_team_pass_wpa),
                   total_away_pass_wpa = cumsum(away_team_pass_wpa)) %>%
+    dplyr::ungroup() %>%
     return
 
 }
@@ -1045,6 +1057,7 @@ add_air_yac_ep_variables <- function(pbp_data) {
   pbp_data %>%
     dplyr::rename(air_epa = airEPA,
                   yac_epa = yacEPA) %>%
+    dplyr::group_by(game_id) %>%
     dplyr::mutate(comp_air_epa = dplyr::if_else(complete_pass == 1,
                                                 air_epa, 0),
                   comp_yac_epa = dplyr::if_else(complete_pass == 1,
@@ -1090,6 +1103,7 @@ add_air_yac_ep_variables <- function(pbp_data) {
                   total_away_raw_air_epa = cumsum(away_team_raw_air_epa),
                   total_home_raw_yac_epa = cumsum(home_team_raw_yac_epa),
                   total_away_raw_yac_epa = cumsum(away_team_raw_yac_epa)) %>%
+    dplyr::ungroup() %>%
     return
 }
 
@@ -1356,6 +1370,7 @@ add_air_yac_wp_variables <- function(pbp_data) {
   pbp_data %>%
     dplyr::rename(air_wpa = airWPA,
                   yac_wpa = yacWPA) %>%
+    dplyr::group_by(game_id) %>%
     dplyr::mutate(comp_air_wpa = dplyr::if_else(complete_pass == 1,
                                                 air_wpa, 0),
                   comp_yac_wpa = dplyr::if_else(complete_pass == 1,
@@ -1401,6 +1416,7 @@ add_air_yac_wp_variables <- function(pbp_data) {
                   total_away_raw_air_wpa = cumsum(away_team_raw_air_wpa),
                   total_home_raw_yac_wpa = cumsum(home_team_raw_yac_wpa),
                   total_away_raw_yac_wpa = cumsum(away_team_raw_yac_wpa)) %>%
+    dplyr::ungroup() %>%
     return
 
 }

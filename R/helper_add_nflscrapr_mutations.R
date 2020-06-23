@@ -26,7 +26,9 @@ add_nflscrapr_mutations <- function(pbp) {
     ) %>%
     #put plays in the right order
     dplyr::group_by(game_id) %>%
-    dplyr::arrange(quarter, -quarter_seconds_remaining, index) %>%
+    # the !is.na(drive), drive part is to make the initial GAME line show up first
+    # https://stackoverflow.com/questions/43343590/how-to-sort-putting-nas-first-in-dplyr
+    dplyr::arrange(quarter, !is.na(quarter_seconds_remaining), -quarter_seconds_remaining, !is.na(drive), drive, index, .by_group = TRUE) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(
       # Fill in the rows with missing posteam with the lag:

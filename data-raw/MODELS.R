@@ -15,7 +15,7 @@ set.seed(2013) #GoHawks
 # Estimate EP model
 ################################################################################
 
-pbp_data <- readRDS('data-raw/cal_data.rds')
+pbp_data <- readRDS(url('https://github.com/guga31bb/nflfastR-data/blob/master/models/cal_data.rds?raw=true'))
 
 #function in helper_add_ep_wp.R
 model_data <- pbp_data %>%

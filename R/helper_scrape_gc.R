@@ -98,9 +98,11 @@ get_pbp_gc <- function(gameId) {
         )
 
 
-      pbp_stats <- purrr::map_df(unique(stats$playId), function(x) {
+      pbp_stats <- purrr::map(unique(stats$playId), function(x) {
         sum_play_stats(x, stats = stats)
       })
+
+      pbp_stats <- dplyr::bind_rows(pbp_stats)
 
       #drive info
       d <- tibble::tibble(drives) %>%

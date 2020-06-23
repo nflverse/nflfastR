@@ -1,0 +1,128 @@
+---
+title: "Examples"
+author: "Ben Baldwin & Sebastian Carl"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+All examples listed below assume that the following two libraries are installed and loaded.
+
+``` {r load, warning = FALSE, message = FALSE}
+library(nflfastR)
+library(tidyverse)
+```
+
+If you have trouble understanding the code in the examples we highly recommend the **nflfastR beginner's guide** in `vignette("beginners_guide")`.
+
+# Example 1: replicate nflscrapR with fast_scraper
+
+The functionality of `nflscrapR` can be duplicated by using `fast_scraper()`. This obtains the same information contained in `nflscrapR` (plus some extra) but much more quickly. To compare to `nflscrapR`, we use their data repository as the program no longer functions now that the NFL has taken down the old Gamecenter feed. Note that EP differs from nflscrapR as we use a newer era-adjusted model (more on this in `vignette("nflfastR-models")`).
+
+This example also uses the built-in function `clean_pbp()` to create a 'name' column for the primary player involved (the QB on pass play or ball-carrier on run play).
+
+``` {r ex1-nflscrapR, warning = FALSE, message = FALSE}
+read_csv(url('https://github.com/ryurko/nflscrapR-data/blob/master/play_by_play_data/regular_season/reg_pbp_2019.csv?raw=true')) %>%
+  filter(home_team == 'SF' & away_team == 'SEA') %>%
+  select(desc, play_type, ep, epa, home_wp) %>% head(5) %>% 
+  knitr::kable(digits = 3)
+```
+
+``` {r ex1-fs, warning = FALSE, message = FALSE}
+fast_scraper('2019_10_SEA_SF') %>%
+  clean_pbp() %>%
+  select(desc, play_type, ep, epa, home_wp, name) %>% head(6) %>% 
+  knitr::kable(digits = 3)
+```
+
+# Example 2: scrape a batch of games very quickly with fast_scraper and parallel processing
+
+This is a demonstration of `nflfastR`'s capabilities. While `nflfastR` can scrape a batch of games very quickly, **please be respectful of Github's servers and use the [data repository](https://github.com/guga31bb/nflfastR-data) which hosts all the scraped and cleaned data** whenever possible. The only reason to ever actually use the scraper is if it's in the middle of the season and we haven't updated the repository with recent games (but we will try to keep it updated).
+``` {r ex2-bigscrape, warning = FALSE, message = FALSE}
+#get list of some games from 2019
+games_2019 <- fast_scraper_schedules(2019) %>% head(10) %>% pull(game_id)
+
+tictoc::tic(glue::glue('{length(games_2019)} games with nflfastR:'))
+f <- fast_scraper(games_2019, pp = TRUE)
+tictoc::toc()
+```
+
+# Example 3: completion percentage over expected (CPOE)
+
+Let's look at CPOE leaders from the 2009 regular season.
+
+As discussed above, `nflfastR` has a data repository for old seasons, so there's no need to actually scrape them. Let's use that here (the below reads .rds files, but .csv and .parquet are also available).
+``` {r ex3-cpoe, warning = FALSE, message = FALSE}
+tictoc::tic('loading all games from 2009')
+games_2009 <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2009.rds')) %>% filter(season_type == 'REG')
+tictoc::toc()
+games_2009 %>% filter(!is.na(cpoe)) %>% group_by(passer_player_name) %>%
+  summarize(cpoe = mean(cpoe), Atts=n()) %>%
+  filter(Atts > 200) %>%
+  arrange(-cpoe) %>%
+  head(5) %>% 
+  knitr::kable(digits = 1)
+```
+
+# Example 4: using drive information
+
+When working with `nflfastR`, drive results are automatically included. Let's look at how much more likely teams were to score starting from 1st & 10 at their own 20 yard line in 2015 (the last year before touchbacks on kickoffs changed to the 25) than in 2000.
+``` {r ex4, warning = FALSE, message = FALSE}
+games_2000 <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2000.rds'))
+games_2015 <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2015.rds'))
+
+pbp <- bind_rows(games_2000, games_2015)
+
+pbp %>% filter(season_type == 'REG' & down == 1 & ydstogo == 10 & yardline_100 == 80) %>%
+  mutate(drive_score = if_else(drive_end_transition %in% c("Touchdown", "Field Goal", "TOUCHDOWN", "FIELD_GOAL"), 1, 0)) %>%
+  group_by(season) %>%
+  summarize(drive_score = mean(drive_score)) %>% 
+  knitr::kable(digits = 3)
+```
+
+So about 23% of 1st & 10 plays from teams' own 20 would see the drive end up in a score in 2000, compared to 30% in 2015. This has implications for Expected Points models (see `vignette("nflfastR-models")`).
+
+# Example 5: Plot offensive and defensive EPA per play for a given season
+
+Let's build the **[NFL team tiers](https://rbsdm.com/stats/stats/)** using offensive and defensive expected points added per play for the 2005 regular season. The logo urls of the espn logos are integrated into the `?teams_colors_logos` data frame which is delivered with the package. 
+
+Let's also use the included helper function `clean_pbp()`, which creates "rush" and "pass" columns that (a) properly count sacks and scrambles as pass plays and (b) properly include plays with penalties. Using this, we can keep only rush or pass plays.
+```{r ex5, warning = FALSE, message = FALSE, results = 'hide', fig.keep = 'all', dpi = 600}
+library(ggimage)
+pbp <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2005.rds')) %>%
+  filter(season_type == 'REG') %>% filter(!is.na(posteam) & (rush == 1 | pass == 1))
+offense <- pbp %>% group_by(posteam) %>% summarise(off_epa = mean(epa, na.rm = TRUE))
+defense <- pbp %>% group_by(defteam) %>% summarise(def_epa = mean(epa, na.rm = TRUE))
+logos <- teams_colors_logos %>% select(team_abbr, team_logo_espn)
+
+offense %>%
+  inner_join(defense, by = c("posteam" = "defteam")) %>%
+  inner_join(logos, by = c("posteam" = "team_abbr")) %>%
+  ggplot(aes(x = off_epa, y = def_epa)) +
+  geom_abline(slope = -1.5, intercept = c(.4, .3, .2, .1, 0, -.1, -.2, -.3), alpha = .2) +
+  geom_hline(aes(yintercept = mean(off_epa)), color = "red", linetype = "dashed") +
+  geom_vline(aes(xintercept = mean(def_epa)), color = "red", linetype = "dashed") +
+  geom_image(aes(image = team_logo_espn), size = 0.05, asp = 16 / 9) +
+  labs(
+    x = "Offense EPA/play",
+    y = "Defense EPA/play",
+    caption = "Data: @nflfastR",
+    title = "2005 NFL Offensive and Defensive EPA per Play"
+  ) +
+  theme_bw() +
+  theme(
+    aspect.ratio = 9 / 16,
+    plot.title = element_text(size = 12, hjust = 0.5, face = "bold")
+  ) +
+  scale_y_reverse()
+```
+
+# Example 6: Working with roster and position data
+
+This section used to contain an example of working with roster data. Unfortunately, we have not found a way to obtain roster data that can be joined to the new play by play, so for now, it is empty. We would like to be able to get position data but haven't yet.
+
+The `clean_pbp()` function does a lot of work cleaning up player names and IDs for the purpose of joining them to roster data, but we do not have any roster data to join to. **Note that player IDs are inconsistent between the old (1999-2010) and new (2011 - present) data sources so use IDs with caution**. Unfortunately there is nothing we can do about this as the NFL changed their system for IDs in the underlying data.

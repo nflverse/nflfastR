@@ -5,3 +5,10 @@
 ^README\.Rmd$
 ^.*\.pdf$
 ^.github$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^vignettes/articles$
+^\.github$
+^vignettes/nflfastR-models\.Rmd$
+^vignettes$

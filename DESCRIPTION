@@ -1,18 +1,36 @@
 Type: Package
 Package: nflfastR
 Title: Functions to Efficiently Scrape NFL Play by Play Data
-Version: 2.0.3
+Version: 2.0.5
 Authors@R: 
     c(person(given = "Sebastian",
              family = "Carl",
-             role = "aut"),
+             role = "aut",
+             email = "mrcaseb@gmail.com"),
       person(given = "Ben",
              family = "Baldwin",
              role = c("cre", "aut"),
-             email = "bbaldwin206@gmail.com"))
+             email = "bbaldwin206@gmail.com"),
+      person(given = "Lee", 
+             family = "Sharpe",
+             role = "ctb"),
+      person(given = "Maksim", 
+             family = "Horowitz",
+             role = "ctb",
+             email = "maksim.horowitz@gmail.com"), 
+      person(given = "Ron",
+             family = "Yurko",
+             role = "ctb",
+             email = "ryurko@stat.cmu.edu"),
+      person(given = "Samuel",
+             family = "Ventura",
+             role = "ctb",
+             email = "samventura22@gmail.com"))
 Description: nflfastR is a set of functions to efficiently
     scrape NFL play-by-play data.
 License: MIT + file LICENSE
+URL: https://github.com/mrcaseb/nflfastR
+BugReports: https://github.com/mrcaseb/nflfastR/issues
 Depends: 
     R (>= 3.5.0)
 Imports: 
@@ -34,7 +52,8 @@ Imports:
     xgboost (>= 1.1)
 Suggests: 
     furrr,
-    future
+    future,
+    rmarkdown
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.0

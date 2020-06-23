@@ -1,0 +1,30 @@
+template:
+  params:
+    bootswatch: yeti
+
+toc:
+  depth: 3
+
+authors:
+  Sebastian Carl:
+    href: https://twitter.com/mrcaseb
+  Ben Baldwin:
+    href: https://twitter.com/benbbaldwin
+  Lee Sharpe:
+    href: https://twitter.com/LeeSharpeNFL
+  Maksim Horowitz:
+    href: https://twitter.com/bklynmaks
+  Ron Yurko:
+    href: https://twitter.com/Stat_Ron
+  Samuel Ventura:
+    href: https://twitter.com/stat_sam
+
+home:
+  title: An R package to quickly obtain clean and tidy NFL play by play data
+  links:
+  - text: nflfastR beginner's guide
+    href: https://mrcaseb.github.io/nflfastR/articles/beginners_guide.html
+  - text: nflfastR stats landing page
+    href: https://rbsdm.com/stats/
+  - text: Lee Sharpe's nfl game data
+    href: http://nflgamedata.com

@@ -13,24 +13,24 @@ fast_scraper_schedules(seasons, pp = FALSE)
 }
 \value{
 Data frame containing the following detailed game information:
-\itemize{
-\item{game_id} - Character identifier including season, week, away team and home team
-\item{season} - 4 digit season year.
-\item{game_type} - One of 'REG', 'WC', 'DIV', 'CON', 'SB' indicating if a game was a regular season game or one of the playoff rounds.
-\item{week} - Numeric week number.
-\item{gameday} - Game date in format yyyy/mm/dd.
-\item{weekday} - The day of the week on which the game occcured.
-\item{gametime} - The kickoff time of the game. This is represented in 24-hour time and the Eastern time zone, regardless of what time zone the game was being played in.
-\item{away_team} - Away team abbreviation.
-\item{home_team} - Home team abbreviation.
-\item{away_score} - The number of points the away team scored. Is 'NA' for games which haven't yet been played.
-\item{home_score} - The number of points the home team scored. Is 'NA' for games which haven't yet been played.
-\item{home_result} - Equals home_score - away_score and means the game outcome from the perspective of the home team.
-\item{stadium} - Name of the stadium the game was or will be played in. (Source: Pro-Football-Reference)
-\item{location} - Either 'Home' o 'Neutral' indicating if the home team played at home or at a neutral site.
-\item{roof} - One of 'dome', 'outdoors', 'closed', 'open' indicating indicating the roof status of the stadium the game was played in. (Source: Pro-Football-Reference)
-\item{surface} - What type of ground the game was played on. (Source: Pro-Football-Reference)
-\item{old_game_id} - Unique game identifier of the old NFL API.
+\describe{
+\item{game_id}{Character identifier including season, week, away team and home team}
+\item{season}{4 digit season year.}
+\item{game_type}{One of 'REG', 'WC', 'DIV', 'CON', 'SB' indicating if a game was a regular season game or one of the playoff rounds.}
+\item{week}{Numeric week number.}
+\item{gameday}{Game date in format yyyy/mm/dd.}
+\item{weekday}{The day of the week on which the game occcured.}
+\item{gametime}{The kickoff time of the game. This is represented in 24-hour time and the Eastern time zone, regardless of what time zone the game was being played in.}
+\item{away_team}{Away team abbreviation.}
+\item{home_team}{Home team abbreviation.}
+\item{away_score}{The number of points the away team scored. Is 'NA' for games which haven't yet been played.}
+\item{home_score}{The number of points the home team scored. Is 'NA' for games which haven't yet been played.}
+\item{home_result}{Equals home_score - away_score and means the game outcome from the perspective of the home team.}
+\item{stadium}{Name of the stadium the game was or will be played in. (Source: Pro-Football-Reference)}
+\item{location}{Either 'Home' o 'Neutral' indicating if the home team played at home or at a neutral site. }
+\item{roof}{One of 'dome', 'outdoors', 'closed', 'open' indicating indicating the roof status of the stadium the game was played in. (Source: Pro-Football-Reference)}
+\item{surface}{What type of ground the game was played on. (Source: Pro-Football-Reference)}
+\item{old_game_id}{Unique game identifier of the old NFL API.}
 }
 }
 \description{
