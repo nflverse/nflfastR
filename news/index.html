@@ -47,7 +47,10 @@
 
 
 <meta property="og:title" content="Changelog" />
-<meta property="og:image" content="/logo.png" />
+<meta property="og:image" content="/reference/figures/card.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:creator" content="@nflfastR" />
+<meta name="twitter:site" content="@nflfastR" />
 
 
 
@@ -79,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.6</span>
       </span>
     </div>
 
@@ -93,6 +96,9 @@
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li>
+  <a href="../news/index.html">Changelog</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -112,12 +118,15 @@
     </li>
   </ul>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
-</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
+  <a href="http://twitter.com/nflfastR">
+    <span class="fab fa fab fa-twitter fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="https://github.com/mrcaseb/nflfastR/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
@@ -140,6 +149,23 @@
       <small>Source: <a href='https://github.com/mrcaseb/nflfastR/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="nflfastr-206" class="section level1">
+<h1 class="page-header" data-toc-text="2.0.6">
+<a href="#nflfastr-206" class="anchor"></a>nflfastR 2.0.6</h1>
+<ul>
+<li>Fixed a problem where defensive two point conversions were not counted</li>
+<li>Kneels on kickoffs are no longer counted as qb kneels</li>
+<li>Variable <code>yards_gained</code> more precisely defined</li>
+<li>Bugfixes for more games with out of order of plays</li>
+<li>Fix bug related to EPA on plays with a failed pass interference challenge</li>
+<li>Added new example to <code><a href="../articles/examples.html">vignette("examples")</a></code> to demonstrate Expected Points calculator <code><a href="../reference/calculate_expected_points.html">calculate_expected_points()</a></code>
+</li>
+<li>Fix for WP on 2-pt conversion negated by penalty</li>
+<li>Add more variables (containing team names) to team standardization in <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code>
+</li>
+<li>Fix WP for onside kicks</li>
+</ul>
+</div>
     <div id="nflfastr-205" class="section level1">
 <h1 class="page-header" data-toc-text="2.0.5">
 <a href="#nflfastr-205" class="anchor"></a>nflfastR 2.0.5</h1>
