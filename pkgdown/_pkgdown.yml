@@ -7,7 +7,6 @@ template:
     image:
       src: https://raw.githubusercontent.com/mrcaseb/nflfastR/master/man/figures/card.png
     twitter:
-      image: https://raw.githubusercontent.com/mrcaseb/nflfastR/master/man/figures/card.png
       site: "@nflfastR"
       card: summary_large_image
 
