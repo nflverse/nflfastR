@@ -169,6 +169,7 @@ nflfastR::calculate_expected_points(data) %>%
   select(season, yardline_100, td_prob, ep) %>% 
   knitr::kable(digits = 2)
 ```
+
 So for 2018 and 2019, 1st & 10 from a home team's own 25 yard line had EP of 1.44 outdoors and 1.67 in domes
 
 # Example 7: Working with roster and position data
