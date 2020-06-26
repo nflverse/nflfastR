@@ -1,9 +1,11 @@
+url: https://mrcaseb.github.io/nflfastR/
+
 template:
   params:
     bootswatch: yeti
   opengraph:
     image:
-      src: man/figures/card.png
+      src: https://raw.githubusercontent.com/mrcaseb/nflfastR/master/man/figures/card.png
     twitter:
       site: "@nflfastR"
       card: summary_large_image
