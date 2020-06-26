@@ -125,6 +125,7 @@ offense %>%
 We have provided a calculator for working with the Expected Points model. Here is an example of how to use it, looking for how the Expected Points on a drive beginning following a touchback has changed over time.
 
 While I have put in `'SEA'` for `home_team` and `posteam`, this only matters for figuring out whether the team with the ball is the home team (there's no actual effect for given team; it would be the same no matter what team is supplied).
+
 ``` {r ex6a}
 data <- tibble::tibble(
   "season" = 1999:2019,
@@ -144,6 +145,7 @@ nflfastR::calculate_expected_points(data) %>%
   select(season, yardline_100, td_prob, ep) %>% 
   knitr::kable(digits = 2)
 ```
+
 Not surprisingly, offenses have become much more successful over time, with the kickoff touchback moving from the 20 to the 25 in 2016 providing an additional boost. Note that the `td_prob` in this example is the probability that the next score within the same half will be a touchdown scored by team with the ball, **not** the probability that the current drive will end in a touchdown (this is why the numbers are different from Example 4 above).
 
 We could compare the most recent four years to the expectation for playing in a dome by inputting all the same things and changing the `roof` input:
