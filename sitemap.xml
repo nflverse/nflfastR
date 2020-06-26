@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://mrcaseb.github.io/nflfastR//index.html</loc>
+  </url>
+  <url>
+    <loc>https://mrcaseb.github.io/nflfastR//reference/add_qb_epa.html</loc>
+  </url>
+  <url>
+    <loc>https://mrcaseb.github.io/nflfastR//reference/calculate_expected_points.html</loc>
+  </url>
+  <url>
+    <loc>https://mrcaseb.github.io/nflfastR//reference/clean_pbp.html</loc>
+  </url>
+  <url>
+    <loc>https://mrcaseb.github.io/nflfastR//reference/fast_scraper.html</loc>
+  </url>
+  <url>
+    <loc>https://mrcaseb.github.io/nflfastR//reference/fast_scraper_schedules.html</loc>
+  </url>
+  <url>
+    <loc>https://mrcaseb.github.io/nflfastR//reference/teams_colors_logos.html</loc>
+  </url>
+  <url>
+    <loc>https://mrcaseb.github.io/nflfastR//articles/beginners_guide.html</loc>
+  </url>
+  <url>
+    <loc>https://mrcaseb.github.io/nflfastR//articles/examples.html</loc>
+  </url>
+  <url>
+    <loc>https://mrcaseb.github.io/nflfastR//articles/nflfastR-models.html</loc>
+  </url>
+</urlset>
