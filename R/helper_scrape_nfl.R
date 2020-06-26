@@ -198,6 +198,8 @@ get_pbp_nfl <- function(id) {
             id == '2012_04_NO_GB' & play_id == 1085 ~ 4,
             id == '2012_16_BUF_MIA' & play_id == 2571 ~ 15,
             id == '2015_16_CHI_TB' & play_id == 2182 ~ 14,
+            id == '2019_12_IND_HOU' & play_id == 2579 ~ 12,
+            id == '2019_12_IND_HOU' & play_id == 2544 ~ 11,
             TRUE ~ drive
           ),
           time = dplyr::case_when(

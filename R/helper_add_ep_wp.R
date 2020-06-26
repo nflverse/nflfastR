@@ -297,7 +297,7 @@ add_ep_variables <- function(pbp_data) {
   kickoff_preds <- get_preds(kickoff_data)
 
   # Find the kickoffs:
-  kickoff_i <- which(pbp_data$play_type == "kickoff")
+  kickoff_i <- which(pbp_data$play_type == "kickoff" | pbp_data$kickoff_attempt == 1)
 
   # Now update the probabilities:
   base_ep_preds[kickoff_i, "Field_Goal"] <- kickoff_preds[kickoff_i, "Field_Goal"]
@@ -334,11 +334,16 @@ add_ep_variables <- function(pbp_data) {
   twopoint_i <- which(pbp_data$two_point_attempt == 1)
 
   #new: special case for PAT or kickoff with penalty
+  #for inserting NAs
   st_penalty_i <- which(
     # pat
     (dplyr::lag(pbp_data$touchdown == 1) & (dplyr::lead(pbp_data$two_point_attempt)==1 | dplyr::lead(pbp_data$extra_point_attempt)==1)) |
       #kickoff
-      ((dplyr::lag(pbp_data$two_point_attempt)==1 | dplyr::lag(pbp_data$extra_point_attempt)==1) & dplyr::lead(pbp_data$kickoff_attempt == 1))
+      ((dplyr::lag(pbp_data$two_point_attempt)==1 | dplyr::lag(pbp_data$extra_point_attempt)==1) & dplyr::lead(pbp_data$kickoff_attempt == 1)) |
+      # kick formation + NA down
+      (stringr::str_detect(pbp_data$desc, 'Kick formation') & is.na(pbp_data$down) & pbp_data$play_type == 'no_play') |
+      (stringr::str_detect(pbp_data$desc, 'Pass formation') & is.na(pbp_data$down) & pbp_data$play_type == 'no_play') |
+      (stringr::str_detect(pbp_data$desc, 'TWO-POINT CONVERSION') & is.na(pbp_data$down) & pbp_data$play_type == 'no_play')
     )
 
   # Assign the make_fg_probs of the extra-point PATs:
@@ -349,7 +354,8 @@ add_ep_variables <- function(pbp_data) {
 
   # ----------------------------------------------------------------------------------
   # Insert NAs for timeouts and end of play rows:
-  missing_i <- which((pbp_data$timeout == 1 & pbp_data$play_type == "no_play") | is.na(pbp_data$play_type))
+  missing_i <- which((pbp_data$timeout == 1 & pbp_data$play_type == "no_play" &
+                        !stringr::str_detect(pbp_data$desc, ' pass ')) | is.na(pbp_data$play_type))
 
   # Now update the probabilities for missing and PATs:
   base_ep_preds$Field_Goal[c(missing_i, extrapoint_i, twopoint_i, st_penalty_i)] <- 0
@@ -517,9 +523,11 @@ add_ep_variables <- function(pbp_data) {
                              safety == 0 &
                              posteam == dplyr::lead(posteam) &
                              !is.na(dplyr::lead(play_type)) &
+                             # no timeout on next line
                              (dplyr::lead(timeout) == 0 |
+                                #or timeout caused by failed challenge
                                 (dplyr::lead(timeout) == 1 &
-                                   dplyr::lead(play_type) != "no_play")),
+                                   (dplyr::lead(play_type) != "no_play" | stringr::str_detect(dplyr::lead(desc), ' pass ')))),
                            dplyr::lead(ExpPts) - ExpPts, EPA),
       # Same but timeout or end of play follows:
       EPA = dplyr::if_else(is.na(td_team) & field_goal_made == 0 &
@@ -534,9 +542,12 @@ add_ep_variables <- function(pbp_data) {
                              two_point_pass_good == 0 &
                              two_point_pass_reception_good == 0 &
                              safety == 0 &
+                             #missing play type
                              (is.na(dplyr::lead(play_type)) |
+                                #or timeout without a pass play
                                 (dplyr::lead(timeout) == 1 &
-                                   dplyr::lead(play_type) == "no_play")) &
+                                   dplyr::lead(play_type) == "no_play" &
+                                    !stringr::str_detect(dplyr::lead(desc), ' pass '))) &
                              posteam == dplyr::lead(posteam, 2),
                            dplyr::lead(ExpPts, 2) - ExpPts, EPA),
       # Same as above but when two rows without play info follow:
@@ -573,9 +584,9 @@ add_ep_variables <- function(pbp_data) {
                   extra_point_prob = ExPoint_Prob,
                   two_point_conversion_prob = TwoPoint_Prob) %>%
     # Create columns with cumulative epa totals for both teams:
-    dplyr::mutate(ep = dplyr::if_else(timeout == 1 & play_type == "no_play",
+    dplyr::mutate(ep = dplyr::if_else(timeout == 1 & play_type == "no_play" & !stringr::str_detect(desc, ' pass '),
                                       dplyr::lead(ep), ep),
-                  epa = dplyr::if_else(timeout == 1 & play_type == "no_play",
+                  epa = dplyr::if_else(timeout == 1 & play_type == "no_play" & !stringr::str_detect(desc, ' pass '),
                                        0, epa),
                   # Change epa for plays occurring at end of half with no scoring
                   # plays to be just the difference between 0 and starting ep:
@@ -760,8 +771,19 @@ add_wp_variables <- function(pbp_data) {
     ) %>%
     dplyr::mutate(
       #because other team will have the ball so WP from their perspective
-      wp = dplyr::if_else((stringr::str_detect(desc, 'Kick formation') & is.na(down)) | stringr::str_detect(desc, 'extra point') | !is.na(two_point_conv_result) | !is.na(extra_point_result), 1 - wp, wp),
-      vegas_wp = dplyr::if_else((stringr::str_detect(desc, 'Kick formation') & is.na(down)) | stringr::str_detect(desc, 'extra point') | !is.na(two_point_conv_result) | !is.na(extra_point_result), 1 - vegas_wp, vegas_wp),
+      #this is for backfilling WP on PATs
+      wp =
+        dplyr::if_else((kickoff_attempt == 0 & (stringr::str_detect(desc, 'Kick formation') | stringr::str_detect(desc, 'Pass formation')) & is.na(down)) |
+                            stringr::str_detect(desc, 'extra point') |
+                            !is.na(two_point_conv_result) |
+                            !is.na(extra_point_result),
+                          1 - wp, wp),
+      vegas_wp =
+        dplyr::if_else((kickoff_attempt == 0 & (stringr::str_detect(desc, 'Kick formation') | stringr::str_detect(desc, 'Pass formation')) & is.na(down)) |
+                            stringr::str_detect(desc, 'extra point') |
+                            !is.na(two_point_conv_result) |
+                            !is.na(extra_point_result),
+                          1 - vegas_wp, vegas_wp),
       wp = dplyr::if_else(is.na(posteam), NA_real_, wp),
       def_wp = 1 - wp,
       home_wp = dplyr::if_else(posteam == home_team,

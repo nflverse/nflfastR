@@ -12,3 +12,4 @@
 ^\.github$
 ^vignettes/nflfastR-models\.Rmd$
 ^vignettes$
+^\.travis\.yml$

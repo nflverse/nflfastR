@@ -230,7 +230,7 @@ add_nflscrapr_mutations <- function(pbp) {
       ),
       # Indicator columns for both QB kneels, spikes, scrambles,
       # no huddle, shotgun plays:
-      qb_kneel = stringr::str_detect(play_description, " kneels ") %>% as.numeric(),
+      qb_kneel = dplyr::if_else(stringr::str_detect(play_description, " kneels ") & kickoff_attempt != 1, 1, 0),
       qb_spike = stringr::str_detect(play_description, " spiked ") %>% as.numeric(),
       qb_scramble = stringr::str_detect(play_description, " scrambles ") %>% as.numeric(),
       shotgun = stringr::str_detect(play_description, "Shotgun") %>% as.numeric(),
@@ -419,7 +419,7 @@ add_nflscrapr_mutations <- function(pbp) {
       ),
       home_points_scored = dplyr::if_else(
         defteam == home_team &
-          (safety == 1 | two_point_return == 1),
+          (safety == 1 | two_point_return == 1 | defensive_two_point_conv == 1),
         2, home_points_scored
       ),
       away_points_scored = dplyr::if_else(
@@ -449,7 +449,7 @@ add_nflscrapr_mutations <- function(pbp) {
       ),
       away_points_scored = dplyr::if_else(
         defteam == away_team &
-          (safety == 1 | two_point_return == 1),
+          (safety == 1 | two_point_return == 1 | defensive_two_point_conv == 1),
         2, away_points_scored
       ),
       home_points_scored = dplyr::if_else(

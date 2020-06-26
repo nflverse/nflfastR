@@ -121,7 +121,55 @@ offense %>%
   scale_y_reverse()
 ```
 
-# Example 6: Working with roster and position data
+# Example 6: Expected Points calculator
+We have provided a calculator for working with the Expected Points model. Here is an example of how to use it, looking for how the Expected Points on a drive beginning following a touchback has changed over time.
+
+While I have put in `'SEA'` for `home_team` and `posteam`, this only matters for figuring out whether the team with the ball is the home team (there's no actual effect for given team; it would be the same no matter what team is supplied).
+``` {r ex6a}
+data <- tibble::tibble(
+  "season" = 1999:2019,
+  "week" = 5,
+  'home_team' = 'SEA',
+  'posteam' = 'SEA',
+  'roof' = 'outdoors',
+  'half_seconds_remaining' = 1800,
+  'yardline_100' = c(rep(80, 17), rep(75, 4)),
+  'down' = 1,
+  'ydstogo' = 10,
+  'posteam_timeouts_remaining' = 3,
+  'defteam_timeouts_remaining' = 3
+)
+
+nflfastR::calculate_expected_points(data) %>%
+  select(season, yardline_100, td_prob, ep) %>% 
+  knitr::kable(digits = 2)
+```
+Not surprisingly, offenses have become much more successful over time, with the kickoff touchback moving from the 20 to the 25 in 2016 providing an additional boost. Note that the `td_prob` in this example is the probability that the next score within the same half will be a touchdown scored by team with the ball, **not** the probability that the current drive will end in a touchdown (this is why the numbers are different from Example 4 above).
+
+We could compare the most recent four years to the expectation for playing in a dome by inputting all the same things and changing the `roof` input:
+
+``` {r ex6b}
+data <- tibble::tibble(
+  "season" = 2016:2019,
+  "week" = 5,
+  'home_team' = 'SEA',
+  'posteam' = 'SEA',
+  'roof' = 'dome',
+  'half_seconds_remaining' = 1800,
+  'yardline_100' = c(rep(75, 4)),
+  'down' = 1,
+  'ydstogo' = 10,
+  'posteam_timeouts_remaining' = 3,
+  'defteam_timeouts_remaining' = 3
+)
+
+nflfastR::calculate_expected_points(data) %>%
+  select(season, yardline_100, td_prob, ep) %>% 
+  knitr::kable(digits = 2)
+```
+So for 2018 and 2019, 1st & 10 from a home team's own 25 yard line had EP of 1.44 outdoors and 1.67 in domes
+
+# Example 7: Working with roster and position data
 
 This section used to contain an example of working with roster data. Unfortunately, we have not found a way to obtain roster data that can be joined to the new play by play, so for now, it is empty. We would like to be able to get position data but haven't yet.
 

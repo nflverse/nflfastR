@@ -124,7 +124,13 @@ clean_pbp <- function(pbp) {
                     play_type %in% c("no_play","pass","run"),1,0)
     ) %>%
     #standardize team names (eg Chargers are always LAC even when they were playing in SD)
-    dplyr::mutate_at(dplyr::vars(posteam, defteam, home_team, away_team, timeout_team, td_team, return_team, penalty_team), team_name_fn) %>%
+    dplyr::mutate_at(dplyr::vars(
+      posteam, defteam, home_team, away_team, timeout_team, td_team, return_team, penalty_team,
+      side_of_field, forced_fumble_player_1_team, forced_fumble_player_2_team,
+      solo_tackle_1_team, solo_tackle_2_team,
+      assist_tackle_1_team, assist_tackle_2_team, assist_tackle_3_team, assist_tackle_4_team,
+      fumbled_1_team, fumbled_2_team, fumble_recovery_1_team, fumble_recovery_2_team
+      ), team_name_fn) %>%
     #Seb's stuff for fixing player ids
     dplyr::mutate(index = 1 : dplyr::n()) %>% # to re-sort after all the group_bys
 

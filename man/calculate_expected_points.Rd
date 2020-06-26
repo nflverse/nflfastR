@@ -38,9 +38,10 @@ must be present:
 \item{week}
 \item{home_team}
 \item{posteam}
-\item{roof (coded as 'open', 'closed', or 'retractable')}
+\item{roof (coded as 'outdoors', 'dome', or {'open' / 'closed' / NA} (retractable))}
 \item{half_seconds_remaining}
 \item{yardline_100}
+\item{down}
 \item{ydstogo}
 \item{posteam_timeouts_remaining}
 \item{defteam_timeouts_remaining}

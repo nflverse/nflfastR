@@ -16,6 +16,8 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/mrcaseb/nflfastR?label=latest%20release)
+[![R build status](https://github.com/mrcaseb/nflfastR/workflows/R-CMD-check/badge.svg)](https://github.com/mrcaseb/nflfastR/actions)
+[![Travis build status](https://travis-ci.com/mrcaseb/nflfastR.svg?branch=master)](https://travis-ci.com/mrcaseb/nflfastR)
 [![Twitter Follow](https://img.shields.io/twitter/follow/nflfastR.svg?style=social)](https://twitter.com/nflfastR)
 <!-- badges: end -->
 

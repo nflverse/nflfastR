@@ -1,3 +1,16 @@
+# nflfastR 2.0.6
+
+* Fixed a problem where defensive two point conversions were not counted
+* Kneels on kickoffs are no longer counted as qb kneels
+* Variable `yards_gained` more precisely defined
+* Bugfixes for more games with out of order of plays
+* Fix bug related to EPA on plays with a failed pass interference challenge
+* Added new example to `vignette("examples")` to demonstrate Expected Points 
+calculator `calculate_expected_points()`
+* Fix for WP on 2-pt conversion negated by penalty
+* Add more variables (containing team names) to team standardization in `clean_pbp()`
+* Fix WP for onside kicks
+
 # nflfastR 2.0.5
 
 * Fix yet another bug caused by NFL providing plays out of order
