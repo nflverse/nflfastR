@@ -52,7 +52,10 @@ probabilities of each scoring event and EP added. The following columns
 must be present: season, week, home_team, posteam, roof (coded as 'open',
 'closed', or 'retractable'), half_seconds_remaining, yardline_100,
 ydstogo, posteam_timeouts_remaining, defteam_timeouts_remaining" />
-<meta property="og:image" content="/logo.png" />
+<meta property="og:image" content="/reference/figures/card.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:creator" content="@nflfastR" />
+<meta name="twitter:site" content="@nflfastR" />
 
 
 
@@ -84,7 +87,7 @@ ydstogo, posteam_timeouts_remaining, defteam_timeouts_remaining" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.6</span>
       </span>
     </div>
 
@@ -98,6 +101,9 @@ ydstogo, posteam_timeouts_remaining, defteam_timeouts_remaining" />
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li>
+  <a href="../news/index.html">Changelog</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -117,12 +123,15 @@ ydstogo, posteam_timeouts_remaining, defteam_timeouts_remaining" />
     </li>
   </ul>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
-</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
+  <a href="http://twitter.com/nflfastR">
+    <span class="fab fa fab fa-twitter fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="https://github.com/mrcaseb/nflfastR/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
@@ -188,9 +197,10 @@ must be present:</p><ul>
 <li><p>week</p></li>
 <li><p>home_team</p></li>
 <li><p>posteam</p></li>
-<li><p>roof (coded as 'open', 'closed', or 'retractable')</p></li>
+<li><p>roof (coded as 'outdoors', 'dome', or 'open' / 'closed' / NA (retractable))</p></li>
 <li><p>half_seconds_remaining</p></li>
 <li><p>yardline_100</p></li>
+<li><p>down</p></li>
 <li><p>ydstogo</p></li>
 <li><p>posteam_timeouts_remaining</p></li>
 <li><p>defteam_timeouts_remaining</p></li>

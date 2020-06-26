@@ -48,7 +48,10 @@
 
 <meta property="og:title" content="Get NFL Play by Play Data — fast_scraper" />
 <meta property="og:description" content="Get NFL Play by Play Data" />
-<meta property="og:image" content="/logo.png" />
+<meta property="og:image" content="/reference/figures/card.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:creator" content="@nflfastR" />
+<meta name="twitter:site" content="@nflfastR" />
 
 
 
@@ -80,7 +83,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.6</span>
       </span>
     </div>
 
@@ -94,6 +97,9 @@
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li>
+  <a href="../news/index.html">Changelog</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -113,12 +119,15 @@
     </li>
   </ul>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
-</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
+  <a href="http://twitter.com/nflfastR">
+    <span class="fab fa fab fa-twitter fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="https://github.com/mrcaseb/nflfastR/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
@@ -198,7 +207,7 @@ detailed information (description partly extracted from nflscrapR):</p><dl'>
 <dt>ydsnet</dt><dd><p>Numeric value for total yards gained on the given drive.</p></dd>
 <dt>desc</dt><dd><p>Detailed string description for the given play.</p></dd>
 <dt>play_type</dt><dd><p>String indicating the type of play: pass (includes sacks), run (includes scrambles), punt, field_goal, kickoff, extra_point, qb_kneel, qb_spike, no_play (timeouts and penalties), and missing for rows indicating end of play.</p></dd>
-<dt>yards_gained</dt><dd><p>Numeric yards gained (or lost) for the given play.</p></dd>
+<dt>yards_gained</dt><dd><p>Numeric yards gained (or lost) by the possessing team, excluding yards gained via fumble recoveries and laterals.</p></dd>
 <dt>shotgun</dt><dd><p>Binary indicator for whether or not the play was in shotgun formation.</p></dd>
 <dt>no_huddle</dt><dd><p>Binary indicator for whether or not the play was in no_huddle formation.</p></dd>
 <dt>qb_dropback</dt><dd><p>Binary indicator for whether or not the QB dropped back on the play (pass attempt, sack, or scrambled).</p></dd>
