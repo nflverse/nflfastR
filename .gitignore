@@ -28,3 +28,4 @@ vignettes/*.pdf
 .Renviron
 .DS_Store
 docs
+inst/doc

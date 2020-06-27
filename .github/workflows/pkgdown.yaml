@@ -36,6 +36,7 @@ jobs:
           install.packages("tidyverse")
           install.packages("ggrepel")
           install.packages("ggimage")
+          install.packages("tictoc")
           remotes::install_deps(dependencies = TRUE)
           remotes::install_dev("pkgdown")
         shell: Rscript {0}
