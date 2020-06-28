@@ -155,7 +155,7 @@
     <p>Get NFL Play by Play Data</p>
     </div>
 
-    <pre class="usage"><span class='fu'>fast_scraper</span>(<span class='no'>game_ids</span>, <span class='kw'>source</span> <span class='kw'>=</span> <span class='st'>"nfl"</span>, <span class='kw'>pp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>fast_scraper</span>(<span class='kw'>game_ids</span>, source = <span class='st'>"nfl"</span>, pp = <span class='fl'>FALSE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -178,7 +178,7 @@
 
     <p>Data frame where each individual row represents a single play for
 all passed game_ids containing the following
-detailed information (description partly extracted from nflscrapR):</p><dl'>
+detailed information (description partly extracted from nflscrapR):</p><dl>
 <dt>play_id</dt><dd><p>Numeric play id that when used with game_id and drive provides the unique identifier for a single play.</p></dd>
 <dt>game_id</dt><dd><p>Ten digit identifier for NFL game.</p></dd>
 <dt>home_team</dt><dd><p>String abbreviation for the home team.</p></dd>
@@ -491,7 +491,7 @@ detailed information (description partly extracted from nflscrapR):</p><dl'>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>To load valid game_ids please use the package function <code><a href='fast_scraper_schedules.html'>fast_scraper_schedules</a></code>.</p>
+    <p>To load valid game_ids please use the package function <code>fast_scraper_schedules</code>.</p>
 <p>The <code>source</code> parameter controls from which source the data is being
 scraped. The old parameters <code>rs</code> as well as <code>gc</code>
 are not valid anymore. Please use <code>nfl</code> or leave unspecified.
@@ -500,10 +500,10 @@ Please note that the initiating process takes a few seconds which means it
 may be better to set <code>pp = FALSE</code> if you are scraping just a few games.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+    <pre class="examples"><div class='input'><span class='co'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Get pbp data for two games using parallel processing</span>
-<span class='no'>game_ids</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"2019_01_GB_CHI"</span>, <span class='st'>"2013_21_SEA_DEN"</span>)
-<span class='no'>pbp</span> <span class='kw'>&lt;-</span> <span class='fu'>fast_scraper</span>(<span class='no'>game_ids</span>, <span class='kw'>pp</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='kw'>game_ids</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"2019_01_GB_CHI"</span>, <span class='st'>"2013_21_SEA_DEN"</span>)
+<span class='kw'>pbp</span> <span class='op'>&lt;-</span> <span class='fu'>fast_scraper</span>(<span class='kw'>game_ids</span>, pp = <span class='fl'>TRUE</span>)
 }</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -520,7 +520,7 @@ may be better to set <code>pp = FALSE</code> if you are scraping just a few game
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

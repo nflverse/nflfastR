@@ -116,19 +116,30 @@
     
     
 <p>All examples listed below assume that the following two libraries are installed and loaded.</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">nflfastR</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tidyverse</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://mrcaseb.github.io/nflfastR">nflfastR</a></span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="http://tidyverse.tidyverse.org">tidyverse</a></span>)
+</pre></div>
 <p>If you have trouble understanding the code in the examples we highly recommend the <strong>nflfastR beginner’s guide</strong> in <code><a href="../articles/beginners_guide.html">vignette("beginners_guide")</a></code>.</p>
 <div id="example-1-replicate-nflscrapr-with-fast_scraper" class="section level1">
 <h1 class="hasAnchor">
 <a href="#example-1-replicate-nflscrapr-with-fast_scraper" class="anchor"></a>Example 1: replicate nflscrapR with fast_scraper</h1>
 <p>The functionality of <code>nflscrapR</code> can be duplicated by using <code><a href="../reference/fast_scraper.html">fast_scraper()</a></code>. This obtains the same information contained in <code>nflscrapR</code> (plus some extra) but much more quickly. To compare to <code>nflscrapR</code>, we use their data repository as the program no longer functions now that the NFL has taken down the old Gamecenter feed. Note that EP differs from nflscrapR as we use a newer era-adjusted model (more on this in <code><a href="../articles/nflfastR-models.html">vignette("nflfastR-models")</a></code>).</p>
 <p>This example also uses the built-in function <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> to create a ‘name’ column for the primary player involved (the QB on pass play or ball-carrier on run play).</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu">read_csv</span>(<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">'https://github.com/ryurko/nflscrapR-data/blob/master/play_by_play_data/regular_season/reg_pbp_2019.csv?raw=true'</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">home_team</span> <span class="kw">==</span> <span class="st">'SF'</span> <span class="kw">&amp;</span> <span class="no">away_team</span> <span class="kw">==</span> <span class="st">'SEA'</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">select</span>(<span class="no">desc</span>, <span class="no">play_type</span>, <span class="no">ep</span>, <span class="no">epa</span>, <span class="no">home_wp</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fl">5</span>) <span class="kw">%&gt;%</span>
-  <span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(<span class="kw">digits</span> <span class="kw">=</span> <span class="fl">3</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="fu">read_csv</span>(<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">'https://github.com/ryurko/nflscrapR-data/blob/master/play_by_play_data/regular_season/reg_pbp_2019.csv?raw=true'</span>)) <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">home_team</span> <span class="op">==</span> <span class="st">'SF'</span> <span class="op">&amp;</span> <span class="kw">away_team</span> <span class="op">==</span> <span class="st">'SEA'</span>) <span class="op">%&gt;%</span>
+  <span class="fu">select</span>(<span class="kw">desc</span>, <span class="kw">play_type</span>, <span class="kw">ep</span>, <span class="kw">epa</span>, <span class="kw">home_wp</span>) <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fl">5</span>) <span class="op">%&gt;%</span> 
+  <span class="kw">knitr</span>::<span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(digits = <span class="fl">3</span>)
+</pre></div>
 <table class="table">
+<colgroup>
+<col width="78%">
+<col width="6%">
+<col width="4%">
+<col width="4%">
+<col width="5%">
+</colgroup>
 <thead><tr class="header">
 <th align="left">desc</th>
 <th align="left">play_type</th>
@@ -174,11 +185,21 @@
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="../reference/fast_scraper.html">fast_scraper</a></span>(<span class="st">'2019_10_SEA_SF'</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="../reference/clean_pbp.html">clean_pbp</a></span>() <span class="kw">%&gt;%</span>
-  <span class="fu">select</span>(<span class="no">desc</span>, <span class="no">play_type</span>, <span class="no">ep</span>, <span class="no">epa</span>, <span class="no">home_wp</span>, <span class="no">name</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fl">6</span>) <span class="kw">%&gt;%</span>
-  <span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(<span class="kw">digits</span> <span class="kw">=</span> <span class="fl">3</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="fu"><a href="../reference/fast_scraper.html">fast_scraper</a></span>(<span class="st">'2019_10_SEA_SF'</span>) <span class="op">%&gt;%</span>
+  <span class="fu"><a href="../reference/clean_pbp.html">clean_pbp</a></span>() <span class="op">%&gt;%</span>
+  <span class="fu">select</span>(<span class="kw">desc</span>, <span class="kw">play_type</span>, <span class="kw">ep</span>, <span class="kw">epa</span>, <span class="kw">home_wp</span>, <span class="kw">name</span>) <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fl">6</span>) <span class="op">%&gt;%</span> 
+  <span class="kw">knitr</span>::<span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(digits = <span class="fl">3</span>)
+</pre></div>
 <table class="table">
+<colgroup>
+<col width="74%">
+<col width="5%">
+<col width="3%">
+<col width="4%">
+<col width="4%">
+<col width="7%">
+</colgroup>
 <thead><tr class="header">
 <th align="left">desc</th>
 <th align="left">play_type</th>
@@ -243,29 +264,33 @@
 <h1 class="hasAnchor">
 <a href="#example-2-scrape-a-batch-of-games-very-quickly-with-fast_scraper-and-parallel-processing" class="anchor"></a>Example 2: scrape a batch of games very quickly with fast_scraper and parallel processing</h1>
 <p>This is a demonstration of <code>nflfastR</code>’s capabilities. While <code>nflfastR</code> can scrape a batch of games very quickly, <strong>please be respectful of Github’s servers and use the <a href="https://github.com/guga31bb/nflfastR-data">data repository</a> which hosts all the scraped and cleaned data</strong> whenever possible. The only reason to ever actually use the scraper is if it’s in the middle of the season and we haven’t updated the repository with recent games (but we will try to keep it updated).</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="co">#get list of some games from 2019</span>
-<span class="no">games_2019</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/fast_scraper_schedules.html">fast_scraper_schedules</a></span>(<span class="fl">2019</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fl">10</span>) <span class="kw">%&gt;%</span> <span class="fu">pull</span>(<span class="no">game_id</span>)
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="co">#get list of some games from 2019</span>
+<span class="kw">games_2019</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fast_scraper_schedules.html">fast_scraper_schedules</a></span>(<span class="fl">2019</span>) <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fl">10</span>) <span class="op">%&gt;%</span> <span class="fu">pull</span>(<span class="kw">game_id</span>)
 
-<span class="kw pkg">tictoc</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span>(<span class="kw pkg">glue</span><span class="kw ns">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">'{length(games_2019)} games with nflfastR:'</span>))
-<span class="no">f</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/fast_scraper.html">fast_scraper</a></span>(<span class="no">games_2019</span>, <span class="kw">pp</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="kw pkg">tictoc</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span>()
-<span class="co">#&gt; 10 games with nflfastR:: 16.18 sec elapsed</span></pre></body></html></div>
+<span class="kw">tictoc</span>::<span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span>(<span class="kw">glue</span>::<span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">'{length(games_2019)} games with nflfastR:'</span>))
+<span class="kw">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fast_scraper.html">fast_scraper</a></span>(<span class="kw">games_2019</span>, pp = <span class="fl">TRUE</span>)
+<span class="kw">tictoc</span>::<span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span>()
+<span class="co">#&gt; 10 games with nflfastR:: 16.97 sec elapsed</span>
+</pre></div>
 </div>
 <div id="example-3-completion-percentage-over-expected-cpoe" class="section level1">
 <h1 class="hasAnchor">
 <a href="#example-3-completion-percentage-over-expected-cpoe" class="anchor"></a>Example 3: completion percentage over expected (CPOE)</h1>
 <p>Let’s look at CPOE leaders from the 2009 regular season.</p>
 <p>As discussed above, <code>nflfastR</code> has a data repository for old seasons, so there’s no need to actually scrape them. Let’s use that here (the below reads .rds files, but .csv and .parquet are also available).</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="kw pkg">tictoc</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span>(<span class="st">'loading all games from 2009'</span>)
-<span class="no">games_2009</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">'https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2009.rds'</span>)) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">season_type</span> <span class="kw">==</span> <span class="st">'REG'</span>)
-<span class="kw pkg">tictoc</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span>()
-<span class="co">#&gt; loading all games from 2009: 2.21 sec elapsed</span>
-<span class="no">games_2009</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">cpoe</span>)) <span class="kw">%&gt;%</span> <span class="fu">group_by</span>(<span class="no">passer_player_name</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">summarize</span>(<span class="kw">cpoe</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="no">cpoe</span>), <span class="kw">Atts</span><span class="kw">=</span><span class="fu">n</span>()) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">Atts</span> <span class="kw">&gt;</span> <span class="fl">200</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">arrange</span>(-<span class="no">cpoe</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fl">5</span>) <span class="kw">%&gt;%</span>
-  <span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(<span class="kw">digits</span> <span class="kw">=</span> <span class="fl">1</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="kw">tictoc</span>::<span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span>(<span class="st">'loading all games from 2009'</span>)
+<span class="kw">games_2009</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">'https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2009.rds'</span>)) <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">season_type</span> <span class="op">==</span> <span class="st">'REG'</span>)
+<span class="kw">tictoc</span>::<span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span>()
+<span class="co">#&gt; loading all games from 2009: 3.516 sec elapsed</span>
+<span class="kw">games_2009</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">cpoe</span>)) <span class="op">%&gt;%</span> <span class="fu">group_by</span>(<span class="kw">passer_player_name</span>) <span class="op">%&gt;%</span>
+  <span class="fu">summarize</span>(cpoe = <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">cpoe</span>), Atts=<span class="fu">n</span>()) <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">Atts</span> <span class="op">&gt;</span> <span class="fl">200</span>) <span class="op">%&gt;%</span>
+  <span class="fu">arrange</span>(<span class="op">-</span><span class="kw">cpoe</span>) <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fl">5</span>) <span class="op">%&gt;%</span> 
+  <span class="kw">knitr</span>::<span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(digits = <span class="fl">1</span>)
+</pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">passer_player_name</th>
@@ -305,16 +330,18 @@
 <h1 class="hasAnchor">
 <a href="#example-4-using-drive-information" class="anchor"></a>Example 4: using drive information</h1>
 <p>When working with <code>nflfastR</code>, drive results are automatically included. Let’s look at how much more likely teams were to score starting from 1st &amp; 10 at their own 20 yard line in 2015 (the last year before touchbacks on kickoffs changed to the 25) than in 2000.</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">games_2000</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">'https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2000.rds'</span>))
-<span class="no">games_2015</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">'https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2015.rds'</span>))
+<div class="sourceCode" id="cb6"><pre class="downlit">
+<span class="kw">games_2000</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">'https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2000.rds'</span>))
+<span class="kw">games_2015</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">'https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2015.rds'</span>))
 
-<span class="no">pbp</span> <span class="kw">&lt;-</span> <span class="fu">bind_rows</span>(<span class="no">games_2000</span>, <span class="no">games_2015</span>)
+<span class="kw">pbp</span> <span class="op">&lt;-</span> <span class="fu">bind_rows</span>(<span class="kw">games_2000</span>, <span class="kw">games_2015</span>)
 
-<span class="no">pbp</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">season_type</span> <span class="kw">==</span> <span class="st">'REG'</span> <span class="kw">&amp;</span> <span class="no">down</span> <span class="kw">==</span> <span class="fl">1</span> <span class="kw">&amp;</span> <span class="no">ydstogo</span> <span class="kw">==</span> <span class="fl">10</span> <span class="kw">&amp;</span> <span class="no">yardline_100</span> <span class="kw">==</span> <span class="fl">80</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">mutate</span>(<span class="kw">drive_score</span> <span class="kw">=</span> <span class="fu">if_else</span>(<span class="no">drive_end_transition</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Touchdown"</span>, <span class="st">"Field Goal"</span>, <span class="st">"TOUCHDOWN"</span>, <span class="st">"FIELD_GOAL"</span>), <span class="fl">1</span>, <span class="fl">0</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu">group_by</span>(<span class="no">season</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">summarize</span>(<span class="kw">drive_score</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="no">drive_score</span>)) <span class="kw">%&gt;%</span>
-  <span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(<span class="kw">digits</span> <span class="kw">=</span> <span class="fl">3</span>)</pre></body></html></div>
+<span class="kw">pbp</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">season_type</span> <span class="op">==</span> <span class="st">'REG'</span> <span class="op">&amp;</span> <span class="kw">down</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">&amp;</span> <span class="kw">ydstogo</span> <span class="op">==</span> <span class="fl">10</span> <span class="op">&amp;</span> <span class="kw">yardline_100</span> <span class="op">==</span> <span class="fl">80</span>) <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span>(drive_score = <span class="fu">if_else</span>(<span class="kw">drive_end_transition</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Touchdown"</span>, <span class="st">"Field Goal"</span>, <span class="st">"TOUCHDOWN"</span>, <span class="st">"FIELD_GOAL"</span>), <span class="fl">1</span>, <span class="fl">0</span>)) <span class="op">%&gt;%</span>
+  <span class="fu">group_by</span>(<span class="kw">season</span>) <span class="op">%&gt;%</span>
+  <span class="fu">summarize</span>(drive_score = <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">drive_score</span>)) <span class="op">%&gt;%</span> 
+  <span class="kw">knitr</span>::<span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(digits = <span class="fl">3</span>)
+</pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="right">season</th>
@@ -338,33 +365,35 @@
 <a href="#example-5-plot-offensive-and-defensive-epa-per-play-for-a-given-season" class="anchor"></a>Example 5: Plot offensive and defensive EPA per play for a given season</h1>
 <p>Let’s build the <strong><a href="https://rbsdm.com/stats/stats/">NFL team tiers</a></strong> using offensive and defensive expected points added per play for the 2005 regular season. The logo urls of the espn logos are integrated into the <code><a href="../reference/teams_colors_logos.html">?teams_colors_logos</a></code> data frame which is delivered with the package.</p>
 <p>Let’s also use the included helper function <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code>, which creates “rush” and “pass” columns that (a) properly count sacks and scrambles as pass plays and (b) properly include plays with penalties. Using this, we can keep only rush or pass plays.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggimage</span>)
-<span class="no">pbp</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">'https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2005.rds'</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">season_type</span> <span class="kw">==</span> <span class="st">'REG'</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">posteam</span>) <span class="kw">&amp;</span> (<span class="no">rush</span> <span class="kw">==</span> <span class="fl">1</span> <span class="kw">|</span> <span class="no">pass</span> <span class="kw">==</span> <span class="fl">1</span>))
-<span class="no">offense</span> <span class="kw">&lt;-</span> <span class="no">pbp</span> <span class="kw">%&gt;%</span> <span class="fu">group_by</span>(<span class="no">posteam</span>) <span class="kw">%&gt;%</span> <span class="fu">summarise</span>(<span class="kw">off_epa</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="no">epa</span>, <span class="kw">na.rm</span> <span class="kw">=</span> <span class="fl">TRUE</span>))
-<span class="no">defense</span> <span class="kw">&lt;-</span> <span class="no">pbp</span> <span class="kw">%&gt;%</span> <span class="fu">group_by</span>(<span class="no">defteam</span>) <span class="kw">%&gt;%</span> <span class="fu">summarise</span>(<span class="kw">def_epa</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="no">epa</span>, <span class="kw">na.rm</span> <span class="kw">=</span> <span class="fl">TRUE</span>))
-<span class="no">logos</span> <span class="kw">&lt;-</span> <span class="no">teams_colors_logos</span> <span class="kw">%&gt;%</span> <span class="fu">select</span>(<span class="no">team_abbr</span>, <span class="no">team_logo_espn</span>)
+<div class="sourceCode" id="cb7"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/GuangchuangYu/ggimage">ggimage</a></span>)
+<span class="kw">pbp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">'https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2005.rds'</span>)) <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">season_type</span> <span class="op">==</span> <span class="st">'REG'</span>) <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">posteam</span>) <span class="op">&amp;</span> (<span class="kw">rush</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">|</span> <span class="kw">pass</span> <span class="op">==</span> <span class="fl">1</span>))
+<span class="kw">offense</span> <span class="op">&lt;-</span> <span class="kw">pbp</span> <span class="op">%&gt;%</span> <span class="fu">group_by</span>(<span class="kw">posteam</span>) <span class="op">%&gt;%</span> <span class="fu">summarise</span>(off_epa = <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">epa</span>, na.rm = <span class="fl">TRUE</span>))
+<span class="kw">defense</span> <span class="op">&lt;-</span> <span class="kw">pbp</span> <span class="op">%&gt;%</span> <span class="fu">group_by</span>(<span class="kw">defteam</span>) <span class="op">%&gt;%</span> <span class="fu">summarise</span>(def_epa = <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">epa</span>, na.rm = <span class="fl">TRUE</span>))
+<span class="kw">logos</span> <span class="op">&lt;-</span> <span class="kw">teams_colors_logos</span> <span class="op">%&gt;%</span> <span class="fu">select</span>(<span class="kw">team_abbr</span>, <span class="kw">team_logo_espn</span>)
 
-<span class="no">offense</span> <span class="kw">%&gt;%</span>
-  <span class="fu">inner_join</span>(<span class="no">defense</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"posteam"</span> <span class="kw">=</span> <span class="st">"defteam"</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu">inner_join</span>(<span class="no">logos</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"posteam"</span> <span class="kw">=</span> <span class="st">"team_abbr"</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">off_epa</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">def_epa</span>)) +
-  <span class="fu">geom_abline</span>(<span class="kw">slope</span> <span class="kw">=</span> -<span class="fl">1.5</span>, <span class="kw">intercept</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">.4</span>, <span class="fl">.3</span>, <span class="fl">.2</span>, <span class="fl">.1</span>, <span class="fl">0</span>, -<span class="fl">.1</span>, -<span class="fl">.2</span>, -<span class="fl">.3</span>), <span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">.2</span>) +
-  <span class="fu">geom_hline</span>(<span class="fu">aes</span>(<span class="kw">yintercept</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="no">off_epa</span>)), <span class="kw">color</span> <span class="kw">=</span> <span class="st">"red"</span>, <span class="kw">linetype</span> <span class="kw">=</span> <span class="st">"dashed"</span>) +
-  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="kw">xintercept</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="no">def_epa</span>)), <span class="kw">color</span> <span class="kw">=</span> <span class="st">"red"</span>, <span class="kw">linetype</span> <span class="kw">=</span> <span class="st">"dashed"</span>) +
-  <span class="fu"><a href="https://rdrr.io/pkg/ggimage/man/geom_image.html">geom_image</a></span>(<span class="fu">aes</span>(<span class="kw">image</span> <span class="kw">=</span> <span class="no">team_logo_espn</span>), <span class="kw">size</span> <span class="kw">=</span> <span class="fl">0.05</span>, <span class="kw">asp</span> <span class="kw">=</span> <span class="fl">16</span> / <span class="fl">9</span>) +
+<span class="kw">offense</span> <span class="op">%&gt;%</span>
+  <span class="fu">inner_join</span>(<span class="kw">defense</span>, by = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"posteam"</span> = <span class="st">"defteam"</span>)) <span class="op">%&gt;%</span>
+  <span class="fu">inner_join</span>(<span class="kw">logos</span>, by = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"posteam"</span> = <span class="st">"team_abbr"</span>)) <span class="op">%&gt;%</span>
+  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x = <span class="kw">off_epa</span>, y = <span class="kw">def_epa</span>)) <span class="op">+</span>
+  <span class="fu">geom_abline</span>(slope = <span class="op">-</span><span class="fl">1.5</span>, intercept = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">.4</span>, <span class="fl">.3</span>, <span class="fl">.2</span>, <span class="fl">.1</span>, <span class="fl">0</span>, <span class="op">-</span><span class="fl">.1</span>, <span class="op">-</span><span class="fl">.2</span>, <span class="op">-</span><span class="fl">.3</span>), alpha = <span class="fl">.2</span>) <span class="op">+</span>
+  <span class="fu">geom_hline</span>(<span class="fu">aes</span>(yintercept = <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">off_epa</span>)), color = <span class="st">"red"</span>, linetype = <span class="st">"dashed"</span>) <span class="op">+</span>
+  <span class="fu">geom_vline</span>(<span class="fu">aes</span>(xintercept = <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">def_epa</span>)), color = <span class="st">"red"</span>, linetype = <span class="st">"dashed"</span>) <span class="op">+</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/ggimage/man/geom_image.html">geom_image</a></span>(<span class="fu">aes</span>(image = <span class="kw">team_logo_espn</span>), size = <span class="fl">0.05</span>, asp = <span class="fl">16</span> <span class="op">/</span> <span class="fl">9</span>) <span class="op">+</span>
   <span class="fu">labs</span>(
-    <span class="kw">x</span> <span class="kw">=</span> <span class="st">"Offense EPA/play"</span>,
-    <span class="kw">y</span> <span class="kw">=</span> <span class="st">"Defense EPA/play"</span>,
-    <span class="kw">caption</span> <span class="kw">=</span> <span class="st">"Data: @nflfastR"</span>,
-    <span class="kw">title</span> <span class="kw">=</span> <span class="st">"2005 NFL Offensive and Defensive EPA per Play"</span>
-  ) +
-  <span class="fu">theme_bw</span>() +
+    x = <span class="st">"Offense EPA/play"</span>,
+    y = <span class="st">"Defense EPA/play"</span>,
+    caption = <span class="st">"Data: @nflfastR"</span>,
+    title = <span class="st">"2005 NFL Offensive and Defensive EPA per Play"</span>
+  ) <span class="op">+</span>
+  <span class="fu">theme_bw</span>() <span class="op">+</span>
   <span class="fu">theme</span>(
-    <span class="kw">aspect.ratio</span> <span class="kw">=</span> <span class="fl">9</span> / <span class="fl">16</span>,
-    <span class="kw">plot.title</span> <span class="kw">=</span> <span class="fu">element_text</span>(<span class="kw">size</span> <span class="kw">=</span> <span class="fl">12</span>, <span class="kw">hjust</span> <span class="kw">=</span> <span class="fl">0.5</span>, <span class="kw">face</span> <span class="kw">=</span> <span class="st">"bold"</span>)
-  ) +
-  <span class="fu">scale_y_reverse</span>()</pre></body></html></div>
+    aspect.ratio = <span class="fl">9</span> <span class="op">/</span> <span class="fl">16</span>,
+    plot.title = <span class="fu">element_text</span>(size = <span class="fl">12</span>, hjust = <span class="fl">0.5</span>, face = <span class="st">"bold"</span>)
+  ) <span class="op">+</span>
+  <span class="fu">scale_y_reverse</span>()
+</pre></div>
 <p><img src="examples_files/figure-html/ex5-1.png" width="4375"></p>
 </div>
 <div id="example-6-expected-points-calculator" class="section level1">
@@ -372,23 +401,25 @@
 <a href="#example-6-expected-points-calculator" class="anchor"></a>Example 6: Expected Points calculator</h1>
 <p>We have provided a calculator for working with the Expected Points model. Here is an example of how to use it, looking for how the Expected Points on a drive beginning following a touchback has changed over time.</p>
 <p>While I have put in <code>'SEA'</code> for <code>home_team</code> and <code>posteam</code>, this only matters for figuring out whether the team with the ball is the home team (there’s no actual effect for given team; it would be the same no matter what team is supplied).</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="kw pkg">tibble</span><span class="kw ns">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(
-  <span class="st">"season"</span> <span class="kw">=</span> <span class="fl">1999</span>:<span class="fl">2019</span>,
-  <span class="st">"week"</span> <span class="kw">=</span> <span class="fl">5</span>,
-  <span class="st">'home_team'</span> <span class="kw">=</span> <span class="st">'SEA'</span>,
-  <span class="st">'posteam'</span> <span class="kw">=</span> <span class="st">'SEA'</span>,
-  <span class="st">'roof'</span> <span class="kw">=</span> <span class="st">'outdoors'</span>,
-  <span class="st">'half_seconds_remaining'</span> <span class="kw">=</span> <span class="fl">1800</span>,
-  <span class="st">'yardline_100'</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">80</span>, <span class="fl">17</span>), <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">75</span>, <span class="fl">4</span>)),
-  <span class="st">'down'</span> <span class="kw">=</span> <span class="fl">1</span>,
-  <span class="st">'ydstogo'</span> <span class="kw">=</span> <span class="fl">10</span>,
-  <span class="st">'posteam_timeouts_remaining'</span> <span class="kw">=</span> <span class="fl">3</span>,
-  <span class="st">'defteam_timeouts_remaining'</span> <span class="kw">=</span> <span class="fl">3</span>
+<div class="sourceCode" id="cb8"><pre class="downlit">
+<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">tibble</span>::<span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(
+  <span class="st">"season"</span> = <span class="fl">1999</span><span class="op">:</span><span class="fl">2019</span>,
+  <span class="st">"week"</span> = <span class="fl">5</span>,
+  <span class="st">'home_team'</span> = <span class="st">'SEA'</span>,
+  <span class="st">'posteam'</span> = <span class="st">'SEA'</span>,
+  <span class="st">'roof'</span> = <span class="st">'outdoors'</span>,
+  <span class="st">'half_seconds_remaining'</span> = <span class="fl">1800</span>,
+  <span class="st">'yardline_100'</span> = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">80</span>, <span class="fl">17</span>), <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">75</span>, <span class="fl">4</span>)),
+  <span class="st">'down'</span> = <span class="fl">1</span>,
+  <span class="st">'ydstogo'</span> = <span class="fl">10</span>,
+  <span class="st">'posteam_timeouts_remaining'</span> = <span class="fl">3</span>,
+  <span class="st">'defteam_timeouts_remaining'</span> = <span class="fl">3</span>
 )
 
-<span class="kw pkg">nflfastR</span><span class="kw ns">::</span><span class="fu"><a href="../reference/calculate_expected_points.html">calculate_expected_points</a></span>(<span class="no">data</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">select</span>(<span class="no">season</span>, <span class="no">yardline_100</span>, <span class="no">td_prob</span>, <span class="no">ep</span>) <span class="kw">%&gt;%</span>
-  <span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(<span class="kw">digits</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
+<span class="kw">nflfastR</span>::<span class="fu"><a href="../reference/calculate_expected_points.html">calculate_expected_points</a></span>(<span class="kw">data</span>) <span class="op">%&gt;%</span>
+  <span class="fu">select</span>(<span class="kw">season</span>, <span class="kw">yardline_100</span>, <span class="kw">td_prob</span>, <span class="kw">ep</span>) <span class="op">%&gt;%</span> 
+  <span class="kw">knitr</span>::<span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(digits = <span class="fl">2</span>)
+</pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="right">season</th>
@@ -527,23 +558,25 @@
 </table>
 <p>Not surprisingly, offenses have become much more successful over time, with the kickoff touchback moving from the 20 to the 25 in 2016 providing an additional boost. Note that the <code>td_prob</code> in this example is the probability that the next score within the same half will be a touchdown scored by team with the ball, <strong>not</strong> the probability that the current drive will end in a touchdown (this is why the numbers are different from Example 4 above).</p>
 <p>We could compare the most recent four years to the expectation for playing in a dome by inputting all the same things and changing the <code>roof</code> input:</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="kw pkg">tibble</span><span class="kw ns">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(
-  <span class="st">"season"</span> <span class="kw">=</span> <span class="fl">2016</span>:<span class="fl">2019</span>,
-  <span class="st">"week"</span> <span class="kw">=</span> <span class="fl">5</span>,
-  <span class="st">'home_team'</span> <span class="kw">=</span> <span class="st">'SEA'</span>,
-  <span class="st">'posteam'</span> <span class="kw">=</span> <span class="st">'SEA'</span>,
-  <span class="st">'roof'</span> <span class="kw">=</span> <span class="st">'dome'</span>,
-  <span class="st">'half_seconds_remaining'</span> <span class="kw">=</span> <span class="fl">1800</span>,
-  <span class="st">'yardline_100'</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">75</span>, <span class="fl">4</span>)),
-  <span class="st">'down'</span> <span class="kw">=</span> <span class="fl">1</span>,
-  <span class="st">'ydstogo'</span> <span class="kw">=</span> <span class="fl">10</span>,
-  <span class="st">'posteam_timeouts_remaining'</span> <span class="kw">=</span> <span class="fl">3</span>,
-  <span class="st">'defteam_timeouts_remaining'</span> <span class="kw">=</span> <span class="fl">3</span>
+<div class="sourceCode" id="cb9"><pre class="downlit">
+<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">tibble</span>::<span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span>(
+  <span class="st">"season"</span> = <span class="fl">2016</span><span class="op">:</span><span class="fl">2019</span>,
+  <span class="st">"week"</span> = <span class="fl">5</span>,
+  <span class="st">'home_team'</span> = <span class="st">'SEA'</span>,
+  <span class="st">'posteam'</span> = <span class="st">'SEA'</span>,
+  <span class="st">'roof'</span> = <span class="st">'dome'</span>,
+  <span class="st">'half_seconds_remaining'</span> = <span class="fl">1800</span>,
+  <span class="st">'yardline_100'</span> = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">75</span>, <span class="fl">4</span>)),
+  <span class="st">'down'</span> = <span class="fl">1</span>,
+  <span class="st">'ydstogo'</span> = <span class="fl">10</span>,
+  <span class="st">'posteam_timeouts_remaining'</span> = <span class="fl">3</span>,
+  <span class="st">'defteam_timeouts_remaining'</span> = <span class="fl">3</span>
 )
 
-<span class="kw pkg">nflfastR</span><span class="kw ns">::</span><span class="fu"><a href="../reference/calculate_expected_points.html">calculate_expected_points</a></span>(<span class="no">data</span>) <span class="kw">%&gt;%</span>
-  <span class="fu">select</span>(<span class="no">season</span>, <span class="no">yardline_100</span>, <span class="no">td_prob</span>, <span class="no">ep</span>) <span class="kw">%&gt;%</span>
-  <span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(<span class="kw">digits</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
+<span class="kw">nflfastR</span>::<span class="fu"><a href="../reference/calculate_expected_points.html">calculate_expected_points</a></span>(<span class="kw">data</span>) <span class="op">%&gt;%</span>
+  <span class="fu">select</span>(<span class="kw">season</span>, <span class="kw">yardline_100</span>, <span class="kw">td_prob</span>, <span class="kw">ep</span>) <span class="op">%&gt;%</span> 
+  <span class="kw">knitr</span>::<span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(digits = <span class="fl">2</span>)
+</pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="right">season</th>
@@ -603,7 +636,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>
