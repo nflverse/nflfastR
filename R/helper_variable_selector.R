@@ -4,6 +4,8 @@
 # Code Style Guide: styler::tidyverse_style()
 ################################################################################
 
+#' @import dplyr
+#' @importFrom tidyselect one_of
 select_variables <- function(pbp) {
 
     suppressWarnings(

@@ -1,7 +1,7 @@
 Type: Package
 Package: nflfastR
 Title: Functions to Efficiently Scrape NFL Play by Play Data
-Version: 2.0.6
+Version: 2.1.0
 Authors@R: 
     c(person(given = "Sebastian",
              family = "Carl",
@@ -45,17 +45,20 @@ Imports:
     progressr,
     purrr,
     stats,
+    rlang,
     stringr,
     tibble,
     tidyr,
     tidyselect,
     xgboost (>= 1.1)
 Suggests: 
+    DBI,
     furrr,
     future,
     rmarkdown,
+    RSQLite,
     knitr
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 VignetteBuilder: knitr

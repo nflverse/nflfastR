@@ -4,6 +4,13 @@
 # Code Style Guide: styler::tidyverse_style()
 ################################################################################
 
+#' @importFrom httr GET content
+#' @importFrom glue glue
+#' @importFrom jsonlite fromJSON
+#' @importFrom purrr pluck map_df
+#' @importFrom janitor clean_names
+#' @import dplyr
+#' @importFrom rlang .data
 get_pbp_highlights <- function(gameId) {
   highlights <- data.frame()
   tryCatch(
@@ -38,15 +45,15 @@ get_pbp_highlights <- function(gameId) {
         warning(warn <- 3)
       } else {
         highlights <- highlights %>%
-          dplyr::filter(!is.na(highlight_video_content_type)) %>%
+          dplyr::filter(!is.na(.data$highlight_video_content_type)) %>%
           dplyr::mutate(
             highlight_video_url = dplyr::if_else(
-              is.na(highlight_video_video_file_url),
-              as.character(highlight_video_video_detail_page_url),
-              as.character(highlight_video_video_file_url)
+              is.na(.data$highlight_video_video_file_url),
+              as.character(.data$highlight_video_video_detail_page_url),
+              as.character(.data$highlight_video_video_file_url)
             )
           ) %>%
-          dplyr::select(game_id, play_id, highlight_video_url)
+          dplyr::select("game_id", "play_id", "highlight_video_url")
       }
     },
     error = function(e) {

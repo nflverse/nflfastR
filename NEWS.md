@@ -1,3 +1,33 @@
+# nflfastR 2.1.0
+
+### Models
+
+* Removed `week` from Expected Points models along with an update of
+`vignette("nflfastR-models")` and `vignette("examples")`
+
+### Functions
+
+* Added function `update_db()` which adds all completed games to a SQLite database
+* Added function `calculate_win_probability()` 
+* Added new examples to `vignette("examples")` demonstrating the usage of the
+above mentioned functions
+
+### Bugs
+
+* Fixed a problem with inconsistent data types of the variable
+`drive_real_start_time` pre and post 2011
+* Fixed a problem where some `game_id`s were overwritten during the play by play parsing
+* Fix some more WP bugs on kickoffs with penalties and rare play description
+
+### Miscellaneous
+
+* `fast_scraper()` now loads the raw game data from a separate raw data repo
+* Completely overhauled the entire code base to directly implement
+[tidy evaluation](https://dplyr.tidyverse.org/articles/programming.html) using 
+`.data` from the [rlang](https://rlang.r-lib.org/) package (this is a major 
+code change that takes some getting used to but we need it in preparation of 
+a future release)
+
 # nflfastR 2.0.6
 
 * Fixed a problem where defensive two point conversions were not counted

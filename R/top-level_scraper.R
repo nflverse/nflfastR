@@ -9,6 +9,7 @@
 #' @param game_ids Vector of character ids (see details for further information)
 #' @param source Character - must now be \code{nfl} or unspecified (see details for further information)
 #' @param pp Logical - either \code{TRUE} or \code{FALSE} (see details for further information)
+#' @param ... Additional arguments passed to the scraping functions (for internal use)
 #' @details To load valid game_ids please use the package function \code{\link{fast_scraper_schedules}}.
 #'
 #' The \code{source} parameter controls from which source the data is being
@@ -336,7 +337,7 @@
 #' game_ids <- c("2019_01_GB_CHI", "2013_21_SEA_DEN")
 #' pbp <- fast_scraper(game_ids, pp = TRUE)
 #' }
-fast_scraper <- function(game_ids, source = "nfl", pp = FALSE) {
+fast_scraper <- function(game_ids, source = "nfl", pp = FALSE, ...) {
 
   # Error handling to correct source type
   if (source != "nfl") {
@@ -348,15 +349,15 @@ fast_scraper <- function(game_ids, source = "nfl", pp = FALSE) {
     suppressWarnings({
       progressr::with_progress({
         p <- progressr::progressor(along = game_ids)
-        pbp <- purrr::map_dfr(game_ids, function(x){
+        pbp <- purrr::map_dfr(game_ids, function(x, ...){
           if (substr(x, 1, 4) < 2011) {
-            plays <- get_pbp_gc(x)
+            plays <- get_pbp_gc(x, ...)
           } else {
-            plays <- get_pbp_nfl(x)
+            plays <- get_pbp_nfl(x, ...)
           }
           p(sprintf("x=%s", as.character(x)))
           return(plays)
-        })
+        }, ...)
       })
 
       if(purrr::is_empty(pbp) == FALSE) {
@@ -388,15 +389,15 @@ fast_scraper <- function(game_ids, source = "nfl", pp = FALSE) {
       progressr::with_progress({
         p <- progressr::progressor(along = game_ids)
         future::plan("multiprocess")
-        pbp <- furrr::future_map_dfr(game_ids,  function(x){
+        pbp <- furrr::future_map_dfr(game_ids, function(x, ...){
           if (substr(x, 1, 4) < 2011) {
-            plays <- get_pbp_gc(x)
+            plays <- get_pbp_gc(x,  ...)
           } else {
-            plays <- get_pbp_nfl(x)
+            plays <- get_pbp_nfl(x, ...)
           }
           p(sprintf("x=%s", as.character(x)))
           return(plays)
-        })
+        }, ...)
       })
 
       if(purrr::is_empty(pbp) == FALSE) {

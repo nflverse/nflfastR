@@ -7,18 +7,17 @@
 # For now those functions are only a call to nflscrapR but we may want to
 # use other models and epa wpa definitions. This is the place where this
 # could happen
-
+#' @importFrom magrittr "%>%"
 add_ep <- function(pbp) {
-
-  out <- pbp %>%
-    add_ep_variables()
-
+  out <- pbp %>% add_ep_variables()
   message("added ep variables")
   return(out)
 }
 
+#' @importFrom dplyr filter mutate
+#' @importFrom rlang .data
 add_air_yac_ep <- function(pbp) {
-  if (nrow(pbp %>% dplyr::filter(!is.na(air_yards))) == 0) {
+  if (nrow(pbp %>% dplyr::filter(!is.na(.data$air_yards))) == 0) {
     out <- pbp %>%
       dplyr::mutate(
         air_epa = NA_real_,
@@ -44,23 +43,23 @@ add_air_yac_ep <- function(pbp) {
       )
     message("No non-NA air_yards detected. air_yac_ep variables set to NA")
   } else {
-    out <- pbp %>%
-      add_air_yac_ep_variables()
-      message("added air_yac_ep variables")
+    out <- pbp %>% add_air_yac_ep_variables()
+    message("added air_yac_ep variables")
   }
   return(out)
 }
 
+#' @importFrom magrittr "%>%"
 add_wp <- function(pbp) {
-  out <-
-    pbp %>%
-    add_wp_variables()
+  out <- pbp %>% add_wp_variables()
   message("added wp variables")
   return(out)
 }
 
+#' @importFrom dplyr filter mutate
+#' @importFrom rlang .data
 add_air_yac_wp <- function(pbp) {
-  if (nrow(pbp %>% dplyr::filter(!is.na(air_yards))) == 0) {
+  if (nrow(pbp %>% dplyr::filter(!is.na(.data$air_yards))) == 0) {
     out <- pbp %>%
       dplyr::mutate(
         air_wpa = NA_real_,
@@ -86,15 +85,15 @@ add_air_yac_wp <- function(pbp) {
       )
     message("No non-NA air_yards detected. air_yac_wp variables set to NA")
   } else {
-    out <- pbp %>%
-      add_air_yac_wp_variables()
-      message("added air_yac_wp variables")
+    out <- pbp %>% add_air_yac_wp_variables()
+    message("added air_yac_wp variables")
   }
   return(out)
 }
 
 #get predictions for a set of pbp data
 #for predict stage
+#' @importFrom stats predict
 get_preds <- function(pbp) {
 
   preds <- as.data.frame(
@@ -109,6 +108,7 @@ get_preds <- function(pbp) {
 
 #get predictions for a set of pbp data
 #for predict stage
+#' @importFrom stats predict
 get_preds_wp <- function(pbp) {
 
   preds <- stats::predict(wp_model, as.matrix(pbp %>% wp_model_select()))
@@ -118,6 +118,7 @@ get_preds_wp <- function(pbp) {
 
 #get predictions for a set of pbp data
 #for predict stage
+#' @importFrom stats predict
 get_preds_wp_spread <- function(pbp) {
 
   preds <- stats::predict(wp_model_spread, as.matrix(pbp %>% wp_spread_model_select()))
@@ -129,23 +130,23 @@ get_preds_wp_spread <- function(pbp) {
 
 #get the columns needed for ep predictions
 #making sure they're in the right order
+#' @importFrom dplyr select
 ep_model_select <- function(pbp) {
 
   pbp <- pbp %>%
-  dplyr::select(
-    half_seconds_remaining,
-    yardline_100,
-    home,
-    retractable,
-    dome,
-    outdoors,
-    ydstogo,
-    era0, era1, era2, era3, era4,
-    down1, down2, down3, down4,
-    posteam_timeouts_remaining,
-    defteam_timeouts_remaining,
-    model_week
-  )
+    dplyr::select(
+      "half_seconds_remaining",
+      "yardline_100",
+      "home",
+      "retractable",
+      "dome",
+      "outdoors",
+      "ydstogo",
+      "era0", "era1", "era2", "era3", "era4",
+      "down1", "down2", "down3", "down4",
+      "posteam_timeouts_remaining",
+      "defteam_timeouts_remaining",
+    )
 
   return(pbp)
 
@@ -153,21 +154,22 @@ ep_model_select <- function(pbp) {
 
 #get the columns needed for wp predictions
 #making sure they're in the right order
+#' @importFrom dplyr select
 wp_model_select <- function(pbp) {
 
   pbp <- pbp %>%
     dplyr::select(
-      receive_2h_ko,
-      half_seconds_remaining,
-      game_seconds_remaining,
-      ExpScoreDiff_Time_Ratio,
-      ep,
-      score_differential,
-      down,
-      ydstogo,
-      home,
-      posteam_timeouts_remaining,
-      defteam_timeouts_remaining
+      "receive_2h_ko",
+      "half_seconds_remaining",
+      "game_seconds_remaining",
+      "ExpScoreDiff_Time_Ratio",
+      "ep",
+      "score_differential",
+      "down",
+      "ydstogo",
+      "home",
+      "posteam_timeouts_remaining",
+      "defteam_timeouts_remaining"
     )
 
   return(pbp)
@@ -176,41 +178,44 @@ wp_model_select <- function(pbp) {
 
 #get the columns needed for wp predictions
 #making sure they're in the right order
+#' @importFrom dplyr select
 wp_spread_model_select <- function(pbp) {
 
   pbp <- pbp %>%
     dplyr::select(
-      receive_2h_ko,
-      spread_time,
-      half_seconds_remaining,
-      game_seconds_remaining,
-      ExpScoreDiff_Time_Ratio,
-      ep,
-      score_differential,
-      down,
-      ydstogo,
-      home,
-      posteam_timeouts_remaining,
-      defteam_timeouts_remaining
+      "receive_2h_ko",
+      "spread_time",
+      "half_seconds_remaining",
+      "game_seconds_remaining",
+      "ExpScoreDiff_Time_Ratio",
+      "ep",
+      "score_differential",
+      "down",
+      "ydstogo",
+      "home",
+      "posteam_timeouts_remaining",
+      "defteam_timeouts_remaining"
     )
 
   return(pbp)
 
 }
-
+#' @importFrom dplyr group_by mutate ungroup if_else first
+#' @importFrom stats na.omit
+#' @importFrom rlang .data
 prepare_wp_data <- function(pbp) {
 
   pbp <- pbp %>%
-    dplyr::group_by(game_id) %>%
+    dplyr::group_by(.data$game_id) %>%
     dplyr::mutate(
-      receive_2h_ko = dplyr::if_else(qtr <= 2 & posteam == dplyr::first(stats::na.omit(defteam)), 1, 0)
+      receive_2h_ko = dplyr::if_else(.data$qtr <= 2 & .data$posteam == dplyr::first(stats::na.omit(.data$defteam)), 1, 0)
     ) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(
-      ExpScoreDiff = ep + score_differential,
-      posteam_spread = dplyr::if_else(home == 1, spread_line, -1 * spread_line),
-      spread_time = posteam_spread * log(3600 / (50 + (3600 - game_seconds_remaining))),
-      ExpScoreDiff_Time_Ratio = ExpScoreDiff / (game_seconds_remaining + 1)
+      ExpScoreDiff = .data$ep + .data$score_differential,
+      posteam_spread = dplyr::if_else(.data$home == 1, .data$spread_line, -1 * .data$spread_line),
+      spread_time = .data$posteam_spread * log(3600 / (50 + (3600 - .data$game_seconds_remaining))),
+      ExpScoreDiff_Time_Ratio = .data$ExpScoreDiff / (.data$game_seconds_remaining + 1)
     )
 
   return(pbp)
@@ -220,6 +225,9 @@ prepare_wp_data <- function(pbp) {
 
 #add ep variables
 #All of these are heavily borrowed from nflscrapR (Maksim Horowitz, Ronald Yurko, and Samuel Ventura)
+#' @import dplyr
+#' @importFrom rlang .data
+#' @importFrom mgcv predict.bam
 add_ep_variables <- function(pbp_data) {
 
   #testing
@@ -257,7 +265,7 @@ add_ep_variables <- function(pbp_data) {
   missed_fg_ep_preds[end_game_i,] <- rep(0,ncol(missed_fg_ep_preds))
 
   # Get the probability of making the field goal:
-  make_fg_prob <- as.numeric(mgcv::predict.bam(fg_model, newdata= pbp_data, type="response"))
+  make_fg_prob <- as.numeric(mgcv::predict.bam(fg_model, newdata = pbp_data, type="response"))
 
   # Multiply each value of the missed_fg_ep_preds by the 1 - make_fg_prob
   missed_fg_ep_preds <- missed_fg_ep_preds * (1 - make_fg_prob)
@@ -343,6 +351,8 @@ add_ep_variables <- function(pbp_data) {
       # kick formation + NA down
       (stringr::str_detect(pbp_data$desc, 'Kick formation') & is.na(pbp_data$down) & pbp_data$play_type == 'no_play') |
       (stringr::str_detect(pbp_data$desc, 'Pass formation') & is.na(pbp_data$down) & pbp_data$play_type == 'no_play') |
+      (stringr::str_detect(pbp_data$desc, 'kicks onside') & is.na(pbp_data$down) & pbp_data$play_type == 'no_play') |
+      (stringr::str_detect(pbp_data$desc, 'Offside on Free Kick') & is.na(pbp_data$down) & pbp_data$play_type == 'no_play') |
       (stringr::str_detect(pbp_data$desc, 'TWO-POINT CONVERSION') & is.na(pbp_data$down) & pbp_data$play_type == 'no_play')
     )
 
@@ -368,13 +378,13 @@ add_ep_variables <- function(pbp_data) {
 
   # Rename the events to all have _Prob at the end of them:
   base_ep_preds <- dplyr::rename(base_ep_preds,
-                                 Field_Goal_Prob = Field_Goal,
-                                 Touchdown_Prob = Touchdown,
-                                 Opp_Field_Goal_Prob = Opp_Field_Goal,
-                                 Opp_Touchdown_Prob = Opp_Touchdown,
-                                 Safety_Prob = Safety,
-                                 Opp_Safety_Prob = Opp_Safety,
-                                 No_Score_Prob = No_Score)
+                                 Field_Goal_Prob = "Field_Goal",
+                                 Touchdown_Prob = "Touchdown",
+                                 Opp_Field_Goal_Prob = "Opp_Field_Goal",
+                                 Opp_Touchdown_Prob = "Opp_Touchdown",
+                                 Safety_Prob = "Safety",
+                                 Opp_Safety_Prob = "Opp_Safety",
+                                 No_Score_Prob = "No_Score")
 
 
   # Join them together:
@@ -382,11 +392,11 @@ add_ep_variables <- function(pbp_data) {
 
   # Calculate the ExpPts:
   pbp_data_ep <- dplyr::mutate(pbp_data,
-                               ExpPts = (0*No_Score_Prob) + (-3 * Opp_Field_Goal_Prob) +
-                                 (-2 * Opp_Safety_Prob) +
-                                 (-7 * Opp_Touchdown_Prob) + (3 * Field_Goal_Prob) +
-                                 (2 * Safety_Prob) + (7 * Touchdown_Prob) +
-                                 (1 * ExPoint_Prob) + (2 * TwoPoint_Prob))
+                               ExpPts = (0*.data$No_Score_Prob) + (-3 * .data$Opp_Field_Goal_Prob) +
+                                 (-2 * .data$Opp_Safety_Prob) +
+                                 (-7 * .data$Opp_Touchdown_Prob) + (3 * .data$Field_Goal_Prob) +
+                                 (2 * .data$Safety_Prob) + (7 * .data$Touchdown_Prob) +
+                                 (1 * .data$ExPoint_Prob) + (2 * .data$TwoPoint_Prob))
 
   #just going to set these to NA bc we have no way of calculating EPA for them
   pbp_data_ep$ExpPts[st_penalty_i] <- NA_real_
@@ -402,235 +412,240 @@ add_ep_variables <- function(pbp_data) {
   # an ifelse statement to decide which one
   # to use as the final EPA):
   pbp_data_ep %>%
-    dplyr::group_by(game_id) %>%
+    dplyr::group_by(.data$game_id) %>%
     dplyr::mutate(# Now conditionally assign the EPA, first for possession team
       # touchdowns:
-      EPA = dplyr::if_else(!is.na(td_team),
-                           dplyr::if_else(td_team == posteam,
-                                          7 - ExpPts, -7 - ExpPts),
+      EPA = dplyr::if_else(!is.na(.data$td_team),
+                           dplyr::if_else(.data$td_team == .data$posteam,
+                                          7 - .data$ExpPts, -7 - .data$ExpPts),
                            0),
       #                     7 - ExpPts, 0),
       # Offense field goal:
-      EPA = dplyr::if_else(is.na(td_team) & field_goal_made == 1,
-                           3 - ExpPts, EPA),
+      EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 1,
+                           3 - .data$ExpPts, .data$EPA),
       # Offense extra-point:
-      EPA = dplyr::if_else(is.na(td_team) & field_goal_made == 0 &
-                             extra_point_good == 1,
-                           1 - ExpPts, EPA),
+      EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
+                             .data$extra_point_good == 1,
+                           1 - .data$ExpPts, .data$EPA),
       # Offense two-point conversion:
-      EPA = dplyr::if_else(is.na(td_team) & field_goal_made == 0 &
-                             extra_point_good == 0 &
-                             (two_point_rush_good == 1 |
-                                two_point_pass_good == 1 |
-                                two_point_pass_reception_good == 1),
-                           2 - ExpPts, EPA),
+      EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
+                             .data$extra_point_good == 0 &
+                             (.data$two_point_rush_good == 1 |
+                                .data$two_point_pass_good == 1 |
+                                .data$two_point_pass_reception_good == 1),
+                           2 - .data$ExpPts, .data$EPA),
       # Failed PAT (both 1 and 2):
-      EPA = dplyr::if_else(is.na(td_team) & field_goal_made == 0 &
-                             extra_point_good == 0 &
-                             ((extra_point_failed == 1 |
-                                 extra_point_blocked == 1 |
-                                 extra_point_aborted == 1) |
-                                (two_point_rush_failed == 1 |
-                                   two_point_pass_failed == 1 |
-                                   two_point_pass_reception_failed == 1)),
-                           0 - ExpPts, EPA),
+      EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
+                             .data$extra_point_good == 0 &
+                             ((.data$extra_point_failed == 1 |
+                                 .data$extra_point_blocked == 1 |
+                                 .data$extra_point_aborted == 1) |
+                                (.data$two_point_rush_failed == 1 |
+                                   .data$two_point_pass_failed == 1 |
+                                   .data$two_point_pass_reception_failed == 1)),
+                           0 - .data$ExpPts, .data$EPA),
       # Opponent safety:
-      EPA = dplyr::if_else(is.na(td_team) & field_goal_made == 0 &
-                             extra_point_good == 0 &
-                             extra_point_failed == 0 &
-                             extra_point_blocked == 0 &
-                             extra_point_aborted == 0 &
-                             two_point_rush_failed == 0 &
-                             two_point_pass_failed == 0 &
-                             two_point_pass_reception_failed == 0 &
-                             two_point_rush_good == 0 &
-                             two_point_pass_good == 0 &
-                             two_point_pass_reception_good == 0 &
-                             safety == 1,
-                           -2 - ExpPts, EPA),
+      EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
+                             .data$extra_point_good == 0 &
+                             .data$extra_point_failed == 0 &
+                             .data$extra_point_blocked == 0 &
+                             .data$extra_point_aborted == 0 &
+                             .data$two_point_rush_failed == 0 &
+                             .data$two_point_pass_failed == 0 &
+                             .data$two_point_pass_reception_failed == 0 &
+                             .data$two_point_rush_good == 0 &
+                             .data$two_point_pass_good == 0 &
+                             .data$two_point_pass_reception_good == 0 &
+                             .data$safety == 1,
+                           -2 - .data$ExpPts, .data$EPA),
       # Defense touchdown
       #EPA = dplyr::if_else(touchdown == 1 & td_team == defteam,
       #                     -7 - ExpPts, EPA),
       # Change of possession without defense scoring
       # and no timeout, two minute warning, or quarter end follows:
-      EPA = dplyr::if_else(is.na(td_team) & field_goal_made == 0 &
-                             extra_point_good == 0 &
-                             extra_point_failed == 0 &
-                             extra_point_blocked == 0 &
-                             extra_point_aborted == 0 &
-                             two_point_rush_failed == 0 &
-                             two_point_pass_failed == 0 &
-                             two_point_pass_reception_failed == 0 &
-                             two_point_rush_good == 0 &
-                             two_point_pass_good == 0 &
-                             two_point_pass_reception_good == 0 &
-                             safety == 0 &
-                             posteam != dplyr::lead(posteam) &
-                             !is.na(dplyr::lead(play_type)) &
-                             (dplyr::lead(timeout) == 0 |
-                                (dplyr::lead(timeout) == 1 &
-                                   dplyr::lead(play_type) != "no_play")),
-                           -dplyr::lead(ExpPts) - ExpPts, EPA),
+      EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
+                             .data$extra_point_good == 0 &
+                             .data$extra_point_failed == 0 &
+                             .data$extra_point_blocked == 0 &
+                             .data$extra_point_aborted == 0 &
+                             .data$two_point_rush_failed == 0 &
+                             .data$two_point_pass_failed == 0 &
+                             .data$two_point_pass_reception_failed == 0 &
+                             .data$two_point_rush_good == 0 &
+                             .data$two_point_pass_good == 0 &
+                             .data$two_point_pass_reception_good == 0 &
+                             .data$safety == 0 &
+                             .data$posteam != dplyr::lead(.data$posteam) &
+                             !is.na(dplyr::lead(.data$play_type)) &
+                             (dplyr::lead(.data$timeout) == 0 |
+                                (dplyr::lead(.data$timeout) == 1 &
+                                   dplyr::lead(.data$play_type) != "no_play")),
+                           -dplyr::lead(.data$ExpPts) - .data$ExpPts, .data$EPA),
+
       # Same thing except for when timeouts and end of play follow:
-      EPA = dplyr::if_else(is.na(td_team) & field_goal_made == 0 &
-                             extra_point_good == 0 &
-                             extra_point_failed == 0 &
-                             extra_point_blocked == 0 &
-                             extra_point_aborted == 0 &
-                             two_point_rush_failed == 0 &
-                             two_point_pass_failed == 0 &
-                             two_point_pass_reception_failed == 0 &
-                             two_point_rush_good == 0 &
-                             two_point_pass_good == 0 &
-                             two_point_pass_reception_good == 0 &
-                             safety == 0 &
-                             (is.na(dplyr::lead(play_type)) |
-                                (dplyr::lead(timeout) == 1 &
-                                   dplyr::lead(play_type) == "no_play")) &
-                             posteam != dplyr::lead(posteam, 2),
-                           -dplyr::lead(ExpPts, 2) - ExpPts, EPA),
+      EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
+                             .data$extra_point_good == 0 &
+                             .data$extra_point_failed == 0 &
+                             .data$extra_point_blocked == 0 &
+                             .data$extra_point_aborted == 0 &
+                             .data$two_point_rush_failed == 0 &
+                             .data$two_point_pass_failed == 0 &
+                             .data$two_point_pass_reception_failed == 0 &
+                             .data$two_point_rush_good == 0 &
+                             .data$two_point_pass_good == 0 &
+                             .data$two_point_pass_reception_good == 0 &
+                             .data$safety == 0 &
+                             (is.na(dplyr::lead(.data$play_type)) |
+                                (dplyr::lead(.data$timeout) == 1 &
+                                   dplyr::lead(.data$play_type) == "no_play")) &
+                             .data$posteam != dplyr::lead(.data$posteam, 2),
+                           -dplyr::lead(.data$ExpPts, 2) - .data$ExpPts, .data$EPA),
+
       # Same thing except for when back to back rows of end of
       # play that can potentially occur because the NFL likes to
       # make my life difficult:
-      EPA = dplyr::if_else(is.na(td_team) & field_goal_made == 0 &
-                             extra_point_good == 0 &
-                             extra_point_failed == 0 &
-                             extra_point_blocked == 0 &
-                             extra_point_aborted == 0 &
-                             two_point_rush_failed == 0 &
-                             two_point_pass_failed == 0 &
-                             two_point_pass_reception_failed == 0 &
-                             two_point_rush_good == 0 &
-                             two_point_pass_good == 0 &
-                             two_point_pass_reception_good == 0 &
-                             safety == 0 &
-                             (is.na(dplyr::lead(play_type)) &
-                                is.na(dplyr::lead(play_type, 2))) &
-                             posteam != dplyr::lead(posteam, 3),
-                           -dplyr::lead(ExpPts, 3) - ExpPts, EPA),
+      EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
+                             .data$extra_point_good == 0 &
+                             .data$extra_point_failed == 0 &
+                             .data$extra_point_blocked == 0 &
+                             .data$extra_point_aborted == 0 &
+                             .data$two_point_rush_failed == 0 &
+                             .data$two_point_pass_failed == 0 &
+                             .data$two_point_pass_reception_failed == 0 &
+                             .data$two_point_rush_good == 0 &
+                             .data$two_point_pass_good == 0 &
+                             .data$two_point_pass_reception_good == 0 &
+                             .data$safety == 0 &
+                             (is.na(dplyr::lead(.data$play_type)) &
+                                is.na(dplyr::lead(.data$play_type, 2))) &
+                             .data$posteam != dplyr::lead(.data$posteam, 3),
+                           -dplyr::lead(.data$ExpPts, 3) - .data$ExpPts, .data$EPA),
+
       # Team keeps possession and no timeout or end of play follows:
-      EPA = dplyr::if_else(is.na(td_team) & field_goal_made == 0 &
-                             extra_point_good == 0 &
-                             extra_point_failed == 0 &
-                             extra_point_blocked == 0 &
-                             extra_point_aborted == 0 &
-                             two_point_rush_failed == 0 &
-                             two_point_pass_failed == 0 &
-                             two_point_pass_reception_failed == 0 &
-                             two_point_rush_good == 0 &
-                             two_point_pass_good == 0 &
-                             two_point_pass_reception_good == 0 &
-                             safety == 0 &
-                             posteam == dplyr::lead(posteam) &
-                             !is.na(dplyr::lead(play_type)) &
+      EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
+                             .data$extra_point_good == 0 &
+                             .data$extra_point_failed == 0 &
+                             .data$extra_point_blocked == 0 &
+                             .data$extra_point_aborted == 0 &
+                             .data$two_point_rush_failed == 0 &
+                             .data$two_point_pass_failed == 0 &
+                             .data$two_point_pass_reception_failed == 0 &
+                             .data$two_point_rush_good == 0 &
+                             .data$two_point_pass_good == 0 &
+                             .data$two_point_pass_reception_good == 0 &
+                             .data$safety == 0 &
+                             .data$posteam == dplyr::lead(.data$posteam) &
+                             !is.na(dplyr::lead(.data$play_type)) &
                              # no timeout on next line
-                             (dplyr::lead(timeout) == 0 |
+                             (dplyr::lead(.data$timeout) == 0 |
                                 #or timeout caused by failed challenge
-                                (dplyr::lead(timeout) == 1 &
-                                   (dplyr::lead(play_type) != "no_play" | stringr::str_detect(dplyr::lead(desc), ' pass ')))),
-                           dplyr::lead(ExpPts) - ExpPts, EPA),
+                                (dplyr::lead(.data$timeout) == 1 &
+                                   (dplyr::lead(.data$play_type) != "no_play" | stringr::str_detect(dplyr::lead(.data$desc), ' pass ')))),
+                           dplyr::lead(.data$ExpPts) - .data$ExpPts, .data$EPA),
+
       # Same but timeout or end of play follows:
-      EPA = dplyr::if_else(is.na(td_team) & field_goal_made == 0 &
-                             extra_point_good == 0 &
-                             extra_point_failed == 0 &
-                             extra_point_blocked == 0 &
-                             extra_point_aborted == 0 &
-                             two_point_rush_failed == 0 &
-                             two_point_pass_failed == 0 &
-                             two_point_pass_reception_failed == 0 &
-                             two_point_rush_good == 0 &
-                             two_point_pass_good == 0 &
-                             two_point_pass_reception_good == 0 &
-                             safety == 0 &
+      EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
+                             .data$extra_point_good == 0 &
+                             .data$extra_point_failed == 0 &
+                             .data$extra_point_blocked == 0 &
+                             .data$extra_point_aborted == 0 &
+                             .data$two_point_rush_failed == 0 &
+                             .data$two_point_pass_failed == 0 &
+                             .data$two_point_pass_reception_failed == 0 &
+                             .data$two_point_rush_good == 0 &
+                             .data$two_point_pass_good == 0 &
+                             .data$two_point_pass_reception_good == 0 &
+                             .data$safety == 0 &
                              #missing play type
-                             (is.na(dplyr::lead(play_type)) |
+                             (is.na(dplyr::lead(.data$play_type)) |
                                 #or timeout without a pass play
-                                (dplyr::lead(timeout) == 1 &
-                                   dplyr::lead(play_type) == "no_play" &
-                                    !stringr::str_detect(dplyr::lead(desc), ' pass '))) &
-                             posteam == dplyr::lead(posteam, 2),
-                           dplyr::lead(ExpPts, 2) - ExpPts, EPA),
+                                (dplyr::lead(.data$timeout) == 1 &
+                                   dplyr::lead(.data$play_type) == "no_play" &
+                                    !stringr::str_detect(dplyr::lead(.data$desc), ' pass '))) &
+                             .data$posteam == dplyr::lead(.data$posteam, 2),
+                           dplyr::lead(.data$ExpPts, 2) - .data$ExpPts, .data$EPA),
+
       # Same as above but when two rows without play info follow:
-      EPA = dplyr::if_else(is.na(td_team) & field_goal_made == 0 &
-                             extra_point_good == 0 &
-                             extra_point_failed == 0 &
-                             extra_point_blocked == 0 &
-                             extra_point_aborted == 0 &
-                             two_point_rush_failed == 0 &
-                             two_point_pass_failed == 0 &
-                             two_point_pass_reception_failed == 0 &
-                             two_point_rush_good == 0 &
-                             two_point_pass_good == 0 &
-                             two_point_pass_reception_good == 0 &
-                             safety == 0 &
+      EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
+                             .data$extra_point_good == 0 &
+                             .data$extra_point_failed == 0 &
+                             .data$extra_point_blocked == 0 &
+                             .data$extra_point_aborted == 0 &
+                             .data$two_point_rush_failed == 0 &
+                             .data$two_point_pass_failed == 0 &
+                             .data$two_point_pass_reception_failed == 0 &
+                             .data$two_point_rush_good == 0 &
+                             .data$two_point_pass_good == 0 &
+                             .data$two_point_pass_reception_good == 0 &
+                             .data$safety == 0 &
                              (
                                #next play is missing play type or has timeout
-                               ( is.na(dplyr::lead(play_type)) | (dplyr::lead(timeout) == 1 & dplyr::lead(play_type) == "no_play") ) &
+                               ( is.na(dplyr::lead(.data$play_type)) | (dplyr::lead(.data$timeout) == 1 & dplyr::lead(.data$play_type) == "no_play") ) &
                                  #same for play after that
-                                 ( is.na(dplyr::lead(play_type, 2)) | (dplyr::lead(timeout, 2) == 1 & dplyr::lead(play_type, 2) == "no_play") )
+                                 ( is.na(dplyr::lead(.data$play_type, 2)) | (dplyr::lead(.data$timeout, 2) == 1 & dplyr::lead(.data$play_type, 2) == "no_play") )
                              ) &
-                             posteam == dplyr::lead(posteam, 3),
-                           dplyr::lead(ExpPts, 3) - ExpPts, EPA)) %>%
+                             .data$posteam == dplyr::lead(.data$posteam, 3),
+                           dplyr::lead(.data$ExpPts, 3) - .data$ExpPts, .data$EPA)) %>%
     # Now rename each of the expected points columns to match the style of
     # the updated code:
-    dplyr::rename(ep = ExpPts, epa = EPA,
-                  no_score_prob = No_Score_Prob,
-                  opp_fg_prob = Opp_Field_Goal_Prob,
-                  opp_safety_prob = Opp_Safety_Prob,
-                  opp_td_prob = Opp_Touchdown_Prob,
-                  fg_prob = Field_Goal_Prob,
-                  safety_prob = Safety_Prob,
-                  td_prob = Touchdown_Prob,
-                  extra_point_prob = ExPoint_Prob,
-                  two_point_conversion_prob = TwoPoint_Prob) %>%
+    dplyr::rename(ep = "ExpPts", epa = "EPA",
+                  no_score_prob = "No_Score_Prob",
+                  opp_fg_prob = "Opp_Field_Goal_Prob",
+                  opp_safety_prob = "Opp_Safety_Prob",
+                  opp_td_prob = "Opp_Touchdown_Prob",
+                  fg_prob = "Field_Goal_Prob",
+                  safety_prob = "Safety_Prob",
+                  td_prob = "Touchdown_Prob",
+                  extra_point_prob = "ExPoint_Prob",
+                  two_point_conversion_prob = "TwoPoint_Prob") %>%
     # Create columns with cumulative epa totals for both teams:
-    dplyr::mutate(ep = dplyr::if_else(timeout == 1 & play_type == "no_play" & !stringr::str_detect(desc, ' pass '),
-                                      dplyr::lead(ep), ep),
-                  epa = dplyr::if_else(timeout == 1 & play_type == "no_play" & !stringr::str_detect(desc, ' pass '),
-                                       0, epa),
+    dplyr::mutate(ep = dplyr::if_else(.data$timeout == 1 & .data$play_type == "no_play" & !stringr::str_detect(.data$desc, ' pass '),
+                                      dplyr::lead(.data$ep), .data$ep),
+                  epa = dplyr::if_else(.data$timeout == 1 & .data$play_type == "no_play" & !stringr::str_detect(.data$desc, ' pass '),
+                                       0, .data$epa),
                   # Change epa for plays occurring at end of half with no scoring
                   # plays to be just the difference between 0 and starting ep:
-                  epa = dplyr::if_else(((qtr == 2 &
-                                           (dplyr::lead(qtr) == 3 |
-                                              dplyr::lead(desc) == "END QUARTER 2")) |
-                                          (qtr == 4 &
-                                             (dplyr::lead(qtr) == 5 |
-                                                dplyr::lead(desc) == "END QUARTER 4" |
-                                                dplyr::lead(desc) == "END GAME"))) &
-                                         sp == 0 &
-                                         !is.na(play_type),
-                                       0 - ep, epa),
-                  home_team_epa = dplyr::if_else(posteam == home_team,
-                                                 epa, -epa),
-                  away_team_epa = dplyr::if_else(posteam == away_team,
-                                                 epa, -epa),
-                  home_team_epa = dplyr::if_else(is.na(home_team_epa),
-                                                 0, home_team_epa),
-                  away_team_epa = dplyr::if_else(is.na(away_team_epa),
-                                                 0, away_team_epa),
-                  total_home_epa = cumsum(home_team_epa),
-                  total_away_epa = cumsum(away_team_epa),
+                  epa = dplyr::if_else(((.data$qtr == 2 &
+                                           (dplyr::lead(.data$qtr) == 3 |
+                                              dplyr::lead(.data$desc) == "END QUARTER 2")) |
+                                          (.data$qtr == 4 &
+                                             (dplyr::lead(.data$qtr) == 5 |
+                                                dplyr::lead(.data$desc) == "END QUARTER 4" |
+                                                dplyr::lead(.data$desc) == "END GAME"))) &
+                                         .data$sp == 0 &
+                                         !is.na(.data$play_type),
+                                       0 - .data$ep, .data$epa),
+                  home_team_epa = dplyr::if_else(.data$posteam == .data$home_team,
+                                                 .data$epa, -.data$epa),
+                  away_team_epa = dplyr::if_else(.data$posteam == .data$away_team,
+                                                 .data$epa, -.data$epa),
+                  home_team_epa = dplyr::if_else(is.na(.data$home_team_epa),
+                                                 0, .data$home_team_epa),
+                  away_team_epa = dplyr::if_else(is.na(.data$away_team_epa),
+                                                 0, .data$away_team_epa),
+                  total_home_epa = cumsum(.data$home_team_epa),
+                  total_away_epa = cumsum(.data$away_team_epa),
                   # Same thing but separating passing and rushing:
-                  home_team_rush_epa = dplyr::if_else(play_type == "run",
-                                                      home_team_epa, 0),
-                  away_team_rush_epa = dplyr::if_else(play_type == "run",
-                                                      away_team_epa, 0),
-                  home_team_rush_epa = dplyr::if_else(is.na(home_team_rush_epa),
-                                                      0, home_team_rush_epa),
-                  away_team_rush_epa = dplyr::if_else(is.na(away_team_rush_epa),
-                                                      0, away_team_rush_epa),
-                  total_home_rush_epa = cumsum(home_team_rush_epa),
-                  total_away_rush_epa = cumsum(away_team_rush_epa),
-                  home_team_pass_epa = dplyr::if_else(play_type == "pass",
-                                                      home_team_epa, 0),
-                  away_team_pass_epa = dplyr::if_else(play_type == "pass",
-                                                      away_team_epa, 0),
-                  home_team_pass_epa = dplyr::if_else(is.na(home_team_pass_epa),
-                                                      0, home_team_pass_epa),
-                  away_team_pass_epa = dplyr::if_else(is.na(away_team_pass_epa),
-                                                      0, away_team_pass_epa),
-                  total_home_pass_epa = cumsum(home_team_pass_epa),
-                  total_away_pass_epa = cumsum(away_team_pass_epa)) %>%
+                  home_team_rush_epa = dplyr::if_else(.data$play_type == "run",
+                                                      .data$home_team_epa, 0),
+                  away_team_rush_epa = dplyr::if_else(.data$play_type == "run",
+                                                      .data$away_team_epa, 0),
+                  home_team_rush_epa = dplyr::if_else(is.na(.data$home_team_rush_epa),
+                                                      0, .data$home_team_rush_epa),
+                  away_team_rush_epa = dplyr::if_else(is.na(.data$away_team_rush_epa),
+                                                      0, .data$away_team_rush_epa),
+                  total_home_rush_epa = cumsum(.data$home_team_rush_epa),
+                  total_away_rush_epa = cumsum(.data$away_team_rush_epa),
+                  home_team_pass_epa = dplyr::if_else(.data$play_type == "pass",
+                                                      .data$home_team_epa, 0),
+                  away_team_pass_epa = dplyr::if_else(.data$play_type == "pass",
+                                                      .data$away_team_epa, 0),
+                  home_team_pass_epa = dplyr::if_else(is.na(.data$home_team_pass_epa),
+                                                      0, .data$home_team_pass_epa),
+                  away_team_pass_epa = dplyr::if_else(is.na(.data$away_team_pass_epa),
+                                                      0, .data$away_team_pass_epa),
+                  total_home_pass_epa = cumsum(.data$home_team_pass_epa),
+                  total_away_pass_epa = cumsum(.data$away_team_pass_epa)) %>%
     dplyr::ungroup() %>%
     return
 }
@@ -638,7 +653,9 @@ add_ep_variables <- function(pbp_data) {
 
 #################################################################
 # Calculate WP and WPA:
-
+#' @import dplyr
+#' @importFrom stringr str_detect
+#' @importFrom rlang .data
 add_wp_variables <- function(pbp_data) {
 
   #testing only
@@ -668,7 +685,7 @@ add_wp_variables <- function(pbp_data) {
 
     # Calculate the difference in drive number
     overtime_df <- dplyr::mutate(overtime_df,
-                                 Drive_Diff = drive - First_Drive)
+                                 Drive_Diff = .data$drive - .data$First_Drive)
 
     # Create an indicator column that means the posteam is losing by 3 and
     # its the second drive of overtime:
@@ -696,7 +713,7 @@ add_wp_variables <- function(pbp_data) {
     overtime_df_ko_preds <- get_preds(overtime_df_ko)
 
     overtime_df_ko_preds <- dplyr::mutate(overtime_df_ko_preds,
-                                          Win_Back = No_Score + Opp_Field_Goal + Opp_Safety + Opp_Touchdown)
+                                          Win_Back = .data$No_Score + .data$Opp_Field_Goal + .data$Opp_Safety + .data$Opp_Touchdown)
 
     # Calculate the two possible win probability types, Sudden Death and one Field Goal:
     overtime_df$Sudden_Death_WP <- overtime_df$fg_prob + overtime_df$td_prob + overtime_df$safety_prob
@@ -764,65 +781,66 @@ add_wp_variables <- function(pbp_data) {
       wp = OffWinProb,
       vegas_wp = OffWinProb_spread) %>%
     tidyr::fill(
-      wp, .direction = "up"
+      .data$wp, .direction = "up"
     ) %>%
     tidyr::fill(
-      vegas_wp, .direction = "up"
+      .data$vegas_wp, .direction = "up"
     ) %>%
     dplyr::mutate(
       #because other team will have the ball so WP from their perspective
       #this is for backfilling WP on PATs
       wp =
-        dplyr::if_else((kickoff_attempt == 0 & (stringr::str_detect(desc, 'Kick formation') | stringr::str_detect(desc, 'Pass formation')) & is.na(down)) |
-                            stringr::str_detect(desc, 'extra point') |
-                            !is.na(two_point_conv_result) |
-                            !is.na(extra_point_result),
-                          1 - wp, wp),
+        dplyr::if_else((.data$kickoff_attempt == 0 & (stringr::str_detect(.data$desc, 'Kick formation') | stringr::str_detect(.data$desc, 'Pass formation')) & is.na(.data$down)) |
+                            stringr::str_detect(.data$desc, 'extra point') |
+                            !is.na(.data$two_point_conv_result) |
+                            !is.na(.data$extra_point_result),
+                          1 - .data$wp, .data$wp),
       vegas_wp =
-        dplyr::if_else((kickoff_attempt == 0 & (stringr::str_detect(desc, 'Kick formation') | stringr::str_detect(desc, 'Pass formation')) & is.na(down)) |
-                            stringr::str_detect(desc, 'extra point') |
-                            !is.na(two_point_conv_result) |
-                            !is.na(extra_point_result),
-                          1 - vegas_wp, vegas_wp),
-      wp = dplyr::if_else(is.na(posteam), NA_real_, wp),
-      def_wp = 1 - wp,
-      home_wp = dplyr::if_else(posteam == home_team,
-                               wp, def_wp),
-      away_wp = dplyr::if_else(posteam == away_team,
-                               wp, def_wp),
+        dplyr::if_else((.data$kickoff_attempt == 0 & (stringr::str_detect(.data$desc, 'Kick formation') | stringr::str_detect(.data$desc, 'Pass formation')) & is.na(.data$down)) |
+                            stringr::str_detect(.data$desc, 'extra point') |
+                            !is.na(.data$two_point_conv_result) |
+                            !is.na(.data$extra_point_result),
+                          1 - .data$vegas_wp, .data$vegas_wp),
+      wp = dplyr::if_else(is.na(.data$posteam), NA_real_, .data$wp),
+      def_wp = 1 - .data$wp,
+      home_wp = dplyr::if_else(.data$posteam == .data$home_team,
+                               .data$wp, .data$def_wp),
+      away_wp = dplyr::if_else(.data$posteam == .data$away_team,
+                               .data$wp, .data$def_wp),
+
       #add columns for WP taking into account spread
-      vegas_wp = dplyr::if_else(is.na(posteam), NA_real_, vegas_wp),
-      vegas_home_wp = dplyr::if_else(posteam == home_team,
-                                     vegas_wp, 1 - vegas_wp),
+      vegas_wp = dplyr::if_else(is.na(.data$posteam), NA_real_, .data$vegas_wp),
+      vegas_home_wp = dplyr::if_else(.data$posteam == .data$home_team,
+                                     .data$vegas_wp, 1 - .data$vegas_wp),
       #make 1 or 0 the final win prob
       vegas_home_wp = dplyr::if_else(
         stringr::str_detect(
-          tolower(desc), "(end of game)|(end game)"
+          tolower(.data$desc), "(end of game)|(end game)"
         ),
         dplyr::case_when(
-          home_score > away_score ~ 1,
-          away_score > home_score ~ 0,
-          home_score == away_score ~ .5
+          .data$home_score > .data$away_score ~ 1,
+          .data$away_score > .data$home_score ~ 0,
+          .data$home_score == .data$away_score ~ .5
         ),
-        vegas_home_wp
+        .data$vegas_home_wp
       )
-      )
+    )
 
   # For now follow the code from before, will need to update later:
   # Create the possible WPA values
   pbp_data <- dplyr::mutate(pbp_data,
                             # Team keeps possession (most general case):
-                            WPA_base = dplyr::lead(wp) - wp,
+                            WPA_base = dplyr::lead(.data$wp) - .data$wp,
                             # Team keeps possession but either Timeout, Two Minute Warning,
                             # Quarter End is the following row
-                            WPA_base_nxt = dplyr::lead(wp,2) - wp,
+                            WPA_base_nxt = dplyr::lead(.data$wp,2) - .data$wp,
                             # Change of possession and no timeout,
                             # two minute warning, or quarter end follows:
-                            WPA_change = (1 - dplyr::lead(wp)) - wp,
+                            WPA_change = (1 - dplyr::lead(.data$wp)) - .data$wp,
                             # Change of possession but either Timeout,
                             # Two Minute Warning, or
                             # Quarter End is the following row:
-                            WPA_change_nxt = (1 - dplyr::lead(wp, 2)) - wp,
+                            WPA_change_nxt = (1 - dplyr::lead(.data$wp, 2)) - .data$wp,
                             # End of quarter, half or end rows:
                             WPA_halfend_to = 0)
   # Create a WPA column for the last play of the game:
@@ -889,16 +907,16 @@ add_wp_variables <- function(pbp_data) {
   # If next thing is end of game, and post score differential is tied because it's
   # overtime then make both the home_wp_post and away_wp_post equal to 0:
   pbp_data <- pbp_data %>%
-    dplyr::mutate(home_wp_post = dplyr::if_else(qtr == 5 &
-                                                  stringr::str_detect(tolower(dplyr::lead(desc)),
+    dplyr::mutate(home_wp_post = dplyr::if_else(.data$qtr == 5 &
+                                                  stringr::str_detect(tolower(dplyr::lead(.data$desc)),
                                                                       "(end of game)|(end game)") &
-                                                  score_differential_post == 0,
-                                                0, home_wp_post),
-                  away_wp_post = dplyr::if_else(qtr == 5 &
-                                                  stringr::str_detect(tolower(dplyr::lead(desc)),
+                                                  .data$score_differential_post == 0,
+                                                0, .data$home_wp_post),
+                  away_wp_post = dplyr::if_else(.data$qtr == 5 &
+                                                  stringr::str_detect(tolower(dplyr::lead(.data$desc)),
                                                                       "(end of game)|(end game)") &
-                                                  score_differential_post == 0,
-                                                0, away_wp_post))
+                                                  .data$score_differential_post == 0,
+                                                0, .data$away_wp_post))
 
 
   # For plays with playtype of End of Game, use the previous play's WP_post columns
@@ -927,44 +945,44 @@ add_wp_variables <- function(pbp_data) {
 
 
   # Now drop the unnecessary columns, rename variables back, and return:
-  pbp_data %>% dplyr::select(-c(WPA_base,WPA_base_nxt,WPA_change_nxt,WPA_change,
-                                WPA_halfend_to, WPA_final,
-                                WPA_base_nxt_ind, WPA_change_nxt_ind,
-                                WPA_change_ind, WPA_halfend_to_ind, WPA_final_ind
+  pbp_data %>% dplyr::select(-c("WPA_base","WPA_base_nxt","WPA_change_nxt","WPA_change",
+                                "WPA_halfend_to", "WPA_final",
+                                "WPA_base_nxt_ind", "WPA_change_nxt_ind",
+                                "WPA_change_ind", "WPA_halfend_to_ind", "WPA_final_ind"
                                 )) %>%
-    dplyr::group_by(game_id) %>%
+    dplyr::group_by(.data$game_id) %>%
     dplyr::mutate(
                   # Generate columns to keep track of cumulative rushing and
                   # passing WPA values:
-                  home_team_wpa = dplyr::if_else(posteam == home_team,
-                                                 wpa, -wpa),
-                  away_team_wpa = dplyr::if_else(posteam == away_team,
-                                                 wpa, -wpa),
-                  home_team_wpa = dplyr::if_else(is.na(home_team_wpa),
-                                                 0, home_team_wpa),
-                  away_team_wpa = dplyr::if_else(is.na(away_team_wpa),
-                                                 0, away_team_wpa),
+                  home_team_wpa = dplyr::if_else(.data$posteam == .data$home_team,
+                                                 .data$wpa, -.data$wpa),
+                  away_team_wpa = dplyr::if_else(.data$posteam == .data$away_team,
+                                                 .data$wpa, -.data$wpa),
+                  home_team_wpa = dplyr::if_else(is.na(.data$home_team_wpa),
+                                                 0, .data$home_team_wpa),
+                  away_team_wpa = dplyr::if_else(is.na(.data$away_team_wpa),
+                                                 0, .data$away_team_wpa),
                   # Same thing but separating passing and rushing:
-                  home_team_rush_wpa = dplyr::if_else(play_type == "run",
-                                                      home_team_wpa, 0),
-                  away_team_rush_wpa = dplyr::if_else(play_type == "run",
-                                                      away_team_wpa, 0),
-                  home_team_rush_wpa = dplyr::if_else(is.na(home_team_rush_wpa),
-                                                      0, home_team_rush_wpa),
-                  away_team_rush_wpa = dplyr::if_else(is.na(away_team_rush_wpa),
-                                                      0, away_team_rush_wpa),
-                  total_home_rush_wpa = cumsum(home_team_rush_wpa),
-                  total_away_rush_wpa = cumsum(away_team_rush_wpa),
-                  home_team_pass_wpa = dplyr::if_else(play_type == "pass",
-                                                      home_team_wpa, 0),
-                  away_team_pass_wpa = dplyr::if_else(play_type == "pass",
-                                                      away_team_wpa, 0),
-                  home_team_pass_wpa = dplyr::if_else(is.na(home_team_pass_wpa),
-                                                      0, home_team_pass_wpa),
-                  away_team_pass_wpa = dplyr::if_else(is.na(away_team_pass_wpa),
-                                                      0, away_team_pass_wpa),
-                  total_home_pass_wpa = cumsum(home_team_pass_wpa),
-                  total_away_pass_wpa = cumsum(away_team_pass_wpa)) %>%
+                  home_team_rush_wpa = dplyr::if_else(.data$play_type == "run",
+                                                      .data$home_team_wpa, 0),
+                  away_team_rush_wpa = dplyr::if_else(.data$play_type == "run",
+                                                      .data$away_team_wpa, 0),
+                  home_team_rush_wpa = dplyr::if_else(is.na(.data$home_team_rush_wpa),
+                                                      0, .data$home_team_rush_wpa),
+                  away_team_rush_wpa = dplyr::if_else(is.na(.data$away_team_rush_wpa),
+                                                      0, .data$away_team_rush_wpa),
+                  total_home_rush_wpa = cumsum(.data$home_team_rush_wpa),
+                  total_away_rush_wpa = cumsum(.data$away_team_rush_wpa),
+                  home_team_pass_wpa = dplyr::if_else(.data$play_type == "pass",
+                                                      .data$home_team_wpa, 0),
+                  away_team_pass_wpa = dplyr::if_else(.data$play_type == "pass",
+                                                      .data$away_team_wpa, 0),
+                  home_team_pass_wpa = dplyr::if_else(is.na(.data$home_team_pass_wpa),
+                                                      0, .data$home_team_pass_wpa),
+                  away_team_pass_wpa = dplyr::if_else(is.na(.data$away_team_pass_wpa),
+                                                      0, .data$away_team_pass_wpa),
+                  total_home_pass_wpa = cumsum(.data$home_team_pass_wpa),
+                  total_away_pass_wpa = cumsum(.data$away_team_pass_wpa)) %>%
     dplyr::ungroup() %>%
     return
 
@@ -977,7 +995,8 @@ add_wp_variables <- function(pbp_data) {
 # air and YAC EP:
 # as with the rest, heavily borrowed from nflscrapR:
 # https://github.com/maksimhorowitz/nflscrapR/blob/master/R/add_ep_wp_variables.R
-
+#' @import dplyr
+#' @importFrom rlang .data
 add_air_yac_ep_variables <- function(pbp_data) {
 
   #testing
@@ -997,36 +1016,36 @@ add_air_yac_ep_variables <- function(pbp_data) {
   # Get everything set up for calculation
   pass_pbp_data <- pass_pbp_data %>%
     dplyr::mutate(
-      posteam_timeouts_pre = posteam_timeouts_remaining,
-      defeam_timeouts_pre = defteam_timeouts_remaining
+      posteam_timeouts_pre = .data$posteam_timeouts_remaining,
+      defeam_timeouts_pre = .data$defteam_timeouts_remaining
     ) %>%
     # Rename the old columns to update for calculating the EP from the air:
-    dplyr::rename(old_yrdline100 = yardline_100,
-                  old_ydstogo = ydstogo,
-                  old_TimeSecs_Remaining = half_seconds_remaining,
-                  old_down = down) %>%
-    dplyr::mutate(Turnover_Ind = dplyr::if_else(old_down == 4 & air_yards < old_ydstogo,
+    dplyr::rename(old_yrdline100 = .data$yardline_100,
+                  old_ydstogo = .data$ydstogo,
+                  old_TimeSecs_Remaining = .data$half_seconds_remaining,
+                  old_down = .data$down) %>%
+    dplyr::mutate(Turnover_Ind = dplyr::if_else(.data$old_down == 4 & .data$air_yards < .data$old_ydstogo,
                                                 1, 0),
-                  yardline_100 = dplyr::if_else(Turnover_Ind == 0,
-                                              old_yrdline100 - air_yards,
-                                              100 - (old_yrdline100 - air_yards)),
-                  ydstogo = dplyr::if_else(air_yards >= old_ydstogo |
-                                             Turnover_Ind == 1,
-                                           10, old_ydstogo - air_yards),
-                  down = dplyr::if_else(air_yards >= old_ydstogo |
-                                          Turnover_Ind == 1,
-                                        1, as.numeric(old_down) + 1),
-                  half_seconds_remaining = old_TimeSecs_Remaining - 5.704673,
-                  down1 = dplyr::if_else(down == 1, 1, 0),
-                  down2 = dplyr::if_else(down == 2, 1, 0),
-                  down3 = dplyr::if_else(down == 3, 1, 0),
-                  down4 = dplyr::if_else(down == 4, 1, 0),
-                  posteam_timeouts_remaining = dplyr::if_else(Turnover_Ind == 1,
-                                                              defeam_timeouts_pre,
-                                                              posteam_timeouts_pre),
-                  defteam_timeouts_remaining = dplyr::if_else(Turnover_Ind == 1,
-                                                              posteam_timeouts_pre,
-                                                              defeam_timeouts_pre)
+                  yardline_100 = dplyr::if_else(.data$Turnover_Ind == 0,
+                                                .data$old_yrdline100 - .data$air_yards,
+                                              100 - (.data$old_yrdline100 - .data$air_yards)),
+                  ydstogo = dplyr::if_else(.data$air_yards >= .data$old_ydstogo |
+                                             .data$Turnover_Ind == 1,
+                                           10, .data$old_ydstogo - .data$air_yards),
+                  down = dplyr::if_else(.data$air_yards >= .data$old_ydstogo |
+                                          .data$Turnover_Ind == 1,
+                                        1, as.numeric(.data$old_down) + 1),
+                  half_seconds_remaining = .data$old_TimeSecs_Remaining - 5.704673,
+                  down1 = dplyr::if_else(.data$down == 1, 1, 0),
+                  down2 = dplyr::if_else(.data$down == 2, 1, 0),
+                  down3 = dplyr::if_else(.data$down == 3, 1, 0),
+                  down4 = dplyr::if_else(.data$down == 4, 1, 0),
+                  posteam_timeouts_remaining = dplyr::if_else(.data$Turnover_Ind == 1,
+                                                              .data$defeam_timeouts_pre,
+                                                              .data$posteam_timeouts_pre),
+                  defteam_timeouts_remaining = dplyr::if_else(.data$Turnover_Ind == 1,
+                                                              .data$posteam_timeouts_pre,
+                                                              .data$defeam_timeouts_pre)
                   )
 
 
@@ -1034,8 +1053,8 @@ add_air_yac_ep_variables <- function(pbp_data) {
   pass_pbp_data_preds <- get_preds(pass_pbp_data)
 
   # Convert to air EP:
-  pass_pbp_data_preds <- dplyr::mutate(pass_pbp_data_preds, airEP = (Opp_Safety*-2) + (Opp_Field_Goal*-3) +
-                                         (Opp_Touchdown*-7) + (Safety*2) + (Field_Goal*3) + (Touchdown*7))
+  pass_pbp_data_preds <- dplyr::mutate(pass_pbp_data_preds, airEP = (.data$Opp_Safety*-2) + (.data$Opp_Field_Goal*-3) +
+                                         (.data$Opp_Touchdown*-7) + (.data$Safety*2) + (.data$Field_Goal*3) + (.data$Touchdown*7))
 
   # Return back to the passing data:
   pass_pbp_data$airEP <- pass_pbp_data_preds$airEP
@@ -1057,7 +1076,7 @@ add_air_yac_ep_variables <- function(pbp_data) {
   pass_pbp_data$airEPA <- with(pass_pbp_data, ifelse(two_point_attempt == 1,
                                                      NA, airEPA))
   # Calculate the yards after catch EPA:
-  pass_pbp_data <- dplyr::mutate(pass_pbp_data, yacEPA = epa - airEPA)
+  pass_pbp_data <- dplyr::mutate(pass_pbp_data, yacEPA = .data$epa - .data$airEPA)
 
 
   # if Yards after catch is 0 make yacEPA set to 0:
@@ -1077,54 +1096,54 @@ add_air_yac_ep_variables <- function(pbp_data) {
   # Now change the names to be the right style, calculate the completion form
   # of the variables, as well as the cumulative totals and return:
   pbp_data %>%
-    dplyr::rename(air_epa = airEPA,
-                  yac_epa = yacEPA) %>%
-    dplyr::group_by(game_id) %>%
-    dplyr::mutate(comp_air_epa = dplyr::if_else(complete_pass == 1,
-                                                air_epa, 0),
-                  comp_yac_epa = dplyr::if_else(complete_pass == 1,
-                                                yac_epa, 0),
-                  home_team_comp_air_epa = dplyr::if_else(posteam == home_team,
-                                                          comp_air_epa, -comp_air_epa),
-                  away_team_comp_air_epa = dplyr::if_else(posteam == away_team,
-                                                          comp_air_epa, -comp_air_epa),
-                  home_team_comp_yac_epa = dplyr::if_else(posteam == home_team,
-                                                          comp_yac_epa, -comp_yac_epa),
-                  away_team_comp_yac_epa = dplyr::if_else(posteam == away_team,
-                                                          comp_yac_epa, -comp_yac_epa),
-                  home_team_comp_air_epa = dplyr::if_else(is.na(home_team_comp_air_epa),
-                                                          0, home_team_comp_air_epa),
-                  away_team_comp_air_epa = dplyr::if_else(is.na(away_team_comp_air_epa),
-                                                          0, away_team_comp_air_epa),
-                  home_team_comp_yac_epa = dplyr::if_else(is.na(home_team_comp_yac_epa),
-                                                          0, home_team_comp_yac_epa),
-                  away_team_comp_yac_epa = dplyr::if_else(is.na(away_team_comp_yac_epa),
-                                                          0, away_team_comp_yac_epa),
-                  total_home_comp_air_epa = cumsum(home_team_comp_air_epa),
-                  total_away_comp_air_epa = cumsum(away_team_comp_air_epa),
-                  total_home_comp_yac_epa = cumsum(home_team_comp_yac_epa),
-                  total_away_comp_yac_epa = cumsum(away_team_comp_yac_epa),
+    dplyr::rename(air_epa = "airEPA",
+                  yac_epa = "yacEPA") %>%
+    dplyr::group_by(.data$game_id) %>%
+    dplyr::mutate(comp_air_epa = dplyr::if_else(.data$complete_pass == 1,
+                                                .data$air_epa, 0),
+                  comp_yac_epa = dplyr::if_else(.data$complete_pass == 1,
+                                                .data$yac_epa, 0),
+                  home_team_comp_air_epa = dplyr::if_else(.data$posteam == .data$home_team,
+                                                          .data$comp_air_epa, -.data$comp_air_epa),
+                  away_team_comp_air_epa = dplyr::if_else(.data$posteam == .data$away_team,
+                                                          .data$comp_air_epa, -.data$comp_air_epa),
+                  home_team_comp_yac_epa = dplyr::if_else(.data$posteam == .data$home_team,
+                                                          .data$comp_yac_epa, -.data$comp_yac_epa),
+                  away_team_comp_yac_epa = dplyr::if_else(.data$posteam == .data$away_team,
+                                                          .data$comp_yac_epa, -.data$comp_yac_epa),
+                  home_team_comp_air_epa = dplyr::if_else(is.na(.data$home_team_comp_air_epa),
+                                                          0, .data$home_team_comp_air_epa),
+                  away_team_comp_air_epa = dplyr::if_else(is.na(.data$away_team_comp_air_epa),
+                                                          0, .data$away_team_comp_air_epa),
+                  home_team_comp_yac_epa = dplyr::if_else(is.na(.data$home_team_comp_yac_epa),
+                                                          0, .data$home_team_comp_yac_epa),
+                  away_team_comp_yac_epa = dplyr::if_else(is.na(.data$away_team_comp_yac_epa),
+                                                          0, .data$away_team_comp_yac_epa),
+                  total_home_comp_air_epa = cumsum(.data$home_team_comp_air_epa),
+                  total_away_comp_air_epa = cumsum(.data$away_team_comp_air_epa),
+                  total_home_comp_yac_epa = cumsum(.data$home_team_comp_yac_epa),
+                  total_away_comp_yac_epa = cumsum(.data$away_team_comp_yac_epa),
                   # Same but for raw - not just completions:
-                  home_team_raw_air_epa = dplyr::if_else(posteam == home_team,
-                                                         air_epa, -air_epa),
-                  away_team_raw_air_epa = dplyr::if_else(posteam == away_team,
-                                                         air_epa, -air_epa),
-                  home_team_raw_yac_epa = dplyr::if_else(posteam == home_team,
-                                                         yac_epa, -yac_epa),
-                  away_team_raw_yac_epa = dplyr::if_else(posteam == away_team,
-                                                         yac_epa, -yac_epa),
-                  home_team_raw_air_epa = dplyr::if_else(is.na(home_team_raw_air_epa),
-                                                         0, home_team_raw_air_epa),
-                  away_team_raw_air_epa = dplyr::if_else(is.na(away_team_raw_air_epa),
-                                                         0, away_team_raw_air_epa),
-                  home_team_raw_yac_epa = dplyr::if_else(is.na(home_team_raw_yac_epa),
-                                                         0, home_team_raw_yac_epa),
-                  away_team_raw_yac_epa = dplyr::if_else(is.na(away_team_raw_yac_epa),
-                                                         0, away_team_raw_yac_epa),
-                  total_home_raw_air_epa = cumsum(home_team_raw_air_epa),
-                  total_away_raw_air_epa = cumsum(away_team_raw_air_epa),
-                  total_home_raw_yac_epa = cumsum(home_team_raw_yac_epa),
-                  total_away_raw_yac_epa = cumsum(away_team_raw_yac_epa)) %>%
+                  home_team_raw_air_epa = dplyr::if_else(.data$posteam == .data$home_team,
+                                                         .data$air_epa, -.data$air_epa),
+                  away_team_raw_air_epa = dplyr::if_else(.data$posteam == .data$away_team,
+                                                         .data$air_epa, -.data$air_epa),
+                  home_team_raw_yac_epa = dplyr::if_else(.data$posteam == .data$home_team,
+                                                         .data$yac_epa, -.data$yac_epa),
+                  away_team_raw_yac_epa = dplyr::if_else(.data$posteam == .data$away_team,
+                                                         .data$yac_epa, -.data$yac_epa),
+                  home_team_raw_air_epa = dplyr::if_else(is.na(.data$home_team_raw_air_epa),
+                                                         0, .data$home_team_raw_air_epa),
+                  away_team_raw_air_epa = dplyr::if_else(is.na(.data$away_team_raw_air_epa),
+                                                         0, .data$away_team_raw_air_epa),
+                  home_team_raw_yac_epa = dplyr::if_else(is.na(.data$home_team_raw_yac_epa),
+                                                         0, .data$home_team_raw_yac_epa),
+                  away_team_raw_yac_epa = dplyr::if_else(is.na(.data$away_team_raw_yac_epa),
+                                                         0, .data$away_team_raw_yac_epa),
+                  total_home_raw_air_epa = cumsum(.data$home_team_raw_air_epa),
+                  total_away_raw_air_epa = cumsum(.data$away_team_raw_air_epa),
+                  total_home_raw_yac_epa = cumsum(.data$home_team_raw_yac_epa),
+                  total_away_raw_yac_epa = cumsum(.data$away_team_raw_yac_epa)) %>%
     dplyr::ungroup() %>%
     return
 }
@@ -1134,7 +1153,8 @@ add_air_yac_ep_variables <- function(pbp_data) {
 # air and YAC WP:
 # as with the rest, heavily borrowed from nflscrapR:
 # https://github.com/maksimhorowitz/nflscrapR/blob/master/R/add_ep_wp_variables.R
-
+#' @import dplyr
+#' @importFrom rlang .data
 add_air_yac_wp_variables <- function(pbp_data) {
 
   #testing
@@ -1143,8 +1163,8 @@ add_air_yac_wp_variables <- function(pbp_data) {
   # Change the names to reflect the old style - will update this later on:
   pbp_data <- pbp_data %>%
     dplyr::mutate(
-                  posteam_timeouts_pre = posteam_timeouts_remaining,
-                  defeam_timeouts_pre = defteam_timeouts_remaining
+                  posteam_timeouts_pre = .data$posteam_timeouts_remaining,
+                  defeam_timeouts_pre = .data$defteam_timeouts_remaining
       )
 
   # Final all pass attempts that are not sacks:
@@ -1152,23 +1172,23 @@ add_air_yac_wp_variables <- function(pbp_data) {
   pass_pbp_data <- pbp_data[pass_plays_i,]
 
   pass_pbp_data <- pass_pbp_data %>%
-    dplyr::mutate(ExpScoreDiff = ep + air_epa + score_differential,
-                  half_seconds_remaining = half_seconds_remaining - 5.704673,
-                  game_seconds_remaining = game_seconds_remaining - 5.704673,
-                  ExpScoreDiff_Time_Ratio = ExpScoreDiff / (game_seconds_remaining + 1),
-                  Turnover_Ind = dplyr::if_else(down == 4 & air_yards < ydstogo,
+    dplyr::mutate(ExpScoreDiff = .data$ep + .data$air_epa + .data$score_differential,
+                  half_seconds_remaining = .data$half_seconds_remaining - 5.704673,
+                  game_seconds_remaining = .data$game_seconds_remaining - 5.704673,
+                  ExpScoreDiff_Time_Ratio = .data$ExpScoreDiff / (.data$game_seconds_remaining + 1),
+                  Turnover_Ind = dplyr::if_else(.data$down == 4 & .data$air_yards < .data$ydstogo,
                                                 1, 0),
-                  ExpScoreDiff = dplyr::if_else(Turnover_Ind == 1,
-                                                -1 * ExpScoreDiff, ExpScoreDiff),
-                  ExpScoreDiff_Time_Ratio = dplyr::if_else(Turnover_Ind == 1,
-                                                           -1 * ExpScoreDiff_Time_Ratio,
-                                                           ExpScoreDiff_Time_Ratio),
-                  posteam_timeouts_remaining = dplyr::if_else(Turnover_Ind == 1,
-                                                              defeam_timeouts_pre,
-                                                        posteam_timeouts_pre),
-                  defteam_timeouts_remaining = dplyr::if_else(Turnover_Ind == 1,
-                                                       posteam_timeouts_pre,
-                                                       defeam_timeouts_pre))
+                  ExpScoreDiff = dplyr::if_else(.data$Turnover_Ind == 1,
+                                                -1 * .data$ExpScoreDiff, .data$ExpScoreDiff),
+                  ExpScoreDiff_Time_Ratio = dplyr::if_else(.data$Turnover_Ind == 1,
+                                                           -1 * .data$ExpScoreDiff_Time_Ratio,
+                                                           .data$ExpScoreDiff_Time_Ratio),
+                  posteam_timeouts_remaining = dplyr::if_else(.data$Turnover_Ind == 1,
+                                                              .data$defeam_timeouts_pre,
+                                                        .data$posteam_timeouts_pre),
+                  defteam_timeouts_remaining = dplyr::if_else(.data$Turnover_Ind == 1,
+                                                              .data$posteam_timeouts_pre,
+                                                              .data$defeam_timeouts_pre))
 
   # Calculate the airWP:
   pass_pbp_data$airWP <- get_preds_wp(pass_pbp_data)
@@ -1183,8 +1203,8 @@ add_air_yac_wp_variables <- function(pbp_data) {
   pass_pbp_data$airWP[which(pass_pbp_data$game_seconds_remaining <= 0)] <- 0
 
   # Calculate the airWPA and yacWPA:
-  pass_pbp_data <- dplyr::mutate(pass_pbp_data, airWPA = airWP - wp,
-                                 yacWPA = wpa - airWPA)
+  pass_pbp_data <- dplyr::mutate(pass_pbp_data, airWPA = .data$airWP - .data$wp,
+                                 yacWPA = .data$wpa - .data$airWPA)
 
 
   # If the play is a two-point conversion then change the airWPA to NA since
@@ -1221,7 +1241,7 @@ add_air_yac_wp_variables <- function(pbp_data) {
 
     # Calculate the difference in drive number
     overtime_df <- dplyr::mutate(overtime_df,
-                                 Drive_Diff = drive - First_Drive)
+                                 Drive_Diff = .data$drive - .data$First_Drive)
 
     # Create an indicator column that means the posteam is losing by 3 and
     # its the second drive of overtime:
@@ -1253,7 +1273,7 @@ add_air_yac_wp_variables <- function(pbp_data) {
     }
 
     overtime_df_ko_preds <- dplyr::mutate(overtime_df_ko_preds,
-                                          Win_Back = No_Score + Opp_Field_Goal + Opp_Safety + Opp_Touchdown)
+                                          Win_Back = .data$No_Score + .data$Opp_Field_Goal + .data$Opp_Safety + .data$Opp_Touchdown)
 
     # Calculate the two possible win probability types, Sudden Death and one Field Goal:
     overtime_df$Sudden_Death_WP <- overtime_df$fg_prob + overtime_df$td_prob + overtime_df$safety_prob
@@ -1274,10 +1294,10 @@ add_air_yac_wp_variables <- function(pbp_data) {
 
     # First rename the old columns to update for calculating the EP from the air:
     overtime_pass_df <- dplyr::rename(overtime_pass_df,
-                                      old_yrdline100 = yardline_100,
-                                      old_ydstogo = ydstogo,
-                                      old_TimeSecs_Remaining = half_seconds_remaining,
-                                      old_down = down)
+                                      old_yrdline100 = "yardline_100",
+                                      old_ydstogo = "ydstogo",
+                                      old_TimeSecs_Remaining = "half_seconds_remaining",
+                                      old_down = "down")
 
     # Create an indicator column for the air yards failing to convert the first down:
     overtime_pass_df$Turnover_Ind <- ifelse(overtime_pass_df$old_down == 4 &
@@ -1301,10 +1321,10 @@ add_air_yac_wp_variables <- function(pbp_data) {
 
     overtime_pass_df <- overtime_pass_df %>%
       dplyr::mutate(
-        down1 = dplyr::if_else(down == 1, 1, 0),
-        down2 = dplyr::if_else(down == 2, 1, 0),
-        down3 = dplyr::if_else(down == 3, 1, 0),
-        down4 = dplyr::if_else(down == 4, 1, 0)
+        down1 = dplyr::if_else(.data$down == 1, 1, 0),
+        down2 = dplyr::if_else(.data$down == 2, 1, 0),
+        down3 = dplyr::if_else(.data$down == 3, 1, 0),
+        down4 = dplyr::if_else(.data$down == 4, 1, 0)
       )
 
     # Get the predictions from the EP model and calculate the necessary probability:
@@ -1316,12 +1336,12 @@ add_air_yac_wp_variables <- function(pbp_data) {
 
     # For the turnover plays flip the scoring probabilities:
     overtime_pass_data_preds <- dplyr::mutate(overtime_pass_data_preds,
-                                              old_Opp_Field_Goal = Opp_Field_Goal,
-                                              old_Opp_Safety = Opp_Safety,
-                                              old_Opp_Touchdown = Opp_Touchdown,
-                                              old_Field_Goal = Field_Goal,
-                                              old_Safety = Safety,
-                                              old_Touchdown = Touchdown)
+                                              old_Opp_Field_Goal = .data$Opp_Field_Goal,
+                                              old_Opp_Safety = .data$Opp_Safety,
+                                              old_Opp_Touchdown = .data$Opp_Touchdown,
+                                              old_Field_Goal = .data$Field_Goal,
+                                              old_Safety = .data$Safety,
+                                              old_Touchdown = .data$Touchdown)
     overtime_pass_data_preds$Opp_Field_Goal <- ifelse(overtime_pass_df$Turnover_Ind == 1,
                                                       overtime_pass_data_preds$old_Field_Goal,
                                                       overtime_pass_data_preds$Opp_Field_Goal)
@@ -1353,8 +1373,8 @@ add_air_yac_wp_variables <- function(pbp_data) {
     pass_overtime_df$airWP[which(overtime_pass_df$half_seconds_remaining <= 0)] <- 0
 
     # Calculate the airWPA and yacWPA:
-    pass_overtime_df <- dplyr::mutate(pass_overtime_df, airWPA = airWP - wp,
-                                      yacWPA = wpa - airWPA)
+    pass_overtime_df <- dplyr::mutate(pass_overtime_df, airWPA = .data$airWP - .data$wp,
+                                      yacWPA = .data$wpa - .data$airWPA)
 
     # If the play is a two-point conversion then change the airWPA to NA since
     # no air yards are provided:
@@ -1390,54 +1410,54 @@ add_air_yac_wp_variables <- function(pbp_data) {
   # Now change the names to be the right style, calculate the completion form
   # of the variables, as well as the cumulative totals and return:
   pbp_data %>%
-    dplyr::rename(air_wpa = airWPA,
-                  yac_wpa = yacWPA) %>%
-    dplyr::group_by(game_id) %>%
-    dplyr::mutate(comp_air_wpa = dplyr::if_else(complete_pass == 1,
-                                                air_wpa, 0),
-                  comp_yac_wpa = dplyr::if_else(complete_pass == 1,
-                                                yac_wpa, 0),
-                  home_team_comp_air_wpa = dplyr::if_else(posteam == home_team,
-                                                          comp_air_wpa, -comp_air_wpa),
-                  away_team_comp_air_wpa = dplyr::if_else(posteam == away_team,
-                                                          comp_air_wpa, -comp_air_wpa),
-                  home_team_comp_yac_wpa = dplyr::if_else(posteam == home_team,
-                                                          comp_yac_wpa, -comp_yac_wpa),
-                  away_team_comp_yac_wpa = dplyr::if_else(posteam == away_team,
-                                                          comp_yac_wpa, -comp_yac_wpa),
-                  home_team_comp_air_wpa = dplyr::if_else(is.na(home_team_comp_air_wpa),
-                                                          0, home_team_comp_air_wpa),
-                  away_team_comp_air_wpa = dplyr::if_else(is.na(away_team_comp_air_wpa),
-                                                          0, away_team_comp_air_wpa),
-                  home_team_comp_yac_wpa = dplyr::if_else(is.na(home_team_comp_yac_wpa),
-                                                          0, home_team_comp_yac_wpa),
-                  away_team_comp_yac_wpa = dplyr::if_else(is.na(away_team_comp_yac_wpa),
-                                                          0, away_team_comp_yac_wpa),
-                  total_home_comp_air_wpa = cumsum(home_team_comp_air_wpa),
-                  total_away_comp_air_wpa = cumsum(away_team_comp_air_wpa),
-                  total_home_comp_yac_wpa = cumsum(home_team_comp_yac_wpa),
-                  total_away_comp_yac_wpa = cumsum(away_team_comp_yac_wpa),
+    dplyr::rename(air_wpa = "airWPA",
+                  yac_wpa = "yacWPA") %>%
+    dplyr::group_by(.data$game_id) %>%
+    dplyr::mutate(comp_air_wpa = dplyr::if_else(.data$complete_pass == 1,
+                                                .data$air_wpa, 0),
+                  comp_yac_wpa = dplyr::if_else(.data$complete_pass == 1,
+                                                .data$yac_wpa, 0),
+                  home_team_comp_air_wpa = dplyr::if_else(.data$posteam == .data$home_team,
+                                                          .data$comp_air_wpa, -.data$comp_air_wpa),
+                  away_team_comp_air_wpa = dplyr::if_else(.data$posteam == .data$away_team,
+                                                          .data$comp_air_wpa, -.data$comp_air_wpa),
+                  home_team_comp_yac_wpa = dplyr::if_else(.data$posteam == .data$home_team,
+                                                          .data$comp_yac_wpa, -.data$comp_yac_wpa),
+                  away_team_comp_yac_wpa = dplyr::if_else(.data$posteam == .data$away_team,
+                                                          .data$comp_yac_wpa, -.data$comp_yac_wpa),
+                  home_team_comp_air_wpa = dplyr::if_else(is.na(.data$home_team_comp_air_wpa),
+                                                          0, .data$home_team_comp_air_wpa),
+                  away_team_comp_air_wpa = dplyr::if_else(is.na(.data$away_team_comp_air_wpa),
+                                                          0, .data$away_team_comp_air_wpa),
+                  home_team_comp_yac_wpa = dplyr::if_else(is.na(.data$home_team_comp_yac_wpa),
+                                                          0, .data$home_team_comp_yac_wpa),
+                  away_team_comp_yac_wpa = dplyr::if_else(is.na(.data$away_team_comp_yac_wpa),
+                                                          0, .data$away_team_comp_yac_wpa),
+                  total_home_comp_air_wpa = cumsum(.data$home_team_comp_air_wpa),
+                  total_away_comp_air_wpa = cumsum(.data$away_team_comp_air_wpa),
+                  total_home_comp_yac_wpa = cumsum(.data$home_team_comp_yac_wpa),
+                  total_away_comp_yac_wpa = cumsum(.data$away_team_comp_yac_wpa),
                   # Same but for raw - not just completions:
-                  home_team_raw_air_wpa = dplyr::if_else(posteam == home_team,
-                                                         air_wpa, -air_wpa),
-                  away_team_raw_air_wpa = dplyr::if_else(posteam == away_team,
-                                                         air_wpa, -air_wpa),
-                  home_team_raw_yac_wpa = dplyr::if_else(posteam == home_team,
-                                                         yac_wpa, -yac_wpa),
-                  away_team_raw_yac_wpa = dplyr::if_else(posteam == away_team,
-                                                         yac_wpa, -yac_wpa),
-                  home_team_raw_air_wpa = dplyr::if_else(is.na(home_team_raw_air_wpa),
-                                                         0, home_team_raw_air_wpa),
-                  away_team_raw_air_wpa = dplyr::if_else(is.na(away_team_raw_air_wpa),
-                                                         0, away_team_raw_air_wpa),
-                  home_team_raw_yac_wpa = dplyr::if_else(is.na(home_team_raw_yac_wpa),
-                                                         0, home_team_raw_yac_wpa),
-                  away_team_raw_yac_wpa = dplyr::if_else(is.na(away_team_raw_yac_wpa),
-                                                         0, away_team_raw_yac_wpa),
-                  total_home_raw_air_wpa = cumsum(home_team_raw_air_wpa),
-                  total_away_raw_air_wpa = cumsum(away_team_raw_air_wpa),
-                  total_home_raw_yac_wpa = cumsum(home_team_raw_yac_wpa),
-                  total_away_raw_yac_wpa = cumsum(away_team_raw_yac_wpa)) %>%
+                  home_team_raw_air_wpa = dplyr::if_else(.data$posteam == .data$home_team,
+                                                         .data$air_wpa, -.data$air_wpa),
+                  away_team_raw_air_wpa = dplyr::if_else(.data$posteam == .data$away_team,
+                                                         .data$air_wpa, -.data$air_wpa),
+                  home_team_raw_yac_wpa = dplyr::if_else(.data$posteam == .data$home_team,
+                                                         .data$yac_wpa, -.data$yac_wpa),
+                  away_team_raw_yac_wpa = dplyr::if_else(.data$posteam == .data$away_team,
+                                                         .data$yac_wpa, -.data$yac_wpa),
+                  home_team_raw_air_wpa = dplyr::if_else(is.na(.data$home_team_raw_air_wpa),
+                                                         0, .data$home_team_raw_air_wpa),
+                  away_team_raw_air_wpa = dplyr::if_else(is.na(.data$away_team_raw_air_wpa),
+                                                         0, .data$away_team_raw_air_wpa),
+                  home_team_raw_yac_wpa = dplyr::if_else(is.na(.data$home_team_raw_yac_wpa),
+                                                         0, .data$home_team_raw_yac_wpa),
+                  away_team_raw_yac_wpa = dplyr::if_else(is.na(.data$away_team_raw_yac_wpa),
+                                                         0, .data$away_team_raw_yac_wpa),
+                  total_home_raw_air_wpa = cumsum(.data$home_team_raw_air_wpa),
+                  total_away_raw_air_wpa = cumsum(.data$away_team_raw_air_wpa),
+                  total_home_raw_yac_wpa = cumsum(.data$home_team_raw_yac_wpa),
+                  total_away_raw_yac_wpa = cumsum(.data$away_team_raw_yac_wpa)) %>%
     dplyr::ungroup() %>%
     return
 

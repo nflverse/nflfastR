@@ -12,7 +12,7 @@ status](https://github.com/mrcaseb/nflfastR/workflows/R-CMD-check/badge.svg)](ht
 [![Travis build
 status](https://travis-ci.com/mrcaseb/nflfastR.svg?branch=master)](https://travis-ci.com/mrcaseb/nflfastR)
 [![Twitter
-Follow](https://img.shields.io/twitter/follow/nflfastR.svg?style=social)](https://twitter.com/nflfastR)
+Follow](https://img.shields.io/twitter/follow/nflfastR.svg?style=social)](https://twitter.com/nflfastR) 
 <!-- badges: end -->
 
 `nflfastR` is a set of functions to efficiently scrape NFL play-by-play

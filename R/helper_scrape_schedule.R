@@ -4,6 +4,8 @@
 # Code Style Guide: styler::tidyverse_style()
 ################################################################################
 
+#' @importFrom glue glue
+#' @importFrom httr HEAD
 get_season_schedule <- function(season) {
   season_schedule <- data.frame()
   tryCatch(

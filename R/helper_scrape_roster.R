@@ -12,6 +12,9 @@
 # for which the roster is scraped
 # @param season 4-digit year associated with a given NFL season
 
+#' @importFrom httr GET content
+#' @importFrom glue glue
+#' @importFrom jsonlite fromJSON
 grab_roster <- function(teamId, season) {
 
   # If a combination of Team ID and season is passed for which there

@@ -13,3 +13,8 @@
 ^vignettes/nflfastR-models\.Rmd$
 ^vignettes$
 ^\.travis\.yml$
+^man/figures/card\.png$
+^man/figures/header_github\.png$
+^man/figures/header_twitter\.png$
+^man/figures/logo\.png$
+^man/figures/nflfastR_logo_fillsize\.png$

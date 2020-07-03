@@ -8,7 +8,16 @@
 #
 # @param id Specifies the game
 
-get_pbp_nfl <- function(id) {
+#' @importFrom httr HEAD
+#' @importFrom glue glue
+#' @import dplyr
+#' @importFrom tibble as_tibble
+#' @importFrom janitor clean_names
+#' @importFrom tidyr unnest
+#' @importFrom purrr map_df map_chr
+#' @importFrom stringr str_extract str_split str_detect
+#' @importFrom rlang .data
+get_pbp_nfl <- function(id, dir = NULL) {
   combined <- data.frame()
   tryCatch(
     expr = {
@@ -21,7 +30,8 @@ get_pbp_nfl <- function(id) {
       season <- substr(id, 1, 4)
       week <- as.integer(substr(id, 6, 7))
 
-      path <- "https://github.com/guga31bb/nflfastR-data/raw/master/raw"
+      if (is.null(dir)) {
+      path <- "https://raw.githubusercontent.com/guga31bb/nflfastR-raw/master/raw"
 
       request <- httr::HEAD(glue::glue("{path}/{season}/{id}.rds"))
 
@@ -34,6 +44,16 @@ get_pbp_nfl <- function(id) {
       }
 
       raw_data <- readRDS(url(glue::glue("{path}/{season}/{id}.rds")))
+
+      } else {
+        # build path to locally stored game files. This functionality is primarily
+        # for the data repo maintainer
+        p <- glue::glue("{dir}/{season}/{id}.rds")
+        if (file.exists(p) == FALSE) {
+          warning(warn <- 4)
+        }
+        raw_data <- readRDS(p)
+      }
 
       season_type <- dplyr::if_else(week <= 17, "REG", "POST")
 
@@ -54,16 +74,14 @@ get_pbp_nfl <- function(id) {
       )
       start_time <- raw_data$data$viewer$gameDetail$startTime
 
-      game_info <- data.frame(
-        game_id,
+      game_info <- tibble::tibble(
+        game_id = as.character(game_id),
         home_team,
         away_team,
         weather,
         stadium,
         start_time
-      ) %>%
-        tibble::as_tibble() %>%
-        dplyr::mutate(game_id = as.character(game_id))
+      )
 
       plays <- raw_data$data$viewer$gameDetail$plays %>% dplyr::mutate(game_id = as.character(game_id))
 
@@ -73,44 +91,44 @@ get_pbp_nfl <- function(id) {
           dplyr::mutate(
             possessionTeam.abbreviation = stringr::str_extract(plays$prePlayByPlay, '[A-Z]{2,3}(?=\\s)'),
             possessionTeam.abbreviation = dplyr::if_else(
-              possessionTeam.abbreviation %in% c('OUT', 'END', 'NA'),
-              NA_character_, possessionTeam.abbreviation
+              .data$possessionTeam.abbreviation %in% c('OUT', 'END', 'NA'),
+              NA_character_, .data$possessionTeam.abbreviation
             ),
             possessionTeam.abbreviation = dplyr::if_else(
-              possessionTeam.abbreviation == 'JAX', 'JAC', possessionTeam.abbreviation
+              .data$possessionTeam.abbreviation == 'JAX', 'JAC', .data$possessionTeam.abbreviation
             )
           )
       }
 
       drives <- raw_data$data$viewer$gameDetail$drives %>%
-        dplyr::mutate(ydsnet = yards + yardsPenalized) %>%
+        dplyr::mutate(ydsnet = .data$yards + .data$yardsPenalized) %>%
         # these are already in plays
         dplyr::select(
-          -possessionTeam.abbreviation,
-          -possessionTeam.nickName,
-          -possessionTeam.franchise.currentLogo.url
+          -"possessionTeam.abbreviation",
+          -"possessionTeam.nickName",
+          -"possessionTeam.franchise.currentLogo.url"
         ) %>%
         janitor::clean_names()
       colnames(drives) <- paste0("drive_", colnames(drives))
 
-      stats <- tidyr::unnest(plays %>% dplyr::select(-yards), cols = c(playStats)) %>%
+      stats <- tidyr::unnest(plays %>% dplyr::select(-"yards"), cols = c("playStats")) %>%
         dplyr::mutate(
-          yards = as.integer(yards),
-          statId = as.numeric(statId),
-          team.abbreviation = as.character(team.abbreviation)
+          yards = as.integer(.data$yards),
+          statId = as.numeric(.data$statId),
+          team.abbreviation = as.character(.data$team.abbreviation)
         ) %>%
         dplyr::rename(
-          player.esbId = gsisPlayer.id,
-          player.displayName = playerName,
-          teamAbbr = team.abbreviation
+          player.esbId = "gsisPlayer.id",
+          player.displayName = "playerName",
+          teamAbbr = "team.abbreviation"
         ) %>%
         dplyr::select(
-          playId,
-          statId,
-          yards,
-          teamAbbr,
-          player.displayName,
-          player.esbId
+          "playId",
+          "statId",
+          "yards",
+          "teamAbbr",
+          "player.displayName",
+          "player.esbId"
         )
 
       # if I don't put this here it breaks
@@ -125,98 +143,92 @@ get_pbp_nfl <- function(id) {
       pbp_stats <- dplyr::bind_rows(pbp_stats)
 
       combined <- game_info %>%
-        dplyr::left_join(plays %>% dplyr::select(-playStats), by = c("game_id")) %>%
+        dplyr::left_join(plays %>% dplyr::select(-"playStats"), by = c("game_id")) %>%
         dplyr::left_join(drives, by = c("driveSequenceNumber" = "drive_order_sequence")) %>%
         dplyr::left_join(pbp_stats, by = c("playId" = "play_id")) %>%
         dplyr::mutate_if(is.logical, as.numeric) %>%
         dplyr::mutate_if(is.integer, as.numeric) %>%
         dplyr::mutate_if(is.factor, as.character) %>%
         janitor::clean_names() %>%
-        dplyr::select(-drive_play_count, -drive_time_of_possession, -next_play_type) %>%
+        dplyr::select(-"drive_play_count", -"drive_time_of_possession", -"next_play_type") %>%
         dplyr::rename(
-          time = clock_time,
-          play_type_nfl = play_type,
-          posteam = possession_team_abbreviation,
-          yardline = yard_line,
-          sp = scoring_play,
-          drive = drive_sequence_number,
-          nfl_api_id = game_id,
-          drive_play_count = drive_play_count_2,
-          drive_time_of_possession = drive_time_of_possession_2,
-          ydsnet = drive_ydsnet
+          time = "clock_time",
+          play_type_nfl = "play_type",
+          posteam = "possession_team_abbreviation",
+          yardline = "yard_line",
+          sp = "scoring_play",
+          drive = "drive_sequence_number",
+          nfl_api_id = "game_id",
+          drive_play_count = "drive_play_count_2",
+          drive_time_of_possession = "drive_time_of_possession_2",
+          ydsnet = "drive_ydsnet"
         ) %>%
         dplyr::mutate(
-          posteam_id = posteam,
+          posteam_id = .data$posteam,
           # have to do all this nonsense to make goal_to_go and yardline_side for compatibility with later functions
           yardline_side = purrr::map_chr(
-            stringr::str_split(yardline, " "),
+            stringr::str_split(.data$yardline, " "),
             function(x) x[1]
           ),
           yardline_number = as.numeric(purrr::map_chr(
-            stringr::str_split(yardline, " "),
+            stringr::str_split(.data$yardline, " "),
             function(x) x[2]
           )),
-          quarter_end = dplyr::if_else(stringr::str_detect(play_description, "END QUARTER"), 1, 0),
+          quarter_end = dplyr::if_else(stringr::str_detect(.data$play_description, "END QUARTER"), 1, 0),
           game_year = as.integer(season),
           season = as.integer(season),
           # this is only needed for epa and dropped later
           game_month = as.integer(11),
-          game_id = as.character(glue::glue('{season}_{formatC(week, width=2, flag=\"0\")}_{away_team}_{home_team}')),
-          play_description = play_description_with_jersey_numbers,
+          game_id = id,
+          play_description = .data$play_description_with_jersey_numbers,
           week = week,
           season_type = season_type,
-          play_clock = as.character(play_clock),
-          st_play_type = as.character(st_play_type),
+          play_clock = as.character(.data$play_clock),
+          st_play_type = as.character(.data$st_play_type),
           #if JAC has the ball and scored, make them the scoring team
           td_team = dplyr::if_else(
-            season >= 2011 & season <= 2015 & posteam == 'JAC' &
-              drive_how_ended_description == 'Touchdown' & !is.na(td_team),
-            'JAC', td_team
+            .data$season >= 2011 & .data$season <= 2015 & .data$posteam == 'JAC' &
+              .data$drive_how_ended_description == 'Touchdown' & !is.na(.data$td_team),
+            'JAC', .data$td_team
           ),
           #if JAC involved in a game and defensive team score, fill in the right team
           td_team = dplyr::if_else(
             #game involving the jags
-            season >= 2011 & season <= 2015 & (home_team == 'JAC' | away_team == 'JAC') &
+            .data$season >= 2011 & .data$season <= 2015 & (.data$home_team == 'JAC' | .data$away_team == 'JAC') &
               #defensive TD
-              drive_how_ended_description != 'Touchdown' & !is.na(td_team),
+              .data$drive_how_ended_description != 'Touchdown' & !is.na(.data$td_team),
             #if home team has ball, then away team scored, otherwise home team scored
-            dplyr::if_else(posteam == home_team, away_team, home_team),
-            td_team
+            dplyr::if_else(.data$posteam == .data$home_team, .data$away_team, .data$home_team),
+            .data$td_team
           ),
           yardline_side = dplyr::if_else(
-            season >= 2011 & season <= 2015 & yardline_side == 'JAX',
-            'JAC', yardline_side
+            .data$season >= 2011 & .data$season <= 2015 & .data$yardline_side == 'JAX',
+            'JAC', .data$yardline_side
           ),
           #if there's some random missing drive, fill in with previous drive
           #this fixes a bug with plays appearing out of order after defensive TDs
           drive = dplyr::if_else(
-            !is.na(dplyr::lag(drive)) & !is.na(dplyr::lead(drive)),
-            dplyr::lag(drive), drive
+            !is.na(dplyr::lag(.data$drive)) & !is.na(dplyr::lead(.data$drive)),
+            dplyr::lag(.data$drive), .data$drive
           ),
           #fix for drives being messed up in this game
           drive = dplyr::case_when(
-            id == '2012_04_NO_GB' & play_id == 1085 ~ 4,
-            id == '2012_16_BUF_MIA' & play_id == 2571 ~ 15,
-            id == '2015_16_CHI_TB' & play_id == 2182 ~ 14,
-            id == '2019_12_IND_HOU' & play_id == 2579 ~ 12,
-            id == '2019_12_IND_HOU' & play_id == 2544 ~ 11,
-            TRUE ~ drive
+            id == '2012_04_NO_GB' & .data$play_id == 1085 ~ 4,
+            id == '2012_16_BUF_MIA' & .data$play_id == 2571 ~ 15,
+            id == '2015_16_CHI_TB' & .data$play_id == 2182 ~ 14,
+            id == '2019_12_IND_HOU' & .data$play_id == 2579 ~ 12,
+            id == '2019_12_IND_HOU' & .data$play_id == 2544 ~ 11,
+            TRUE ~ .data$drive
           ),
           time = dplyr::case_when(
-            id == '2012_04_NO_GB' & play_id == 1085 ~ '3:34',
-            id == '2012_16_BUF_MIA' & play_id == 2571 ~ '8:31',
-            TRUE ~ time
-          )
+            id == '2012_04_NO_GB' & .data$play_id == 1085 ~ '3:34',
+            id == '2012_16_BUF_MIA' & .data$play_id == 2571 ~ '8:31',
+            TRUE ~ .data$time
+          ),
+          drive_real_start_time = as.character(.data$drive_real_start_time)
         ) %>%
         dplyr::mutate_all(dplyr::na_if, "")
 
-      # combined <-
-      #   combined %>%
-      #   dplyr::select(
-      #     tidyselect::one_of(
-      #       c(pbp_stat_columns, api_cols, save_cols)
-      #     )
-      #   )
     },
     error = function(e) {
       message("The following error has occured:")
@@ -229,6 +241,8 @@ get_pbp_nfl <- function(id) {
         message(glue::glue("Warning: The data hosting servers are down, please try again later!"))
       } else if (warn == 3) {
         message(glue::glue("Warning: The requested GameID {id} is not loaded yet, please try again later!"))
+      } else if (warn == 4) {
+        message(glue::glue("Warning: Either the requested GameID {id} is missing or you've passed an invalid path!"))
       } else {
         message("The following warning has occured:")
         message(w)

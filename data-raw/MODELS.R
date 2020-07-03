@@ -15,7 +15,11 @@ set.seed(2013) #GoHawks
 # Estimate EP model
 ################################################################################
 
-pbp_data <- readRDS(url('https://github.com/guga31bb/nflfastR-data/blob/master/models/cal_data.rds?raw=true'))
+# from remote
+# pbp_data <- readRDS(url('https://github.com/guga31bb/nflfastR-data/blob/master/models/cal_data.rds?raw=true'))
+
+# from local
+pbp_data <- readRDS('../nflfastR-data/models/cal_data.rds')
 
 #function in helper_add_ep_wp.R
 model_data <- pbp_data %>%
@@ -62,23 +66,22 @@ model_data <- pbp_data %>%
     down1, down2, down3, down4,
     posteam_timeouts_remaining,
     defteam_timeouts_remaining,
-    model_week,
     Total_W_Scaled
   )
 
-nrounds = 70
+nrounds = 500
 params <-
   list(
     booster = "gbtree",
     objective = "multi:softprob",
     eval_metric = c("mlogloss"),
     num_class = 7,
-    eta = 0.2,
-    gamma = .2,
-    subsample=0.8,
-    colsample_bytree=0.8,
-    max_depth = 4,
-    min_child_weight = .9
+    eta = 0.025,
+    gamma = 1,
+    subsample = 0.8,
+    colsample_bytree = 0.8,
+    max_depth = 5,
+    min_child_weight = 1
   )
 
 model_data <- model_data %>%
@@ -113,16 +116,16 @@ model_vars <- pbp_data %>%
   filter(valid_pass == 1) %>%
   select(-valid_pass)
 
-nrounds = 70
+nrounds = 560
 params <-
   list(
     booster = "gbtree",
     objective = "binary:logistic",
     eval_metric = c("logloss"),
-    eta = 0.2,
+    eta = 0.025,
     gamma = 5,
-    subsample=0.8,
-    colsample_bytree=0.8,
+    subsample = 0.8,
+    colsample_bytree = 0.8,
     max_depth = 4,
     min_child_weight = 6,
     base_score = mean(model_vars$complete_pass)
@@ -198,7 +201,7 @@ params <-
   list(
     booster = "gbtree",
     objective = "binary:logistic",
-    eval_metric = c("error", "logloss"),
+    eval_metric = c("logloss"),
     eta = 0.2,
     gamma = 0,
     subsample=0.8,

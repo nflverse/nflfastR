@@ -4,6 +4,10 @@
 # Code Style Guide: styler::tidyverse_style()
 ################################################################################
 
+#' @import dplyr
+#' @importFrom tidyselect matches
+#' @importFrom glue glue
+#' @importFrom rlang .data
 add_roster_mutations <- function(pbp) {
   out <-
     pbp %>%
@@ -62,7 +66,7 @@ add_roster_mutations <- function(pbp) {
 
     # Some Variables have empty observations. Replace them with 'NA'
     dplyr::mutate_all(dplyr::na_if, "") %>%
-    dplyr::mutate(team.abbr = dplyr::if_else(team.abbr == "JAC", "JAX", team.abbr))
+    dplyr::mutate(team.abbr = dplyr::if_else(.data$team.abbr == "JAC", "JAX", .data$team.abbr))
 
   # add the two new variables headshot_url and profile_url
   # since this only works if the variables esbId and nflId are available

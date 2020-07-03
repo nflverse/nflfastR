@@ -4,7 +4,7 @@
 \alias{fast_scraper}
 \title{Get NFL Play by Play Data}
 \usage{
-fast_scraper(game_ids, source = "nfl", pp = FALSE)
+fast_scraper(game_ids, source = "nfl", pp = FALSE, ...)
 }
 \arguments{
 \item{game_ids}{Vector of character ids (see details for further information)}
@@ -12,6 +12,8 @@ fast_scraper(game_ids, source = "nfl", pp = FALSE)
 \item{source}{Character - must now be \code{nfl} or unspecified (see details for further information)}
 
 \item{pp}{Logical - either \code{TRUE} or \code{FALSE} (see details for further information)}
+
+\item{...}{Additional arguments passed to the scraping functions (for internal use)}
 }
 \value{
 Data frame where each individual row represents a single play for

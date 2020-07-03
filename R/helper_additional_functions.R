@@ -33,52 +33,56 @@
 #' \item{qb_epa}{Gives QB credit for EPA for up to the point where a receiver lost a fumble after a completed catch and makes EPA work more like passing yards on plays with fumbles.}
 #' }
 #' @export
+#' @import dplyr
+#' @importFrom stringr str_detect str_extract str_replace_all
+#' @importFrom glue glue
+#' @importFrom rlang .data
 clean_pbp <- function(pbp) {
   message('Cleaning up play-by-play. If you run this with a lot of seasons this could take a few minutes.')
   r <- pbp %>%
     dplyr::mutate(
       #get rid of extraneous spaces that mess with player name finding
       #if there is a space or dash, and then a capital letter, and then a period, and then a space, take out the space
-      desc = stringr::str_replace_all(desc, "(((\\s)|(\\-))[A-Z]\\.)\\s+", "\\1"),
-      success = dplyr::if_else(is.na(epa), NA_real_, dplyr::if_else(epa > 0, 1, 0)),
-      passer = stringr::str_extract(desc, glue::glue('{big_parser}{pass_finder}')),
-      rusher = stringr::str_extract(desc, glue::glue('{big_parser}{rush_finder}')),
+      desc = stringr::str_replace_all(.data$desc, "(((\\s)|(\\-))[A-Z]\\.)\\s+", "\\1"),
+      success = dplyr::if_else(is.na(.data$epa), NA_real_, dplyr::if_else(.data$epa > 0, 1, 0)),
+      passer = stringr::str_extract(.data$desc, glue::glue('{big_parser}{pass_finder}')),
+      rusher = stringr::str_extract(.data$desc, glue::glue('{big_parser}{rush_finder}')),
       #get rusher_player_name as a measure of last resort
       #finds things like aborted snaps and "F.Last to NYG 44."
       rusher = dplyr::if_else(
-        is.na(rusher) & is.na(passer) & !is.na(rusher_player_name), rusher_player_name, rusher
+        is.na(.data$rusher) & is.na(.data$passer) & !is.na(.data$rusher_player_name), .data$rusher_player_name, .data$rusher
       ),
-      receiver = stringr::str_extract(desc, glue::glue('{receiver_finder}{big_parser}')),
+      receiver = stringr::str_extract(.data$desc, glue::glue('{receiver_finder}{big_parser}')),
       #overwrite all these weird plays messing with the parser
       receiver = dplyr::case_when(
-        stringr::str_detect(desc, glue::glue('{abnormal_play}')) ~ receiver_player_name,
-        TRUE ~ receiver
+        stringr::str_detect(.data$desc, glue::glue('{abnormal_play}')) ~ .data$receiver_player_name,
+        TRUE ~ .data$receiver
       ),
       rusher = dplyr::case_when(
-        stringr::str_detect(desc, glue::glue('{abnormal_play}')) ~ rusher_player_name,
-        TRUE ~ rusher
+        stringr::str_detect(.data$desc, glue::glue('{abnormal_play}')) ~ .data$rusher_player_name,
+        TRUE ~ .data$rusher
       ),
       passer = dplyr::case_when(
-        stringr::str_detect(desc, glue::glue('{abnormal_play}')) ~ passer_player_name,
-        TRUE ~ passer
+        stringr::str_detect(.data$desc, glue::glue('{abnormal_play}')) ~ .data$passer_player_name,
+        TRUE ~ .data$passer
       ),
       #finally, for rusher, if there was already a passer (eg from scramble), set rusher to NA
       rusher = dplyr::if_else(
-        !is.na(passer), NA_character_, rusher
+        !is.na(.data$passer), NA_character_, .data$rusher
       ),
       #if no pass is thrown, there shouldn't be a receiver
       receiver = dplyr::if_else(
-        stringr::str_detect(desc, ' pass'), receiver, NA_character_
+        stringr::str_detect(.data$desc, ' pass'), .data$receiver, NA_character_
       ),
       #if there's a pass, sack, or scramble, it's a pass play
-      pass = dplyr::if_else(stringr::str_detect(desc, "( pass)|(sacked)|(scramble)"), 1, 0),
+      pass = dplyr::if_else(stringr::str_detect(.data$desc, "( pass)|(sacked)|(scramble)"), 1, 0),
       #if there's a rusher and it wasn't a QB kneel or pass play, it's a run play
-      rush = dplyr::if_else(!is.na(rusher) & qb_kneel == 0 & pass == 0, 1, 0),
+      rush = dplyr::if_else(!is.na(.data$rusher) & .data$qb_kneel == 0 & .data$pass == 0, 1, 0),
       #fix some common QBs with inconsistent names
       passer = dplyr::case_when(
         passer == "Jos.Allen" ~ "J.Allen",
         passer == "Alex Smith" | passer == "Ale.Smith" ~ "A.Smith",
-        passer == "Ryan" & posteam == "ATL" ~ "M.Ryan",
+        passer == "Ryan" & .data$posteam == "ATL" ~ "M.Ryan",
         passer == "Tr.Brown" ~ "T.Brown",
         passer == "Sh.Hill" ~ "S.Hill",
         passer == "Matt.Moore" | passer == "Mat.Moore" ~ "M.Moore",
@@ -89,12 +93,12 @@ clean_pbp <- function(pbp) {
         passer == "Randle El" ~ "A.Randle El",
         passer == "Van Pelt" ~ "A.Van Pelt",
         passer == "Dom.Davis" ~ "D.Davis",
-        TRUE ~ passer
+        TRUE ~ .data$passer
       ),
       rusher = dplyr::case_when(
         rusher == "Jos.Allen" ~ "J.Allen",
         rusher == "Alex Smith" | rusher == "Ale.Smith" ~ "A.Smith",
-        rusher == "Ryan" & posteam == "ATL" ~ "M.Ryan",
+        rusher == "Ryan" & .data$posteam == "ATL" ~ "M.Ryan",
         rusher == "Tr.Brown" ~ "T.Brown",
         rusher == "Sh.Hill" ~ "S.Hill",
         rusher == "Matt.Moore" | rusher == "Mat.Moore" ~ "M.Moore",
@@ -111,74 +115,75 @@ clean_pbp <- function(pbp) {
         receiver == "F.R" ~ "F.Jones",
         TRUE ~ receiver
       ),
-      first_down = dplyr::if_else(first_down_rush == 1 | first_down_pass == 1 | first_down_penalty == 1, 1, 0),
+      first_down = dplyr::if_else(.data$first_down_rush == 1 | .data$first_down_pass == 1 | .data$first_down_penalty == 1, 1, 0),
       # easy filter: play is 1 if a "special teams" play, or 0 otherwise
       # with thanks to Lee Sharpe for the code
-      special=dplyr::if_else(play_type %in%
+      special = dplyr::if_else(.data$play_type %in%
                        c("extra_point","field_goal","kickoff","punt"), 1, 0),
       # easy filter: play is 1 if a "normal" play (including penalties), or 0 otherwise
       # with thanks to Lee Sharpe for the code
-      play=dplyr::if_else(!is.na(epa) & !is.na(posteam) &
-                    desc != "*** play under review ***" &
-                    substr(desc,1,8) != "Timeout " &
-                    play_type %in% c("no_play","pass","run"),1,0)
+      play=dplyr::if_else(!is.na(.data$epa) & !is.na(.data$posteam) &
+                            .data$desc != "*** play under review ***" &
+                            substr(.data$desc,1,8) != "Timeout " &
+                            .data$play_type %in% c("no_play","pass","run"),1,0)
     ) %>%
     #standardize team names (eg Chargers are always LAC even when they were playing in SD)
     dplyr::mutate_at(dplyr::vars(
-      posteam, defteam, home_team, away_team, timeout_team, td_team, return_team, penalty_team,
-      side_of_field, forced_fumble_player_1_team, forced_fumble_player_2_team,
-      solo_tackle_1_team, solo_tackle_2_team,
-      assist_tackle_1_team, assist_tackle_2_team, assist_tackle_3_team, assist_tackle_4_team,
-      fumbled_1_team, fumbled_2_team, fumble_recovery_1_team, fumble_recovery_2_team
+      "posteam", "defteam", "home_team", "away_team", "timeout_team", "td_team", "return_team", "penalty_team",
+      "side_of_field", "forced_fumble_player_1_team", "forced_fumble_player_2_team",
+      "solo_tackle_1_team", "solo_tackle_2_team",
+      "assist_tackle_1_team", "assist_tackle_2_team", "assist_tackle_3_team", "assist_tackle_4_team",
+      "fumbled_1_team", "fumbled_2_team", "fumble_recovery_1_team", "fumble_recovery_2_team"
       ), team_name_fn) %>%
+
     #Seb's stuff for fixing player ids
     dplyr::mutate(index = 1 : dplyr::n()) %>% # to re-sort after all the group_bys
 
-    dplyr::group_by(passer, posteam, season) %>%
-    dplyr::mutate(passer_id = dplyr::if_else(is.na(passer), NA_character_, custom_mode(passer_player_id))) %>%
+    dplyr::group_by(.data$passer, .data$posteam, .data$season) %>%
+    dplyr::mutate(passer_id = dplyr::if_else(is.na(.data$passer), NA_character_, custom_mode(.data$passer_player_id))) %>%
 
-    dplyr::group_by(passer_id) %>%
-    dplyr::mutate(passer = dplyr::if_else(is.na(passer_id), NA_character_, custom_mode(passer))) %>%
+    dplyr::group_by(.data$passer_id) %>%
+    dplyr::mutate(passer = dplyr::if_else(is.na(.data$passer_id), NA_character_, custom_mode(.data$passer))) %>%
 
-    dplyr::group_by(rusher, posteam, season) %>%
-    dplyr::mutate(rusher_id = dplyr::if_else(is.na(rusher), NA_character_, custom_mode(rusher_player_id))) %>%
+    dplyr::group_by(.data$rusher, .data$posteam, .data$season) %>%
+    dplyr::mutate(rusher_id = dplyr::if_else(is.na(.data$rusher), NA_character_, custom_mode(.data$rusher_player_id))) %>%
 
-    dplyr::group_by(rusher_id) %>%
-    dplyr::mutate(rusher = dplyr::if_else(is.na(rusher_id), NA_character_, custom_mode(rusher))) %>%
+    dplyr::group_by(.data$rusher_id) %>%
+    dplyr::mutate(rusher = dplyr::if_else(is.na(.data$rusher_id), NA_character_, custom_mode(.data$rusher))) %>%
 
-    dplyr::group_by(receiver, posteam, season) %>%
-    dplyr::mutate(receiver_id = dplyr::if_else(is.na(receiver), NA_character_, custom_mode(receiver_player_id))) %>%
+    dplyr::group_by(.data$receiver, .data$posteam, .data$season) %>%
+    dplyr::mutate(receiver_id = dplyr::if_else(is.na(.data$receiver), NA_character_, custom_mode(.data$receiver_player_id))) %>%
 
-    dplyr::group_by(receiver_id) %>%
-    dplyr::mutate(receiver = dplyr::if_else(is.na(receiver_id), NA_character_, custom_mode(receiver))) %>%
+    dplyr::group_by(.data$receiver_id) %>%
+    dplyr::mutate(receiver = dplyr::if_else(is.na(.data$receiver_id), NA_character_, custom_mode(.data$receiver))) %>%
 
     dplyr::ungroup() %>%
     dplyr::mutate(
-      name = dplyr::if_else(!is.na(passer), passer, rusher),
-      id = dplyr::if_else(!is.na(passer_id), passer_id, rusher_id)
+      name = dplyr::if_else(!is.na(.data$passer), .data$passer, .data$rusher),
+      id = dplyr::if_else(!is.na(.data$passer_id), .data$passer_id, .data$rusher_id)
     ) %>%
-    dplyr::arrange(index) %>%
-    dplyr::select(-index)
+    dplyr::arrange(.data$index) %>%
+    dplyr::select(-"index")
 
   return(r)
 }
 
 #these things are used in clean_pbp() above
 
-#look for First[period or space]Last[maybe - or ' in last][maybe more letters in last][maybe Jr. or II or IV]
-  big_parser = "(?<=)[A-Z][A-z]*(\\.|\\s)+[A-Z][A-z]*\\'*\\-*[A-Z]*[a-z]*(\\s((Jr.)|(Sr.)|I{2,3})|(IV))?"
-#maybe some spaces and letters, and then a rush direction unless they fumbled
-  rush_finder = '(?=\\s*[a-z]*\\s*((FUMBLES) | (left end)|(left tackle)|(left guard)|(up the middle)|(right guard)|(right tackle)|(right end)))'
-#maybe some spaces and leters, and then pass / sack / scramble
-  pass_finder = "(?=\\s*[a-z]*\\s*(( pass)|(sack)|(scramble)))"
-#to or for, maybe a jersey number and a dash
-  receiver_finder = "(?<=((to)|(for))\\s[:digit:]{0,2}\\-{0,1})"
-#weird play finder
-  abnormal_play = "(Lateral)|(lateral)|(pitches to)|(Direct snap to)|(New quarterback for)|(Aborted)|(backwards pass)|(Pass back to)|(Flea-flicker)"
+# look for First[period or space]Last[maybe - or ' in last][maybe more letters in last][maybe Jr. or II or IV]
+big_parser <- "(?<=)[A-Z][A-z]*(\\.|\\s)+[A-Z][A-z]*\\'*\\-*[A-Z]*[a-z]*(\\s((Jr.)|(Sr.)|I{2,3})|(IV))?"
+# maybe some spaces and letters, and then a rush direction unless they fumbled
+rush_finder <- "(?=\\s*[a-z]*\\s*((FUMBLES) | (left end)|(left tackle)|(left guard)|(up the middle)|(right guard)|(right tackle)|(right end)))"
+# maybe some spaces and leters, and then pass / sack / scramble
+pass_finder <- "(?=\\s*[a-z]*\\s*(( pass)|(sack)|(scramble)))"
+# to or for, maybe a jersey number and a dash
+receiver_finder <- "(?<=((to)|(for))\\s[:digit:]{0,2}\\-{0,1})"
+# weird play finder
+abnormal_play <- "(Lateral)|(lateral)|(pitches to)|(Direct snap to)|(New quarterback for)|(Aborted)|(backwards pass)|(Pass back to)|(Flea-flicker)"
 
 # custom mode function from https://stackoverflow.com/questions/2547402/is-there-a-built-in-function-for-finding-the-mode/8189441
 custom_mode <- function(x, na.rm = TRUE) {
-  if(na.rm){x = x[!is.na(x)]}
+  if(na.rm){x <- x[!is.na(x)]}
   ux <- unique(x)
   return(ux[which.max(tabulate(match(x, ux)))])
 }
@@ -199,13 +204,6 @@ team_name_fn <- function(var) {
   )
 }
 
-# custom mode function from https://stackoverflow.com/questions/2547402/is-there-a-built-in-function-for-finding-the-mode/8189441
-custom_mode <- function(x, na.rm = TRUE) {
-  if(na.rm){x = x[!is.na(x)]}
-  ux <- unique(x)
-  return(ux[which.max(tabulate(match(x, ux)))])
-}
-
 #' Compute QB epa
 #'
 #' @param d is a Data frame of play-by-play data scraped using \code{\link{fast_scraper}}.
@@ -213,41 +211,49 @@ custom_mode <- function(x, na.rm = TRUE) {
 #' a receiver lost a fumble after a completed catch and makes EPA work more
 #' like passing yards on plays with fumbles
 #' @export
+#' @import dplyr
+#' @importFrom rlang .data
 add_qb_epa <- function(d) {
 
   fumbles_df <- d %>%
-    dplyr::filter(complete_pass == 1 & fumble_lost == 1 & !is.na(epa)) %>%
+    dplyr::filter(.data$complete_pass == 1 & .data$fumble_lost == 1 & !is.na(.data$epa) & !is.na(.data$down)) %>%
     dplyr::mutate(
-      down = as.numeric(down),
+      down = as.numeric(.data$down),
       # save old stuff for testing/checking
-      down_old = down, ydstogo_old = ydstogo, epa_old = epa,
+      down_old = .data$down, ydstogo_old = .data$ydstogo, epa_old = .data$epa,
       # update yard line, down, yards to go from play result
-      yardline_100 = yardline_100 - yards_gained, down = dplyr::if_else(yards_gained >= ydstogo, 1, down + 1),
+      yardline_100 = .data$yardline_100 - .data$yards_gained, down = dplyr::if_else(.data$yards_gained >= .data$ydstogo, 1, .data$down + 1),
       # if the fumble spot would have resulted in turnover on downs, need to give other team the ball and fix
-      change = dplyr::if_else(down == 5, 1, 0), down = dplyr::if_else(down == 5, 1, down),
+      change = dplyr::if_else(.data$down == 5, 1, 0), down = dplyr::if_else(.data$down == 5, 1, .data$down),
       # yards to go is 10 if its a first down, update otherwise
-      ydstogo = dplyr::if_else(down == 1, 10, ydstogo - yards_gained),
+      ydstogo = dplyr::if_else(.data$down == 1, 10, .data$ydstogo - .data$yards_gained),
       # fix yards to go for goal line (eg can't have 1st & 10 inside opponent 10 yard line)
-      ydstogo = dplyr::if_else(yardline_100 < ydstogo, yardline_100, ydstogo),
+      ydstogo = dplyr::if_else(.data$yardline_100 < .data$ydstogo, .data$yardline_100, .data$ydstogo),
       # 10 yards to go if possession change
-      ydstogo = dplyr::if_else(change == 1, 10, ydstogo),
+      ydstogo = dplyr::if_else(.data$change == 1, 10, .data$ydstogo),
       # flip field for possession change
-      yardline_100 = dplyr::if_else(change == 1, 100 - yardline_100, yardline_100),
-      ep_old = ep
+      yardline_100 = dplyr::if_else(.data$change == 1, 100 - .data$yardline_100, .data$yardline_100),
+      ep_old = .data$ep
     ) %>%
-    dplyr::select(-ep, -epa)
+    dplyr::select(
+      "game_id", "play_id",
+      "season", "home_team", "posteam", "roof", "half_seconds_remaining",
+      "yardline_100", "down", "ydstogo",
+      "posteam_timeouts_remaining", "defteam_timeouts_remaining",
+      "down_old", "ep_old", "change"
+      )
 
   if (nrow(fumbles_df) > 0) {
     new_ep_df <- calculate_expected_points(fumbles_df) %>%
-      dplyr::mutate(ep = dplyr::if_else(change == 1, -ep, ep), fixed_epa = ep - ep_old) %>%
-      dplyr::select(game_id, play_id, fixed_epa)
+      dplyr::mutate(ep = dplyr::if_else(.data$change == 1, -.data$ep, .data$ep), fixed_epa = .data$ep - .data$ep_old) %>%
+      dplyr::select("game_id", "play_id", "fixed_epa")
 
     d <- d %>%
       dplyr::left_join(new_ep_df, by = c("game_id", "play_id")) %>%
-      dplyr::mutate(qb_epa = dplyr::if_else(!is.na(fixed_epa), fixed_epa, epa)) %>%
-      dplyr::select(-fixed_epa)
+      dplyr::mutate(qb_epa = dplyr::if_else(!is.na(.data$fixed_epa), .data$fixed_epa, .data$epa)) %>%
+      dplyr::select(-"fixed_epa")
   } else {
-    d <- d %>% dplyr::mutate(qb_epa = epa)
+    d <- d %>% dplyr::mutate(qb_epa = .data$epa)
   }
 
   return(d)

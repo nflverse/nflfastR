@@ -29,7 +29,6 @@ The EP, WP, and CP models are trained using xgboost, which uses training data to
 * Down
 * Yards to go
 * Era: 1999-2001 (pre-expansion), 2002-2005 (pre-CPOE), 2006-2013 (pre-LOB rules change), 2014-2017, 2018 and beyond
-* Week (the model is trained on regular season only, so for playoff games, we impute week = 17)
 * Timeouts remaining for each team
 
 **WP model features**
@@ -56,7 +55,6 @@ The EP, WP, and CP models are trained using xgboost, which uses training data to
 * Yards to go
 * Distance to sticks (air yards - yards to go)
 * Era: 2006-2013, 2014-2017, 2018 and beyond (note that air yards data only go back to 2006, so there is no CP for earlier years)
-* Week (the model is trained on regular season only, so for playoff games, we impute week = 17)
 * Air yards
 * Whether air yards is 0 (probably unnecessary with tree-based method and a relic from earlier models where it was included because completion percentage is much lower for 0 air yard passes)
 * Pass location (binary: middle or not middle)
@@ -120,7 +118,6 @@ model_data <- pbp_data %>%
     down1, down2, down3, down4,
     posteam_timeouts_remaining,
     defteam_timeouts_remaining,
-    model_week,
     Total_W_Scaled
   )
 
@@ -136,19 +133,19 @@ seasons <- unique(model_data$season)
 
 Input the stuff we'll need to fit the model. The parameters were obtained from cross-validation, where each season was forced to be entirely contained in a given CV fold to prevent leakage in labels from one fold to another (for example, if a given drive were split up between folds).
 ```{r params}
-nrounds = 70
+nrounds = 500
 params <-
   list(
     booster = "gbtree",
     objective = "multi:softprob",
     eval_metric = c("mlogloss"),
     num_class = 7,
-    eta = 0.2,
-    gamma = .2,
-    subsample=0.8,
-    colsample_bytree=0.8,
-    max_depth = 4,
-    min_child_weight = .9
+    eta = 0.025,
+    gamma = 1,
+    subsample = 0.8,
+    colsample_bytree = 0.8,
+    max_depth = 5,
+    min_child_weight = 1
   )
 ```
 
@@ -598,19 +595,19 @@ model_data <- pbp %>%
   dplyr::select(
     season, complete_pass, air_yards, yardline_100, ydstogo,
     down1, down2, down3, down4, air_is_zero, pass_middle,
-    era2, era3, era4, qb_hit, home, model_week,
+    era2, era3, era4, qb_hit, home, 
     outdoors, retractable, dome, distance_to_sticks
   )
 rm(pbp)
 
 
-nrounds = 70
+nrounds = 560
 params <-
   list(
     booster = "gbtree",
     objective = "binary:logistic",
     eval_metric = c("logloss"),
-    eta = 0.2,
+    eta = 0.025,
     gamma = 5,
     subsample=0.8,
     colsample_bytree=0.8,

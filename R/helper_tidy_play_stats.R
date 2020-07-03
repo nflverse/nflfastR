@@ -15,9 +15,9 @@
 #' @importFrom dplyr filter if_else
 #' @importFrom tibble as_tibble_row
 #' @importFrom purrr prepend set_names modify_at modify_if
-
+#' @importFrom rlang .data
 sum_play_stats <- function(play_Id, stats) {
-  play_stats <- stats %>% filter(playId == play_Id)
+  play_stats <- stats %>% filter(.data$playId == play_Id)
 
   row <-
     as_tibble_row(
@@ -37,7 +37,6 @@ sum_play_stats <- function(play_Id, stats) {
       "fumble_recovery_1_yards", "fumble_recovery_2_yards"
     ), as.integer) %>%
     as_tibble_row()
-
 
 
   for (index in seq_along(play_stats$playId)) {

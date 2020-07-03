@@ -5,7 +5,10 @@
 ################################################################################
 
 # Thanks Lee!
-
+#' @import dplyr
+#' @importFrom httr HEAD
+#' @importFrom glue glue
+#' @importFrom rlang .data
 add_game_data <- function(pbp) {
   out <- pbp
   tryCatch(
@@ -22,15 +25,15 @@ add_game_data <- function(pbp) {
         dplyr::left_join(
           readRDS(url(url)) %>%
             dplyr::select(
-              game_id, away_score, home_score, location, result, total,
-              spread_line, total_line, div_game, roof, surface, temp, wind,
-              home_coach, away_coach, stadium, stadium_id, gameday
+              "game_id", "away_score", "home_score", "location", "result", "total",
+              "spread_line", "total_line", "div_game", "roof", "surface", "temp", "wind",
+              "home_coach", "away_coach", "stadium", "stadium_id", "gameday"
             ) %>%
-            dplyr::rename(game_stadium = stadium),
+            dplyr::rename(game_stadium = "stadium"),
           by = c("game_id")
         ) %>%
         dplyr::mutate(
-          game_date = gameday
+          game_date = .data$gameday
         )
 
       message("added game variables")
