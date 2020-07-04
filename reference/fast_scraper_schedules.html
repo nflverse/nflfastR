@@ -83,7 +83,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
       </span>
     </div>
 
@@ -155,7 +155,7 @@
     <p>Get NFL Season Schedules</p>
     </div>
 
-    <pre class="usage"><span class='fu'>fast_scraper_schedules</span>(<span class='kw'>seasons</span>, pp = <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>fast_scraper_schedules</span>(<span class='no'>seasons</span>, <span class='kw'>pp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -172,7 +172,7 @@
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Data frame containing the following detailed game information:</p><dl>
+    <p>Data frame containing the following detailed game information:</p><dl'>
 <dt>game_id</dt><dd><p>Character identifier including season, week, away team and home team</p></dd>
 <dt>season</dt><dd><p>4 digit season year.</p></dd>
 <dt>game_type</dt><dd><p>One of 'REG', 'WC', 'DIV', 'CON', 'SB' indicating if a game was a regular season game or one of the playoff rounds.</p></dd>
@@ -202,10 +202,10 @@ Please note that the initiating process takes a few seconds which means it
 may be better to set <code>pp = FALSE</code> if you are scraping less than 10 seasons.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>if</span> (<span class='fl'>FALSE</span>) {
+    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Get schedules for the whole 2015 - 2018 seasons</span>
-<span class='kw'>seasons</span> <span class='op'>&lt;-</span> <span class='fl'>2015</span><span class='op'>:</span><span class='fl'>2018</span>
-<span class='kw'>schedules</span> <span class='op'>&lt;-</span> <span class='fu'>fast_scraper_schedules</span>(<span class='kw'>seasons</span>)
+<span class='no'>seasons</span> <span class='kw'>&lt;-</span> <span class='fl'>2015</span>:<span class='fl'>2018</span>
+<span class='no'>schedules</span> <span class='kw'>&lt;-</span> <span class='fu'>fast_scraper_schedules</span>(<span class='no'>seasons</span>)
 }</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -222,7 +222,7 @@ may be better to set <code>pp = FALSE</code> if you are scraping less than 10 se
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

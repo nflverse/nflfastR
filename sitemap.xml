@@ -10,6 +10,9 @@
     <loc>https://mrcaseb.github.io/nflfastR//reference/calculate_expected_points.html</loc>
   </url>
   <url>
+    <loc>https://mrcaseb.github.io/nflfastR//reference/calculate_win_probability.html</loc>
+  </url>
+  <url>
     <loc>https://mrcaseb.github.io/nflfastR//reference/clean_pbp.html</loc>
   </url>
   <url>
@@ -20,6 +23,9 @@
   </url>
   <url>
     <loc>https://mrcaseb.github.io/nflfastR//reference/teams_colors_logos.html</loc>
+  </url>
+  <url>
+    <loc>https://mrcaseb.github.io/nflfastR//reference/update_db.html</loc>
   </url>
   <url>
     <loc>https://mrcaseb.github.io/nflfastR//articles/beginners_guide.html</loc>

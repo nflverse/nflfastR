@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • nflfastR</title>
+<title>Compute win probability — calculate_win_probability • nflfastR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,7 +46,14 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Compute win probability — calculate_win_probability" />
+<meta property="og:description" content="for provided plays. Returns the data with
+probabilities of winning the game. The following columns
+must be present: receive_h2_ko (1 if game is in 1st half and possession
+team will receive 2nd half kickoff, 0 otherwise), ep (expected points),
+home_team, posteam, half_seconds_remaining, game_seconds_remaining,
+spread_line (how many points home team was favored by), down, ydstogo,
+posteam_timeouts_remaining, defteam_timeouts_remaining" />
 <meta property="og:image" content="https://raw.githubusercontent.com/mrcaseb/nflfastR/master/man/figures/card.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:creator" content="@nflfastR" />
@@ -69,7 +76,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -143,84 +150,63 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Compute win probability</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mrcaseb/nflfastR/blob/master/R/ep_wp_calculators.R'><code>R/ep_wp_calculators.R</code></a></small>
+    <div class="hidden name"><code>calculate_win_probability.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p>for provided plays. Returns the data with
+probabilities of winning the game. The following columns
+must be present: receive_h2_ko (1 if game is in 1st half and possession
+team will receive 2nd half kickoff, 0 otherwise), ep (expected points),
+home_team, posteam, half_seconds_remaining, game_seconds_remaining,
+spread_line (how many points home team was favored by), down, ydstogo,
+posteam_timeouts_remaining, defteam_timeouts_remaining</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+    <pre class="usage"><span class='fu'>calculate_win_probability</span>(<span class='no'>pbp_data</span>)</pre>
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="add_qb_epa.html">add_qb_epa()</a></code> </p>
-        </td>
-        <td><p>Compute QB epa</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="calculate_expected_points.html">calculate_expected_points()</a></code> </p>
-        </td>
-        <td><p>Compute expected points</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="calculate_win_probability.html">calculate_win_probability()</a></code> </p>
-        </td>
-        <td><p>Compute win probability</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="clean_pbp.html">clean_pbp()</a></code> </p>
-        </td>
-        <td><p>Clean Play by Play Data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="fast_scraper.html">fast_scraper()</a></code> </p>
-        </td>
-        <td><p>Get NFL Play by Play Data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="fast_scraper_schedules.html">fast_scraper_schedules()</a></code> </p>
-        </td>
-        <td><p>Get NFL Season Schedules</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="teams_colors_logos.html">teams_colors_logos</a></code> </p>
-        </td>
-        <td><p>NFL Team names, colors and logo urls.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="update_db.html">update_db()</a></code> </p>
-        </td>
-        <td><p>Update or create a nflfastR play by play database</p></td>
-      </tr>
-    </tbody>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>pbp_data</th>
+      <td><p>Play-by-play dataset to estimate win probability for.</p></td>
+    </tr>
     </table>
-  </div>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>The original pbp_data with the following columns appended to it:</p><dl'>
+<dt>wp</dt><dd><p>win probability.</p></dd>
+<dt>vegas_wp</dt><dd><p>win probability taking into account pre-game spread.</p></dd>
+
+</dl>
+
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Computes win probability for provided plays. Returns the data with
+probabilities of each scoring event and EP added. The following columns
+must be present:</p><ul>
+<li><p>receive_2h_ko (1 if game is in 1st half and possession team will receive 2nd half kickoff, 0 otherwise)</p></li>
+<li><p>ep (expected points)</p></li>
+<li><p>score_differential</p></li>
+<li><p>home_team</p></li>
+<li><p>posteam</p></li>
+<li><p>half_seconds_remaining</p></li>
+<li><p>game_seconds_remaining</p></li>
+<li><p>spread_line (how many points home team was favored by)</p></li>
+<li><p>down</p></li>
+<li><p>ydstogo</p></li>
+<li><p>posteam_timeouts_remaining</p></li>
+<li><p>defteam_timeouts_remaining</p></li>
+</ul>
+
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>

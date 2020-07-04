@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • nflfastR</title>
+<title>Update or create a nflfastR play by play database — update_db • nflfastR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,7 +46,9 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Update or create a nflfastR play by play database — update_db" />
+<meta property="og:description" content="update_db updates or creates a SQLite database with nflfastR
+play by play data of all completed games since 1999." />
 <meta property="og:image" content="https://raw.githubusercontent.com/mrcaseb/nflfastR/master/man/figures/card.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:creator" content="@nflfastR" />
@@ -69,7 +71,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -143,84 +145,60 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Update or create a nflfastR play by play database</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mrcaseb/nflfastR/blob/master/R/helper_database_functions.R'><code>R/helper_database_functions.R</code></a></small>
+    <div class="hidden name"><code>update_db.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p><code>update_db</code> updates or creates a SQLite database with <code>nflfastR</code>
+play by play data of all completed games since 1999.</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+    <pre class="usage"><span class='fu'>update_db</span>(
+  <span class='kw'>dbdir</span> <span class='kw'>=</span> <span class='st'>"."</span>,
+  <span class='kw'>dbname</span> <span class='kw'>=</span> <span class='st'>"pbp_db"</span>,
+  <span class='kw'>tblname</span> <span class='kw'>=</span> <span class='st'>"nflfastR_pbp"</span>,
+  <span class='kw'>force_rebuild</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+)</pre>
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="add_qb_epa.html">add_qb_epa()</a></code> </p>
-        </td>
-        <td><p>Compute QB epa</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="calculate_expected_points.html">calculate_expected_points()</a></code> </p>
-        </td>
-        <td><p>Compute expected points</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="calculate_win_probability.html">calculate_win_probability()</a></code> </p>
-        </td>
-        <td><p>Compute win probability</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="clean_pbp.html">clean_pbp()</a></code> </p>
-        </td>
-        <td><p>Clean Play by Play Data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="fast_scraper.html">fast_scraper()</a></code> </p>
-        </td>
-        <td><p>Get NFL Play by Play Data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="fast_scraper_schedules.html">fast_scraper_schedules()</a></code> </p>
-        </td>
-        <td><p>Get NFL Season Schedules</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="teams_colors_logos.html">teams_colors_logos</a></code> </p>
-        </td>
-        <td><p>NFL Team names, colors and logo urls.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="update_db.html">update_db()</a></code> </p>
-        </td>
-        <td><p>Update or create a nflfastR play by play database</p></td>
-      </tr>
-    </tbody>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>dbdir</th>
+      <td><p>Directory in which the database is or shall be located</p></td>
+    </tr>
+    <tr>
+      <th>dbname</th>
+      <td><p>File name of an existing or desired SQLite database within <code>dbdir</code></p></td>
+    </tr>
+    <tr>
+      <th>tblname</th>
+      <td><p>The name of the play by play data table within the database</p></td>
+    </tr>
+    <tr>
+      <th>force_rebuild</th>
+      <td><p>Logical parameter to rebuild the play by play data table
+within the database from scratch in case the cleaned data were updated</p></td>
+    </tr>
     </table>
-  </div>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>This function creates and updates a data table with the name <code>tblname</code>
+within a SQLite database located in <code>dbdir</code> and named <code>dbname</code>.
+The data table combines all play by play data for every available game back
+to the 1999 season and adds the most recent completed games as soon as they
+are available for <code>nflfastR</code>.
+The <code>force_rebuild</code> parameter controls if the data table within the
+database (not the database itself because there might be other data in it)
+should be removed and rebuilt from scratch (mostly because of bugfixes in
+nflfastR or its underlying data)</p>
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
