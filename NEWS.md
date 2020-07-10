@@ -1,3 +1,33 @@
+# nflfastR 2.1.1
+
+### Functions
+
+* `clean_pbp()` now standardizes player IDs across the old (1999-2010) and new 
+(2011+) data sources. Player IDs once again uniquely identify players, and each 
+unique player has one unique ID (as they did before the NFL data source change):
+    * For players whose careers finished before 2011, their IDs remain the same
+    * For players who played in both eras or only in the new era, their ID is 
+    the new ID
+    * For example, Akili Smith (ID: 00-0015082) and Alex Smith 
+    (ID: 32013030-2d30-3032-3334-3336b638d37d) are both abbreviated as "A.Smith" 
+    but can be distinguished by their IDs, with Akili showing what the old 
+    format ID looks like, and Smith the new one
+    * Standardization is realized by using an [ID map](https://github.com/guga31bb/nflfastR-data/blob/master/roster-data/legacy_id_map.csv)
+    available in the data repo created with [this script](https://github.com/guga31bb/nflfastR-data/blob/master/roster-data/legacy_id_map.R)
+    
+* `clean_pbp()` now removes all variables it is about to create to make sure 
+nothing unexpected can happen
+
+### Miscellaneous
+
+* Added minimum version requirements to some package dependencies because 
+installation broke for some users with outdated packages
+
+* Made a minor bug fix to catch more out-of-order plays and fixed a bug where some
+plays were being incorrectly dropped in older seasons
+
+* Standardized team names (e.g. `SD` --> `LAC`) in some columns we had missed
+
 # nflfastR 2.1.0
 
 ### Models

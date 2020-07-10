@@ -229,6 +229,15 @@ get_pbp_nfl <- function(id, dir = NULL) {
         ) %>%
         dplyr::mutate_all(dplyr::na_if, "")
 
+      # nfl didn't fill in first downs on this game
+      if (id == '2018_01_ATL_PHI') {
+        combined <- combined %>%
+          dplyr::mutate(
+            first_down_pass = dplyr::if_else(.data$pass_attempt == 1 & .data$first_down == 1, 1, .data$first_down_pass),
+            first_down_rush = dplyr::if_else(.data$rush_attempt == 1 & .data$first_down == 1, 1, .data$first_down_rush)
+          )
+      }
+
     },
     error = function(e) {
       message("The following error has occured:")

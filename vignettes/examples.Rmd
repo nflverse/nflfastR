@@ -200,7 +200,7 @@ nflfastR::calculate_win_probability(data) %>%
 
 Not surprisingly, `vegas_wp` increases with the amount a team was coming into the game favored by. Weirdly, the model thinks home teams are more likely to win even when the spread is 0. I'm not sure how much to believe the model on that one, but leaving `home` in the model did make the model better at out of sample predictions, so who knows.
 
-# Example 8: Using the build-in database function
+# Example 8: Using the built-in database function
 
 If you're comfortable using `dplyr` functions to manipulate and tidy data, you're ready to use a database. Why should you use a database?
 

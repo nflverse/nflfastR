@@ -18,12 +18,13 @@ add_nflscrapr_mutations <- function(pbp) {
     dplyr::mutate(index = 1 : dplyr::n()) %>%
     # remove duplicate plays. can't do this with play_id because duplicate plays
     # sometimes have different play_ids
-    dplyr::group_by(.data$game_id, .data$quarter, .data$time, .data$play_description) %>%
+    dplyr::group_by(.data$game_id, .data$quarter, .data$time, .data$play_description, .data$down) %>%
     dplyr::slice(1) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(
       # Modify the time column for the quarter end:
-      time = dplyr::if_else(.data$quarter_end == 1, "00:00", .data$time),
+      time = dplyr::if_else(.data$quarter_end == 1 |
+                              (.data$play_description == "END GAME" & is.na(.data$time)), "00:00", .data$time),
       time = dplyr::if_else(.data$play_description == 'GAME', "15:00", .data$time),
       # Create a column with the time in seconds remaining for the quarter:
       quarter_seconds_remaining = lubridate::period_to_seconds(lubridate::ms(.data$time))

@@ -1,7 +1,7 @@
 Type: Package
 Package: nflfastR
 Title: Functions to Efficiently Scrape NFL Play by Play Data
-Version: 2.1.0
+Version: 2.1.1
 Authors@R: 
     c(person(given = "Sebastian",
              family = "Carl",
@@ -26,8 +26,7 @@ Authors@R:
              family = "Ventura",
              role = "ctb",
              email = "samventura22@gmail.com"))
-Description: nflfastR is a set of functions to efficiently
-    scrape NFL play-by-play data.
+Description: A set of functions to efficiently scrape NFL play-by-play data.
 License: MIT + file LICENSE
 URL: https://mrcaseb.github.io/nflfastR/, https://github.com/mrcaseb/nflfastR
 BugReports: https://github.com/mrcaseb/nflfastR/issues
@@ -42,23 +41,22 @@ Imports:
     lubridate,
     magrittr,
     mgcv,
-    progressr,
-    purrr,
+    progressr (>= 0.6.0),
+    purrr (>= 0.3.0),
     stats,
     rlang,
-    stringr,
-    tibble,
-    tidyr,
-    tidyselect,
+    stringr (>= 1.3.0),
+    tibble (>= 3.0),
+    tidyr (>= 1.0.0),
+    tidyselect (>= 1.0.0),
     xgboost (>= 1.1)
 Suggests: 
     DBI,
     furrr,
     future,
     rmarkdown,
-    RSQLite,
-    knitr
+    RSQLite
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
-VignetteBuilder: knitr
+
