@@ -41,7 +41,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.1</span>
       </span>
     </div>
 
@@ -264,7 +264,7 @@
 <span class="kw pkg">tictoc</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span>(<span class="kw pkg">glue</span><span class="kw ns">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">'{length(games_2019)} games with nflfastR:'</span>))
 <span class="no">f</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/fast_scraper.html">fast_scraper</a></span>(<span class="no">games_2019</span>, <span class="kw">pp</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 <span class="kw pkg">tictoc</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span>()
-<span class="co">#&gt; 10 games with nflfastR:: 24.54 sec elapsed</span></pre></body></html></div>
+<span class="co">#&gt; 10 games with nflfastR:: 23.68 sec elapsed</span></pre></body></html></div>
 </div>
 <div id="example-3-completion-percentage-over-expected-cpoe" class="section level1">
 <h1 class="hasAnchor">
@@ -274,7 +274,7 @@
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="kw pkg">tictoc</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span>(<span class="st">'loading all games from 2009'</span>)
 <span class="no">games_2009</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">'https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2009.rds'</span>)) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">season_type</span> <span class="kw">==</span> <span class="st">'REG'</span>)
 <span class="kw pkg">tictoc</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span>()
-<span class="co">#&gt; loading all games from 2009: 1.73 sec elapsed</span>
+<span class="co">#&gt; loading all games from 2009: 1.76 sec elapsed</span>
 <span class="no">games_2009</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">cpoe</span>)) <span class="kw">%&gt;%</span> <span class="fu">group_by</span>(<span class="no">passer_player_name</span>) <span class="kw">%&gt;%</span>
   <span class="fu">summarize</span>(<span class="kw">cpoe</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="no">cpoe</span>), <span class="kw">Atts</span><span class="kw">=</span><span class="fu">n</span>()) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">Atts</span> <span class="kw">&gt;</span> <span class="fl">200</span>) <span class="kw">%&gt;%</span>
@@ -648,9 +648,9 @@
 </table>
 <p>Not surprisingly, <code>vegas_wp</code> increases with the amount a team was coming into the game favored by. Weirdly, the model thinks home teams are more likely to win even when the spread is 0. I’m not sure how much to believe the model on that one, but leaving <code>home</code> in the model did make the model better at out of sample predictions, so who knows.</p>
 </div>
-<div id="example-8-using-the-build-in-database-function" class="section level1">
+<div id="example-8-using-the-built-in-database-function" class="section level1">
 <h1 class="hasAnchor">
-<a href="#example-8-using-the-build-in-database-function" class="anchor"></a>Example 8: Using the build-in database function</h1>
+<a href="#example-8-using-the-built-in-database-function" class="anchor"></a>Example 8: Using the built-in database function</h1>
 <p>If you’re comfortable using <code>dplyr</code> functions to manipulate and tidy data, you’re ready to use a database. Why should you use a database?</p>
 <ul>
 <li>The provided function in <code>nflfastR</code> makes it extremely easy to build a database and keep it updated</li>

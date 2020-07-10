@@ -41,7 +41,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.1</span>
       </span>
     </div>
 
@@ -897,7 +897,7 @@
 <p>We’re going to cheat a little and take advantage of Lee Sharpe’s famous <code>games</code> file. Most of this stuff has been added into <code>nflfastR</code>, but it’s easier working with this file where each game is one row.</p>
 <div class="sourceCode" id="cb32"><html><body><pre class="r"><span class="no">games</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">"http://www.habitatring.com/games.rds"</span>))
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="no">games</span>)
-<span class="co">#&gt; tibble [5,839 x 33] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt; tibble [5,839 x 35] (S3: tbl_df/tbl/data.frame)</span>
 <span class="co">#&gt;  $ game_id         : chr [1:5839] "1999_01_MIN_ATL" "1999_01_KC_CHI" "1999_01_PIT_CLE" "1999_01_OAK_GB" ...</span>
 <span class="co">#&gt;  $ season          : int [1:5839] 1999 1999 1999 1999 1999 1999 1999 1999 1999 1999 ...</span>
 <span class="co">#&gt;  $ game_type       : chr [1:5839] "REG" "REG" "REG" "REG" ...</span>
@@ -913,6 +913,8 @@
 <span class="co">#&gt;  $ result          : int [1:5839] -3 3 -43 4 17 38 9 -2 -1 -8 ...</span>
 <span class="co">#&gt;  $ total           : int [1:5839] 31 37 43 52 45 44 29 58 49 48 ...</span>
 <span class="co">#&gt;  $ old_game_id     : chr [1:5839] "1999091210" "1999091206" "1999091213" "1999091208" ...</span>
+<span class="co">#&gt;  $ away_rest       : int [1:5839] 7 7 7 7 7 7 7 7 7 7 ...</span>
+<span class="co">#&gt;  $ home_rest       : int [1:5839] 7 7 7 7 7 7 7 7 7 7 ...</span>
 <span class="co">#&gt;  $ away_moneyline  : int [1:5839] NA NA NA NA NA NA NA NA NA NA ...</span>
 <span class="co">#&gt;  $ home_moneyline  : int [1:5839] NA NA NA NA NA NA NA NA NA NA ...</span>
 <span class="co">#&gt;  $ spread_line     : num [1:5839] -4 -3 -6 9 -3 5.5 3.5 7 -3 9.5 ...</span>

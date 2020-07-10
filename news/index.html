@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.1</span>
       </span>
     </div>
 
@@ -149,6 +149,37 @@
       <small>Source: <a href='https://github.com/mrcaseb/nflfastR/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="nflfastr-211" class="section level1">
+<h1 class="page-header" data-toc-text="2.1.1">
+<a href="#nflfastr-211" class="anchor"></a>nflfastR 2.1.1</h1>
+<div id="functions" class="section level3">
+<h3 class="hasAnchor">
+<a href="#functions" class="anchor"></a>Functions</h3>
+<ul>
+<li>
+<code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> now standardizes player IDs across the old (1999-2010) and new (2011+) data sources. Player IDs once again uniquely identify players, and each unique player has one unique ID (as they did before the NFL data source change):
+<ul>
+<li>For players whose careers finished before 2011, their IDs remain the same</li>
+<li>For players who played in both eras or only in the new era, their ID is the new ID</li>
+<li>For example, Akili Smith (ID: 00-0015082) and Alex Smith (ID: 32013030-2d30-3032-3334-3336b638d37d) are both abbreviated as “A.Smith” but can be distinguished by their IDs, with Akili showing what the old format ID looks like, and Smith the new one</li>
+<li>Standardization is realized by using an <a href="https://github.com/guga31bb/nflfastR-data/blob/master/roster-data/legacy_id_map.csv">ID map</a> available in the data repo created with <a href="https://github.com/guga31bb/nflfastR-data/blob/master/roster-data/legacy_id_map.R">this script</a>
+</li>
+</ul>
+</li>
+<li>
+<code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> now removes all variables it is about to create to make sure nothing unexpected can happen</li>
+</ul>
+</div>
+<div id="miscellaneous" class="section level3">
+<h3 class="hasAnchor">
+<a href="#miscellaneous" class="anchor"></a>Miscellaneous</h3>
+<ul>
+<li><p>Added minimum version requirements to some package dependencies because installation broke for some users with outdated packages</p></li>
+<li><p>Made a minor bug fix to catch more out-of-order plays and fixed a bug where some plays were being incorrectly dropped in older seasons</p></li>
+<li><p>Standardized team names (e.g. <code>SD</code> –&gt; <code>LAC</code>) in some columns we had missed</p></li>
+</ul>
+</div>
+</div>
     <div id="nflfastr-210" class="section level1">
 <h1 class="page-header" data-toc-text="2.1.0">
 <a href="#nflfastr-210" class="anchor"></a>nflfastR 2.1.0</h1>
@@ -160,9 +191,9 @@
 </li>
 </ul>
 </div>
-<div id="functions" class="section level3">
+<div id="functions-1" class="section level3">
 <h3 class="hasAnchor">
-<a href="#functions" class="anchor"></a>Functions</h3>
+<a href="#functions-1" class="anchor"></a>Functions</h3>
 <ul>
 <li>Added function <code><a href="../reference/update_db.html">update_db()</a></code> which adds all completed games to a SQLite database</li>
 <li>Added function <code><a href="../reference/calculate_win_probability.html">calculate_win_probability()</a></code>
@@ -179,9 +210,9 @@
 <li>Fix some more WP bugs on kickoffs with penalties and rare play description</li>
 </ul>
 </div>
-<div id="miscellaneous" class="section level3">
+<div id="miscellaneous-1" class="section level3">
 <h3 class="hasAnchor">
-<a href="#miscellaneous" class="anchor"></a>Miscellaneous</h3>
+<a href="#miscellaneous-1" class="anchor"></a>Miscellaneous</h3>
 <ul>
 <li>
 <code><a href="../reference/fast_scraper.html">fast_scraper()</a></code> now loads the raw game data from a separate raw data repo</li>
@@ -265,9 +296,9 @@
 <li><p>Added new function <code><a href="../reference/calculate_expected_points.html">calculate_expected_points()</a></code> usable for the enduser.</p></li>
 </ul>
 </div>
-<div id="functions-1" class="section level3">
+<div id="functions-2" class="section level3">
 <h3 class="hasAnchor">
-<a href="#functions-1" class="anchor"></a>Functions</h3>
+<a href="#functions-2" class="anchor"></a>Functions</h3>
 <ul>
 <li><p>Completely overhauled <code><a href="../reference/fast_scraper.html">fast_scraper()</a></code> to make it work with the NFL’s new server backend. The option <code>source</code> is still available but will be deprecated since there is only one source now. There are some changes in the output as well (please see below).</p></li>
 <li><p><code><a href="../reference/fast_scraper.html">fast_scraper()</a></code> now adds game data to the play by play data set courtesy of Lee Sharpe. Game data include: away_score, home_score, location, result, total, spread_line, total_line, div_game, roof, surface, temp, wind, home_coach, away_coach, stadium, stadium_id, gameday</p></li>
@@ -276,9 +307,9 @@
 <li><p>The function <code>fix_fumbles()</code> has been renamed to <code><a href="../reference/add_qb_epa.html">add_qb_epa()</a></code> as the new name much better describes what the function is actually doing.</p></li>
 </ul>
 </div>
-<div id="miscellaneous-1" class="section level3">
+<div id="miscellaneous-2" class="section level3">
 <h3 class="hasAnchor">
-<a href="#miscellaneous-1" class="anchor"></a>Miscellaneous</h3>
+<a href="#miscellaneous-2" class="anchor"></a>Miscellaneous</h3>
 <ul>
 <li><p>Added progress information using the <code>progressr</code>package and removed the <code>furrr</code> progress bars.</p></li>
 <li><p><code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> now adds the column <code>ìd</code> which is the id of the player in the column <code>name</code>. Because we have to piece together different data to cover the full span of years, <strong>player IDs are not consistent between the early (1999-2010) and recent (2011 onward) periods</strong>.</p></li>
