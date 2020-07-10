@@ -1,8 +1,4 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
-os:
-  - linux
-  - osx
-
 language: r
 r:
   - oldrel
