@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.2</span>
       </span>
     </div>
 
@@ -149,6 +149,22 @@
       <small>Source: <a href='https://github.com/mrcaseb/nflfastR/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="nflfastr-212" class="section level1">
+<h1 class="page-header" data-toc-text="2.1.2">
+<a href="#nflfastr-212" class="anchor"></a>nflfastR 2.1.2</h1>
+<ul>
+<li>Added the following columns that are available 2011 and later: <code>special_teams_play</code>, <code>st_play_type</code>, <code>time_of_day</code>, and <code>order_sequence</code>
+</li>
+<li>Added <code>old_game_id</code> column (useful for merging to external data that still uses this ID: format is YYYYMMDDxx)</li>
+<li>The <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> function now adds an <code>aborted_play</code> column</li>
+<li>Fixed a bug where pass plays with a penalty at end of play were classified as <code>play_type</code> = <code>no_play</code> rather than <code>pass</code>
+</li>
+<li>Fixed bug where EPA on defensive 2 point return was -0.95 instead of -2.95</li>
+<li>Fixed some remaining failed challenge plays that incorrectly had 0 for EPA</li>
+<li>Updated the included dataframe <code>teams_colors_logos</code> for the interim name of the ‘Washington Football Team’ and the corresponding logo urls.</li>
+<li>Some internal code improvements causing the required <code>tidyselect</code> version to be &gt;= 1.1.0</li>
+</ul>
+</div>
     <div id="nflfastr-211" class="section level1">
 <h1 class="page-header" data-toc-text="2.1.1">
 <a href="#nflfastr-211" class="anchor"></a>nflfastR 2.1.1</h1>

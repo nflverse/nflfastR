@@ -41,7 +41,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.2</span>
       </span>
     </div>
 
@@ -264,7 +264,7 @@
 <span class="kw pkg">tictoc</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span>(<span class="kw pkg">glue</span><span class="kw ns">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">'{length(games_2019)} games with nflfastR:'</span>))
 <span class="no">f</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/fast_scraper.html">fast_scraper</a></span>(<span class="no">games_2019</span>, <span class="kw">pp</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 <span class="kw pkg">tictoc</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span>()
-<span class="co">#&gt; 10 games with nflfastR:: 23.68 sec elapsed</span></pre></body></html></div>
+<span class="co">#&gt; 10 games with nflfastR:: 22.87 sec elapsed</span></pre></body></html></div>
 </div>
 <div id="example-3-completion-percentage-over-expected-cpoe" class="section level1">
 <h1 class="hasAnchor">
@@ -274,7 +274,7 @@
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="kw pkg">tictoc</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span>(<span class="st">'loading all games from 2009'</span>)
 <span class="no">games_2009</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">'https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2009.rds'</span>)) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">season_type</span> <span class="kw">==</span> <span class="st">'REG'</span>)
 <span class="kw pkg">tictoc</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span>()
-<span class="co">#&gt; loading all games from 2009: 1.76 sec elapsed</span>
+<span class="co">#&gt; loading all games from 2009: 1.81 sec elapsed</span>
 <span class="no">games_2009</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">cpoe</span>)) <span class="kw">%&gt;%</span> <span class="fu">group_by</span>(<span class="no">passer_player_name</span>) <span class="kw">%&gt;%</span>
   <span class="fu">summarize</span>(<span class="kw">cpoe</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="no">cpoe</span>), <span class="kw">Atts</span><span class="kw">=</span><span class="fu">n</span>()) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">Atts</span> <span class="kw">&gt;</span> <span class="fl">200</span>) <span class="kw">%&gt;%</span>
@@ -705,9 +705,8 @@
 <p>Since we went with the defaults, there’s a table called <code>nflfastR_pbp</code>. Another useful function is to see the fields (i.e., columns) in a table:</p>
 <div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbListFields.html">dbListFields</a></span>(<span class="no">connection</span>, <span class="st">"nflfastR_pbp"</span>) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fl">10</span>)
-<span class="co">#&gt;  [1] "play_id"       "game_id"       "home_team"     "away_team"    </span>
-<span class="co">#&gt;  [5] "season_type"   "week"          "posteam"       "posteam_type" </span>
-<span class="co">#&gt;  [9] "defteam"       "side_of_field"</span></pre></body></html></div>
+<span class="co">#&gt;  [1] "play_id"      "game_id"      "old_game_id"  "home_team"    "away_team"   </span>
+<span class="co">#&gt;  [6] "season_type"  "week"         "posteam"      "posteam_type" "defteam"</span></pre></body></html></div>
 <p>This is the same list as the list of columns in <code>nflfastR</code> play-by-play. Notice we had to supply the name of the table above (<code>"nflfastR_pbp"</code>).</p>
 <p>With all that out of the way, there’s only a couple more things to learn. The main driver here is <code>tbl</code>, which helps get output with a specific table in a database:</p>
 <div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="no">pbp_db</span> <span class="kw">&lt;-</span> <span class="fu">tbl</span>(<span class="no">connection</span>, <span class="st">"nflfastR_pbp"</span>)</pre></body></html></div>
@@ -719,16 +718,16 @@
 <span class="co">#&gt; # Database: sqlite 3.30.1 [D:\11_Coding\R\nflfastR\vignettes\pbp_db]</span>
 <span class="co">#&gt;    season     n</span>
 <span class="co">#&gt;     &lt;int&gt; &lt;int&gt;</span>
-<span class="co">#&gt;  1   1999 46030</span>
-<span class="co">#&gt;  2   2000 45474</span>
-<span class="co">#&gt;  3   2001 45433</span>
+<span class="co">#&gt;  1   1999 46137</span>
+<span class="co">#&gt;  2   2000 45492</span>
+<span class="co">#&gt;  3   2001 45435</span>
 <span class="co">#&gt;  4   2002 47819</span>
-<span class="co">#&gt;  5   2003 47334</span>
-<span class="co">#&gt;  6   2004 47201</span>
-<span class="co">#&gt;  7   2005 47343</span>
-<span class="co">#&gt;  8   2006 46867</span>
-<span class="co">#&gt;  9   2007 46788</span>
-<span class="co">#&gt; 10   2008 46444</span>
+<span class="co">#&gt;  5   2003 47335</span>
+<span class="co">#&gt;  6   2004 47203</span>
+<span class="co">#&gt;  7   2005 47344</span>
+<span class="co">#&gt;  8   2006 46868</span>
+<span class="co">#&gt;  9   2007 46789</span>
+<span class="co">#&gt; 10   2008 46445</span>
 <span class="co">#&gt; # ... with more rows</span>
 
 <span class="no">pbp_db</span> <span class="kw">%&gt;%</span>
@@ -743,7 +742,7 @@
 <span class="co">#&gt;    pass mean_epa</span>
 <span class="co">#&gt;   &lt;dbl&gt;    &lt;dbl&gt;</span>
 <span class="co">#&gt; 1     0  -0.0955</span>
-<span class="co">#&gt; 2     1   0.0734</span></pre></body></html></div>
+<span class="co">#&gt; 2     1   0.0733</span></pre></body></html></div>
 <p>So far, everything has stayed in the database. If you want to bring a query into memory, just use <code>collect()</code> at the end:</p>
 <div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="no">russ</span> <span class="kw">&lt;-</span> <span class="no">pbp_db</span> <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">name</span> <span class="kw">==</span> <span class="st">"R.Wilson"</span> <span class="kw">&amp;</span> <span class="no">posteam</span> <span class="kw">==</span> <span class="st">"SEA"</span>) <span class="kw">%&gt;%</span>
@@ -774,7 +773,7 @@
 <h1 class="hasAnchor">
 <a href="#example-9-working-with-roster-and-position-data" class="anchor"></a>Example 9: Working with roster and position data</h1>
 <p>This section used to contain an example of working with roster data. Unfortunately, we have not found a way to obtain roster data that can be joined to the new play by play, so for now, it is empty. We would like to be able to get position data but haven’t yet.</p>
-<p>The <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> function does a lot of work cleaning up player names and IDs for the purpose of joining them to roster data, but we do not have any roster data to join to. <strong>Note that player IDs are inconsistent between the old (1999-2010) and new (2011 - present) data sources so use IDs with caution</strong>. Unfortunately there is nothing we can do about this as the NFL changed their system for IDs in the underlying data.</p>
+<p>The <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> function does a lot of work cleaning up player names and IDs for the purpose of joining them to roster data, but we do not have any roster data to join to. <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> does standardize player IDs so that they are unique for each player across seasons.</p>
 </div>
   </div>
 

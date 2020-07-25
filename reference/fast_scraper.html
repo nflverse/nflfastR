@@ -83,7 +83,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.2</span>
       </span>
     </div>
 
@@ -185,6 +185,7 @@ all passed game_ids containing the following
 detailed information (description partly extracted from nflscrapR):</p><dl'>
 <dt>play_id</dt><dd><p>Numeric play id that when used with game_id and drive provides the unique identifier for a single play.</p></dd>
 <dt>game_id</dt><dd><p>Ten digit identifier for NFL game.</p></dd>
+<dt>old_game_id</dt><dd><p>Legacy NFL game ID.</p></dd>
 <dt>home_team</dt><dd><p>String abbreviation for the home team.</p></dd>
 <dt>away_team</dt><dd><p>String abbreviation for the away team.</p></dd>
 <dt>season_type</dt><dd><p>'REG' or 'POST' indicating if the game belongs to regular or post season.</p></dd>
@@ -230,7 +231,7 @@ detailed information (description partly extracted from nflscrapR):</p><dl'>
 <dt>two_point_conv_result</dt><dd><p>String indicator for result of two point conversion attempt: success, failure, safety (touchback in defensive endzone is 1 point apparently), or return.</p></dd>
 <dt>home_timeouts_remaining</dt><dd><p>Numeric timeouts remaining in the half for the home team.</p></dd>
 <dt>away_timeouts_remaining</dt><dd><p>Numeric timeouts remaining in the half for the away team.</p></dd>
-<dt>timeout</dt><dd><p>Binary indicator for whether or not a timeout was called.</p></dd>
+<dt>timeout</dt><dd><p>Binary indicator for whether or not a timeout was called by either team.</p></dd>
 <dt>timeout_team</dt><dd><p>String abbreviation for which team called the timeout.</p></dd>
 <dt>td_team</dt><dd><p>String abbreviation for which team scored the touchdown.</p></dd>
 <dt>posteam_timeouts_remaining</dt><dd><p>Number of timeouts remaining for the possession team.</p></dd>
@@ -277,8 +278,8 @@ detailed information (description partly extracted from nflscrapR):</p><dl'>
 <dt>home_wp</dt><dd><p>Estimated win probability for the home team.</p></dd>
 <dt>away_wp</dt><dd><p>Estimated win probability for the away team.</p></dd>
 <dt>wpa</dt><dd><p>Win probability added (WPA) for the posteam.</p></dd>
-<dt>home_wp_post</dt><dd><p>Estimated win probability for the home team at the start of the play.</p></dd>
-<dt>away_wp_post</dt><dd><p>Estimated win probability for the away team at the start of the play.</p></dd>
+<dt>home_wp_post</dt><dd><p>Estimated win probability for the home team at the end of the play.</p></dd>
+<dt>away_wp_post</dt><dd><p>Estimated win probability for the away team at the end of the play.</p></dd>
 <dt>vegas_wp</dt><dd><p>Estimated win probabiity for the posteam given the current situation at the start of the given play, incorporating pre-game Vegas line.</p></dd>
 <dt>vegas_home_wp</dt><dd><p>Estimated win probability for the home team incorporating pre-game Vegas line.</p></dd>
 <dt>total_home_rush_wpa</dt><dd><p>Cumulative total rushing WPA for the home team in the game so far.</p></dd>
@@ -449,12 +450,16 @@ detailed information (description partly extracted from nflscrapR):</p><dl'>
 <dt>series</dt><dd><p>Starts at 1, each new first down increments, numbers shared across both teams NA: kickoffs, extra point/two point conversion attempts, non-plays, no posteam</p></dd>
 <dt>series_success</dt><dd><p>1: scored touchdown, gained enough yards for first down 0: punt, interception, fumble lost, turnover on downs, FG attempt NA: series is NA, series contains QB spike/kneel</p></dd>
 <dt>start_time</dt><dd><p>Kickoff time in eastern time zone.</p></dd>
+<dt>order_sequence</dt><dd><p>Column provided by NFL to fix out-of-order plays. Available 2011 and beyond.</p></dd>
+<dt>time_of_day</dt><dd><p>Time of day of play in UTC "HH:MM:SS" format. Available 2011 and beyond.</p></dd>
 <dt>stadium</dt><dd><p>Game site name.</p></dd>
 <dt>weather</dt><dd><p>String describing the weather including temperature, humidity and wind (direction and speed). Doesn't change during the game!</p></dd>
 <dt>nfl_api_id</dt><dd><p>UUID of the game in the new NFL API.</p></dd>
 <dt>play_clock</dt><dd><p>Time on the playclock when the ball was snapped.</p></dd>
 <dt>play_deleted</dt><dd><p>Binary indicator for deleted plays.</p></dd>
 <dt>play_type_nfl</dt><dd><p>Play type as listed in the NFL source. Slightly different to the regular play_type variable.</p></dd>
+<dt>special_teams_play</dt><dd><p>Binary indicator for whether play is special teams play from NFL source. Available 2011 and beyond.</p></dd>
+<dt>st_play_type</dt><dd><p>Type of special teams play from NFL source. Available 2011 and beyond.</p></dd>
 <dt>end_clock_time</dt><dd><p>Game time at the end of a given play.</p></dd>
 <dt>end_yard_line</dt><dd><p>String indicating the yardline at the end of the given play consisting of team half and yard line number.</p></dd>
 <dt>drive_real_start_time</dt><dd><p>Local day time when the drive started (currently not used by the NFL and therefore mostly 'NA').</p></dd>
