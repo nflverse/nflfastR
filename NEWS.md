@@ -1,3 +1,16 @@
+# nflfastR 2.1.2
+
+* Added the following columns that are available 2011 and later: `special_teams_play`, `st_play_type`, `time_of_day`, and `order_sequence`
+* Added `old_game_id` column (useful for merging to external data that still uses this ID: format is YYYYMMDDxx)
+* The `clean_pbp()` function now adds an `aborted_play` column
+* Fixed a bug where pass plays with a penalty at end of play were classified as `play_type` = `no_play` rather than `pass`
+* Fixed bug where EPA on defensive 2 point return was -0.95 instead of -2.95
+* Fixed some remaining failed challenge plays that incorrectly had 0 for EPA
+* Updated the included dataframe `teams_colors_logos` for the interim name of 
+the 'Washington Football Team' and the corresponding logo urls.
+* Some internal code improvements causing the required `tidyselect` version
+to be >= 1.1.0
+
 # nflfastR 2.1.1
 
 ### Functions

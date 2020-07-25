@@ -96,6 +96,7 @@ sum_play_stats <- function(play_Id, stats) {
       row$pass_attempt <- 1
       row$passer_player_id <- play_stats$player.esbId[index]
       row$passer_player_name <- play_stats$player.displayName[index]
+      row$penalty_fix <- 1
     } else if (stat_id == 15) {
       row$pass_attempt <- 1
       row$complete_pass <- 1
@@ -118,6 +119,7 @@ sum_play_stats <- function(play_Id, stats) {
       row$pass_attempt <- 1
       row$passer_player_id <- play_stats$player.esbId[index]
       row$passer_player_name <- play_stats$player.displayName[index]
+      row$penalty_fix <- 1
     } else if (stat_id == 20) {
       row$pass_attempt <- 1
       row$sack <- 1

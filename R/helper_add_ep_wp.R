@@ -338,7 +338,7 @@ add_ep_variables <- function(pbp_data) {
   base_ep_preds$TwoPoint_Prob <- 0
 
   # Find the indices for these types of plays:
-  extrapoint_i <- which(pbp_data$play_type == "extra_point")
+  extrapoint_i <- which(pbp_data$play_type == "extra_point" & pbp_data$play_type_nfl != "PAT2")
   twopoint_i <- which(pbp_data$two_point_attempt == 1)
 
   #new: special case for PAT or kickoff with penalty
@@ -364,8 +364,22 @@ add_ep_variables <- function(pbp_data) {
 
   # ----------------------------------------------------------------------------------
   # Insert NAs for timeouts and end of play rows:
-  missing_i <- which((pbp_data$timeout == 1 & pbp_data$play_type == "no_play" &
-                        !stringr::str_detect(pbp_data$desc, ' pass ')) | is.na(pbp_data$play_type))
+  missing_i <- which(
+    (pbp_data$timeout == 1 &
+       pbp_data$play_type == "no_play" &
+                        !stringr::str_detect(pbp_data$desc, ' pass ') &
+                        !stringr::str_detect(pbp_data$desc, ' sacked ') &
+                        !stringr::str_detect(pbp_data$desc, ' scramble ') &
+                        !stringr::str_detect(pbp_data$desc, ' punts ') &
+                        !stringr::str_detect(pbp_data$desc, ' up the middle ') &
+                        !stringr::str_detect(pbp_data$desc, ' left end ') &
+                        !stringr::str_detect(pbp_data$desc, ' left guard ') &
+                        !stringr::str_detect(pbp_data$desc, ' left tackle ') &
+                        !stringr::str_detect(pbp_data$desc, ' right end ') &
+                        !stringr::str_detect(pbp_data$desc, ' right guard ') &
+                        !stringr::str_detect(pbp_data$desc, ' right tackle ')
+                      ) |
+      is.na(pbp_data$play_type))
 
   # Now update the probabilities for missing and PATs:
   base_ep_preds$Field_Goal[c(missing_i, extrapoint_i, twopoint_i, st_penalty_i)] <- 0
@@ -444,6 +458,10 @@ add_ep_variables <- function(pbp_data) {
                                    .data$two_point_pass_failed == 1 |
                                    .data$two_point_pass_reception_failed == 1)),
                            0 - .data$ExpPts, .data$EPA),
+      # Opponent scores defensive 2 point:
+      EPA = dplyr::if_else(
+        .data$defensive_two_point_conv == 1, -2 - .data$ExpPts, .data$EPA
+      ),
       # Opponent safety:
       EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
                              .data$extra_point_good == 0 &
@@ -599,9 +617,33 @@ add_ep_variables <- function(pbp_data) {
                   extra_point_prob = "ExPoint_Prob",
                   two_point_conversion_prob = "TwoPoint_Prob") %>%
     # Create columns with cumulative epa totals for both teams:
-    dplyr::mutate(ep = dplyr::if_else(.data$timeout == 1 & .data$play_type == "no_play" & !stringr::str_detect(.data$desc, ' pass '),
+    dplyr::mutate(ep = dplyr::if_else(.data$timeout == 1 & .data$play_type == "no_play" &
+                                        !stringr::str_detect(.data$desc, ' pass ') &
+                                        !stringr::str_detect(.data$desc, ' sacked ') &
+                                        !stringr::str_detect(.data$desc, ' scramble ') &
+                                        !stringr::str_detect(.data$desc, ' punts ') &
+                                        !stringr::str_detect(.data$desc, ' up the middle ') &
+                                        !stringr::str_detect(.data$desc, ' left end ') &
+                                        !stringr::str_detect(.data$desc, ' left guard ') &
+                                        !stringr::str_detect(.data$desc, ' left tackle ') &
+                                        !stringr::str_detect(.data$desc, ' right end ') &
+                                        !stringr::str_detect(.data$desc, ' right guard ') &
+                                        !stringr::str_detect(.data$desc, ' right tackle ')
+                                      ,
                                       dplyr::lead(.data$ep), .data$ep),
-                  epa = dplyr::if_else(.data$timeout == 1 & .data$play_type == "no_play" & !stringr::str_detect(.data$desc, ' pass '),
+                  epa = dplyr::if_else(.data$timeout == 1 & .data$play_type == "no_play" &
+                                         !stringr::str_detect(.data$desc, ' pass ') &
+                                         !stringr::str_detect(.data$desc, ' sacked ') &
+                                         !stringr::str_detect(.data$desc, ' scramble ') &
+                                         !stringr::str_detect(.data$desc, ' punts ') &
+                                         !stringr::str_detect(.data$desc, ' up the middle ') &
+                                         !stringr::str_detect(.data$desc, ' left end ') &
+                                         !stringr::str_detect(.data$desc, ' left guard ') &
+                                         !stringr::str_detect(.data$desc, ' left tackle ') &
+                                         !stringr::str_detect(.data$desc, ' right end ') &
+                                         !stringr::str_detect(.data$desc, ' right guard ') &
+                                         !stringr::str_detect(.data$desc, ' right tackle ')
+                                       ,
                                        0, .data$epa),
                   # Change epa for plays occurring at end of half with no scoring
                   # plays to be just the difference between 0 and starting ep:

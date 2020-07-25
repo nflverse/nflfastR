@@ -314,4 +314,4 @@ For more details on using a database with `nflfastR`, see [Thomas Mock's life-ch
 
 This section used to contain an example of working with roster data. Unfortunately, we have not found a way to obtain roster data that can be joined to the new play by play, so for now, it is empty. We would like to be able to get position data but haven't yet.
 
-The `clean_pbp()` function does a lot of work cleaning up player names and IDs for the purpose of joining them to roster data, but we do not have any roster data to join to. **Note that player IDs are inconsistent between the old (1999-2010) and new (2011 - present) data sources so use IDs with caution**. Unfortunately there is nothing we can do about this as the NFL changed their system for IDs in the underlying data.
+The `clean_pbp()` function does a lot of work cleaning up player names and IDs for the purpose of joining them to roster data, but we do not have any roster data to join to. `clean_pbp()` does standardize player IDs so that they are unique for each player across seasons.

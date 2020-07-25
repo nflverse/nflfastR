@@ -293,16 +293,6 @@ add_nflscrapr_mutations <- function(pbp) {
       ),
       play_type = dplyr::if_else(
         (.data$penalty == 0 |
-          (.data$penalty == 1 & .data$penalty_fix == 1)) & .data$qb_spike == 1,
-        "qb_spike", .data$play_type
-      ),
-      play_type = dplyr::if_else(
-        (.data$penalty == 0 |
-          (.data$penalty == 1 & .data$penalty_fix == 1)) & .data$qb_kneel == 1,
-        "qb_kneel", .data$play_type
-      ),
-      play_type = dplyr::if_else(
-        (.data$penalty == 0 |
           (.data$penalty == 1 & .data$penalty_fix == 1)) & .data$field_goal_attempt == 1,
         "field_goal", .data$play_type
       ),
@@ -310,6 +300,16 @@ add_nflscrapr_mutations <- function(pbp) {
         (.data$penalty == 0 |
           (.data$penalty == 1 & .data$penalty_fix == 1)) & .data$extra_point_attempt == 1,
         "extra_point", .data$play_type
+      ),
+      play_type = dplyr::if_else(
+        (.data$penalty == 0 |
+           (.data$penalty == 1 & .data$penalty_fix == 1)) & .data$qb_spike == 1,
+        "qb_spike", .data$play_type
+      ),
+      play_type = dplyr::if_else(
+        (.data$penalty == 0 |
+           (.data$penalty == 1 & .data$penalty_fix == 1)) & .data$qb_kneel == 1,
+        "qb_kneel", .data$play_type
       ),
       # Indicator for QB dropbacks (exclude spikes and kneels):
       qb_dropback = dplyr::if_else(

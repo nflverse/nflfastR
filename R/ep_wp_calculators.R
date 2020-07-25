@@ -35,14 +35,14 @@
 #' }
 #' @importFrom rlang .data
 #' @importFrom dplyr select mutate bind_cols
-#' @importFrom tidyselect one_of
+#' @importFrom tidyselect any_of
 #' @importFrom stats predict
 #' @export
 calculate_expected_points <- function(pbp_data) {
   suppressWarnings(
     model_data <- pbp_data %>%
       # drop existing values of ep and the probs before making new ones
-      dplyr::select(-one_of(drop.cols)) %>%
+      dplyr::select(-any_of(drop.cols)) %>%
       make_model_mutations() %>%
       ep_model_select()
   )
@@ -114,7 +114,7 @@ drop.cols <- c(
 #' }
 #' @importFrom rlang .data
 #' @importFrom dplyr select mutate if_else rename bind_cols
-#' @importFrom tidyselect one_of
+#' @importFrom tidyselect any_of
 #' @importFrom stats predict
 #' @importFrom tibble as_tibble
 #' @export
@@ -122,7 +122,7 @@ calculate_win_probability <- function(pbp_data) {
   suppressWarnings(
     model_data <- pbp_data %>%
       # drop existing values of ep and the probs before making new ones
-      dplyr::select(-one_of(drop.cols.wp)) %>%
+      dplyr::select(-any_of(drop.cols.wp)) %>%
       dplyr::mutate(
         home = dplyr::if_else(.data$posteam == .data$home_team, 1, 0),
         ExpScoreDiff = .data$ep + .data$score_differential,

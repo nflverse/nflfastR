@@ -228,7 +228,11 @@ get_pbp_gc <- function(gameId, dir = NULL) {
           play_type_nfl = NA_character_,
           drive_yards_penalized = NA_real_,
           end_clock_time = NA_character_,
-          end_yard_line = NA_character_
+          end_yard_line = NA_character_,
+          order_sequence = NA_real_,
+          time_of_day = NA_character_,
+          special_teams_play = NA_real_,
+          st_play_type = NA_character_
         ) %>%
         dplyr::group_by(.data$drive) %>%
         dplyr::mutate(

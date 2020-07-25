@@ -26,6 +26,7 @@
 #' \item{rush}{Binary indicator if the play was a rushing play.}
 #' \item{special}{Binary indicator if the play was a special teams play.}
 #' \item{first_down}{Binary indicator if the play ended in a first down.}
+#' \item{aborted_play}{Binary indicator if the play description indicates "Aborted".}
 #' \item{play}{Binary indicator: 1 if the play was a 'normal' play (including penalties), 0 otherwise.}
 #' \item{passer_id}{ID of the player in the 'passer' column (NOTE: ids vary pre and post 2011)}
 #' \item{rusher_id}{ID of the player in the 'rusher' column (NOTE: ids vary pre and post 2011)}
@@ -39,7 +40,7 @@
 #' @importFrom stringr str_detect str_extract str_replace_all
 #' @importFrom glue glue
 #' @importFrom rlang .data
-#' @importFrom tidyselect one_of
+#' @importFrom tidyselect any_of
 clean_pbp <- function(pbp) {
   message('Cleaning up play-by-play. If you run this with a lot of seasons this could take a few minutes.')
 
@@ -48,7 +49,7 @@ clean_pbp <- function(pbp) {
   legacy_id_map <- readRDS(url("https://github.com/guga31bb/nflfastR-data/blob/master/roster-data/legacy_id_map.rds?raw=true"))
 
   # drop existing values of clean_pbp
-  pbp <- pbp %>% dplyr::select(-tidyselect::one_of(drop.cols))
+  pbp <- pbp %>% dplyr::select(-tidyselect::any_of(drop.cols))
 
   r <- pbp %>%
     dplyr::mutate(
@@ -129,6 +130,7 @@ clean_pbp <- function(pbp) {
         TRUE ~ receiver
       ),
       first_down = dplyr::if_else(.data$first_down_rush == 1 | .data$first_down_pass == 1 | .data$first_down_penalty == 1, 1, 0),
+      aborted_play = dplyr::if_else(stringr::str_detect(.data$desc, 'Aborted'), 1, 0),
       # easy filter: play is 1 if a "special teams" play, or 0 otherwise
       # with thanks to Lee Sharpe for the code
       special = dplyr::if_else(.data$play_type %in%
@@ -257,11 +259,11 @@ update_ids <- function(var, id_map) {
 #' @export
 #' @import dplyr
 #' @importFrom rlang .data
-#' @importFrom tidyselect one_of
+#' @importFrom tidyselect any_of
 add_qb_epa <- function(d) {
 
   # drop existing values of clean_pbp
-  d <- d %>% dplyr::select(-tidyselect::one_of("qb_epa"))
+  d <- d %>% dplyr::select(-tidyselect::any_of("qb_epa"))
 
   fumbles_df <- d %>%
     dplyr::filter(.data$complete_pass == 1 & .data$fumble_lost == 1 & !is.na(.data$epa) & !is.na(.data$down)) %>%

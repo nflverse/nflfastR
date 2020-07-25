@@ -22,6 +22,7 @@ detailed information (description partly extracted from nflscrapR):
 \describe{
 \item{play_id}{Numeric play id that when used with game_id and drive provides the unique identifier for a single play.}
 \item{game_id}{Ten digit identifier for NFL game.}
+\item{old_game_id}{Legacy NFL game ID.}
 \item{home_team}{String abbreviation for the home team.}
 \item{away_team}{String abbreviation for the away team.}
 \item{season_type}{'REG' or 'POST' indicating if the game belongs to regular or post season.}
@@ -67,7 +68,7 @@ detailed information (description partly extracted from nflscrapR):
 \item{two_point_conv_result}{String indicator for result of two point conversion attempt: success, failure, safety (touchback in defensive endzone is 1 point apparently), or return.}
 \item{home_timeouts_remaining}{Numeric timeouts remaining in the half for the home team.}
 \item{away_timeouts_remaining}{Numeric timeouts remaining in the half for the away team.}
-\item{timeout}{Binary indicator for whether or not a timeout was called.}
+\item{timeout}{Binary indicator for whether or not a timeout was called by either team.}
 \item{timeout_team}{String abbreviation for which team called the timeout.}
 \item{td_team}{String abbreviation for which team scored the touchdown.}
 \item{posteam_timeouts_remaining}{Number of timeouts remaining for the possession team.}
@@ -114,8 +115,8 @@ detailed information (description partly extracted from nflscrapR):
 \item{home_wp}{Estimated win probability for the home team.}
 \item{away_wp}{Estimated win probability for the away team.}
 \item{wpa}{Win probability added (WPA) for the posteam.}
-\item{home_wp_post}{Estimated win probability for the home team at the start of the play.}
-\item{away_wp_post}{Estimated win probability for the away team at the start of the play.}
+\item{home_wp_post}{Estimated win probability for the home team at the end of the play.}
+\item{away_wp_post}{Estimated win probability for the away team at the end of the play.}
 \item{vegas_wp}{Estimated win probabiity for the posteam given the current situation at the start of the given play, incorporating pre-game Vegas line.}
 \item{vegas_home_wp}{Estimated win probability for the home team incorporating pre-game Vegas line.}
 \item{total_home_rush_wpa}{Cumulative total rushing WPA for the home team in the game so far.}
@@ -286,12 +287,16 @@ detailed information (description partly extracted from nflscrapR):
 \item{series}{Starts at 1, each new first down increments, numbers shared across both teams NA: kickoffs, extra point/two point conversion attempts, non-plays, no posteam}
 \item{series_success}{1: scored touchdown, gained enough yards for first down 0: punt, interception, fumble lost, turnover on downs, FG attempt NA: series is NA, series contains QB spike/kneel}
 \item{start_time}{Kickoff time in eastern time zone.}
+\item{order_sequence}{Column provided by NFL to fix out-of-order plays. Available 2011 and beyond.}
+\item{time_of_day}{Time of day of play in UTC "HH:MM:SS" format. Available 2011 and beyond.}
 \item{stadium}{Game site name.}
 \item{weather}{String describing the weather including temperature, humidity and wind (direction and speed). Doesn't change during the game!}
 \item{nfl_api_id}{UUID of the game in the new NFL API.}
 \item{play_clock}{Time on the playclock when the ball was snapped.}
 \item{play_deleted}{Binary indicator for deleted plays.}
 \item{play_type_nfl}{Play type as listed in the NFL source. Slightly different to the regular play_type variable.}
+\item{special_teams_play}{Binary indicator for whether play is special teams play from NFL source. Available 2011 and beyond.}
+\item{st_play_type}{Type of special teams play from NFL source. Available 2011 and beyond.}
 \item{end_clock_time}{Game time at the end of a given play.}
 \item{end_yard_line}{String indicating the yardline at the end of the given play consisting of team half and yard line number.}
 \item{drive_real_start_time}{Local day time when the drive started (currently not used by the NFL and therefore mostly 'NA').}

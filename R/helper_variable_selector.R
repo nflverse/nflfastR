@@ -5,14 +5,14 @@
 ################################################################################
 
 #' @import dplyr
-#' @importFrom tidyselect one_of
+#' @importFrom tidyselect any_of
 select_variables <- function(pbp) {
 
     suppressWarnings(
       out <-
         pbp %>%
         dplyr::select(
-          tidyselect::one_of(
+          tidyselect::any_of(
             c(nflscrapr_cols, new_cols, api_cols)
           )
         )
@@ -27,7 +27,7 @@ new_cols <- c("season", "cp", "cpoe", "series", "series_success")
 # original nflscrapr columns
 nflscrapr_cols <-
   c(
-    "play_id", "game_id", "home_team", "away_team",
+    "play_id", "game_id", "old_game_id", "home_team", "away_team",
     #added these to new gc scraper
     "season_type", "week",
     "posteam", "posteam_type", "defteam", "side_of_field", "yardline_100",
@@ -124,10 +124,10 @@ rs_cols <- c(
 
 # these are columns in the new API that aren't in nflscrapR
 api_cols <- c(
-  "start_time",
+  "order_sequence", "start_time", "time_of_day",
   "stadium", "weather", "nfl_api_id",
   "play_clock", "play_deleted",
-  "play_type_nfl",
+  "play_type_nfl", "special_teams_play", "st_play_type",
   "end_clock_time", "end_yard_line",
   "drive_real_start_time",
 

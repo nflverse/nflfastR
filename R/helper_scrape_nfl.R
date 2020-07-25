@@ -264,26 +264,6 @@ get_pbp_nfl <- function(id, dir = NULL) {
 }
 
 
-# otherwise scraping a lot of seasons breaks
-save_cols <- c(
-  "game_id", "nfl_api_id", "home_team", "away_team",
-  "season", "game_month",
-  "game_year", "time", "down", "drive_net_yards",
-  "drive", "first_down", "goal_to_go", "order_sequence",
-  "play_description", "play_review_status",
-  "play_type_nfl", "quarter", "sp",
-  "scoring_play_type", "special_teams_play",
-  "time_of_day",
-  "yardline", "yards",
-  "yards_to_go", "latest_play",
-  "posteam",
-  "scoring_team_id",
-  "scoring_team_abbreviation", "scoring_team_nick_name",
-  "ydsnet", "drive_yards_penalized",
-  "posteam_id", "yardline_side",
-  "yardline_number", "quarter_end"
-)
-
 # hard coded 2020 regular season game ids to make sure the output of the
 # schedule scraper is not named 'invalid' if the source file not yet exists
 valid_games <- c(
