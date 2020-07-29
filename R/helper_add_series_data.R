@@ -28,11 +28,18 @@ add_series_data <- function(pbp) {
       first_down = dplyr::if_else(
         #earn first down
         (.data$first_down_rush == 1 | .data$first_down_pass == 1 | .data$first_down_penalty == 1 |
-        #defensive TD
-          (.data$touchdown == 1 & .data$td_team != .data$posteam) |
-        #drive changes
-           (.data$drive < dplyr::lead(.data$drive) | (.data$drive < dplyr::lead(.data$drive, 2) & is.na(dplyr::lead(.data$drive))))
-         ) &
+           #defensive TD
+           (.data$touchdown == 1 & .data$td_team != .data$posteam) |
+           # posteam changes
+           (
+             #change in posteam
+             .data$posteam != dplyr::lead(.data$posteam) |
+               #change in posteam in t+2 and na posteam in t+1
+               (.data$posteam != dplyr::lead(.data$posteam, 2) & is.na(dplyr::lead(.data$posteam))) |
+               #change in posteam in t+3 and na posteam in t+1 and t+2
+               (.data$posteam != dplyr::lead(.data$posteam, 3) & is.na(dplyr::lead(.data$posteam, 2)) & is.na(dplyr::lead(.data$posteam)))
+           )
+        ) &
           (.data$extra_point_attempt == 0 & .data$two_point_attempt == 0 & .data$kickoff_attempt == 0),
         1, 0
       ),

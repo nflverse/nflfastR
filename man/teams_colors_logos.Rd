@@ -29,4 +29,4 @@ teams_colors_logos
 \description{
 NFL Team names, colors and logo urls.
 }
-\keyword{datasets} 
+\keyword{datasets}

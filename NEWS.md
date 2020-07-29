@@ -1,3 +1,7 @@
+# nflfastR 2.1.3
+
+* Fixed a bug in `series_success` caused by bad `drive` information provided by NFL
+
 # nflfastR 2.1.2
 
 * Added the following columns that are available 2011 and later: `special_teams_play`, `st_play_type`, `time_of_day`, and `order_sequence`
