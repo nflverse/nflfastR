@@ -83,7 +83,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.3</span>
       </span>
     </div>
 
@@ -180,11 +180,11 @@ added:</p><dl'>
 <dt>first_down</dt><dd><p>Binary indicator if the play ended in a first down.</p></dd>
 <dt>aborted_play</dt><dd><p>Binary indicator if the play description indicates "Aborted".</p></dd>
 <dt>play</dt><dd><p>Binary indicator: 1 if the play was a 'normal' play (including penalties), 0 otherwise.</p></dd>
-<dt>passer_id</dt><dd><p>ID of the player in the 'passer' column (NOTE: ids vary pre and post 2011)</p></dd>
-<dt>rusher_id</dt><dd><p>ID of the player in the 'rusher' column (NOTE: ids vary pre and post 2011)</p></dd>
-<dt>receiver_id</dt><dd><p>ID of the player in the 'receiver' column (NOTE: ids vary pre and post 2011)</p></dd>
+<dt>passer_id</dt><dd><p>ID of the player in the 'passer' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)</p></dd>
+<dt>rusher_id</dt><dd><p>ID of the player in the 'rusher' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)</p></dd>
+<dt>receiver_id</dt><dd><p>ID of the player in the 'receiver' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)</p></dd>
 <dt>name</dt><dd><p>Name of the 'passer' if it is not 'NA', or name of the 'rusher' otherwise.</p></dd>
-<dt>id</dt><dd><p>ID of the player in the 'name' column.</p></dd>
+<dt>id</dt><dd><p>ID of the player in the 'name' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)</p></dd>
 <dt>qb_epa</dt><dd><p>Gives QB credit for EPA for up to the point where a receiver lost a fumble after a completed catch and makes EPA work more like passing yards on plays with fumbles.</p></dd>
 
 </dl>
