@@ -7,7 +7,8 @@ output: github_document
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.path = "man/figures/readme-"
 )
 ```
 
@@ -55,7 +56,65 @@ Even though `nflfastR` is very fast, **for historical games we recommend downloa
 
 ## nflfastR models
 
-`nflfastR` uses its own models for Expected Points, Win Probability, and Completion Probability. To read about the models, please see `vignette("nflfastR-models")`. For a more detailed description of Expected Points models, we highly recommend this paper [from the nflscrapR team located here](https://arxiv.org/pdf/1802.00998.pdf). 
+`nflfastR` uses its own models for Expected Points, Win Probability, Completion Probability, and Expected Yards After the Catch. To read about the models, please see `vignette("nflfastR-models")`. For a more detailed description of Expected Points models, we highly recommend this paper [from the nflscrapR team located here](https://arxiv.org/pdf/1802.00998.pdf). 
+
+Here is a visualization of the Expected Points model by down and yardline.
+
+``` {r epa-model, warning = FALSE, message = FALSE, results = 'hide', fig.keep = 'all', dpi = 600, echo=FALSE}
+library(tidyverse)
+
+df <- map_df(2014:2019, ~{
+  readRDS(url(glue::glue('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_{.x}.rds'))) %>%
+      filter(!is.na(posteam) & !is.na(ep), !is.na(down)) %>%
+      select(ep, down, yardline_100, air_yards, pass_location, cp)
+})
+
+df %>%
+  ggplot(aes(x = yardline_100, y = ep, color = as.factor(down))) + 
+  geom_smooth(size = 2) + 
+  labs(x = "Yards from opponent's end zone",
+       y = "Expected points value",
+       color = "Down",
+       title = "Expected Points by Yardline and Down") +
+  theme_bw() + 
+  scale_y_continuous(expand=c(0,0), breaks = scales::pretty_breaks(10)) + 
+  scale_x_continuous(expand=c(0,0), breaks = seq(from = 5, to = 95, by = 10)) +
+  theme(
+    plot.title = element_text(size = 18, hjust = 0.5),
+    plot.subtitle = element_text(size = 16, hjust = 0.5),
+    axis.title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    legend.text = element_text(size = 16),
+    legend.title = element_text(size = 16),
+    legend.position = c(.90, .80)) +
+    annotate("text", x = 14, y = -2.2, size = 3, label = "2014-2019 | Model: @nflfastR")
+```
+
+Here is a visualization of the Completion Probability model by air yards and pass direction.
+
+``` {r cp-model, warning = FALSE, message = FALSE, results = 'hide', fig.keep = 'all', dpi = 600, echo=FALSE}
+df %>%
+  filter(!is.na(cp), between(air_yards, -5, 45)) %>%
+  mutate(pass_middle = if_else(pass_location == "middle", "Yes", "No")) %>%
+  ggplot(aes(x = air_yards, y = cp, color = as.factor(pass_middle))) + 
+  geom_smooth(size = 2) + 
+  labs(x = "Air yards",
+       y = "Expected completion %",
+       color = "Pass middle",
+       title = "Expected Completion % by Air Yards and Pass Direction") +
+  theme_bw() + 
+  scale_y_continuous(expand=c(0,0), breaks = scales::pretty_breaks(5)) + 
+  scale_x_continuous(expand=c(0,0)) +
+  theme(
+    plot.title = element_text(size = 18, hjust = 0.5),
+    plot.subtitle = element_text(size = 16, hjust = 0.5),
+    axis.title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    legend.text = element_text(size = 16),
+    legend.title = element_text(size = 16),
+    legend.position = c(.80, .80)) +
+    annotate("text", x = 2, y = .32, size = 3, label = "2014-2019 | Model: @nflfastR")
+```
 
 `nflfastR` includes two win probability models: one with and one without incorporating the pre-game spread.
 

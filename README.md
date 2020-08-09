@@ -12,7 +12,7 @@ status](https://github.com/mrcaseb/nflfastR/workflows/R-CMD-check/badge.svg)](ht
 [![Travis build
 status](https://travis-ci.com/mrcaseb/nflfastR.svg?branch=master)](https://travis-ci.com/mrcaseb/nflfastR)
 [![Twitter
-Follow](https://img.shields.io/twitter/follow/nflfastR.svg?style=social)](https://twitter.com/nflfastR) 
+Follow](https://img.shields.io/twitter/follow/nflfastR.svg?style=social)](https://twitter.com/nflfastR)
 <!-- badges: end -->
 
 `nflfastR` is a set of functions to efficiently scrape NFL play-by-play
@@ -70,11 +70,22 @@ as .csv.gz, .parquet, or .rds.
 
 ## nflfastR models
 
-`nflfastR` uses its own models for Expected Points, Win Probability, and
-Completion Probability. To read about the models, please see
-`vignette("nflfastR-models")`. For a more detailed description of
-Expected Points models, we highly recommend this paper [from the
-nflscrapR team located here](https://arxiv.org/pdf/1802.00998.pdf).
+`nflfastR` uses its own models for Expected Points, Win Probability,
+Completion Probability, and Expected Yards After the Catch. To read
+about the models, please see `vignette("nflfastR-models")`. For a more
+detailed description of Expected Points models, we highly recommend this
+paper [from the nflscrapR team located
+here](https://arxiv.org/pdf/1802.00998.pdf).
+
+Here is a visualization of the Expected Points model by down and
+yardline.
+
+![](man/figures/readme-epa-model-1.png)<!-- -->
+
+Here is a visualization of the Completion Probability model by air yards
+and pass direction.
+
+![](man/figures/readme-cp-model-1.png)<!-- -->
 
 `nflfastR` includes two win probability models: one with and one without
 incorporating the pre-game spread.

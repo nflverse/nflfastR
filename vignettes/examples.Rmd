@@ -236,7 +236,7 @@ There's exactly one function in `nflfastR` that works with databases: `update_db
 
 Let's say I just want to dump a database into the current working directory. Here we go!
 
-``` {r}
+``` {r create-db}
 update_db()
 ```
 
@@ -244,7 +244,7 @@ This created a database in the current directory called `pbp_db`.
 
 Wait, that's it? That's it! What if it's partway through the season and you want to make sure all the new games are added to the database? What do you run? `update_db()`! (just make sure you're in the directory the database is saved in or you supply the right file path)
 
-``` {r}
+``` {r update-db}
 update_db()
 ```
 
@@ -310,7 +310,50 @@ dbDisconnect(connection)
 
 For more details on using a database with `nflfastR`, see [Thomas Mock's life-changing post here](https://themockup.blog/posts/2019-04-28-nflfastr-dbplyr-rsqlite/).
 
-# Example 9: Working with roster and position data
+# Example 9: working with the expected yards after catch model
+
+The variables in `xyac` are as follows:
+
+* `xyac_epa`: The expected value of EPA gained after the catch, **starting from where the catch was made**.
+* `xyac_success`: The probability the play earns positive EPA (relative to where play started) based on where ball was caught.
+* `xyac_fd`: Probability play earns a first down based on where the ball was caught.
+* `xyac_mean_yardage` and `xyac_median_yardage`: Average and median expected yards after the catch based on where the ball was caught.
+
+Some other notes:
+
+* `epa` = `air_epa` + `yac_epa`, where `air_epa` is the EPA associated with a catch at the target location. If a receiver loses a fumble, it is removed from his `yac_epa`
+* Expected value of EPA at catch point = `air_epa` + `xyac_epa`
+* So if we want to get YAC EPA over expected, we need to compare `yac_epa` to `xyac_epa`, as in the example below
+* To get first downs over expected, we could compare `first_down` to `xyac_fd`
+* These fields are populated for all pass attempts, whether caught or not, but restrict to completed passes when measuring, for example, YAC EPA over expected
+* The expected YAC EPA model doesn't take receiver fumbles into account, so actual minus expected YAC is slightly negative due to fumbles happening
+
+Let's create measures for EPA and first downs over expected in 2015:
+
+``` {r ex9-xyac, warning = FALSE, message = FALSE}
+games_2015 %>% 
+  group_by(receiver, receiver_id, posteam) %>%
+  mutate(tgt = sum(complete_pass + incomplete_pass)) %>%
+  filter(tgt >= 50) %>%
+  filter(complete_pass == 1, air_yards < yardline_100, !is.na(xyac_epa)) %>%
+  summarize(
+    epa_oe = mean(yac_epa - xyac_epa),
+    actual_fd = mean(first_down),
+    expected_fd = mean(xyac_fd),
+    fd_oe = mean(first_down - xyac_fd),
+    rec = n()
+    ) %>%
+  ungroup() %>%
+  select(receiver, posteam, actual_fd, expected_fd, fd_oe, epa_oe, rec) %>%
+  arrange(-epa_oe) %>% 
+  head(10) %>%
+  knitr::kable(digits = 3)
+
+```
+
+The presence of so many running backs on this list suggests that even though it takes into account target depth and pass direction, the model doesn't do a great job capturing space. Alternatively, running backs might be better at generating yards after the catch since running with the football is their primary role.
+
+# Example 10: Working with roster and position data
 
 This section used to contain an example of working with roster data. Unfortunately, we have not found a way to obtain roster data that can be joined to the new play by play, so for now, it is empty. We would like to be able to get position data but haven't yet.
 

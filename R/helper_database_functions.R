@@ -78,7 +78,8 @@ update_db <- function(dbdir = ".",
     message(glue::glue("Starting download of {length(missing)} games ..."))
     new_pbp <- fast_scraper(missing, pp = is_installed_furrr) %>%
       clean_pbp() %>%
-      add_qb_epa()
+      add_qb_epa() %>%
+      add_xyac()
 
     message("Appending new data to database...")
     RSQLite::dbWriteTable(connection, tblname, new_pbp, append = TRUE)

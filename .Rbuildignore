@@ -17,3 +17,7 @@
 ^man/figures/header_github\.png$
 ^man/figures/header_twitter\.png$
 ^man/figures/nflfastR_logo_fillsize\.png$
+^cran-comments\.md$
+^CRAN-RELEASE$
+^man/figures/readme-cp-model-1\.png$
+^man/figures/readme-epa-model-1\.png$

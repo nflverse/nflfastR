@@ -46,7 +46,7 @@ The EP, WP, and CP models are trained using xgboost, which uses training data to
 * Whether possession team is at home
 * [Model with Vegas line only: point spread * log(3600 / (50 + (seconds elapsed in game))]
 
-**CP model features**
+**CP and expected yards after the catch model features**
 
 * Yard line
 * Whether possession team is at home
@@ -59,6 +59,7 @@ The EP, WP, and CP models are trained using xgboost, which uses training data to
 * Whether air yards is 0 (probably unnecessary with tree-based method and a relic from earlier models where it was included because completion percentage is much lower for 0 air yard passes)
 * Pass location (binary: middle or not middle)
 * Whether quarterback was hit on the play
+* For xyac model only: how far away the goal line is when the ball is caught
 
 ## EP Model Calibration Results
 
@@ -705,3 +706,160 @@ cp_cv_cal_error <- cp_cv_loso_calibration_results %>%
 
 round(with(cp_cv_cal_error, weighted.mean(weight_cal_error, n_complete)), 4)
 ```
+
+
+
+## xYAC Model Calibration Results
+
+By now, the process should be familiar.
+``` {r xyac-setup, results = 'hide'}
+# pbp <- readRDS(url('https://github.com/guga31bb/nflfastR-data/blob/master/models/cal_data.rds?raw=true'))
+pbp_data <- readRDS('../../nflfastR-data/models/cal_data.rds')
+
+model_data <- pbp_data %>%
+  make_model_mutations() %>%
+  filter(season >= 2006, complete_pass == 1, !is.na(yards_after_catch), 
+         yards_after_catch >= -20, air_yards < yardline_100) %>%
+  dplyr::mutate(
+    distance_to_goal = yardline_100 - air_yards,
+    pass_middle = dplyr::if_else(pass_location == 'middle', 1, 0),
+    air_is_zero= dplyr::if_else(air_yards == 0,1,0),
+    distance_to_sticks = air_yards - ydstogo,
+    yards_after_catch = dplyr::case_when(
+      yards_after_catch < -5 ~ -5,
+      yards_after_catch > 70 ~ 70,
+      TRUE ~ yards_after_catch
+    ),
+    label = yards_after_catch + 5
+  ) %>%
+  dplyr::filter(!is.na(air_yards) & air_yards >= -15 & air_yards <70 & !is.na(pass_location)) %>%
+  dplyr::select(
+    season, label, air_yards, yardline_100, ydstogo, distance_to_goal,
+    down1, down2, down3, down4, air_is_zero, pass_middle,
+    era2, era3, era4, qb_hit, home,
+    outdoors, retractable, dome, distance_to_sticks
+  )
+
+
+# nrounds = 500
+nrounds = 500
+params <-
+  list(
+    booster = "gbtree",
+    objective = "multi:softprob",
+    eval_metric = c("mlogloss"),
+    num_class = 76,
+    eta = .025,
+    gamma = 2,
+    subsample=0.8,
+    colsample_bytree=0.8,
+    max_depth = 4,
+    min_child_weight = 1
+  )
+
+
+cv_results <- map_dfr(2006:2019, function(x) {
+
+  test_data <- model_data %>%
+    filter(season == x) %>%
+    select(-season)
+  train_data <- model_data %>%
+    filter(season != x) %>%
+    select(-season)
+
+  full_train = xgboost::xgb.DMatrix(model.matrix(~.+0, data = train_data %>% select(-label)), label = train_data$label)
+  xyac_model <- xgboost::xgboost(params = params, data = full_train, nrounds = nrounds, verbose = 2)
+
+  preds <- as.data.frame(
+    matrix(predict(xyac_model, as.matrix(test_data %>% select(-label))), ncol=76, byrow=TRUE)
+  )
+
+  cv_data <- bind_cols(test_data, preds) %>% 
+    mutate(season = x)
+  return(cv_data)
+
+})
+```
+
+``` {r xyac-bins}
+plot <- cv_results %>% 
+  select(label, air_yards, starts_with("V")) %>%
+  mutate(
+    loss = V1 + V2 + V3 + V4 + V5 + V6,
+    short_gain = V7 + V8 + V9 + V10 + V11,
+    med_gain = V12 + V13 + V14 + V15 + V16,
+    long_gain = select(., V17:V76) %>% rowSums(),
+    outcome = case_when(
+      label <= 5 ~ "loss",
+      between(label, 6, 10) ~ "short_gain",
+      between(label, 11, 15) ~ "med_gain",
+      label > 15 ~ "long_gain"
+    ),
+    distance = case_when(
+      air_yards < 5 ~ "1: Short",
+      air_yards >= 5 ~ "2: Long"
+    )) %>%
+  select(outcome, distance, loss, short_gain, med_gain, long_gain) %>%
+  pivot_longer(-c(outcome, distance), names_to = 'type', values_to = 'pred_prob') %>%
+  mutate(bin_pred_prob = round(pred_prob / 0.05) * .05) %>%
+  group_by(type, distance, bin_pred_prob) %>%
+  mutate(correct = if_else(outcome == type, 1, 0)) %>%
+  summarize(n_plays = n(),
+            n_outcome = sum(correct),
+            bin_actual_prob = n_outcome / n_plays)
+
+ann_text <- data.frame(x = c(.25, 0.75), y = c(0.75, 0.25),
+                       lab = c("More times\nthan expected", "Fewer times\nthan expected")
+                       )
+```
+
+```{r plot-xyac, warning = FALSE, message = FALSE, results = 'hide', fig.keep = 'all', dpi = 700}
+
+plot %>%
+  ungroup() %>%
+    mutate(type = fct_relevel(type,
+                                       "loss", "short_gain",
+                                       "med_gain", "long_gain"
+  ),
+  type = fct_recode(type,
+                               "Loss/ no gain" = "loss",
+                               "1-5 yards" = "short_gain",
+                               "6-10 yards" = "med_gain",
+                               "11+ yards" = "long_gain")) %>%
+  filter(n_plays > 15) %>%
+  ggplot() +
+  geom_point(aes(x = bin_pred_prob, y = bin_actual_prob, size = n_plays)) +
+  geom_smooth(aes(x = bin_pred_prob, y = bin_actual_prob), method = "loess") +
+  geom_abline(slope = 1, intercept = 0, color = "black", lty = 2) +
+  coord_equal() +   
+  scale_x_continuous(limits = c(0,1)) +
+  scale_y_continuous(limits = c(0,1)) +
+  labs(size = "Number of plays",
+       x = "Estimated yards after catch",
+       y = "Observed yards after catch") +
+  geom_text(data = ann_text, aes(x = x, y = y, label = lab), size = 2) +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5),
+        strip.background = element_blank(),
+        strip.text = element_text(size = 12),
+        axis.title = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        axis.text.x = element_text(size = 10, angle = 90),
+        legend.title = element_text(size = 12),
+        legend.text = element_text(size = 12),
+        legend.position = c(1.5, .05), legend.justification = c(1, 0)) +
+  facet_wrap(~ distance + type, ncol = 4)
+```
+
+Calibration error:
+```{r xyac-error}
+xyac_cv_cal_error <- plot %>%
+  ungroup() %>%
+  mutate(cal_diff = abs(bin_pred_prob - bin_actual_prob)) %>%
+  group_by(distance) %>%
+  summarize(weight_cal_error = weighted.mean(cal_diff, n_plays, na.rm = TRUE),
+            n_outcome = sum(n_outcome, na.rm = TRUE))
+
+round(with(xyac_cv_cal_error, weighted.mean(weight_cal_error, n_outcome)), 4)
+```
+

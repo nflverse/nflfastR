@@ -1,3 +1,16 @@
+# nflfastR (development version)
+
+* Fix `add_xyac()` breaking with some old packages
+* Fix `add_xyac()` calculations being wrong for some failed 4th downs
+* Updated Readme with ep and cp model plots
+* Updated `vignette("examples")` with the new `add_xyac()` function
+* Added xYAC model to `vignette("nflfastR-models")`
+
+# nflfastR 2.2.0
+
+* New function `add_xyac()` which adds the following columns associated with expected yards after
+the catch (xYAC): `xyac_epa`, `xyac_success`, `xyac_fd`, `xyac_mean_yardage`, `xyac_median_yardage`
+
 # nflfastR 2.1.3
 
 * Fixed a bug in `series_success` caused by bad `drive` information provided by NFL
