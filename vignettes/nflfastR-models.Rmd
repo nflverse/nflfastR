@@ -713,8 +713,7 @@ round(with(cp_cv_cal_error, weighted.mean(weight_cal_error, n_complete)), 4)
 
 By now, the process should be familiar.
 ``` {r xyac-setup, results = 'hide'}
-# pbp <- readRDS(url('https://github.com/guga31bb/nflfastR-data/blob/master/models/cal_data.rds?raw=true'))
-pbp_data <- readRDS('../../nflfastR-data/models/cal_data.rds')
+pbp <- readRDS(url('https://github.com/guga31bb/nflfastR-data/blob/master/models/cal_data.rds?raw=true'))
 
 model_data <- pbp_data %>%
   make_model_mutations() %>%
