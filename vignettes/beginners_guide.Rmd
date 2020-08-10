@@ -59,7 +59,7 @@ data <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/ma
 
 ### Dimensions
 
-Before moving forward, here are a few ways to get a sense of what's in a dataframe. We can check the **dim**ensions of the data, and this tells us that there are 48,034 rows (i.e., plays) in the data and 322 columns (variables):
+Before moving forward, here are a few ways to get a sense of what's in a dataframe. We can check the **dim**ensions of the data, and this tells us that there are 48,034 rows (i.e., plays) in the data and 328 columns (variables):
 ``` {r}
 dim(data)
 ```

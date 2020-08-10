@@ -268,21 +268,37 @@ add_qb_epa <- function(d) {
   fumbles_df <- d %>%
     dplyr::filter(.data$complete_pass == 1 & .data$fumble_lost == 1 & !is.na(.data$epa) & !is.na(.data$down)) %>%
     dplyr::mutate(
+      half_seconds_remaining = dplyr::if_else(
+        .data$half_seconds_remaining <= 6,
+        0,
+        .data$half_seconds_remaining - 6
+      ),
       down = as.numeric(.data$down),
       # save old stuff for testing/checking
-      down_old = .data$down, ydstogo_old = .data$ydstogo, epa_old = .data$epa,
+      posteam_timeouts_pre = .data$posteam_timeouts_remaining,
+      defeam_timeouts_pre = .data$defteam_timeouts_remaining,
+      down_old = .data$down,
+      ydstogo_old = .data$ydstogo,
+      epa_old = .data$epa,
       # update yard line, down, yards to go from play result
-      yardline_100 = .data$yardline_100 - .data$yards_gained, down = dplyr::if_else(.data$yards_gained >= .data$ydstogo, 1, .data$down + 1),
+      yardline_100 = .data$yardline_100 - .data$yards_gained,
+      down = dplyr::if_else(.data$yards_gained >= .data$ydstogo, 1, .data$down + 1),
       # if the fumble spot would have resulted in turnover on downs, need to give other team the ball and fix
       change = dplyr::if_else(.data$down == 5, 1, 0), down = dplyr::if_else(.data$down == 5, 1, .data$down),
       # yards to go is 10 if its a first down, update otherwise
       ydstogo = dplyr::if_else(.data$down == 1, 10, .data$ydstogo - .data$yards_gained),
-      # fix yards to go for goal line (eg can't have 1st & 10 inside opponent 10 yard line)
-      ydstogo = dplyr::if_else(.data$yardline_100 < .data$ydstogo, .data$yardline_100, .data$ydstogo),
       # 10 yards to go if possession change
       ydstogo = dplyr::if_else(.data$change == 1, 10, .data$ydstogo),
-      # flip field for possession change
+      # flip field and timeouts for possession change
       yardline_100 = dplyr::if_else(.data$change == 1, 100 - .data$yardline_100, .data$yardline_100),
+      posteam_timeouts_remaining = dplyr::if_else(.data$change == 1,
+                                                  .data$defeam_timeouts_pre,
+                                                  .data$posteam_timeouts_pre),
+      defteam_timeouts_remaining = dplyr::if_else(.data$change == 1,
+                                                  .data$posteam_timeouts_pre,
+                                                  .data$defeam_timeouts_pre),
+      # fix yards to go for goal line (eg can't have 1st & 10 inside opponent 10 yard line)
+      ydstogo = dplyr::if_else(.data$yardline_100 < .data$ydstogo, .data$yardline_100, .data$ydstogo),
       ep_old = .data$ep
     ) %>%
     dplyr::select(

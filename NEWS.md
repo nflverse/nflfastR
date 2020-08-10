@@ -1,7 +1,7 @@
 # nflfastR (development version)
 
 * Fix `add_xyac()` breaking with some old packages
-* Fix `add_xyac()` calculations being wrong for some failed 4th downs
+* Fix `add_xyac()` and `add_qb_epa()` calculations being wrong for some failed 4th downs
 * Updated Readme with ep and cp model plots
 * Updated `vignette("examples")` with the new `add_xyac()` function
 * Added xYAC model to `vignette("nflfastR-models")`

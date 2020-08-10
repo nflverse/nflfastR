@@ -105,18 +105,19 @@ add_xyac <- function(pbp) {
           turnover = dplyr::if_else(.data$down == 4 & .data$gain < .data$ydstogo, as.integer(1), as.integer(0)),
           down = dplyr::if_else(.data$gain >= .data$ydstogo, 1, .data$down + 1),
           ydstogo = dplyr::if_else(.data$gain >= .data$ydstogo, 10, .data$ydstogo - .data$gain),
-          # ydstogo can't be bigger than yardline
-          ydstogo = dplyr::if_else(.data$ydstogo >= .data$yardline_100, as.integer(.data$yardline_100), as.integer(.data$ydstogo)),
           # possession change if 4th down failed
           down = dplyr::if_else(.data$turnover == 1, as.integer(1), as.integer(.data$down)),
           ydstogo = dplyr::if_else(.data$turnover == 1, as.integer(10), as.integer(.data$ydstogo)),
+          # flip yardline_100 and timeouts for turnovers
           yardline_100 = dplyr::if_else(.data$turnover == 1, as.integer(100 - .data$yardline_100), as.integer(.data$yardline_100)),
           posteam_timeouts_remaining = dplyr::if_else(.data$turnover == 1,
                                                       .data$defeam_timeouts_pre,
                                                       .data$posteam_timeouts_pre),
           defteam_timeouts_remaining = dplyr::if_else(.data$turnover == 1,
                                                       .data$posteam_timeouts_pre,
-                                                      .data$defeam_timeouts_pre)
+                                                      .data$defeam_timeouts_pre),
+          # ydstogo can't be bigger than yardline
+          ydstogo = dplyr::if_else(.data$ydstogo >= .data$yardline_100, as.integer(.data$yardline_100), as.integer(.data$ydstogo))
         ) %>%
         dplyr::ungroup() %>%
         nflfastR::calculate_expected_points() %>%
