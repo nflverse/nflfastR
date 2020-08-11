@@ -41,7 +41,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.0.9001</span>
       </span>
     </div>
 
@@ -264,7 +264,7 @@
 <span class="kw pkg">tictoc</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span>(<span class="kw pkg">glue</span><span class="kw ns">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">'{length(games_2019)} games with nflfastR:'</span>))
 <span class="no">f</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/fast_scraper.html">fast_scraper</a></span>(<span class="no">games_2019</span>, <span class="kw">pp</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 <span class="kw pkg">tictoc</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span>()
-<span class="co">#&gt; 10 games with nflfastR:: 23.23 sec elapsed</span></pre></body></html></div>
+<span class="co">#&gt; 10 games with nflfastR:: 23.48 sec elapsed</span></pre></body></html></div>
 </div>
 <div id="example-3-completion-percentage-over-expected-cpoe" class="section level1">
 <h1 class="hasAnchor">
@@ -274,7 +274,7 @@
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="kw pkg">tictoc</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span>(<span class="st">'loading all games from 2009'</span>)
 <span class="no">games_2009</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">'https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2009.rds'</span>)) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">season_type</span> <span class="kw">==</span> <span class="st">'REG'</span>)
 <span class="kw pkg">tictoc</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span>()
-<span class="co">#&gt; loading all games from 2009: 1.78 sec elapsed</span>
+<span class="co">#&gt; loading all games from 2009: 1.79 sec elapsed</span>
 <span class="no">games_2009</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">cpoe</span>)) <span class="kw">%&gt;%</span> <span class="fu">group_by</span>(<span class="no">passer_player_name</span>) <span class="kw">%&gt;%</span>
   <span class="fu">summarize</span>(<span class="kw">cpoe</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="no">cpoe</span>), <span class="kw">Atts</span><span class="kw">=</span><span class="fu">n</span>()) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">Atts</span> <span class="kw">&gt;</span> <span class="fl">200</span>) <span class="kw">%&gt;%</span>
@@ -769,9 +769,159 @@
 <p>For more details on using a database with <code>nflfastR</code>, see <a href="https://themockup.blog/posts/2019-04-28-nflfastr-dbplyr-rsqlite/">Thomas Mock’s life-changing post here</a>.</p>
 </div>
 </div>
-<div id="example-9-working-with-roster-and-position-data" class="section level1">
+<div id="example-9-working-with-the-expected-yards-after-catch-model" class="section level1">
 <h1 class="hasAnchor">
-<a href="#example-9-working-with-roster-and-position-data" class="anchor"></a>Example 9: Working with roster and position data</h1>
+<a href="#example-9-working-with-the-expected-yards-after-catch-model" class="anchor"></a>Example 9: working with the expected yards after catch model</h1>
+<p>The variables in <code>xyac</code> are as follows:</p>
+<ul>
+<li>
+<code>xyac_epa</code>: The expected value of EPA gained after the catch, <strong>starting from where the catch was made</strong>.</li>
+<li>
+<code>xyac_success</code>: The probability the play earns positive EPA (relative to where play started) based on where ball was caught.</li>
+<li>
+<code>xyac_fd</code>: Probability play earns a first down based on where the ball was caught.</li>
+<li>
+<code>xyac_mean_yardage</code> and <code>xyac_median_yardage</code>: Average and median expected yards after the catch based on where the ball was caught.</li>
+</ul>
+<p>Some other notes:</p>
+<ul>
+<li>
+<code>epa</code> = <code>air_epa</code> + <code>yac_epa</code>, where <code>air_epa</code> is the EPA associated with a catch at the target location. If a receiver loses a fumble, it is removed from his <code>yac_epa</code>
+</li>
+<li>Expected value of EPA at catch point = <code>air_epa</code> + <code>xyac_epa</code>
+</li>
+<li>So if we want to get YAC EPA over expected, we need to compare <code>yac_epa</code> to <code>xyac_epa</code>, as in the example below</li>
+<li>To get first downs over expected, we could compare <code>first_down</code> to <code>xyac_fd</code>
+</li>
+<li>These fields are populated for all pass attempts, whether caught or not, but restrict to completed passes when measuring, for example, YAC EPA over expected</li>
+<li>The expected YAC EPA model doesn’t take receiver fumbles into account, so actual minus expected YAC is slightly negative due to fumbles happening</li>
+</ul>
+<p>Let’s create measures for EPA and first downs over expected in 2015:</p>
+<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="no">games_2015</span> <span class="kw">%&gt;%</span>
+  <span class="fu">group_by</span>(<span class="no">receiver</span>, <span class="no">receiver_id</span>, <span class="no">posteam</span>) <span class="kw">%&gt;%</span>
+  <span class="fu">mutate</span>(<span class="kw">tgt</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">complete_pass</span> + <span class="no">incomplete_pass</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">tgt</span> <span class="kw">&gt;=</span> <span class="fl">50</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="no">complete_pass</span> <span class="kw">==</span> <span class="fl">1</span>, <span class="no">air_yards</span> <span class="kw">&lt;</span> <span class="no">yardline_100</span>, !<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">xyac_epa</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu">summarize</span>(
+    <span class="kw">epa_oe</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="no">yac_epa</span> - <span class="no">xyac_epa</span>),
+    <span class="kw">actual_fd</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="no">first_down</span>),
+    <span class="kw">expected_fd</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="no">xyac_fd</span>),
+    <span class="kw">fd_oe</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="no">first_down</span> - <span class="no">xyac_fd</span>),
+    <span class="kw">rec</span> <span class="kw">=</span> <span class="fu">n</span>()
+    ) <span class="kw">%&gt;%</span>
+  <span class="fu">ungroup</span>() <span class="kw">%&gt;%</span>
+  <span class="fu">select</span>(<span class="no">receiver</span>, <span class="no">posteam</span>, <span class="no">actual_fd</span>, <span class="no">expected_fd</span>, <span class="no">fd_oe</span>, <span class="no">epa_oe</span>, <span class="no">rec</span>) <span class="kw">%&gt;%</span>
+  <span class="fu">arrange</span>(-<span class="no">epa_oe</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fl">10</span>) <span class="kw">%&gt;%</span>
+  <span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(<span class="kw">digits</span> <span class="kw">=</span> <span class="fl">3</span>)</pre></body></html></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">receiver</th>
+<th align="left">posteam</th>
+<th align="right">actual_fd</th>
+<th align="right">expected_fd</th>
+<th align="right">fd_oe</th>
+<th align="right">epa_oe</th>
+<th align="right">rec</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">D.Johnson</td>
+<td align="left">ARI</td>
+<td align="right">0.500</td>
+<td align="right">0.391</td>
+<td align="right">0.109</td>
+<td align="right">0.333</td>
+<td align="right">50</td>
+</tr>
+<tr class="even">
+<td align="left">R.Gronkowski</td>
+<td align="left">NE</td>
+<td align="right">0.688</td>
+<td align="right">0.615</td>
+<td align="right">0.073</td>
+<td align="right">0.265</td>
+<td align="right">80</td>
+</tr>
+<tr class="odd">
+<td align="left">J.White</td>
+<td align="left">NE</td>
+<td align="right">0.489</td>
+<td align="right">0.434</td>
+<td align="right">0.055</td>
+<td align="right">0.257</td>
+<td align="right">47</td>
+</tr>
+<tr class="even">
+<td align="left">T.Ginn</td>
+<td align="left">CAR</td>
+<td align="right">0.800</td>
+<td align="right">0.734</td>
+<td align="right">0.066</td>
+<td align="right">0.247</td>
+<td align="right">45</td>
+</tr>
+<tr class="odd">
+<td align="left">D.Lewis</td>
+<td align="left">NE</td>
+<td align="right">0.472</td>
+<td align="right">0.309</td>
+<td align="right">0.163</td>
+<td align="right">0.235</td>
+<td align="right">36</td>
+</tr>
+<tr class="even">
+<td align="left">L.Green</td>
+<td align="left">LAC</td>
+<td align="right">0.629</td>
+<td align="right">0.526</td>
+<td align="right">0.103</td>
+<td align="right">0.221</td>
+<td align="right">35</td>
+</tr>
+<tr class="odd">
+<td align="left">O.Beckham Jr.</td>
+<td align="left">NYG</td>
+<td align="right">0.692</td>
+<td align="right">0.706</td>
+<td align="right">-0.014</td>
+<td align="right">0.207</td>
+<td align="right">91</td>
+</tr>
+<tr class="even">
+<td align="left">T.Riddick</td>
+<td align="left">DET</td>
+<td align="right">0.400</td>
+<td align="right">0.304</td>
+<td align="right">0.096</td>
+<td align="right">0.202</td>
+<td align="right">80</td>
+</tr>
+<tr class="odd">
+<td align="left">G.Bernard</td>
+<td align="left">CIN</td>
+<td align="right">0.373</td>
+<td align="right">0.289</td>
+<td align="right">0.083</td>
+<td align="right">0.195</td>
+<td align="right">51</td>
+</tr>
+<tr class="even">
+<td align="left">D.Woodhead</td>
+<td align="left">LAC</td>
+<td align="right">0.468</td>
+<td align="right">0.354</td>
+<td align="right">0.114</td>
+<td align="right">0.168</td>
+<td align="right">77</td>
+</tr>
+</tbody>
+</table>
+<p>The presence of so many running backs on this list suggests that even though it takes into account target depth and pass direction, the model doesn’t do a great job capturing space. Alternatively, running backs might be better at generating yards after the catch since running with the football is their primary role.</p>
+</div>
+<div id="example-10-working-with-roster-and-position-data" class="section level1">
+<h1 class="hasAnchor">
+<a href="#example-10-working-with-roster-and-position-data" class="anchor"></a>Example 10: Working with roster and position data</h1>
 <p>This section used to contain an example of working with roster data. Unfortunately, we have not found a way to obtain roster data that can be joined to the new play by play, so for now, it is empty. We would like to be able to get position data but haven’t yet.</p>
 <p>The <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> function does a lot of work cleaning up player names and IDs for the purpose of joining them to roster data, but we do not have any roster data to join to. <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> does standardize player IDs so that they are unique for each player across seasons.</p>
 </div>
