@@ -6,8 +6,8 @@
 
 #' Get NFL Play by Play Data
 #'
-#' @param game_ids Vector of character ids (see details for further information)
-#' @param source Character - \code{nfl} for the NFL.com page or \code{live} for the live gamecenter (works for live games but less information)
+#' @param game_ids Vector of character ids (see details for further information).
+#' @param source Character - \code{nfl} for the NFL.com page or \code{live} for the live gamecenter (works for live games but less information). For \code{live}, old_game_id must be supplied
 #' @param pp Logical - either \code{TRUE} or \code{FALSE} (see details for further information)
 #' @param ... Additional arguments passed to the scraping functions (for internal use)
 #' @details To load valid game_ids please use the package function \code{\link{fast_scraper_schedules}}.
@@ -357,10 +357,12 @@ fast_scraper <- function(game_ids, source = "nfl", pp = FALSE, ...) {
       progressr::with_progress({
         p <- progressr::progressor(along = game_ids)
         pbp <- purrr::map_dfr(game_ids, function(x, ...){
-          if (substr(x, 1, 4) < 2011) {
+          if (substr(x, 1, 4) < 2011 & source == "nfl") {
             plays <- get_pbp_gc(x, ...)
-          } else {
+          } else if (source == "nfl") {
             plays <- get_pbp_nfl(x, ...)
+          } else {
+            plays <- get_pbp_cdns(x, ...)
           }
           p(sprintf("x=%s", as.character(x)))
           return(plays)
@@ -398,10 +400,12 @@ fast_scraper <- function(game_ids, source = "nfl", pp = FALSE, ...) {
         p <- progressr::progressor(along = game_ids)
         future::plan("multiprocess")
         pbp <- furrr::future_map_dfr(game_ids, function(x, ...){
-          if (substr(x, 1, 4) < 2011) {
-            plays <- get_pbp_gc(x,  ...)
-          } else {
+          if (substr(x, 1, 4) < 2011 & source == "nfl") {
+            plays <- get_pbp_gc(x, ...)
+          } else if (source == "nfl") {
             plays <- get_pbp_nfl(x, ...)
+          } else {
+            plays <- get_pbp_cdns(x, ...)
           }
           p(sprintf("x=%s", as.character(x)))
           return(plays)
