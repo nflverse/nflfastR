@@ -70,7 +70,7 @@ games_2009 %>% filter(!is.na(cpoe)) %>% group_by(passer_player_name) %>%
 
 # Example 4: using drive information
 
-When working with `nflfastR`, drive results are automatically included. Let's look at how much more likely teams were to score starting from 1st & 10 at their own 20 yard line in 2015 (the last year before touchbacks on kickoffs changed to the 25) than in 2000.
+When working with `nflfastR`, drive results are automatically included. We use `fixed_drive` and `fixed_drive_result` since the NFL-provided information is a bit wonky. Let's look at how much more likely teams were to score starting from 1st & 10 at their own 20 yard line in 2015 (the last year before touchbacks on kickoffs changed to the 25) than in 2000.
 ``` {r ex4, warning = FALSE, message = FALSE}
 games_2000 <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2000.rds'))
 games_2015 <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2015.rds'))
@@ -78,7 +78,7 @@ games_2015 <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-d
 pbp <- bind_rows(games_2000, games_2015)
 
 pbp %>% filter(season_type == 'REG' & down == 1 & ydstogo == 10 & yardline_100 == 80) %>%
-  mutate(drive_score = if_else(drive_end_transition %in% c("Touchdown", "Field Goal", "TOUCHDOWN", "FIELD_GOAL"), 1, 0)) %>%
+  mutate(drive_score = if_else(fixed_drive_result %in% c("Touchdown", "Field Goal"), 1, 0)) %>%
   group_by(season) %>%
   summarize(drive_score = mean(drive_score)) %>% 
   knitr::kable(digits = 3)
@@ -169,7 +169,7 @@ nflfastR::calculate_expected_points(data) %>%
   knitr::kable(digits = 2)
 ```
 
-So for 2018 and 2019, 1st & 10 from a home team's own 25 yard line had EP of 1.43 outdoors and 1.74 in domes.
+So for 2018 and 2019, 1st & 10 from a home team's own 25 yard line had higher EP in domes than at home, which is to be expected.
 
 
 # Example 7: Win probability calculator

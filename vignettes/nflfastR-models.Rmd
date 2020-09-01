@@ -20,7 +20,7 @@ nflfastR switching from the nflscrapR EP and WP models to its own model should n
 
 The EP, WP, and CP models are trained using xgboost, which uses training data to create [decision trees](https://xgboost.readthedocs.io/en/latest/tutorials/model.html).
 
-**EP model features**
+### EP model features
 
 * Seconds remaining in half
 * Yard line
@@ -31,7 +31,7 @@ The EP, WP, and CP models are trained using xgboost, which uses training data to
 * Era: 1999-2001 (pre-expansion), 2002-2005 (pre-CPOE), 2006-2013 (pre-LOB rules change), 2014-2017, 2018 and beyond
 * Timeouts remaining for each team
 
-**WP model features**
+### WP model features
 
 * Seconds remaining in half
 * Seconds remaining in game
@@ -46,7 +46,7 @@ The EP, WP, and CP models are trained using xgboost, which uses training data to
 * Whether possession team is at home
 * [Model with Vegas line only: point spread * log(3600 / (50 + (seconds elapsed in game))]
 
-**CP and expected yards after the catch model features**
+### CP and expected yards after the catch model features
 
 * Yard line
 * Whether possession team is at home
@@ -76,7 +76,12 @@ source('https://raw.githubusercontent.com/mrcaseb/nflfastR/master/R/helper_add_n
 source('https://raw.githubusercontent.com/mrcaseb/nflfastR/master/R/helper_add_ep_wp.R')
 source('https://raw.githubusercontent.com/mrcaseb/nflfastR/master/R/helper_add_cp_cpoe.R')
 
+# from remote
 pbp_data <- readRDS(url('https://github.com/guga31bb/nflfastR-data/blob/master/models/cal_data.rds?raw=true'))
+
+# from local
+# pbp_data <- readRDS('../../nflfastR-data/models/cal_data.rds')
+
 model_data <- pbp_data %>%
   #in 'R/helper_add_nflscrapr_mutations.R'
   make_model_mutations() %>%
@@ -134,7 +139,7 @@ seasons <- unique(model_data$season)
 
 Input the stuff we'll need to fit the model. The parameters were obtained from cross-validation, where each season was forced to be entirely contained in a given CV fold to prevent leakage in labels from one fold to another (for example, if a given drive were split up between folds).
 ```{r params}
-nrounds = 500
+nrounds = 525
 params <-
   list(
     booster = "gbtree",

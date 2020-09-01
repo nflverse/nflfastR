@@ -5,14 +5,15 @@
 
 <!-- badges: start -->
 
-![GitHub release (latest by
-date)](https://img.shields.io/github/v/release/mrcaseb/nflfastR?label=latest%20release)
-[![R build
-status](https://github.com/mrcaseb/nflfastR/workflows/R-CMD-check/badge.svg)](https://github.com/mrcaseb/nflfastR/actions)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/nflfastR)](https://CRAN.R-project.org/package=nflfastR)
 [![Travis build
 status](https://travis-ci.com/mrcaseb/nflfastR.svg?branch=master)](https://travis-ci.com/mrcaseb/nflfastR)
+[![R build
+status](https://github.com/mrcaseb/nflfastR/workflows/R-CMD-check/badge.svg)](https://github.com/mrcaseb/nflfastR/actions)
 [![Twitter
 Follow](https://img.shields.io/twitter/follow/nflfastR.svg?style=social)](https://twitter.com/nflfastR)
+<!-- ![GitHub release (latest by date)](https://img.shields.io/github/v/release/mrcaseb/nflfastR?label=development%20version) -->
 <!-- badges: end -->
 
 `nflfastR` is a set of functions to efficiently scrape NFL play-by-play
@@ -39,14 +40,20 @@ and inspiration this package would not exist.
 
 ## Installation
 
-You can load and install nflfastR from
+The easiest way to get nflfastR is to install it from
+[CRAN](https://cran.r-project.org/package=nflfastR) with:
+
+``` r
+install.packages("nflfastR")
+```
+
+To get a bug fix or to use a feature from the development version, you
+can install the development version of nflfastR from
 [GitHub](https://github.com/mrcaseb/nflfastR/) with:
 
 ``` r
-# If 'devtools' isn't installed run
-# install.packages("devtools")
-
-devtools::install_github("mrcaseb/nflfastR")
+if (!requireNamespace("remotes", quietly = TRUE)) {install.packages("remotes")}
+remotes::install_github("mrcaseb/nflfastR")
 ```
 
 ## Usage
@@ -80,12 +87,12 @@ here](https://arxiv.org/pdf/1802.00998.pdf).
 Here is a visualization of the Expected Points model by down and
 yardline.
 
-![](man/figures/readme-epa-model-1.png)<!-- -->
+<img src="https://github.com/mrcaseb/nflfastR/raw/master/man/figures/readme-epa-model-1.png" width="100%" style="display: block; margin: auto;" />
 
 Here is a visualization of the Completion Probability model by air yards
 and pass direction.
 
-![](man/figures/readme-cp-model-1.png)<!-- -->
+<img src="https://github.com/mrcaseb/nflfastR/raw/master/man/figures/readme-cp-model-1.png" width="100%" style="display: block; margin: auto;" />
 
 `nflfastR` includes two win probability models: one with and one without
 incorporating the pre-game spread.

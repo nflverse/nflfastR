@@ -164,7 +164,7 @@
 #' \item{solo_tackle}{Binary indicator if the play had a solo tackle (could be multiple due to fumbles).}
 #' \item{safety}{Binary indicator for whether or not a safety occurred.}
 #' \item{penalty}{Binary indicator for whether or not a penalty occurred.}
-#' \item{tackled_for_loss}{Binary indicator for whether or not a tackle for loss occurred.}
+#' \item{tackled_for_loss}{Binary indicator for whether or not a tackle for loss on a run play occurred.}
 #' \item{fumble_lost}{Binary indicator for if the fumble was lost.}
 #' \item{own_kickoff_recovery}{Binary indicator for if the kicking team recovered the kickoff.}
 #' \item{own_kickoff_recovery_td}{Binary indicator for if the kicking team recovered the kickoff and scored a TD.}
@@ -256,12 +256,12 @@
 #' \item{pass_defense_1_player_name}{String name of one of the players with a pass defense.}
 #' \item{pass_defense_2_player_id}{Unique identifier of one of the players with a pass defense.}
 #' \item{pass_defense_2_player_name}{String name of one of the players with a pass defense.}
-#' \item{fumbled_1_team}{Team of one of the players with a fumble.}
-#' \item{fumbled_1_player_id}{Unique identifier of one of the players with a fumble.}
-#' \item{fumbled_1_player_name}{String name of one of the players with a fumble.}
-#' \item{fumbled_2_player_id}{Unique identifier of one of the players with a fumble.}
-#' \item{fumbled_2_player_name}{String name of one of the players with a fumble.}
-#' \item{fumbled_2_team}{Team of one of the players with a fumble.}
+#' \item{fumbled_1_team}{Team of one of the first player with a fumble.}
+#' \item{fumbled_1_player_id}{Unique identifier of the first player who fumbled on the play.}
+#' \item{fumbled_1_player_name}{String name of one of the first player who fumbled on the play.}
+#' \item{fumbled_2_player_id}{Unique identifier of the second player who fumbled on the play.}
+#' \item{fumbled_2_player_name}{String name of one of the second player who fumbled on the play.}
+#' \item{fumbled_2_team}{Team of one of the second player with a fumble.}
 #' \item{fumble_recovery_1_team}{Team of one of the players with a fumble recovery.}
 #' \item{fumble_recovery_1_yards}{Yards gained by one of the players with a fumble recovery.}
 #' \item{fumble_recovery_1_player_id}{Unique identifier of one of the players with a fumble recovery.}
@@ -287,7 +287,8 @@
 #' \item{cp}{Numeric value indicating the probability for a complete pass based on comparable game situations.}
 #' \item{cpoe}{For a single pass play this is 1 - cp when the pass was completed or 0 - cp when the pass was incomplete. Analyzed for a whole game or season an indicator for the passer how much over or under expectation his completion percentage was.}
 #' \item{series}{Starts at 1, each new first down increments, numbers shared across both teams NA: kickoffs, extra point/two point conversion attempts, non-plays, no posteam}
-#' \item{series_success}{1: scored touchdown, gained enough yards for first down 0: punt, interception, fumble lost, turnover on downs, FG attempt NA: series is NA, series contains QB spike/kneel}
+#' \item{series_success}{1: scored touchdown, gained enough yards for first down.}
+#' \item{series_result}{Possible values: First down, Touchdown, Opp touchdown, Field goal, Missed field goal, Safety, Turnover, Punt, Turnover on downs, QB kneel, End of half}
 #' \item{start_time}{Kickoff time in eastern time zone.}
 #' \item{order_sequence}{Column provided by NFL to fix out-of-order plays. Available 2011 and beyond.}
 #' \item{time_of_day}{Time of day of play in UTC "HH:MM:SS" format. Available 2011 and beyond.}
@@ -318,6 +319,8 @@
 #' \item{drive_end_yard_line}{String indicating where a given drive ended consisting of team half and yard line number.}
 #' \item{drive_play_id_started}{Play_id of the first play in the given drive.}
 #' \item{drive_play_id_ended}{Play_id of the last play in the given drive.}
+#' \item{fixed_drive}{Manually created drive number in a game.}
+#' \item{fixed_drive_result}{Manually created drive result.}
 #' \item{away_score}{Total points scored by the away team.}
 #' \item{home_score}{Total points scored by the home team.}
 #' \item{location}{Either 'Home' o 'Neutral' indicating if the home team played at home or at a neutral site. }
@@ -337,10 +340,9 @@
 #' }
 #' @export
 #' @examples
-#' \dontrun{
-#' # Get pbp data for two games using parallel processing
-#' game_ids <- c("2019_01_GB_CHI", "2013_21_SEA_DEN")
-#' pbp <- fast_scraper(game_ids, pp = TRUE)
+#' \donttest{
+#' # Get pbp data for two games
+#' fast_scraper(c("2019_01_GB_CHI", "2013_21_SEA_DEN"))
 #' }
 fast_scraper <- function(game_ids, source = "nfl", pp = FALSE, ...) {
 
@@ -375,6 +377,7 @@ fast_scraper <- function(game_ids, source = "nfl", pp = FALSE, ...) {
           add_wp() %>%
           add_air_yac_wp() %>%
           add_cp() %>%
+          add_drive_results() %>%
           add_series_data() %>%
           select_variables()
       }
@@ -415,6 +418,7 @@ fast_scraper <- function(game_ids, source = "nfl", pp = FALSE, ...) {
           add_wp() %>%
           add_air_yac_wp() %>%
           add_cp() %>%
+          add_drive_results() %>%
           add_series_data() %>%
           select_variables()
       }
@@ -438,10 +442,11 @@ fast_scraper <- function(game_ids, source = "nfl", pp = FALSE, ...) {
 # @export
 #' @noRd
 #' @examples
-#'
+#' \donttest{
 #' # Get highlight clips for two 2019 games using parallel processing
 #' # game_ids <- c("2019090804", "2019101700")
 #' # clips <- fast_scraper_clips(game_ids, pp = TRUE)
+#' }
 fast_scraper_clips <- function(game_ids, pp = FALSE) {
   stop("The NFL removed the public available data feed. We are working on a new solution.\n Meanwhile please check https://github.com/guga31bb/nflfastR-data/tree/master/legacy-data for data of the seasons 2000-2019")
 
@@ -525,12 +530,12 @@ fast_scraper_clips <- function(game_ids, pp = FALSE) {
 #' \item{teamPlayers.profile_url}
 #' }
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Roster of Steelers in 2018, no parallel processing
-#' rosters <- fast_scraper_roster("3900", 2018, pp = FALSE)
+#' # rosters <- fast_scraper_roster("3900", 2018, pp = FALSE)
 #'
 #' # Roster of Steelers and Seahawks in 2016 & 2019 using parallel processing
-#' rosters <- fast_scraper_roster(c("3900", "4600"), c("2016", "2019"), pp = TRUE)
+#' # rosters <- fast_scraper_roster(c("3900", "4600"), c("2016", "2019"), pp = TRUE)
 #' }
 # @export
 #' @noRd
@@ -609,10 +614,9 @@ fast_scraper_roster <- function(team_ids, seasons, pp = FALSE) {
 #' }
 #' @export
 #' @examples
-#'\dontrun{
+#'\donttest{
 #' # Get schedules for the whole 2015 - 2018 seasons
-#' seasons <- 2015:2018
-#' schedules <- fast_scraper_schedules(seasons)
+#' fast_scraper_schedules(2015:2018)
 #' }
 fast_scraper_schedules <- function(seasons, pp = FALSE) {
 

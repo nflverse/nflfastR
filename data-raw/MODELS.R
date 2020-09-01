@@ -69,7 +69,7 @@ model_data <- pbp_data %>%
     Total_W_Scaled
   )
 
-nrounds = 500
+nrounds = 525
 params <-
   list(
     booster = "gbtree",

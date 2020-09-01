@@ -1,10 +1,19 @@
-# nflfastR (development version)
+# nflfastR 2.2.1
 
 * Fix `add_xyac()` breaking with some old packages
 * Fix `add_xyac()` and `add_qb_epa()` calculations being wrong for some failed 4th downs
 * Updated Readme with ep and cp model plots
 * Updated `vignette("examples")` with the new `add_xyac()` function
 * Added xYAC model to `vignette("nflfastR-models")`
+* Added variables `fixed_drive` and `fixed_drive_result` to the output of 
+`fast_scraper()` because the NFL-provided drive info is extremely buggy
+* Added variable `series_result`
+* `clean_pbp()` now adds 4 new variables `passer_jersey_number`, 
+`rusher_jersey_number`, `receiver_jersey_number` and `jersey_number`. These can 
+be used to join rosters. 
+* Fixed incorrect `timeout_team`, `return_team`, `fumble_recovery_1_team` for JAX
+games from 2011-2015
+* Re-trained EPA model with `fixed_drive` and corrections to `timeout_team`
 
 # nflfastR 2.2.0
 

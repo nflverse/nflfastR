@@ -22,7 +22,7 @@ select_variables <- function(pbp) {
 }
 
 # columns that are not in gamecenter that we created
-new_cols <- c("season", "cp", "cpoe", "series", "series_success")
+new_cols <- c("season", "cp", "cpoe", "series", "series_success", "series_result")
 
 # original nflscrapr columns
 nflscrapr_cols <-
@@ -129,6 +129,8 @@ api_cols <- c(
   "play_clock", "play_deleted",
   "play_type_nfl", "special_teams_play", "st_play_type",
   "end_clock_time", "end_yard_line",
+
+  "fixed_drive", "fixed_drive_result",
   "drive_real_start_time",
 
   "drive_play_count", "drive_time_of_possession",

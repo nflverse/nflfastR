@@ -15,8 +15,11 @@ added:
 \describe{
 \item{success}{Binary indicator wheter epa > 0 in the given play. }
 \item{passer}{Name of the dropback player (scrambles included) including plays with penalties.}
+\item{passer_jersey_number}{Jersey number of the passer.}
 \item{rusher}{Name of the rusher (no scrambles) including plays with penalties.}
+\item{rusher_jersey_number}{Jersey number of the rusher.}
 \item{receiver}{Name of the receiver including plays with penalties.}
+\item{receiver_jersey_number}{Jersey number of the receiver.}
 \item{pass}{Binary indicator if the play was a pass play (sacks and scrambles included).}
 \item{rush}{Binary indicator if the play was a rushing play.}
 \item{special}{Binary indicator if the play was a special teams play.}
@@ -27,6 +30,7 @@ added:
 \item{rusher_id}{ID of the player in the 'rusher' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
 \item{receiver_id}{ID of the player in the 'receiver' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
 \item{name}{Name of the 'passer' if it is not 'NA', or name of the 'rusher' otherwise.}
+\item{jersey_number}{Jersey number of the player listed in the 'name' column.}
 \item{id}{ID of the player in the 'name' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
 \item{qb_epa}{Gives QB credit for EPA for up to the point where a receiver lost a fumble after a completed catch and makes EPA work more like passing yards on plays with fumbles.}
 }

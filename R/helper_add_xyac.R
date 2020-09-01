@@ -168,8 +168,8 @@ add_xyac <- function(pbp) {
     message("No non-NA values for xyac calculation detected. xyac variables set to NA")
   }
 
-  # on old versions of dplyr, a .group column is created, which we don't want
-  pbp <- pbp %>% dplyr::select(-tidyselect::any_of(".group"))
+  # on old versions of dplyr, a .groups column is created, which we don't want
+  pbp <- pbp %>% dplyr::select(-tidyselect::any_of(".groups"))
 
   return(pbp)
 }

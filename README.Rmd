@@ -16,10 +16,11 @@ knitr::opts_chunk$set(
 
 
 <!-- badges: start -->
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/mrcaseb/nflfastR?label=latest%20release)
-[![R build status](https://github.com/mrcaseb/nflfastR/workflows/R-CMD-check/badge.svg)](https://github.com/mrcaseb/nflfastR/actions)
+[![CRAN status](https://www.r-pkg.org/badges/version/nflfastR)](https://CRAN.R-project.org/package=nflfastR)
 [![Travis build status](https://travis-ci.com/mrcaseb/nflfastR.svg?branch=master)](https://travis-ci.com/mrcaseb/nflfastR)
+[![R build status](https://github.com/mrcaseb/nflfastR/workflows/R-CMD-check/badge.svg)](https://github.com/mrcaseb/nflfastR/actions)
 [![Twitter Follow](https://img.shields.io/twitter/follow/nflfastR.svg?style=social)](https://twitter.com/nflfastR)
+<!-- ![GitHub release (latest by date)](https://img.shields.io/github/v/release/mrcaseb/nflfastR?label=development%20version) -->
 <!-- badges: end -->
 
 `nflfastR` is a set of functions to efficiently scrape NFL play-by-play data. `nflfastR` expands upon the features of nflscrapR:
@@ -37,13 +38,17 @@ We owe a debt of gratitude to the original [`nflscrapR`](https://github.com/maks
 
 ## Installation
 
-You can load and install nflfastR from [GitHub](https://github.com/mrcaseb/nflfastR/) with:
+The easiest way to get nflfastR is to install it from [CRAN](https://cran.r-project.org/package=nflfastR) with:
+
+```{r, eval=FALSE}
+install.packages("nflfastR")
+```
+
+To get a bug fix or to use a feature from the development version, you can install the development version of nflfastR from [GitHub](https://github.com/mrcaseb/nflfastR/) with:
 
 ``` {r eval = FALSE}
-# If 'devtools' isn't installed run
-# install.packages("devtools")
-
-devtools::install_github("mrcaseb/nflfastR")
+if (!requireNamespace("remotes", quietly = TRUE)) {install.packages("remotes")}
+remotes::install_github("mrcaseb/nflfastR")
 ```
 
 ## Usage
@@ -60,7 +65,12 @@ Even though `nflfastR` is very fast, **for historical games we recommend downloa
 
 Here is a visualization of the Expected Points model by down and yardline.
 
-``` {r epa-model, warning = FALSE, message = FALSE, results = 'hide', fig.keep = 'all', dpi = 600, echo=FALSE}
+``` {r epa-model, warning = FALSE, message = FALSE, results = 'hide', fig.keep = 'all', dpi = 600, echo=FALSE, eval = FALSE}
+
+# This code was used to create the ep model image. Since we don't want to include 
+# the resulting png file in the package for file size reasons it was uploaded to
+# the nflfastR repo and embedded remotely with the next chunk
+
 library(tidyverse)
 
 df <- map_df(2014:2019, ~{
@@ -90,9 +100,18 @@ df %>%
     annotate("text", x = 14, y = -2.2, size = 3, label = "2014-2019 | Model: @nflfastR")
 ```
 
+```{r echo=FALSE, fig.align='center', fig.cap='', out.width='100%'}
+knitr::include_graphics('https://github.com/mrcaseb/nflfastR/raw/master/man/figures/readme-epa-model-1.png')
+```
+
 Here is a visualization of the Completion Probability model by air yards and pass direction.
 
-``` {r cp-model, warning = FALSE, message = FALSE, results = 'hide', fig.keep = 'all', dpi = 600, echo=FALSE}
+``` {r cp-model, warning = FALSE, message = FALSE, results = 'hide', fig.keep = 'all', dpi = 600, echo=FALSE, eval = FALSE}
+
+# This code was used to create the cp model image. Since we don't want to include 
+# the resulting png file in the package for file size reasons it was uploaded to
+# the nflfastR repo and embedded remotely with the next chunk
+
 df %>%
   filter(!is.na(cp), between(air_yards, -5, 45)) %>%
   mutate(pass_middle = if_else(pass_location == "middle", "Yes", "No")) %>%
@@ -114,6 +133,10 @@ df %>%
     legend.title = element_text(size = 16),
     legend.position = c(.80, .80)) +
     annotate("text", x = 2, y = .32, size = 3, label = "2014-2019 | Model: @nflfastR")
+```
+
+```{r echo=FALSE, fig.align='center', fig.cap='', out.width='100%'}
+knitr::include_graphics('https://github.com/mrcaseb/nflfastR/raw/master/man/figures/readme-cp-model-1.png')
 ```
 
 `nflfastR` includes two win probability models: one with and one without incorporating the pre-game spread.

@@ -59,7 +59,13 @@ data <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/ma
 
 ### Dimensions
 
-Before moving forward, here are a few ways to get a sense of what's in a dataframe. We can check the **dim**ensions of the data, and this tells us that there are 48,034 rows (i.e., plays) in the data and 328 columns (variables):
+```{r echo=FALSE}
+rows = dim(data)[[1]]
+cols = dim(data)[[2]]
+```
+
+Before moving forward, here are a few ways to get a sense of what's in a dataframe. We can check the **dim**ensions of the data, and this tells us that there are ```r rows``` rows (i.e., plays) in the data and ```r cols``` columns (variables):
+
 ``` {r}
 dim(data)
 ```
@@ -69,7 +75,7 @@ dim(data)
 str(data[1:10])
 ```
 
-In the above, I've added in the `[1:10]`, which selects only the first 10 columns, otherwise the list is extremely long (remember from above that there are 322 columns!).
+In the above, I've added in the `[1:10]`, which selects only the first 10 columns, otherwise the list is extremely long (remember from above that there are ```r cols``` columns!).
 
 ### Variable names
 
@@ -630,7 +636,18 @@ data %>%
   round(2)
 ```
 
-We've covered `select`, but here we see a new use where a minus sign de-selects variables (we need to de-select team name for correlation to work because it doesn't work for character strings, and correlation with the season number itself is meaningless). We've run the correlation on this dataframe, removing missing values, and then rounding to 2 digits. Not surprisingly, we see that wins in the current season are more strongly related to passing offense EPA than rushing EPA or defense EPA, and prior offense carries more predictive power than prior defense. Pass offense is more stable year to year (0.47) than rush offense (0.33), pass defense (0.28), or rush defense (0.26).
+```{r echo=FALSE}
+pp = cor(data$off_pass_epa, data$prior_off_pass_epa, use="complete.obs") %>%
+  round(2)
+rr = cor(data$off_rush_epa, data$prior_off_rush_epa, use="complete.obs") %>%
+  round(2)
+pd = cor(data$def_pass_epa, data$prior_def_pass_epa, use="complete.obs") %>%
+  round(2)
+rd = cor(data$def_rush_epa, data$prior_def_rush_epa, use="complete.obs") %>%
+  round(2)
+```
+
+We've covered `select`, but here we see a new use where a minus sign de-selects variables (we need to de-select team name for correlation to work because it doesn't work for character strings, and correlation with the season number itself is meaningless). We've run the correlation on this dataframe, removing missing values, and then rounding to 2 digits. Not surprisingly, we see that wins in the current season are more strongly related to passing offense EPA than rushing EPA or defense EPA, and prior offense carries more predictive power than prior defense. Pass offense is more stable year to year (```r pp```) than rush offense (```r rr```), pass defense (```r pd```), or rush defense (```r rd```).
 
 I'm actually surprised that the values for passing offense aren't higher relative to the others. Maybe it was because most of our prior results come from the `nflscrapR` era (2009 - 2019)? Let's check what this looks like since 2009 relative to earlier seasons:
 
@@ -652,7 +669,7 @@ data %>%
   round(2)
 ```
 
-Yep, that seems to be the case. So in the more recent period, passing offense has become slightly more stable (from 0.45 to 0.46) but more predictive of following-year success (from 0.67 to 0.72), while at the same time rushing offense has become substantially less stable (from 0.43 to 0.24) and less predictive of future team success (from 0.48 to 0.42).
+Yep, that seems to be the case. So in the more recent period, passing offense has become slightly more stable but more predictive of following-year success, while at the same time rushing offense has become substantially less stable and less predictive of future team success.
 
 Now let's do a basic regression of wins on prior offense and defense EPA/play. Maybe we should only look at this more recent period to fit our model since it's more relevant for 2020. In the real world, we would be more rigorous about making decisions like this, but let's proceed anyway.
 

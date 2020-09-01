@@ -1,7 +1,7 @@
 Type: Package
 Package: nflfastR
-Title: Functions to Efficiently Scrape NFL Play by Play Data
-Version: 2.2.0.9001
+Title: Functions to Efficiently Access NFL Play by Play Data
+Version: 2.2.1
 Authors@R: 
     c(person(given = "Sebastian",
              family = "Carl",
@@ -26,7 +26,8 @@ Authors@R:
              family = "Ventura",
              role = "ctb",
              email = "samventura22@gmail.com"))
-Description: A set of functions to efficiently scrape NFL play-by-play data.
+Description: A set of functions to access National Football League play-by-play 
+  data from <https://www.nfl.com/>.
 License: MIT + file LICENSE
 URL: https://mrcaseb.github.io/nflfastR/, https://github.com/mrcaseb/nflfastR
 BugReports: https://github.com/mrcaseb/nflfastR/issues

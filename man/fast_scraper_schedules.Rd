@@ -45,9 +45,8 @@ Please note that the initiating process takes a few seconds which means it
 may be better to set \code{pp = FALSE} if you are scraping less than 10 seasons.
 }
 \examples{
-\dontrun{
+\donttest{
 # Get schedules for the whole 2015 - 2018 seasons
-seasons <- 2015:2018
-schedules <- fast_scraper_schedules(seasons)
+fast_scraper_schedules(2015:2018)
 }
 }

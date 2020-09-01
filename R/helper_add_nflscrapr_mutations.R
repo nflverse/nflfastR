@@ -33,7 +33,7 @@ add_nflscrapr_mutations <- function(pbp) {
     dplyr::group_by(.data$game_id) %>%
     # the !is.na(drive), drive part is to make the initial GAME line show up first
     # https://stackoverflow.com/questions/43343590/how-to-sort-putting-nas-first-in-dplyr
-    dplyr::arrange(.data$quarter, !is.na(.data$quarter_seconds_remaining), -.data$quarter_seconds_remaining, !is.na(.data$drive), .data$drive, .data$index, .by_group = TRUE) %>%
+    dplyr::arrange(.data$order_sequence, .data$quarter, !is.na(.data$quarter_seconds_remaining), -.data$quarter_seconds_remaining, !is.na(.data$drive), .data$drive, .data$index, .by_group = TRUE) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(
       # Fill in the rows with missing posteam with the lag:
@@ -55,7 +55,8 @@ add_nflscrapr_mutations <- function(pbp) {
       # Make the possession team for kickoffs be the return team, since that is
       # more intuitive from the EPA / WPA point of view:
       posteam = dplyr::if_else(
-        .data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, "Offside on Free Kick"),
+        # kickoff_finder is defined below
+        .data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, kickoff_finder),
         dplyr::if_else(
           .data$posteam_type == "home",
           .data$away_team, .data$home_team
@@ -63,7 +64,7 @@ add_nflscrapr_mutations <- function(pbp) {
         .data$posteam
       ),
       defteam = dplyr::if_else(
-        .data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, "Offside on Free Kick"),
+        .data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, kickoff_finder),
         dplyr::if_else(
           .data$posteam_type == "home",
           .data$home_team, .data$away_team
@@ -72,7 +73,7 @@ add_nflscrapr_mutations <- function(pbp) {
       ),
       # Now flip the posteam_type as well:
       posteam_type = dplyr::if_else(
-        .data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, "Offside on Free Kick"),
+        .data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, kickoff_finder),
         dplyr::if_else(
           .data$posteam_type == "home",
           "away", "home"
@@ -82,7 +83,7 @@ add_nflscrapr_mutations <- function(pbp) {
       yardline = dplyr::if_else(.data$yardline == "50", "MID 50", .data$yardline),
       yardline = dplyr::if_else(
         nchar(.data$yardline) == 0 | is.null(.data$yardline) | .data$yardline == "NULL" | is.na(.data$yardline),
-        dplyr::lag(.data$yardline), .data$yardline
+        dplyr::lead(.data$yardline), .data$yardline
       ),
       yardline_number = dplyr::if_else(
         .data$yardline == "MID 50", 50, .data$yardline_number
@@ -517,6 +518,10 @@ add_nflscrapr_mutations <- function(pbp) {
   message("added nflscrapR variables")
   return(out)
 }
+
+# to help find kickoffs on plays with penalties
+# otherwise win prob breaks down the road
+kickoff_finder <- "(Offside on Free Kick)|(Delay of Kickoff)|(Onside Kick formation)|(kicks onside)|( kicks [:digit:]+ yards from)"
 
 
 ##some steps to prepare the data for the EP/WP/CP/FG models

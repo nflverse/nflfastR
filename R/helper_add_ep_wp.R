@@ -689,7 +689,7 @@ add_ep_variables <- function(pbp_data) {
                   total_home_pass_epa = cumsum(.data$home_team_pass_epa),
                   total_away_pass_epa = cumsum(.data$away_team_pass_epa)) %>%
     dplyr::ungroup() %>%
-    return
+    return()
 }
 
 
@@ -832,13 +832,15 @@ add_wp_variables <- function(pbp_data) {
       #because other team will have the ball so WP from their perspective
       #this is for backfilling WP on PATs
       wp =
-        dplyr::if_else((.data$kickoff_attempt == 0 & (stringr::str_detect(.data$desc, 'Kick formation') | stringr::str_detect(.data$desc, 'Pass formation')) & is.na(.data$down)) |
+        dplyr::if_else((.data$kickoff_attempt == 0 & !(stringr::str_detect(.data$desc, 'Onside Kick')) &
+                          (stringr::str_detect(.data$desc, 'Kick formation') | stringr::str_detect(.data$desc, 'Pass formation')) & is.na(.data$down)) |
                             stringr::str_detect(.data$desc, 'extra point') |
                             !is.na(.data$two_point_conv_result) |
                             !is.na(.data$extra_point_result),
                           1 - .data$wp, .data$wp),
       vegas_wp =
-        dplyr::if_else((.data$kickoff_attempt == 0 & (stringr::str_detect(.data$desc, 'Kick formation') | stringr::str_detect(.data$desc, 'Pass formation')) & is.na(.data$down)) |
+        dplyr::if_else((.data$kickoff_attempt == 0 & !(stringr::str_detect(.data$desc, 'Onside Kick')) &
+                          (stringr::str_detect(.data$desc, 'Kick formation') | stringr::str_detect(.data$desc, 'Pass formation')) & is.na(.data$down)) |
                             stringr::str_detect(.data$desc, 'extra point') |
                             !is.na(.data$two_point_conv_result) |
                             !is.na(.data$extra_point_result),
@@ -1026,7 +1028,7 @@ add_wp_variables <- function(pbp_data) {
                   total_home_pass_wpa = cumsum(.data$home_team_pass_wpa),
                   total_away_pass_wpa = cumsum(.data$away_team_pass_wpa)) %>%
     dplyr::ungroup() %>%
-    return
+    return()
 
 }
 
@@ -1187,7 +1189,7 @@ add_air_yac_ep_variables <- function(pbp_data) {
                   total_home_raw_yac_epa = cumsum(.data$home_team_raw_yac_epa),
                   total_away_raw_yac_epa = cumsum(.data$away_team_raw_yac_epa)) %>%
     dplyr::ungroup() %>%
-    return
+    return()
 }
 
 
@@ -1501,6 +1503,6 @@ add_air_yac_wp_variables <- function(pbp_data) {
                   total_home_raw_yac_wpa = cumsum(.data$home_team_raw_yac_wpa),
                   total_away_raw_yac_wpa = cumsum(.data$away_team_raw_yac_wpa)) %>%
     dplyr::ungroup() %>%
-    return
+    return()
 
 }

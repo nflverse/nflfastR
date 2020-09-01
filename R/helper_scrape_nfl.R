@@ -136,8 +136,7 @@ get_pbp_nfl <- function(id, dir = NULL) {
         pbp_stats <-
           purrr::map(unique(stats$playId), function(x) {
             sum_play_stats(x, stats = stats)
-          }) # %>%
-          # dplyr::mutate(play_id = as.integer(play_id))
+          })
       )
 
       pbp_stats <- dplyr::bind_rows(pbp_stats)
@@ -187,22 +186,52 @@ get_pbp_nfl <- function(id, dir = NULL) {
           st_play_type = as.character(.data$st_play_type),
           #if JAC has the ball and scored, make them the scoring team
           td_team = dplyr::if_else(
-            .data$season >= 2011 & .data$season <= 2015 & .data$posteam == 'JAC' &
+            .data$season <= 2015 & .data$posteam == 'JAC' &
               .data$drive_how_ended_description == 'Touchdown' & !is.na(.data$td_team),
             'JAC', .data$td_team
           ),
           #if JAC involved in a game and defensive team score, fill in the right team
           td_team = dplyr::if_else(
             #game involving the jags
-            .data$season >= 2011 & .data$season <= 2015 & (.data$home_team == 'JAC' | .data$away_team == 'JAC') &
+            .data$season <= 2015 & (.data$home_team == 'JAC' | .data$away_team == 'JAC') &
               #defensive TD
               .data$drive_how_ended_description != 'Touchdown' & !is.na(.data$td_team),
             #if home team has ball, then away team scored, otherwise home team scored
             dplyr::if_else(.data$posteam == .data$home_team, .data$away_team, .data$home_team),
             .data$td_team
           ),
+          # fill in return team for the JAX games
+          return_team = dplyr::if_else(
+            !is.na(.data$return_team) & .data$season <= 2015 & (.data$home_team == 'JAC' | .data$away_team == 'JAC'),
+            dplyr::if_else(
+              # if the home team has the ball, return team is away team (this is before we flip posteam for kickoffs)
+              .data$posteam == .data$home_team, .data$away_team, .data$home_team
+            ),
+            .data$return_team
+          ),
+          fumble_recovery_1_team = dplyr::if_else(
+            !is.na(.data$fumble_recovery_1_team) & .data$season <= 2015 & (.data$home_team == 'JAC' | .data$away_team == 'JAC'),
+            # assign possession based on fumble_lost
+            dplyr::case_when(
+              .data$fumble_lost == 1 & .data$posteam == .data$home_team ~ .data$away_team,
+              .data$fumble_lost == 1 & .data$posteam == .data$away_team ~ .data$home_team,
+              .data$fumble_lost == 0 & .data$posteam == .data$home_team ~ .data$home_team,
+              .data$fumble_lost == 0 & .data$posteam == .data$away_team ~ .data$away_team
+            ),
+            .data$fumble_recovery_1_team
+          ),
+          timeout_team = dplyr::if_else(
+            # if there's a timeout in the affected seasons
+            !is.na(.data$timeout_team) & .data$season <= 2015 & (.data$home_team == 'JAC' | .data$away_team == 'JAC'),
+            # extract from play description
+            # make it JAC instead of JAX to be consistent with everything else
+            dplyr::if_else(
+              stringr::str_extract(.data$play_description, "(?<=Timeout #[1-3] by )[:upper:]+") == "JAX", "JAC", stringr::str_extract(.data$play_description, "(?<=Timeout #[1-3] by )[:upper:]+")
+            ),
+            .data$timeout_team
+          ),
           yardline_side = dplyr::if_else(
-            .data$season >= 2011 & .data$season <= 2015 & .data$yardline_side == 'JAX',
+            .data$season <= 2015 & .data$yardline_side == 'JAX',
             'JAC', .data$yardline_side
           ),
           #if there's some random missing drive, fill in with previous drive
