@@ -83,7 +83,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.0.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.1</span>
       </span>
     </div>
 
@@ -155,7 +155,7 @@
     <p>Get NFL Play by Play Data</p>
     </div>
 
-    <pre class="usage"><span class='fu'>fast_scraper</span>(<span class='no'>game_ids</span>, <span class='kw'>source</span> <span class='kw'>=</span> <span class='st'>"nfl"</span>, <span class='kw'>pp</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>fast_scraper</span>(<span class='kw'>game_ids</span>, source = <span class='st'>"nfl"</span>, pp = <span class='fl'>FALSE</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -182,7 +182,7 @@
 
     <p>Data frame where each individual row represents a single play for
 all passed game_ids containing the following
-detailed information (description partly extracted from nflscrapR):</p><dl'>
+detailed information (description partly extracted from nflscrapR):</p><dl>
 <dt>play_id</dt><dd><p>Numeric play id that when used with game_id and drive provides the unique identifier for a single play.</p></dd>
 <dt>game_id</dt><dd><p>Ten digit identifier for NFL game.</p></dd>
 <dt>old_game_id</dt><dd><p>Legacy NFL game ID.</p></dd>
@@ -325,7 +325,7 @@ detailed information (description partly extracted from nflscrapR):</p><dl'>
 <dt>solo_tackle</dt><dd><p>Binary indicator if the play had a solo tackle (could be multiple due to fumbles).</p></dd>
 <dt>safety</dt><dd><p>Binary indicator for whether or not a safety occurred.</p></dd>
 <dt>penalty</dt><dd><p>Binary indicator for whether or not a penalty occurred.</p></dd>
-<dt>tackled_for_loss</dt><dd><p>Binary indicator for whether or not a tackle for loss occurred.</p></dd>
+<dt>tackled_for_loss</dt><dd><p>Binary indicator for whether or not a tackle for loss on a run play occurred.</p></dd>
 <dt>fumble_lost</dt><dd><p>Binary indicator for if the fumble was lost.</p></dd>
 <dt>own_kickoff_recovery</dt><dd><p>Binary indicator for if the kicking team recovered the kickoff.</p></dd>
 <dt>own_kickoff_recovery_td</dt><dd><p>Binary indicator for if the kicking team recovered the kickoff and scored a TD.</p></dd>
@@ -417,12 +417,12 @@ detailed information (description partly extracted from nflscrapR):</p><dl'>
 <dt>pass_defense_1_player_name</dt><dd><p>String name of one of the players with a pass defense.</p></dd>
 <dt>pass_defense_2_player_id</dt><dd><p>Unique identifier of one of the players with a pass defense.</p></dd>
 <dt>pass_defense_2_player_name</dt><dd><p>String name of one of the players with a pass defense.</p></dd>
-<dt>fumbled_1_team</dt><dd><p>Team of one of the players with a fumble.</p></dd>
-<dt>fumbled_1_player_id</dt><dd><p>Unique identifier of one of the players with a fumble.</p></dd>
-<dt>fumbled_1_player_name</dt><dd><p>String name of one of the players with a fumble.</p></dd>
-<dt>fumbled_2_player_id</dt><dd><p>Unique identifier of one of the players with a fumble.</p></dd>
-<dt>fumbled_2_player_name</dt><dd><p>String name of one of the players with a fumble.</p></dd>
-<dt>fumbled_2_team</dt><dd><p>Team of one of the players with a fumble.</p></dd>
+<dt>fumbled_1_team</dt><dd><p>Team of one of the first player with a fumble.</p></dd>
+<dt>fumbled_1_player_id</dt><dd><p>Unique identifier of the first player who fumbled on the play.</p></dd>
+<dt>fumbled_1_player_name</dt><dd><p>String name of one of the first player who fumbled on the play.</p></dd>
+<dt>fumbled_2_player_id</dt><dd><p>Unique identifier of the second player who fumbled on the play.</p></dd>
+<dt>fumbled_2_player_name</dt><dd><p>String name of one of the second player who fumbled on the play.</p></dd>
+<dt>fumbled_2_team</dt><dd><p>Team of one of the second player with a fumble.</p></dd>
 <dt>fumble_recovery_1_team</dt><dd><p>Team of one of the players with a fumble recovery.</p></dd>
 <dt>fumble_recovery_1_yards</dt><dd><p>Yards gained by one of the players with a fumble recovery.</p></dd>
 <dt>fumble_recovery_1_player_id</dt><dd><p>Unique identifier of one of the players with a fumble recovery.</p></dd>
@@ -448,7 +448,8 @@ detailed information (description partly extracted from nflscrapR):</p><dl'>
 <dt>cp</dt><dd><p>Numeric value indicating the probability for a complete pass based on comparable game situations.</p></dd>
 <dt>cpoe</dt><dd><p>For a single pass play this is 1 - cp when the pass was completed or 0 - cp when the pass was incomplete. Analyzed for a whole game or season an indicator for the passer how much over or under expectation his completion percentage was.</p></dd>
 <dt>series</dt><dd><p>Starts at 1, each new first down increments, numbers shared across both teams NA: kickoffs, extra point/two point conversion attempts, non-plays, no posteam</p></dd>
-<dt>series_success</dt><dd><p>1: scored touchdown, gained enough yards for first down 0: punt, interception, fumble lost, turnover on downs, FG attempt NA: series is NA, series contains QB spike/kneel</p></dd>
+<dt>series_success</dt><dd><p>1: scored touchdown, gained enough yards for first down.</p></dd>
+<dt>series_result</dt><dd><p>Possible values: First down, Touchdown, Opp touchdown, Field goal, Missed field goal, Safety, Turnover, Punt, Turnover on downs, QB kneel, End of half</p></dd>
 <dt>start_time</dt><dd><p>Kickoff time in eastern time zone.</p></dd>
 <dt>order_sequence</dt><dd><p>Column provided by NFL to fix out-of-order plays. Available 2011 and beyond.</p></dd>
 <dt>time_of_day</dt><dd><p>Time of day of play in UTC "HH:MM:SS" format. Available 2011 and beyond.</p></dd>
@@ -479,6 +480,8 @@ detailed information (description partly extracted from nflscrapR):</p><dl'>
 <dt>drive_end_yard_line</dt><dd><p>String indicating where a given drive ended consisting of team half and yard line number.</p></dd>
 <dt>drive_play_id_started</dt><dd><p>Play_id of the first play in the given drive.</p></dd>
 <dt>drive_play_id_ended</dt><dd><p>Play_id of the last play in the given drive.</p></dd>
+<dt>fixed_drive</dt><dd><p>Manually created drive number in a game.</p></dd>
+<dt>fixed_drive_result</dt><dd><p>Manually created drive result.</p></dd>
 <dt>away_score</dt><dd><p>Total points scored by the away team.</p></dd>
 <dt>home_score</dt><dd><p>Total points scored by the home team.</p></dd>
 <dt>location</dt><dd><p>Either 'Home' o 'Neutral' indicating if the home team played at home or at a neutral site.</p></dd>
@@ -509,11 +512,57 @@ Please note that the initiating process takes a few seconds which means it
 may be better to set <code>pp = FALSE</code> if you are scraping just a few games.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
-<span class='co'># Get pbp data for two games using parallel processing</span>
-<span class='no'>game_ids</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"2019_01_GB_CHI"</span>, <span class='st'>"2013_21_SEA_DEN"</span>)
-<span class='no'>pbp</span> <span class='kw'>&lt;-</span> <span class='fu'>fast_scraper</span>(<span class='no'>game_ids</span>, <span class='kw'>pp</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-}</div></pre>
+    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
+<span class='co'># Get pbp data for two games</span>
+<span class='fu'>fast_scraper</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"2019_01_GB_CHI"</span>, <span class='st'>"2013_21_SEA_DEN"</span>))
+</div><div class='output co'>#&gt; <span class='message'>Download finished. Adding variables...</span></div><div class='output co'>#&gt; <span class='message'>added game variables</span></div><div class='output co'>#&gt; <span class='message'>added nflscrapR variables</span></div><div class='output co'>#&gt; <span class='message'>added ep variables</span></div><div class='output co'>#&gt; <span class='message'>added air_yac_ep variables</span></div><div class='output co'>#&gt; <span class='message'>added wp variables</span></div><div class='output co'>#&gt; <span class='message'>added air_yac_wp variables</span></div><div class='output co'>#&gt; <span class='message'>added cp and cpoe</span></div><div class='output co'>#&gt; <span class='message'>added fixed drive variables</span></div><div class='output co'>#&gt; <span class='message'>added series variables</span></div><div class='output co'>#&gt; <span class='message'>Procedure completed.</span></div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 356 x 315</span><span>
+#&gt;    play_id game_id old_game_id home_team away_team season_type  week posteam
+#&gt;      </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  
+#&gt; </span><span style='color: #555555;'> 1</span><span>       1 2013_2~ 2014020200  DEN       SEA       POST           21 </span><span style='color: #BB0000;'>NA</span><span>     
+#&gt; </span><span style='color: #555555;'> 2</span><span>      37 2013_2~ 2014020200  DEN       SEA       POST           21 </span><span style='color: #BB0000;'>NA</span><span>     
+#&gt; </span><span style='color: #555555;'> 3</span><span>      61 2013_2~ 2014020200  DEN       SEA       POST           21 DEN    
+#&gt; </span><span style='color: #555555;'> 4</span><span>      83 2013_2~ 2014020200  DEN       SEA       POST           21 DEN    
+#&gt; </span><span style='color: #555555;'> 5</span><span>     119 2013_2~ 2014020200  DEN       SEA       POST           21 SEA    
+#&gt; </span><span style='color: #555555;'> 6</span><span>     141 2013_2~ 2014020200  DEN       SEA       POST           21 SEA    
+#&gt; </span><span style='color: #555555;'> 7</span><span>     162 2013_2~ 2014020200  DEN       SEA       POST           21 SEA    
+#&gt; </span><span style='color: #555555;'> 8</span><span>     183 2013_2~ 2014020200  DEN       SEA       POST           21 SEA    
+#&gt; </span><span style='color: #555555;'> 9</span><span>     210 2013_2~ 2014020200  DEN       SEA       POST           21 SEA    
+#&gt; </span><span style='color: #555555;'>10</span><span>     232 2013_2~ 2014020200  DEN       SEA       POST           21 SEA    
+#&gt; </span><span style='color: #555555;'># ... with 346 more rows, and 307 more variables: posteam_type </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   defteam </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, side_of_field </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, yardline_100 </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, game_date </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   quarter_seconds_remaining </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, half_seconds_remaining </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   game_seconds_remaining </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, game_half </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, quarter_end </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   drive </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, sp </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, qtr </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, down </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, goal_to_go </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, time </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   yrdln </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, ydstogo </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, ydsnet </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, desc </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, play_type </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   yards_gained </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, shotgun </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, no_huddle </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, qb_dropback </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   qb_kneel </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, qb_spike </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, qb_scramble </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, pass_length </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   pass_location </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, air_yards </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, yards_after_catch </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   run_location </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, run_gap </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, field_goal_result </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   kick_distance </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, extra_point_result </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, two_point_conv_result </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   home_timeouts_remaining </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, away_timeouts_remaining </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   timeout </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, timeout_team </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, td_team </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   posteam_timeouts_remaining </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, defteam_timeouts_remaining </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   total_home_score </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, total_away_score </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, posteam_score </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   defteam_score </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, score_differential </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, posteam_score_post </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   defteam_score_post </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, score_differential_post </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   no_score_prob </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, opp_fg_prob </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, opp_safety_prob </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   opp_td_prob </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, fg_prob </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, safety_prob </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, td_prob </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   extra_point_prob </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, two_point_conversion_prob </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, ep </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   epa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, total_home_epa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, total_away_epa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   total_home_rush_epa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, total_away_rush_epa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   total_home_pass_epa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, total_away_pass_epa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, air_epa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   yac_epa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, comp_air_epa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, comp_yac_epa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   total_home_comp_air_epa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, total_away_comp_air_epa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   total_home_comp_yac_epa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, total_away_comp_yac_epa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   total_home_raw_air_epa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, total_away_raw_air_epa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   total_home_raw_yac_epa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, total_away_raw_yac_epa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, wp </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   def_wp </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, home_wp </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, away_wp </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, wpa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, home_wp_post </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   away_wp_post </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, vegas_wp </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, vegas_home_wp </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   total_home_rush_wpa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, total_away_rush_wpa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   total_home_pass_wpa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, total_away_pass_wpa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, air_wpa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   yac_wpa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, comp_air_wpa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, comp_yac_wpa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'>#   total_home_comp_air_wpa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, ...</span><span></div><div class='input'><span class='co'># }</span>
+</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -529,7 +578,7 @@ may be better to set <code>pp = FALSE</code> if you are scraping just a few game
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

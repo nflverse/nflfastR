@@ -18,7 +18,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="An R package to quickly obtain clean and tidy NFL play by play data">
-<meta property="og:description" content="A set of functions to efficiently scrape NFL play-by-play data.">
+<meta property="og:description" content="A set of functions to access National Football League play-by-play 
+  data from &lt;https://www.nfl.com/&gt;.">
 <meta property="og:image" content="https://raw.githubusercontent.com/mrcaseb/nflfastR/master/man/figures/card.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@nflfastR">
@@ -41,7 +42,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.0.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.1</span>
       </span>
     </div>
 
@@ -123,11 +124,15 @@
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<p>You can load and install nflfastR from <a href="https://github.com/mrcaseb/nflfastR/">GitHub</a> with:</p>
-<div class="sourceCode" id="cb1"><pre class="r"><span class="co"># If 'devtools' isn't installed run</span>
-<span class="co"># install.packages("devtools")</span>
-
-<span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span>(<span class="st">"mrcaseb/nflfastR"</span>)</pre></div>
+<p>The easiest way to get nflfastR is to install it from <a href="https://cran.r-project.org/package=nflfastR">CRAN</a> with:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"nflfastR"</span>)
+</pre></div>
+<p>To get a bug fix or to use a feature from the development version, you can install the development version of nflfastR from <a href="https://github.com/mrcaseb/nflfastR/">GitHub</a> with:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="co">if</span> (<span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span>(<span class="st">"remotes"</span>, quietly = <span class="fl">TRUE</span>)) {<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"remotes"</span>)}
+<span class="kw">remotes</span>::<span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"mrcaseb/nflfastR"</span>)
+</pre></div>
 </div>
 <div id="usage" class="section level2">
 <h2 class="hasAnchor">
@@ -144,9 +149,9 @@
 <a href="#nflfastr-models" class="anchor"></a>nflfastR models</h2>
 <p><code>nflfastR</code> uses its own models for Expected Points, Win Probability, Completion Probability, and Expected Yards After the Catch. To read about the models, please see <code><a href="articles/nflfastR-models.html">vignette("nflfastR-models")</a></code>. For a more detailed description of Expected Points models, we highly recommend this paper <a href="https://arxiv.org/pdf/1802.00998.pdf">from the nflscrapR team located here</a>.</p>
 <p>Here is a visualization of the Expected Points model by down and yardline.</p>
-<p><img src="reference/figures/readme-epa-model-1.png"><!-- --></p>
+<p><img src="https://github.com/mrcaseb/nflfastR/raw/master/man/figures/readme-epa-model-1.png" width="100%" style="display: block; margin: auto;"></p>
 <p>Here is a visualization of the Completion Probability model by air yards and pass direction.</p>
-<p><img src="reference/figures/readme-cp-model-1.png"><!-- --></p>
+<p><img src="https://github.com/mrcaseb/nflfastR/raw/master/man/figures/readme-cp-model-1.png" width="100%" style="display: block; margin: auto;"></p>
 <p><code>nflfastR</code> includes two win probability models: one with and one without incorporating the pre-game spread.</p>
 </div>
 <div id="special-thanks" class="section level2">
@@ -171,6 +176,8 @@
     <div class="links">
 <h2>Links</h2>
 <ul class="list-unstyled">
+<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=nflfastR">https://​cloud.r-project.org/​package=nflfastR</a>
+</li>
 <li>Browse source code at <br><a href="https://github.com/mrcaseb/nflfastR/">https://​github.com/​mrcaseb/​nflfastR/​</a>
 </li>
 <li>Report a bug at <br><a href="https://github.com/mrcaseb/nflfastR/issues">https://​github.com/​mrcaseb/​nflfastR/​issues</a>
@@ -204,8 +211,9 @@
   <div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/mrcaseb/nflfastR/actions"><img src="https://github.com/mrcaseb/nflfastR/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
+<li><a href="https://CRAN.R-project.org/package=nflfastR"><img src="https://www.r-pkg.org/badges/version/nflfastR" alt="CRAN status"></a></li>
 <li><a href="https://travis-ci.com/mrcaseb/nflfastR"><img src="https://travis-ci.com/mrcaseb/nflfastR.svg?branch=master" alt="Travis build status"></a></li>
+<li><a href="https://github.com/mrcaseb/nflfastR/actions"><img src="https://github.com/mrcaseb/nflfastR/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
 <li><a href="https://twitter.com/nflfastR"><img src="https://img.shields.io/twitter/follow/nflfastR.svg?style=social" alt="Twitter Follow"></a></li>
 </ul>
 </div>
@@ -218,7 +226,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

@@ -83,7 +83,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.0.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.1</span>
       </span>
     </div>
 
@@ -155,7 +155,7 @@
     <p>Clean Play by Play Data</p>
     </div>
 
-    <pre class="usage"><span class='fu'>clean_pbp</span>(<span class='no'>pbp</span>)</pre>
+    <pre class="usage"><span class='fu'>clean_pbp</span>(<span class='kw'>pbp</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -169,11 +169,14 @@
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>The input Data Frame of the paramter 'pbp' with the following columns
-added:</p><dl'>
+added:</p><dl>
 <dt>success</dt><dd><p>Binary indicator wheter epa &gt; 0 in the given play.</p></dd>
 <dt>passer</dt><dd><p>Name of the dropback player (scrambles included) including plays with penalties.</p></dd>
+<dt>passer_jersey_number</dt><dd><p>Jersey number of the passer.</p></dd>
 <dt>rusher</dt><dd><p>Name of the rusher (no scrambles) including plays with penalties.</p></dd>
+<dt>rusher_jersey_number</dt><dd><p>Jersey number of the rusher.</p></dd>
 <dt>receiver</dt><dd><p>Name of the receiver including plays with penalties.</p></dd>
+<dt>receiver_jersey_number</dt><dd><p>Jersey number of the receiver.</p></dd>
 <dt>pass</dt><dd><p>Binary indicator if the play was a pass play (sacks and scrambles included).</p></dd>
 <dt>rush</dt><dd><p>Binary indicator if the play was a rushing play.</p></dd>
 <dt>special</dt><dd><p>Binary indicator if the play was a special teams play.</p></dd>
@@ -184,6 +187,7 @@ added:</p><dl'>
 <dt>rusher_id</dt><dd><p>ID of the player in the 'rusher' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)</p></dd>
 <dt>receiver_id</dt><dd><p>ID of the player in the 'receiver' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)</p></dd>
 <dt>name</dt><dd><p>Name of the 'passer' if it is not 'NA', or name of the 'rusher' otherwise.</p></dd>
+<dt>jersey_number</dt><dd><p>Jersey number of the player listed in the 'name' column.</p></dd>
 <dt>id</dt><dd><p>ID of the player in the 'name' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)</p></dd>
 <dt>qb_epa</dt><dd><p>Gives QB credit for EPA for up to the point where a receiver lost a fumble after a completed catch and makes EPA work more like passing yards on plays with fumbles.</p></dd>
 
@@ -216,7 +220,7 @@ older era (1999-2010) and the new era (2011+).</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>
