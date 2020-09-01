@@ -7,14 +7,14 @@
 #' Get NFL Play by Play Data
 #'
 #' @param game_ids Vector of character ids (see details for further information)
-#' @param source Character - must now be \code{nfl} or unspecified (see details for further information)
+#' @param source Character - \code{nfl} for the NFL.com page or \code{live} for the live gamecenter (works for live games but less information)
 #' @param pp Logical - either \code{TRUE} or \code{FALSE} (see details for further information)
 #' @param ... Additional arguments passed to the scraping functions (for internal use)
 #' @details To load valid game_ids please use the package function \code{\link{fast_scraper_schedules}}.
 #'
 #' The \code{source} parameter controls from which source the data is being
 #' scraped. The old parameters \code{rs} as well as \code{gc}
-#' are not valid anymore. Please use \code{nfl} or leave unspecified.
+#' are not valid anymore. Please use \code{nfl} or \code{live}.
 #' The \code{pp} parameter controls if the scraper should use parallel processing.
 #' Please note that the initiating process takes a few seconds which means it
 #' may be better to set \code{pp = FALSE} if you are scraping just a few games.
@@ -347,8 +347,8 @@
 fast_scraper <- function(game_ids, source = "nfl", pp = FALSE, ...) {
 
   # Error handling to correct source type
-  if (source != "nfl") {
-    stop("You tried to specify a source that isn't the new NFL web page. Please remove source from your request or use source = 'nfl'. The 'source' option will soon be deprecated.")
+  if (!source %in% c("nfl", "live")) {
+    stop("You tried to specify a source that isn't the new NFL web page or the live source. Please remove source from your request, use source = 'nfl', or source = 'live'.")
   }
 
   # No parallel processing demanded -> use purrr
@@ -369,8 +369,8 @@ fast_scraper <- function(game_ids, source = "nfl", pp = FALSE, ...) {
 
       if(purrr::is_empty(pbp) == FALSE) {
         message("Download finished. Adding variables...")
-        pbp <- pbp  %>%
-          add_game_data() %>%
+        pbp <- pbp %>%
+          add_game_data(source) %>%
           add_nflscrapr_mutations() %>%
           add_ep() %>%
           add_air_yac_ep() %>%
@@ -411,7 +411,7 @@ fast_scraper <- function(game_ids, source = "nfl", pp = FALSE, ...) {
       if(purrr::is_empty(pbp) == FALSE) {
         message("Download finished. Adding variables...")
         pbp <- pbp %>%
-          add_game_data() %>%
+          add_game_data(source) %>%
           add_nflscrapr_mutations() %>%
           add_ep() %>%
           add_air_yac_ep() %>%

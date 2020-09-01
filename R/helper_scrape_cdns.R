@@ -4,7 +4,7 @@
 ################################################################################
 
 # Build a tidy version of scraped gamecenter data
-# Data exist since 1999
+# Data exist since 2009
 #
 # @param gameId Specifies the game
 
