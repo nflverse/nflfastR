@@ -1,4 +1,4 @@
-# nflfastR 2.3.0
+# nflfastR (development version)
 
 * Add option `source = "live"` to `fast_scraper()` to enable scraping of live games
 
