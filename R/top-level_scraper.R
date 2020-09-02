@@ -290,16 +290,16 @@
 #' \item{series_success}{1: scored touchdown, gained enough yards for first down.}
 #' \item{series_result}{Possible values: First down, Touchdown, Opp touchdown, Field goal, Missed field goal, Safety, Turnover, Punt, Turnover on downs, QB kneel, End of half}
 #' \item{start_time}{Kickoff time in eastern time zone.}
-#' \item{order_sequence}{Column provided by NFL to fix out-of-order plays. Available 2011 and beyond.}
-#' \item{time_of_day}{Time of day of play in UTC "HH:MM:SS" format. Available 2011 and beyond.}
+#' \item{order_sequence}{Column provided by NFL to fix out-of-order plays. Available 2011 and beyond with source "nfl".}
+#' \item{time_of_day}{Time of day of play in UTC "HH:MM:SS" format. Available 2011 and beyond with source "nfl".}
 #' \item{stadium}{Game site name.}
 #' \item{weather}{String describing the weather including temperature, humidity and wind (direction and speed). Doesn't change during the game!}
 #' \item{nfl_api_id}{UUID of the game in the new NFL API.}
 #' \item{play_clock}{Time on the playclock when the ball was snapped.}
 #' \item{play_deleted}{Binary indicator for deleted plays.}
 #' \item{play_type_nfl}{Play type as listed in the NFL source. Slightly different to the regular play_type variable.}
-#' \item{special_teams_play}{Binary indicator for whether play is special teams play from NFL source. Available 2011 and beyond.}
-#' \item{st_play_type}{Type of special teams play from NFL source. Available 2011 and beyond.}
+#' \item{special_teams_play}{Binary indicator for whether play is special teams play from NFL source. Available 2011 and beyond with source "nfl".}
+#' \item{st_play_type}{Type of special teams play from NFL source. Available 2011 and beyond with source "nfl".}
 #' \item{end_clock_time}{Game time at the end of a given play.}
 #' \item{end_yard_line}{String indicating the yardline at the end of the given play consisting of team half and yard line number.}
 #' \item{drive_real_start_time}{Local day time when the drive started (currently not used by the NFL and therefore mostly 'NA').}
