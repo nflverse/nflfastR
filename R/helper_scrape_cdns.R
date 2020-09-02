@@ -24,7 +24,21 @@ get_pbp_cdns <- function(gameId, dir = NULL) {
       # testing only
       # gameId = '2018090905'
 
-      season <- as.integer(substr(gameId, 1, 4))
+      date_parse <- stringr::str_extract(paste(gameId), pattern = "[0-9]{8}")
+      date_year <- stringr::str_sub(date_parse, 1, 4)
+      date_month <- stringr::str_sub(date_parse, 5, 6)
+      date_day <- stringr::str_sub(
+        date_parse, nchar(date_parse) - 1,
+        nchar(date_parse)
+      )
+
+      season <- dplyr::if_else(
+        as.numeric(date_month) <= 2, as.numeric(date_year) + 1, as.numeric(date_year)
+      )
+
+      if (season < 2009) {
+        warning(warn <- 2)
+      }
 
       url <- glue::glue("http://nflcdns.nfl.com/liveupdate/game-center/{gameId}/{gameId}_gtd.json")
 
@@ -40,24 +54,6 @@ get_pbp_cdns <- function(gameId, dir = NULL) {
         httr::content(as = "text", encoding = "UTF-8") %>%
         jsonlite::fromJSON(flatten = TRUE) %>%
         pluck(1)
-
-      date_parse <- stringr::str_extract(paste(gameId), pattern = "[0-9]{8}")
-      date_year <- stringr::str_sub(date_parse, 1, 4)
-      date_month <- stringr::str_sub(date_parse, 5, 6)
-      date_day <- stringr::str_sub(
-        date_parse, nchar(date_parse) - 1,
-        nchar(date_parse)
-      )
-
-      season <- dplyr::if_else(
-        as.numeric(date_month) <= 2, as.numeric(date_year) + 1, as.numeric(date_year)
-      )
-
-      # need to get week
-
-      if (date_year < 2009) {
-        warning(warn <- 2)
-      }
 
       # excluding last element since it's "crntdrv" and not an actual
       drives <- game_json$drives[-length(game_json$drives)]
@@ -230,7 +226,7 @@ get_pbp_cdns <- function(gameId, dir = NULL) {
       if (warn == 1) {
         message(glue::glue("You asked for {gameId}, which is broken. Skipping."))
       } else if (warn == 2) {
-        message(glue::glue("You asked a game from {date_year}, but data only goes back to 2009"))
+        message(glue::glue("You asked a game from {season} using the live source, but data only goes back to 2009. Please use source = 'nfl' for older seasons."))
       } else if (warn == 3) {
         message(glue::glue("Warning: The requested GameID {gameId} is invalid!"))
       } else if (warn == 4) {
