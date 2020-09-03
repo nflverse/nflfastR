@@ -52,11 +52,11 @@ test_that("Scraper with source nfl works for an old and new game at once: no pp"
   expect_identical(x2[2], desc_2_nfl_source)
 })
 
-# make sure live source works without pp
-x3 <- fast_scraper(game_ids %>% dplyr::pull(old_game_id), source = "live", pp = F) %>%
+# make sure live source works with pp
+x3 <- fast_scraper(game_ids %>% dplyr::pull(old_game_id), source = "live", pp = T) %>%
   extract_desc()
 
-test_that("Scraper with source live works for an old and new game at once: no pp", {
+test_that("Scraper with source live works for an old and new game at once: pp", {
   expect_identical(x3[1], desc_1_nfl_source)
   expect_identical(x3[2], desc_2_live_source)
 })
