@@ -1,5 +1,8 @@
 context("scrapers")
 
+# function to take some games and return
+# the first play description from each game
+# on a 1st down play
 extract_desc <- function(pbp) {
   pbp %>%
   add_qb_epa() %>%
