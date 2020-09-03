@@ -62,5 +62,3 @@ test_that("Scraper with source live works for an old and new game at once: no pp
   expect_identical(x4[1], desc_1_nfl_source)
   expect_identical(x4[2], desc_2_live_source)
 })
-
-
