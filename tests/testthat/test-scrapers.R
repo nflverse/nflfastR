@@ -18,7 +18,7 @@ x1 <- fast_scraper(game_ids %>% dplyr::pull(game_id), pp = T) %>%
   dplyr::ungroup() %>%
   dplyr::pull(desc)
 
-test_that("Scraper works for an old and new game at once: pp", {
+test_that("Scraper with source nfl works for an old and new game at once: pp", {
   expect_identical(x1[1], "(14:53) B.Roethlisberger pass short left to H.Ward to PIT 47 for 5 yards (C.Hope).")
   expect_identical(x1[2], "(15:00) 33-A.Jones left tackle to GB 25 for no gain (58-R.Smith).")
 })
@@ -33,7 +33,7 @@ x2 <- fast_scraper(game_ids %>% dplyr::pull(game_id), pp = F) %>%
   dplyr::ungroup() %>%
   dplyr::pull(desc)
 
-test_that("Scraper works for an old and new game at once: no pp", {
+test_that("Scraper with source nfl works for an old and new game at once: no pp", {
   expect_identical(x2[1], "(14:53) B.Roethlisberger pass short left to H.Ward to PIT 47 for 5 yards (C.Hope).")
   expect_identical(x2[2], "(15:00) 33-A.Jones left tackle to GB 25 for no gain (58-R.Smith).")
 })
@@ -48,13 +48,13 @@ x2 <- fast_scraper(game_ids %>% dplyr::pull(game_id), pp = F) %>%
   dplyr::ungroup() %>%
   dplyr::pull(desc)
 
-test_that("Scraper works for an old and new game at once: no pp", {
+test_that("Scraper with source nfl works for an old and new game at once: no pp", {
   expect_identical(x2[1], "(14:53) B.Roethlisberger pass short left to H.Ward to PIT 47 for 5 yards (C.Hope).")
   expect_identical(x2[2], "(15:00) 33-A.Jones left tackle to GB 25 for no gain (58-R.Smith).")
 })
 
 
-# make sure cdns source works without pp
+# make sure live source works without pp
 x3 <- fast_scraper(game_ids %>% dplyr::pull(old_game_id), source = "live", pp = F) %>%
   clean_pbp() %>%
   add_qb_epa() %>%
@@ -64,12 +64,12 @@ x3 <- fast_scraper(game_ids %>% dplyr::pull(old_game_id), source = "live", pp = 
   dplyr::ungroup() %>%
   dplyr::pull(desc)
 
-test_that("Scraper works for an old and new game at once: no pp", {
-  expect_identical(x2[1], "(14:53) B.Roethlisberger pass short left to H.Ward to PIT 47 for 5 yards (C.Hope).")
-  expect_identical(x2[2], "(15:00) 33-A.Jones left tackle to GB 25 for no gain (58-R.Smith).")
+test_that("Scraper with source live works for an old and new game at once: no pp", {
+  expect_identical(x3[1], "(14:53) B.Roethlisberger pass short left to H.Ward to PIT 47 for 5 yards (C.Hope).")
+  expect_identical(x3[2], "(15:00) 33-A.Jones left tackle to GB 25 for no gain (58-R.Smith).")
 })
 
-# make sure cdns source works without pp
+# make sure live source works without pp
 x4 <- fast_scraper(game_ids %>% dplyr::pull(old_game_id), source = "live", pp = F) %>%
   clean_pbp() %>%
   add_qb_epa() %>%
@@ -79,8 +79,8 @@ x4 <- fast_scraper(game_ids %>% dplyr::pull(old_game_id), source = "live", pp = 
   dplyr::ungroup() %>%
   dplyr::pull(desc)
 
-test_that("Scraper works for an old and new game at once: no pp", {
-  expect_identical(x2[1], "(14:53) B.Roethlisberger pass short left to H.Ward to PIT 47 for 5 yards (C.Hope).")
-  expect_identical(x2[2], "(15:00) 33-A.Jones left tackle to GB 25 for no gain (58-R.Smith).")
+test_that("Scraper with source live works for an old and new game at once: no pp", {
+  expect_identical(x4[1], "(14:53) B.Roethlisberger pass short left to H.Ward to PIT 47 for 5 yards (C.Hope).")
+  expect_identical(x4[2], "(15:00) 33-A.Jones left tackle to GB 25 for no gain (58-R.Smith).")
 })
 
