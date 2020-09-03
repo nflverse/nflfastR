@@ -22,6 +22,10 @@ game_ids <- dplyr::bind_rows(
     dplyr::slice(1)
 )
 
+###
+# section 1: make sure scrapers work and output looks right
+##
+
 # for checking play descriptions after scraping
 # the first is the same for both sources since it's a 2009 game
 desc_1_nfl_source <- "(14:53) B.Roethlisberger pass short left to H.Ward to PIT 47 for 5 yards (C.Hope)."
@@ -65,3 +69,18 @@ test_that("Scraper with source live works for an old and new game at once: no pp
   expect_identical(x4[1], desc_1_nfl_source)
   expect_identical(x4[2], desc_2_live_source)
 })
+
+###
+# section 2: make sure columns are identical across scrapers
+##
+g1 <- fast_scraper(game_ids %>% dplyr::slice(1) %>% dplyr::pull(game_id), source = "nfl", pp = F)
+g2 <- fast_scraper(game_ids %>% dplyr::slice(2) %>% dplyr::pull(game_id), source = "nfl", pp = F)
+g3 <- fast_scraper(game_ids %>% dplyr::slice(1) %>% dplyr::pull(old_game_id), source = "live", pp = F)
+
+test_that("Columns identical across all 3 possibilities", {
+  expect_identical(names(g1), names(g2))
+  expect_identical(names(g2), names(g3))
+})
+
+
+
