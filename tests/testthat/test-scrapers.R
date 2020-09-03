@@ -34,38 +34,47 @@ desc_2_nfl_source <- "(15:00) 33-A.Jones left tackle to GB 25 for no gain (58-R.
 desc_2_live_source <- "(15:00) A.Jones left tackle to GB 25 for no gain (R.Smith)."
 
 
-# make sure nfl source works with pp
-x1 <- fast_scraper(game_ids %>% dplyr::pull(game_id), pp = T) %>%
-  extract_desc()
-
 test_that("Scraper with source nfl works for an old and new game at once: pp", {
+
+  skip_if_not_installed('furrr')
+  skip_if_not_installed('future')
+
+  x1 <- fast_scraper(game_ids %>% dplyr::pull(game_id), pp = T) %>%
+    extract_desc()
+
   expect_identical(x1[1], desc_1_nfl_source)
   expect_identical(x1[2], desc_2_nfl_source)
 })
 
-# make sure nfl source works without pp
-x2 <- fast_scraper(game_ids %>% dplyr::pull(game_id), pp = F) %>%
-  extract_desc()
 
 test_that("Scraper with source nfl works for an old and new game at once: no pp", {
+
+  x2 <- fast_scraper(game_ids %>% dplyr::pull(game_id), pp = F) %>%
+    extract_desc()
+
   expect_identical(x2[1], desc_1_nfl_source)
   expect_identical(x2[2], desc_2_nfl_source)
 })
 
-# make sure live source works with pp
-x3 <- fast_scraper(game_ids %>% dplyr::pull(old_game_id), source = "live", pp = T) %>%
-  extract_desc()
 
 test_that("Scraper with source live works for an old and new game at once: pp", {
+
+  skip_if_not_installed('furrr')
+  skip_if_not_installed('future')
+
+  x3 <- fast_scraper(game_ids %>% dplyr::pull(old_game_id), source = "live", pp = T) %>%
+    extract_desc()
+
   expect_identical(x3[1], desc_1_nfl_source)
   expect_identical(x3[2], desc_2_live_source)
 })
 
-# make sure live source works without pp
-x4 <- fast_scraper(game_ids %>% dplyr::pull(old_game_id), source = "live", pp = F) %>%
-  extract_desc()
 
 test_that("Scraper with source live works for an old and new game at once: no pp", {
+
+  x4 <- fast_scraper(game_ids %>% dplyr::pull(old_game_id), source = "live", pp = F) %>%
+    extract_desc()
+
   expect_identical(x4[1], desc_1_nfl_source)
   expect_identical(x4[2], desc_2_live_source)
 })
@@ -73,6 +82,7 @@ test_that("Scraper with source live works for an old and new game at once: no pp
 ###
 # section 2: make sure columns are identical across scrapers
 ##
+
 g1 <- fast_scraper(game_ids %>% dplyr::slice(1) %>% dplyr::pull(game_id), source = "nfl", pp = F)
 g2 <- fast_scraper(game_ids %>% dplyr::slice(2) %>% dplyr::pull(game_id), source = "nfl", pp = F)
 g3 <- fast_scraper(game_ids %>% dplyr::slice(1) %>% dplyr::pull(old_game_id), source = "live", pp = F)
