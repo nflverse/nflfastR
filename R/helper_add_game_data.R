@@ -45,7 +45,7 @@ add_game_data <- function(pbp, source = "nfl") {
           dplyr::left_join(
             readRDS(url(url)) %>%
               dplyr::rename(
-                actual_id = game_id
+                actual_id = .data$game_id
               ) %>%
               dplyr::select(
                 "actual_id", "old_game_id", "week", "away_score", "home_score", "location", "result", "total",
@@ -59,8 +59,8 @@ add_game_data <- function(pbp, source = "nfl") {
             game_date = .data$gameday
           ) %>%
           dplyr::rename(
-            old_game_id = game_id,
-            game_id = actual_id
+            old_game_id = .data$game_id,
+            game_id = .data$actual_id
           )
 
       }
