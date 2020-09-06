@@ -1,3 +1,7 @@
+# nflfastR (development version)
+
+* Add option `source = "live"` to `fast_scraper()` to enable scraping of live games
+
 # nflfastR 2.2.1
 
 * Fix `add_xyac()` breaking with some old packages

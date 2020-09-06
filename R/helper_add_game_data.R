@@ -9,7 +9,7 @@
 #' @importFrom httr HEAD
 #' @importFrom glue glue
 #' @importFrom rlang .data
-add_game_data <- function(pbp) {
+add_game_data <- function(pbp, source = "nfl") {
   out <- pbp
   tryCatch(
     expr = {
@@ -21,20 +21,49 @@ add_game_data <- function(pbp) {
         warning(warn <- 1)
       }
 
-      out <- out %>%
-        dplyr::left_join(
-          readRDS(url(url)) %>%
-            dplyr::select(
-              "game_id", "old_game_id", "away_score", "home_score", "location", "result", "total",
-              "spread_line", "total_line", "div_game", "roof", "surface", "temp", "wind",
-              "home_coach", "away_coach", "stadium", "stadium_id", "gameday"
-            ) %>%
-            dplyr::rename(game_stadium = "stadium"),
-          by = c("game_id")
-        ) %>%
-        dplyr::mutate(
-          game_date = .data$gameday
-        )
+      if (source != "live") {
+
+        out <- out %>%
+          dplyr::left_join(
+            readRDS(url(url)) %>%
+              dplyr::select(
+                "game_id", "old_game_id", "away_score", "home_score", "location", "result", "total",
+                "spread_line", "total_line", "div_game", "roof", "surface", "temp", "wind",
+                "home_coach", "away_coach", "stadium", "stadium_id", "gameday"
+              ) %>%
+              dplyr::rename(game_stadium = "stadium"),
+            by = c("game_id")
+          ) %>%
+          dplyr::mutate(
+            game_date = .data$gameday
+          )
+
+      } else {
+
+        out <- out %>%
+          dplyr::select(-"week") %>%
+          dplyr::left_join(
+            readRDS(url(url)) %>%
+              dplyr::rename(
+                actual_id = game_id
+              ) %>%
+              dplyr::select(
+                "actual_id", "old_game_id", "week", "away_score", "home_score", "location", "result", "total",
+                "spread_line", "total_line", "div_game", "roof", "surface", "temp", "wind",
+                "home_coach", "away_coach", "stadium", "stadium_id", "gameday"
+              ) %>%
+              dplyr::rename(game_stadium = "stadium"),
+            by = c("game_id" = "old_game_id")
+          ) %>%
+          dplyr::mutate(
+            game_date = .data$gameday
+          ) %>%
+          dplyr::rename(
+            old_game_id = game_id,
+            game_id = actual_id
+          )
+
+      }
 
       message("added game variables")
     },

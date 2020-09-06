@@ -6,15 +6,15 @@
 
 #' Get NFL Play by Play Data
 #'
-#' @param game_ids Vector of character ids (see details for further information)
-#' @param source Character - must now be \code{nfl} or unspecified (see details for further information)
+#' @param game_ids Vector of character ids (see details for further information).
+#' @param source Character - \code{nfl} for the NFL.com page or \code{live} for the live gamecenter (works for live games but less information). For \code{live}, old_game_id must be supplied
 #' @param pp Logical - either \code{TRUE} or \code{FALSE} (see details for further information)
 #' @param ... Additional arguments passed to the scraping functions (for internal use)
 #' @details To load valid game_ids please use the package function \code{\link{fast_scraper_schedules}}.
 #'
 #' The \code{source} parameter controls from which source the data is being
 #' scraped. The old parameters \code{rs} as well as \code{gc}
-#' are not valid anymore. Please use \code{nfl} or leave unspecified.
+#' are not valid anymore. Please use \code{nfl} or \code{live}.
 #' The \code{pp} parameter controls if the scraper should use parallel processing.
 #' Please note that the initiating process takes a few seconds which means it
 #' may be better to set \code{pp = FALSE} if you are scraping just a few games.
@@ -290,16 +290,16 @@
 #' \item{series_success}{1: scored touchdown, gained enough yards for first down.}
 #' \item{series_result}{Possible values: First down, Touchdown, Opp touchdown, Field goal, Missed field goal, Safety, Turnover, Punt, Turnover on downs, QB kneel, End of half}
 #' \item{start_time}{Kickoff time in eastern time zone.}
-#' \item{order_sequence}{Column provided by NFL to fix out-of-order plays. Available 2011 and beyond.}
-#' \item{time_of_day}{Time of day of play in UTC "HH:MM:SS" format. Available 2011 and beyond.}
+#' \item{order_sequence}{Column provided by NFL to fix out-of-order plays. Available 2011 and beyond with source "nfl".}
+#' \item{time_of_day}{Time of day of play in UTC "HH:MM:SS" format. Available 2011 and beyond with source "nfl".}
 #' \item{stadium}{Game site name.}
 #' \item{weather}{String describing the weather including temperature, humidity and wind (direction and speed). Doesn't change during the game!}
 #' \item{nfl_api_id}{UUID of the game in the new NFL API.}
 #' \item{play_clock}{Time on the playclock when the ball was snapped.}
 #' \item{play_deleted}{Binary indicator for deleted plays.}
 #' \item{play_type_nfl}{Play type as listed in the NFL source. Slightly different to the regular play_type variable.}
-#' \item{special_teams_play}{Binary indicator for whether play is special teams play from NFL source. Available 2011 and beyond.}
-#' \item{st_play_type}{Type of special teams play from NFL source. Available 2011 and beyond.}
+#' \item{special_teams_play}{Binary indicator for whether play is special teams play from NFL source. Available 2011 and beyond with source "nfl".}
+#' \item{st_play_type}{Type of special teams play from NFL source. Available 2011 and beyond with source "nfl".}
 #' \item{end_clock_time}{Game time at the end of a given play.}
 #' \item{end_yard_line}{String indicating the yardline at the end of the given play consisting of team half and yard line number.}
 #' \item{drive_real_start_time}{Local day time when the drive started (currently not used by the NFL and therefore mostly 'NA').}
@@ -347,8 +347,8 @@
 fast_scraper <- function(game_ids, source = "nfl", pp = FALSE, ...) {
 
   # Error handling to correct source type
-  if (source != "nfl") {
-    stop("You tried to specify a source that isn't the new NFL web page. Please remove source from your request or use source = 'nfl'. The 'source' option will soon be deprecated.")
+  if (!source %in% c("nfl", "live")) {
+    stop("You tried to specify a source that isn't the new NFL web page or the live source. Please remove source from your request, use source = 'nfl', or source = 'live'.")
   }
 
   # No parallel processing demanded -> use purrr
@@ -357,10 +357,12 @@ fast_scraper <- function(game_ids, source = "nfl", pp = FALSE, ...) {
       progressr::with_progress({
         p <- progressr::progressor(along = game_ids)
         pbp <- purrr::map_dfr(game_ids, function(x, ...){
-          if (substr(x, 1, 4) < 2011) {
+          if (substr(x, 1, 4) < 2011 & source == "nfl") {
             plays <- get_pbp_gc(x, ...)
-          } else {
+          } else if (source == "nfl") {
             plays <- get_pbp_nfl(x, ...)
+          } else {
+            plays <- get_pbp_cdns(x, ...)
           }
           p(sprintf("x=%s", as.character(x)))
           return(plays)
@@ -369,8 +371,8 @@ fast_scraper <- function(game_ids, source = "nfl", pp = FALSE, ...) {
 
       if(purrr::is_empty(pbp) == FALSE) {
         message("Download finished. Adding variables...")
-        pbp <- pbp  %>%
-          add_game_data() %>%
+        pbp <- pbp %>%
+          add_game_data(source) %>%
           add_nflscrapr_mutations() %>%
           add_ep() %>%
           add_air_yac_ep() %>%
@@ -398,10 +400,12 @@ fast_scraper <- function(game_ids, source = "nfl", pp = FALSE, ...) {
         p <- progressr::progressor(along = game_ids)
         future::plan("multiprocess")
         pbp <- furrr::future_map_dfr(game_ids, function(x, ...){
-          if (substr(x, 1, 4) < 2011) {
-            plays <- get_pbp_gc(x,  ...)
-          } else {
+          if (substr(x, 1, 4) < 2011 & source == "nfl") {
+            plays <- get_pbp_gc(x, ...)
+          } else if (source == "nfl") {
             plays <- get_pbp_nfl(x, ...)
+          } else {
+            plays <- get_pbp_cdns(x, ...)
           }
           p(sprintf("x=%s", as.character(x)))
           return(plays)
@@ -411,7 +415,7 @@ fast_scraper <- function(game_ids, source = "nfl", pp = FALSE, ...) {
       if(purrr::is_empty(pbp) == FALSE) {
         message("Download finished. Adding variables...")
         pbp <- pbp %>%
-          add_game_data() %>%
+          add_game_data(source) %>%
           add_nflscrapr_mutations() %>%
           add_ep() %>%
           add_air_yac_ep() %>%
