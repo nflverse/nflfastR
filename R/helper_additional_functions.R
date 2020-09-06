@@ -163,19 +163,28 @@ clean_pbp <- function(pbp) {
     dplyr::mutate(index = 1 : dplyr::n()) %>% # to re-sort after all the group_bys
 
     dplyr::group_by(.data$passer, .data$posteam, .data$season) %>%
-    dplyr::mutate(passer_id = dplyr::if_else(is.na(.data$passer), NA_character_, custom_mode(.data$passer_player_id))) %>%
+    dplyr::mutate(
+      passer_id = dplyr::if_else(is.na(.data$passer), NA_character_, custom_mode(.data$passer_player_id)),
+      passer_jersey_number = dplyr::if_else(is.na(.data$passer), NA_integer_, custom_mode(.data$passer_jersey_number))
+    ) %>%
 
     dplyr::group_by(.data$passer_id) %>%
     dplyr::mutate(passer = dplyr::if_else(is.na(.data$passer_id), NA_character_, custom_mode(.data$passer))) %>%
 
     dplyr::group_by(.data$rusher, .data$posteam, .data$season) %>%
-    dplyr::mutate(rusher_id = dplyr::if_else(is.na(.data$rusher), NA_character_, custom_mode(.data$rusher_player_id))) %>%
+    dplyr::mutate(
+      rusher_id = dplyr::if_else(is.na(.data$rusher), NA_character_, custom_mode(.data$rusher_player_id)),
+      rusher_jersey_number = dplyr::if_else(is.na(.data$rusher), NA_integer_, custom_mode(.data$rusher_jersey_number))
+    ) %>%
 
     dplyr::group_by(.data$rusher_id) %>%
     dplyr::mutate(rusher = dplyr::if_else(is.na(.data$rusher_id), NA_character_, custom_mode(.data$rusher))) %>%
 
     dplyr::group_by(.data$receiver, .data$posteam, .data$season) %>%
-    dplyr::mutate(receiver_id = dplyr::if_else(is.na(.data$receiver), NA_character_, custom_mode(.data$receiver_player_id))) %>%
+    dplyr::mutate(
+      receiver_id = dplyr::if_else(is.na(.data$receiver), NA_character_, custom_mode(.data$receiver_player_id)),
+      receiver_jersey_number = dplyr::if_else(is.na(.data$receiver), NA_integer_, custom_mode(.data$receiver_jersey_number))
+    ) %>%
 
     dplyr::group_by(.data$receiver_id) %>%
     dplyr::mutate(receiver = dplyr::if_else(is.na(.data$receiver_id), NA_character_, custom_mode(.data$receiver))) %>%
