@@ -1,6 +1,7 @@
 # nflfastR (development version)
 
 * Add option `source = "live"` to `fast_scraper()` to enable scraping of live games
+* `clean_pbp()` now fixes some bugs in jersey numbers
 
 # nflfastR 2.2.1
 
