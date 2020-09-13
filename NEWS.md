@@ -2,6 +2,7 @@
 
 * Add option `source = "live"` to `fast_scraper()` to enable scraping of live games
 * `clean_pbp()` now fixes some bugs in jersey numbers
+* Fix empty line causing `fast_scraper()` to fail (affects week 1 Packers-Vikings)
 
 # nflfastR 2.2.1
 
