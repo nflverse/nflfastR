@@ -226,7 +226,7 @@ get_pbp_cdns <- function(gameId, dir = NULL) {
       if (warn == 1) {
         message(glue::glue("You asked for {gameId}, which is broken. Skipping."))
       } else if (warn == 2) {
-        message(glue::glue("You asked a game from {season} using the live source, but data only goes back to 2009. Please use source = 'nfl' for older seasons."))
+        message(glue::glue("You asked a game from {season} using the old source, but data only goes back to 2009. Please use source = 'nfl' for older seasons."))
       } else if (warn == 3) {
         message(glue::glue("Warning: The requested GameID {gameId} is invalid!"))
       } else if (warn == 4) {
