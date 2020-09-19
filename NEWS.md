@@ -1,6 +1,7 @@
 # nflfastR (development version)
 
-* Add option `source = "live"` to `fast_scraper()` to enable scraping of live games
+* Add option `source = "old"` to `fast_scraper()` to enable scraping of old source.
+This is mostly useless as it doesn't work for 2020 and provides less info
 * `clean_pbp()` now fixes some bugs in jersey numbers
 * Fix empty line causing `fast_scraper()` to fail (affects week 1 Packers-Vikings)
 * Fix bug in `fixed_drive` that counted PAT after defensive TD as its own drive
