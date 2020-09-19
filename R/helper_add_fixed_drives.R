@@ -26,8 +26,14 @@ add_drive_results <- function(d) {
           (.data$posteam != dplyr::lag(.data$posteam, 3) & is.na(dplyr::lag(.data$posteam, 2)) & is.na(dplyr::lag(.data$posteam))),
         1, 0
       ),
+      # PAT after defensive TD is not a new drive
+      new_drive = dplyr::if_else(
+        dplyr::lag(.data$touchdown == 1) & (dplyr::lag(.data$posteam) != dplyr::lag(.data$td_team)),
+        0,
+        .data$new_drive),
       # first observation of a half is also a new drive
       new_drive = dplyr::if_else(.data$row == 1, 1, .data$new_drive),
+      # if there's a missing, make it not a new drive (0)
       new_drive = dplyr::if_else(is.na(.data$new_drive), 0, .data$new_drive)
     ) %>%
     dplyr::group_by(.data$game_id) %>%
