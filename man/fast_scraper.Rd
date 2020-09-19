@@ -9,7 +9,7 @@ fast_scraper(game_ids, source = "nfl", pp = FALSE, ...)
 \arguments{
 \item{game_ids}{Vector of character ids (see details for further information).}
 
-\item{source}{Character - \code{nfl} for the NFL.com page or \code{live} for the live gamecenter (works for live games but less information). For \code{live}, old_game_id must be supplied}
+\item{source}{Character - \code{nfl} for the NFL.com page or \code{old} for the old gamecenter. For \code{old}, old_game_id must be supplied}
 
 \item{pp}{Logical - either \code{TRUE} or \code{FALSE} (see details for further information)}
 
@@ -345,7 +345,7 @@ To load valid game_ids please use the package function \code{\link{fast_scraper_
 
 The \code{source} parameter controls from which source the data is being
 scraped. The old parameters \code{rs} as well as \code{gc}
-are not valid anymore. Please use \code{nfl} or \code{live}.
+are not valid anymore. Please use \code{nfl} or \code{old}.
 The \code{pp} parameter controls if the scraper should use parallel processing.
 Please note that the initiating process takes a few seconds which means it
 may be better to set \code{pp = FALSE} if you are scraping just a few games.

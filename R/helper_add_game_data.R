@@ -21,7 +21,7 @@ add_game_data <- function(pbp, source = "nfl") {
         warning(warn <- 1)
       }
 
-      if (source != "live") {
+      if (source != "old") {
 
         out <- out %>%
           dplyr::left_join(
