@@ -6,6 +6,7 @@ This is mostly useless as it doesn't work for 2020 and provides less info
 * Fix empty line causing `fast_scraper()` to fail (affects multiple games of the 2020 season)
 * Fix bug in `fixed_drive` that counted PAT after defensive TD as its own drive
 * `clean_pbp()`, `add_qb_epa()` and `add_xyac()` can now handle empty data frames
+* Fixed a bug which caused too high number of tackles in special cases (#85)
 
 # nflfastR 2.2.1
 
