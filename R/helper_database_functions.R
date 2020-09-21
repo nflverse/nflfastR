@@ -81,12 +81,16 @@ update_db <- function(dbdir = ".",
       add_qb_epa() %>%
       add_xyac()
 
-    message("Appending new data to database...")
-    RSQLite::dbWriteTable(connection, tblname, new_pbp, append = TRUE)
+    if (nrow(new_pbp) == 0) {
+      message("Raw data of new games are not yet ready. Please try again in about 10 minutes.")
+    } else {
+      message("Appending new data to database...")
+      RSQLite::dbWriteTable(connection, tblname, new_pbp, append = TRUE)
+    }
   }
 
   DBI::dbDisconnect(connection)
-  #message("Database update completed.")
+  message("Procedure completed.")
 }
 
 # this is a helper function to build nflfastR database from Scratch
