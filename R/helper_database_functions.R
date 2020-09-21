@@ -90,7 +90,7 @@ update_db <- function(dbdir = ".",
   }
 
   DBI::dbDisconnect(connection)
-  message("Procedure completed.")
+  message("Database update completed.")
 }
 
 # this is a helper function to build nflfastR database from Scratch
