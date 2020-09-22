@@ -11,22 +11,28 @@
 #' The \code{force_rebuild} parameter controls if the data table within the
 #' database (not the database itself because there might be other data in it)
 #' should be removed and rebuilt from scratch (mostly because of bugfixes in
-#' nflfastR or its underlying data)
+#' nflfastR or its underlying data).
+#'
+#' The parameter \code{db_connection} is intended for advanced users who want
+#' to use other DBI drivers, such as MariaDB, Postgres or odbc.
 #'
 #' @param dbdir Directory in which the database is or shall be located
 #' @param dbname File name of an existing or desired SQLite database within \code{dbdir}
 #' @param tblname The name of the play by play data table within the database
 #' @param force_rebuild Logical parameter to rebuild the play by play data table
 #' within the database from scratch in case the cleaned data were updated
+#' @param db_connection A \code{DBIConnection} object, as returned by
+#' \code{\link[DBI]{dbConnect}}
 #' @importFrom rlang .data
 #' @export
 update_db <- function(dbdir = ".",
                       dbname = "pbp_db",
                       tblname = "nflfastR_pbp",
-                      force_rebuild = FALSE) {
+                      force_rebuild = FALSE,
+                      db_connection = NULL) {
 
   if (!requireNamespace("DBI", quietly = TRUE) |
-    !requireNamespace("RSQLite", quietly = TRUE)) {
+    (!requireNamespace("RSQLite", quietly = TRUE) & is.null(db_connection))) {
     stop("Packages \"DBI\" and \"RSQLite\" needed for database communication. Please install them.")
   }
 
@@ -34,12 +40,15 @@ update_db <- function(dbdir = ".",
   db <- glue::glue("{dbdir}/{dbname}")
 
   # create db if it doesn't exist or user forces rebuild
-  if (!file.exists(db)) {
+  if (!file.exists(db) & is.null(db_connection)) {
     message(glue::glue("Can't find database {db}. Will try to create it and load the play by play data into the data table \"{tblname}\"."))
-    build_db(dbdir, dbname, tblname)
-  } else if (file.exists(db) & force_rebuild) {
+    build_db(dbdir, dbname, tblname, db_connection)
+  } else if (file.exists(db) & force_rebuild & is.null(db_connection)) {
     message(glue::glue("Start rebuilding the data table \"{tblname}\" in your database {db}."))
-    build_db(dbdir, dbname, tblname)
+    build_db(dbdir, dbname, tblname, db_connection)
+  } else if (force_rebuild & !is.null(db_connection)) {
+    message(glue::glue("Start rebuilding the data table in your connected database."))
+    build_db(dbdir, dbname, tblname, db_connection)
   }
 
   # get completed games using Lee's file (thanks Lee!)
@@ -50,8 +59,12 @@ update_db <- function(dbdir = ".",
     dplyr::arrange(.data$gameday) %>%
     dplyr::pull(.data$game_id)
 
-  #message("Connecting to database...")
-  connection <- DBI::dbConnect(RSQLite::SQLite(), db)
+
+  if (is.null(db_connection)) {
+    connection <- DBI::dbConnect(RSQLite::SQLite(), db)
+  } else {
+    connection <- db_connection
+  }
 
   # function below
   missing <- get_missing_games(completed_games, connection, tblname)
@@ -60,8 +73,12 @@ update_db <- function(dbdir = ".",
   if(length(missing) >= 50) {
     DBI::dbDisconnect(connection)
     message("The number of missing games is so large that rebuilding the database is more efficient.")
-    build_db(dbdir, dbname, tblname)
-    connection <- DBI::dbConnect(RSQLite::SQLite(), db)
+    build_db(dbdir, dbname, tblname, db_connection)
+    if (is.null(db_connection)) {
+      connection <- DBI::dbConnect(RSQLite::SQLite(), db)
+    } else {
+      connection <- db_connection
+    }
     missing <- get_missing_games(completed_games, connection, tblname)
   }
 
@@ -75,6 +92,11 @@ update_db <- function(dbdir = ".",
       is_installed_furrr <- TRUE
     }
 
+    # prevent the fast_scraper() warning for pp = TRUE with less than 5 games
+    if (is_installed_furrr == TRUE & length(missing) < 5) {
+      is_installed_furrr <- FALSE
+    }
+
     message(glue::glue("Starting download of {length(missing)} games ..."))
     new_pbp <- fast_scraper(missing, pp = is_installed_furrr) %>%
       clean_pbp() %>%
@@ -85,7 +107,7 @@ update_db <- function(dbdir = ".",
       message("Raw data of new games are not yet ready. Please try again in about 10 minutes.")
     } else {
       message("Appending new data to database...")
-      RSQLite::dbWriteTable(connection, tblname, new_pbp, append = TRUE)
+      DBI::dbWriteTable(connection, tblname, new_pbp, append = TRUE)
     }
   }
 
@@ -94,8 +116,8 @@ update_db <- function(dbdir = ".",
 }
 
 # this is a helper function to build nflfastR database from Scratch
-build_db <- function(dbdir = ".", dbname = "pbp_db", tblname = "nflfastR_pbp") {
-  if (!dir.exists(dbdir)) {
+build_db <- function(dbdir = ".", dbname = "pbp_db", tblname = "nflfastR_pbp", db_conn) {
+  if (!dir.exists(dbdir) & is.null(db_conn)) {
     message(glue::glue("Directory {dbdir} doesn't exist yet. Try creating..."))
     dir.create(dbdir)
   }
@@ -103,7 +125,11 @@ build_db <- function(dbdir = ".", dbname = "pbp_db", tblname = "nflfastR_pbp") {
   db <- glue::glue("{dbdir}/{dbname}")
 
   #message("Connecting to database...")
-  connection <- DBI::dbConnect(RSQLite::SQLite(), db)
+  if (is.null(db_conn)) {
+    connection <- DBI::dbConnect(RSQLite::SQLite(), db)
+  } else {
+    connection <- db_conn
+  }
 
   if (DBI::dbExistsTable(connection, tblname)) {
     message(glue::glue("Purging old {tblname} table from database..."))
@@ -132,7 +158,7 @@ load_cleaned_pbp <- function(season, dbConnection, p, tablename) {
   pbp_cleaned <- readRDS(
     url(glue::glue("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_{season}.rds"))
   )
-  RSQLite::dbWriteTable(dbConnection, tablename, pbp_cleaned, append = TRUE)
+  DBI::dbWriteTable(dbConnection, tablename, pbp_cleaned, append = TRUE)
   p(sprintf("season=%g", season))
 }
 
