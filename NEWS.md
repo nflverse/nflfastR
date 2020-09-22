@@ -10,6 +10,7 @@ This is mostly useless as it doesn't work for 2020 and provides less info
 use other DBI drivers, such as `RMariaDB::MariaDB()`, `RPostgres::Postgres()` or 
 `odbc::odbc()` (please see [dbplyr](https://dbplyr.tidyverse.org/articles/dbplyr.html)
 for more information)
+* Fixed a bug which caused too high number of tackles in special cases (#85)
 
 # nflfastR 2.2.1
 
