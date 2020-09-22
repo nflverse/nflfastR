@@ -64,7 +64,7 @@ prepare_cp_data <- function(pbp) {
       valid_pass = dplyr::if_else(
         (.data$complete_pass == 1 | .data$incomplete_pass == 1 | .data$interception == 1) &
           !is.na(.data$air_yards) & .data$air_yards >= -15 & .data$air_yards < 70 &
-          !is.na(.data$receiver_player_name) & !is.na(.data$pass_location),
+          (!is.na(.data$receiver_player_name) | !is.na(.data$receiver_player_id)) & !is.na(.data$pass_location),
         1, 0
       )
     ) %>%
