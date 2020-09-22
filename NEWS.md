@@ -7,6 +7,7 @@ This is mostly useless as it doesn't work for 2020 and provides less info
 * Fix bug in `fixed_drive` that counted PAT after defensive TD as its own drive
 * `clean_pbp()`, `add_qb_epa()` and `add_xyac()` can now handle empty data frames
 * Fixed a bug which caused too high number of tackles in special cases (#85)
+* Fixed a bug where CPOE was NA when targeting players with apostrophe in last name
 
 # nflfastR 2.2.1
 
