@@ -819,102 +819,46 @@ sum_play_stats <- function(play_Id, stats) {
           row$solo_tackle_2_team
         )
     } else if (stat_id == 80) {
-      row$assist_tackle <- 1
-      row$assist_tackle_1_player_id <-
+      row$tackle_with_assist <- 1
+      row$tackle_with_assist_1_player_id <-
         if_else(
-          is.na(row$assist_tackle_1_player_id),
+          is.na(row$tackle_with_assist_1_player_id),
           play_stats$player.esbId[index],
-          row$assist_tackle_1_player_id
+          row$tackle_with_assist_1_player_id
         )
-      row$assist_tackle_1_player_name <-
+      row$tackle_with_assist_1_player_name <-
         if_else(
-          is.na(row$assist_tackle_1_player_name),
+          is.na(row$tackle_with_assist_1_player_name),
           play_stats$player.displayName[index],
-          row$assist_tackle_1_player_name
+          row$tackle_with_assist_1_player_name
         )
-      row$assist_tackle_1_team <-
+      row$tackle_with_assist_1_team <-
         if_else(
-          is.na(row$assist_tackle_1_team),
+          is.na(row$tackle_with_assist_1_team),
           play_stats$teamAbbr[index],
-          row$assist_tackle_1_team
+          row$tackle_with_assist_1_team
         )
-      row$assist_tackle_2_player_id <-
+      row$tackle_with_assist_2_player_id <-
         if_else(
-          is.na(row$assist_tackle_2_player_id) &
-            row$assist_tackle_1_player_id != play_stats$player.esbId[index],
+          is.na(row$tackle_with_assist_2_player_id) &
+            row$tackle_with_assist_1_player_id != play_stats$player.esbId[index],
           play_stats$player.esbId[index],
-          row$assist_tackle_2_player_id
+          row$tackle_with_assist_2_player_id
         )
-      row$assist_tackle_2_player_name <-
+      row$tackle_with_assist_2_player_name <-
         if_else(
-          is.na(row$assist_tackle_2_player_name) &
-            row$assist_tackle_1_player_name != play_stats$player.displayName[index],
+          is.na(row$tackle_with_assist_2_player_name) &
+            row$tackle_with_assist_1_player_name != play_stats$player.displayName[index],
           play_stats$player.displayName[index],
-          row$assist_tackle_2_player_name
+          row$tackle_with_assist_2_player_name
         )
-      row$assist_tackle_2_team <-
+      row$tackle_with_assist_2_team <-
         if_else(
-          is.na(row$assist_tackle_2_team) &
-            row$assist_tackle_1_player_name != play_stats$player.displayName[index],
-            # row$assist_tackle_1_team != play_stats$teamAbbr[index],
+          is.na(row$tackle_with_assist_2_team) &
+            row$tackle_with_assist_1_player_name != play_stats$player.displayName[index],
+            # row$tackle_with_assist_1_team != play_stats$teamAbbr[index],
           play_stats$teamAbbr[index],
-          row$assist_tackle_2_team
-        )
-      row$assist_tackle_3_player_id <-
-        if_else(
-          (is.na(row$assist_tackle_3_player_id) &
-            row$assist_tackle_1_player_id != play_stats$player.esbId[index] &
-             row$assist_tackle_2_player_id != play_stats$player.esbId[index]),
-          play_stats$player.esbId[index],
-          row$assist_tackle_3_player_id
-        )
-      row$assist_tackle_3_player_name <-
-        if_else(
-          (is.na(row$assist_tackle_3_player_name) &
-            row$assist_tackle_1_player_name != play_stats$player.displayName[index] &
-             row$assist_tackle_2_player_name != play_stats$player.displayName[index]),
-          play_stats$player.displayName[index],
-          row$assist_tackle_3_player_name
-        )
-      row$assist_tackle_3_team <-
-        if_else(
-          (is.na(row$assist_tackle_3_team) &
-             row$assist_tackle_1_player_name != play_stats$player.displayName[index] &
-             row$assist_tackle_2_player_name != play_stats$player.displayName[index]),
-             # row$assist_tackle_1_team != play_stats$teamAbbr[index] &
-             #  row$assist_tackle_2_team != play_stats$teamAbbr[index]),
-          play_stats$teamAbbr[index],
-          row$assist_tackle_3_team
-        )
-      row$assist_tackle_4_player_id <-
-        if_else(
-          (is.na(row$assist_tackle_4_player_id) &
-            row$assist_tackle_1_player_id != play_stats$player.esbId[index] &
-             row$assist_tackle_2_player_id != play_stats$player.esbId[index] &
-             row$assist_tackle_3_player_id != play_stats$player.esbId[index]),
-          play_stats$player.esbId[index],
-          row$assist_tackle_4_player_id
-        )
-      row$assist_tackle_4_player_name <-
-        if_else(
-          (is.na(row$assist_tackle_4_player_name) &
-            row$assist_tackle_1_player_name != play_stats$player.displayName[index] &
-             row$assist_tackle_2_player_name != play_stats$player.displayName[index] &
-             row$assist_tackle_3_player_name != play_stats$player.displayName[index]),
-          play_stats$player.displayName[index],
-          row$assist_tackle_4_player_name
-        )
-      row$assist_tackle_4_team <-
-        if_else(
-          (is.na(row$assist_tackle_4_team) &
-             row$assist_tackle_1_player_name != play_stats$player.displayName[index] &
-             row$assist_tackle_2_player_name != play_stats$player.displayName[index] &
-             row$assist_tackle_3_player_name != play_stats$player.displayName[index]),
-            # row$assist_tackle_1_team != play_stats$teamAbbr[index] &
-            #  row$assist_tackle_2_team != play_stats$teamAbbr[index] &
-            #  row$assist_tackle_3_team != play_stats$teamAbbr[index]),
-          play_stats$teamAbbr[index],
-          row$assist_tackle_4_team
+          row$tackle_with_assist_2_team
         )
     } else if (stat_id == 82) { # =81
       row$assist_tackle <- 1
@@ -1443,6 +1387,14 @@ pbp_stat_columns <-
     "assist_tackle_4_player_id",
     "assist_tackle_4_player_name",
     "assist_tackle_4_team",
+    # new for stat ID 80 -> tackle_with_assist
+    "tackle_with_assist_1_player_id",
+    "tackle_with_assist_1_player_name",
+    "tackle_with_assist_1_team",
+    "tackle_with_assist_2_player_id",
+    "tackle_with_assist_2_player_name",
+    "tackle_with_assist_2_team",
+
     "pass_defense_1_player_id",
     "pass_defense_1_player_name",
     "pass_defense_2_player_id",
@@ -1550,6 +1502,9 @@ indicator_stats <- c(
   "fumble",
   "complete_pass",
   "assist_tackle",
+  # new for stat ID 80 -> tackle_with_assist
+  "tackle_with_assist",
+
   "lateral_reception",
   "lateral_rush",
   "lateral_return",
