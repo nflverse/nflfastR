@@ -8,6 +8,7 @@ This is mostly useless as it doesn't work for 2020 and provides less info
 * `clean_pbp()`, `add_qb_epa()` and `add_xyac()` can now handle empty data frames
 * `clean_pbp()` now decodes all player IDs to the commonly known GSIS ID format
 (00-00xxxxx)
+* Fixed a bug which caused too high number of tackles in special cases (#85)
 
 # nflfastR 2.2.1
 
