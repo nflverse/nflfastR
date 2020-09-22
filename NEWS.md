@@ -1,5 +1,7 @@
 # nflfastR (development version)
 
+# nflfastR 2.3.0
+
 * Add option `source = "old"` to `fast_scraper()` to enable scraping of old source.
 This is mostly useless as it doesn't work for 2020 and provides less info
 * `clean_pbp()` now fixes some bugs in jersey numbers
