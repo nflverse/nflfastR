@@ -1,13 +1,15 @@
 # nflfastR (development version)
 
-# nflfastR 2.3.0
-
 * Add option `source = "old"` to `fast_scraper()` to enable scraping of old source.
 This is mostly useless as it doesn't work for 2020 and provides less info
 * `clean_pbp()` now fixes some bugs in jersey numbers
 * Fix empty line causing `fast_scraper()` to fail (affects multiple games of the 2020 season)
 * Fix bug in `fixed_drive` that counted PAT after defensive TD as its own drive
 * `clean_pbp()`, `add_qb_epa()` and `add_xyac()` can now handle empty data frames
+* Added new option `db_connection` to `update_db()` to allow advanced users to
+use other DBI drivers, such as `RMariaDB::MariaDB()`, `RPostgres::Postgres()` or 
+`odbc::odbc()` (please see [dbplyr](https://dbplyr.tidyverse.org/articles/dbplyr.html)
+for more information)
 
 # nflfastR 2.2.1
 
