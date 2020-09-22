@@ -26,7 +26,7 @@ added:
 \item{first_down}{Binary indicator if the play ended in a first down.}
 \item{aborted_play}{Binary indicator if the play description indicates "Aborted".}
 \item{play}{Binary indicator: 1 if the play was a 'normal' play (including penalties), 0 otherwise.}
-\item{passer_id}{ID of the player in the 'passer' colum}
+\item{passer_id}{ID of the player in the 'passer' column}
 \item{rusher_id}{ID of the player in the 'rusher' column}
 \item{receiver_id}{ID of the player in the 'receiver' column}
 \item{name}{Name of the 'passer' if it is not 'NA', or name of the 'rusher' otherwise.}
