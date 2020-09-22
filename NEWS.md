@@ -8,7 +8,12 @@ This is mostly useless as it doesn't work for 2020 and provides less info
 * `clean_pbp()`, `add_qb_epa()` and `add_xyac()` can now handle empty data frames
 * `clean_pbp()` now decodes all player IDs to the commonly known GSIS ID format
 (00-00xxxxx)
+* Added new option `db_connection` to `update_db()` to allow advanced users to
+use other DBI drivers, such as `RMariaDB::MariaDB()`, `RPostgres::Postgres()` or 
+`odbc::odbc()` (please see [dbplyr](https://dbplyr.tidyverse.org/articles/dbplyr.html)
+for more information)
 * Fixed a bug which caused too high number of tackles in special cases (#85)
+* Fixed a bug where CPOE was NA when targeting players with apostrophe in last name
 
 # nflfastR 2.2.1
 

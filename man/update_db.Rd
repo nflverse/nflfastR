@@ -8,7 +8,8 @@ update_db(
   dbdir = ".",
   dbname = "pbp_db",
   tblname = "nflfastR_pbp",
-  force_rebuild = FALSE
+  force_rebuild = FALSE,
+  db_connection = NULL
 )
 }
 \arguments{
@@ -20,6 +21,9 @@ update_db(
 
 \item{force_rebuild}{Logical parameter to rebuild the play by play data table
 within the database from scratch in case the cleaned data were updated}
+
+\item{db_connection}{A \code{DBIConnection} object, as returned by
+\code{\link[DBI]{dbConnect}}}
 }
 \description{
 \code{update_db} updates or creates a SQLite database with \code{nflfastR}
@@ -34,5 +38,8 @@ are available for \code{nflfastR}.
 The \code{force_rebuild} parameter controls if the data table within the
 database (not the database itself because there might be other data in it)
 should be removed and rebuilt from scratch (mostly because of bugfixes in
-nflfastR or its underlying data)
+nflfastR or its underlying data).
+
+The parameter \code{db_connection} is intended for advanced users who want
+to use other DBI drivers, such as MariaDB, Postgres or odbc.
 }
