@@ -40,12 +40,15 @@ update_db <- function(dbdir = ".",
   db <- glue::glue("{dbdir}/{dbname}")
 
   # create db if it doesn't exist or user forces rebuild
-  if (!file.exists(db)) {
+  if (!file.exists(db) & is.null(db_connection)) {
     message(glue::glue("Can't find database {db}. Will try to create it and load the play by play data into the data table \"{tblname}\"."))
-    build_db(dbdir, dbname, tblname)
-  } else if (file.exists(db) & force_rebuild) {
+    build_db(dbdir, dbname, tblname, db_connection)
+  } else if (file.exists(db) & force_rebuild & is.null(db_connection)) {
     message(glue::glue("Start rebuilding the data table \"{tblname}\" in your database {db}."))
-    build_db(dbdir, dbname, tblname)
+    build_db(dbdir, dbname, tblname, db_connection)
+  } else if (force_rebuild & !is.null(db_connection)) {
+    message(glue::glue("Start rebuilding the data table in your connected database."))
+    build_db(dbdir, dbname, tblname, db_connection)
   }
 
   # get completed games using Lee's file (thanks Lee!)
@@ -70,7 +73,7 @@ update_db <- function(dbdir = ".",
   if(length(missing) >= 50) {
     DBI::dbDisconnect(connection)
     message("The number of missing games is so large that rebuilding the database is more efficient.")
-    build_db(dbdir, dbname, tblname)
+    build_db(dbdir, dbname, tblname, db_connection)
     if (is.null(db_connection)) {
       connection <- DBI::dbConnect(RSQLite::SQLite(), db)
     } else {
@@ -108,8 +111,8 @@ update_db <- function(dbdir = ".",
 }
 
 # this is a helper function to build nflfastR database from Scratch
-build_db <- function(dbdir = ".", dbname = "pbp_db", tblname = "nflfastR_pbp") {
-  if (!dir.exists(dbdir)) {
+build_db <- function(dbdir = ".", dbname = "pbp_db", tblname = "nflfastR_pbp", db_conn) {
+  if (!dir.exists(dbdir) & is.null(db_conn)) {
     message(glue::glue("Directory {dbdir} doesn't exist yet. Try creating..."))
     dir.create(dbdir)
   }
@@ -117,10 +120,10 @@ build_db <- function(dbdir = ".", dbname = "pbp_db", tblname = "nflfastR_pbp") {
   db <- glue::glue("{dbdir}/{dbname}")
 
   #message("Connecting to database...")
-  if (is.null(db_connection)) {
+  if (is.null(db_conn)) {
     connection <- DBI::dbConnect(RSQLite::SQLite(), db)
   } else {
-    connection <- db_connection
+    connection <- db_conn
   }
 
   if (DBI::dbExistsTable(connection, tblname)) {
