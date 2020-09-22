@@ -21,8 +21,8 @@
 #' @param tblname The name of the play by play data table within the database
 #' @param force_rebuild Logical parameter to rebuild the play by play data table
 #' within the database from scratch in case the cleaned data were updated
-#' @param db_connection A \linkS4class{DBIConnection} object, as returned by
-#' \code{\link[=dbConnect]{dbConnect()}}
+#' @param db_connection A \code{DBIConnection} object, as returned by
+#' \code{\link[DBI]{dbConnect}}
 #' @importFrom rlang .data
 #' @export
 update_db <- function(dbdir = ".",

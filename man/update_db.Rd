@@ -22,8 +22,8 @@ update_db(
 \item{force_rebuild}{Logical parameter to rebuild the play by play data table
 within the database from scratch in case the cleaned data were updated}
 
-\item{db_connection}{A \linkS4class{DBIConnection} object, as returned by
-\code{\link[=dbConnect]{dbConnect()}}}
+\item{db_connection}{A \code{DBIConnection} object, as returned by
+\code{\link[DBI]{dbConnect}}}
 }
 \description{
 \code{update_db} updates or creates a SQLite database with \code{nflfastR}
