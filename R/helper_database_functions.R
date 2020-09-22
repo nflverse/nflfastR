@@ -32,7 +32,7 @@ update_db <- function(dbdir = ".",
                       db_connection = NULL) {
 
   if (!requireNamespace("DBI", quietly = TRUE) |
-    !requireNamespace("RSQLite", quietly = TRUE)) {
+    (!requireNamespace("RSQLite", quietly = TRUE) & is.null(db_connection))) {
     stop("Packages \"DBI\" and \"RSQLite\" needed for database communication. Please install them.")
   }
 
