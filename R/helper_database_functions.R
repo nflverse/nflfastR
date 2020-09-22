@@ -92,6 +92,11 @@ update_db <- function(dbdir = ".",
       is_installed_furrr <- TRUE
     }
 
+    # prevent the fast_scraper() warning for pp = TRUE with less than 5 games
+    if (is_installed_furrr == TRUE & length(missing) < 5) {
+      is_installed_furrr <- FALSE
+    }
+
     message(glue::glue("Starting download of {length(missing)} games ..."))
     new_pbp <- fast_scraper(missing, pp = is_installed_furrr) %>%
       clean_pbp() %>%
