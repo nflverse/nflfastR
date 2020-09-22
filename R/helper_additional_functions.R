@@ -13,8 +13,7 @@
 #' the play description; e.g. 24-M.Lynch instead of M.Lynch.
 #' The function also standardizes team abbreviations so that, for example,
 #' the Chargers are always represented by 'LAC' regardless of which year it was.
-#' The function also standardizes player IDs for players appearing in both the
-#' older era (1999-2010) and the new era (2011+).
+#' The function also decodes player IDs to the well known GSIS ID format 00-00xxxxx.
 #' @return The input Data Frame of the paramter 'pbp' with the following columns
 #' added:
 #' \describe{
@@ -31,12 +30,12 @@
 #' \item{first_down}{Binary indicator if the play ended in a first down.}
 #' \item{aborted_play}{Binary indicator if the play description indicates "Aborted".}
 #' \item{play}{Binary indicator: 1 if the play was a 'normal' play (including penalties), 0 otherwise.}
-#' \item{passer_id}{ID of the player in the 'passer' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
-#' \item{rusher_id}{ID of the player in the 'rusher' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
-#' \item{receiver_id}{ID of the player in the 'receiver' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
+#' \item{passer_id}{ID of the player in the 'passer' colum}
+#' \item{rusher_id}{ID of the player in the 'rusher' column}
+#' \item{receiver_id}{ID of the player in the 'receiver' column}
 #' \item{name}{Name of the 'passer' if it is not 'NA', or name of the 'rusher' otherwise.}
 #' \item{jersey_number}{Jersey number of the player listed in the 'name' column.}
-#' \item{id}{ID of the player in the 'name' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
+#' \item{id}{ID of the player in the 'name' column}
 #' \item{qb_epa}{Gives QB credit for EPA for up to the point where a receiver lost a fumble after a completed catch and makes EPA work more like passing yards on plays with fumbles.}
 #' }
 #' @export
@@ -52,11 +51,7 @@ clean_pbp <- function(pbp) {
   } else{
     message('Cleaning up play-by-play. If you run this with a lot of seasons this could take a few minutes.')
 
-    # Load id map to standardize player ids for players that were active before 2011
-    # and in or after 2011 meaning they appear with old gsis_ids and new ids
-    legacy_id_map <- readRDS(url("https://github.com/guga31bb/nflfastR-data/blob/master/roster-data/legacy_id_map.rds?raw=true"))
-
-    # drop existing values of clean_pbp
+        # drop existing values of clean_pbp
     pbp <- pbp %>% dplyr::select(-tidyselect::any_of(drop.cols))
 
     r <- pbp %>%
@@ -201,7 +196,7 @@ clean_pbp <- function(pbp) {
       ) %>%
       dplyr::mutate_at(
         dplyr::vars(.data$passer_id, .data$rusher_id, .data$receiver_id, .data$id, ends_with("player_id")),
-        update_ids, legacy_id_map) %>%
+        decode_ids) %>%
       dplyr::arrange(.data$index) %>%
       dplyr::select(-"index")
   }
@@ -265,17 +260,25 @@ team_name_fn <- function(var) {
 
 #' @importFrom tibble tibble
 #' @importFrom rlang .data
-#' @importFrom dplyr left_join mutate case_when
-update_ids <- function(var, id_map) {
-  join <- tibble::tibble(id = var) %>%
-    dplyr::left_join(id_map, by = c("id" = "gsis_id")) %>%
-    dplyr::mutate(
-      out_id = dplyr::case_when(
-        is.na(.data$new_id) ~ .data$id,
-        TRUE ~ .data$new_id
-      )
-    )
-  return(join$out_id)
+#' @importFrom dplyr mutate pull
+#' @importFrom purrr map
+#' @importFrom stringr str_sub str_replace_all str_length
+decode_ids <- function(var) {
+  tibble::tibble(pbp_id = var) %>%
+    dplyr::mutate(gsis = purrr::map(.data$pbp_id, convert_to_gsis_id)) %>%
+    dplyr::pull(.data$gsis) %>%
+    return()
+}
+
+convert_to_gsis_id <- function(new_id) {
+  if (is.na(new_id) | stringr::str_length(new_id) != 36){
+    ret <- new_id
+  } else {
+    to_decode <- new_id %>% stringr::str_sub(5, -9) %>% stringr::str_replace_all("-", "")
+    hex_raw <- sapply(seq(1, nchar(to_decode), by=2), function(x) substr(to_decode, x, x+1))
+    ret <- rawToChar(as.raw(strtoi(hex_raw, 16L)))
+  }
+  return(ret)
 }
 
 #' Compute QB epa

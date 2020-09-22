@@ -26,12 +26,12 @@ added:
 \item{first_down}{Binary indicator if the play ended in a first down.}
 \item{aborted_play}{Binary indicator if the play description indicates "Aborted".}
 \item{play}{Binary indicator: 1 if the play was a 'normal' play (including penalties), 0 otherwise.}
-\item{passer_id}{ID of the player in the 'passer' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
-\item{rusher_id}{ID of the player in the 'rusher' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
-\item{receiver_id}{ID of the player in the 'receiver' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
+\item{passer_id}{ID of the player in the 'passer' colum}
+\item{rusher_id}{ID of the player in the 'rusher' column}
+\item{receiver_id}{ID of the player in the 'receiver' column}
 \item{name}{Name of the 'passer' if it is not 'NA', or name of the 'rusher' otherwise.}
 \item{jersey_number}{Jersey number of the player listed in the 'name' column.}
-\item{id}{ID of the player in the 'name' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
+\item{id}{ID of the player in the 'name' column}
 \item{qb_epa}{Gives QB credit for EPA for up to the point where a receiver lost a fumble after a completed catch and makes EPA work more like passing yards on plays with fumbles.}
 }
 }
@@ -46,6 +46,5 @@ but updated to work with the RS data, which has a different player format in
 the play description; e.g. 24-M.Lynch instead of M.Lynch.
 The function also standardizes team abbreviations so that, for example,
 the Chargers are always represented by 'LAC' regardless of which year it was.
-The function also standardizes player IDs for players appearing in both the
-older era (1999-2010) and the new era (2011+).
+The function also decodes player IDs to the well known GSIS ID format 00-00xxxxx.
 }
