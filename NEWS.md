@@ -12,6 +12,8 @@ use other DBI drivers, such as `RMariaDB::MariaDB()`, `RPostgres::Postgres()` or
 for more information)
 * Fixed a bug which caused too high number of tackles in special cases (#85)
 * Fixed a bug where CPOE was NA when targeting players with apostrophe in last name
+* Added the function `decode_player_ids()` to decode all player IDs to the 
+commonly known GSIS ID format (00-00xxxxx)
 
 # nflfastR 2.2.1
 
