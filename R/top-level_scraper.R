@@ -480,85 +480,60 @@ fast_scraper_clips <- function(game_ids, pp = FALSE) {
   return(clips)
 }
 
-#' Get team rosters for multiple seasons and teams
+#' Get team rosters for multiple seasons
 #'
-#' Given team_ids and years, return a dataset with each
-#' player the NFL has listed as part of the roster.
+#' Given years return a dataset with each player listed as part of the roster.
 #'
-#' @param team_ids A string vector containing the IDs for NFL Team(s)
-#' (see details for more information)
-#' @param seasons A string vector of 4-digit years associated with given NFL seasons
+#' @param seasons A vector of 4-digit years associated with given NFL seasons
 #' @param pp Logical - either \code{TRUE} or \code{FALSE} (see details for further information)
-#' @details To find team associated Team IDs use the \code{\link{teams_colors_logos}}
-#' dataset stored in this package!
+#' @details The roster data is accessed via the free to use Sleeper API.
 #' The \code{pp} parameter controls if the scraper should use parallel processing.
 #' Please note that the initiating process takes a few seconds which means it
-#' may be better to set \code{pp = FALSE} if you are scraping just a few teams/seasons.
+#' may be better to set \code{pp = FALSE} if you are scraping just a few seasons.
 #' @return Data frame where each individual row represents a player in
-#' the roster of the given team and season listed by the NFL
-#' containing the following information:
-#' \itemize{
-#' \item{team.season}
-#' \item{teamPlayers.displayName}
-#' \item{teamPlayers.firstName}
-#' \item{teamPlayers.middleName}
-#' \item{teamPlayers.lastName}
-#' \item{teamPlayers.suffix}
-#' \item{teamPlayers.status}
-#' \item{teamPlayers.position}
-#' \item{teamPlayers.positionGroup}
-#' \item{teamPlayers.nflId}
-#' \item{teamPlayers.esbId}
-#' \item{teamPlayers.gsisId}
-#' \item{teamPlayers.birthDate}
-#' \item{teamPlayers.homeTown}
-#' \item{teamPlayers.collegeId}
-#' \item{teamPlayers.collegeName}
-#' \item{teamPlayers.jerseyNumber}
-#' \item{teamPlayers.height}
-#' \item{teamPlayers.weight}
-# \item{teamPlayers.yearsOfExperience}
-# \item{teamPlayers.teamAbbr}
-# \item{teamPlayers.teamSeq}
-# \item{teamPlayers.teamId}
-# \item{teamPlayers.teamFullName}
-#' \item{team.teamId}
-#' \item{team.abbr}
-#' \item{team.cityState}
-#' \item{team.fullName}
-#' \item{team.nick}
-# \item{team.teamType}
-#' \item{team.conferenceAbbr}
-#' \item{team.divisionAbbr}
-#' \item{teamPlayers.headshot_url}
-#' \item{teamPlayers.profile_url}
+#' the roster of the given team and season containing the following information:
+#' \describe{
+#' \item{season}{}
+#' \item{team}{}
+#' \item{position}{}
+#' \item{depth_chart_position}{}
+#' \item{jersey_number}{}
+#' \item{status}{}
+#' \item{full_name}{}
+#' \item{first_name}{}
+#' \item{last_name}{}
+#' \item{birth_date}{}
+#' \item{height}{}
+#' \item{weight}{}
+#' \item{college}{}
+#' \item{high_school}{}
+#' \item{gsis_id}{}
+#' \item{espn_id}{}
+#' \item{sportradar_id}{}
+#' \item{yahoo_id}{}
+#' \item{rotowire_id}{}
+#' \item{update_dt}{}
+#' \item{headshot_url}{}
 #' }
 #' @examples
 #' \donttest{
-#' # Roster of Steelers in 2018, no parallel processing
-#' # rosters <- fast_scraper_roster("3900", 2018, pp = FALSE)
-#'
-#' # Roster of Steelers and Seahawks in 2016 & 2019 using parallel processing
-#' # rosters <- fast_scraper_roster(c("3900", "4600"), c("2016", "2019"), pp = TRUE)
+#' # Roster of the 2019 and 2020 seasons
+#' fast_scraper_roster(2019:2020)
 #' }
-# @export
-#' @noRd
-fast_scraper_roster <- function(team_ids, seasons, pp = FALSE) {
-  stop("The NFL removed the public available data feed. We are working on a new solution.\n Meanwhile please check https://github.com/guga31bb/nflfastR-data/tree/master/roster-data for data of the seasons 2000-2019")
+#' @export
+fast_scraper_roster <- function(seasons, pp = FALSE) {
 
   # No parallel processing demanded -> use purrr
   if (pp == FALSE) {
     suppressWarnings(
-      rosters <-
-        purrr::pmap_df(
-          # pmap needs a list of lists. It is generated as all combinations of
-          # team_ids and seasons by cross2 but needs to be transposed for pmap
-          purrr::transpose(purrr::cross2(unique(team_ids), unique(seasons))),
-          function(teamId, season) {
-            grab_roster(teamId, season)
-          }
-        ) %>%
-        add_roster_mutations()
+      progressr::with_progress({
+        p <- progressr::progressor(along = seasons)
+        ret <- purrr::map_dfr(seasons, function(x){
+          out <- get_scheds_and_rosters(x, "roster")
+          p(sprintf("x=%s", as.integer(x)))
+          return(out)
+        })
+      })
     )
   }
 
@@ -568,22 +543,22 @@ fast_scraper_roster <- function(team_ids, seasons, pp = FALSE) {
     stop("Package \"furrr\" needed for parallel processing. Please install/load it.")
   }
   else {
+    if (length(seasons)<=10){
+      message(glue::glue("You have passed only {length(seasons)} season(s) to parallel processing.\nPlease note that the initiating process takes a few seconds\nand consider using pp=FALSE for a small number of seasons."))
+    }
     suppressWarnings({
-      future::plan("multiprocess")
-      rosters <-
-        furrr::future_pmap_dfr(
-          # pmap needs a list of lists. It is generated as all combinations of
-          # team_ids and seasons by cross2 but needs to be transposed for pmap
-          purrr::transpose(purrr::cross2(unique(team_ids), unique(seasons))),
-          function(teamId, season) {
-            grab_roster(teamId, season)
-          },
-          .progress = TRUE
-        ) %>%
-        add_roster_mutations()
+      progressr::with_progress({
+        p <- progressr::progressor(along = seasons)
+        future::plan("multiprocess")
+        ret <- furrr::future_map_dfr(seasons, function(x){
+          out <- get_scheds_and_rosters(x, "roster")
+          p(sprintf("x=%s", as.integer(x)))
+          return(out)
+        })
+      })
     })
   }
-  return(rosters)
+  return(ret)
 }
 
 #' Get NFL Season Schedules
@@ -629,10 +604,10 @@ fast_scraper_schedules <- function(seasons, pp = FALSE) {
     suppressWarnings(
       progressr::with_progress({
         p <- progressr::progressor(along = seasons)
-        schedules <- purrr::map_dfr(seasons, function(x){
-          sched <- get_season_schedule(x)
+        ret <- purrr::map_dfr(seasons, function(x){
+          out <- get_scheds_and_rosters(x, "schedule")
           p(sprintf("x=%s", as.integer(x)))
-          return(sched)
+          return(out)
         })
       })
     )
@@ -651,13 +626,13 @@ fast_scraper_schedules <- function(seasons, pp = FALSE) {
       progressr::with_progress({
         p <- progressr::progressor(along = seasons)
         future::plan("multiprocess")
-        schedules <- furrr::future_map_dfr(seasons, function(x){
-          sched <- get_season_schedule(x)
+        ret <- furrr::future_map_dfr(seasons, function(x){
+          out <- get_scheds_and_rosters(x, "schedule")
           p(sprintf("x=%s", as.integer(x)))
-          return(sched)
+          return(out)
         })
       })
     })
   }
-  return(schedules)
+  return(ret)
 }
