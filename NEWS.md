@@ -12,6 +12,7 @@ use other DBI drivers, such as `RMariaDB::MariaDB()`, `RPostgres::Postgres()` or
 for more information)
 * Fixed a bug which caused too high number of tackles in special cases (#85)
 * Fixed a bug where CPOE was NA when targeting players with apostrophe in last name
+* `fast_scraper_roster()` is finally back!
 
 # nflfastR 2.2.1
 
