@@ -1,18 +1,23 @@
 ################################################################################
-# Author: Sebastian Carl and Ben Baldwin
-# Purpose: Function for scraping games that have been put in github repo
+# Author: Sebastian Carl
+# Purpose: Function for loading schedules and rosters from nflfastR repos
 # Code Style Guide: styler::tidyverse_style()
 ################################################################################
 
 #' @importFrom glue glue
 #' @importFrom httr HEAD
-get_season_schedule <- function(season) {
-  season_schedule <- data.frame()
+#' @importFrom tibble tibble
+get_scheds_and_rosters <- function(season, type) {
+  out <- tibble::tibble()
   tryCatch(
     expr = {
-      url <- glue::glue("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/schedules/sched_{season}.rds")
+      if (type == "schedule") {
+        path <- glue::glue("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/schedules/sched_{season}.rds")
+      } else if (type == "roster") {
+        path <- glue::glue("https://raw.githubusercontent.com/mrcaseb/nflfastR-roster/master/data/seasons/roster_{season}.rds")
+      }
 
-      request <- httr::HEAD(url = url)
+      request <- httr::HEAD(url = path)
 
       if (request$status_code == 404) {
         warning(warn <- 2)
@@ -20,15 +25,7 @@ get_season_schedule <- function(season) {
         warning(warn <- 1)
       }
 
-      # I know it's bad to call the server twice but couldn't figure out how
-      # to parse the content in the request variable
-
-      season_schedule <-
-        readRDS(
-          url(
-            glue::glue("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/schedules/sched_{season}.rds")
-          )
-        )
+      out <- readRDS(url(path))
     },
     error = function(e) {
       message("The following error has occured:")
@@ -47,5 +44,5 @@ get_season_schedule <- function(season) {
     finally = {
     }
   )
-  return(season_schedule)
+  return(out)
 }
