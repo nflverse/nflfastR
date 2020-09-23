@@ -355,6 +355,63 @@ The presence of so many running backs on this list suggests that even though it 
 
 # Example 10: Working with roster and position data
 
-This section used to contain an example of working with roster data. Unfortunately, we have not found a way to obtain roster data that can be joined to the new play by play, so for now, it is empty. We would like to be able to get position data but haven't yet.
+At long last, there's a way to merge the new play-by-play data with roster information. The easy part is getting the rosters:
 
-The `clean_pbp()` function does a lot of work cleaning up player names and IDs for the purpose of joining them to roster data, but we do not have any roster data to join to. `clean_pbp()` does standardize player IDs so that they are unique for each player across seasons.
+``` {r roster}
+roster <- nflfastR::fast_scraper_roster(2019)
+```
+
+Now let's load play-by-play data from 2019:
+``` {r roster_pbp}
+games_2019 <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2019.rds'))
+```
+
+Here is what the new player IDs look like:
+
+``` {r roster_pbp}
+games_2019 %>%
+  filter(rush == 1 | pass == 1, posteam == "SEA") %>%
+  select(desc, name, id)
+```
+
+But these IDs aren't very useful. So we need to decode them using the new function `decode_player_ids`:
+
+``` {r roster_decode_ex}
+games_2019 %>%
+  filter(rush == 1 | pass == 1, posteam == "SEA") %>%
+  nflfastR::decode_player_ids() %>%
+  select(desc, name, id)
+```
+
+So now we have the familiar GSIS IDs. Let's apply this to the whole dataframe:
+
+``` {r pbp_decode}
+decoded_pbp <- games_2019 %>%
+  nflfastR::decode_player_ids()
+```
+
+Now we're ready to join to the roster data using these IDs:
+``` {r decode_join}
+joined <- decoded_pbp %>% 
+  filter(!is.na(receiver_id)) %>%
+  select(posteam, season, desc, receiver, receiver_id, epa) %>%
+  left_join(roster, by = c('receiver_id' = 'gsis_id'))
+```
+
+``` {r decode_table}
+#the real work is done, this just makes a table and has it look nice
+joined %>%
+  filter(position %in% c('WR', 'TE', 'RB')) %>%
+  group_by(receiver_id, receiver, position) %>%
+  summarize(tot_epa = sum(epa), n=n()) %>%
+  arrange(-tot_epa) %>%
+  ungroup() %>%
+  group_by(position) %>%
+  mutate(position_rank = 1:n()) %>%
+  filter(position_rank <= 5) %>%
+  dplyr::rename(Pos_Rank = position_rank, Player = receiver, Pos = position, Tgt = n, EPA = tot_epa) %>%
+  select(Player, Pos, Pos_Rank, Tgt, EPA) %>%
+  knitr::kable(digits = 0)
+```
+
+Not surprisingly, all 5 of the top 5 WRs and 4 of the top 5 TEs in terms of EPA added come in ahead of the top RB. Note that the number of targets won't match official stats because we're including plays with penalties.
