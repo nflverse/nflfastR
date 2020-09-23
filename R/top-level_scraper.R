@@ -506,13 +506,13 @@ fast_scraper_clips <- function(game_ids, pp = FALSE) {
 #' \item{height}{Height of the player.}
 #' \item{weight}{Weight of the player.}
 #' \item{college}{Name of the college the player has attended.}
-#' \item{high_school}{Name of the High School the player has attended.}
+#' \item{high_school}{Name of the High School the player has attended (only non-NA for players who were listed in the 2020 season).}
 #' \item{gsis_id}{The player's NFL GSIS ID, which can be used to link the player to play-by-play data.}
-#' \item{espn_id}{The player's ESPN ID.}
-#' \item{sportradar_id}{The player's Sportradar ID.}
-#' \item{yahoo_id}{The player's Yahoo Sports ID.}
-#' \item{rotowire_id}{The player's Rotowire ID.}
-#' \item{update_dt}{Date and time when the current entry was last updated.}
+#' \item{espn_id}{The player's ESPN ID (only non-NA for players who were listed in the 2020 season).}
+#' \item{sportradar_id}{The player's Sportradar ID (only non-NA for players who were listed in the 2020 season).}
+#' \item{yahoo_id}{The player's Yahoo Sports ID (only non-NA for players who were listed in the 2020 season).}
+#' \item{rotowire_id}{The player's Rotowire ID (only non-NA for players who were listed in the 2020 season).}
+#' \item{update_dt}{Date and time when the current entry was last updated (starting with the 2020 season).}
 #' \item{headshot_url}{URL to a player image (starting in the 2020 season on ESPN servers).}
 #' }
 #' @examples
