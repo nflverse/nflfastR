@@ -16,6 +16,8 @@ The input Data Frame of the parameter 'pbp' with decoded player IDs.
 Decode the player IDs in nflfastR play-by-ply data
 }
 \details{
-Take all columns ending with "player_id" of an nflfastR play-by-play Data set
-and decode the player IDs to the commonly known GSIS IDs format 00-00xxxxx.
+Take all columns ending with \code{player_id} as well as
+\code{passer_id}, \code{rusher_id}, \code{receiver_id}, \code{id} of an
+nflfastR play-by-play Data set and decode the player IDs to the commonly
+known GSIS ID format 00-00xxxxx.
 }
