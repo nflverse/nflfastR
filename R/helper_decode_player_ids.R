@@ -37,10 +37,7 @@ decode_player_ids <- function(pbp) {
 }
 
 decode_ids <- function(var) {
-  tibble::tibble(pbp_id = var) %>%
-    dplyr::mutate(gsis = furrr::future_map(.data$pbp_id, convert_to_gsis_id)) %>%
-    dplyr::pull(.data$gsis) %>%
-    return()
+  return(furrr::future_map_chr(var, convert_to_gsis_id))
 }
 
 convert_to_gsis_id <- function(new_id) {
