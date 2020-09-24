@@ -362,7 +362,7 @@ roster <- nflfastR::fast_scraper_roster(2019)
 ```
 
 Now let's load play-by-play data from 2019:
-``` {r roster_pbp}
+``` {r roster_pbp_load}
 games_2019 <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2019.rds'))
 ```
 
@@ -414,4 +414,4 @@ joined %>%
   knitr::kable(digits = 0)
 ```
 
-Not surprisingly, all 5 of the top 5 WRs and 4 of the top 5 TEs in terms of EPA added come in ahead of the top RB. Note that the number of targets won't match official stats because we're including plays with penalties.
+Not surprisingly, all 5 of the top 5 WRs in terms of EPA added come in ahead of the top RB. Note that the number of targets won't match official stats because we're including plays with penalties.
