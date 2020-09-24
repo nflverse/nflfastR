@@ -20,4 +20,6 @@ Take all columns ending with \code{player_id} as well as
 \code{passer_id}, \code{rusher_id}, \code{receiver_id}, \code{id} of an
 nflfastR play-by-play Data set and decode the player IDs to the commonly
 known GSIS ID format 00-00xxxxx.
+The function requires the package \code{furrr} if the data frame
+\code{pbp} has more than 4500 rows.
 }
