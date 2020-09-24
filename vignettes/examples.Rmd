@@ -362,7 +362,7 @@ roster <- nflfastR::fast_scraper_roster(2019)
 ```
 
 Now let's load play-by-play data from 2019:
-``` {r roster_pbp}
+``` {r roster_pbp_load}
 games_2019 <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2019.rds'))
 ```
 
