@@ -414,4 +414,4 @@ joined %>%
   knitr::kable(digits = 0)
 ```
 
-Not surprisingly, all 5 of the top 5 WRs and 4 of the top 5 TEs in terms of EPA added come in ahead of the top RB. Note that the number of targets won't match official stats because we're including plays with penalties.
+Not surprisingly, all 5 of the top 5 WRs in terms of EPA added come in ahead of the top RB. Note that the number of targets won't match official stats because we're including plays with penalties.
