@@ -28,7 +28,11 @@ add_drive_results <- function(d) {
       ),
       # PAT after defensive TD is not a new drive
       new_drive = dplyr::if_else(
-        dplyr::lag(.data$touchdown == 1) & (dplyr::lag(.data$posteam) != dplyr::lag(.data$td_team)),
+        dplyr::lag(.data$touchdown == 1) &
+          (dplyr::lag(.data$posteam) != dplyr::lag(.data$td_team))
+          # this last part is needed because otherwise it was overwriting
+          # the existing value of new_drive with NA on plays following timeouts
+          & !is.na(dplyr::lag(.data$posteam)),
         0,
         .data$new_drive),
       # first observation of a half is also a new drive

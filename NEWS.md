@@ -1,3 +1,8 @@
+# nflfastR (development version)
+
+* More fixes for `fixed_drive` which was not incrementing properly on drives
+that began following a timeout
+
 # nflfastR 3.0.0
 
 ## Breaking changes
