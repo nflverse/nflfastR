@@ -39,8 +39,21 @@ home:
 
 navbar:
   structure:
-    right: [twitter, github]
+    left:  [home, intro, reference, articles, tutorials, OSF, news]
+    right: [data, stats, games, twitter, github]
   components:
     twitter:
       icon: "fab fa-twitter fa-lg"
       href: http://twitter.com/nflfastR
+    data:
+      icon: "fas fa-database fa-lg"
+      href: https://github.com/guga31bb/nflfastR-data
+    games:
+      icon: "fas fa-football-ball fa-lg"
+      href: http://nflgamedata.com/
+    stats:
+      icon: "fas fa-chart-line fa-lg"
+      href: https://rbsdm.com/stats/
+    OSF:
+      icon: "far fa-folder-open fa-lg"
+      href: https://www.opensourcefootball.com/
