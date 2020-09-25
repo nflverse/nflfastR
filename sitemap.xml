@@ -19,7 +19,13 @@
     <loc>https://mrcaseb.github.io/nflfastR//reference/clean_pbp.html</loc>
   </url>
   <url>
+    <loc>https://mrcaseb.github.io/nflfastR//reference/decode_player_ids.html</loc>
+  </url>
+  <url>
     <loc>https://mrcaseb.github.io/nflfastR//reference/fast_scraper.html</loc>
+  </url>
+  <url>
+    <loc>https://mrcaseb.github.io/nflfastR//reference/fast_scraper_roster.html</loc>
   </url>
   <url>
     <loc>https://mrcaseb.github.io/nflfastR//reference/fast_scraper_schedules.html</loc>

@@ -83,7 +83,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.0.0</span>
       </span>
     </div>
 
@@ -155,18 +155,18 @@
     <p>Get NFL Play by Play Data</p>
     </div>
 
-    <pre class="usage"><span class='fu'>fast_scraper</span>(<span class='kw'>game_ids</span>, source = <span class='st'>"nfl"</span>, pp = <span class='fl'>FALSE</span>, <span class='kw'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>fast_scraper</span><span class='op'>(</span><span class='va'>game_ids</span>, source <span class='op'>=</span> <span class='st'>"nfl"</span>, pp <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>game_ids</th>
-      <td><p>Vector of character ids (see details for further information)</p></td>
+      <td><p>Vector of character ids (see details for further information).</p></td>
     </tr>
     <tr>
       <th>source</th>
-      <td><p>Character - must now be <code>nfl</code> or unspecified (see details for further information)</p></td>
+      <td><p>Character - <code>nfl</code> for the NFL.com page or <code>old</code> for the old gamecenter. For <code>old</code>, old_game_id must be supplied</p></td>
     </tr>
     <tr>
       <th>pp</th>
@@ -451,16 +451,16 @@ detailed information (description partly extracted from nflscrapR):</p><dl>
 <dt>series_success</dt><dd><p>1: scored touchdown, gained enough yards for first down.</p></dd>
 <dt>series_result</dt><dd><p>Possible values: First down, Touchdown, Opp touchdown, Field goal, Missed field goal, Safety, Turnover, Punt, Turnover on downs, QB kneel, End of half</p></dd>
 <dt>start_time</dt><dd><p>Kickoff time in eastern time zone.</p></dd>
-<dt>order_sequence</dt><dd><p>Column provided by NFL to fix out-of-order plays. Available 2011 and beyond.</p></dd>
-<dt>time_of_day</dt><dd><p>Time of day of play in UTC "HH:MM:SS" format. Available 2011 and beyond.</p></dd>
+<dt>order_sequence</dt><dd><p>Column provided by NFL to fix out-of-order plays. Available 2011 and beyond with source "nfl".</p></dd>
+<dt>time_of_day</dt><dd><p>Time of day of play in UTC "HH:MM:SS" format. Available 2011 and beyond with source "nfl".</p></dd>
 <dt>stadium</dt><dd><p>Game site name.</p></dd>
 <dt>weather</dt><dd><p>String describing the weather including temperature, humidity and wind (direction and speed). Doesn't change during the game!</p></dd>
 <dt>nfl_api_id</dt><dd><p>UUID of the game in the new NFL API.</p></dd>
 <dt>play_clock</dt><dd><p>Time on the playclock when the ball was snapped.</p></dd>
 <dt>play_deleted</dt><dd><p>Binary indicator for deleted plays.</p></dd>
 <dt>play_type_nfl</dt><dd><p>Play type as listed in the NFL source. Slightly different to the regular play_type variable.</p></dd>
-<dt>special_teams_play</dt><dd><p>Binary indicator for whether play is special teams play from NFL source. Available 2011 and beyond.</p></dd>
-<dt>st_play_type</dt><dd><p>Type of special teams play from NFL source. Available 2011 and beyond.</p></dd>
+<dt>special_teams_play</dt><dd><p>Binary indicator for whether play is special teams play from NFL source. Available 2011 and beyond with source "nfl".</p></dd>
+<dt>st_play_type</dt><dd><p>Type of special teams play from NFL source. Available 2011 and beyond with source "nfl".</p></dd>
 <dt>end_clock_time</dt><dd><p>Game time at the end of a given play.</p></dd>
 <dt>end_yard_line</dt><dd><p>String indicating the yardline at the end of the given play consisting of team half and yard line number.</p></dd>
 <dt>drive_real_start_time</dt><dd><p>Local day time when the drive started (currently not used by the NFL and therefore mostly 'NA').</p></dd>
@@ -506,7 +506,7 @@ detailed information (description partly extracted from nflscrapR):</p><dl>
     <p>To load valid game_ids please use the package function <code><a href='fast_scraper_schedules.html'>fast_scraper_schedules</a></code>.</p>
 <p>The <code>source</code> parameter controls from which source the data is being
 scraped. The old parameters <code>rs</code> as well as <code>gc</code>
-are not valid anymore. Please use <code>nfl</code> or leave unspecified.
+are not valid anymore. Please use <code>nfl</code> or <code>old</code>.
 The <code>pp</code> parameter controls if the scraper should use parallel processing.
 Please note that the initiating process takes a few seconds which means it
 may be better to set <code>pp = FALSE</code> if you are scraping just a few games.</p>
@@ -514,7 +514,7 @@ may be better to set <code>pp = FALSE</code> if you are scraping just a few game
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 <span class='co'># Get pbp data for two games</span>
-<span class='fu'>fast_scraper</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"2019_01_GB_CHI"</span>, <span class='st'>"2013_21_SEA_DEN"</span>))
+<span class='fu'>fast_scraper</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"2019_01_GB_CHI"</span>, <span class='st'>"2013_21_SEA_DEN"</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>Download finished. Adding variables...</span></div><div class='output co'>#&gt; <span class='message'>added game variables</span></div><div class='output co'>#&gt; <span class='message'>added nflscrapR variables</span></div><div class='output co'>#&gt; <span class='message'>added ep variables</span></div><div class='output co'>#&gt; <span class='message'>added air_yac_ep variables</span></div><div class='output co'>#&gt; <span class='message'>added wp variables</span></div><div class='output co'>#&gt; <span class='message'>added air_yac_wp variables</span></div><div class='output co'>#&gt; <span class='message'>added cp and cpoe</span></div><div class='output co'>#&gt; <span class='message'>added fixed drive variables</span></div><div class='output co'>#&gt; <span class='message'>added series variables</span></div><div class='output co'>#&gt; <span class='message'>Procedure completed.</span></div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 356 x 315</span><span>
 #&gt;    play_id game_id old_game_id home_team away_team season_type  week posteam
 #&gt;      </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  
@@ -578,7 +578,7 @@ may be better to set <code>pp = FALSE</code> if you are scraping just a few game
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

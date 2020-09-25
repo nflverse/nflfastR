@@ -41,7 +41,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.0.0</span>
       </span>
     </div>
 
@@ -101,7 +101,7 @@
 
       
 
-      </header><script src="beginners_guide_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="beginners_guide_files/header-attrs-2.3/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>A beginner’s guide to nflfastR</h1>
@@ -129,37 +129,33 @@
 <h3 class="hasAnchor">
 <a href="#install-packages" class="anchor"></a>Install packages</h3>
 <div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"tidyverse"</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"ggrepel"</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"ggimage"</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"tidyverse"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"ggrepel"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"ggimage"</span><span class="op">)</span>
 
 <span class="co">#needed to install `nflfastR`</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"devtools"</span>)
-<span class="kw">devtools</span>::<span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span>(<span class="st">"mrcaseb/nflfastR"</span>)
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"mrcaseb/nflfastR"</span><span class="op">)</span></pre></div>
 </div>
 <div id="load-packages" class="section level3">
 <h3 class="hasAnchor">
 <a href="#load-packages" class="anchor"></a>Load packages</h3>
 <p>Okay, now here’s the stuff you’re going to want to start putting into your R script. The following loads <code>tidyverse</code>, which contains a lot of helper functions for working with data, and <code>ggrepel</code> and <code>ggimage</code> for making figures, along with <code>nflfastR</code>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="http://tidyverse.tidyverse.org">tidyverse</a></span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="http://github.com/slowkow/ggrepel">ggrepel</a></span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/GuangchuangYu/ggimage">ggimage</a></span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://mrcaseb.github.io/nflfastR">nflfastR</a></span>)
-</pre></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://github.com/slowkow/ggrepel">ggrepel</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/GuangchuangYu/ggimage">ggimage</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mrcaseb.github.io/nflfastR/">nflfastR</a></span><span class="op">)</span></pre></div>
 <p>This one is optional but makes R prefer not to display numbers in scientific notation, which I find very annoying:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(scipen = <span class="fl">9999</span>)
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>scipen <span class="op">=</span> <span class="fl">9999</span><span class="op">)</span></pre></div>
 </div>
 <div id="load-data" class="section level3">
 <h3 class="hasAnchor">
 <a href="#load-data" class="anchor"></a>Load data</h3>
 <p>This will load the full play by play for the 2019 season (including playoffs). We’ll get to how to get more seasons later. Note that this is not actually using the <code>nflfastR</code> package, but downloading pre-cleaned data from its data repository, which is much faster.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">'https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2019.rds'</span>))
-</pre></div>
+<span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span><span class="op">(</span><span class="st">'https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2019.rds'</span><span class="op">)</span><span class="op">)</span></pre></div>
 </div>
 </div>
 <div id="basics-how-to-look-at-your-data" class="section level2">
@@ -170,12 +166,11 @@
 <a href="#dimensions" class="anchor"></a>Dimensions</h3>
 <p>Before moving forward, here are a few ways to get a sense of what’s in a dataframe. We can check the <strong>dim</strong>ensions of the data, and this tells us that there are <code>48034</code> rows (i.e., plays) in the data and <code>340</code> columns (variables):</p>
 <div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(<span class="kw">data</span>)
-<span class="co">#&gt; [1] 48034   340</span>
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>
+<span class="co">#&gt; [1] 48034   340</span></pre></div>
 <p><code>str</code> displays the <strong>str</strong>ucture of the dataframe:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="kw">data</span>[<span class="fl">1</span><span class="op">:</span><span class="fl">10</span>])
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">data</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span>
 <span class="co">#&gt; tibble [48,034 x 10] (S3: tbl_df/tbl/data.frame)</span>
 <span class="co">#&gt;  $ play_id     : num [1:48034] 1 36 51 79 100 121 148 185 214 239 ...</span>
 <span class="co">#&gt;  $ game_id     : chr [1:48034] "2019_01_ATL_MIN" "2019_01_ATL_MIN" "2019_01_ATL_MIN" "2019_01_ATL_MIN" ...</span>
@@ -186,8 +181,7 @@
 <span class="co">#&gt;  $ week        : int [1:48034] 1 1 1 1 1 1 1 1 1 1 ...</span>
 <span class="co">#&gt;  $ posteam     : chr [1:48034] NA "ATL" "ATL" "ATL" ...</span>
 <span class="co">#&gt;  $ posteam_type: chr [1:48034] NA "away" "away" "away" ...</span>
-<span class="co">#&gt;  $ defteam     : chr [1:48034] NA "MIN" "MIN" "MIN" ...</span>
-</pre></div>
+<span class="co">#&gt;  $ defteam     : chr [1:48034] NA "MIN" "MIN" "MIN" ...</span></pre></div>
 <p>In the above, I’ve added in the <code>[1:10]</code>, which selects only the first 10 columns, otherwise the list is extremely long (remember from above that there are <code>340</code> columns!).</p>
 </div>
 <div id="variable-names" class="section level3">
@@ -195,7 +189,7 @@
 <a href="#variable-names" class="anchor"></a>Variable names</h3>
 <p>Another very useful command is to get the <code>names</code> of the variables in the data:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="kw">data</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>
 <span class="co">#&gt;   [1] "play_id"                             </span>
 <span class="co">#&gt;   [2] "game_id"                             </span>
 <span class="co">#&gt;   [3] "old_game_id"                         </span>
@@ -535,8 +529,7 @@
 <span class="co">#&gt; [337] "xyac_mean_yardage"                   </span>
 <span class="co">#&gt; [338] "xyac_median_yardage"                 </span>
 <span class="co">#&gt; [339] "xyac_success"                        </span>
-<span class="co">#&gt; [340] "xyac_fd"</span>
-</pre></div>
+<span class="co">#&gt; [340] "xyac_fd"</span></pre></div>
 <p>That is a lot to work with!</p>
 </div>
 <div id="viewer" class="section level3">
@@ -544,14 +537,12 @@
 <a href="#viewer" class="anchor"></a>Viewer</h3>
 <p>One more way to look at your data is with the <code><a href="https://rdrr.io/r/utils/View.html">View()</a></code> function. If you’re coming from an Excel background, this will help you feel more at home as a way to see what’s in the data.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/View.html">View</a></span>(<span class="kw">data</span>)
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/View.html">View</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></pre></div>
 <p>This will open the viewer in RStudio in a new panel. Try it out yourself! Since there are so many columns, the Viewer won’t show them all. To pick which columns to view, you can <strong>select</strong> some:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="kw">data</span> <span class="op">%&gt;%</span>
-  <span class="fu">select</span>(<span class="kw">home_team</span>, <span class="kw">away_team</span>, <span class="kw">posteam</span>, <span class="kw">desc</span>) <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/View.html">View</a></span>()
-</pre></div>
+<span class="va">data</span> <span class="op">%&gt;%</span>
+  <span class="fu">select</span><span class="op">(</span><span class="va">home_team</span>, <span class="va">away_team</span>, <span class="va">posteam</span>, <span class="va">desc</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/utils/View.html">View</a></span><span class="op">(</span><span class="op">)</span></pre></div>
 <p>The <code>%&gt;%</code> thing lets you pipe together a bunch of different commands. So we’re taking our data, “<code>select</code>”ing a few variables we want to look at, and then Viewing. Again, I can’t display the results of that here, but try it out yourself!</p>
 </div>
 <div id="head-manipulation" class="section level3">
@@ -559,9 +550,9 @@
 <a href="#head-manipulation" class="anchor"></a>Head + manipulation</h3>
 <p>To start, let’s just look at the first few rows (the “head”) of the data.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="kw">data</span> <span class="op">%&gt;%</span> 
-  <span class="fu">select</span>(<span class="kw">posteam</span>, <span class="kw">defteam</span>, <span class="kw">desc</span>, <span class="kw">rush</span>, <span class="kw">pass</span>) <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()
+<span class="va">data</span> <span class="op">%&gt;%</span> 
+  <span class="fu">select</span><span class="op">(</span><span class="va">posteam</span>, <span class="va">defteam</span>, <span class="va">desc</span>, <span class="va">rush</span>, <span class="va">pass</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 6 x 5</span>
 <span class="co">#&gt;   posteam defteam desc                                                rush  pass</span>
 <span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;                                              &lt;dbl&gt; &lt;dbl&gt;</span>
@@ -570,19 +561,17 @@
 <span class="co">#&gt; 3 ATL     MIN     (15:00) 2-M.Ryan sacked at ATL 17 for -8 yards (5~     0     1</span>
 <span class="co">#&gt; 4 ATL     MIN     (14:20) 24-D.Freeman right tackle to ATL 21 for 4~     1     0</span>
 <span class="co">#&gt; 5 ATL     MIN     (13:41) (Shotgun) 2-M.Ryan scrambles left end to ~     0     1</span>
-<span class="co">#&gt; 6 ATL     MIN     (12:59) 5-M.Bosher punt is BLOCKED by 50-E.Wilson~     0     0</span>
-</pre></div>
+<span class="co">#&gt; 6 ATL     MIN     (12:59) 5-M.Bosher punt is BLOCKED by 50-E.Wilson~     0     0</span></pre></div>
 <p>A couple things. “<code>desc</code>” is the important variable that lists the description of what happened on the play, and <code>head</code> says to show the first few rows (the “head” of the data). Since this is already sorted by game, these are the first 6 rows from a week 1 game, ATL @ MIN. To make code easier to read, people often put each part of a pipe on a new line, which is useful when working with more complicated functions. We could run:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit">
-<span class="kw">data</span> <span class="op">%&gt;%</span> <span class="fu">select</span>(<span class="kw">posteam</span>, <span class="kw">defteam</span>, <span class="kw">desc</span>, <span class="kw">rush</span>, <span class="kw">pass</span>) <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()
-</pre></div>
+<span class="va">data</span> <span class="op">%&gt;%</span> <span class="fu">select</span><span class="op">(</span><span class="va">posteam</span>, <span class="va">defteam</span>, <span class="va">desc</span>, <span class="va">rush</span>, <span class="va">pass</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span></pre></div>
 <p>And it would return the exact same output as the one written out in multiple lines, but the code isn’t as easy to read.</p>
 <p>We’ve covered <code>select</code>, and the next important function to learn is <code>filter</code>, which lets you filter the data to what you want. The following returns only plays that are run plays and pass plays; i.e., no punts, kickoffs, field goals, or dead ball penalties (e.g. false starts) where we don’t know what the attempted play was.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit">
-<span class="kw">data</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">rush</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">|</span> <span class="kw">pass</span> <span class="op">==</span> <span class="fl">1</span>) <span class="op">%&gt;%</span>
-  <span class="fu">select</span>(<span class="kw">posteam</span>, <span class="kw">desc</span>, <span class="kw">rush</span>, <span class="kw">pass</span>, <span class="kw">name</span>, <span class="kw">passer</span>, <span class="kw">rusher</span>, <span class="kw">receiver</span>) <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()
+<span class="va">data</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">rush</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">|</span> <span class="va">pass</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">select</span><span class="op">(</span><span class="va">posteam</span>, <span class="va">desc</span>, <span class="va">rush</span>, <span class="va">pass</span>, <span class="va">name</span>, <span class="va">passer</span>, <span class="va">rusher</span>, <span class="va">receiver</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 6 x 8</span>
 <span class="co">#&gt;   posteam desc                        rush  pass name    passer  rusher receiver</span>
 <span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;                      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;   </span>
@@ -591,16 +580,15 @@
 <span class="co">#&gt; 3 ATL     (13:41) (Shotgun) 2-M.Rya~     0     1 M.Ryan  M.Ryan  &lt;NA&gt;   &lt;NA&gt;    </span>
 <span class="co">#&gt; 4 MIN     (12:53) 33-D.Cook right e~     1     0 D.Cook  &lt;NA&gt;    D.Cook &lt;NA&gt;    </span>
 <span class="co">#&gt; 5 MIN     (12:32) 8-K.Cousins pass ~     0     1 K.Cous~ K.Cous~ &lt;NA&gt;   D.Cook  </span>
-<span class="co">#&gt; 6 MIN     (11:57) 8-K.Cousins pass ~     0     1 K.Cous~ K.Cous~ &lt;NA&gt;   A.Thiel~</span>
-</pre></div>
+<span class="co">#&gt; 6 MIN     (11:57) 8-K.Cousins pass ~     0     1 K.Cous~ K.Cous~ &lt;NA&gt;   A.Thiel~</span></pre></div>
 <p>Compared to the first time we did this, the opening line for the start of the game, the kickoff, and the punt are now gone. Note that if you’re checking whether a variable is equal to something, we need to use the double equals sign <code><a href="https://rdrr.io/r/base/Comparison.html">==</a></code> like above. There’s probably some technical reason for this [shrug emoji]. Also, the character <code><a href="https://rdrr.io/r/base/Logic.html">|</a></code> is used for “or”, and <code><a href="https://rdrr.io/r/base/Logic.html">&amp;</a></code> for “and”. So <code>rush == 1 | pass == 1</code> means “rush or pass”.</p>
 <p>Note that the <code>rush</code>, <code>pass</code>, <code>name</code>, <code>passer</code>, <code>rusher</code>, and <code>receiver</code> columns are all <code>nflfastR</code> creations, where we have provided these to make working with the data easier. As we can see above, <code>passer</code> is filled in for all dropbacks (including sacks and scrambles, which also have <code>pass</code> = 1), and <code>name</code> is equal to the passer on pass plays and the rusher on rush plays. Think of this as the primary player involved on a play.</p>
 <p>What if we wanted to view special teams plays? Again, we can use <code>filter</code>:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit">
-<span class="kw">data</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">special</span> <span class="op">==</span> <span class="fl">1</span>) <span class="op">%&gt;%</span>
-  <span class="fu">select</span>(<span class="kw">down</span>, <span class="kw">ydstogo</span>, <span class="kw">desc</span>) <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()
+<span class="va">data</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">special</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">select</span><span class="op">(</span><span class="va">down</span>, <span class="va">ydstogo</span>, <span class="va">desc</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 6 x 3</span>
 <span class="co">#&gt;    down ydstogo desc                                                            </span>
 <span class="co">#&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;                                                           </span>
@@ -609,14 +597,13 @@
 <span class="co">#&gt; 3    NA       0 (Kick formation) 5-D.Bailey extra point is GOOD, Center-58-A.Cu~</span>
 <span class="co">#&gt; 4    NA       0 5-D.Bailey kicks 67 yards from MIN 35 to ATL -2. 38-K.Barner to~</span>
 <span class="co">#&gt; 5    NA       0 (Kick formation) 5-D.Bailey extra point is GOOD, Center-58-A.Cu~</span>
-<span class="co">#&gt; 6    NA       0 5-D.Bailey kicks 65 yards from MIN 35 to end zone, Touchback.</span>
-</pre></div>
+<span class="co">#&gt; 6    NA       0 5-D.Bailey kicks 65 yards from MIN 35 to end zone, Touchback.</span></pre></div>
 <p>Fourth down plays?</p>
 <div class="sourceCode" id="cb14"><pre class="downlit">
-<span class="kw">data</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">down</span> <span class="op">==</span> <span class="fl">4</span>) <span class="op">%&gt;%</span>
-  <span class="fu">select</span>(<span class="kw">down</span>, <span class="kw">ydstogo</span>, <span class="kw">desc</span>) <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()
+<span class="va">data</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">down</span> <span class="op">==</span> <span class="fl">4</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">select</span><span class="op">(</span><span class="va">down</span>, <span class="va">ydstogo</span>, <span class="va">desc</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 6 x 3</span>
 <span class="co">#&gt;    down ydstogo desc                                                            </span>
 <span class="co">#&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;                                                           </span>
@@ -625,14 +612,13 @@
 <span class="co">#&gt; 3     4      20 (12:33) 2-B.Colquitt punts 51 yards to ATL 17, Center-58-A.Cutt~</span>
 <span class="co">#&gt; 4     4      27 (1:49) 5-M.Bosher punts 45 yards to MIN 10, Center-47-J.Harris,~</span>
 <span class="co">#&gt; 5     4      10 (:49) 2-B.Colquitt punts 57 yards to ATL 33, Center-58-A.Cuttin~</span>
-<span class="co">#&gt; 6     4       1 (10:56) 2-B.Colquitt punts 42 yards to ATL 10, Center-58-A.Cutt~</span>
-</pre></div>
+<span class="co">#&gt; 6     4       1 (10:56) 2-B.Colquitt punts 42 yards to ATL 10, Center-58-A.Cutt~</span></pre></div>
 <p>Fourth down plays that aren’t special teams plays?</p>
 <div class="sourceCode" id="cb15"><pre class="downlit">
-<span class="kw">data</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">down</span> <span class="op">==</span> <span class="fl">4</span> <span class="op">&amp;</span> <span class="kw">special</span> <span class="op">==</span> <span class="fl">0</span>) <span class="op">%&gt;%</span>
-  <span class="fu">select</span>(<span class="kw">down</span>, <span class="kw">ydstogo</span>, <span class="kw">desc</span>) <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>()
+<span class="va">data</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">down</span> <span class="op">==</span> <span class="fl">4</span> <span class="op">&amp;</span> <span class="va">special</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">select</span><span class="op">(</span><span class="va">down</span>, <span class="va">ydstogo</span>, <span class="va">desc</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 6 x 3</span>
 <span class="co">#&gt;    down ydstogo desc                                                            </span>
 <span class="co">#&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;                                                           </span>
@@ -641,13 +627,11 @@
 <span class="co">#&gt; 3     4       2 (1:27) (No Huddle, Shotgun) 2-M.Ryan pass short left to 11-J.Jo~</span>
 <span class="co">#&gt; 4     4       1 (2:59) (Punt formation) Direct snap to 41-A.Levine.  41-A.Levin~</span>
 <span class="co">#&gt; 5     4       3 (9:30) (Shotgun) 3-R.Griffin pass short left to 89-M.Andrews fo~</span>
-<span class="co">#&gt; 6     4       1 (3:55) 17-J.Allen FUMBLES (Aborted) at NYJ 37, RECOVERED by NYJ~</span>
-</pre></div>
+<span class="co">#&gt; 6     4       1 (3:55) 17-J.Allen FUMBLES (Aborted) at NYJ 37, RECOVERED by NYJ~</span></pre></div>
 <p>So far, we’ve just been taking a look at the initial dataset we downloaded, but none of our results are preserved. To save a new dataframe of just the plays we want, we need to use <code><a href="https://rdrr.io/r/base/assignOps.html">&lt;-</a></code> to assign a new dataframe. Let’s save a new dataframe that’s just run plays and pass plays with non-missing EPA, called <code>pbp_rp</code>.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit">
-<span class="kw">pbp_rp</span> <span class="op">&lt;-</span> <span class="kw">data</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">rush</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">|</span> <span class="kw">pass</span> <span class="op">==</span> <span class="fl">1</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">epa</span>))
-</pre></div>
+<span class="va">pbp_rp</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">rush</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">|</span> <span class="va">pass</span> <span class="op">==</span> <span class="fl">1</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">epa</span><span class="op">)</span><span class="op">)</span></pre></div>
 <p>In the above, <code>!is.na(epa)</code> means to exclude plays with missing (<code>na</code>) EPA. The <code><a href="https://rdrr.io/r/base/Logic.html">!</a></code> symbol is often used by computer folk to negate something, so <code><a href="https://rdrr.io/r/base/NA.html">is.na(epa)</a></code> means “EPA is missing” and <code>!is.na(epa)</code> means “EPA is not missing”, which we have used above.</p>
 </div>
 </div>
@@ -660,40 +644,38 @@
 <a href="#group-by-and-summarize" class="anchor"></a>Group by and Summarize</h3>
 <p>Let’s take a look at how various Cowboys’ running backs fared on run plays in 2019:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit">
-<span class="kw">pbp_rp</span> <span class="op">%&gt;%</span>
-    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">posteam</span> <span class="op">==</span> <span class="st">"DAL"</span>, <span class="kw">rush</span> <span class="op">==</span> <span class="fl">1</span>) <span class="op">%&gt;%</span>
-    <span class="fu">group_by</span>(<span class="kw">rusher</span>) <span class="op">%&gt;%</span>
-    <span class="fu">summarize</span>(
-      mean_epa = <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">epa</span>), success_rate = <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">success</span>), ypc=<span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">yards_gained</span>), plays=<span class="fu">n</span>()
-      ) <span class="op">%&gt;%</span>
-    <span class="fu">arrange</span>(<span class="op">-</span><span class="kw">mean_epa</span>) <span class="op">%&gt;%</span>
-    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">plays</span> <span class="op">&gt;</span> <span class="fl">20</span>)
+<span class="va">pbp_rp</span> <span class="op">%&gt;%</span>
+    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">posteam</span> <span class="op">==</span> <span class="st">"DAL"</span>, <span class="va">rush</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu">group_by</span><span class="op">(</span><span class="va">rusher</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu">summarize</span><span class="op">(</span>
+      mean_epa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">epa</span><span class="op">)</span>, success_rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">success</span><span class="op">)</span>, ypc<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">yards_gained</span><span class="op">)</span>, plays<span class="op">=</span><span class="fu">n</span><span class="op">(</span><span class="op">)</span>
+      <span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu">arrange</span><span class="op">(</span><span class="op">-</span><span class="va">mean_epa</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">plays</span> <span class="op">&gt;</span> <span class="fl">20</span><span class="op">)</span>
 <span class="co">#&gt; `summarise()` ungrouping output (override with `.groups` argument)</span>
 <span class="co">#&gt; # A tibble: 3 x 5</span>
 <span class="co">#&gt;   rusher     mean_epa success_rate   ypc plays</span>
 <span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;</span>
 <span class="co">#&gt; 1 D.Prescott   0.288         0.591  6.41    22</span>
 <span class="co">#&gt; 2 T.Pollard   -0.0266        0.456  5.08    90</span>
-<span class="co">#&gt; 3 E.Elliott   -0.0412        0.411  4.39   309</span>
-</pre></div>
+<span class="co">#&gt; 3 E.Elliott   -0.0412        0.411  4.39   309</span></pre></div>
 <p>There’s a lot going on here. We’ve covered <code>filter</code> already. The <code>group_by</code> function is an <em>extremely</em> useful function that, well, groups by what you tell it – in this case the rusher. Summarize is useful for collapsing the data down to a summary of what you’re looking at, and here, while grouping by player, we’re summarizing the mean of EPA, success, yardage (a bad rushing stat, but since we’re here), and getting the number of plays using <code>n()</code>, which returns the number in a group. Unsurprisingly, Prescott was much more effective as a rusher in 2019 than the running backs, and there was no meaningful difference between Pollard and Elliott in efficiency.</p>
 <p>If you check the <a href="https://www.pro-football-reference.com/teams/dal/2019.htm">PFR team stats page</a>, you’ll notice that the above doesn’t match up with the official stats. This is because <code>nflfastR</code> computes EPA and provides player names on plays with penalties and on two-point conversions. So if wanting to match the official stats, we need to restrict to <code>down &lt;= 4</code> (to excluded two-point conversions, which have down listed as <code>NA</code>) and <code>play_type = run</code> (to exclude penalties, which are <code>play_type = no_play</code>):</p>
 <div class="sourceCode" id="cb18"><pre class="downlit">
-<span class="kw">pbp_rp</span> <span class="op">%&gt;%</span>
-    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">posteam</span> <span class="op">==</span> <span class="st">"DAL"</span>, <span class="kw">down</span> <span class="op">&lt;=</span><span class="fl">4</span>, <span class="kw">play_type</span> <span class="op">==</span> <span class="st">'run'</span>) <span class="op">%&gt;%</span>
-    <span class="fu">group_by</span>(<span class="kw">rusher</span>) <span class="op">%&gt;%</span>
-    <span class="fu">summarize</span>(
-      mean_epa = <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">epa</span>), success_rate = <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">success</span>), ypc=<span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">yards_gained</span>), plays=<span class="fu">n</span>()
-      ) <span class="op">%&gt;%</span>
-    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">plays</span> <span class="op">&gt;</span> <span class="fl">20</span>)
+<span class="va">pbp_rp</span> <span class="op">%&gt;%</span>
+    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">posteam</span> <span class="op">==</span> <span class="st">"DAL"</span>, <span class="va">down</span> <span class="op">&lt;=</span><span class="fl">4</span>, <span class="va">play_type</span> <span class="op">==</span> <span class="st">'run'</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu">group_by</span><span class="op">(</span><span class="va">rusher</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu">summarize</span><span class="op">(</span>
+      mean_epa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">epa</span><span class="op">)</span>, success_rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">success</span><span class="op">)</span>, ypc<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">yards_gained</span><span class="op">)</span>, plays<span class="op">=</span><span class="fu">n</span><span class="op">(</span><span class="op">)</span>
+      <span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">plays</span> <span class="op">&gt;</span> <span class="fl">20</span><span class="op">)</span>
 <span class="co">#&gt; `summarise()` ungrouping output (override with `.groups` argument)</span>
 <span class="co">#&gt; # A tibble: 3 x 5</span>
 <span class="co">#&gt;   rusher     mean_epa success_rate   ypc plays</span>
 <span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;</span>
 <span class="co">#&gt; 1 D.Prescott   0.288         0.591  6.41    22</span>
 <span class="co">#&gt; 2 E.Elliott   -0.0185        0.422  4.51   301</span>
-<span class="co">#&gt; 3 T.Pollard   -0.0210        0.453  5.29    86</span>
-</pre></div>
+<span class="co">#&gt; 3 T.Pollard   -0.0210        0.453  5.29    86</span></pre></div>
 <p>Now we exactly match PFR: Zeke has 301 carries at 4.5 yards/carry, and Pollard has 86 carries for 5.3 yards/carry. Note that we still aren’t matching Dak’s stats to PFR because the NFL classifies scrambles as rush attempts and <code>nflfastR</code> does not.</p>
 </div>
 <div id="manipulating-columns-mutate-if_else-and-case_when" class="section level3">
@@ -701,12 +683,12 @@
 <a href="#manipulating-columns-mutate-if_else-and-case_when" class="anchor"></a>Manipulating columns: mutate, if_else, and case_when</h3>
 <p>Let’s say we want to make a new column, named <code>home</code>, which is equal to 1 if the team with the ball is the home team. Let’s introduce another extremely useful function, <code>if_else</code>:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit">
-<span class="kw">pbp_rp</span> <span class="op">%&gt;%</span>
-  <span class="fu">mutate</span>(
-    home = <span class="fu">if_else</span>(<span class="kw">posteam</span> <span class="op">==</span> <span class="kw">home_team</span>, <span class="fl">1</span>, <span class="fl">0</span>)
-  ) <span class="op">%&gt;%</span>
-  <span class="fu">select</span>(<span class="kw">posteam</span>, <span class="kw">home_team</span>, <span class="kw">home</span>) <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fl">10</span>)
+<span class="va">pbp_rp</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span>
+    home <span class="op">=</span> <span class="fu">if_else</span><span class="op">(</span><span class="va">posteam</span> <span class="op">==</span> <span class="va">home_team</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>
+  <span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">select</span><span class="op">(</span><span class="va">posteam</span>, <span class="va">home_team</span>, <span class="va">home</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 10 x 3</span>
 <span class="co">#&gt;    posteam home_team  home</span>
 <span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;     &lt;dbl&gt;</span>
@@ -719,38 +701,36 @@
 <span class="co">#&gt;  7 ATL     MIN           0</span>
 <span class="co">#&gt;  8 ATL     MIN           0</span>
 <span class="co">#&gt;  9 ATL     MIN           0</span>
-<span class="co">#&gt; 10 MIN     MIN           1</span>
-</pre></div>
+<span class="co">#&gt; 10 MIN     MIN           1</span></pre></div>
 <p><code>mutate</code> is R’s word for creating a new column (or overwriting an existing one); in this case, we’ve created a new column called <code>home</code>. The above uses <code>if_else</code>, which uses the following pattern: condition (in this case, <code>posteam == home_team</code>), value if condition is true (in this case, if <code>posteam == home_team</code>, it is 1), and value if the condition is false (0). So we could use this to, for example, look at average EPA/play by home and road teams:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit">
-<span class="kw">pbp_rp</span> <span class="op">%&gt;%</span>
-  <span class="fu">mutate</span>(
-    home = <span class="fu">if_else</span>(<span class="kw">posteam</span> <span class="op">==</span> <span class="kw">home_team</span>, <span class="fl">1</span>, <span class="fl">0</span>)
-  ) <span class="op">%&gt;%</span>
-  <span class="fu">group_by</span>(<span class="kw">home</span>) <span class="op">%&gt;%</span>
-  <span class="fu">summarize</span>(epa = <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">epa</span>))
+<span class="va">pbp_rp</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span>
+    home <span class="op">=</span> <span class="fu">if_else</span><span class="op">(</span><span class="va">posteam</span> <span class="op">==</span> <span class="va">home_team</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>
+  <span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">home</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">summarize</span><span class="op">(</span>epa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">epa</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; `summarise()` ungrouping output (override with `.groups` argument)</span>
 <span class="co">#&gt; # A tibble: 2 x 2</span>
 <span class="co">#&gt;    home     epa</span>
 <span class="co">#&gt;   &lt;dbl&gt;   &lt;dbl&gt;</span>
 <span class="co">#&gt; 1     0  0.0213</span>
-<span class="co">#&gt; 2     1 -0.0164</span>
-</pre></div>
+<span class="co">#&gt; 2     1 -0.0164</span></pre></div>
 <p>Note that EPA/play is similar for home teams and away teams because <code>home</code> is already built into the <code>nflfastR</code> EPA model, so this result is expected. Actually, away EPA/play is actually somewhat higher, presumably because away teams out-performed their usual in 2019 as homefield advantage continues to decline generally.</p>
 <p><code>if_else</code> is nice if you’re creating a new column based on a simple condition. But what if you need to do something more complicated? <code>case_when</code> is a good option. Here’s how it works:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit">
-<span class="kw">pbp_rp</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">cp</span>)) <span class="op">%&gt;%</span>
-  <span class="fu">mutate</span>(
-    depth = <span class="fu">case_when</span>(
-      <span class="kw">air_yards</span> <span class="op">&lt;</span> <span class="fl">0</span> <span class="op">~</span> <span class="st">"Negative"</span>,
-      <span class="kw">air_yards</span> <span class="op">&gt;=</span> <span class="fl">0</span> <span class="op">&amp;</span> <span class="kw">air_yards</span> <span class="op">&lt;</span> <span class="fl">10</span> <span class="op">~</span> <span class="st">"Short"</span>,
-      <span class="kw">air_yards</span> <span class="op">&gt;=</span> <span class="fl">10</span> <span class="op">&amp;</span> <span class="kw">air_yards</span> <span class="op">&lt;</span> <span class="fl">20</span> <span class="op">~</span> <span class="st">"Medium"</span>,
-      <span class="kw">air_yards</span> <span class="op">&gt;=</span> <span class="fl">20</span> <span class="op">~</span> <span class="st">"Deep"</span>
-    )
-  ) <span class="op">%&gt;%</span>
-  <span class="fu">group_by</span>(<span class="kw">depth</span>) <span class="op">%&gt;%</span>
-  <span class="fu">summarize</span>(cp = <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">cp</span>))
+<span class="va">pbp_rp</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">cp</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span>
+    depth <span class="op">=</span> <span class="fu">case_when</span><span class="op">(</span>
+      <span class="va">air_yards</span> <span class="op">&lt;</span> <span class="fl">0</span> <span class="op">~</span> <span class="st">"Negative"</span>,
+      <span class="va">air_yards</span> <span class="op">&gt;=</span> <span class="fl">0</span> <span class="op">&amp;</span> <span class="va">air_yards</span> <span class="op">&lt;</span> <span class="fl">10</span> <span class="op">~</span> <span class="st">"Short"</span>,
+      <span class="va">air_yards</span> <span class="op">&gt;=</span> <span class="fl">10</span> <span class="op">&amp;</span> <span class="va">air_yards</span> <span class="op">&lt;</span> <span class="fl">20</span> <span class="op">~</span> <span class="st">"Medium"</span>,
+      <span class="va">air_yards</span> <span class="op">&gt;=</span> <span class="fl">20</span> <span class="op">~</span> <span class="st">"Deep"</span>
+    <span class="op">)</span>
+  <span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">depth</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">summarize</span><span class="op">(</span>cp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">cp</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; `summarise()` ungrouping output (override with `.groups` argument)</span>
 <span class="co">#&gt; # A tibble: 4 x 2</span>
 <span class="co">#&gt;   depth       cp</span>
@@ -758,8 +738,7 @@
 <span class="co">#&gt; 1 Deep     0.367</span>
 <span class="co">#&gt; 2 Medium   0.573</span>
 <span class="co">#&gt; 3 Negative 0.847</span>
-<span class="co">#&gt; 4 Short    0.718</span>
-</pre></div>
+<span class="co">#&gt; 4 Short    0.718</span></pre></div>
 <p>Note the new syntax for <code>case_when</code>: we have condition (for the first one, air yards less than 0), followed by <code><a href="https://rdrr.io/r/base/tilde.html">~</a></code>, followed by assignment (for the first one, “Negative”). In the above, we created 4 bins based on air yards and got average completion probability (<code>cp</code>) based on the <code>nflfastR</code> model. Unsurprisingly, <code>cp</code> is lower the longer downfield a throw goes.</p>
 </div>
 <div id="a-basic-figure" class="section level3">
@@ -767,13 +746,13 @@
 <a href="#a-basic-figure" class="anchor"></a>A basic figure</h3>
 <p>Now that we’ve gained some skills at manipulating data, let’s put it to use by making things. Which teams were the most pass-heavy in the first half on early downs with win probability between 20 and 80, excluding the final 2 minutes of the half when everyone is pass-happy?</p>
 <div class="sourceCode" id="cb22"><pre class="downlit">
-<span class="kw">schotty</span> <span class="op">&lt;-</span> <span class="kw">pbp_rp</span> <span class="op">%&gt;%</span>
-    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">wp</span> <span class="op">&gt;</span> <span class="fl">.20</span> <span class="op">&amp;</span> <span class="kw">wp</span> <span class="op">&lt;</span> <span class="fl">.80</span> <span class="op">&amp;</span> <span class="kw">down</span> <span class="op">&lt;=</span> <span class="fl">2</span> <span class="op">&amp;</span> <span class="kw">qtr</span> <span class="op">&lt;=</span> <span class="fl">2</span> <span class="op">&amp;</span> <span class="kw">half_seconds_remaining</span> <span class="op">&gt;</span> <span class="fl">120</span>) <span class="op">%&gt;%</span>
-    <span class="fu">group_by</span>(<span class="kw">posteam</span>) <span class="op">%&gt;%</span>
-    <span class="fu">summarize</span>(mean_pass = <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">pass</span>), plays = <span class="fu">n</span>()) <span class="op">%&gt;%</span>
-    <span class="fu">arrange</span>(<span class="op">-</span><span class="kw">mean_pass</span>)
+<span class="va">schotty</span> <span class="op">&lt;-</span> <span class="va">pbp_rp</span> <span class="op">%&gt;%</span>
+    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">wp</span> <span class="op">&gt;</span> <span class="fl">.20</span> <span class="op">&amp;</span> <span class="va">wp</span> <span class="op">&lt;</span> <span class="fl">.80</span> <span class="op">&amp;</span> <span class="va">down</span> <span class="op">&lt;=</span> <span class="fl">2</span> <span class="op">&amp;</span> <span class="va">qtr</span> <span class="op">&lt;=</span> <span class="fl">2</span> <span class="op">&amp;</span> <span class="va">half_seconds_remaining</span> <span class="op">&gt;</span> <span class="fl">120</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu">group_by</span><span class="op">(</span><span class="va">posteam</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu">summarize</span><span class="op">(</span>mean_pass <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">pass</span><span class="op">)</span>, plays <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu">arrange</span><span class="op">(</span><span class="op">-</span><span class="va">mean_pass</span><span class="op">)</span>
 <span class="co">#&gt; `summarise()` ungrouping output (override with `.groups` argument)</span>
-<span class="kw">schotty</span>
+<span class="va">schotty</span>
 <span class="co">#&gt; # A tibble: 32 x 3</span>
 <span class="co">#&gt;    posteam mean_pass plays</span>
 <span class="co">#&gt;    &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;</span>
@@ -787,14 +766,12 @@
 <span class="co">#&gt;  8 CAR         0.550   269</span>
 <span class="co">#&gt;  9 ARI         0.549   319</span>
 <span class="co">#&gt; 10 GB          0.547   285</span>
-<span class="co">#&gt; # ... with 22 more rows</span>
-</pre></div>
+<span class="co">#&gt; # ... with 22 more rows</span></pre></div>
 <p>Again, we’ve already used <code>filter</code>, <code>group_by</code>, and <code>summarize</code>. The new function we are using here is <code>arrange</code>, which sorts the data by the variable(s) given. The minus sign in front of <code>mean_pass</code> means to sort in descending order.</p>
 <p>Let’s make our first figure:</p>
 <div class="sourceCode" id="cb23"><pre class="downlit">
-<span class="fu">ggplot</span>(<span class="kw">schotty</span>, <span class="fu">aes</span>(x=<span class="fu"><a href="https://rdrr.io/r/stats/reorder.factor.html">reorder</a></span>(<span class="kw">posteam</span>,<span class="op">-</span><span class="kw">mean_pass</span>), y=<span class="kw">mean_pass</span>)) <span class="op">+</span>
-        <span class="fu">geom_text</span>(<span class="fu">aes</span>(label=<span class="kw">posteam</span>))
-</pre></div>
+<span class="fu">ggplot</span><span class="op">(</span><span class="va">schotty</span>, <span class="fu">aes</span><span class="op">(</span>x<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/reorder.factor.html">reorder</a></span><span class="op">(</span><span class="va">posteam</span>,<span class="op">-</span><span class="va">mean_pass</span><span class="op">)</span>, y<span class="op">=</span><span class="va">mean_pass</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+        <span class="fu">geom_text</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>label<span class="op">=</span><span class="va">posteam</span><span class="op">)</span><span class="op">)</span></pre></div>
 <p><img src="beginners_guide_files/figure-html/fig1-1.png" width="100%"></p>
 <p>This image is kind of a mess – we still need a title, axis labels, etc – but gets the point across. We’ll get to that other stuff later. But more importantly, we made something interesting using <code>nflfastR</code> data! The “reorder” sorts the teams according to pass rate, with the “-” again saying to do it in descending order. “aes” is short for “aesthetic”, which is R’s weird way of asking which variables should go on the x and y axes.</p>
 <p>Looking at the figure, the Chiefs will never have playoff success until they establish the run.</p>
@@ -805,21 +782,20 @@
 <a href="#loading-multiple-seasons" class="anchor"></a>Loading multiple seasons</h2>
 <p>Because all the data is stored in the data repository, it is very easy to use data from multiple seasons. <a href="https://github.com/guga31bb/nflfastR-data">The repository page</a> has instructions for loading multiple seasons:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit">
-<span class="kw">seasons</span> <span class="op">&lt;-</span> <span class="fl">2015</span><span class="op">:</span><span class="fl">2019</span>
-<span class="kw">pbp</span> <span class="op">&lt;-</span> <span class="fu">map_df</span>(<span class="kw">seasons</span>, <span class="fu">function</span>(<span class="kw">x</span>) {
-  <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(
-    <span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(
-      <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_"</span>,<span class="kw">x</span>,<span class="st">".rds"</span>)
-    )
-  )
-})
-</pre></div>
+<span class="va">seasons</span> <span class="op">&lt;-</span> <span class="fl">2015</span><span class="op">:</span><span class="fl">2019</span>
+<span class="va">pbp</span> <span class="op">&lt;-</span> <span class="fu">map_df</span><span class="op">(</span><span class="va">seasons</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span><span class="op">(</span>
+      <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_"</span>,<span class="va">x</span>,<span class="st">".rds"</span><span class="op">)</span>
+    <span class="op">)</span>
+  <span class="op">)</span>
+<span class="op">}</span><span class="op">)</span></pre></div>
 <p>You don’t need to understand this one yet, but if you’re curious, <code>map_df</code> stitches together the output from running a function repeatedly with different inputs. In this case, the function is simply reading one season’s data, and the inputs are the list of seasons we want: in the above, 2015 through 2019. But all you need to know how to do is change the range of seasons to get whichever seasons you want.</p>
 <p>Let’s make sure we got it all. By now, you should understand what this is doing:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit">
-<span class="kw">pbp</span> <span class="op">%&gt;%</span>
-  <span class="fu">group_by</span>(<span class="kw">season</span>) <span class="op">%&gt;%</span>
-  <span class="fu">summarize</span>(n = <span class="fu">n</span>())
+<span class="va">pbp</span> <span class="op">%&gt;%</span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">season</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">summarize</span><span class="op">(</span>n <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; `summarise()` ungrouping output (override with `.groups` argument)</span>
 <span class="co">#&gt; # A tibble: 5 x 2</span>
 <span class="co">#&gt;   season     n</span>
@@ -828,13 +804,12 @@
 <span class="co">#&gt; 2   2016 48419</span>
 <span class="co">#&gt; 3   2017 47997</span>
 <span class="co">#&gt; 4   2018 47874</span>
-<span class="co">#&gt; 5   2019 48034</span>
-</pre></div>
+<span class="co">#&gt; 5   2019 48034</span></pre></div>
 <p>So each season has about 48,000 plays. Just for fun, let’s look at the various play types:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit">
-<span class="kw">pbp</span> <span class="op">%&gt;%</span>
-  <span class="fu">group_by</span>(<span class="kw">play_type</span>) <span class="op">%&gt;%</span>
-  <span class="fu">summarize</span>(n = <span class="fu">n</span>())
+<span class="va">pbp</span> <span class="op">%&gt;%</span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">play_type</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">summarize</span><span class="op">(</span>n <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; `summarise()` ungrouping output (override with `.groups` argument)</span>
 <span class="co">#&gt; # A tibble: 10 x 2</span>
 <span class="co">#&gt;    play_type       n</span>
@@ -848,33 +823,31 @@
 <span class="co">#&gt;  7 qb_kneel     2090</span>
 <span class="co">#&gt;  8 qb_spike      340</span>
 <span class="co">#&gt;  9 run         68129</span>
-<span class="co">#&gt; 10 &lt;NA&gt;        11071</span>
-</pre></div>
+<span class="co">#&gt; 10 &lt;NA&gt;        11071</span></pre></div>
 </div>
 <div id="figures-with-qb-stats" class="section level2">
 <h2 class="hasAnchor">
 <a href="#figures-with-qb-stats" class="anchor"></a>Figures with QB stats</h2>
 <p>Let’s do some stuff with quarterbacks:</p>
 <div class="sourceCode" id="cb27"><pre class="downlit">
-<span class="kw">qbs</span> <span class="op">&lt;-</span> <span class="kw">pbp</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">week</span> <span class="op">&lt;=</span> <span class="fl">17</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">epa</span>)) <span class="op">%&gt;%</span>
-  <span class="fu">group_by</span>(<span class="kw">id</span>, <span class="kw">name</span>) <span class="op">%&gt;%</span>
-  <span class="fu">summarize</span>(
-    epa = <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">qb_epa</span>),
-    cpoe = <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">cpoe</span>, na.rm = <span class="kw">T</span>),
-    n_dropbacks = <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw">pass</span>),
-    n_plays = <span class="fu">n</span>(),
-    team = <span class="fu">last</span>(<span class="kw">posteam</span>)
-  ) <span class="op">%&gt;%</span>
-  <span class="fu">ungroup</span>() <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">n_dropbacks</span> <span class="op">&gt;</span> <span class="fl">100</span> <span class="op">&amp;</span> <span class="kw">n_plays</span> <span class="op">&gt;</span> <span class="fl">1000</span>)
-<span class="co">#&gt; `summarise()` regrouping output by 'id' (override with `.groups` argument)</span>
-</pre></div>
+<span class="va">qbs</span> <span class="op">&lt;-</span> <span class="va">pbp</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">week</span> <span class="op">&lt;=</span> <span class="fl">17</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">epa</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">id</span>, <span class="va">name</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">summarize</span><span class="op">(</span>
+    epa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">qb_epa</span><span class="op">)</span>,
+    cpoe <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">cpoe</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>,
+    n_dropbacks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">pass</span><span class="op">)</span>,
+    n_plays <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span>,
+    team <span class="op">=</span> <span class="fu">last</span><span class="op">(</span><span class="va">posteam</span><span class="op">)</span>
+  <span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">n_dropbacks</span> <span class="op">&gt;</span> <span class="fl">100</span> <span class="op">&amp;</span> <span class="va">n_plays</span> <span class="op">&gt;</span> <span class="fl">1000</span><span class="op">)</span>
+<span class="co">#&gt; `summarise()` regrouping output by 'id' (override with `.groups` argument)</span></pre></div>
 <p>Lots of new stuff here. First, we’re grouping by <code>id</code> and <code>name</code> to make sure we’re getting unique players; i.e., if two players have the same name (like Javorius Allen and Josh Allen both being J.Allen), we are also using their id to differntiate them. <code>qb_epa</code> is an <code>nflfastR</code> creation that is equal to EPA in all instances except for when a pass is completed and a fumble is lost, in which case a QB gets “credit” for the play up to the spot the fumble was lost (making EPA function like passing yards). The <code>last</code> part in the <code>summarize</code> comment gets the last team that a player was observed playing with.</p>
-<p>Because there’s no way to join to rosters (yet?), my way of getting a dataset with only quarterbacks is to make sure they hit some number of dropbacks. In this case, filtering with <code>n_dropbacks &gt; 100</code> makes sure we’re only including quarterbacks. The <code>ungroup()</code> near the end is good practice after grouping to make sure you don’t get weird behavior with the data you created down the line.</p>
+<p>My way of getting a dataset with only quarterbacks without joining to external roster data is to make sure they hit some number of dropbacks. In this case, filtering with <code>n_dropbacks &gt; 100</code> makes sure we’re only including quarterbacks. The <code>ungroup()</code> near the end is good practice after grouping to make sure you don’t get weird behavior with the data you created down the line.</p>
 <p>Let’s make some more figures. The <code>team_colors_logos</code> dataframe is provided in the <code>nflfastR</code> package, so since we have already loaded the package, it’s ready to use.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="kw">teams_colors_logos</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">teams_colors_logos</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 6 x 10</span>
 <span class="co">#&gt;   team_abbr team_name team_id team_nick team_color team_color2 team_color3</span>
 <span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;      </span>
@@ -885,48 +858,45 @@
 <span class="co">#&gt; 5 CAR       Carolina~ 0750    Panthers  #0085ca    #000000     #bfc0bf    </span>
 <span class="co">#&gt; 6 CHI       Chicago ~ 0810    Bears     #0b162a    #c83803     #0b162a    </span>
 <span class="co">#&gt; # ... with 3 more variables: team_color4 &lt;chr&gt;, team_logo_wikipedia &lt;chr&gt;,</span>
-<span class="co">#&gt; #   team_logo_espn &lt;chr&gt;</span>
-</pre></div>
+<span class="co">#&gt; #   team_logo_espn &lt;chr&gt;</span></pre></div>
 <p>Let’s join this to the <code>qbs</code> dataframe we created:</p>
 <div class="sourceCode" id="cb29"><pre class="downlit">
-<span class="kw">qbs</span> <span class="op">&lt;-</span> <span class="kw">qbs</span> <span class="op">%&gt;%</span>
-  <span class="fu">left_join</span>(<span class="kw">teams_colors_logos</span>, by = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'team'</span> = <span class="st">'team_abbr'</span>))
-</pre></div>
+<span class="va">qbs</span> <span class="op">&lt;-</span> <span class="va">qbs</span> <span class="op">%&gt;%</span>
+  <span class="fu">left_join</span><span class="op">(</span><span class="va">teams_colors_logos</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'team'</span> <span class="op">=</span> <span class="st">'team_abbr'</span><span class="op">)</span><span class="op">)</span></pre></div>
 <p><code>left_join</code> means keep all the rows from the left dataframe (the first one provided, <code>qbs</code>), and join those rows to available rows in the other dataframe. We also need to provide the joining variables, <code>team</code> from <code>qbs</code> and <code>team_abbr</code> from <code>team_colors_logos</code>. Why do we have to type <code>by = c('team' = 'team_abbr')</code>? Who knows, but it’s what <code>left_join</code> requires as instructions for how to match.</p>
 <div id="with-team-color-dots" class="section level3">
 <h3 class="hasAnchor">
 <a href="#with-team-color-dots" class="anchor"></a>With team color dots</h3>
 <p>Now we can make a figure!</p>
 <div class="sourceCode" id="cb30"><pre class="downlit">
-<span class="kw">qbs</span> <span class="op">%&gt;%</span>
-  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x = <span class="kw">cpoe</span>, y = <span class="kw">epa</span>)) <span class="op">+</span>
+<span class="va">qbs</span> <span class="op">%&gt;%</span>
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">cpoe</span>, y <span class="op">=</span> <span class="va">epa</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="co">#horizontal line with mean EPA</span>
-  <span class="fu">geom_hline</span>(yintercept = <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">qbs</span><span class="op">$</span><span class="kw">epa</span>), color = <span class="st">"red"</span>, linetype = <span class="st">"dashed"</span>, alpha=<span class="fl">0.5</span>) <span class="op">+</span>
+  <span class="fu">geom_hline</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">qbs</span><span class="op">$</span><span class="va">epa</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"red"</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, alpha<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span>
   <span class="co">#vertical line with mean CPOE</span>
-  <span class="fu">geom_vline</span>(xintercept =  <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">qbs</span><span class="op">$</span><span class="kw">cpoe</span>), color = <span class="st">"red"</span>, linetype = <span class="st">"dashed"</span>, alpha=<span class="fl">0.5</span>) <span class="op">+</span>
+  <span class="fu">geom_vline</span><span class="op">(</span>xintercept <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">qbs</span><span class="op">$</span><span class="va">cpoe</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"red"</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, alpha<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span>
   <span class="co">#add points for the QBs with the right colors</span>
   <span class="co">#cex controls point size and alpha the transparency (alpha = 1 is normal)</span>
-  <span class="fu">geom_point</span>(color = <span class="kw">qbs</span><span class="op">$</span><span class="kw">team_color</span>, cex=<span class="kw">qbs</span><span class="op">$</span><span class="kw">n_plays</span> <span class="op">/</span> <span class="fl">350</span>, alpha = <span class="fl">.6</span>) <span class="op">+</span>
+  <span class="fu">geom_point</span><span class="op">(</span>color <span class="op">=</span> <span class="va">qbs</span><span class="op">$</span><span class="va">team_color</span>, cex<span class="op">=</span><span class="va">qbs</span><span class="op">$</span><span class="va">n_plays</span> <span class="op">/</span> <span class="fl">350</span>, alpha <span class="op">=</span> <span class="fl">.6</span><span class="op">)</span> <span class="op">+</span>
   <span class="co">#add names using ggrepel, which tries to make them not overlap</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/ggrepel/man/geom_text_repel.html">geom_text_repel</a></span>(<span class="fu">aes</span>(label=<span class="kw">name</span>)) <span class="op">+</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/ggrepel/man/geom_text_repel.html">geom_text_repel</a></span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>label<span class="op">=</span><span class="va">name</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="co">#add a smooth line fitting cpoe + epa</span>
-  <span class="fu">stat_smooth</span>(geom=<span class="st">'line'</span>, alpha=<span class="fl">0.5</span>, se=<span class="fl">FALSE</span>, method=<span class="st">'lm'</span>)<span class="op">+</span>
+  <span class="fu">stat_smooth</span><span class="op">(</span>geom<span class="op">=</span><span class="st">'line'</span>, alpha<span class="op">=</span><span class="fl">0.5</span>, se<span class="op">=</span><span class="cn">FALSE</span>, method<span class="op">=</span><span class="st">'lm'</span><span class="op">)</span><span class="op">+</span>
   <span class="co">#titles and caption</span>
-  <span class="fu">labs</span>(x = <span class="st">"Completion % above expected (CPOE)"</span>,
-       y = <span class="st">"EPA per play (passes, rushes, and penalties)"</span>,
-       title = <span class="st">"Quarterback Efficiency, 2015 - 2019"</span>,
-       caption = <span class="st">"Data: @nflfastR"</span>) <span class="op">+</span>
+  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Completion % above expected (CPOE)"</span>,
+       y <span class="op">=</span> <span class="st">"EPA per play (passes, rushes, and penalties)"</span>,
+       title <span class="op">=</span> <span class="st">"Quarterback Efficiency, 2015 - 2019"</span>,
+       caption <span class="op">=</span> <span class="st">"Data: @nflfastR"</span><span class="op">)</span> <span class="op">+</span>
   <span class="co">#uses the black and white ggplot theme</span>
-  <span class="fu">theme_bw</span>() <span class="op">+</span>
+  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="co">#center title with hjust = 0.5</span>
-  <span class="fu">theme</span>(
-    plot.title = <span class="fu">element_text</span>(size = <span class="fl">14</span>, hjust = <span class="fl">0.5</span>, face = <span class="st">"bold"</span>)
-  ) <span class="op">+</span>
+  <span class="fu">theme</span><span class="op">(</span>
+    plot.title <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">14</span>, hjust <span class="op">=</span> <span class="fl">0.5</span>, face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span>
+  <span class="op">)</span> <span class="op">+</span>
   <span class="co">#make ticks look nice</span>
   <span class="co">#if this doesn't work, `install.packages('scales')`</span>
-  <span class="fu">scale_y_continuous</span>(breaks = <span class="kw">scales</span>::<span class="fu"><a href="https://scales.r-lib.org//reference/breaks_pretty.html">pretty_breaks</a></span>(n = <span class="fl">10</span>)) <span class="op">+</span>
-  <span class="fu">scale_x_continuous</span>(breaks = <span class="kw">scales</span>::<span class="fu"><a href="https://scales.r-lib.org//reference/breaks_pretty.html">pretty_breaks</a></span>(n = <span class="fl">10</span>))
-</pre></div>
+  <span class="fu">scale_y_continuous</span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org//reference/breaks_pretty.html">pretty_breaks</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_x_continuous</span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org//reference/breaks_pretty.html">pretty_breaks</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span></pre></div>
 <p><img src="beginners_guide_files/figure-html/fig2-1.png" width="100%"></p>
 <p>This looks complicated, but is just a way of getting a bunch of different stuff on the same plot: we have lines for averages, dots, names, etc. I added comments above to explain what is going on, but in practice for making figures I usually just copy and paste stuff and/or google what I need.</p>
 </div>
@@ -935,33 +905,32 @@
 <a href="#with-team-logos" class="anchor"></a>With team logos</h3>
 <p>We could also make the same plot with team logos:</p>
 <div class="sourceCode" id="cb31"><pre class="downlit">
-<span class="kw">qbs</span> <span class="op">%&gt;%</span>
-  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x = <span class="kw">cpoe</span>, y = <span class="kw">epa</span>)) <span class="op">+</span>
+<span class="va">qbs</span> <span class="op">%&gt;%</span>
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">cpoe</span>, y <span class="op">=</span> <span class="va">epa</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="co">#horizontal line with mean EPA</span>
-  <span class="fu">geom_hline</span>(yintercept = <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">qbs</span><span class="op">$</span><span class="kw">epa</span>), color = <span class="st">"red"</span>, linetype = <span class="st">"dashed"</span>, alpha=<span class="fl">0.5</span>) <span class="op">+</span>
+  <span class="fu">geom_hline</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">qbs</span><span class="op">$</span><span class="va">epa</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"red"</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, alpha<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span>
   <span class="co">#vertical line with mean CPOE</span>
-  <span class="fu">geom_vline</span>(xintercept =  <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">qbs</span><span class="op">$</span><span class="kw">cpoe</span>), color = <span class="st">"red"</span>, linetype = <span class="st">"dashed"</span>, alpha=<span class="fl">0.5</span>) <span class="op">+</span>
+  <span class="fu">geom_vline</span><span class="op">(</span>xintercept <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">qbs</span><span class="op">$</span><span class="va">cpoe</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"red"</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, alpha<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span>
   <span class="co">#add points for the QBs with the logos</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/ggimage/man/geom_image.html">geom_image</a></span>(<span class="fu">aes</span>(image = <span class="kw">team_logo_espn</span>), size = <span class="kw">qbs</span><span class="op">$</span><span class="kw">n_plays</span> <span class="op">/</span> <span class="fl">45000</span>, asp = <span class="fl">16</span> <span class="op">/</span> <span class="fl">9</span>) <span class="op">+</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/ggimage/man/geom_image.html">geom_image</a></span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>image <span class="op">=</span> <span class="va">team_logo_espn</span><span class="op">)</span>, size <span class="op">=</span> <span class="va">qbs</span><span class="op">$</span><span class="va">n_plays</span> <span class="op">/</span> <span class="fl">45000</span>, asp <span class="op">=</span> <span class="fl">16</span> <span class="op">/</span> <span class="fl">9</span><span class="op">)</span> <span class="op">+</span>
   <span class="co">#add names using ggrepel, which tries to make them not overlap</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/ggrepel/man/geom_text_repel.html">geom_text_repel</a></span>(<span class="fu">aes</span>(label=<span class="kw">name</span>)) <span class="op">+</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/ggrepel/man/geom_text_repel.html">geom_text_repel</a></span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>label<span class="op">=</span><span class="va">name</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="co">#add a smooth line fitting cpoe + epa</span>
-  <span class="fu">stat_smooth</span>(geom=<span class="st">'line'</span>, alpha=<span class="fl">0.5</span>, se=<span class="fl">FALSE</span>, method=<span class="st">'lm'</span>)<span class="op">+</span>
+  <span class="fu">stat_smooth</span><span class="op">(</span>geom<span class="op">=</span><span class="st">'line'</span>, alpha<span class="op">=</span><span class="fl">0.5</span>, se<span class="op">=</span><span class="cn">FALSE</span>, method<span class="op">=</span><span class="st">'lm'</span><span class="op">)</span><span class="op">+</span>
   <span class="co">#titles and caption</span>
-  <span class="fu">labs</span>(x = <span class="st">"Completion % above expected (CPOE)"</span>,
-       y = <span class="st">"EPA per play (passes, rushes, and penalties)"</span>,
-       title = <span class="st">"Quarterback Efficiency, 2015 - 2019"</span>,
-       caption = <span class="st">"Data: @nflfastR"</span>) <span class="op">+</span>
-  <span class="fu">theme_bw</span>() <span class="op">+</span>
+  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Completion % above expected (CPOE)"</span>,
+       y <span class="op">=</span> <span class="st">"EPA per play (passes, rushes, and penalties)"</span>,
+       title <span class="op">=</span> <span class="st">"Quarterback Efficiency, 2015 - 2019"</span>,
+       caption <span class="op">=</span> <span class="st">"Data: @nflfastR"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="co">#center title</span>
-  <span class="fu">theme</span>(
-    aspect.ratio = <span class="fl">9</span> <span class="op">/</span> <span class="fl">16</span>,
-    plot.title = <span class="fu">element_text</span>(size = <span class="fl">14</span>, hjust = <span class="fl">0.5</span>, face = <span class="st">"bold"</span>)
-  ) <span class="op">+</span>
+  <span class="fu">theme</span><span class="op">(</span>
+    aspect.ratio <span class="op">=</span> <span class="fl">9</span> <span class="op">/</span> <span class="fl">16</span>,
+    plot.title <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">14</span>, hjust <span class="op">=</span> <span class="fl">0.5</span>, face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span>
+  <span class="op">)</span> <span class="op">+</span>
   <span class="co">#make ticks look nice</span>
-  <span class="fu">scale_y_continuous</span>(breaks = <span class="kw">scales</span>::<span class="fu"><a href="https://scales.r-lib.org//reference/breaks_pretty.html">pretty_breaks</a></span>(n = <span class="fl">10</span>)) <span class="op">+</span>
-  <span class="fu">scale_x_continuous</span>(breaks = <span class="kw">scales</span>::<span class="fu"><a href="https://scales.r-lib.org//reference/breaks_pretty.html">pretty_breaks</a></span>(n = <span class="fl">10</span>))
-</pre></div>
+  <span class="fu">scale_y_continuous</span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org//reference/breaks_pretty.html">pretty_breaks</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">scale_x_continuous</span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org//reference/breaks_pretty.html">pretty_breaks</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span></pre></div>
 <p><img src="beginners_guide_files/figure-html/fig3-1.png" width="100%"></p>
 <p>The only changes we’ve made are to use <code>geom_image</code> instead of <code>geom_point</code>, and to put <code>aspect.ratio = 9 / 16</code> in the <code>theme()</code> part. This makes the plot output dimensions consistent with the provided images and leads to the images not looking squished (how to figure out the right size for the images? Trial and error).</p>
 <p>This figure would look better with transparent logos or fewer players shown, but the point of this is explaining how to do stuff, so let’s call this good enough.</p>
@@ -976,8 +945,8 @@
 <a href="#get-team-wins-each-season" class="anchor"></a>Get team wins each season</h3>
 <p>We’re going to cheat a little and take advantage of Lee Sharpe’s famous <code>games</code> file. Most of this stuff has been added into <code>nflfastR</code>, but it’s easier working with this file where each game is one row.</p>
 <div class="sourceCode" id="cb32"><pre class="downlit">
-<span class="kw">games</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">"http://www.habitatring.com/games.rds"</span>))
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="kw">games</span>)
+<span class="va">games</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span><span class="op">(</span><span class="st">"http://www.habitatring.com/games.rds"</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">games</span><span class="op">)</span>
 <span class="co">#&gt; tibble [5,839 x 35] (S3: tbl_df/tbl/data.frame)</span>
 <span class="co">#&gt;  $ game_id         : chr [1:5839] "1999_01_MIN_ATL" "1999_01_KC_CHI" "1999_01_PIT_CLE" "1999_01_OAK_GB" ...</span>
 <span class="co">#&gt;  $ season          : int [1:5839] 1999 1999 1999 1999 1999 1999 1999 1999 1999 1999 ...</span>
@@ -1013,15 +982,14 @@
 <span class="co">#&gt;  $ home_coach      : chr [1:5839] "Dan Reeves" "Dick Jauron" "Chris Palmer" "Ray Rhodes" ...</span>
 <span class="co">#&gt;  $ referee         : chr [1:5839] "Gerry Austin" "Phil Luckett" "Bob McElwee" "Tony Corrente" ...</span>
 <span class="co">#&gt;  $ stadium_id      : chr [1:5839] "ATL00" "CHI98" "CLE00" "GNB00" ...</span>
-<span class="co">#&gt;  $ stadium         : chr [1:5839] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...</span>
-</pre></div>
+<span class="co">#&gt;  $ stadium         : chr [1:5839] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...</span></pre></div>
 <p>To start, we want to create a dataframe where each row is a team-season observation, listing how many games they won. There are multiple ways to do this, but I’m going to just take the home and away results and bind together. As an example, here’s what the <code>home</code> results look like:</p>
 <div class="sourceCode" id="cb33"><pre class="downlit">
-<span class="kw">home</span> <span class="op">&lt;-</span> <span class="kw">games</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">game_type</span> <span class="op">==</span> <span class="st">'REG'</span>) <span class="op">%&gt;%</span>
-  <span class="fu">select</span>(<span class="kw">season</span>, <span class="kw">week</span>, <span class="kw">home_team</span>, <span class="kw">result</span>) <span class="op">%&gt;%</span>
-  <span class="fu">rename</span>(team = <span class="kw">home_team</span>)
-<span class="kw">home</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fl">5</span>)
+<span class="va">home</span> <span class="op">&lt;-</span> <span class="va">games</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">game_type</span> <span class="op">==</span> <span class="st">'REG'</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">select</span><span class="op">(</span><span class="va">season</span>, <span class="va">week</span>, <span class="va">home_team</span>, <span class="va">result</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">rename</span><span class="op">(</span>team <span class="op">=</span> <span class="va">home_team</span><span class="op">)</span>
+<span class="va">home</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 5 x 4</span>
 <span class="co">#&gt;   season  week team  result</span>
 <span class="co">#&gt;    &lt;int&gt; &lt;int&gt; &lt;chr&gt;  &lt;int&gt;</span>
@@ -1029,16 +997,15 @@
 <span class="co">#&gt; 2   1999     1 CHI        3</span>
 <span class="co">#&gt; 3   1999     1 CLE      -43</span>
 <span class="co">#&gt; 4   1999     1 GB         4</span>
-<span class="co">#&gt; 5   1999     1 IND       17</span>
-</pre></div>
+<span class="co">#&gt; 5   1999     1 IND       17</span></pre></div>
 <p>Note that we used <code>rename</code> to change <code>home_team</code> to <code>team</code>.</p>
 <div class="sourceCode" id="cb34"><pre class="downlit">
-<span class="kw">away</span> <span class="op">&lt;-</span> <span class="kw">games</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">game_type</span> <span class="op">==</span> <span class="st">'REG'</span>) <span class="op">%&gt;%</span>
-  <span class="fu">select</span>(<span class="kw">season</span>, <span class="kw">week</span>, <span class="kw">away_team</span>, <span class="kw">result</span>) <span class="op">%&gt;%</span>
-  <span class="fu">rename</span>(team = <span class="kw">away_team</span>) <span class="op">%&gt;%</span>
-  <span class="fu">mutate</span>(result = <span class="op">-</span><span class="kw">result</span>)
-<span class="kw">away</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fl">5</span>)
+<span class="va">away</span> <span class="op">&lt;-</span> <span class="va">games</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">game_type</span> <span class="op">==</span> <span class="st">'REG'</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">select</span><span class="op">(</span><span class="va">season</span>, <span class="va">week</span>, <span class="va">away_team</span>, <span class="va">result</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">rename</span><span class="op">(</span>team <span class="op">=</span> <span class="va">away_team</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span>result <span class="op">=</span> <span class="op">-</span><span class="va">result</span><span class="op">)</span>
+<span class="va">away</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 5 x 4</span>
 <span class="co">#&gt;   season  week team  result</span>
 <span class="co">#&gt;    &lt;int&gt; &lt;int&gt; &lt;chr&gt;  &lt;int&gt;</span>
@@ -1046,21 +1013,20 @@
 <span class="co">#&gt; 2   1999     1 KC        -3</span>
 <span class="co">#&gt; 3   1999     1 PIT       43</span>
 <span class="co">#&gt; 4   1999     1 OAK       -4</span>
-<span class="co">#&gt; 5   1999     1 BUF      -17</span>
-</pre></div>
+<span class="co">#&gt; 5   1999     1 BUF      -17</span></pre></div>
 <p>For away teams, we need to flip the result since result is given from the perspective of the home team. Now let’s make a columns called <code>win</code> based on the result.</p>
 <div class="sourceCode" id="cb35"><pre class="downlit">
-<span class="kw">results</span> <span class="op">&lt;-</span> <span class="fu">bind_rows</span>(<span class="kw">home</span>, <span class="kw">away</span>) <span class="op">%&gt;%</span>
-  <span class="fu">arrange</span>(<span class="kw">week</span>) <span class="op">%&gt;%</span>
-  <span class="fu">mutate</span>(
-    win = <span class="fu">case_when</span>(
-      <span class="kw">result</span> <span class="op">&gt;</span> <span class="fl">0</span> <span class="op">~</span> <span class="fl">1</span>,
-      <span class="kw">result</span> <span class="op">&lt;</span> <span class="fl">0</span> <span class="op">~</span> <span class="fl">0</span>,
-      <span class="kw">result</span> <span class="op">==</span> <span class="fl">0</span> <span class="op">~</span> <span class="fl">0.5</span>
-    )
-  )
+<span class="va">results</span> <span class="op">&lt;-</span> <span class="fu">bind_rows</span><span class="op">(</span><span class="va">home</span>, <span class="va">away</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">arrange</span><span class="op">(</span><span class="va">week</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span>
+    win <span class="op">=</span> <span class="fu">case_when</span><span class="op">(</span>
+      <span class="va">result</span> <span class="op">&gt;</span> <span class="fl">0</span> <span class="op">~</span> <span class="fl">1</span>,
+      <span class="va">result</span> <span class="op">&lt;</span> <span class="fl">0</span> <span class="op">~</span> <span class="fl">0</span>,
+      <span class="va">result</span> <span class="op">==</span> <span class="fl">0</span> <span class="op">~</span> <span class="fl">0.5</span>
+    <span class="op">)</span>
+  <span class="op">)</span>
 
-<span class="kw">results</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">season</span> <span class="op">==</span> <span class="fl">2019</span> <span class="op">&amp;</span> <span class="kw">team</span> <span class="op">==</span> <span class="st">'SEA'</span>)
+<span class="va">results</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op">==</span> <span class="fl">2019</span> <span class="op">&amp;</span> <span class="va">team</span> <span class="op">==</span> <span class="st">'SEA'</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 16 x 5</span>
 <span class="co">#&gt;    season  week team  result   win</span>
 <span class="co">#&gt;     &lt;int&gt; &lt;int&gt; &lt;chr&gt;  &lt;int&gt; &lt;dbl&gt;</span>
@@ -1079,22 +1045,21 @@
 <span class="co">#&gt; 13   2019    14 SEA      -16     0</span>
 <span class="co">#&gt; 14   2019    15 SEA        6     1</span>
 <span class="co">#&gt; 15   2019    16 SEA      -14     0</span>
-<span class="co">#&gt; 16   2019    17 SEA       -5     0</span>
-</pre></div>
+<span class="co">#&gt; 16   2019    17 SEA       -5     0</span></pre></div>
 <p>Doing the <code>results %&gt;% filter(season == 2019 &amp; team == 'SEA')</code> part at the end isn’t actually for saving the data in a new form, but just making sure the previous step did what I wanted. This is a good habit to get into: frequently inspect your data and make sure it looks like you think it should.</p>
 <p>Now that we have the dataframe we wanted, we can get team wins by season easily:</p>
 <div class="sourceCode" id="cb36"><pre class="downlit">
-<span class="kw">team_wins</span> <span class="op">&lt;-</span> <span class="kw">results</span> <span class="op">%&gt;%</span>
-  <span class="fu">group_by</span>(<span class="kw">team</span>, <span class="kw">season</span>) <span class="op">%&gt;%</span>
-  <span class="fu">summarize</span>(
-    wins = <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw">win</span>),
-    point_diff = <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw">result</span>)) <span class="op">%&gt;%</span>
-  <span class="fu">ungroup</span>()
+<span class="va">team_wins</span> <span class="op">&lt;-</span> <span class="va">results</span> <span class="op">%&gt;%</span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">team</span>, <span class="va">season</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">summarize</span><span class="op">(</span>
+    wins <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">win</span><span class="op">)</span>,
+    point_diff <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; `summarise()` regrouping output by 'team' (override with `.groups` argument)</span>
 
-<span class="kw">team_wins</span> <span class="op">%&gt;%</span>
-  <span class="fu">arrange</span>(<span class="op">-</span><span class="kw">wins</span>) <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fl">5</span>)
+<span class="va">team_wins</span> <span class="op">%&gt;%</span>
+  <span class="fu">arrange</span><span class="op">(</span><span class="op">-</span><span class="va">wins</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 5 x 4</span>
 <span class="co">#&gt;   team  season  wins point_diff</span>
 <span class="co">#&gt;   &lt;chr&gt;  &lt;int&gt; &lt;dbl&gt;      &lt;int&gt;</span>
@@ -1102,8 +1067,7 @@
 <span class="co">#&gt; 2 CAR     2015    15        192</span>
 <span class="co">#&gt; 3 GB      2011    15        201</span>
 <span class="co">#&gt; 4 PIT     2004    15        121</span>
-<span class="co">#&gt; 5 BAL     2019    14        249</span>
-</pre></div>
+<span class="co">#&gt; 5 BAL     2019    14        249</span></pre></div>
 <p>Again, we’re making sure the data looks like it “should” by checking the 5 seasons with the most wins, and making sure it looks right.</p>
 <p>Now that the team-season win and point differential data is ready, we need to go back to the <code>nflfastR</code> data to get EPA/play.</p>
 </div>
@@ -1112,24 +1076,23 @@
 <a href="#get-team-epa-by-season" class="anchor"></a>Get team EPA by season</h3>
 <p>Let’s start by getting data from every season from the <code>nflfastR</code> data repository:</p>
 <div class="sourceCode" id="cb37"><pre class="downlit">
-<span class="kw">seasons</span> <span class="op">&lt;-</span> <span class="fl">1999</span><span class="op">:</span><span class="fl">2019</span>
-<span class="kw">pbp</span> <span class="op">&lt;-</span> <span class="fu">map_df</span>(<span class="kw">seasons</span>, <span class="fu">function</span>(<span class="kw">x</span>) {
-  <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(
-    <span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(
-      <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_"</span>,<span class="kw">x</span>,<span class="st">".rds"</span>)
-    )
-  ) <span class="op">%&gt;%</span>
-    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">rush</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">|</span> <span class="kw">pass</span> <span class="op">==</span> <span class="fl">1</span>, <span class="kw">week</span> <span class="op">&lt;=</span> <span class="fl">17</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">epa</span>), <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">posteam</span>), <span class="kw">posteam</span> != <span class="st">""</span>) <span class="op">%&gt;%</span>
-    <span class="fu">select</span>(<span class="kw">season</span>, <span class="kw">posteam</span>, <span class="kw">pass</span>, <span class="kw">defteam</span>, <span class="kw">epa</span>)
-})
-</pre></div>
+<span class="va">seasons</span> <span class="op">&lt;-</span> <span class="fl">1999</span><span class="op">:</span><span class="fl">2019</span>
+<span class="va">pbp</span> <span class="op">&lt;-</span> <span class="fu">map_df</span><span class="op">(</span><span class="va">seasons</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span><span class="op">(</span>
+      <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_"</span>,<span class="va">x</span>,<span class="st">".rds"</span><span class="op">)</span>
+    <span class="op">)</span>
+  <span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">rush</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">|</span> <span class="va">pass</span> <span class="op">==</span> <span class="fl">1</span>, <span class="va">week</span> <span class="op">&lt;=</span> <span class="fl">17</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">epa</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">posteam</span><span class="op">)</span>, <span class="va">posteam</span> <span class="op">!=</span> <span class="st">""</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu">select</span><span class="op">(</span><span class="va">season</span>, <span class="va">posteam</span>, <span class="va">pass</span>, <span class="va">defteam</span>, <span class="va">epa</span><span class="op">)</span>
+<span class="op">}</span><span class="op">)</span></pre></div>
 <p>I’m being pretty aggressive with dropping rows and columns (<code>filter</code> and <code>select</code>) because otherwise loading this all into memory can be painful on the computer. But this is all we need for what we’re doing. Note that I’m only keeping regular season games here (<code>week &lt;= 17</code>) since this is how this analysis is usually done.</p>
 <p>Now we can get EPA/play on offense and defense. Let’s break it out by pass and rush too. I don’t remember how to do some of this so let’s do it in steps. We know we need to group by team, season, and pass, so there’s the beginning:</p>
 <div class="sourceCode" id="cb38"><pre class="downlit">
-<span class="kw">pbp</span> <span class="op">%&gt;%</span>
-  <span class="fu">group_by</span>(<span class="kw">posteam</span>, <span class="kw">season</span>, <span class="kw">pass</span>) <span class="op">%&gt;%</span> 
-  <span class="fu">summarize</span>(epa = <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">epa</span>)) <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fl">4</span>)
+<span class="va">pbp</span> <span class="op">%&gt;%</span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">posteam</span>, <span class="va">season</span>, <span class="va">pass</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">summarize</span><span class="op">(</span>epa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">epa</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>
 <span class="co">#&gt; `summarise()` regrouping output by 'posteam', 'season' (override with `.groups` argument)</span>
 <span class="co">#&gt; # A tibble: 4 x 4</span>
 <span class="co">#&gt; # Groups:   posteam, season [2]</span>
@@ -1138,15 +1101,14 @@
 <span class="co">#&gt; 1 ARI       1999     0 -0.201 </span>
 <span class="co">#&gt; 2 ARI       1999     1 -0.162 </span>
 <span class="co">#&gt; 3 ARI       2000     0 -0.242 </span>
-<span class="co">#&gt; 4 ARI       2000     1 -0.0678</span>
-</pre></div>
+<span class="co">#&gt; 4 ARI       2000     1 -0.0678</span></pre></div>
 <p>But this makes two rows per team-season. How to get each team-season on the same row? <code>pivot_wider</code> is what we need:</p>
 <div class="sourceCode" id="cb39"><pre class="downlit">
-<span class="kw">pbp</span> <span class="op">%&gt;%</span>
-  <span class="fu">group_by</span>(<span class="kw">posteam</span>, <span class="kw">season</span>, <span class="kw">pass</span>) <span class="op">%&gt;%</span> 
-  <span class="fu">summarize</span>(epa = <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">epa</span>)) <span class="op">%&gt;%</span>
-  <span class="fu">pivot_wider</span>(names_from = <span class="kw">pass</span>, values_from = <span class="kw">epa</span>) <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fl">4</span>)
+<span class="va">pbp</span> <span class="op">%&gt;%</span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">posteam</span>, <span class="va">season</span>, <span class="va">pass</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">summarize</span><span class="op">(</span>epa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">epa</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">pass</span>, values_from <span class="op">=</span> <span class="va">epa</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>
 <span class="co">#&gt; `summarise()` regrouping output by 'posteam', 'season' (override with `.groups` argument)</span>
 <span class="co">#&gt; # A tibble: 4 x 4</span>
 <span class="co">#&gt; # Groups:   posteam, season [4]</span>
@@ -1155,34 +1117,31 @@
 <span class="co">#&gt; 1 ARI       1999 -0.201 -0.162 </span>
 <span class="co">#&gt; 2 ARI       2000 -0.242 -0.0678</span>
 <span class="co">#&gt; 3 ARI       2001 -0.177  0.0740</span>
-<span class="co">#&gt; 4 ARI       2002 -0.134 -0.0662</span>
-</pre></div>
+<span class="co">#&gt; 4 ARI       2002 -0.134 -0.0662</span></pre></div>
 <p>This one is hard to wrap my head around so I usually open up the <a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">reference page</a>, read the example, and pray that what I try works. In this case it did. Hooray! This turned our two-lines-per-team dataframe into one, with the 0 column being pass == 0 (run plays) and the 1 column pass == 1.</p>
 <p>Now let’s rename to something more sensible and save:</p>
 <div class="sourceCode" id="cb40"><pre class="downlit">
-<span class="kw">offense</span> <span class="op">&lt;-</span> <span class="kw">pbp</span> <span class="op">%&gt;%</span>
-  <span class="fu">group_by</span>(<span class="kw">posteam</span>, <span class="kw">season</span>, <span class="kw">pass</span>) <span class="op">%&gt;%</span> 
-  <span class="fu">summarize</span>(epa = <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">epa</span>)) <span class="op">%&gt;%</span>
-  <span class="fu">pivot_wider</span>(names_from = <span class="kw">pass</span>, values_from = <span class="kw">epa</span>) <span class="op">%&gt;%</span>
-  <span class="fu">rename</span>(off_pass_epa = <span class="kw">`1`</span>, off_rush_epa = <span class="kw">`0`</span>)
-<span class="co">#&gt; `summarise()` regrouping output by 'posteam', 'season' (override with `.groups` argument)</span>
-</pre></div>
+<span class="va">offense</span> <span class="op">&lt;-</span> <span class="va">pbp</span> <span class="op">%&gt;%</span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">posteam</span>, <span class="va">season</span>, <span class="va">pass</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">summarize</span><span class="op">(</span>epa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">epa</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">pass</span>, values_from <span class="op">=</span> <span class="va">epa</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">rename</span><span class="op">(</span>off_pass_epa <span class="op">=</span> <span class="va">`1`</span>, off_rush_epa <span class="op">=</span> <span class="va">`0`</span><span class="op">)</span>
+<span class="co">#&gt; `summarise()` regrouping output by 'posteam', 'season' (override with `.groups` argument)</span></pre></div>
 <p>Note that variable names that are numbers need to be surrounded in tick marks for this to work.</p>
 <p>Now we can repeat the same process for defense:</p>
 <div class="sourceCode" id="cb41"><pre class="downlit">
-<span class="kw">defense</span> <span class="op">&lt;-</span> <span class="kw">pbp</span> <span class="op">%&gt;%</span>
-  <span class="fu">group_by</span>(<span class="kw">defteam</span>, <span class="kw">season</span>, <span class="kw">pass</span>) <span class="op">%&gt;%</span> 
-  <span class="fu">summarize</span>(epa = <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="kw">epa</span>)) <span class="op">%&gt;%</span>
-  <span class="fu">pivot_wider</span>(names_from = <span class="kw">pass</span>, values_from = <span class="kw">epa</span>) <span class="op">%&gt;%</span>
-  <span class="fu">rename</span>(def_pass_epa = <span class="kw">`1`</span>, def_rush_epa = <span class="kw">`0`</span>)
-<span class="co">#&gt; `summarise()` regrouping output by 'defteam', 'season' (override with `.groups` argument)</span>
-</pre></div>
+<span class="va">defense</span> <span class="op">&lt;-</span> <span class="va">pbp</span> <span class="op">%&gt;%</span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">defteam</span>, <span class="va">season</span>, <span class="va">pass</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">summarize</span><span class="op">(</span>epa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">epa</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">pass</span>, values_from <span class="op">=</span> <span class="va">epa</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">rename</span><span class="op">(</span>def_pass_epa <span class="op">=</span> <span class="va">`1`</span>, def_rush_epa <span class="op">=</span> <span class="va">`0`</span><span class="op">)</span>
+<span class="co">#&gt; `summarise()` regrouping output by 'defteam', 'season' (override with `.groups` argument)</span></pre></div>
 <p>Let’s do another sanity check looking at the top 5 pass offenses and defenses:</p>
 <div class="sourceCode" id="cb42"><pre class="downlit">
 <span class="co">#top 5 offenses</span>
-<span class="kw">offense</span> <span class="op">%&gt;%</span>
-  <span class="fu">arrange</span>(<span class="op">-</span><span class="kw">off_pass_epa</span>) <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fl">5</span>)
+<span class="va">offense</span> <span class="op">%&gt;%</span>
+  <span class="fu">arrange</span><span class="op">(</span><span class="op">-</span><span class="va">off_pass_epa</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 5 x 4</span>
 <span class="co">#&gt; # Groups:   posteam, season [5]</span>
 <span class="co">#&gt;   posteam season off_rush_epa off_pass_epa</span>
@@ -1194,9 +1153,9 @@
 <span class="co">#&gt; 5 DEN       2013     -0.0296         0.344</span>
 
 <span class="co">#top 5 defenses</span>
-<span class="kw">defense</span> <span class="op">%&gt;%</span>
-  <span class="fu">arrange</span>(<span class="kw">def_pass_epa</span>) <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fl">5</span>)
+<span class="va">defense</span> <span class="op">%&gt;%</span>
+  <span class="fu">arrange</span><span class="op">(</span><span class="va">def_pass_epa</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 5 x 4</span>
 <span class="co">#&gt; # Groups:   defteam, season [5]</span>
 <span class="co">#&gt;   defteam season def_rush_epa def_pass_epa</span>
@@ -1205,8 +1164,7 @@
 <span class="co">#&gt; 2 NE        2019      -0.164        -0.244</span>
 <span class="co">#&gt; 3 JAX       2017      -0.111        -0.243</span>
 <span class="co">#&gt; 4 NYJ       2009      -0.103        -0.220</span>
-<span class="co">#&gt; 5 LA        2003      -0.0543       -0.214</span>
-</pre></div>
+<span class="co">#&gt; 5 LA        2003      -0.0543       -0.214</span></pre></div>
 <p>The top pass defenses (2002 TB, 2017 JAX, 2019 NE) and offenses (2007 Pats, 2004 Colts, 2011 Packers) definitely check out!</p>
 </div>
 <div id="fix-team-names-and-join" class="section level3">
@@ -1214,10 +1172,10 @@
 <a href="#fix-team-names-and-join" class="anchor"></a>Fix team names and join</h3>
 <p>Now we’re ready to bind it all together. Actually, let’s make sure all the team names are ready too.</p>
 <div class="sourceCode" id="cb43"><pre class="downlit">
-<span class="kw">team_wins</span> <span class="op">%&gt;%</span>
-  <span class="fu">group_by</span>(<span class="kw">team</span>) <span class="op">%&gt;%</span>
-  <span class="fu">summarize</span>(n=<span class="fu">n</span>()) <span class="op">%&gt;%</span>
-  <span class="fu">arrange</span>(<span class="kw">n</span>)
+<span class="va">team_wins</span> <span class="op">%&gt;%</span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">summarize</span><span class="op">(</span>n<span class="op">=</span><span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">arrange</span><span class="op">(</span><span class="va">n</span><span class="op">)</span>
 <span class="co">#&gt; `summarise()` ungrouping output (override with `.groups` argument)</span>
 <span class="co">#&gt; # A tibble: 35 x 2</span>
 <span class="co">#&gt;    team      n</span>
@@ -1232,26 +1190,24 @@
 <span class="co">#&gt;  8 ARI      22</span>
 <span class="co">#&gt;  9 ATL      22</span>
 <span class="co">#&gt; 10 BAL      22</span>
-<span class="co">#&gt; # ... with 25 more rows</span>
-</pre></div>
+<span class="co">#&gt; # ... with 25 more rows</span></pre></div>
 <p>Nope, not yet, we need to fix the Raiders, Rams, and Chargers, which are LV, LA, and LAC in <code>nflfastR</code>.</p>
 <div class="sourceCode" id="cb44"><pre class="downlit">
-<span class="kw">team_wins</span> <span class="op">&lt;-</span> <span class="kw">team_wins</span> <span class="op">%&gt;%</span>
-  <span class="fu">mutate</span>(
-    team = <span class="fu">case_when</span>(
-      <span class="kw">team</span> <span class="op">==</span> <span class="st">'OAK'</span> <span class="op">~</span> <span class="st">'LV'</span>,
-      <span class="kw">team</span> <span class="op">==</span> <span class="st">'SD'</span> <span class="op">~</span> <span class="st">'LAC'</span>,
-      <span class="kw">team</span> <span class="op">==</span> <span class="st">'STL'</span> <span class="op">~</span> <span class="st">'LA'</span>,
-      <span class="fl">TRUE</span> <span class="op">~</span> <span class="kw">team</span>
-    )
-  )
-</pre></div>
+<span class="va">team_wins</span> <span class="op">&lt;-</span> <span class="va">team_wins</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span>
+    team <span class="op">=</span> <span class="fu">case_when</span><span class="op">(</span>
+      <span class="va">team</span> <span class="op">==</span> <span class="st">'OAK'</span> <span class="op">~</span> <span class="st">'LV'</span>,
+      <span class="va">team</span> <span class="op">==</span> <span class="st">'SD'</span> <span class="op">~</span> <span class="st">'LAC'</span>,
+      <span class="va">team</span> <span class="op">==</span> <span class="st">'STL'</span> <span class="op">~</span> <span class="st">'LA'</span>,
+      <span class="cn">TRUE</span> <span class="op">~</span> <span class="va">team</span>
+    <span class="op">)</span>
+  <span class="op">)</span></pre></div>
 <p>The <code>TRUE</code> statement at the bottom says that if none of the above cases are found, keep team the same. Let’s make sure this worked:</p>
 <div class="sourceCode" id="cb45"><pre class="downlit">
-<span class="kw">team_wins</span> <span class="op">%&gt;%</span>
-  <span class="fu">group_by</span>(<span class="kw">team</span>) <span class="op">%&gt;%</span>
-  <span class="fu">summarize</span>(n=<span class="fu">n</span>()) <span class="op">%&gt;%</span>
-  <span class="fu">arrange</span>(<span class="kw">n</span>)
+<span class="va">team_wins</span> <span class="op">%&gt;%</span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">summarize</span><span class="op">(</span>n<span class="op">=</span><span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">arrange</span><span class="op">(</span><span class="va">n</span><span class="op">)</span>
 <span class="co">#&gt; `summarise()` ungrouping output (override with `.groups` argument)</span>
 <span class="co">#&gt; # A tibble: 32 x 2</span>
 <span class="co">#&gt;    team      n</span>
@@ -1266,16 +1222,15 @@
 <span class="co">#&gt;  8 CIN      22</span>
 <span class="co">#&gt;  9 CLE      22</span>
 <span class="co">#&gt; 10 DAL      22</span>
-<span class="co">#&gt; # ... with 22 more rows</span>
-</pre></div>
+<span class="co">#&gt; # ... with 22 more rows</span></pre></div>
 <p>HOU has 3 fewer seasons because it didn’t exist from 1999 through 2001, which is fine, and all the other team names have 22 seasons like they should. Okay NOW we can join:</p>
 <div class="sourceCode" id="cb46"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">team_wins</span> <span class="op">%&gt;%</span>
-  <span class="fu">left_join</span>(<span class="kw">offense</span>, by = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'team'</span> = <span class="st">'posteam'</span>, <span class="st">'season'</span>)) <span class="op">%&gt;%</span>
-  <span class="fu">left_join</span>(<span class="kw">defense</span>, by = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'team'</span> = <span class="st">'defteam'</span>, <span class="st">'season'</span>))
+<span class="va">data</span> <span class="op">&lt;-</span> <span class="va">team_wins</span> <span class="op">%&gt;%</span>
+  <span class="fu">left_join</span><span class="op">(</span><span class="va">offense</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'team'</span> <span class="op">=</span> <span class="st">'posteam'</span>, <span class="st">'season'</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">left_join</span><span class="op">(</span><span class="va">defense</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'team'</span> <span class="op">=</span> <span class="st">'defteam'</span>, <span class="st">'season'</span><span class="op">)</span><span class="op">)</span>
 
-<span class="kw">data</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">team</span> <span class="op">==</span> <span class="st">'SEA'</span> <span class="op">&amp;</span> <span class="kw">season</span> <span class="op">&gt;=</span> <span class="fl">2012</span>)
+<span class="va">data</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">'SEA'</span> <span class="op">&amp;</span> <span class="va">season</span> <span class="op">&gt;=</span> <span class="fl">2012</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 9 x 8</span>
 <span class="co">#&gt;   team  season  wins point_diff off_rush_epa off_pass_epa def_rush_epa</span>
 <span class="co">#&gt;   &lt;chr&gt;  &lt;int&gt; &lt;dbl&gt;      &lt;int&gt;        &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;</span>
@@ -1288,22 +1243,21 @@
 <span class="co">#&gt; 7 SEA     2018  10           81     -0.0273        0.210       -0.131 </span>
 <span class="co">#&gt; 8 SEA     2019  11            7     -0.136         0.120       -0.0930</span>
 <span class="co">#&gt; 9 SEA     2020  NA           NA     NA            NA           NA     </span>
-<span class="co">#&gt; # ... with 1 more variable: def_pass_epa &lt;dbl&gt;</span>
-</pre></div>
+<span class="co">#&gt; # ... with 1 more variable: def_pass_epa &lt;dbl&gt;</span></pre></div>
 <p>Now we’re getting really close to doing what we want! Next we need to create new columns for prior year EPA, and let’s do point differential too.</p>
 <div class="sourceCode" id="cb47"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">data</span> <span class="op">%&gt;%</span> 
-  <span class="fu">arrange</span>(<span class="kw">team</span>, <span class="kw">season</span>) <span class="op">%&gt;%</span>
-  <span class="fu">mutate</span>(
-    prior_off_rush_epa = <span class="fu"><a href="https://rdrr.io/r/stats/lag.html">lag</a></span>(<span class="kw">off_rush_epa</span>),
-    prior_off_pass_epa = <span class="fu"><a href="https://rdrr.io/r/stats/lag.html">lag</a></span>(<span class="kw">off_pass_epa</span>),
-    prior_def_rush_epa = <span class="fu"><a href="https://rdrr.io/r/stats/lag.html">lag</a></span>(<span class="kw">def_rush_epa</span>),
-    prior_def_pass_epa = <span class="fu"><a href="https://rdrr.io/r/stats/lag.html">lag</a></span>(<span class="kw">def_pass_epa</span>),
-    prior_point_diff = <span class="fu"><a href="https://rdrr.io/r/stats/lag.html">lag</a></span>(<span class="kw">point_diff</span>)
-  )
+<span class="va">data</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op">%&gt;%</span> 
+  <span class="fu">arrange</span><span class="op">(</span><span class="va">team</span>, <span class="va">season</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">mutate</span><span class="op">(</span>
+    prior_off_rush_epa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/lag.html">lag</a></span><span class="op">(</span><span class="va">off_rush_epa</span><span class="op">)</span>,
+    prior_off_pass_epa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/lag.html">lag</a></span><span class="op">(</span><span class="va">off_pass_epa</span><span class="op">)</span>,
+    prior_def_rush_epa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/lag.html">lag</a></span><span class="op">(</span><span class="va">def_rush_epa</span><span class="op">)</span>,
+    prior_def_pass_epa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/lag.html">lag</a></span><span class="op">(</span><span class="va">def_pass_epa</span><span class="op">)</span>,
+    prior_point_diff <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/lag.html">lag</a></span><span class="op">(</span><span class="va">point_diff</span><span class="op">)</span>
+  <span class="op">)</span>
 
-<span class="kw">data</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fl">5</span>)
+<span class="va">data</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 5 x 13</span>
 <span class="co">#&gt;   team  season  wins point_diff off_rush_epa off_pass_epa def_rush_epa</span>
 <span class="co">#&gt;   &lt;chr&gt;  &lt;int&gt; &lt;dbl&gt;      &lt;int&gt;        &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;</span>
@@ -1314,18 +1268,17 @@
 <span class="co">#&gt; 5 ARI     2003     4       -227       -0.219      -0.120      -0.0627 </span>
 <span class="co">#&gt; # ... with 6 more variables: def_pass_epa &lt;dbl&gt;, prior_off_rush_epa &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   prior_off_pass_epa &lt;dbl&gt;, prior_def_rush_epa &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   prior_def_pass_epa &lt;dbl&gt;, prior_point_diff &lt;int&gt;</span>
-</pre></div>
+<span class="co">#&gt; #   prior_def_pass_epa &lt;dbl&gt;, prior_point_diff &lt;int&gt;</span></pre></div>
 <p>Finally! Now we have the data in place and can start doing things with it.</p>
 </div>
 <div id="correlations-and-regressions" class="section level3">
 <h3 class="hasAnchor">
 <a href="#correlations-and-regressions" class="anchor"></a>Correlations and regressions</h3>
 <div class="sourceCode" id="cb48"><pre class="downlit">
-<span class="kw">data</span> <span class="op">%&gt;%</span> 
-  <span class="fu">select</span>(<span class="op">-</span><span class="kw">team</span>, <span class="op">-</span><span class="kw">season</span>) <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span>(use=<span class="st">"complete.obs"</span>) <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(<span class="fl">2</span>)
+<span class="va">data</span> <span class="op">%&gt;%</span> 
+  <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">team</span>, <span class="op">-</span><span class="va">season</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span>use<span class="op">=</span><span class="st">"complete.obs"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span>
 <span class="co">#&gt;                     wins point_diff off_rush_epa off_pass_epa def_rush_epa</span>
 <span class="co">#&gt; wins                1.00       0.92         0.43         0.70        -0.29</span>
 <span class="co">#&gt; point_diff          0.92       1.00         0.48         0.76        -0.33</span>
@@ -1361,18 +1314,17 @@
 <span class="co">#&gt; prior_off_pass_epa              -0.02              -0.09             0.76</span>
 <span class="co">#&gt; prior_def_rush_epa               1.00               0.31            -0.35</span>
 <span class="co">#&gt; prior_def_pass_epa               0.31               1.00            -0.60</span>
-<span class="co">#&gt; prior_point_diff                -0.35              -0.60             1.00</span>
-</pre></div>
+<span class="co">#&gt; prior_point_diff                -0.35              -0.60             1.00</span></pre></div>
 <p>We’ve covered <code>select</code>, but here we see a new use where a minus sign de-selects variables (we need to de-select team name for correlation to work because it doesn’t work for character strings, and correlation with the season number itself is meaningless). We’ve run the correlation on this dataframe, removing missing values, and then rounding to 2 digits. Not surprisingly, we see that wins in the current season are more strongly related to passing offense EPA than rushing EPA or defense EPA, and prior offense carries more predictive power than prior defense. Pass offense is more stable year to year (<code>0.46</code>) than rush offense (<code>0.33</code>), pass defense (<code>0.27</code>), or rush defense (<code>0.26</code>).</p>
 <p>I’m actually surprised that the values for passing offense aren’t higher relative to the others. Maybe it was because most of our prior results come from the <code>nflscrapR</code> era (2009 - 2019)? Let’s check what this looks like since 2009 relative to earlier seasons:</p>
 <div class="sourceCode" id="cb49"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/message.html">message</a></span>(<span class="st">"2009 through 2019"</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/message.html">message</a></span><span class="op">(</span><span class="st">"2009 through 2019"</span><span class="op">)</span>
 <span class="co">#&gt; 2009 through 2019</span>
-<span class="kw">data</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">season</span> <span class="op">&gt;=</span> <span class="fl">2009</span>) <span class="op">%&gt;%</span>
-  <span class="fu">select</span>(<span class="kw">wins</span>, <span class="kw">point_diff</span>, <span class="kw">off_pass_epa</span>, <span class="kw">off_rush_epa</span>, <span class="kw">prior_point_diff</span>, <span class="kw">prior_off_pass_epa</span>, <span class="kw">prior_off_rush_epa</span>) <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span>(use=<span class="st">"complete.obs"</span>) <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(<span class="fl">2</span>)
+<span class="va">data</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op">&gt;=</span> <span class="fl">2009</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">select</span><span class="op">(</span><span class="va">wins</span>, <span class="va">point_diff</span>, <span class="va">off_pass_epa</span>, <span class="va">off_rush_epa</span>, <span class="va">prior_point_diff</span>, <span class="va">prior_off_pass_epa</span>, <span class="va">prior_off_rush_epa</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span>use<span class="op">=</span><span class="st">"complete.obs"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span>
 <span class="co">#&gt;                    wins point_diff off_pass_epa off_rush_epa prior_point_diff</span>
 <span class="co">#&gt; wins               1.00       0.91         0.73         0.40             0.43</span>
 <span class="co">#&gt; point_diff         0.91       1.00         0.79         0.47             0.44</span>
@@ -1388,16 +1340,15 @@
 <span class="co">#&gt; off_rush_epa                     0.11               0.24</span>
 <span class="co">#&gt; prior_point_diff                 0.78               0.45</span>
 <span class="co">#&gt; prior_off_pass_epa               1.00               0.35</span>
-<span class="co">#&gt; prior_off_rush_epa               0.35               1.00</span>
-</pre></div>
+<span class="co">#&gt; prior_off_rush_epa               0.35               1.00</span></pre></div>
 <div class="sourceCode" id="cb50"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/message.html">message</a></span>(<span class="st">"1999 through 2008"</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/message.html">message</a></span><span class="op">(</span><span class="st">"1999 through 2008"</span><span class="op">)</span>
 <span class="co">#&gt; 1999 through 2008</span>
-<span class="kw">data</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">season</span> <span class="op">&lt;</span> <span class="fl">2009</span>) <span class="op">%&gt;%</span>
-  <span class="fu">select</span>(<span class="kw">wins</span>, <span class="kw">point_diff</span>, <span class="kw">off_pass_epa</span>, <span class="kw">off_rush_epa</span>, <span class="kw">prior_point_diff</span>, <span class="kw">prior_off_pass_epa</span>, <span class="kw">prior_off_rush_epa</span>) <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span>(use=<span class="st">"complete.obs"</span>) <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(<span class="fl">2</span>)
+<span class="va">data</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op">&lt;</span> <span class="fl">2009</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu">select</span><span class="op">(</span><span class="va">wins</span>, <span class="va">point_diff</span>, <span class="va">off_pass_epa</span>, <span class="va">off_rush_epa</span>, <span class="va">prior_point_diff</span>, <span class="va">prior_off_pass_epa</span>, <span class="va">prior_off_rush_epa</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span>use<span class="op">=</span><span class="st">"complete.obs"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span>
 <span class="co">#&gt;                    wins point_diff off_pass_epa off_rush_epa prior_point_diff</span>
 <span class="co">#&gt; wins               1.00       0.92         0.68         0.47             0.28</span>
 <span class="co">#&gt; point_diff         0.92       1.00         0.73         0.51             0.36</span>
@@ -1413,16 +1364,15 @@
 <span class="co">#&gt; off_rush_epa                     0.30               0.42</span>
 <span class="co">#&gt; prior_point_diff                 0.74               0.50</span>
 <span class="co">#&gt; prior_off_pass_epa               1.00               0.48</span>
-<span class="co">#&gt; prior_off_rush_epa               0.48               1.00</span>
-</pre></div>
+<span class="co">#&gt; prior_off_rush_epa               0.48               1.00</span></pre></div>
 <p>Yep, that seems to be the case. So in the more recent period, passing offense has become slightly more stable but more predictive of following-year success, while at the same time rushing offense has become substantially less stable and less predictive of future team success.</p>
 <p>Now let’s do a basic regression of wins on prior offense and defense EPA/play. Maybe we should only look at this more recent period to fit our model since it’s more relevant for 2020. In the real world, we would be more rigorous about making decisions like this, but let’s proceed anyway.</p>
 <div class="sourceCode" id="cb51"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">data</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">season</span> <span class="op">&gt;=</span> <span class="fl">2009</span>)
+<span class="va">data</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op">&gt;=</span> <span class="fl">2009</span><span class="op">)</span>
 
-<span class="kw">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>(<span class="kw">wins</span> <span class="op">~</span> <span class="kw">prior_off_pass_epa</span>  <span class="op">+</span> <span class="kw">prior_off_rush_epa</span> <span class="op">+</span> <span class="kw">prior_def_pass_epa</span> <span class="op">+</span> <span class="kw">prior_def_rush_epa</span>, data = <span class="kw">data</span>)
+<span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">wins</span> <span class="op">~</span> <span class="va">prior_off_pass_epa</span>  <span class="op">+</span> <span class="va">prior_off_rush_epa</span> <span class="op">+</span> <span class="va">prior_def_pass_epa</span> <span class="op">+</span> <span class="va">prior_def_rush_epa</span>, data <span class="op">=</span> <span class="va">data</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">fit</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Call:</span>
 <span class="co">#&gt; lm(formula = wins ~ prior_off_pass_epa + prior_off_rush_epa + </span>
@@ -1445,13 +1395,12 @@
 <span class="co">#&gt; Residual standard error: 2.823 on 347 degrees of freedom</span>
 <span class="co">#&gt;   (32 observations deleted due to missingness)</span>
 <span class="co">#&gt; Multiple R-squared:  0.1684, Adjusted R-squared:  0.1588 </span>
-<span class="co">#&gt; F-statistic: 17.56 on 4 and 347 DF,  p-value: 0.0000000000003874</span>
-</pre></div>
+<span class="co">#&gt; F-statistic: 17.56 on 4 and 347 DF,  p-value: 0.0000000000003874</span></pre></div>
 <p>I’m actually pretty surprised passing offense isn’t higher here. How does this compare to simply using point differential?</p>
 <div class="sourceCode" id="cb52"><pre class="downlit">
-<span class="kw">fit2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span>(<span class="kw">wins</span> <span class="op">~</span> <span class="kw">prior_point_diff</span>, data = <span class="kw">data</span>)
+<span class="va">fit2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">wins</span> <span class="op">~</span> <span class="va">prior_point_diff</span>, data <span class="op">=</span> <span class="va">data</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">fit2</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">fit2</span><span class="op">)</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Call:</span>
 <span class="co">#&gt; lm(formula = wins ~ prior_point_diff, data = data)</span>
@@ -1470,8 +1419,7 @@
 <span class="co">#&gt; Residual standard error: 2.786 on 350 degrees of freedom</span>
 <span class="co">#&gt;   (32 observations deleted due to missingness)</span>
 <span class="co">#&gt; Multiple R-squared:  0.1827, Adjusted R-squared:  0.1804 </span>
-<span class="co">#&gt; F-statistic: 78.26 on 1 and 350 DF,  p-value: &lt; 0.00000000000000022</span>
-</pre></div>
+<span class="co">#&gt; F-statistic: 78.26 on 1 and 350 DF,  p-value: &lt; 0.00000000000000022</span></pre></div>
 <p>So R2 is somewhat higher for just point differential. This isn’t surprising as we’ve thrown away special teams plays and haven’t attempted to make any adjustments for things like fumble luck that we know can improve EPA’s predictive power.</p>
 </div>
 <div id="predictions" class="section level3">
@@ -1479,20 +1427,20 @@
 <a href="#predictions" class="anchor"></a>Predictions</h3>
 <p>Now let’s get the predictions from the EPA model:</p>
 <div class="sourceCode" id="cb53"><pre class="downlit">
-<span class="kw">preds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(<span class="kw">fit</span>, <span class="kw">data</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">season</span> <span class="op">==</span> <span class="fl">2020</span>)) <span class="op">%&gt;%</span>
+<span class="va">preds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">data</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op">==</span> <span class="fl">2020</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="co">#was just a vector, need a tibble to bind</span>
-  <span class="fu">as_tibble</span>() <span class="op">%&gt;%</span>
+  <span class="fu">as_tibble</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="co">#make the column name make sense</span>
-  <span class="fu">rename</span>(prediction = <span class="kw">value</span>) <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(<span class="fl">1</span>) <span class="op">%&gt;%</span>
+  <span class="fu">rename</span><span class="op">(</span>prediction <span class="op">=</span> <span class="va">value</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="co">#get names</span>
-  <span class="fu">bind_cols</span>(
-    <span class="kw">data</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">season</span> <span class="op">==</span> <span class="fl">2020</span>) <span class="op">%&gt;%</span> <span class="fu">select</span>(<span class="kw">team</span>)
-  )
+  <span class="fu">bind_cols</span><span class="op">(</span>
+    <span class="va">data</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op">==</span> <span class="fl">2020</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">select</span><span class="op">(</span><span class="va">team</span><span class="op">)</span>
+  <span class="op">)</span>
 
-<span class="kw">preds</span> <span class="op">%&gt;%</span>
-  <span class="fu">arrange</span>(<span class="op">-</span><span class="kw">prediction</span>) <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fl">5</span>)
+<span class="va">preds</span> <span class="op">%&gt;%</span>
+  <span class="fu">arrange</span><span class="op">(</span><span class="op">-</span><span class="va">prediction</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 5 x 2</span>
 <span class="co">#&gt;   prediction team </span>
 <span class="co">#&gt;        &lt;dbl&gt; &lt;chr&gt;</span>
@@ -1500,25 +1448,24 @@
 <span class="co">#&gt; 2       10.2 SF   </span>
 <span class="co">#&gt; 3        9.7 NE   </span>
 <span class="co">#&gt; 4        9.7 NO   </span>
-<span class="co">#&gt; 5        9.6 DAL</span>
-</pre></div>
+<span class="co">#&gt; 5        9.6 DAL</span></pre></div>
 <p>This mostly checks out.</p>
 <p>What if we just used simple point differential to predict?</p>
 <div class="sourceCode" id="cb54"><pre class="downlit">
-<span class="kw">preds2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(<span class="kw">fit2</span>, <span class="kw">data</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">season</span> <span class="op">==</span> <span class="fl">2020</span>)) <span class="op">%&gt;%</span>
+<span class="va">preds2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">fit2</span>, <span class="va">data</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op">==</span> <span class="fl">2020</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="co">#was just a vector, need a tibble to bind</span>
-  <span class="fu">as_tibble</span>() <span class="op">%&gt;%</span>
+  <span class="fu">as_tibble</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="co">#make the column name make sense</span>
-  <span class="fu">rename</span>(prediction = <span class="kw">value</span>) <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(<span class="fl">1</span>) <span class="op">%&gt;%</span>
+  <span class="fu">rename</span><span class="op">(</span>prediction <span class="op">=</span> <span class="va">value</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="co">#get names</span>
-  <span class="fu">bind_cols</span>(
-    <span class="kw">data</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">season</span> <span class="op">==</span> <span class="fl">2020</span>) <span class="op">%&gt;%</span> <span class="fu">select</span>(<span class="kw">team</span>)
-  )
+  <span class="fu">bind_cols</span><span class="op">(</span>
+    <span class="va">data</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op">==</span> <span class="fl">2020</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">select</span><span class="op">(</span><span class="va">team</span><span class="op">)</span>
+  <span class="op">)</span>
 
-<span class="kw">preds2</span> <span class="op">%&gt;%</span>
-  <span class="fu">arrange</span>(<span class="op">-</span><span class="kw">prediction</span>) <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fl">5</span>)
+<span class="va">preds2</span> <span class="op">%&gt;%</span>
+  <span class="fu">arrange</span><span class="op">(</span><span class="op">-</span><span class="va">prediction</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 5 x 2</span>
 <span class="co">#&gt;   prediction team </span>
 <span class="co">#&gt;        &lt;dbl&gt; &lt;chr&gt;</span>
@@ -1526,8 +1473,7 @@
 <span class="co">#&gt; 2       10.5 NE   </span>
 <span class="co">#&gt; 3       10.2 SF   </span>
 <span class="co">#&gt; 4        9.9 KC   </span>
-<span class="co">#&gt; 5        9.5 DAL</span>
-</pre></div>
+<span class="co">#&gt; 5        9.5 DAL</span></pre></div>
 <p>Not surprisingly, this looks pretty similar. These are very basic models that don’t incorporate schedule, roster changes, etc. For example, a better model would take into account Tom Brady no longer playing for the Patriots. But hopefully this has been useful!</p>
 </div>
 </div>
@@ -1602,7 +1548,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

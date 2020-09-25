@@ -83,7 +83,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.0.0</span>
       </span>
     </div>
 
@@ -155,7 +155,7 @@
     <p>Get NFL Season Schedules</p>
     </div>
 
-    <pre class="usage"><span class='fu'>fast_scraper_schedules</span>(<span class='kw'>seasons</span>, pp = <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>fast_scraper_schedules</span><span class='op'>(</span><span class='va'>seasons</span>, pp <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -204,7 +204,7 @@ may be better to set <code>pp = FALSE</code> if you are scraping less than 10 se
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 <span class='co'># Get schedules for the whole 2015 - 2018 seasons</span>
-<span class='fu'>fast_scraper_schedules</span>(<span class='fl'>2015</span><span class='op'>:</span><span class='fl'>2018</span>)
+<span class='fu'>fast_scraper_schedules</span><span class='op'>(</span><span class='fl'>2015</span><span class='op'>:</span><span class='fl'>2018</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 1,068 x 17</span><span>
 #&gt;    game_id season game_type  week gameday weekday gametime away_team home_team
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    
@@ -237,7 +237,7 @@ may be better to set <code>pp = FALSE</code> if you are scraping less than 10 se
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
