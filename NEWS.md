@@ -1,20 +1,28 @@
-# nflfastR (development version)
+# nflfastR 3.0.0
+
+## Breaking changes
+
+* `fast_scraper_roster()` is finally back! It loads NFL roster of a given season.
+* Added the function `decode_player_ids()` to decode all player IDs to the 
+commonly known GSIS ID format (00-00xxxxx)
+
+## New features
 
 * Add option `source = "old"` to `fast_scraper()` to enable scraping of old source.
 This is mostly useless as it doesn't work for 2020 and provides less info
-* `clean_pbp()` now fixes some bugs in jersey numbers
-* Fix empty line causing `fast_scraper()` to fail (affects multiple games of the 2020 season)
-* Fix bug in `fixed_drive` that counted PAT after defensive TD as its own drive
-* `clean_pbp()`, `add_qb_epa()` and `add_xyac()` can now handle empty data frames
 * Added new option `db_connection` to `update_db()` to allow advanced users to
 use other DBI drivers, such as `RMariaDB::MariaDB()`, `RPostgres::Postgres()` or 
 `odbc::odbc()` (please see [dbplyr](https://dbplyr.tidyverse.org/articles/dbplyr.html)
 for more information)
-* Fixed a bug which caused too high number of tackles in special cases (#85)
+
+## Minor improvements and fixes
+
+* `clean_pbp()` now fixes some bugs in jersey numbers
+* `clean_pbp()`, `add_qb_epa()` and `add_xyac()` can now handle empty data frames
+* Fix empty line causing `fast_scraper()` to fail (affects multiple games of the 2020 season)
+* Fix bug in `fixed_drive` that counted PAT after defensive TD as its own drive
+* Fixed a bug which caused too high number of tackles in special cases
 * Fixed a bug where CPOE was NA when targeting players with apostrophe in last name
-* Added the function `decode_player_ids()` to decode all player IDs to the 
-commonly known GSIS ID format (00-00xxxxx)
-* `fast_scraper_roster()` is finally back!
 
 # nflfastR 2.2.1
 
