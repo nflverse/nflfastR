@@ -5,6 +5,8 @@ that began following a timeout
 * Fixed more bugs in EPA and win probability on PATs and kickoffs with penalties
 * Fixed a bug where scoring probabilities weren't adding to 1 on field goal attempts
 near the end of a half
+* Fixed a bug where `update_db()` disconnected the connection to a database provided 
+by the argument `db_connection` (#102)
 
 # nflfastR 3.0.0
 
