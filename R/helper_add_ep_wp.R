@@ -341,7 +341,8 @@ add_ep_variables <- function(pbp_data) {
   base_ep_preds$TwoPoint_Prob <- 0
 
   # Find the indices for these types of plays:
-  extrapoint_i <- which(pbp_data$play_type == "extra_point" & pbp_data$play_type_nfl != "PAT2")
+  extrapoint_i <- which((pbp_data$play_type == "extra_point" | pbp_data$play_type_nfl == "XP_KICK") &
+                          (is.na(pbp_data$play_type_nfl) | pbp_data$play_type_nfl != "PAT2"))
   twopoint_i <- which(pbp_data$two_point_attempt == 1)
 
   #new: special case for PAT or kickoff with penalty
@@ -837,14 +838,14 @@ add_wp_variables <- function(pbp_data) {
       wp =
         dplyr::if_else((.data$kickoff_attempt == 0 & !(stringr::str_detect(.data$desc, 'Onside Kick')) &
                           (stringr::str_detect(.data$desc, 'Kick formation') | stringr::str_detect(.data$desc, 'Pass formation')) & is.na(.data$down)) |
-                            stringr::str_detect(.data$desc, 'extra point') |
+                            stringr::str_detect(.data$desc, 'TWO-POINT CONVERSION ATTEMPT') | stringr::str_detect(.data$desc, 'extra point') |
                             !is.na(.data$two_point_conv_result) |
                             !is.na(.data$extra_point_result),
                           1 - .data$wp, .data$wp),
       vegas_wp =
         dplyr::if_else((.data$kickoff_attempt == 0 & !(stringr::str_detect(.data$desc, 'Onside Kick')) &
                           (stringr::str_detect(.data$desc, 'Kick formation') | stringr::str_detect(.data$desc, 'Pass formation')) & is.na(.data$down)) |
-                            stringr::str_detect(.data$desc, 'extra point') |
+                            stringr::str_detect(.data$desc, 'TWO-POINT CONVERSION ATTEMPT') | stringr::str_detect(.data$desc, 'extra point') |
                             !is.na(.data$two_point_conv_result) |
                             !is.na(.data$extra_point_result),
                           1 - .data$vegas_wp, .data$vegas_wp),
