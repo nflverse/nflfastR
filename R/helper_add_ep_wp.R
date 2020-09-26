@@ -424,8 +424,13 @@ add_ep_variables <- function(pbp_data) {
                                  (1 * .data$ExPoint_Prob) + (2 * .data$TwoPoint_Prob))
 
   #just going to set these to NA bc we have no way of calculating EPA for them
-  pbp_data_ep$ExpPts[st_penalty_i_1] <- NA_real_
-  pbp_data_ep$ExpPts[st_penalty_i_2] <- NA_real_
+  if (length(st_penalty_i_1) > 0) {
+    pbp_data_ep$ExpPts[st_penalty_i_1] <- NA_real_
+  }
+
+  if (length(st_penalty_i_2) > 0) {
+    pbp_data_ep$ExpPts[st_penalty_i_2] <- NA_real_
+  }
 
   #################################################################
   # Calculate EPA:
