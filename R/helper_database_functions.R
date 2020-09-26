@@ -14,7 +14,10 @@
 #' nflfastR or its underlying data).
 #'
 #' The parameter \code{db_connection} is intended for advanced users who want
-#' to use other DBI drivers, such as MariaDB, Postgres or odbc.
+#' to use other DBI drivers, such as MariaDB, Postgres or odbc. Please note that
+#' the arguments \code{dbdir} and \code{dbname} are dropped in case a \code{db_connection}
+#' is provided but the argument \code{tblname} will still be used to write the
+#' data table into the database.
 #'
 #' @param dbdir Directory in which the database is or shall be located
 #' @param dbname File name of an existing or desired SQLite database within \code{dbdir}
@@ -22,7 +25,7 @@
 #' @param force_rebuild Logical parameter to rebuild the play by play data table
 #' within the database from scratch in case the cleaned data were updated
 #' @param db_connection A \code{DBIConnection} object, as returned by
-#' \code{\link[DBI]{dbConnect}}
+#' \code{\link[DBI]{dbConnect}} (please see details for further information)
 #' @importFrom rlang .data
 #' @export
 update_db <- function(dbdir = ".",
