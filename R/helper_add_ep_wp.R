@@ -264,6 +264,9 @@ add_ep_variables <- function(pbp_data) {
   end_game_i <- which(missed_fg_data$half_seconds_remaining <= 0)
   missed_fg_ep_preds[end_game_i,] <- rep(0,ncol(missed_fg_ep_preds))
 
+  # if the half ends, no one scored
+  missed_fg_ep_preds[end_game_i, "No_Score"] <- 1
+
   # Get the probability of making the field goal:
   make_fg_prob <- as.numeric(mgcv::predict.bam(fg_model, newdata = pbp_data, type="response"))
 
@@ -389,13 +392,13 @@ add_ep_variables <- function(pbp_data) {
       is.na(pbp_data$play_type))
 
   # Now update the probabilities for missing and PATs:
-  base_ep_preds$Field_Goal[c(missing_i, extrapoint_i, twopoint_i, st_penalty_i)] <- 0
-  base_ep_preds$Touchdown[c(missing_i, extrapoint_i, twopoint_i, st_penalty_i)] <- 0
-  base_ep_preds$Opp_Field_Goal[c(missing_i, extrapoint_i, twopoint_i, st_penalty_i)] <- 0
-  base_ep_preds$Opp_Touchdown[c(missing_i, extrapoint_i, twopoint_i, st_penalty_i)] <- 0
-  base_ep_preds$Safety[c(missing_i, extrapoint_i, twopoint_i, st_penalty_i)] <- 0
-  base_ep_preds$Opp_Safety[c(missing_i, extrapoint_i, twopoint_i, st_penalty_i)] <- 0
-  base_ep_preds$No_Score[c(missing_i, extrapoint_i, twopoint_i, st_penalty_i)] <- 0
+  base_ep_preds$Field_Goal[c(missing_i, extrapoint_i, twopoint_i, st_penalty_i_1, st_penalty_i_2)] <- 0
+  base_ep_preds$Touchdown[c(missing_i, extrapoint_i, twopoint_i, st_penalty_i_1, st_penalty_i_2)] <- 0
+  base_ep_preds$Opp_Field_Goal[c(missing_i, extrapoint_i, twopoint_i, st_penalty_i_1, st_penalty_i_2)] <- 0
+  base_ep_preds$Opp_Touchdown[c(missing_i, extrapoint_i, twopoint_i, st_penalty_i_1, st_penalty_i_2)] <- 0
+  base_ep_preds$Safety[c(missing_i, extrapoint_i, twopoint_i, st_penalty_i_1, st_penalty_i_2)] <- 0
+  base_ep_preds$Opp_Safety[c(missing_i, extrapoint_i, twopoint_i, st_penalty_i_1, st_penalty_i_2)] <- 0
+  base_ep_preds$No_Score[c(missing_i, extrapoint_i, twopoint_i, st_penalty_i_1, st_penalty_i_2)] <- 0
 
   # Rename the events to all have _Prob at the end of them:
   base_ep_preds <- dplyr::rename(base_ep_preds,
