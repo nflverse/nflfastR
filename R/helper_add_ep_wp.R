@@ -341,7 +341,8 @@ add_ep_variables <- function(pbp_data) {
   base_ep_preds$TwoPoint_Prob <- 0
 
   # Find the indices for these types of plays:
-  extrapoint_i <- which((pbp_data$play_type == "extra_point" | pbp_data$play_type_nfl == "XP_KICK") & pbp_data$play_type_nfl != "PAT2")
+  extrapoint_i <- which((pbp_data$play_type == "extra_point" | pbp_data$play_type_nfl == "XP_KICK") &
+                          (is.na(pbp_data$play_type_nfl) | pbp_data$play_type_nfl != "PAT2"))
   twopoint_i <- which(pbp_data$two_point_attempt == 1)
 
   #new: special case for PAT or kickoff with penalty
