@@ -264,6 +264,9 @@ add_ep_variables <- function(pbp_data) {
   end_game_i <- which(missed_fg_data$half_seconds_remaining <= 0)
   missed_fg_ep_preds[end_game_i,] <- rep(0,ncol(missed_fg_ep_preds))
 
+  # if the half ends, no one scored
+  missed_fg_ep_preds[end_game_i, "No_Score"] <- 1
+
   # Get the probability of making the field goal:
   make_fg_prob <- as.numeric(mgcv::predict.bam(fg_model, newdata = pbp_data, type="response"))
 
