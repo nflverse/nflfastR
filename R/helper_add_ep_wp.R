@@ -368,17 +368,17 @@ add_ep_variables <- function(pbp_data) {
       ((dplyr::lag(pbp_data$two_point_attempt)==1 | dplyr::lag(pbp_data$extra_point_attempt)==1) & dplyr::lead(pbp_data$kickoff_attempt == 1))
   )
 
-  st_penalty_i_2 <- which(
-    is.na(dplyr::lead(.data$down)) &
-      # has a key term in desc
-      (((stringr::str_detect(pbp_data$desc, 'Kick formation') & is.na(pbp_data$down) & pbp_data$play_type == 'no_play') |
-          (stringr::str_detect(pbp_data$desc, 'Pass formation') & is.na(pbp_data$down) & pbp_data$play_type == 'no_play') |
-          (stringr::str_detect(pbp_data$desc, 'kicks onside') & is.na(pbp_data$down) & pbp_data$play_type == 'no_play') |
-          (stringr::str_detect(pbp_data$desc, 'Offside on Free Kick') & is.na(pbp_data$down) & pbp_data$play_type == 'no_play') |
-          (stringr::str_detect(pbp_data$desc, 'TWO-POINT CONVERSION')) &
-          # down is NA and play type no play and next play isn't a kickoff
-          is.na(pbp_data$down) & pbp_data$play_type == 'no_play' & dplyr::lead(pbp_data$kickoff_attempt) == 0))
-  )
+  # st_penalty_i_2 <- which(
+  #   is.na(dplyr::lead(.data$down)) &
+  #     # has a key term in desc
+  #     (((stringr::str_detect(pbp_data$desc, 'Kick formation') & is.na(pbp_data$down) & pbp_data$play_type == 'no_play') |
+  #         (stringr::str_detect(pbp_data$desc, 'Pass formation') & is.na(pbp_data$down) & pbp_data$play_type == 'no_play') |
+  #         (stringr::str_detect(pbp_data$desc, 'kicks onside') & is.na(pbp_data$down) & pbp_data$play_type == 'no_play') |
+  #         (stringr::str_detect(pbp_data$desc, 'Offside on Free Kick') & is.na(pbp_data$down) & pbp_data$play_type == 'no_play') |
+  #         (stringr::str_detect(pbp_data$desc, 'TWO-POINT CONVERSION')) &
+  #         # down is NA and play type no play and next play isn't a kickoff
+  #         is.na(pbp_data$down) & pbp_data$play_type == 'no_play' & dplyr::lead(pbp_data$kickoff_attempt) == 0))
+  # )
 
   # Assign the make_fg_probs of the extra-point PATs:
   base_ep_preds$ExPoint_Prob[extrapoint_i] <- make_fg_prob[extrapoint_i]
