@@ -2,6 +2,9 @@
 
 * More fixes for `fixed_drive` which was not incrementing properly on drives
 that began following a timeout
+* Fixed more bugs in EPA and win probability on PATs and kickoffs with penalties
+* Fixed a bug where scoring probabilities weren't adding to 1 on field goal attempts
+near the end of a half
 
 # nflfastR 3.0.0
 
