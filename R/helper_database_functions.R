@@ -36,19 +36,29 @@ update_db <- function(dbdir = ".",
     stop("Packages \"DBI\" and \"RSQLite\" needed for database communication. Please install them.")
   }
 
-  # create path to db
+  if (!dir.exists(dbdir) & is.null(db_connection)) {
+    message(glue::glue("Directory {dbdir} doesn't exist yet. Try creating..."))
+    dir.create(dbdir)
+  }
+
   db <- glue::glue("{dbdir}/{dbname}")
+
+  if (is.null(db_connection)) {
+    connection <- DBI::dbConnect(RSQLite::SQLite(), db)
+  } else {
+    connection <- db_connection
+  }
 
   # create db if it doesn't exist or user forces rebuild
   if (!file.exists(db) & is.null(db_connection)) {
     message(glue::glue("Can't find database {db}. Will try to create it and load the play by play data into the data table \"{tblname}\"."))
-    build_db(dbdir, dbname, tblname, db_connection)
+    build_db(tblname, connection)
   } else if (file.exists(db) & force_rebuild & is.null(db_connection)) {
     message(glue::glue("Start rebuilding the data table \"{tblname}\" in your database {db}."))
-    build_db(dbdir, dbname, tblname, db_connection)
+    build_db(tblname, connection)
   } else if (force_rebuild & !is.null(db_connection)) {
-    message(glue::glue("Start rebuilding the data table in your connected database."))
-    build_db(dbdir, dbname, tblname, db_connection)
+    message(glue::glue("Start rebuilding the data table in your \"{tblname}\" connected database."))
+    build_db(tblname, connection)
   }
 
   # get completed games using Lee's file (thanks Lee!)
@@ -59,26 +69,13 @@ update_db <- function(dbdir = ".",
     dplyr::arrange(.data$gameday) %>%
     dplyr::pull(.data$game_id)
 
-
-  if (is.null(db_connection)) {
-    connection <- DBI::dbConnect(RSQLite::SQLite(), db)
-  } else {
-    connection <- db_connection
-  }
-
   # function below
   missing <- get_missing_games(completed_games, connection, tblname)
 
   # rebuild db if number of missing games is too large
   if(length(missing) >= 50) {
-    DBI::dbDisconnect(connection)
     message("The number of missing games is so large that rebuilding the database is more efficient.")
-    build_db(dbdir, dbname, tblname, db_connection)
-    if (is.null(db_connection)) {
-      connection <- DBI::dbConnect(RSQLite::SQLite(), db)
-    } else {
-      connection <- db_connection
-    }
+    build_db(tblname, connection)
     missing <- get_missing_games(completed_games, connection, tblname)
   }
 
@@ -116,27 +113,12 @@ update_db <- function(dbdir = ".",
 }
 
 # this is a helper function to build nflfastR database from Scratch
-build_db <- function(dbdir = ".", dbname = "pbp_db", tblname = "nflfastR_pbp", db_conn) {
-  if (!dir.exists(dbdir) & is.null(db_conn)) {
-    message(glue::glue("Directory {dbdir} doesn't exist yet. Try creating..."))
-    dir.create(dbdir)
-  }
-
-  db <- glue::glue("{dbdir}/{dbname}")
-
-  #message("Connecting to database...")
-  if (is.null(db_conn)) {
-    connection <- DBI::dbConnect(RSQLite::SQLite(), db)
-  } else {
-    connection <- db_conn
-  }
-
-  if (DBI::dbExistsTable(connection, tblname)) {
+build_db <- function(tblname = "nflfastR_pbp", db_conn) {
+  if (DBI::dbExistsTable(db_conn, tblname)) {
     message(glue::glue("Purging old {tblname} table from database..."))
-    DBI::dbRemoveTable(connection, tblname)
+    DBI::dbRemoveTable(db_conn, tblname)
   }
 
-  #message("Checking for completed games...")
   games <- readRDS(url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true"))
   complete_games <- games %>%
     dplyr::filter(.data$season >= 1999 & !is.na(.data$result)) %>%
@@ -146,10 +128,8 @@ build_db <- function(dbdir = ".", dbname = "pbp_db", tblname = "nflfastR_pbp", d
   message(glue::glue("Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}..."))
   progressr::with_progress({
     p <- progressr::progressor(along = seasons)
-    purrr::walk(seasons, load_cleaned_pbp, connection, p, tblname)
+    purrr::walk(seasons, load_cleaned_pbp, db_conn, p, tblname)
   })
-  DBI::dbDisconnect(connection)
-  #message("Process completed.")
 }
 
 # this is a helper function to add one season of data
