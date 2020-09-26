@@ -356,7 +356,7 @@ add_ep_variables <- function(pbp_data) {
     )
 
   st_penalty_i_2 <- which(
-      is.na(dplyr::lead(.data$down)) &
+      is.na(dplyr::lead(pbp_data$down)) &
          # has a key term in desc
          (((stringr::str_detect(pbp_data$desc, 'Kick formation') & is.na(pbp_data$down) & pbp_data$play_type == 'no_play') |
              (stringr::str_detect(pbp_data$desc, 'Pass formation') & is.na(pbp_data$down) & pbp_data$play_type == 'no_play') |
