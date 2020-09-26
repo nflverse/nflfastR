@@ -360,6 +360,26 @@ add_ep_variables <- function(pbp_data) {
       (stringr::str_detect(pbp_data$desc, 'TWO-POINT CONVERSION') & is.na(pbp_data$down) & pbp_data$play_type == 'no_play')
     )
 
+  st_penalty_i_1 <- which(
+    # pat: prior play was TD or PAT and next play is PAT
+    ((dplyr::lag(pbp_data$touchdown == 1) | dplyr::lag(pbp_data$play_type_nfl == "XP_KICK")) &
+       (dplyr::lead(pbp_data$two_point_attempt)==1 | dplyr::lead(pbp_data$extra_point_attempt)==1 | dplyr::lead(pbp_data$play_type_nfl) == "XP_KICK")) |
+      #kickoff: prior play was PAT and next play is kickoff
+      ((dplyr::lag(pbp_data$two_point_attempt)==1 | dplyr::lag(pbp_data$extra_point_attempt)==1) & dplyr::lead(pbp_data$kickoff_attempt == 1))
+  )
+
+  st_penalty_i_2 <- which(
+    is.na(dplyr::lead(.data$down)) &
+      # has a key term in desc
+      (((stringr::str_detect(pbp_data$desc, 'Kick formation') & is.na(pbp_data$down) & pbp_data$play_type == 'no_play') |
+          (stringr::str_detect(pbp_data$desc, 'Pass formation') & is.na(pbp_data$down) & pbp_data$play_type == 'no_play') |
+          (stringr::str_detect(pbp_data$desc, 'kicks onside') & is.na(pbp_data$down) & pbp_data$play_type == 'no_play') |
+          (stringr::str_detect(pbp_data$desc, 'Offside on Free Kick') & is.na(pbp_data$down) & pbp_data$play_type == 'no_play') |
+          (stringr::str_detect(pbp_data$desc, 'TWO-POINT CONVERSION')) &
+          # down is NA and play type no play and next play isn't a kickoff
+          is.na(pbp_data$down) & pbp_data$play_type == 'no_play' & dplyr::lead(pbp_data$kickoff_attempt) == 0))
+  )
+
   # Assign the make_fg_probs of the extra-point PATs:
   base_ep_preds$ExPoint_Prob[extrapoint_i] <- make_fg_prob[extrapoint_i]
 
