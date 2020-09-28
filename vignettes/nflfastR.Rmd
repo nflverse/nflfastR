@@ -253,7 +253,7 @@ update_db(dbdir = getwd())
 Now we can make a connection to the database. This is the only part that will look a little bit foreign, but all you need to know is where your database is located. If it's in your current working directory, this will work:
 
 ``` {r}
-connection <- dbConnect(SQLite(), glue::glue("{dbdir = getwd()}/pbp_db"))
+connection <- dbConnect(SQLite(), glue::glue("{getwd()}/pbp_db"))
 connection
 ```
 
