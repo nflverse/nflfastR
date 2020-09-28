@@ -83,7 +83,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.0.0.9002</span>
       </span>
     </div>
 
@@ -96,7 +96,10 @@
   </a>
 </li>
 <li>
-  <a href="../reference/index.html">Reference</a>
+  <a href="../articles/nflfastR.html">Get started</a>
+</li>
+<li>
+  <a href="../reference/index.html">Functions</a>
 </li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -109,19 +112,37 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/beginners_guide.html">A beginner's guide to nflfastR</a>
+      <a href="../articles/beginners_guide.html">A beginner’s guide to nflfastR</a>
     </li>
     <li>
-      <a href="../articles/examples.html">Examples</a>
-    </li>
-    <li>
-      <a href="../articles/nflfastR-models.html">nflfastR EP, WP, and CP models</a>
+      <a href="https://www.opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/">nflfastR models</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="https://www.opensourcefootball.com/">Open Source Football</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
+  <a href="https://github.com/guga31bb/nflfastR-data">
+    <span class="fas fa fas fa-database fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://rbsdm.com/stats/">
+    <span class="fas fa fas fa-chart-line fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="http://nflgamedata.com/">
+    <span class="fas fa fas fa-football-ball fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="http://twitter.com/nflfastR">
     <span class="fab fa fab fa-twitter fa-lg"></span>
      
@@ -209,20 +230,20 @@ may be better to set <code>pp = FALSE</code> if you are scraping just a few seas
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 <span class='co'># Roster of the 2019 and 2020 seasons</span>
 <span class='fu'>fast_scraper_roster</span><span class='op'>(</span><span class='fl'>2019</span><span class='op'>:</span><span class='fl'>2020</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 7,678 x 21</span><span>
-#&gt;    season team  position depth_chart_pos~ jersey_number status full_name
+</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 7,668 x 21</span><span>
+#&gt;    season team  position depth_chart_pos… jersey_number status full_name
 #&gt;     </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>                    </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    
-#&gt; </span><span style='color: #555555;'> 1</span><span>   </span><span style='text-decoration: underline;'>2</span><span>019 ARI   C        </span><span style='color: #BB0000;'>NA</span><span>                          60 CUT    Jacob Oh~
-#&gt; </span><span style='color: #555555;'> 2</span><span>   </span><span style='text-decoration: underline;'>2</span><span>019 ARI   C        </span><span style='color: #BB0000;'>NA</span><span>                          53 ACT    A.Q. Shi~
-#&gt; </span><span style='color: #555555;'> 3</span><span>   </span><span style='text-decoration: underline;'>2</span><span>019 ARI   C        </span><span style='color: #BB0000;'>NA</span><span>                          65 ACT    Lamont G~
+#&gt; </span><span style='color: #555555;'> 1</span><span>   </span><span style='text-decoration: underline;'>2</span><span>019 ARI   C        </span><span style='color: #BB0000;'>NA</span><span>                          60 CUT    Jacob Oh…
+#&gt; </span><span style='color: #555555;'> 2</span><span>   </span><span style='text-decoration: underline;'>2</span><span>019 ARI   C        </span><span style='color: #BB0000;'>NA</span><span>                          53 ACT    A.Q. Shi…
+#&gt; </span><span style='color: #555555;'> 3</span><span>   </span><span style='text-decoration: underline;'>2</span><span>019 ARI   C        </span><span style='color: #BB0000;'>NA</span><span>                          65 ACT    Lamont G…
 #&gt; </span><span style='color: #555555;'> 4</span><span>   </span><span style='text-decoration: underline;'>2</span><span>019 ARI   CB       </span><span style='color: #BB0000;'>NA</span><span>                          27 SUS    Josh Shaw
-#&gt; </span><span style='color: #555555;'> 5</span><span>   </span><span style='text-decoration: underline;'>2</span><span>019 ARI   CB       </span><span style='color: #BB0000;'>NA</span><span>                          30 ACT    Jalen Da~
-#&gt; </span><span style='color: #555555;'> 6</span><span>   </span><span style='text-decoration: underline;'>2</span><span>019 ARI   CB       </span><span style='color: #BB0000;'>NA</span><span>                          33 ACT    Byron Mu~
-#&gt; </span><span style='color: #555555;'> 7</span><span>   </span><span style='text-decoration: underline;'>2</span><span>019 ARI   CB       </span><span style='color: #BB0000;'>NA</span><span>                          22 CUT    Trevor W~
-#&gt; </span><span style='color: #555555;'> 8</span><span>   </span><span style='text-decoration: underline;'>2</span><span>019 ARI   CB       </span><span style='color: #BB0000;'>NA</span><span>                          26 RES    Brandon ~
-#&gt; </span><span style='color: #555555;'> 9</span><span>   </span><span style='text-decoration: underline;'>2</span><span>019 ARI   CB       </span><span style='color: #BB0000;'>NA</span><span>                          </span><span style='color: #BB0000;'>NA</span><span> DEV    Sojourn ~
-#&gt; </span><span style='color: #555555;'>10</span><span>   </span><span style='text-decoration: underline;'>2</span><span>019 ARI   CB       </span><span style='color: #BB0000;'>NA</span><span>                          28 CUT    Deatrick~
-#&gt; </span><span style='color: #555555;'># ... with 7,668 more rows, and 14 more variables: first_name </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'> 5</span><span>   </span><span style='text-decoration: underline;'>2</span><span>019 ARI   CB       </span><span style='color: #BB0000;'>NA</span><span>                          30 ACT    Jalen Da…
+#&gt; </span><span style='color: #555555;'> 6</span><span>   </span><span style='text-decoration: underline;'>2</span><span>019 ARI   CB       </span><span style='color: #BB0000;'>NA</span><span>                          33 ACT    Byron Mu…
+#&gt; </span><span style='color: #555555;'> 7</span><span>   </span><span style='text-decoration: underline;'>2</span><span>019 ARI   CB       </span><span style='color: #BB0000;'>NA</span><span>                          22 CUT    Trevor W…
+#&gt; </span><span style='color: #555555;'> 8</span><span>   </span><span style='text-decoration: underline;'>2</span><span>019 ARI   CB       </span><span style='color: #BB0000;'>NA</span><span>                          26 RES    Brandon …
+#&gt; </span><span style='color: #555555;'> 9</span><span>   </span><span style='text-decoration: underline;'>2</span><span>019 ARI   CB       </span><span style='color: #BB0000;'>NA</span><span>                          </span><span style='color: #BB0000;'>NA</span><span> DEV    Sojourn …
+#&gt; </span><span style='color: #555555;'>10</span><span>   </span><span style='text-decoration: underline;'>2</span><span>019 ARI   CB       </span><span style='color: #BB0000;'>NA</span><span>                          28 CUT    Deatrick…
+#&gt; </span><span style='color: #555555;'># … with 7,658 more rows, and 14 more variables: first_name </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,</span><span>
 #&gt; </span><span style='color: #555555;'>#   last_name </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, birth_date </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, height </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, weight </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,</span><span>
 #&gt; </span><span style='color: #555555;'>#   college </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, high_school </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, gsis_id </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, espn_id </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span style='color: #555555;'>,</span><span>
 #&gt; </span><span style='color: #555555;'>#   sportradar_id </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, yahoo_id </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span style='color: #555555;'>, rotowire_id </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span style='color: #555555;'>, update_dt </span><span style='color: #555555;font-style: italic;'>&lt;dttm&gt;</span><span style='color: #555555;'>,</span><span>

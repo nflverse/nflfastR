@@ -95,6 +95,9 @@
   </a>
 </li>
 <li>
+  <a href="../articles/nflfastR.html">Get started</a>
+</li>
+<li>
   <a href="../reference/index.html">Functions</a>
 </li>
 <li>
@@ -108,13 +111,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/beginners_guide.html">A beginner's guide to nflfastR</a>
+      <a href="../articles/beginners_guide.html">A beginner’s guide to nflfastR</a>
     </li>
     <li>
-      <a href="../articles/examples.html">Examples</a>
-    </li>
-    <li>
-      <a href="../articles/nflfastR-models.html">nflfastR EP, WP, and CP models</a>
+      <a href="https://www.opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/">nflfastR models</a>
     </li>
   </ul>
 </li>
@@ -199,7 +199,7 @@
 <a href="#new-features" class="anchor"></a>New features</h2>
 <ul>
 <li>Add option <code>source = "old"</code> to <code><a href="../reference/fast_scraper.html">fast_scraper()</a></code> to enable scraping of old source. This is mostly useless as it doesn’t work for 2020 and provides less info</li>
-<li>Added new option <code>db_connection</code> to <code><a href="../reference/update_db.html">update_db()</a></code> to allow advanced users to use other DBI drivers, such as <code><a href="https://rmariadb.r-dbi.org/reference/dbConnect-MariaDBDriver-method.html">RMariaDB::MariaDB()</a></code>, <code><a href="https://rpostgres.r-dbi.org/reference/Postgres.html">RPostgres::Postgres()</a></code> or <code>odbc::odbc()</code> (please see <a href="https://dbplyr.tidyverse.org/articles/dbplyr.html">dbplyr</a> for more information)</li>
+<li>Added new option <code>db_connection</code> to <code><a href="../reference/update_db.html">update_db()</a></code> to allow advanced users to use other DBI drivers, such as <code>RMariaDB::MariaDB()</code>, <code>RPostgres::Postgres()</code> or <code>odbc::odbc()</code> (please see <a href="https://dbplyr.tidyverse.org/articles/dbplyr.html">dbplyr</a> for more information)</li>
 </ul>
 </div>
 <div id="minor-improvements-and-fixes" class="section level2">
@@ -225,8 +225,8 @@
 <li>Fix <code><a href="../reference/add_xyac.html">add_xyac()</a></code> breaking with some old packages</li>
 <li>Fix <code><a href="../reference/add_xyac.html">add_xyac()</a></code> and <code><a href="../reference/add_qb_epa.html">add_qb_epa()</a></code> calculations being wrong for some failed 4th downs</li>
 <li>Updated Readme with ep and cp model plots</li>
-<li>Updated <code><a href="../articles/examples.html">vignette("examples")</a></code> with the new <code><a href="../reference/add_xyac.html">add_xyac()</a></code> function</li>
-<li>Added xYAC model to <code><a href="../articles/nflfastR-models.html">vignette("nflfastR-models")</a></code>
+<li>Updated <code>vignette("examples")</code> with the new <code><a href="../reference/add_xyac.html">add_xyac()</a></code> function</li>
+<li>Added xYAC model to <code>vignette("nflfastR-models")</code>
 </li>
 <li>Added variables <code>fixed_drive</code> and <code>fixed_drive_result</code> to the output of <code><a href="../reference/fast_scraper.html">fast_scraper()</a></code> because the NFL-provided drive info is extremely buggy</li>
 <li>Added variable <code>series_result</code>
@@ -312,7 +312,7 @@
 <h3 class="hasAnchor">
 <a href="#models" class="anchor"></a>Models</h3>
 <ul>
-<li>Removed <code>week</code> from Expected Points models along with an update of <code><a href="../articles/nflfastR-models.html">vignette("nflfastR-models")</a></code> and <code><a href="../articles/examples.html">vignette("examples")</a></code>
+<li>Removed <code>week</code> from Expected Points models along with an update of <code>vignette("nflfastR-models")</code> and <code>vignette("examples")</code>
 </li>
 </ul>
 </div>
@@ -323,7 +323,7 @@
 <li>Added function <code><a href="../reference/update_db.html">update_db()</a></code> which adds all completed games to a SQLite database</li>
 <li>Added function <code><a href="../reference/calculate_win_probability.html">calculate_win_probability()</a></code>
 </li>
-<li>Added new examples to <code><a href="../articles/examples.html">vignette("examples")</a></code> demonstrating the usage of the above mentioned functions</li>
+<li>Added new examples to <code>vignette("examples")</code> demonstrating the usage of the above mentioned functions</li>
 </ul>
 </div>
 <div id="bugs" class="section level3">
@@ -355,7 +355,7 @@
 <li>Variable <code>yards_gained</code> more precisely defined</li>
 <li>Bugfixes for more games with out of order of plays</li>
 <li>Fix bug related to EPA on plays with a failed pass interference challenge</li>
-<li>Added new example to <code><a href="../articles/examples.html">vignette("examples")</a></code> to demonstrate Expected Points calculator <code><a href="../reference/calculate_expected_points.html">calculate_expected_points()</a></code>
+<li>Added new example to <code>vignette("examples")</code> to demonstrate Expected Points calculator <code><a href="../reference/calculate_expected_points.html">calculate_expected_points()</a></code>
 </li>
 <li>Fix for WP on 2-pt conversion negated by penalty</li>
 <li>Add more variables (containing team names) to team standardization in <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code>

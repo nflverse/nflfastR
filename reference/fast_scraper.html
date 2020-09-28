@@ -83,7 +83,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.0.0.9002</span>
       </span>
     </div>
 
@@ -96,7 +96,10 @@
   </a>
 </li>
 <li>
-  <a href="../reference/index.html">Reference</a>
+  <a href="../articles/nflfastR.html">Get started</a>
+</li>
+<li>
+  <a href="../reference/index.html">Functions</a>
 </li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -109,19 +112,37 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/beginners_guide.html">A beginner's guide to nflfastR</a>
+      <a href="../articles/beginners_guide.html">A beginner’s guide to nflfastR</a>
     </li>
     <li>
-      <a href="../articles/examples.html">Examples</a>
-    </li>
-    <li>
-      <a href="../articles/nflfastR-models.html">nflfastR EP, WP, and CP models</a>
+      <a href="https://www.opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/">nflfastR models</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="https://www.opensourcefootball.com/">Open Source Football</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
+  <a href="https://github.com/guga31bb/nflfastR-data">
+    <span class="fas fa fas fa-database fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://rbsdm.com/stats/">
+    <span class="fas fa fas fa-chart-line fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="http://nflgamedata.com/">
+    <span class="fas fa fas fa-football-ball fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="http://twitter.com/nflfastR">
     <span class="fab fa fab fa-twitter fa-lg"></span>
      
@@ -518,17 +539,17 @@ may be better to set <code>pp = FALSE</code> if you are scraping just a few game
 </div><div class='output co'>#&gt; <span class='message'>Download finished. Adding variables...</span></div><div class='output co'>#&gt; <span class='message'>added game variables</span></div><div class='output co'>#&gt; <span class='message'>added nflscrapR variables</span></div><div class='output co'>#&gt; <span class='message'>added ep variables</span></div><div class='output co'>#&gt; <span class='message'>added air_yac_ep variables</span></div><div class='output co'>#&gt; <span class='message'>added wp variables</span></div><div class='output co'>#&gt; <span class='message'>added air_yac_wp variables</span></div><div class='output co'>#&gt; <span class='message'>added cp and cpoe</span></div><div class='output co'>#&gt; <span class='message'>added fixed drive variables</span></div><div class='output co'>#&gt; <span class='message'>added series variables</span></div><div class='output co'>#&gt; <span class='message'>Procedure completed.</span></div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 356 x 315</span><span>
 #&gt;    play_id game_id old_game_id home_team away_team season_type  week posteam
 #&gt;      </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  
-#&gt; </span><span style='color: #555555;'> 1</span><span>       1 2013_2~ 2014020200  DEN       SEA       POST           21 </span><span style='color: #BB0000;'>NA</span><span>     
-#&gt; </span><span style='color: #555555;'> 2</span><span>      37 2013_2~ 2014020200  DEN       SEA       POST           21 </span><span style='color: #BB0000;'>NA</span><span>     
-#&gt; </span><span style='color: #555555;'> 3</span><span>      61 2013_2~ 2014020200  DEN       SEA       POST           21 DEN    
-#&gt; </span><span style='color: #555555;'> 4</span><span>      83 2013_2~ 2014020200  DEN       SEA       POST           21 DEN    
-#&gt; </span><span style='color: #555555;'> 5</span><span>     119 2013_2~ 2014020200  DEN       SEA       POST           21 SEA    
-#&gt; </span><span style='color: #555555;'> 6</span><span>     141 2013_2~ 2014020200  DEN       SEA       POST           21 SEA    
-#&gt; </span><span style='color: #555555;'> 7</span><span>     162 2013_2~ 2014020200  DEN       SEA       POST           21 SEA    
-#&gt; </span><span style='color: #555555;'> 8</span><span>     183 2013_2~ 2014020200  DEN       SEA       POST           21 SEA    
-#&gt; </span><span style='color: #555555;'> 9</span><span>     210 2013_2~ 2014020200  DEN       SEA       POST           21 SEA    
-#&gt; </span><span style='color: #555555;'>10</span><span>     232 2013_2~ 2014020200  DEN       SEA       POST           21 SEA    
-#&gt; </span><span style='color: #555555;'># ... with 346 more rows, and 307 more variables: posteam_type </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span>       1 2013_2… 2014020200  DEN       SEA       POST           21 </span><span style='color: #BB0000;'>NA</span><span>     
+#&gt; </span><span style='color: #555555;'> 2</span><span>      37 2013_2… 2014020200  DEN       SEA       POST           21 </span><span style='color: #BB0000;'>NA</span><span>     
+#&gt; </span><span style='color: #555555;'> 3</span><span>      61 2013_2… 2014020200  DEN       SEA       POST           21 DEN    
+#&gt; </span><span style='color: #555555;'> 4</span><span>      83 2013_2… 2014020200  DEN       SEA       POST           21 DEN    
+#&gt; </span><span style='color: #555555;'> 5</span><span>     119 2013_2… 2014020200  DEN       SEA       POST           21 SEA    
+#&gt; </span><span style='color: #555555;'> 6</span><span>     141 2013_2… 2014020200  DEN       SEA       POST           21 SEA    
+#&gt; </span><span style='color: #555555;'> 7</span><span>     162 2013_2… 2014020200  DEN       SEA       POST           21 SEA    
+#&gt; </span><span style='color: #555555;'> 8</span><span>     183 2013_2… 2014020200  DEN       SEA       POST           21 SEA    
+#&gt; </span><span style='color: #555555;'> 9</span><span>     210 2013_2… 2014020200  DEN       SEA       POST           21 SEA    
+#&gt; </span><span style='color: #555555;'>10</span><span>     232 2013_2… 2014020200  DEN       SEA       POST           21 SEA    
+#&gt; </span><span style='color: #555555;'># … with 346 more rows, and 307 more variables: posteam_type </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,</span><span>
 #&gt; </span><span style='color: #555555;'>#   defteam </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, side_of_field </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, yardline_100 </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, game_date </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,</span><span>
 #&gt; </span><span style='color: #555555;'>#   quarter_seconds_remaining </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, half_seconds_remaining </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
 #&gt; </span><span style='color: #555555;'>#   game_seconds_remaining </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, game_half </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, quarter_end </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
@@ -561,7 +582,7 @@ may be better to set <code>pp = FALSE</code> if you are scraping just a few game
 #&gt; </span><span style='color: #555555;'>#   total_home_rush_wpa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, total_away_rush_wpa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
 #&gt; </span><span style='color: #555555;'>#   total_home_pass_wpa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, total_away_pass_wpa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, air_wpa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
 #&gt; </span><span style='color: #555555;'>#   yac_wpa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, comp_air_wpa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, comp_yac_wpa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
-#&gt; </span><span style='color: #555555;'>#   total_home_comp_air_wpa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, ...</span><span></div><div class='input'><span class='co'># }</span>
+#&gt; </span><span style='color: #555555;'>#   total_home_comp_air_wpa </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, …</span><span></div><div class='input'><span class='co'># }</span>
 </div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

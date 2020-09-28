@@ -41,7 +41,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.0.0.9002</span>
       </span>
     </div>
 
@@ -54,7 +54,10 @@
   </a>
 </li>
 <li>
-  <a href="../reference/index.html">Reference</a>
+  <a href="../articles/nflfastR.html">Get started</a>
+</li>
+<li>
+  <a href="../reference/index.html">Functions</a>
 </li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -67,18 +70,36 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/beginners_guide.html">A beginner's guide to nflfastR</a>
+      <a href="../articles/beginners_guide.html">A beginner’s guide to nflfastR</a>
     </li>
     <li>
-      <a href="../articles/examples.html">Examples</a>
-    </li>
-    <li>
-      <a href="../articles/nflfastR-models.html">nflfastR EP, WP, and CP models</a>
+      <a href="https://www.opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/">nflfastR models</a>
     </li>
   </ul>
 </li>
+<li>
+  <a href="https://www.opensourcefootball.com/">Open Source Football</a>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/guga31bb/nflfastR-data">
+    <span class="fas fa fas fa-database fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://rbsdm.com/stats/">
+    <span class="fas fa fas fa-chart-line fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="http://nflgamedata.com/">
+    <span class="fas fa fas fa-football-ball fa-lg"></span>
+     
+  </a>
+</li>
 <li>
   <a href="http://twitter.com/nflfastR">
     <span class="fab fa fab fa-twitter fa-lg"></span>
@@ -101,7 +122,7 @@
 
       
 
-      </header><script src="beginners_guide_files/header-attrs-2.3/header-attrs.js"></script><div class="row">
+      </header><script src="beginners_guide_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>A beginner’s guide to nflfastR</h1>
@@ -135,7 +156,7 @@
 
 <span class="co">#needed to install `nflfastR`</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"mrcaseb/nflfastR"</span><span class="op">)</span></pre></div>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"mrcaseb/nflfastR"</span><span class="op">)</span></pre></div>
 </div>
 <div id="load-packages" class="section level3">
 <h3 class="hasAnchor">
@@ -171,7 +192,7 @@
 <p><code>str</code> displays the <strong>str</strong>ucture of the dataframe:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">data</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span>
-<span class="co">#&gt; tibble [48,034 x 10] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt; tibble [48,034 × 10] (S3: tbl_df/tbl/data.frame)</span>
 <span class="co">#&gt;  $ play_id     : num [1:48034] 1 36 51 79 100 121 148 185 214 239 ...</span>
 <span class="co">#&gt;  $ game_id     : chr [1:48034] "2019_01_ATL_MIN" "2019_01_ATL_MIN" "2019_01_ATL_MIN" "2019_01_ATL_MIN" ...</span>
 <span class="co">#&gt;  $ old_game_id : chr [1:48034] "2019090804" "2019090804" "2019090804" "2019090804" ...</span>
@@ -557,11 +578,11 @@
 <span class="co">#&gt;   posteam defteam desc                                                rush  pass</span>
 <span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;                                              &lt;dbl&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 &lt;NA&gt;    &lt;NA&gt;    GAME                                                   0     0</span>
-<span class="co">#&gt; 2 ATL     MIN     5-D.Bailey kicks 65 yards from MIN 35 to end zone~     0     0</span>
-<span class="co">#&gt; 3 ATL     MIN     (15:00) 2-M.Ryan sacked at ATL 17 for -8 yards (5~     0     1</span>
-<span class="co">#&gt; 4 ATL     MIN     (14:20) 24-D.Freeman right tackle to ATL 21 for 4~     1     0</span>
-<span class="co">#&gt; 5 ATL     MIN     (13:41) (Shotgun) 2-M.Ryan scrambles left end to ~     0     1</span>
-<span class="co">#&gt; 6 ATL     MIN     (12:59) 5-M.Bosher punt is BLOCKED by 50-E.Wilson~     0     0</span></pre></div>
+<span class="co">#&gt; 2 ATL     MIN     5-D.Bailey kicks 65 yards from MIN 35 to end zone…     0     0</span>
+<span class="co">#&gt; 3 ATL     MIN     (15:00) 2-M.Ryan sacked at ATL 17 for -8 yards (5…     0     1</span>
+<span class="co">#&gt; 4 ATL     MIN     (14:20) 24-D.Freeman right tackle to ATL 21 for 4…     1     0</span>
+<span class="co">#&gt; 5 ATL     MIN     (13:41) (Shotgun) 2-M.Ryan scrambles left end to …     0     1</span>
+<span class="co">#&gt; 6 ATL     MIN     (12:59) 5-M.Bosher punt is BLOCKED by 50-E.Wilson…     0     0</span></pre></div>
 <p>A couple things. “<code>desc</code>” is the important variable that lists the description of what happened on the play, and <code>head</code> says to show the first few rows (the “head” of the data). Since this is already sorted by game, these are the first 6 rows from a week 1 game, ATL @ MIN. To make code easier to read, people often put each part of a pipe on a new line, which is useful when working with more complicated functions. We could run:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit">
 <span class="va">data</span> <span class="op">%&gt;%</span> <span class="fu">select</span><span class="op">(</span><span class="va">posteam</span>, <span class="va">defteam</span>, <span class="va">desc</span>, <span class="va">rush</span>, <span class="va">pass</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span></pre></div>
@@ -575,12 +596,12 @@
 <span class="co">#&gt; # A tibble: 6 x 8</span>
 <span class="co">#&gt;   posteam desc                        rush  pass name    passer  rusher receiver</span>
 <span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;                      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;   </span>
-<span class="co">#&gt; 1 ATL     (15:00) 2-M.Ryan sacked a~     0     1 M.Ryan  M.Ryan  &lt;NA&gt;   &lt;NA&gt;    </span>
-<span class="co">#&gt; 2 ATL     (14:20) 24-D.Freeman righ~     1     0 D.Free~ &lt;NA&gt;    D.Fre~ &lt;NA&gt;    </span>
-<span class="co">#&gt; 3 ATL     (13:41) (Shotgun) 2-M.Rya~     0     1 M.Ryan  M.Ryan  &lt;NA&gt;   &lt;NA&gt;    </span>
-<span class="co">#&gt; 4 MIN     (12:53) 33-D.Cook right e~     1     0 D.Cook  &lt;NA&gt;    D.Cook &lt;NA&gt;    </span>
-<span class="co">#&gt; 5 MIN     (12:32) 8-K.Cousins pass ~     0     1 K.Cous~ K.Cous~ &lt;NA&gt;   D.Cook  </span>
-<span class="co">#&gt; 6 MIN     (11:57) 8-K.Cousins pass ~     0     1 K.Cous~ K.Cous~ &lt;NA&gt;   A.Thiel~</span></pre></div>
+<span class="co">#&gt; 1 ATL     (15:00) 2-M.Ryan sacked a…     0     1 M.Ryan  M.Ryan  &lt;NA&gt;   &lt;NA&gt;    </span>
+<span class="co">#&gt; 2 ATL     (14:20) 24-D.Freeman righ…     1     0 D.Free… &lt;NA&gt;    D.Fre… &lt;NA&gt;    </span>
+<span class="co">#&gt; 3 ATL     (13:41) (Shotgun) 2-M.Rya…     0     1 M.Ryan  M.Ryan  &lt;NA&gt;   &lt;NA&gt;    </span>
+<span class="co">#&gt; 4 MIN     (12:53) 33-D.Cook right e…     1     0 D.Cook  &lt;NA&gt;    D.Cook &lt;NA&gt;    </span>
+<span class="co">#&gt; 5 MIN     (12:32) 8-K.Cousins pass …     0     1 K.Cous… K.Cous… &lt;NA&gt;   D.Cook  </span>
+<span class="co">#&gt; 6 MIN     (11:57) 8-K.Cousins pass …     0     1 K.Cous… K.Cous… &lt;NA&gt;   A.Thiel…</span></pre></div>
 <p>Compared to the first time we did this, the opening line for the start of the game, the kickoff, and the punt are now gone. Note that if you’re checking whether a variable is equal to something, we need to use the double equals sign <code><a href="https://rdrr.io/r/base/Comparison.html">==</a></code> like above. There’s probably some technical reason for this [shrug emoji]. Also, the character <code><a href="https://rdrr.io/r/base/Logic.html">|</a></code> is used for “or”, and <code><a href="https://rdrr.io/r/base/Logic.html">&amp;</a></code> for “and”. So <code>rush == 1 | pass == 1</code> means “rush or pass”.</p>
 <p>Note that the <code>rush</code>, <code>pass</code>, <code>name</code>, <code>passer</code>, <code>rusher</code>, and <code>receiver</code> columns are all <code>nflfastR</code> creations, where we have provided these to make working with the data easier. As we can see above, <code>passer</code> is filled in for all dropbacks (including sacks and scrambles, which also have <code>pass</code> = 1), and <code>name</code> is equal to the passer on pass plays and the rusher on rush plays. Think of this as the primary player involved on a play.</p>
 <p>What if we wanted to view special teams plays? Again, we can use <code>filter</code>:</p>
@@ -593,10 +614,10 @@
 <span class="co">#&gt;    down ydstogo desc                                                            </span>
 <span class="co">#&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;                                                           </span>
 <span class="co">#&gt; 1    NA       0 5-D.Bailey kicks 65 yards from MIN 35 to end zone, Touchback.   </span>
-<span class="co">#&gt; 2     4       2 (12:59) 5-M.Bosher punt is BLOCKED by 50-E.Wilson, Center-47-J.~</span>
-<span class="co">#&gt; 3    NA       0 (Kick formation) 5-D.Bailey extra point is GOOD, Center-58-A.Cu~</span>
-<span class="co">#&gt; 4    NA       0 5-D.Bailey kicks 67 yards from MIN 35 to ATL -2. 38-K.Barner to~</span>
-<span class="co">#&gt; 5    NA       0 (Kick formation) 5-D.Bailey extra point is GOOD, Center-58-A.Cu~</span>
+<span class="co">#&gt; 2     4       2 (12:59) 5-M.Bosher punt is BLOCKED by 50-E.Wilson, Center-47-J.…</span>
+<span class="co">#&gt; 3    NA       0 (Kick formation) 5-D.Bailey extra point is GOOD, Center-58-A.Cu…</span>
+<span class="co">#&gt; 4    NA       0 5-D.Bailey kicks 67 yards from MIN 35 to ATL -2. 38-K.Barner to…</span>
+<span class="co">#&gt; 5    NA       0 (Kick formation) 5-D.Bailey extra point is GOOD, Center-58-A.Cu…</span>
 <span class="co">#&gt; 6    NA       0 5-D.Bailey kicks 65 yards from MIN 35 to end zone, Touchback.</span></pre></div>
 <p>Fourth down plays?</p>
 <div class="sourceCode" id="cb14"><pre class="downlit">
@@ -607,12 +628,12 @@
 <span class="co">#&gt; # A tibble: 6 x 3</span>
 <span class="co">#&gt;    down ydstogo desc                                                            </span>
 <span class="co">#&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;                                                           </span>
-<span class="co">#&gt; 1     4       2 (12:59) 5-M.Bosher punt is BLOCKED by 50-E.Wilson, Center-47-J.~</span>
-<span class="co">#&gt; 2     4      19 (2:38) 5-M.Bosher punts 33 yards to MIN 8, Center-47-J.Harris, ~</span>
-<span class="co">#&gt; 3     4      20 (12:33) 2-B.Colquitt punts 51 yards to ATL 17, Center-58-A.Cutt~</span>
-<span class="co">#&gt; 4     4      27 (1:49) 5-M.Bosher punts 45 yards to MIN 10, Center-47-J.Harris,~</span>
-<span class="co">#&gt; 5     4      10 (:49) 2-B.Colquitt punts 57 yards to ATL 33, Center-58-A.Cuttin~</span>
-<span class="co">#&gt; 6     4       1 (10:56) 2-B.Colquitt punts 42 yards to ATL 10, Center-58-A.Cutt~</span></pre></div>
+<span class="co">#&gt; 1     4       2 (12:59) 5-M.Bosher punt is BLOCKED by 50-E.Wilson, Center-47-J.…</span>
+<span class="co">#&gt; 2     4      19 (2:38) 5-M.Bosher punts 33 yards to MIN 8, Center-47-J.Harris, …</span>
+<span class="co">#&gt; 3     4      20 (12:33) 2-B.Colquitt punts 51 yards to ATL 17, Center-58-A.Cutt…</span>
+<span class="co">#&gt; 4     4      27 (1:49) 5-M.Bosher punts 45 yards to MIN 10, Center-47-J.Harris,…</span>
+<span class="co">#&gt; 5     4      10 (:49) 2-B.Colquitt punts 57 yards to ATL 33, Center-58-A.Cuttin…</span>
+<span class="co">#&gt; 6     4       1 (10:56) 2-B.Colquitt punts 42 yards to ATL 10, Center-58-A.Cutt…</span></pre></div>
 <p>Fourth down plays that aren’t special teams plays?</p>
 <div class="sourceCode" id="cb15"><pre class="downlit">
 <span class="va">data</span> <span class="op">%&gt;%</span> 
@@ -622,12 +643,12 @@
 <span class="co">#&gt; # A tibble: 6 x 3</span>
 <span class="co">#&gt;    down ydstogo desc                                                            </span>
 <span class="co">#&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;                                                           </span>
-<span class="co">#&gt; 1     4       5 (9:25) (Shotgun) 2-M.Ryan pass deep left to 18-C.Ridley for 20 ~</span>
-<span class="co">#&gt; 2     4       2 (4:39) (Punt formation) PENALTY on MIN, Delay of Game, 5 yards,~</span>
-<span class="co">#&gt; 3     4       2 (1:27) (No Huddle, Shotgun) 2-M.Ryan pass short left to 11-J.Jo~</span>
-<span class="co">#&gt; 4     4       1 (2:59) (Punt formation) Direct snap to 41-A.Levine.  41-A.Levin~</span>
-<span class="co">#&gt; 5     4       3 (9:30) (Shotgun) 3-R.Griffin pass short left to 89-M.Andrews fo~</span>
-<span class="co">#&gt; 6     4       1 (3:55) 17-J.Allen FUMBLES (Aborted) at NYJ 37, RECOVERED by NYJ~</span></pre></div>
+<span class="co">#&gt; 1     4       5 (9:25) (Shotgun) 2-M.Ryan pass deep left to 18-C.Ridley for 20 …</span>
+<span class="co">#&gt; 2     4       2 (4:39) (Punt formation) PENALTY on MIN, Delay of Game, 5 yards,…</span>
+<span class="co">#&gt; 3     4       2 (1:27) (No Huddle, Shotgun) 2-M.Ryan pass short left to 11-J.Jo…</span>
+<span class="co">#&gt; 4     4       1 (2:59) (Punt formation) Direct snap to 41-A.Levine.  41-A.Levin…</span>
+<span class="co">#&gt; 5     4       3 (9:30) (Shotgun) 3-R.Griffin pass short left to 89-M.Andrews fo…</span>
+<span class="co">#&gt; 6     4       1 (3:55) 17-J.Allen FUMBLES (Aborted) at NYJ 37, RECOVERED by NYJ…</span></pre></div>
 <p>So far, we’ve just been taking a look at the initial dataset we downloaded, but none of our results are preserved. To save a new dataframe of just the plays we want, we need to use <code><a href="https://rdrr.io/r/base/assignOps.html">&lt;-</a></code> to assign a new dataframe. Let’s save a new dataframe that’s just run plays and pass plays with non-missing EPA, called <code>pbp_rp</code>.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit">
 <span class="va">pbp_rp</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op">%&gt;%</span>
@@ -766,7 +787,7 @@
 <span class="co">#&gt;  8 CAR         0.550   269</span>
 <span class="co">#&gt;  9 ARI         0.549   319</span>
 <span class="co">#&gt; 10 GB          0.547   285</span>
-<span class="co">#&gt; # ... with 22 more rows</span></pre></div>
+<span class="co">#&gt; # … with 22 more rows</span></pre></div>
 <p>Again, we’ve already used <code>filter</code>, <code>group_by</code>, and <code>summarize</code>. The new function we are using here is <code>arrange</code>, which sorts the data by the variable(s) given. The minus sign in front of <code>mean_pass</code> means to sort in descending order.</p>
 <p>Let’s make our first figure:</p>
 <div class="sourceCode" id="cb23"><pre class="downlit">
@@ -851,13 +872,13 @@
 <span class="co">#&gt; # A tibble: 6 x 10</span>
 <span class="co">#&gt;   team_abbr team_name team_id team_nick team_color team_color2 team_color3</span>
 <span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;      </span>
-<span class="co">#&gt; 1 ARI       Arizona ~ 3800    Cardinals #97233f    #000000     #ffb612    </span>
-<span class="co">#&gt; 2 ATL       Atlanta ~ 0200    Falcons   #a71930    #000000     #a5acaf    </span>
-<span class="co">#&gt; 3 BAL       Baltimor~ 0325    Ravens    #241773    #000000     #9e7c0c    </span>
-<span class="co">#&gt; 4 BUF       Buffalo ~ 0610    Bills     #00338d    #c60c30     #0c2e82    </span>
-<span class="co">#&gt; 5 CAR       Carolina~ 0750    Panthers  #0085ca    #000000     #bfc0bf    </span>
-<span class="co">#&gt; 6 CHI       Chicago ~ 0810    Bears     #0b162a    #c83803     #0b162a    </span>
-<span class="co">#&gt; # ... with 3 more variables: team_color4 &lt;chr&gt;, team_logo_wikipedia &lt;chr&gt;,</span>
+<span class="co">#&gt; 1 ARI       Arizona … 3800    Cardinals #97233f    #000000     #ffb612    </span>
+<span class="co">#&gt; 2 ATL       Atlanta … 0200    Falcons   #a71930    #000000     #a5acaf    </span>
+<span class="co">#&gt; 3 BAL       Baltimor… 0325    Ravens    #241773    #000000     #9e7c0c    </span>
+<span class="co">#&gt; 4 BUF       Buffalo … 0610    Bills     #00338d    #c60c30     #0c2e82    </span>
+<span class="co">#&gt; 5 CAR       Carolina… 0750    Panthers  #0085ca    #000000     #bfc0bf    </span>
+<span class="co">#&gt; 6 CHI       Chicago … 0810    Bears     #0b162a    #c83803     #0b162a    </span>
+<span class="co">#&gt; # … with 3 more variables: team_color4 &lt;chr&gt;, team_logo_wikipedia &lt;chr&gt;,</span>
 <span class="co">#&gt; #   team_logo_espn &lt;chr&gt;</span></pre></div>
 <p>Let’s join this to the <code>qbs</code> dataframe we created:</p>
 <div class="sourceCode" id="cb29"><pre class="downlit">
@@ -947,7 +968,7 @@
 <div class="sourceCode" id="cb32"><pre class="downlit">
 <span class="va">games</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span><span class="op">(</span><span class="st">"http://www.habitatring.com/games.rds"</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">games</span><span class="op">)</span>
-<span class="co">#&gt; tibble [5,839 x 35] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt; tibble [5,839 × 35] (S3: tbl_df/tbl/data.frame)</span>
 <span class="co">#&gt;  $ game_id         : chr [1:5839] "1999_01_MIN_ATL" "1999_01_KC_CHI" "1999_01_PIT_CLE" "1999_01_OAK_GB" ...</span>
 <span class="co">#&gt;  $ season          : int [1:5839] 1999 1999 1999 1999 1999 1999 1999 1999 1999 1999 ...</span>
 <span class="co">#&gt;  $ game_type       : chr [1:5839] "REG" "REG" "REG" "REG" ...</span>
@@ -1190,7 +1211,7 @@
 <span class="co">#&gt;  8 ARI      22</span>
 <span class="co">#&gt;  9 ATL      22</span>
 <span class="co">#&gt; 10 BAL      22</span>
-<span class="co">#&gt; # ... with 25 more rows</span></pre></div>
+<span class="co">#&gt; # … with 25 more rows</span></pre></div>
 <p>Nope, not yet, we need to fix the Raiders, Rams, and Chargers, which are LV, LA, and LAC in <code>nflfastR</code>.</p>
 <div class="sourceCode" id="cb44"><pre class="downlit">
 <span class="va">team_wins</span> <span class="op">&lt;-</span> <span class="va">team_wins</span> <span class="op">%&gt;%</span>
@@ -1222,7 +1243,7 @@
 <span class="co">#&gt;  8 CIN      22</span>
 <span class="co">#&gt;  9 CLE      22</span>
 <span class="co">#&gt; 10 DAL      22</span>
-<span class="co">#&gt; # ... with 22 more rows</span></pre></div>
+<span class="co">#&gt; # … with 22 more rows</span></pre></div>
 <p>HOU has 3 fewer seasons because it didn’t exist from 1999 through 2001, which is fine, and all the other team names have 22 seasons like they should. Okay NOW we can join:</p>
 <div class="sourceCode" id="cb46"><pre class="downlit">
 <span class="va">data</span> <span class="op">&lt;-</span> <span class="va">team_wins</span> <span class="op">%&gt;%</span>
@@ -1243,7 +1264,7 @@
 <span class="co">#&gt; 7 SEA     2018  10           81     -0.0273        0.210       -0.131 </span>
 <span class="co">#&gt; 8 SEA     2019  11            7     -0.136         0.120       -0.0930</span>
 <span class="co">#&gt; 9 SEA     2020  NA           NA     NA            NA           NA     </span>
-<span class="co">#&gt; # ... with 1 more variable: def_pass_epa &lt;dbl&gt;</span></pre></div>
+<span class="co">#&gt; # … with 1 more variable: def_pass_epa &lt;dbl&gt;</span></pre></div>
 <p>Now we’re getting really close to doing what we want! Next we need to create new columns for prior year EPA, and let’s do point differential too.</p>
 <div class="sourceCode" id="cb47"><pre class="downlit">
 <span class="va">data</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op">%&gt;%</span> 
@@ -1266,7 +1287,7 @@
 <span class="co">#&gt; 3 ARI     2001     7        -48       -0.177       0.0740     -0.0689 </span>
 <span class="co">#&gt; 4 ARI     2002     5       -155       -0.134      -0.0662     -0.0192 </span>
 <span class="co">#&gt; 5 ARI     2003     4       -227       -0.219      -0.120      -0.0627 </span>
-<span class="co">#&gt; # ... with 6 more variables: def_pass_epa &lt;dbl&gt;, prior_off_rush_epa &lt;dbl&gt;,</span>
+<span class="co">#&gt; # … with 6 more variables: def_pass_epa &lt;dbl&gt;, prior_off_rush_epa &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   prior_off_pass_epa &lt;dbl&gt;, prior_def_rush_epa &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   prior_def_pass_epa &lt;dbl&gt;, prior_point_diff &lt;int&gt;</span></pre></div>
 <p>Finally! Now we have the data in place and can start doing things with it.</p>
