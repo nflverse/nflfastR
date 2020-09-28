@@ -1,5 +1,5 @@
 ---
-title: "Examples"
+title: "Get started with nflfastR"
 author: "Ben Baldwin & Sebastian Carl"
 ---
 
