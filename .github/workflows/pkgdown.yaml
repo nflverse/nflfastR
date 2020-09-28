@@ -33,8 +33,7 @@ jobs:
       - name: Install dependencies
         run: |
           remotes::install_deps(dependencies = TRUE)
-          remotes::install_github("mrcaseb/nflfastR")
-          install.packages("pkgdown", "tidyverse", "ggrepel", "ggimage", "knitr", "tictoc", "glue", "DBI", "RSQLite")
+          install.packages(c("pkgdown", "tidyverse", "ggrepel", "ggimage", "knitr", "tictoc", "glue", "DBI", "RSQLite"))
         shell: Rscript {0}
 
       - name: Install package
