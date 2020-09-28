@@ -60,3 +60,10 @@ navbar:
     reference:
       text: "Functions"
       href: reference/index.html
+    articles:
+      text: "Articles"
+      menu:
+      - text: A beginner’s guide to nflfastR
+        href: articles/beginners_guide.html
+      - text: nflfastR models
+        href: https://www.opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/
