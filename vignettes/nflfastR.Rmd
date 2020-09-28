@@ -237,7 +237,7 @@ There's exactly one function in `nflfastR` that works with databases: `update_db
 Let's say I just want to dump a database into the current working directory. Here we go!
 
 ``` {r create-db}
-update_db(dbdir = getwd())
+update_db(force_rebuild = TRUE)
 ```
 
 This created a database in the current directory called `pbp_db`.
@@ -245,7 +245,7 @@ This created a database in the current directory called `pbp_db`.
 Wait, that's it? That's it! What if it's partway through the season and you want to make sure all the new games are added to the database? What do you run? `update_db()`! (just make sure you're in the directory the database is saved in or you supply the right file path)
 
 ``` {r update-db}
-update_db(dbdir = getwd())
+update_db()
 ```
 
 ## Connect to database
