@@ -7,6 +7,8 @@ that began following a timeout
 near the end of a half
 * Fixed a bug where `update_db()` disconnected the connection to a database provided 
 by the argument `db_connection` (#102)
+* Fixed a bug where `update_db()` didn't build a fresh database without providing
+the argument `force_rebuild`
 
 # nflfastR 3.0.0
 
