@@ -53,14 +53,14 @@ update_db <- function(dbdir = ".",
   }
 
   # create db if it doesn't exist or user forces rebuild
-  if (!file.exists(db) & is.null(db_connection)) {
+  if (!DBI::dbExistsTable(connection, tblname) & is.null(db_connection)) {
     message(glue::glue("Can't find database {db}. Will try to create it and load the play by play data into the data table \"{tblname}\"."))
     build_db(tblname, connection)
-  } else if (file.exists(db) & force_rebuild & is.null(db_connection)) {
+  } else if (DBI::dbExistsTable(connection, tblname) & force_rebuild & is.null(db_connection)) {
     message(glue::glue("Start rebuilding the data table \"{tblname}\" in your database {db}."))
     build_db(tblname, connection)
   } else if (force_rebuild & !is.null(db_connection)) {
-    message(glue::glue("Start rebuilding the data table in your \"{tblname}\" connected database."))
+    message(glue::glue("Start rebuilding the data table \"{tblname}\" in your connected database."))
     build_db(tblname, connection)
   }
 

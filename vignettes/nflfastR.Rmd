@@ -237,7 +237,7 @@ There's exactly one function in `nflfastR` that works with databases: `update_db
 Let's say I just want to dump a database into the current working directory. Here we go!
 
 ``` {r create-db}
-update_db(force_rebuild = TRUE)
+update_db()
 ```
 
 This created a database in the current directory called `pbp_db`.
@@ -253,7 +253,7 @@ update_db()
 Now we can make a connection to the database. This is the only part that will look a little bit foreign, but all you need to know is where your database is located. If it's in your current working directory, this will work:
 
 ``` {r}
-connection <- dbConnect(SQLite(), glue::glue("{getwd()}/pbp_db"))
+connection <- dbConnect(SQLite(), "./pbp_db")
 connection
 ```
 
