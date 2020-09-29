@@ -19,11 +19,11 @@ update_db(
 
 \item{tblname}{The name of the play by play data table within the database}
 
-\item{force_rebuild}{Logical parameter to rebuild the play by play data table
-within the database from scratch in case the cleaned data were updated}
+\item{force_rebuild}{Hybrid parameter (logical or numeric) to rebuild parts
+of or the complete play by play data table within the database (please see details for further information)}
 
 \item{db_connection}{A \code{DBIConnection} object, as returned by
-\code{\link[DBI]{dbConnect}}}
+\code{\link[DBI]{dbConnect}} (please see details for further information)}
 }
 \description{
 \code{update_db} updates or creates a SQLite database with \code{nflfastR}
@@ -35,11 +35,17 @@ within a SQLite database located in \code{dbdir} and named \code{dbname}.
 The data table combines all play by play data for every available game back
 to the 1999 season and adds the most recent completed games as soon as they
 are available for \code{nflfastR}.
-The \code{force_rebuild} parameter controls if the data table within the
-database (not the database itself because there might be other data in it)
-should be removed and rebuilt from scratch (mostly because of bugfixes in
-nflfastR or its underlying data).
+
+The argument \code{force_rebuild} is of hybrid type. It can rebuild the play
+by play data table either for the whole nflfastR era (with \code{force_rebuild = TRUE})
+or just for specified seasons (e.g. \code{force_rebuild = c(2018, 2020)}).
+The latter is intended to be used for running seasons because the NFL fixes
+bugs in the play by play data during the week and it is recommended to rebuild
+the current season every Wednesday during the season.
 
 The parameter \code{db_connection} is intended for advanced users who want
-to use other DBI drivers, such as MariaDB, Postgres or odbc.
+to use other DBI drivers, such as MariaDB, Postgres or odbc. Please note that
+the arguments \code{dbdir} and \code{dbname} are dropped in case a \code{db_connection}
+is provided but the argument \code{tblname} will still be used to write the
+data table into the database.
 }

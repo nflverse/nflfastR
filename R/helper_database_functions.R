@@ -8,10 +8,13 @@
 #' The data table combines all play by play data for every available game back
 #' to the 1999 season and adds the most recent completed games as soon as they
 #' are available for \code{nflfastR}.
-#' The \code{force_rebuild} parameter controls if the data table within the
-#' database (not the database itself because there might be other data in it)
-#' should be removed and rebuilt from scratch (mostly because of bugfixes in
-#' nflfastR or its underlying data).
+#'
+#' The argument \code{force_rebuild} is of hybrid type. It can rebuild the play
+#' by play data table either for the whole nflfastR era (with \code{force_rebuild = TRUE})
+#' or just for specified seasons (e.g. \code{force_rebuild = c(2018, 2020)}).
+#' The latter is intended to be used for running seasons because the NFL fixes
+#' bugs in the play by play data during the week and it is recommended to rebuild
+#' the current season every Wednesday during the season.
 #'
 #' The parameter \code{db_connection} is intended for advanced users who want
 #' to use other DBI drivers, such as MariaDB, Postgres or odbc. Please note that
@@ -22,8 +25,8 @@
 #' @param dbdir Directory in which the database is or shall be located
 #' @param dbname File name of an existing or desired SQLite database within \code{dbdir}
 #' @param tblname The name of the play by play data table within the database
-#' @param force_rebuild Logical parameter to rebuild the play by play data table
-#' within the database from scratch in case the cleaned data were updated
+#' @param force_rebuild Hybrid parameter (logical or numeric) to rebuild parts
+#' of or the complete play by play data table within the database (please see details for further information)
 #' @param db_connection A \code{DBIConnection} object, as returned by
 #' \code{\link[DBI]{dbConnect}} (please see details for further information)
 #' @importFrom rlang .data
@@ -53,15 +56,10 @@ update_db <- function(dbdir = ".",
   }
 
   # create db if it doesn't exist or user forces rebuild
-  if (!DBI::dbExistsTable(connection, tblname) & is.null(db_connection)) {
-    message(glue::glue("Can't find database {db}. Will try to create it and load the play by play data into the data table \"{tblname}\"."))
-    build_db(tblname, connection)
-  } else if (DBI::dbExistsTable(connection, tblname) & force_rebuild & is.null(db_connection)) {
-    message(glue::glue("Start rebuilding the data table \"{tblname}\" in your database {db}."))
-    build_db(tblname, connection)
-  } else if (force_rebuild & !is.null(db_connection)) {
-    message(glue::glue("Start rebuilding the data table \"{tblname}\" in your connected database."))
-    build_db(tblname, connection)
+  if (!DBI::dbExistsTable(connection, tblname)) {
+    build_db(tblname, connection, rebuild = "NEW")
+  } else if (DBI::dbExistsTable(connection, tblname) & all(force_rebuild != FALSE)) {
+    build_db(tblname, connection, rebuild = force_rebuild)
   }
 
   # get completed games using Lee's file (thanks Lee!)
@@ -76,9 +74,9 @@ update_db <- function(dbdir = ".",
   missing <- get_missing_games(completed_games, connection, tblname)
 
   # rebuild db if number of missing games is too large
-  if(length(missing) >= 50) {
-    message("The number of missing games is so large that rebuilding the database is more efficient.")
-    build_db(tblname, connection)
+  if(length(missing) >= 5) {
+    # message("The number of missing games is so large that rebuilding the database is more efficient.")
+    build_db(tblname, connection, rebuild = unique(stringr::str_sub(missing, 1, 4)))
     missing <- get_missing_games(completed_games, connection, tblname)
   }
 
@@ -116,23 +114,41 @@ update_db <- function(dbdir = ".",
 }
 
 # this is a helper function to build nflfastR database from Scratch
-build_db <- function(tblname = "nflfastR_pbp", db_conn) {
-  if (DBI::dbExistsTable(db_conn, tblname)) {
-    message(glue::glue("Purging old {tblname} table from database..."))
-    DBI::dbRemoveTable(db_conn, tblname)
+build_db <- function(tblname = "nflfastR_pbp", db_conn, rebuild = FALSE) {
+
+  valid_seasons <- readRDS(url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true")) %>%
+    dplyr::filter(.data$season >= 1999 & !is.na(.data$result)) %>%
+    dplyr::group_by(.data$season) %>%
+    dplyr::summarise() %>%
+    dplyr::ungroup()
+
+  if (all(rebuild == TRUE)) {
+    message(glue::glue("Purging all rows from {tblname} in your connected database..."))
+    DBI::dbExecute(db_conn, glue::glue("DELETE FROM {tblname}"))
+    seasons <- valid_seasons %>% dplyr::pull("season")
+    message(glue::glue("Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}..."))
+  } else if (is.numeric(rebuild) & any(rebuild %in% valid_seasons$season)) {
+    string <- paste0(rebuild, collapse = ", ")
+    message(glue::glue("Purging {string} season(s) from {tblname} in your connected database..."))
+    DBI::dbExecute(db_conn, glue::glue("DELETE FROM {tblname} WHERE season IN ({string})"))
+    seasons <- valid_seasons %>% dplyr::filter(.data$season %in% rebuild) %>% dplyr::pull("season")
+    message(glue::glue("Starting download of {string} season(s)..."))
+  } else if (all(rebuild == "NEW")) {
+    message(glue::glue("Can't find the data table '{tblname}' in your database. Will load the play by play data from scratch."))
+    # DBI::dbExecute(db_conn, glue::glue("DELETE FROM {tblname}"))
+    seasons <- valid_seasons %>% dplyr::pull("season")
+    message(glue::glue("Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}..."))
+  } else {
+    seasons <- NULL
+    message("No valid value passed to argument 'force_rebuild'.")
   }
 
-  games <- readRDS(url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true"))
-  complete_games <- games %>%
-    dplyr::filter(.data$season >= 1999 & !is.na(.data$result)) %>%
-    dplyr::arrange(.data$gameday)
-
-  seasons <- 1999:dplyr::last(complete_games$season)
-  message(glue::glue("Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}..."))
-  progressr::with_progress({
-    p <- progressr::progressor(along = seasons)
-    purrr::walk(seasons, load_cleaned_pbp, db_conn, p, tblname)
-  })
+  if (!is.null(seasons)) {
+    progressr::with_progress({
+      p <- progressr::progressor(along = seasons)
+      purrr::walk(seasons, load_cleaned_pbp, db_conn, p, tblname)
+    })
+  }
 }
 
 # this is a helper function to add one season of data
