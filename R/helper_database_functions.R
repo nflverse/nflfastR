@@ -51,6 +51,14 @@ update_db <- function(dbdir = ".",
     stop("Packages \"DBI\" and \"RSQLite\" needed for database communication. Please install them.")
   }
 
+  if (any(force_rebuild == "NEW")) {
+    stop("The argument `force_rebuild = \"NEW\"` is only for internal usage!")
+  }
+
+  if (!(is.logical(force_rebuild) | is.numeric(force_rebuild))) {
+    stop("The argument `force_rebuild` has to be either logical or numeric!")
+  }
+
   if (!dir.exists(dbdir) & is.null(db_connection)) {
     message(glue::glue("Directory {dbdir} doesn't exist yet. Try creating..."))
     dir.create(dbdir)
@@ -81,9 +89,9 @@ update_db <- function(dbdir = ".",
   missing <- get_missing_games(completed_games, connection, tblname)
 
   # rebuild db if number of missing games is too large
-  if(length(missing) >= 5) {
+  if(length(missing) > 5) {
     # message("The number of missing games is so large that rebuilding the database is more efficient.")
-    build_db(tblname, connection, rebuild = unique(stringr::str_sub(missing, 1, 4)))
+    build_db(tblname, connection, show_message = FALSE, rebuild = as.numeric(unique(stringr::str_sub(missing, 1, 4))))
     missing <- get_missing_games(completed_games, connection, tblname)
   }
 
@@ -121,7 +129,7 @@ update_db <- function(dbdir = ".",
 }
 
 # this is a helper function to build nflfastR database from Scratch
-build_db <- function(tblname = "nflfastR_pbp", db_conn, rebuild = FALSE) {
+build_db <- function(tblname = "nflfastR_pbp", db_conn, rebuild = FALSE, show_message = TRUE) {
 
   valid_seasons <- readRDS(url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true")) %>%
     dplyr::filter(.data$season >= 1999 & !is.na(.data$result)) %>%
@@ -130,15 +138,16 @@ build_db <- function(tblname = "nflfastR_pbp", db_conn, rebuild = FALSE) {
     dplyr::ungroup()
 
   if (all(rebuild == TRUE)) {
-    message(glue::glue("Purging all rows from {tblname} in your connected database..."))
+    message(glue::glue("Purging the complete data table '{tblname}' in your connected database..."))
     DBI::dbRemoveTable(db_conn, tblname)
     seasons <- valid_seasons %>% dplyr::pull("season")
     message(glue::glue("Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}..."))
   } else if (is.numeric(rebuild) & all(rebuild %in% valid_seasons$season)) {
-    message(glue::glue("Purging {string} season(s) from {tblname} in your connected database..."))
+    string <- paste0(rebuild, collapse = ", ")
+    if (show_message){message(glue::glue("Purging {string} season(s) from the data table '{tblname}' in your connected database..."))}
     DBI::dbExecute(db_conn, glue::glue_sql("DELETE FROM {`tblname`} WHERE season IN ({vals*})", vals = rebuild, .con = db_conn))
     seasons <- valid_seasons %>% dplyr::filter(.data$season %in% rebuild) %>% dplyr::pull("season")
-    message(glue::glue("Starting download of {string} season(s)..."))
+    message(glue::glue("Starting download of the {string} season(s)..."))
   } else if (all(rebuild == "NEW")) {
     message(glue::glue("Can't find the data table '{tblname}' in your database. Will load the play by play data from scratch."))
     seasons <- valid_seasons %>% dplyr::pull("season")
