@@ -135,9 +135,8 @@ build_db <- function(tblname = "nflfastR_pbp", db_conn, rebuild = FALSE) {
     seasons <- valid_seasons %>% dplyr::pull("season")
     message(glue::glue("Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}..."))
   } else if (is.numeric(rebuild) & all(rebuild %in% valid_seasons$season)) {
-    string <- paste0(rebuild, collapse = ", ")
     message(glue::glue("Purging {string} season(s) from {tblname} in your connected database..."))
-    DBI::dbExecute(db_conn, glue::glue("DELETE FROM {tblname} WHERE season IN ({string})"))
+    DBI::dbExecute(db_conn, glue::glue_sql("DELETE FROM {`tblname`} WHERE season IN ({vals*})", vals = rebuild, .con = db_conn))
     seasons <- valid_seasons %>% dplyr::filter(.data$season %in% rebuild) %>% dplyr::pull("season")
     message(glue::glue("Starting download of {string} season(s)..."))
   } else if (all(rebuild == "NEW")) {
@@ -146,7 +145,7 @@ build_db <- function(tblname = "nflfastR_pbp", db_conn, rebuild = FALSE) {
     message(glue::glue("Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}..."))
   } else {
     seasons <- NULL
-    message("No valid value passed to argument 'force_rebuild'.")
+    message("At least one invalid value passed to argument 'force_rebuild'.")
   }
 
   if (!is.null(seasons)) {
