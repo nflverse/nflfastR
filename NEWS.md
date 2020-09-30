@@ -16,7 +16,7 @@ type. It can rebuild the play by play data table either for the whole nflfastR
 era (with `force_rebuild = TRUE`) or just for specified seasons (e.g. `force_rebuild = 2019:2020`).
 The latter is intended to be used for running seasons because the NFL fixes bugs
 in the play by play data during the week and we recommend to rebuild the current 
-season every Wednesday.
+season every Thursday.
 
 # nflfastR 3.0.0
 
