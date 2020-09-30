@@ -1,20 +1,29 @@
 #' Update or create a nflfastR play by play database
 #'
-#' \code{update_db} updates or creates a SQLite database with \code{nflfastR}
+#' \code{update_db} updates or creates a database with \code{nflfastR}
 #' play by play data of all completed games since 1999.
 #'
 #' @details This function creates and updates a data table with the name \code{tblname}
-#' within a SQLite database located in \code{dbdir} and named \code{dbname}.
+#' within a SQLite database (other drivers via \code{db_connection}) located in
+#' \code{dbdir} and named \code{dbname}.
 #' The data table combines all play by play data for every available game back
 #' to the 1999 season and adds the most recent completed games as soon as they
 #' are available for \code{nflfastR}.
 #'
 #' The argument \code{force_rebuild} is of hybrid type. It can rebuild the play
 #' by play data table either for the whole nflfastR era (with \code{force_rebuild = TRUE})
-#' or just for specified seasons (e.g. \code{force_rebuild = c(2018, 2020)}).
-#' The latter is intended to be used for running seasons because the NFL fixes
-#' bugs in the play by play data during the week and it is recommended to rebuild
-#' the current season every Wednesday during the season.
+#' or just for specified seasons (e.g. \code{force_rebuild = c(2019, 2020)}).
+#' Please note the following behavior:
+#' \itemize{
+#'  \item{\code{force_rebuild = TRUE}}{: The data table with the name \code{tblname}
+#'   will be removed completely and rebuilt from scratch. This is helpful when
+#'   new columns are added during the Off-Season.}
+#'  \item{\code{force_rebuild = c(2019, 2020)}}{: The data table with the name \code{tblname}
+#'  will be preserved and only it's rows of the 2019 and 2020 seasons will be
+#'  deleted and readded. This is intended to be used for running seasons because
+#'  the NFL fixes bugs in the underlying data during the week and it is recommended
+#'  to rebuild the current season every Wednesday during the season.}
+#' }
 #'
 #' The parameter \code{db_connection} is intended for advanced users who want
 #' to use other DBI drivers, such as MariaDB, Postgres or odbc. Please note that
@@ -47,10 +56,8 @@ update_db <- function(dbdir = ".",
     dir.create(dbdir)
   }
 
-  db <- glue::glue("{dbdir}/{dbname}")
-
   if (is.null(db_connection)) {
-    connection <- DBI::dbConnect(RSQLite::SQLite(), db)
+    connection <- DBI::dbConnect(RSQLite::SQLite(), glue::glue("{dbdir}/{dbname}"))
   } else {
     connection <- db_connection
   }
@@ -124,7 +131,7 @@ build_db <- function(tblname = "nflfastR_pbp", db_conn, rebuild = FALSE) {
 
   if (all(rebuild == TRUE)) {
     message(glue::glue("Purging all rows from {tblname} in your connected database..."))
-    DBI::dbExecute(db_conn, glue::glue("DELETE FROM {tblname}"))
+    DBI::dbRemoveTable(db_conn, tblname)
     seasons <- valid_seasons %>% dplyr::pull("season")
     message(glue::glue("Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}..."))
   } else if (is.numeric(rebuild) & all(rebuild %in% valid_seasons$season)) {
@@ -135,7 +142,6 @@ build_db <- function(tblname = "nflfastR_pbp", db_conn, rebuild = FALSE) {
     message(glue::glue("Starting download of {string} season(s)..."))
   } else if (all(rebuild == "NEW")) {
     message(glue::glue("Can't find the data table '{tblname}' in your database. Will load the play by play data from scratch."))
-    # DBI::dbExecute(db_conn, glue::glue("DELETE FROM {tblname}"))
     seasons <- valid_seasons %>% dplyr::pull("season")
     message(glue::glue("Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}..."))
   } else {
