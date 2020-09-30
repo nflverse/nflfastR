@@ -127,7 +127,7 @@ build_db <- function(tblname = "nflfastR_pbp", db_conn, rebuild = FALSE) {
     DBI::dbExecute(db_conn, glue::glue("DELETE FROM {tblname}"))
     seasons <- valid_seasons %>% dplyr::pull("season")
     message(glue::glue("Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}..."))
-  } else if (is.numeric(rebuild) & any(rebuild %in% valid_seasons$season)) {
+  } else if (is.numeric(rebuild) & all(rebuild %in% valid_seasons$season)) {
     string <- paste0(rebuild, collapse = ", ")
     message(glue::glue("Purging {string} season(s) from {tblname} in your connected database..."))
     DBI::dbExecute(db_conn, glue::glue("DELETE FROM {tblname} WHERE season IN ({string})"))
