@@ -135,11 +135,12 @@
 <ul>
 <li>The package contains NFL play-by-play data back to 1999</li>
 <li>As suggested by the package name, it obtains games <strong>much</strong> faster</li>
-<li>Includes completion probability (<code>cp</code>) and completion percentage over expected (<code>cpoe</code>) in play-by-play going back to 2006</li>
+<li>Includes completion probability (<code>cp</code>), completion percentage over expected (<code>cpoe</code>), and expected yards after the catch (<code>xyac_epa</code> and <code>xyac_mean_yardage</code>) in play-by-play going back to 2006</li>
 <li>Includes drive information, including drive starting position and drive result</li>
 <li>Includes series information, including series number and series success</li>
 <li>Hosts <a href="https://github.com/guga31bb/nflfastR-data">a repository of play-by-play data going back to 1999</a> for very quick access</li>
-<li>Features new and enhanced models for Expected Points, Win Probability, and Completion Probability (see section below)</li>
+<li>Features models for Expected Points, Win Probability, Completion Probability, and Yards After the Catch (see section below)</li>
+<li>Includes a function <code><a href="reference/update_db.html">update_db()</a></code> that creates and updates a database</li>
 </ul>
 <p>We owe a debt of gratitude to the original <a href="https://github.com/maksimhorowitz/nflscrapR"><code>nflscrapR</code></a> team, Maksim Horowitz, Ronald Yurko, and Samuel Ventura, without whose contributions and inspiration this package would not exist.</p>
 <div id="installation" class="section level2">
@@ -156,7 +157,7 @@
 <div id="usage" class="section level2">
 <h2 class="hasAnchor">
 <a href="#usage" class="anchor"></a>Usage</h2>
-<p>We have provided some application examples under <code>vignette("examples")</code>. However, these require a basic knowledge of R. For this reason we have the <strong>nflfastR beginner’s guide</strong> in <code><a href="articles/beginners_guide.html">vignette("beginners_guide")</a></code>, which we recommend to all those who are looking for an introduction to nflfastR with R.</p>
+<p>We have provided some application examples under <code><a href="articles/nflfastR.html">vignette("nflfastR")</a></code>. However, these require a basic knowledge of R. For this reason we have the <strong>nflfastR beginner’s guide</strong> in <code><a href="articles/beginners_guide.html">vignette("beginners_guide")</a></code>, which we recommend to all those who are looking for an introduction to nflfastR with R.</p>
 </div>
 <div id="data-repository" class="section level2">
 <h2 class="hasAnchor">
@@ -166,7 +167,7 @@
 <div id="nflfastr-models" class="section level2">
 <h2 class="hasAnchor">
 <a href="#nflfastr-models" class="anchor"></a>nflfastR models</h2>
-<p><code>nflfastR</code> uses its own models for Expected Points, Win Probability, Completion Probability, and Expected Yards After the Catch. To read about the models, please see <code>vignette("nflfastR-models")</code>. For a more detailed description of Expected Points models, we highly recommend this paper <a href="https://arxiv.org/pdf/1802.00998.pdf">from the nflscrapR team located here</a>.</p>
+<p><code>nflfastR</code> uses its own models for Expected Points, Win Probability, Completion Probability, and Expected Yards After the Catch. To read about the models, please see <a href="https://www.opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/">this post on Open Source Football</a>. For a more detailed description of the motivation for Expected Points models, we highly recommend this paper <a href="https://arxiv.org/pdf/1802.00998.pdf">from the nflscrapR team located here</a>.</p>
 <p>Here is a visualization of the Expected Points model by down and yardline.</p>
 <p><img src="https://github.com/mrcaseb/nflfastR/raw/master/man/figures/readme-epa-model-1.png" width="100%" style="display: block; margin: auto;"></p>
 <p>Here is a visualization of the Completion Probability model by air yards and pass direction.</p>
