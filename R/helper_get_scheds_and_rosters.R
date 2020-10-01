@@ -17,6 +17,8 @@ get_scheds_and_rosters <- function(season, type) {
         path <- glue::glue("https://github.com/mrcaseb/nflfastR-roster/blob/master/data/seasons/roster_{season}.rds?raw=true")
       }
 
+      warn <- 0
+
       request <- httr::HEAD(url = path)
 
       if (request$status_code == 404) {
@@ -33,7 +35,7 @@ get_scheds_and_rosters <- function(season, type) {
     },
     warning = function(w) {
       if (warn == 1) {
-        message(glue::glue("Warning: The data hosting servers are down, please try again later!"))
+        message("Warning: The data hosting servers are down, please try again later!")
       } else if (warn == 2) {
         message(glue::glue("Warning: Either the requested season {season} is invalid or no data available at this time!"))
       } else {
