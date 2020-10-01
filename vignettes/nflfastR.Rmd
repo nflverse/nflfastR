@@ -234,7 +234,7 @@ There's exactly one function in `nflfastR` that works with databases: `update_db
 * You can specify a different table name with `tblname`.
 * If you want to rebuild the database from scratch for whatever reason, supply `force_rebuild = TRUE`. This is primarily intended for the case when we update the play-by-play data in the data repo due to fixing a bug and you want to force the database to be wiped and updated.
 * If you want to rebuild specified seasons, this can also be supplied to `force_rebuild` (e.g. `force_rebuild = c(2019, 2020)`).
-* The parameter `db_connection` is intended for advanced users who want to use other DBI drivers, such as MariaDB, Postgres or odbc. Please note that `dbdir` and `dbname` are dropped when case a `db_connection` is provided but the argument `tblname` will still be used to write the data table into the database.
+* The parameter `db_connection` is intended for advanced users who want to use other DBI drivers, such as MariaDB, Postgres or odbc. Please note that `dbdir` and `dbname` are dropped when a `db_connection` is provided but the argument `tblname` will still be used to write the data table into the database.
 
 Let's say I just want to dump a database into the current working directory. Here we go!
 
