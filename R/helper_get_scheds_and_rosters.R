@@ -12,9 +12,9 @@ get_scheds_and_rosters <- function(season, type) {
   tryCatch(
     expr = {
       if (type == "schedule") {
-        path <- glue::glue("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/schedules/sched_{season}.rds")
+        path <- glue::glue("https://github.com/guga31bb/nflfastR-data/blob/master/schedules/sched_{season}.rds?raw=true")
       } else if (type == "roster") {
-        path <- glue::glue("https://raw.githubusercontent.com/mrcaseb/nflfastR-roster/master/data/seasons/roster_{season}.rds")
+        path <- glue::glue("https://github.com/mrcaseb/nflfastR-roster/blob/master/data/seasons/roster_{season}.rds?raw=true")
       }
 
       request <- httr::HEAD(url = path)
