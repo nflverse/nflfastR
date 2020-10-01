@@ -33,14 +33,14 @@ add_cp <- function(pbp) {
       ) %>%
       dplyr::select(-"valid_pass")
 
-    message("added cp and cpoe")
+    usethis::ui_done("added cp and cpoe")
   } else {
     pbp <- pbp %>%
       dplyr::mutate(
         cp = NA_real_,
         cpoe = NA_real_
       )
-    message("No non-NA values for cp calculation detected. cp and cpoe set to NA")
+    usethis::ui_info("No non-NA values for cp calculation detected. cp and cpoe set to NA")
   }
 
   return(pbp)

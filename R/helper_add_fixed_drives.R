@@ -69,6 +69,6 @@ add_drive_results <- function(d) {
     dplyr::ungroup() %>%
     dplyr::select(-"row", -"new_drive", -"tmp_result")
 
-  message("added fixed drive variables")
+  usethis::ui_done("added fixed drive variables")
   return(drive_df)
 }
