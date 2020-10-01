@@ -27,10 +27,7 @@ First, you need to install the magic packages. You only need to run this step on
 install.packages("tidyverse")
 install.packages("ggrepel")
 install.packages("ggimage")
-
-#needed to install `nflfastR`
-install.packages("devtools")
-devtools::install_github("mrcaseb/nflfastR")
+install.packages("nflfastR")
 ```
 
 ### Load packages
@@ -741,14 +738,19 @@ You now should know enough to be able to tackle a great deal of questions using 
 
 Looking at others' code is also a good way to learn. One option is to look through the `nflfastR` code base, much of which you should now understand what it's doing. For example, [here is the function that cleans up the data and prepares it for later stages](https://github.com/mrcaseb/nflfastR/blob/master/R/helper_add_nflscrapr_mutations.R): there's a heavy dose of `mutate`, `group_by`, `arrange`, `lag`, `if_else`, and `case_when`. 
 
-### Other code examples: R
+### Resources: The gold standards
+
+This is an R package so this section is pretty R heavy.
 
 * [Introduction to R (**recommended**)](https://r4ds.had.co.nz/explore-intro.html)
+* [Open Source Football](https://www.opensourcefootball.com/): Mix of R and Python
+* [The Mockup Blog (Thomas Mock)](https://themockup.blog/): Invaluable resource for making cool stuff in R
+
+### Code examples: R
+
 * [Lee Sharpe: basic intro to R and RStudio](https://github.com/leesharpe/nfldata/blob/master/RSTUDIO-INTRO.md)
 * [Lee Sharpe: lots of useful NFL / nflscrapR code](https://github.com/leesharpe/nfldata)
 * [Lee Sharpe: how to update current season games](https://github.com/leesharpe/nfldata/blob/master/UPDATING-NFLSCRAPR.md)
-* [Thomas Mock: pretty #viz with nflscrapR](https://jthomasmock.github.io/nfl_plotting_cookbook/)
-* [Thomas Mock: biggest comebacks](https://gist.github.com/jthomasmock/7d489f04e53812eacca8b94b6c8ee84a)
 * [Josh Hermsmeyer: Getting Started with R for NFL Analysis](https://t.co/gxDDhOYhcI)
 * [Slavin: visualizing positional tiers in SFB9](https://slavin22.github.io/SFB9-Positional-Tiers/Guide.nb)
 * [Ron Yurko: assorted examples](https://github.com/ryurko/nflscrapR-data/tree/master/R)
