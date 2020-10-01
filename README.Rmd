@@ -54,7 +54,7 @@ remotes::install_github("mrcaseb/nflfastR")
 
 ## Usage
 
-We have provided some application examples under `vignette("examples")`. However, these require a basic knowledge of R. For this reason we have the **nflfastR beginner's guide** in `vignette("beginners_guide")`, which we recommend to all those who are looking for an introduction to nflfastR with R.
+We have provided some application examples under `vignette("nflfastR")`. However, these require a basic knowledge of R. For this reason we have the **nflfastR beginner's guide** in `vignette("beginners_guide")`, which we recommend to all those who are looking for an introduction to nflfastR with R.
 
 ## Data repository
 

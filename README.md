@@ -21,8 +21,9 @@ data. `nflfastR` expands upon the features of nflscrapR:
 
   - The package contains NFL play-by-play data back to 1999
   - As suggested by the package name, it obtains games **much** faster
-  - Includes completion probability (`cp`) and completion percentage
-    over expected (`cpoe`) in play-by-play going back to 2006
+  - Includes completion probability (`cp`), completion percentage over
+    expected (`cpoe`), and expected yards after the catch (`xyac_epa`
+    and `xyac_mean_yardage`) in play-by-play going back to 2006
   - Includes drive information, including drive starting position and
     drive result
   - Includes series information, including series number and series
@@ -30,8 +31,10 @@ data. `nflfastR` expands upon the features of nflscrapR:
   - Hosts [a repository of play-by-play data going back
     to 1999](https://github.com/guga31bb/nflfastR-data) for very quick
     access
-  - Features new and enhanced models for Expected Points, Win
-    Probability, and Completion Probability (see section below)
+  - Features models for Expected Points, Win Probability, Completion
+    Probability, and Yards After the Catch (see section below)
+  - Includes a function `update_db()` that creates and updates a
+    database
 
 We owe a debt of gratitude to the original
 [`nflscrapR`](https://github.com/maksimhorowitz/nflscrapR) team, Maksim
@@ -58,7 +61,7 @@ remotes::install_github("mrcaseb/nflfastR")
 
 ## Usage
 
-We have provided some application examples under `vignette("examples")`.
+We have provided some application examples under `vignette("nflfastR")`.
 However, these require a basic knowledge of R. For this reason we have
 the **nflfastR beginner’s guide** in `vignette("beginners_guide")`,
 which we recommend to all those who are looking for an introduction to
@@ -79,9 +82,10 @@ as .csv.gz, .parquet, or .rds.
 
 `nflfastR` uses its own models for Expected Points, Win Probability,
 Completion Probability, and Expected Yards After the Catch. To read
-about the models, please see `vignette("nflfastR-models")`. For a more
-detailed description of Expected Points models, we highly recommend this
-paper [from the nflscrapR team located
+about the models, please see [this post on Open Source
+Football](https://www.opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/).
+For a more detailed description of the motivation for Expected Points
+models, we highly recommend this paper [from the nflscrapR team located
 here](https://arxiv.org/pdf/1802.00998.pdf).
 
 Here is a visualization of the Expected Points model by down and
