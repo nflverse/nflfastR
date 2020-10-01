@@ -9,6 +9,7 @@ near the end of a half
 by the argument `db_connection` (#102)
 * Fixed a bug where `update_db()` didn't build a fresh database without providing
 the argument `force_rebuild`
+* Messages to the user are now created with the new dependency `usethis`.
 
 # nflfastR 3.0.0
 
