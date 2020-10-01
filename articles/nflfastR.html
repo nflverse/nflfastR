@@ -289,7 +289,7 @@
 <span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span><span class="op">(</span><span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span><span class="op">(</span><span class="st">'{length(games_2019)} games with nflfastR:'</span><span class="op">)</span><span class="op">)</span>
 <span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fast_scraper.html">fast_scraper</a></span><span class="op">(</span><span class="va">games_2019</span>, pp <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; 10 games with nflfastR:: 16.864 sec elapsed</span></pre></div>
+<span class="co">#&gt; 10 games with nflfastR:: 16.3 sec elapsed</span></pre></div>
 </div>
 <div id="example-3-completion-percentage-over-expected-cpoe" class="section level1">
 <h1 class="hasAnchor">
@@ -300,7 +300,7 @@
 <span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span><span class="op">(</span><span class="st">'loading all games from 2009'</span><span class="op">)</span>
 <span class="va">games_2009</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span><span class="op">(</span><span class="st">'https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2009.rds'</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">season_type</span> <span class="op">==</span> <span class="st">'REG'</span><span class="op">)</span>
 <span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; loading all games from 2009: 4.003 sec elapsed</span>
+<span class="co">#&gt; loading all games from 2009: 3.07 sec elapsed</span>
 <span class="va">games_2009</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">cpoe</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">group_by</span><span class="op">(</span><span class="va">passer_player_name</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">summarize</span><span class="op">(</span>cpoe <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">cpoe</span><span class="op">)</span>, Atts<span class="op">=</span><span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">Atts</span> <span class="op">&gt;</span> <span class="fl">200</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -691,7 +691,7 @@
 <div id="start-install-and-load-packages" class="section level2">
 <h2 class="hasAnchor">
 <a href="#start-install-and-load-packages" class="anchor"></a>Start: install and load packages</h2>
-<p>To start, we need to install the two packages required for this that aren’t installed automatically when <code>nflfastR</code> installs: <code>DBI</code> and <code>RSQLite</code>:</p>
+<p>To start, we need to install the two packages required for this that aren’t installed automatically when <code>nflfastR</code> installs: <code>DBI</code> and <code>RSQLite</code> (advanced users can use other types of databases, but this example will use SQLite):</p>
 <div class="sourceCode" id="cb11"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"DBI"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"RSQLite"</span><span class="op">)</span></pre></div>
@@ -710,6 +710,8 @@
 <li>You can specify a different filename with <code>dbname</code>.</li>
 <li>You can specify a different table name with <code>tblname</code>.</li>
 <li>If you want to rebuild the database from scratch for whatever reason, supply <code>force_rebuild = TRUE</code>. This is primarily intended for the case when we update the play-by-play data in the data repo due to fixing a bug and you want to force the database to be wiped and updated.</li>
+<li>If you want to rebuild specified seasons, this can also be supplied to <code>force_rebuild</code> (e.g. <code>force_rebuild = c(2019, 2020)</code>).</li>
+<li>The parameter <code>db_connection</code> is intended for advanced users who want to use other DBI drivers, such as MariaDB, Postgres or odbc. Please note that <code>dbdir</code> and <code>dbname</code> are dropped when a <code>db_connection</code> is provided but the argument <code>tblname</code> will still be used to write the data table into the database.</li>
 </ul>
 <p>Let’s say I just want to dump a database into the current working directory. Here we go!</p>
 <div class="sourceCode" id="cb13"><pre class="downlit">
@@ -728,33 +730,42 @@
 <span class="co">#&gt; ℹ You have 5628 games and are missing 0.</span>
 <span class="co">#&gt; ℹ Path to your db: '/Users/runner/work/nflfastR/nflfastR/vignettes/pbp_db'</span>
 <span class="co">#&gt; ✔ Database update completed.</span></pre></div>
+<p>If it’s partway through a season and you want to re-build a season to allow for data corrections from the NFL to propagate into your database, you can specify one season to be rebuilt:</p>
+<div class="sourceCode" id="cb15"><pre class="downlit">
+<span class="fu"><a href="../reference/update_db.html">update_db</a></span><span class="op">(</span>force_rebuild <span class="op">=</span> <span class="fl">2020</span><span class="op">)</span>
+<span class="co">#&gt; ● Purging 2020 season(s) from the data table 'nflfastR_pbp' in your connected database...</span>
+<span class="co">#&gt; ● Starting download of the 2020 season(s)...</span>
+<span class="co">#&gt; ● Checking for missing completed games...</span>
+<span class="co">#&gt; ℹ You have 5628 games and are missing 0.</span>
+<span class="co">#&gt; ℹ Path to your db: '/Users/runner/work/nflfastR/nflfastR/vignettes/pbp_db'</span>
+<span class="co">#&gt; ✔ Database update completed.</span></pre></div>
 </div>
 <div id="connect-to-database" class="section level2">
 <h2 class="hasAnchor">
 <a href="#connect-to-database" class="anchor"></a>Connect to database</h2>
 <p>Now we can make a connection to the database. This is the only part that will look a little bit foreign, but all you need to know is where your database is located. If it’s in your current working directory, this will work:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit">
+<div class="sourceCode" id="cb16"><pre class="downlit">
 <span class="va">connection</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html">dbConnect</a></span><span class="op">(</span><span class="fu"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html">SQLite</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"./pbp_db"</span><span class="op">)</span>
 <span class="va">connection</span>
 <span class="co">#&gt; &lt;SQLiteConnection&gt;</span>
 <span class="co">#&gt;   Path: /Users/runner/work/nflfastR/nflfastR/vignettes/pbp_db</span>
 <span class="co">#&gt;   Extensions: TRUE</span></pre></div>
 <p>It looks like nothing happened, but we now have a connection to the database. Now we’re ready to do stuff. If you aren’t familiar with databases, they’re organized around tables. Here’s how to see which tables are present in our database:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit">
+<div class="sourceCode" id="cb17"><pre class="downlit">
 <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbListTables.html">dbListTables</a></span><span class="op">(</span><span class="va">connection</span><span class="op">)</span>
 <span class="co">#&gt; [1] "nflfastR_pbp"</span></pre></div>
 <p>Since we went with the defaults, there’s a table called <code>nflfastR_pbp</code>. Another useful function is to see the fields (i.e., columns) in a table:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit">
+<div class="sourceCode" id="cb18"><pre class="downlit">
 <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbListFields.html">dbListFields</a></span><span class="op">(</span><span class="va">connection</span>, <span class="st">"nflfastR_pbp"</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>
 <span class="co">#&gt;  [1] "play_id"      "game_id"      "old_game_id"  "home_team"    "away_team"   </span>
 <span class="co">#&gt;  [6] "season_type"  "week"         "posteam"      "posteam_type" "defteam"</span></pre></div>
 <p>This is the same list as the list of columns in <code>nflfastR</code> play-by-play. Notice we had to supply the name of the table above (<code>"nflfastR_pbp"</code>).</p>
 <p>With all that out of the way, there’s only a couple more things to learn. The main driver here is <code>tbl</code>, which helps get output with a specific table in a database:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit">
+<div class="sourceCode" id="cb19"><pre class="downlit">
 <span class="va">pbp_db</span> <span class="op">&lt;-</span> <span class="fu">tbl</span><span class="op">(</span><span class="va">connection</span>, <span class="st">"nflfastR_pbp"</span><span class="op">)</span></pre></div>
 <p>And now, everything will magically just “work”: you can forget you’re even working with a database!</p>
-<div class="sourceCode" id="cb19"><pre class="downlit">
+<div class="sourceCode" id="cb20"><pre class="downlit">
 <span class="va">pbp_db</span> <span class="op">%&gt;%</span>
   <span class="fu">group_by</span><span class="op">(</span><span class="va">season</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">summarize</span><span class="op">(</span>n<span class="op">=</span><span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
@@ -790,7 +801,7 @@
 <span class="co">#&gt; 1     0  -0.0994</span>
 <span class="co">#&gt; 2     1   0.0722</span></pre></div>
 <p>So far, everything has stayed in the database. If you want to bring a query into memory, just use <code>collect()</code> at the end:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit">
+<div class="sourceCode" id="cb21"><pre class="downlit">
 <span class="va">russ</span> <span class="op">&lt;-</span> <span class="va">pbp_db</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">name</span> <span class="op">==</span> <span class="st">"R.Wilson"</span> <span class="op">&amp;</span> <span class="va">posteam</span> <span class="op">==</span> <span class="st">"SEA"</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">select</span><span class="op">(</span><span class="va">desc</span>, <span class="va">epa</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -812,7 +823,7 @@
 <span class="co">#&gt; 10 (13:59) 3-R.Wilson pass incomplete deep left to 87-B.Obomanu.         -0.453 </span>
 <span class="co">#&gt; # … with 5,800 more rows</span></pre></div>
 <p>So we’ve searched through about 1 million rows of data across 300+ columns and only brought about 5,500 rows and two columns into memory. Pretty neat! This is how I supply the data to the shiny apps on rbsdm.com without running out of memory on the server. Now there’s only one more thing to remember. When you’re finished doing what you need with the database:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit">
+<div class="sourceCode" id="cb22"><pre class="downlit">
 <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html">dbDisconnect</a></span><span class="op">(</span><span class="va">connection</span><span class="op">)</span></pre></div>
 <p>For more details on using a database with <code>nflfastR</code>, see <a href="https://themockup.blog/posts/2019-04-28-nflfastr-dbplyr-rsqlite/">Thomas Mock’s life-changing post here</a>.</p>
 </div>
@@ -845,7 +856,7 @@
 <li>The expected YAC EPA model doesn’t take receiver fumbles into account, so actual minus expected YAC is slightly negative due to fumbles happening</li>
 </ul>
 <p>Let’s create measures for EPA and first downs over expected in 2015:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit">
+<div class="sourceCode" id="cb23"><pre class="downlit">
 <span class="va">games_2015</span> <span class="op">%&gt;%</span> 
   <span class="fu">group_by</span><span class="op">(</span><span class="va">receiver</span>, <span class="va">receiver_id</span>, <span class="va">posteam</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">mutate</span><span class="op">(</span>tgt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">complete_pass</span> <span class="op">+</span> <span class="va">incomplete_pass</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -972,13 +983,13 @@
 <h1 class="hasAnchor">
 <a href="#example-10-working-with-roster-and-position-data" class="anchor"></a>Example 10: Working with roster and position data</h1>
 <p>At long last, there’s a way to merge the new play-by-play data with roster information. The easy part is getting the rosters:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit">
+<div class="sourceCode" id="cb24"><pre class="downlit">
 <span class="va">roster</span> <span class="op">&lt;-</span> <span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/fast_scraper_roster.html">fast_scraper_roster</a></span><span class="op">(</span><span class="fl">2019</span><span class="op">)</span></pre></div>
 <p>Now let’s load play-by-play data from 2019:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit">
+<div class="sourceCode" id="cb25"><pre class="downlit">
 <span class="va">games_2019</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span><span class="op">(</span><span class="st">'https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2019.rds'</span><span class="op">)</span><span class="op">)</span></pre></div>
 <p>Here is what the new player IDs look like:</p>
-<div class="sourceCode" id="cb25"><pre class="downlit">
+<div class="sourceCode" id="cb26"><pre class="downlit">
 <span class="va">games_2019</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">rush</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">|</span> <span class="va">pass</span> <span class="op">==</span> <span class="fl">1</span>, <span class="va">posteam</span> <span class="op">==</span> <span class="st">"SEA"</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">select</span><span class="op">(</span><span class="va">desc</span>, <span class="va">name</span>, <span class="va">id</span><span class="op">)</span>
@@ -997,7 +1008,7 @@
 <span class="co">#&gt; 10 (14:15) (Shotgun) 3-R.Wilson pass short middl… R.Wils… 32013030-2d30-3032-39…</span>
 <span class="co">#&gt; # … with 1,194 more rows</span></pre></div>
 <p>But these IDs aren’t very useful. So we need to decode them using the new function <code>decode_player_ids</code>:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit">
+<div class="sourceCode" id="cb27"><pre class="downlit">
 <span class="va">games_2019</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">rush</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">|</span> <span class="va">pass</span> <span class="op">==</span> <span class="fl">1</span>, <span class="va">posteam</span> <span class="op">==</span> <span class="st">"SEA"</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/decode_player_ids.html">decode_player_ids</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -1019,18 +1030,18 @@
 <span class="co">#&gt; 10 (14:15) (Shotgun) 3-R.Wilson pass short middle to 32-C.Car… R.Wilson 00-0029…</span>
 <span class="co">#&gt; # … with 1,194 more rows</span></pre></div>
 <p>So now we have the familiar GSIS IDs. Let’s apply this to the whole dataframe:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit">
+<div class="sourceCode" id="cb28"><pre class="downlit">
 <span class="va">decoded_pbp</span> <span class="op">&lt;-</span> <span class="va">games_2019</span> <span class="op">%&gt;%</span>
   <span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/decode_player_ids.html">decode_player_ids</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; ● Start decoding, please wait...</span>
 <span class="co">#&gt; ✔ Decoding completed.</span></pre></div>
 <p>Now we’re ready to join to the roster data using these IDs:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit">
+<div class="sourceCode" id="cb29"><pre class="downlit">
 <span class="va">joined</span> <span class="op">&lt;-</span> <span class="va">decoded_pbp</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">receiver_id</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">select</span><span class="op">(</span><span class="va">posteam</span>, <span class="va">season</span>, <span class="va">desc</span>, <span class="va">receiver</span>, <span class="va">receiver_id</span>, <span class="va">epa</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">left_join</span><span class="op">(</span><span class="va">roster</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'receiver_id'</span> <span class="op">=</span> <span class="st">'gsis_id'</span><span class="op">)</span><span class="op">)</span></pre></div>
-<div class="sourceCode" id="cb29"><pre class="downlit">
+<div class="sourceCode" id="cb30"><pre class="downlit">
 <span class="co">#the real work is done, this just makes a table and has it look nice</span>
 <span class="va">joined</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">position</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'WR'</span>, <span class="st">'TE'</span>, <span class="st">'RB'</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -1162,7 +1173,6 @@
 </tbody>
 </table>
 <p>Not surprisingly, all 5 of the top 5 WRs in terms of EPA added come in ahead of the top RB. Note that the number of targets won’t match official stats because we’re including plays with penalties.</p>
-<p>wd()</p>
 </div>
   </div>
 

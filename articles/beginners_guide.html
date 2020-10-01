@@ -153,10 +153,7 @@
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"tidyverse"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"ggrepel"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"ggimage"</span><span class="op">)</span>
-
-<span class="co">#needed to install `nflfastR`</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"mrcaseb/nflfastR"</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"nflfastR"</span><span class="op">)</span></pre></div>
 </div>
 <div id="load-packages" class="section level3">
 <h3 class="hasAnchor">
@@ -1503,16 +1500,25 @@
 <a href="#next-steps" class="anchor"></a>Next Steps</h2>
 <p>You now should know enough to be able to tackle a great deal of questions using <code>nflfastR</code> data. A good way to build up skills is to take interesting things you see and try to replicate them (for making figures, this will also involve a heavy dose of googling stuff).</p>
 <p>Looking at others’ code is also a good way to learn. One option is to look through the <code>nflfastR</code> code base, much of which you should now understand what it’s doing. For example, <a href="https://github.com/mrcaseb/nflfastR/blob/master/R/helper_add_nflscrapr_mutations.R">here is the function that cleans up the data and prepares it for later stages</a>: there’s a heavy dose of <code>mutate</code>, <code>group_by</code>, <code>arrange</code>, <code>lag</code>, <code>if_else</code>, and <code>case_when</code>.</p>
-<div id="other-code-examples-r" class="section level3">
+<div id="resources-the-gold-standards" class="section level3">
 <h3 class="hasAnchor">
-<a href="#other-code-examples-r" class="anchor"></a>Other code examples: R</h3>
+<a href="#resources-the-gold-standards" class="anchor"></a>Resources: The gold standards</h3>
+<p>This is an R package so this section is pretty R heavy.</p>
 <ul>
 <li><a href="https://r4ds.had.co.nz/explore-intro.html">Introduction to R (<strong>recommended</strong>)</a></li>
+<li>
+<a href="https://www.opensourcefootball.com/">Open Source Football</a>: Mix of R and Python</li>
+<li>
+<a href="https://themockup.blog/">The Mockup Blog (Thomas Mock)</a>: Invaluable resource for making cool stuff in R</li>
+</ul>
+</div>
+<div id="code-examples-r" class="section level3">
+<h3 class="hasAnchor">
+<a href="#code-examples-r" class="anchor"></a>Code examples: R</h3>
+<ul>
 <li><a href="https://github.com/leesharpe/nfldata/blob/master/RSTUDIO-INTRO.md">Lee Sharpe: basic intro to R and RStudio</a></li>
 <li><a href="https://github.com/leesharpe/nfldata">Lee Sharpe: lots of useful NFL / nflscrapR code</a></li>
 <li><a href="https://github.com/leesharpe/nfldata/blob/master/UPDATING-NFLSCRAPR.md">Lee Sharpe: how to update current season games</a></li>
-<li><a href="https://jthomasmock.github.io/nfl_plotting_cookbook/">Thomas Mock: pretty #viz with nflscrapR</a></li>
-<li><a href="https://gist.github.com/jthomasmock/7d489f04e53812eacca8b94b6c8ee84a">Thomas Mock: biggest comebacks</a></li>
 <li><a href="https://t.co/gxDDhOYhcI">Josh Hermsmeyer: Getting Started with R for NFL Analysis</a></li>
 <li><a href="https://slavin22.github.io/SFB9-Positional-Tiers/Guide.nb">Slavin: visualizing positional tiers in SFB9</a></li>
 <li><a href="https://github.com/ryurko/nflscrapR-data/tree/master/R">Ron Yurko: assorted examples</a></li>
