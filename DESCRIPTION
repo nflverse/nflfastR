@@ -50,6 +50,7 @@ Imports:
     tibble (>= 3.0),
     tidyr (>= 1.0.0),
     tidyselect (>= 1.1.0),
+    usethis (>= 1.6.0),
     xgboost (>= 1.1)
 Suggests: 
     DBI,

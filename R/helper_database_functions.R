@@ -48,19 +48,19 @@ update_db <- function(dbdir = ".",
 
   if (!requireNamespace("DBI", quietly = TRUE) |
     (!requireNamespace("RSQLite", quietly = TRUE) & is.null(db_connection))) {
-    stop("Packages \"DBI\" and \"RSQLite\" needed for database communication. Please install them.")
+    usethis::ui_stop("Packages {usethis::ui_value('DBI')} and {usethis::ui_value('RSQLite')} needed for database communication. Please install them.")
   }
 
   if (any(force_rebuild == "NEW")) {
-    stop("The argument `force_rebuild = \"NEW\"` is only for internal usage!")
+    usethis::ui_stop("The argument {usethis::ui_value('force_rebuild = NEW')} is only for internal usage!")
   }
 
   if (!(is.logical(force_rebuild) | is.numeric(force_rebuild))) {
-    stop("The argument `force_rebuild` has to be either logical or numeric!")
+    usethis::ui_stop("The argument {usethis::ui_value('force_rebuild')} has to be either logical or numeric!")
   }
 
   if (!dir.exists(dbdir) & is.null(db_connection)) {
-    message(glue::glue("Directory {dbdir} doesn't exist yet. Try creating..."))
+    usethis::ui_oops("Directory {usethis::ui_path(dbdir)} doesn't exist yet. Try creating...")
     dir.create(dbdir)
   }
 
@@ -78,7 +78,7 @@ update_db <- function(dbdir = ".",
   }
 
   # get completed games using Lee's file (thanks Lee!)
-  message("Checking for missing completed games...")
+  usethis::ui_todo("Checking for missing completed games...")
   completed_games <- readRDS(url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true")) %>%
     # completed games since 1999, excluding the broken games
     dplyr::filter(.data$season >= 1999, !is.na(.data$result), !.data$game_id %in% c("1999_01_BAL_STL", "2000_06_BUF_MIA", "2000_03_SD_KC")) %>%
@@ -99,8 +99,8 @@ update_db <- function(dbdir = ".",
   if (length(missing) > 0) {
     if (!requireNamespace("furrr", quietly = TRUE)) {
       is_installed_furrr <- FALSE
-      message("Package \"furrr\" not installed. Can't use parallel processing. Please consider installing it.")
-      message("Will go on sequentially...")
+      usethis::ui_info("Package {usethis::ui_value('furrr')} not installed. Can't use parallel processing. Please consider installing it.")
+      usethis::ui_info("Will go on sequentially...")
     } else {
       is_installed_furrr <- TRUE
     }
@@ -110,22 +110,23 @@ update_db <- function(dbdir = ".",
       is_installed_furrr <- FALSE
     }
 
-    message(glue::glue("Starting download of {length(missing)} games ..."))
+    usethis::ui_todo("Starting download of {length(missing)} game(s) ...")
     new_pbp <- fast_scraper(missing, pp = is_installed_furrr) %>%
       clean_pbp() %>%
       add_qb_epa() %>%
       add_xyac()
 
     if (nrow(new_pbp) == 0) {
-      message("Raw data of new games are not yet ready. Please try again in about 10 minutes.")
+      usethis::ui_oops("Raw data of new games are not yet ready. Please try again in about 10 minutes.")
     } else {
-      message("Appending new data to database...")
+      usethis::ui_todo("Appending new data to database...")
       DBI::dbWriteTable(connection, tblname, new_pbp, append = TRUE)
     }
   }
 
+  usethis::ui_info("Path to your db: {usethis::ui_path(DBI::dbGetInfo(connection)$dbname)}")
   DBI::dbDisconnect(connection)
-  message("Database update completed.")
+  usethis::ui_done("{usethis::ui_field('Database update completed.')}")
 }
 
 # this is a helper function to build nflfastR database from Scratch
@@ -138,23 +139,23 @@ build_db <- function(tblname = "nflfastR_pbp", db_conn, rebuild = FALSE, show_me
     dplyr::ungroup()
 
   if (all(rebuild == TRUE)) {
-    message(glue::glue("Purging the complete data table '{tblname}' in your connected database..."))
+    usethis::ui_todo("Purging the complete data table {usethis::ui_value(tblname)} in your connected database...")
     DBI::dbRemoveTable(db_conn, tblname)
     seasons <- valid_seasons %>% dplyr::pull("season")
-    message(glue::glue("Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}..."))
+    usethis::ui_todo("Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}...")
   } else if (is.numeric(rebuild) & all(rebuild %in% valid_seasons$season)) {
     string <- paste0(rebuild, collapse = ", ")
-    if (show_message){message(glue::glue("Purging {string} season(s) from the data table '{tblname}' in your connected database..."))}
+    if (show_message){usethis::ui_todo("Purging {string} season(s) from the data table {usethis::ui_value(tblname)} in your connected database...")}
     DBI::dbExecute(db_conn, glue::glue_sql("DELETE FROM {`tblname`} WHERE season IN ({vals*})", vals = rebuild, .con = db_conn))
     seasons <- valid_seasons %>% dplyr::filter(.data$season %in% rebuild) %>% dplyr::pull("season")
-    message(glue::glue("Starting download of the {string} season(s)..."))
+    usethis::ui_todo("Starting download of the {string} season(s)...")
   } else if (all(rebuild == "NEW")) {
-    message(glue::glue("Can't find the data table '{tblname}' in your database. Will load the play by play data from scratch."))
+    usethis::ui_info("Can't find the data table {usethis::ui_value(tblname)} in your database. Will load the play by play data from scratch.")
     seasons <- valid_seasons %>% dplyr::pull("season")
-    message(glue::glue("Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}..."))
+    usethis::ui_todo("Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}...")
   } else {
     seasons <- NULL
-    message("At least one invalid value passed to argument 'force_rebuild'.")
+    usethis::ui_oops("At least one invalid value passed to argument {usethis::ui_code('force_rebuild')}. Please try again with valid input.")
   }
 
   if (!is.null(seasons)) {
@@ -186,6 +187,6 @@ get_missing_games <- function(completed_games, dbConnection, tablename) {
 
   need_scrape <- completed_games[!completed_games %in% db_ids]
 
-  message(glue::glue("You have {length(db_ids)} games and are missing {length(need_scrape)}."))
+  usethis::ui_info("You have {length(db_ids)} games and are missing {length(need_scrape)}.")
   return(need_scrape)
 }
