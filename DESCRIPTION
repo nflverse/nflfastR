@@ -1,7 +1,7 @@
 Type: Package
 Package: nflfastR
 Title: Functions to Efficiently Access NFL Play by Play Data
-Version: 3.0.0.9004
+Version: 3.0.0.9005
 Authors@R: 
     c(person(given = "Sebastian",
              family = "Carl",
@@ -50,6 +50,7 @@ Imports:
     tibble (>= 3.0),
     tidyr (>= 1.0.0),
     tidyselect (>= 1.1.0),
+    usethis (>= 1.6.0),
     xgboost (>= 1.1)
 Suggests: 
     DBI,

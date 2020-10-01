@@ -65,7 +65,7 @@ add_game_data <- function(pbp, source = "nfl") {
 
       }
 
-      message("added game variables")
+      usethis::ui_done("added game variables")
     },
     error = function(e) {
       message("The following error has occured:")

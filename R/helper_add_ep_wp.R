@@ -10,7 +10,7 @@
 #' @importFrom magrittr "%>%"
 add_ep <- function(pbp) {
   out <- pbp %>% add_ep_variables()
-  message("added ep variables")
+  usethis::ui_done("added ep variables")
   return(out)
 }
 
@@ -41,10 +41,10 @@ add_air_yac_ep <- function(pbp) {
         total_home_raw_yac_epa = NA_real_,
         total_away_raw_yac_epa = NA_real_
       )
-    message("No non-NA air_yards detected. air_yac_ep variables set to NA")
+    usethis::ui_info("No non-NA air_yards detected. air_yac_ep variables set to NA")
   } else {
     out <- pbp %>% add_air_yac_ep_variables()
-    message("added air_yac_ep variables")
+    usethis::ui_done("added air_yac_ep variables")
   }
   return(out)
 }
@@ -52,7 +52,7 @@ add_air_yac_ep <- function(pbp) {
 #' @importFrom magrittr "%>%"
 add_wp <- function(pbp) {
   out <- pbp %>% add_wp_variables()
-  message("added wp variables")
+  usethis::ui_done("added wp variables")
   return(out)
 }
 
@@ -83,10 +83,10 @@ add_air_yac_wp <- function(pbp) {
         total_home_raw_yac_wpa = NA_real_,
         total_away_raw_yac_wpa = NA_real_
       )
-    message("No non-NA air_yards detected. air_yac_wp variables set to NA")
+    usethis::ui_info("No non-NA air_yards detected. air_yac_wp variables set to NA")
   } else {
     out <- pbp %>% add_air_yac_wp_variables()
-    message("added air_yac_wp variables")
+    usethis::ui_done("added air_yac_wp variables")
   }
   return(out)
 }

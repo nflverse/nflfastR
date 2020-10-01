@@ -22,13 +22,13 @@
 #' @export
 decode_player_ids <- function(pbp) {
   if (!requireNamespace("furrr", quietly = TRUE) & nrow(pbp) > 4500) {
-    stop("Package \"furrr\" required to decode big data frames. Please install/load it.")
+    usethis::ui_stop("Package \"furrr\" required to decode big data frames. Please install/load it.")
   } else if (requireNamespace("furrr", quietly = TRUE) & nrow(pbp) > 4500) {
-    message("Start decoding, please wait...")
+    usethis::ui_todo("Start decoding, please wait...")
     future::plan("multiprocess")
     pp <- TRUE
   } else {
-    message("Start decoding, please wait...")
+    usethis::ui_todo("Start decoding, please wait...")
     pp <- FALSE
   }
 
@@ -40,7 +40,7 @@ decode_player_ids <- function(pbp) {
       ),
       decode_ids, pp
     )
-  message("Decoding completed.")
+  usethis::ui_done("{usethis::ui_field('Decoding completed.')}")
   return(ret)
 }
 
