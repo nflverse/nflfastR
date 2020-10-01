@@ -65,6 +65,6 @@ add_series_data <- function(pbp) {
     dplyr::ungroup() %>%
     dplyr::select(-"row", -"tmp_result", -"new_series")
 
-  message("added series variables")
+  usethis::ui_done("added series variables")
   return(out)
 }

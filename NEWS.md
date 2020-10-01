@@ -17,6 +17,7 @@ era (with `force_rebuild = TRUE`) or just for specified seasons (e.g. `force_reb
 The latter is intended to be used for running seasons because the NFL fixes bugs
 in the play by play data during the week and we recommend to rebuild the current 
 season every Thursday.
+* Messages to the user are now created with the new dependency `usethis`.
 
 # nflfastR 3.0.0
 

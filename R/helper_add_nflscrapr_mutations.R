@@ -520,7 +520,7 @@ add_nflscrapr_mutations <- function(pbp) {
     make_model_mutations()
 
 
-  message("added nflscrapR variables")
+  usethis::ui_done("added nflscrapR variables")
   return(out)
 }
 

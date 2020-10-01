@@ -348,7 +348,7 @@ fast_scraper <- function(game_ids, source = "nfl", pp = FALSE, ...) {
 
   # Error handling to correct source type
   if (!source %in% c("nfl", "old")) {
-    stop("You tried to specify a source that isn't the new NFL web page or the old source. Please remove source from your request, use source = 'nfl', or source = 'old'.")
+    usethis::ui_stop("You tried to specify a source that isn't the new NFL web page or the old source.\nPlease remove source from your request, use {usethis::ui_code('source = \"nfl\"')}, or {usethis::ui_code('source = \"old\"')}.")
   }
 
   # No parallel processing demanded -> use purrr
@@ -370,7 +370,7 @@ fast_scraper <- function(game_ids, source = "nfl", pp = FALSE, ...) {
       })
 
       if(purrr::is_empty(pbp) == FALSE) {
-        message("Download finished. Adding variables...")
+        usethis::ui_done("Download finished. Adding variables...")
         pbp <- pbp %>%
           add_game_data(source) %>%
           add_nflscrapr_mutations() %>%
@@ -389,11 +389,11 @@ fast_scraper <- function(game_ids, source = "nfl", pp = FALSE, ...) {
   # User wants parallel processing: check if the required package is installed.
   # Stop and Error when missing
   else if (pp == TRUE & !requireNamespace("furrr", quietly = TRUE)) {
-    stop("Package \"furrr\" needed for parallel processing. Please install/load it.")
+    usethis::ui_stop("Package {usethis::ui_value('furrr')} needed for parallel processing. Please install it with {usethis::ui_code('install.packages(\"furrr\")')}.")
   }
   else {
     if (length(game_ids)<=4){
-      message(glue::glue("You have passed only {length(game_ids)} GameIDs to parallel processing.\nPlease note that the initiating process takes a few seconds\nand consider using pp=FALSE for a small number of games."))
+      usethis::ui_info("You have passed only {length(game_ids)} GameID(s) to parallel processing.\nPlease note that the initiating process takes a few seconds\nand consider using {usethis::ui_code('pp = FALSE')} for a small number of games.\n")
     }
     suppressWarnings({
       progressr::with_progress({
@@ -413,7 +413,7 @@ fast_scraper <- function(game_ids, source = "nfl", pp = FALSE, ...) {
       })
 
       if(purrr::is_empty(pbp) == FALSE) {
-        message("Download finished. Adding variables...")
+        usethis::ui_done("Download finished. Adding variables...")
         pbp <- pbp %>%
           add_game_data(source) %>%
           add_nflscrapr_mutations() %>%
@@ -428,7 +428,7 @@ fast_scraper <- function(game_ids, source = "nfl", pp = FALSE, ...) {
       }
     })
   }
-  message("Procedure completed.")
+  usethis::ui_done("{usethis::ui_field('Procedure completed.')}")
   return(pbp)
 }
 
@@ -540,11 +540,11 @@ fast_scraper_roster <- function(seasons, pp = FALSE) {
   # User wants parallel processing: check if the required package is installed.
   # Stop and Error when missing
   else if (pp == TRUE & !requireNamespace("furrr", quietly = TRUE)) {
-    stop("Package \"furrr\" needed for parallel processing. Please install/load it.")
+    usethis::ui_stop("Package {usethis::ui_value('furrr')} needed for parallel processing. Please install it with {usethis::ui_code('install.packages(\"furrr\")')}.")
   }
   else {
     if (length(seasons)<=10){
-      message(glue::glue("You have passed only {length(seasons)} season(s) to parallel processing.\nPlease note that the initiating process takes a few seconds\nand consider using pp=FALSE for a small number of seasons."))
+      usethis::ui_info("You have passed only {length(seasons)} season(s) to parallel processing.\nPlease note that the initiating process takes a few seconds\nand consider using {usethis::ui_code('pp = FALSE')} for a small number of seasons.")
     }
     suppressWarnings({
       progressr::with_progress({
@@ -616,11 +616,11 @@ fast_scraper_schedules <- function(seasons, pp = FALSE) {
   # User wants parallel processing: check if the required package is installed.
   # Stop and Error when missing
   else if (pp == TRUE & !requireNamespace("furrr", quietly = TRUE)) {
-    stop("Package \"furrr\" needed for parallel processing. Please install/load it.")
+    usethis::ui_stop("Package {usethis::ui_value('furrr')} needed for parallel processing. Please install it with {usethis::ui_code('install.packages(\"furrr\")')}.")
   }
   else {
     if (length(seasons)<=10){
-      message(glue::glue("You have passed only {length(seasons)} season(s) to parallel processing.\nPlease note that the initiating process takes a few seconds\nand consider using pp=FALSE for a small number of seasons."))
+      usethis::ui_info("You have passed only {length(seasons)} season(s) to parallel processing.\nPlease note that the initiating process takes a few seconds\nand consider using {usethis::ui_code('pp = FALSE')} for a small number of seasons.")
     }
     suppressWarnings({
       progressr::with_progress({

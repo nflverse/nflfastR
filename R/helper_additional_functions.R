@@ -47,10 +47,11 @@
 #' @importFrom tidyselect any_of
 clean_pbp <- function(pbp) {
   if (nrow(pbp) == 0) {
-    message("Nothing to clean. Return empty data frame.")
+    usethis::ui_info("Nothing to clean. Return passed data frame.")
     r <- pbp
   } else{
-    message('Cleaning up play-by-play. If you run this with a lot of seasons this could take a few minutes.')
+    #              crayon::red(cli::symbol$bullet)                crayon::yellow(cli::symbol$info)
+    rlang::inform("\033[31m*\033[39m Cleaning up play-by-play... (\033[33mi\033[39m If you run this with a lot of seasons this could take a few minutes.)")
 
     # Load id map to standardize player ids for players that were active before 2011
     # and in or after 2011 meaning they appear with old gsis_ids and new ids
@@ -205,7 +206,7 @@ clean_pbp <- function(pbp) {
       dplyr::arrange(.data$index) %>%
       dplyr::select(-"index")
   }
-
+  usethis::ui_done("{usethis::ui_field('Cleaning completed.')}")
   return(r)
 }
 
@@ -291,7 +292,7 @@ update_ids <- function(var, id_map) {
 add_qb_epa <- function(d) {
 
   if (nrow(d) == 0) {
-    message("Nothing to do. Return empty data frame.")
+    usethis::ui_info("Nothing to do. Return passed data frame.")
   } else {
     # drop existing values of clean_pbp
     d <- d %>% dplyr::select(-tidyselect::any_of("qb_epa"))

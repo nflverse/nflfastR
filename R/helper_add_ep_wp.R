@@ -10,7 +10,7 @@
 #' @importFrom magrittr "%>%"
 add_ep <- function(pbp) {
   out <- pbp %>% add_ep_variables()
-  message("added ep variables")
+  usethis::ui_done("added ep variables")
   return(out)
 }
 
@@ -41,10 +41,10 @@ add_air_yac_ep <- function(pbp) {
         total_home_raw_yac_epa = NA_real_,
         total_away_raw_yac_epa = NA_real_
       )
-    message("No non-NA air_yards detected. air_yac_ep variables set to NA")
+    usethis::ui_info("No non-NA air_yards detected. air_yac_ep variables set to NA")
   } else {
     out <- pbp %>% add_air_yac_ep_variables()
-    message("added air_yac_ep variables")
+    usethis::ui_done("added air_yac_ep variables")
   }
   return(out)
 }
@@ -52,7 +52,7 @@ add_air_yac_ep <- function(pbp) {
 #' @importFrom magrittr "%>%"
 add_wp <- function(pbp) {
   out <- pbp %>% add_wp_variables()
-  message("added wp variables")
+  usethis::ui_done("added wp variables")
   return(out)
 }
 
@@ -83,10 +83,10 @@ add_air_yac_wp <- function(pbp) {
         total_home_raw_yac_wpa = NA_real_,
         total_away_raw_yac_wpa = NA_real_
       )
-    message("No non-NA air_yards detected. air_yac_wp variables set to NA")
+    usethis::ui_info("No non-NA air_yards detected. air_yac_wp variables set to NA")
   } else {
     out <- pbp %>% add_air_yac_wp_variables()
-    message("added air_yac_wp variables")
+    usethis::ui_done("added air_yac_wp variables")
   }
   return(out)
 }
@@ -348,8 +348,8 @@ add_ep_variables <- function(pbp_data) {
   #new: special case for PAT or kickoff with penalty
   #for inserting NAs
   st_penalty_i_1 <- which(
-    # pat: prior play was TD or PAT and next play is PAT
-    ((dplyr::lag(pbp_data$touchdown == 1) | dplyr::lag(pbp_data$play_type_nfl == "XP_KICK")) &
+    # pat: prior play was TD or PAT and next play is PAT and this play isn't a td
+    (pbp_data$touchdown == 0 & (dplyr::lag(pbp_data$touchdown == 1) | dplyr::lag(pbp_data$play_type_nfl == "XP_KICK")) &
           (dplyr::lead(pbp_data$two_point_attempt)==1 | dplyr::lead(pbp_data$extra_point_attempt)==1 | dplyr::lead(pbp_data$play_type_nfl) == "XP_KICK")) |
       #kickoff: prior play was PAT and next play is kickoff
       ((dplyr::lag(pbp_data$two_point_attempt)==1 | dplyr::lag(pbp_data$extra_point_attempt)==1) & dplyr::lead(pbp_data$kickoff_attempt == 1))
@@ -849,19 +849,35 @@ add_wp_variables <- function(pbp_data) {
       #because other team will have the ball so WP from their perspective
       #this is for backfilling WP on PATs
       wp =
-        dplyr::if_else((.data$kickoff_attempt == 0 & !(stringr::str_detect(.data$desc, 'Onside Kick')) &
-                          (stringr::str_detect(.data$desc, 'Kick formation') | stringr::str_detect(.data$desc, 'Pass formation')) & is.na(.data$down)) |
-                            stringr::str_detect(.data$desc, 'TWO-POINT CONVERSION ATTEMPT') | stringr::str_detect(.data$desc, 'extra point') |
-                            !is.na(.data$two_point_conv_result) |
-                            !is.na(.data$extra_point_result),
-                          1 - .data$wp, .data$wp),
+        dplyr::if_else(
+          # added to deal with XP being last play of half and same team getting 2nd half kickoff
+          # make sure there's not end of half on next line with same posteam on line after that
+          !(.data$qtr == 2 & dplyr::lead(.data$qtr, 2) == 3 & dplyr::lead(.data$posteam, 2) == .data$posteam) &
+            # not a kickoff and has NA down
+          ((.data$kickoff_attempt == 0 &
+            !(stringr::str_detect(.data$desc, 'Onside Kick')) &
+            (stringr::str_detect(.data$desc, 'Kick formation') | stringr::str_detect(.data$desc, 'Pass formation')) &
+             is.na(.data$down)) |
+            # or has PAT indicators
+            stringr::str_detect(.data$desc, 'TWO-POINT CONVERSION ATTEMPT') | stringr::str_detect(.data$desc, 'extra point') |
+            !is.na(.data$two_point_conv_result) |
+            !is.na(.data$extra_point_result)),
+          1 - .data$wp, .data$wp),
       vegas_wp =
-        dplyr::if_else((.data$kickoff_attempt == 0 & !(stringr::str_detect(.data$desc, 'Onside Kick')) &
-                          (stringr::str_detect(.data$desc, 'Kick formation') | stringr::str_detect(.data$desc, 'Pass formation')) & is.na(.data$down)) |
-                         stringr::str_detect(.data$desc, 'TWO-POINT CONVERSION ATTEMPT') | stringr::str_detect(.data$desc, 'extra point') |
-                         !is.na(.data$two_point_conv_result) |
-                            !is.na(.data$extra_point_result),
-                          1 - .data$vegas_wp, .data$vegas_wp),
+        dplyr::if_else(
+          # added to deal with XP being last play of half and same team getting 2nd half kickoff
+          # make sure there's not end of half on next line with same posteam on line after that
+          !(.data$qtr == 2 & dplyr::lead(.data$qtr, 2) == 3 & dplyr::lead(.data$posteam, 2) == .data$posteam) &
+            # not a kickoff and has NA down
+            ((.data$kickoff_attempt == 0 &
+                !(stringr::str_detect(.data$desc, 'Onside Kick')) &
+                (stringr::str_detect(.data$desc, 'Kick formation') | stringr::str_detect(.data$desc, 'Pass formation')) &
+                is.na(.data$down)) |
+               # or has PAT indicators
+               stringr::str_detect(.data$desc, 'TWO-POINT CONVERSION ATTEMPT') | stringr::str_detect(.data$desc, 'extra point') |
+               !is.na(.data$two_point_conv_result) |
+               !is.na(.data$extra_point_result)),
+          1 - .data$vegas_wp, .data$vegas_wp),
       wp = dplyr::if_else(is.na(.data$posteam), NA_real_, .data$wp),
       def_wp = 1 - .data$wp,
       home_wp = dplyr::if_else(.data$posteam == .data$home_team,
