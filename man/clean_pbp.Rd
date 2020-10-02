@@ -4,10 +4,12 @@
 \alias{clean_pbp}
 \title{Clean Play by Play Data}
 \usage{
-clean_pbp(pbp)
+clean_pbp(pbp, ...)
 }
 \arguments{
 \item{pbp}{is a Data frame of play-by-play data scraped using \code{\link{fast_scraper}}.}
+
+\item{...}{Additional arguments passed to a message function (for internal use).}
 }
 \value{
 The input Data Frame of the paramter 'pbp' with the following columns

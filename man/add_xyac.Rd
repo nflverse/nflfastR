@@ -4,10 +4,12 @@
 \alias{add_xyac}
 \title{Add expected yards after completion (xyac) variables}
 \usage{
-add_xyac(pbp)
+add_xyac(pbp, ...)
 }
 \arguments{
 \item{pbp}{is a Data frame of play-by-play data scraped using \code{\link{fast_scraper}}.}
+
+\item{...}{Additional arguments passed to a message function (for internal use).}
 }
 \value{
 The input Data Frame of the parameter 'pbp' with the following columns

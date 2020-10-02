@@ -2,6 +2,7 @@
 
 export(add_qb_epa)
 export(add_xyac)
+export(build_nflfastR_pbp)
 export(calculate_expected_points)
 export(calculate_win_probability)
 export(clean_pbp)
