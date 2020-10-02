@@ -34,3 +34,49 @@ rule_footer <- function(x) {
     )
   )
 }
+
+get_seasons <- function(seasons) {
+
+  most_recent <- dplyr::if_else(
+    lubridate::month(lubridate::today("America/New_York")) >= 9,
+    lubridate::year(lubridate::today("America/New_York")) ,
+    lubridate::year(lubridate::today("America/New_York")) - 1
+  )
+
+  if (!all(seasons %in% 1999:most_recent)) {
+    usethis::ui_stop("Please pass valid seasons between 1999 and {most_recent}")
+  }
+
+  season_count <- length(seasons)
+
+  if (season_count >= 10 & !requireNamespace("furrr", quietly = TRUE)) {
+    pp <- FALSE
+    usethis::ui_info("It is recommended to use parallel processing when trying to load {season_count} seasons but the package {usethis::ui_value('furrr')} is not installed.\nPlease consider installing it with {usethis::ui_code('install.packages(\"furrr\")')}. Will go on sequentially...")
+  } else if (season_count >= 10 & requireNamespace("furrr", quietly = TRUE)) {
+    pp <- TRUE
+  } else {
+    pp <- FALSE
+  }
+
+  progressr::with_progress({
+    p <- progressr::progressor(along = seasons)
+
+    if (pp == TRUE) {
+      future::plan("multiprocess")
+      out <- furrr::future_map_dfr(seasons, single_season, p)
+    } else {
+      out <- purrr::map_dfr(seasons, single_season, p)
+    }
+
+  })
+
+  return(out)
+}
+
+single_season <- function(season, p) {
+  ret <- readRDS(url(
+    glue::glue("https://github.com/guga31bb/nflfastR-data/blob/master/data/play_by_play_{season}.rds?raw=true")
+  ))
+  p(sprintf("season=%g", season))
+  return(ret)
+}
