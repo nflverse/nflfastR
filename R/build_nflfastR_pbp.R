@@ -48,7 +48,7 @@
 #' }
 build_nflfastR_pbp <- function(game_ids, source = "nfl", pp = FALSE, ..., decode = FALSE, rules = TRUE) {
   if (rules) {
-    rule("Build nflfastR play-by-play data")
+    rule("Build nflfastR Play-by-Play Data")
   }
 
   game_count <- length(game_ids)
