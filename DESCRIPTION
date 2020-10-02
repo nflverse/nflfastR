@@ -34,6 +34,8 @@ BugReports: https://github.com/mrcaseb/nflfastR/issues
 Depends: 
     R (>= 3.5.0)
 Imports: 
+    cli (>= 1.1.0),
+    crayon (>= 1.3.4),
     dplyr,
     glue,
     httr,
