@@ -16,27 +16,21 @@ custom_mode <- function(x, na.rm = TRUE) {
   return(ux[which.max(tabulate(match(x, ux)))])
 }
 
-
-# This function is borrowed from pkgdown:::rule and slightly modified
-rule <- function(x = NULL, line = "-") {
-  width <- getOption("width")
-
-  if (!is.null(x)) {
-    prefix <- paste0(line, line, " ")
-    suffix <- " "
-  } else {
-    prefix <- ""
-    suffix <- ""
-    x <- ""
-  }
-
-  bold_text <- paste0("\033[1m", x, "\033[22m")
-
-  line_length <- width - nchar(x) - nchar(prefix) - nchar(suffix)
-  cat_line(prefix, bold_text, suffix, strrep(line, line_length))
+rule_header <- function(x) {
+  rlang::inform(
+    cli::rule(
+      left = crayon::bold(x),
+      right = paste0("nflfastR version ", utils::packageVersion("nflfastR")),
+      width = getOption("width")
+    )
+  )
 }
 
-# This function is borrowed from pkgdown:::cat_line
-cat_line <- function(...) {
-  cat(paste0(..., "\n"), sep = "")
+rule_footer <- function(x) {
+  rlang::inform(
+    cli::rule(
+      left = crayon::bold(x),
+      width = getOption("width")
+    )
+  )
 }

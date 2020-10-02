@@ -51,8 +51,7 @@ clean_pbp <- function(pbp, ...) {
     usethis::ui_info("Nothing to clean. Return passed data frame.")
     r <- pbp
   } else{
-    #              crayon::red(cli::symbol$bullet)                crayon::yellow(cli::symbol$info)
-    rlang::inform("\033[31m*\033[39m Cleaning up play-by-play... (\033[33mi\033[39m If you run this with a lot of seasons this could take a few minutes.)")
+    rlang::inform(paste0(crayon::red(cli::symbol$bullet), " Cleaning up play-by-play... (", crayon::yellow(cli::symbol$info), " If you run this with a lot of seasons this could take a few minutes.)"))
 
     # Load id map to standardize player ids for players that were active before 2011
     # and in or after 2011 meaning they appear with old gsis_ids and new ids

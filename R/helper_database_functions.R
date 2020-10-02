@@ -52,7 +52,7 @@ update_db <- function(dbdir = ".",
                       force_rebuild = FALSE,
                       db_connection = NULL) {
 
-  rule("Update nflfastR Play-by-Play Database")
+  rule_header("Update nflfastR Play-by-Play Database")
 
   if (!requireNamespace("DBI", quietly = TRUE) |
     (!requireNamespace("RSQLite", quietly = TRUE) & is.null(db_connection))) {
@@ -131,7 +131,7 @@ update_db <- function(dbdir = ".",
   message_completed("Database update completed", in_builder = TRUE)
   usethis::ui_info("Path to your db: {usethis::ui_path(DBI::dbGetInfo(connection)$dbname)}")
   DBI::dbDisconnect(connection)
-  rule("DONE")
+  rule_footer("DONE")
 }
 
 # this is a helper function to build nflfastR database from Scratch

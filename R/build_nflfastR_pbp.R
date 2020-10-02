@@ -47,17 +47,15 @@
 #' build_nflfastR_pbp(c("2018_21_NE_LA", "2019_21_SF_KC"))
 #' }
 build_nflfastR_pbp <- function(game_ids, source = "nfl", pp = FALSE, ..., decode = FALSE, rules = TRUE) {
-  if (rules) {
-    rule("Build nflfastR Play-by-Play Data")
-  }
+  if (rules) rule_header("Build nflfastR Play-by-Play Data")
 
   game_count <- length(game_ids)
   builder <- TRUE
 
   if (game_count > 1) {
-    usethis::ui_todo("Start download of {length(game_ids)} games...")
+    usethis::ui_todo("Start download of {game_count} games...")
   } else {
-    usethis::ui_todo("Start download of {length(game_ids)} game...")
+    usethis::ui_todo("Start download of {game_count} game...")
   }
 
   ret <- fast_scraper(game_ids = game_ids, source = source, pp = pp, ..., in_builder = builder) %>%
@@ -69,9 +67,7 @@ build_nflfastR_pbp <- function(game_ids, source = "nfl", pp = FALSE, ..., decode
     ret <- decode_player_ids(ret, in_builder = builder)
   }
 
-  if (rules) {
-    rule("DONE")
-  }
+  if (rules) rule_footer("DONE")
 
   return(ret)
 }
