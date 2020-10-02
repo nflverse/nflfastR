@@ -7,23 +7,34 @@
 # The idea for this wrapper as well as some helper functions and the documentation
 # style are heavily borrowed from the r-lib package pkgdown (https://github.com/r-lib/pkgdown/blob/master/R/build.r)
 
-#' Build a complete nflfastR data set
+#' Build a Complete nflfastR Data Set
 #'
 #' @description
-#' `build_nflfastR_pbp()` is a convenient wrapper around 5 nflfastR functions:
+#' \code{build_nflfastR_pbp} is a convenient wrapper around 5 nflfastR functions:
 #'
-#' * [fast_scraper()]
-#' * [clean_pbp()]
-#' * [add_qb_epa()]
-#' * [add_xyac()]
-#' * [decode_player_ids()]
+#' \itemize{
+#'  \item{\code{\link{fast_scraper}}}
+#'  \item{\code{\link{clean_pbp}}}
+#'  \item{\code{\link{add_qb_epa}}}
+#'  \item{\code{\link{add_xyac}}}
+#'  \item{\code{\link{decode_player_ids}}}
+#' }
 #'
 #' Please see the documentation of each function to learn about the output.
 #'
 #' @inheritParams fast_scraper
 #' @param decode If \code{TRUE}, the function \code{\link{decode_player_ids}} will be executed.
 #' @param rules If \code{FALSE}, printing of the header and footer in the console output will be suppressed.
-#' @return An nflfastR play-by-play data frame with like it can be loaded from \url{https://github.com/guga31bb/nflfastR-data}.
+#' @return An nflfastR play-by-play data frame like it can be loaded from \url{https://github.com/guga31bb/nflfastR-data}.
+#' @details To load valid game_ids please use the package function \code{\link{fast_scraper_schedules}}.
+#'
+#' The \code{source} parameter controls from which source the data is being
+#' loaded. The old parameters \code{rs} as well as \code{gc}
+#' are not valid anymore. Please use \code{nfl} or \code{old}.
+#'
+#' The \code{pp} parameter controls if the scraper should use parallel processing.
+#' Please note that the initiating process takes a few seconds which means it
+#' may be better to set \code{pp = FALSE} if you are scraping just a few games.
 #' @importFrom rlang .data
 #' @importFrom dplyr mutate_at vars mutate pull
 #' @importFrom tidyselect any_of ends_with
