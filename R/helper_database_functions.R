@@ -128,9 +128,9 @@ update_db <- function(dbdir = ".",
     }
   }
 
+  message_completed("Database update completed", in_builder = TRUE)
   usethis::ui_info("Path to your db: {usethis::ui_path(DBI::dbGetInfo(connection)$dbname)}")
   DBI::dbDisconnect(connection)
-  message_completed("Database update completed", in_builder = TRUE)
   rule("DONE")
 }
 
