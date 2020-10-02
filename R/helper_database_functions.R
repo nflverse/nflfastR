@@ -1,4 +1,10 @@
-#' Update or create a nflfastR play by play database
+################################################################################
+# Author: Sebastian Carl
+# Purpose: Create and update database with nflfastR pbp data
+# Code Style Guide: styler::tidyverse_style()
+################################################################################
+
+#' Update or Create a nflfastR Play-by-Play Database
 #'
 #' \code{update_db} updates or creates a database with \code{nflfastR}
 #' play by play data of all completed games since 1999.
@@ -45,6 +51,8 @@ update_db <- function(dbdir = ".",
                       tblname = "nflfastR_pbp",
                       force_rebuild = FALSE,
                       db_connection = NULL) {
+
+  rule("Update nflfastR Play-by-Play Database")
 
   if (!requireNamespace("DBI", quietly = TRUE) |
     (!requireNamespace("RSQLite", quietly = TRUE) & is.null(db_connection))) {
@@ -110,11 +118,7 @@ update_db <- function(dbdir = ".",
       is_installed_furrr <- FALSE
     }
 
-    usethis::ui_todo("Starting download of {length(missing)} game(s) ...")
-    new_pbp <- fast_scraper(missing, pp = is_installed_furrr) %>%
-      clean_pbp() %>%
-      add_qb_epa() %>%
-      add_xyac()
+    new_pbp <- build_nflfastR_pbp(missing, pp = is_installed_furrr, rules = FALSE)
 
     if (nrow(new_pbp) == 0) {
       usethis::ui_oops("Raw data of new games are not yet ready. Please try again in about 10 minutes.")
@@ -126,7 +130,8 @@ update_db <- function(dbdir = ".",
 
   usethis::ui_info("Path to your db: {usethis::ui_path(DBI::dbGetInfo(connection)$dbname)}")
   DBI::dbDisconnect(connection)
-  usethis::ui_done("{usethis::ui_field('Database update completed.')}")
+  message_completed("Database update completed", in_builder = TRUE)
+  rule("DONE")
 }
 
 # this is a helper function to build nflfastR database from Scratch
