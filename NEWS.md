@@ -9,15 +9,17 @@ near the end of a half
 by the argument `db_connection` (#102)
 * Fixed a bug where `update_db()` didn't build a fresh database without providing
 the argument `force_rebuild`
-* `update_db()` no longer removes the complete data table when the argument 
-`force_rebuild` is passed but only removes the rows within the table (#109).
+* `update_db()` no longer removes the complete data table when a numeric argument 
+`force_rebuild` is passed but only removes the rows within the table (#109)
 * The argument `force_rebuild` of the function `update_db()` is now of hybrid 
 type. It can rebuild the play by play data table either for the whole nflfastR 
 era (with `force_rebuild = TRUE`) or just for specified seasons (e.g. `force_rebuild = 2019:2020`).
 The latter is intended to be used for running seasons because the NFL fixes bugs
 in the play by play data during the week and we recommend to rebuild the current 
 season every Thursday.
-* Messages to the user are now created with the new dependency `usethis`.
+* Messages to the user are now created with the new dependency `usethis`
+* Added the new function `build_nflfastR_pbp()`, a convenient wrapper around 
+multiple nflfastR functions for an easy creation of the nflfastR play-by-play data set
 
 # nflfastR 3.0.0
 
