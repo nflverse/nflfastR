@@ -82,7 +82,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.0.0.9006</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.0.0.9007</span>
       </span>
     </div>
 
@@ -182,9 +182,11 @@
 <li>Fixed a bug where <code><a href="../reference/update_db.html">update_db()</a></code> didn’t build a fresh database without providing the argument <code>force_rebuild</code>
 </li>
 <li>
-<code><a href="../reference/update_db.html">update_db()</a></code> no longer removes the complete data table when the argument <code>force_rebuild</code> is passed but only removes the rows within the table (<a href='https://github.com/mrcaseb/nflfastR/issues/109'>#109</a>).</li>
+<code><a href="../reference/update_db.html">update_db()</a></code> no longer removes the complete data table when a numeric argument <code>force_rebuild</code> is passed but only removes the rows within the table (<a href='https://github.com/mrcaseb/nflfastR/issues/109'>#109</a>)</li>
 <li>The argument <code>force_rebuild</code> of the function <code><a href="../reference/update_db.html">update_db()</a></code> is now of hybrid type. It can rebuild the play by play data table either for the whole nflfastR era (with <code>force_rebuild = TRUE</code>) or just for specified seasons (e.g. <code>force_rebuild = 2019:2020</code>). The latter is intended to be used for running seasons because the NFL fixes bugs in the play by play data during the week and we recommend to rebuild the current season every Thursday.</li>
-<li>Messages to the user are now created with the new dependency <code>usethis</code>.</li>
+<li>Messages to the user are now created with the new dependency <code>usethis</code>
+</li>
+<li>Added the new function <code><a href="../reference/build_nflfastR_pbp.html">build_nflfastR_pbp()</a></code>, a convenient wrapper around multiple nflfastR functions for an easy creation of the nflfastR play-by-play data set</li>
 </ul>
 </div>
     <div id="nflfastr-300" class="section level1">

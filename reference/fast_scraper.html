@@ -83,7 +83,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.0.0.9006</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.0.0.9007</span>
       </span>
     </div>
 
@@ -176,7 +176,7 @@
     <p>Get NFL Play by Play Data</p>
     </div>
 
-    <pre class="usage"><span class='fu'>fast_scraper</span><span class='op'>(</span><span class='va'>game_ids</span>, source <span class='op'>=</span> <span class='st'>"nfl"</span>, pp <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>fast_scraper</span><span class='op'>(</span><span class='va'>game_ids</span>, source <span class='op'>=</span> <span class='st'>"nfl"</span>, pp <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span>, in_builder <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -196,6 +196,10 @@
     <tr>
       <th>...</th>
       <td><p>Additional arguments passed to the scraping functions (for internal use)</p></td>
+    </tr>
+    <tr>
+      <th>in_builder</th>
+      <td><p>If <code>TRUE</code>, the final message will be suppressed (for usage inside of <code><a href='build_nflfastR_pbp.html'>build_nflfastR_pbp</a></code>).</p></td>
     </tr>
     </table>
 
@@ -526,9 +530,9 @@ detailed information (description partly extracted from nflscrapR):</p><dl>
 
     <p>To load valid game_ids please use the package function <code><a href='fast_scraper_schedules.html'>fast_scraper_schedules</a></code>.</p>
 <p>The <code>source</code> parameter controls from which source the data is being
-scraped. The old parameters <code>rs</code> as well as <code>gc</code>
-are not valid anymore. Please use <code>nfl</code> or <code>old</code>.
-The <code>pp</code> parameter controls if the scraper should use parallel processing.
+loaded. The old parameters <code>rs</code> as well as <code>gc</code>
+are not valid anymore. Please use <code>nfl</code> or <code>old</code>.</p>
+<p>The <code>pp</code> parameter controls if the scraper should use parallel processing.
 Please note that the initiating process takes a few seconds which means it
 may be better to set <code>pp = FALSE</code> if you are scraping just a few games.</p>
 
