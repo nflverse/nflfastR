@@ -5,10 +5,10 @@
 
 #' Add expected pass columns
 #'
-#' @param pbp is a Data frame of play-by-play data scraped using \code{\link{fast_scraper}}.
+#' @param pbp is a Data frame of play-by-play data from nflfastR.
 #' @details Build columns from the expected dropback model will return NA on data prior to 2006
 #' since that was before NFL started marking scrambles. Must be run on a dataframe that has already had
-#' \code{clean_pbp()} run on it.
+#' \code{clean_pbp()} run on it, such as data from the data repository or built using the database function.
 #' @return The input Data Frame of the paramter 'pbp' with the following columns
 #' added:
 #' \describe{
