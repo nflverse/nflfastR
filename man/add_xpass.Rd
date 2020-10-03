@@ -4,13 +4,15 @@
 \alias{add_xpass}
 \title{Add expected pass columns}
 \usage{
-add_xpass(pbp)
+add_xpass(pbp, ...)
 }
 \arguments{
-\item{pbp}{is a Data frame of play-by-play data from nflfastR.}
+\item{pbp}{is a Data frame of play-by-play data scraped using \code{\link{fast_scraper}}.}
+
+\item{...}{Additional arguments passed to a message function (for internal use).}
 }
 \value{
-The input Data Frame of the paramter 'pbp' with the following columns
+The input Data Frame of the paramter \code{pbp} with the following columns
 added:
 \describe{
 \item{xpass}{Probability of dropback scaled from 0 to 1. }
@@ -23,5 +25,5 @@ Add expected pass columns
 \details{
 Build columns from the expected dropback model will return NA on data prior to 2006
 since that was before NFL started marking scrambles. Must be run on a dataframe that has already had
-\code{clean_pbp()} run on it, such as data from the data repository or built using the database function.
+\link{\code{clean_pbp}} run on it, such as data from the data repository or built using the database function.
 }
