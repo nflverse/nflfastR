@@ -3,7 +3,6 @@
 # on a 1st down play
 extract_desc <- function(pbp) {
   pbp %>%
-    add_qb_epa() %>%
     dplyr::filter(down == 1) %>%
     dplyr::group_by(game_id) %>%
     dplyr::slice(1) %>%

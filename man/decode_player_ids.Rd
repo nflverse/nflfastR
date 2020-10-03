@@ -4,10 +4,12 @@
 \alias{decode_player_ids}
 \title{Decode the player IDs in nflfastR play-by-ply data}
 \usage{
-decode_player_ids(pbp)
+decode_player_ids(pbp, ...)
 }
 \arguments{
-\item{pbp}{is a Data Frame of play-by-play data scraped using \code{\link{fast_scraper}}.}
+\item{pbp}{is a Data frame of play-by-play data scraped using \code{\link{fast_scraper}}.}
+
+\item{...}{Additional arguments passed to a message function (for internal use).}
 }
 \value{
 The input Data Frame of the parameter 'pbp' with decoded player IDs.

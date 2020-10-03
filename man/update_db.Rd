@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_database_functions.R
 \name{update_db}
 \alias{update_db}
-\title{Update or create a nflfastR play by play database}
+\title{Update or Create a nflfastR Play-by-Play Database}
 \usage{
 update_db(
   dbdir = ".",

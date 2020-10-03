@@ -4,10 +4,12 @@
 \alias{add_qb_epa}
 \title{Compute QB epa}
 \usage{
-add_qb_epa(d)
+add_qb_epa(pbp, ...)
 }
 \arguments{
-\item{d}{is a Data frame of play-by-play data scraped using \code{\link{fast_scraper}}.}
+\item{pbp}{is a Data frame of play-by-play data scraped using \code{\link{fast_scraper}}.}
+
+\item{...}{Additional arguments passed to a message function (for internal use).}
 }
 \description{
 Compute QB epa

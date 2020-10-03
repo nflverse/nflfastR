@@ -4,7 +4,7 @@
 \alias{fast_scraper}
 \title{Get NFL Play by Play Data}
 \usage{
-fast_scraper(game_ids, source = "nfl", pp = FALSE, ...)
+fast_scraper(game_ids, source = "nfl", pp = FALSE, ..., in_builder = FALSE)
 }
 \arguments{
 \item{game_ids}{Vector of character ids (see details for further information).}
@@ -14,6 +14,8 @@ fast_scraper(game_ids, source = "nfl", pp = FALSE, ...)
 \item{pp}{Logical - either \code{TRUE} or \code{FALSE} (see details for further information)}
 
 \item{...}{Additional arguments passed to the scraping functions (for internal use)}
+
+\item{in_builder}{If \code{TRUE}, the final message will be suppressed (for usage inside of \code{\link{build_nflfastR_pbp}}).}
 }
 \value{
 Data frame where each individual row represents a single play for
@@ -344,8 +346,9 @@ Get NFL Play by Play Data
 To load valid game_ids please use the package function \code{\link{fast_scraper_schedules}}.
 
 The \code{source} parameter controls from which source the data is being
-scraped. The old parameters \code{rs} as well as \code{gc}
+loaded. The old parameters \code{rs} as well as \code{gc}
 are not valid anymore. Please use \code{nfl} or \code{old}.
+
 The \code{pp} parameter controls if the scraper should use parallel processing.
 Please note that the initiating process takes a few seconds which means it
 may be better to set \code{pp = FALSE} if you are scraping just a few games.

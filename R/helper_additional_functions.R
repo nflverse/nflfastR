@@ -6,6 +6,7 @@
 #' Clean Play by Play Data
 #'
 #' @param pbp is a Data frame of play-by-play data scraped using \code{\link{fast_scraper}}.
+#' @param ... Additional arguments passed to a message function (for internal use).
 #' @details Build columns that capture what happens on all plays, including
 #' penalties, using string extraction from play description.
 #' Loosely based on Ben's nflfastR guide (\url{https://mrcaseb.github.io/nflfastR/articles/beginners_guide.html})
@@ -45,13 +46,12 @@
 #' @importFrom glue glue
 #' @importFrom rlang .data
 #' @importFrom tidyselect any_of
-clean_pbp <- function(pbp) {
+clean_pbp <- function(pbp, ...) {
   if (nrow(pbp) == 0) {
     usethis::ui_info("Nothing to clean. Return passed data frame.")
     r <- pbp
   } else{
-    #              crayon::red(cli::symbol$bullet)                crayon::yellow(cli::symbol$info)
-    rlang::inform("\033[31m*\033[39m Cleaning up play-by-play... (\033[33mi\033[39m If you run this with a lot of seasons this could take a few minutes.)")
+    rlang::inform(paste0(crayon::red(cli::symbol$bullet), " Cleaning up play-by-play... (", crayon::yellow(cli::symbol$info), " If you run this with a lot of seasons this could take a few minutes.)"))
 
     # Load id map to standardize player ids for players that were active before 2011
     # and in or after 2011 meaning they appear with old gsis_ids and new ids
@@ -206,7 +206,9 @@ clean_pbp <- function(pbp) {
       dplyr::arrange(.data$index) %>%
       dplyr::select(-"index")
   }
-  usethis::ui_done("{usethis::ui_field('Cleaning completed.')}")
+
+  message_completed("Cleaning completed", ...)
+
   return(r)
 }
 
@@ -235,13 +237,6 @@ drop.cols <- c(
   "passer_jersey_number", "rusher_jersey_number", "receiver_jersey_number",
   "jersey_number"
 )
-
-# custom mode function from https://stackoverflow.com/questions/2547402/is-there-a-built-in-function-for-finding-the-mode/8189441
-custom_mode <- function(x, na.rm = TRUE) {
-  if(na.rm){x <- x[!is.na(x)]}
-  ux <- unique(x)
-  return(ux[which.max(tabulate(match(x, ux)))])
-}
 
 # fixes team names on columns with yard line
 # example: 'SD 49' --> 'LAC 49'
@@ -281,7 +276,7 @@ update_ids <- function(var, id_map) {
 
 #' Compute QB epa
 #'
-#' @param d is a Data frame of play-by-play data scraped using \code{\link{fast_scraper}}.
+#'@inheritParams clean_pbp
 #' @details Add the variable 'qb_epa', which gives QB credit for EPA for up to the point where
 #' a receiver lost a fumble after a completed catch and makes EPA work more
 #' like passing yards on plays with fumbles
@@ -289,15 +284,15 @@ update_ids <- function(var, id_map) {
 #' @import dplyr
 #' @importFrom rlang .data
 #' @importFrom tidyselect any_of
-add_qb_epa <- function(d) {
+add_qb_epa <- function(pbp, ...) {
 
-  if (nrow(d) == 0) {
+  if (nrow(pbp) == 0) {
     usethis::ui_info("Nothing to do. Return passed data frame.")
   } else {
     # drop existing values of clean_pbp
-    d <- d %>% dplyr::select(-tidyselect::any_of("qb_epa"))
+    pbp <- pbp %>% dplyr::select(-tidyselect::any_of("qb_epa"))
 
-    fumbles_df <- d %>%
+    fumbles_df <- pbp %>%
       dplyr::filter(.data$complete_pass == 1 & .data$fumble_lost == 1 & !is.na(.data$epa) & !is.na(.data$down)) %>%
       dplyr::mutate(
         half_seconds_remaining = dplyr::if_else(
@@ -346,15 +341,17 @@ add_qb_epa <- function(d) {
         dplyr::mutate(ep = dplyr::if_else(.data$change == 1, -.data$ep, .data$ep), fixed_epa = .data$ep - .data$ep_old) %>%
         dplyr::select("game_id", "play_id", "fixed_epa")
 
-      d <- d %>%
+      pbp <- pbp %>%
         dplyr::left_join(new_ep_df, by = c("game_id", "play_id")) %>%
         dplyr::mutate(qb_epa = dplyr::if_else(!is.na(.data$fixed_epa), .data$fixed_epa, .data$epa)) %>%
         dplyr::select(-"fixed_epa")
     } else {
-      d <- d %>% dplyr::mutate(qb_epa = .data$epa)
+      pbp <- pbp %>% dplyr::mutate(qb_epa = .data$epa)
     }
   }
 
-  return(d)
+  message_completed("added qb_epa", ...)
+
+  return(pbp)
 }
 

@@ -6,7 +6,7 @@
 
 #' Decode the player IDs in nflfastR play-by-ply data
 #'
-#' @param pbp is a Data Frame of play-by-play data scraped using \code{\link{fast_scraper}}.
+#' @inheritParams clean_pbp
 #' @details Take all columns ending with \code{player_id} as well as
 #' \code{passer_id}, \code{rusher_id}, \code{receiver_id}, \code{id} of an
 #' nflfastR play-by-play Data set and decode the player IDs to the commonly
@@ -20,15 +20,15 @@
 #' @importFrom tibble tibble
 #' @importFrom stringr str_sub str_replace_all str_length
 #' @export
-decode_player_ids <- function(pbp) {
+decode_player_ids <- function(pbp, ...) {
   if (!requireNamespace("furrr", quietly = TRUE) & nrow(pbp) > 4500) {
-    usethis::ui_stop("Package \"furrr\" required to decode big data frames. Please install/load it.")
+    usethis::ui_stop("Package {usethis::ui_value('furrr')} required to decode big data frames. Please install it with {usethis::ui_code('install.packages(\"furrr\")')}.")
   } else if (requireNamespace("furrr", quietly = TRUE) & nrow(pbp) > 4500) {
-    usethis::ui_todo("Start decoding, please wait...")
+    usethis::ui_todo("Start decoding player ids, please wait...")
     future::plan("multiprocess")
     pp <- TRUE
   } else {
-    usethis::ui_todo("Start decoding, please wait...")
+    usethis::ui_todo("Start decoding player ids, please wait...")
     pp <- FALSE
   }
 
@@ -40,7 +40,9 @@ decode_player_ids <- function(pbp) {
       ),
       decode_ids, pp
     )
-  usethis::ui_done("{usethis::ui_field('Decoding completed.')}")
+
+  message_completed("Decoding completed.", ...)
+
   return(ret)
 }
 
