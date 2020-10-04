@@ -25,3 +25,15 @@ known GSIS ID format 00-00xxxxx.
 The function requires the package \code{furrr} if the data frame
 \code{pbp} has more than 4500 rows.
 }
+\examples{
+\donttest{
+# Decode IDs by Patrick Mahomes and Julio Jones
+decode_player_ids(data.frame(
+  name = c("P.Mahomes", "J.Jones"),
+  id = c(
+    "32013030-2d30-3033-3338-3733fa30c4fa",
+    "32013030-2d30-3032-3739-3434d4d3846d"
+  )
+))
+}
+}

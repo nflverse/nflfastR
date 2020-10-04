@@ -1,7 +1,7 @@
 Type: Package
 Package: nflfastR
 Title: Functions to Efficiently Access NFL Play by Play Data
-Version: 3.0.0.9007
+Version: 3.0.0.9008
 Authors@R: 
     c(person(given = "Sebastian",
              family = "Carl",
@@ -53,7 +53,8 @@ Imports:
     tidyr (>= 1.0.0),
     tidyselect (>= 1.1.0),
     usethis (>= 1.6.0),
-    xgboost (>= 1.1)
+    xgboost (>= 1.1),
+    Rcpp
 Suggests: 
     DBI,
     furrr,
@@ -64,3 +65,5 @@ Suggests:
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
+LinkingTo: 
+    Rcpp

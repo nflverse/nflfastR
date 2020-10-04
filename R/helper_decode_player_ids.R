@@ -20,25 +20,26 @@
 #' @importFrom tibble tibble
 #' @importFrom stringr str_sub str_replace_all str_length
 #' @export
+#' @examples
+#' \donttest{
+#' # Decode IDs by Patrick Mahomes and Julio Jones
+#' decode_player_ids(data.frame(
+#'   name = c("P.Mahomes", "J.Jones"),
+#'   id = c(
+#'     "32013030-2d30-3033-3338-3733fa30c4fa",
+#'     "32013030-2d30-3032-3739-3434d4d3846d"
+#'   )
+#' ))
+#' }
 decode_player_ids <- function(pbp, ...) {
-  if (!requireNamespace("furrr", quietly = TRUE) & nrow(pbp) > 4500) {
-    usethis::ui_stop("Package {usethis::ui_value('furrr')} required to decode big data frames. Please install it with {usethis::ui_code('install.packages(\"furrr\")')}.")
-  } else if (requireNamespace("furrr", quietly = TRUE) & nrow(pbp) > 4500) {
-    usethis::ui_todo("Start decoding player ids, please wait...")
-    future::plan("multiprocess")
-    pp <- TRUE
-  } else {
-    usethis::ui_todo("Start decoding player ids, please wait...")
-    pp <- FALSE
-  }
-
+  usethis::ui_todo("Start decoding player ids, please wait...")
   ret <- pbp %>%
     dplyr::mutate_at(
       dplyr::vars(
         tidyselect::any_of(c("passer_id", "rusher_id", "receiver_id", "id")),
         tidyselect::ends_with("player_id")
       ),
-      decode_ids, pp
+      decode_ids_cpp
     )
 
   message_completed("Decoding completed.", ...)
