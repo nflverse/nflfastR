@@ -35,7 +35,7 @@ rule_footer <- function(x) {
   )
 }
 
-get_seasons <- function(seasons) {
+load_pbp <- function(seasons) {
 
   most_recent <- dplyr::if_else(
     lubridate::month(lubridate::today("America/New_York")) >= 9,
@@ -76,6 +76,53 @@ get_seasons <- function(seasons) {
 single_season <- function(season, p) {
   ret <- readRDS(url(
     glue::glue("https://github.com/guga31bb/nflfastR-data/blob/master/data/play_by_play_{season}.rds?raw=true")
+  ))
+  p(sprintf("season=%g", season))
+  return(ret)
+}
+
+load_ngs <- function(seasons, type) {
+  if (!type %in% c("passing", "rushing", "receiving")) usethis::ui_stop("Please pass valid type!")
+
+  most_recent <- dplyr::if_else(
+    lubridate::month(lubridate::today("America/New_York")) >= 9,
+    lubridate::year(lubridate::today("America/New_York")) ,
+    lubridate::year(lubridate::today("America/New_York")) - 1
+  )
+
+  if (!all(seasons %in% 2016:most_recent)) {
+    usethis::ui_stop("Please pass valid seasons between 2016 and {most_recent}")
+  }
+
+  season_count <- length(seasons)
+
+  if (season_count >= 10 & !requireNamespace("furrr", quietly = TRUE)) {
+    pp <- FALSE
+    usethis::ui_info("It is recommended to use parallel processing when trying to load {season_count} seasons but the package {usethis::ui_value('furrr')} is not installed.\nPlease consider installing it with {usethis::ui_code('install.packages(\"furrr\")')}. Will go on sequentially...")
+  } else if (season_count >= 10 & requireNamespace("furrr", quietly = TRUE)) {
+    pp <- TRUE
+  } else {
+    pp <- FALSE
+  }
+
+  progressr::with_progress({
+    p <- progressr::progressor(along = seasons)
+
+    if (pp == TRUE) {
+      future::plan("multiprocess")
+      out <- furrr::future_map_dfr(seasons, ngs_single_season, type, p)
+    } else {
+      out <- purrr::map_dfr(seasons, ngs_single_season, type, p)
+    }
+
+  })
+
+  return(out)
+}
+
+ngs_single_season <- function(season, type, p) {
+  ret <- readRDS(url(
+    glue::glue("https://github.com/mrcaseb/nfl-data/blob/master/data/ngs/ngs_{season}_{type}.rds?raw=true")
   ))
   p(sprintf("season=%g", season))
   return(ret)
