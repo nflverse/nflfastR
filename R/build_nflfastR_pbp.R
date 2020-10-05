@@ -61,7 +61,8 @@ build_nflfastR_pbp <- function(game_ids, source = "nfl", pp = FALSE, ..., decode
   ret <- fast_scraper(game_ids = game_ids, source = source, pp = pp, ..., in_builder = builder) %>%
     clean_pbp(in_builder = builder) %>%
     add_qb_epa(in_builder = builder) %>%
-    add_xyac(in_builder = builder)
+    add_xyac(in_builder = builder) #%>%
+    # add_xpass(in_builder = builder)
 
   if (decode) {
     ret <- decode_player_ids(ret, in_builder = builder)

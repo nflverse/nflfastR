@@ -20,6 +20,8 @@ season every Thursday.
 * Messages to the user are now created with the new dependency `usethis`
 * Added the new function `build_nflfastR_pbp()`, a convenient wrapper around 
 multiple nflfastR functions for an easy creation of the nflfastR play-by-play data set
+* Added a function that applies our experimental expected pass model, `add_xpass()`,
+that creates columns `xpass` and `pass_oe`
 
 # nflfastR 3.0.0
 
