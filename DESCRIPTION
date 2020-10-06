@@ -1,7 +1,7 @@
 Type: Package
 Package: nflfastR
 Title: Functions to Efficiently Access NFL Play by Play Data
-Version: 3.0.0.9008
+Version: 3.0.0.9009
 Authors@R: 
     c(person(given = "Sebastian",
              family = "Carl",
@@ -58,6 +58,7 @@ Suggests:
     DBI,
     furrr,
     future,
+    gsisdecoder,
     rmarkdown,
     RSQLite,
     testthat
