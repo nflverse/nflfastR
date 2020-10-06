@@ -164,21 +164,9 @@ build_db <- function(tblname = "nflfastR_pbp", db_conn, rebuild = FALSE, show_me
   }
 
   if (!is.null(seasons)) {
-    progressr::with_progress({
-      p <- progressr::progressor(along = seasons)
-      purrr::walk(seasons, load_cleaned_pbp, db_conn, p, tblname)
-    })
+    # this function lives in R/utils.R
+    load_pbp(seasons, in_db = TRUE, dbConnection = db_conn, tablename = tblname)
   }
-}
-
-# this is a helper function to add one season of data
-# from the data repo to a database connection
-load_cleaned_pbp <- function(season, dbConnection, p, tablename) {
-  pbp_cleaned <- readRDS(
-    url(glue::glue("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_{season}.rds"))
-  )
-  DBI::dbWriteTable(dbConnection, tablename, pbp_cleaned, append = TRUE)
-  p(sprintf("season=%g", season))
 }
 
 # this is a helper function to check a list of completed games
