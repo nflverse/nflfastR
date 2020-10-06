@@ -22,6 +22,8 @@ season every Thursday.
 multiple nflfastR functions for an easy creation of the nflfastR play-by-play data set
 * Added a function that applies our experimental expected pass model, `add_xpass()`,
 that creates columns `xpass` and `pass_oe`
+* Added the option `fast` (either `TRUE` or `FALSE`) to the function `decode_player_ids()`
+to activate the high efficient c++ decoder of the package `gsisdecoder`.
 
 # nflfastR 3.0.0
 
