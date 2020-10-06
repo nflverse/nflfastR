@@ -4,24 +4,41 @@
 \alias{decode_player_ids}
 \title{Decode the player IDs in nflfastR play-by-ply data}
 \usage{
-decode_player_ids(pbp, ...)
+decode_player_ids(pbp, ..., fast = FALSE)
 }
 \arguments{
 \item{pbp}{is a Data frame of play-by-play data scraped using \code{\link{fast_scraper}}.}
 
 \item{...}{Additional arguments passed to a message function (for internal use).}
+
+\item{fast}{If \code{TRUE} the IDs will be decoded with the high efficiet
+decoder of the package \code{gsisdecoder}.}
 }
 \value{
-The input Data Frame of the parameter 'pbp' with decoded player IDs.
+The input Data Frame of the parameter \code{pbp} with decoded player IDs.
 }
 \description{
-Decode the player IDs in nflfastR play-by-ply data
-}
-\details{
 Take all columns ending with \code{player_id} as well as
 \code{passer_id}, \code{rusher_id}, \code{receiver_id}, \code{id} of an
 nflfastR play-by-play Data set and decode the player IDs to the commonly
 known GSIS ID format 00-00xxxxx.
 The function requires the package \code{furrr} if the data frame
 \code{pbp} has more than 4500 rows.
+The function requires the package \code{gsisdecoder} if the argument \code{fast}
+is set to \code{TRUE}.
+}
+\examples{
+\donttest{
+# Decode data frame consisting of some names and ids
+decode_player_ids(data.frame(
+  name = c("P.Mahomes", "B.Baldwin", "P.Mahomes", "S.Carl", "J.Jones"),
+  id = c(
+  "32013030-2d30-3033-3338-3733fa30c4fa",
+  NA_character_,
+  "00-0033873",
+  NA_character_,
+  "32013030-2d30-3032-3739-3434d4d3846d"
+  )
+))
+}
 }
