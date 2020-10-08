@@ -22,6 +22,8 @@ season every Thursday.
 multiple nflfastR functions for an easy creation of the nflfastR play-by-play data set
 * Added a function that applies our experimental expected pass model, `add_xpass()`,
 that creates columns `xpass` and `pass_oe`
+* Fixed bug where plays with "backward pass" in play description were counted as pass plays
+(`pass` = 1)
 
 # nflfastR 3.0.0
 
