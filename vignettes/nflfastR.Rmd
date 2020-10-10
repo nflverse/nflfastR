@@ -21,7 +21,7 @@ If you have trouble understanding the code in the examples we highly recommend t
 
 # Example 1: replicate nflscrapR with fast_scraper
 
-The functionality of `nflscrapR` can be duplicated by using `fast_scraper()`. This obtains the same information contained in `nflscrapR` (plus some extra) but much more quickly. To compare to `nflscrapR`, we use their data repository as the program no longer functions now that the NFL has taken down the old Gamecenter feed. Note that EP differs from nflscrapR as we use a newer era-adjusted model (more on this in `vignette("nflfastR-models")`).
+The functionality of `nflscrapR` can be duplicated by using `fast_scraper()`. This obtains the same information contained in `nflscrapR` (plus some extra) but much more quickly. To compare to `nflscrapR`, we use their data repository as the program no longer functions now that the NFL has taken down the old Gamecenter feed. Note that EP differs from nflscrapR as we use a newer era-adjusted model (more on this in [this post on Open Source Football](https://www.opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/)).
 
 This example also uses the built-in function `clean_pbp()` to create a 'name' column for the primary player involved (the QB on pass play or ball-carrier on run play).
 

@@ -16,7 +16,8 @@ knitr::opts_chunk$set(
 
 
 <!-- badges: start -->
-[![CRAN status](https://www.r-pkg.org/badges/version/nflfastR)](https://CRAN.R-project.org/package=nflfastR)
+[![CRAN status](https://www.r-pkg.org/badges/version-last-release/nflfastR)](https://CRAN.R-project.org/package=nflfastR)
+[![CRAN downloads](http://cranlogs.r-pkg.org/badges/grand-total/nflfastR)](https://CRAN.R-project.org/package=nflfastR)
 [![Travis build status](https://travis-ci.com/mrcaseb/nflfastR.svg?branch=master)](https://travis-ci.com/mrcaseb/nflfastR)
 [![R build status](https://github.com/mrcaseb/nflfastR/workflows/R-CMD-check/badge.svg)](https://github.com/mrcaseb/nflfastR/actions)
 [![Twitter Follow](https://img.shields.io/twitter/follow/nflfastR.svg?style=social)](https://twitter.com/nflfastR)
