@@ -44,6 +44,7 @@ sum_play_stats <- function(play_Id, stats) {
     if (stat_id == 2) {
       row$punt_blocked <- 1
       row$punt_attempt <- 1
+      row$kick_distance <- play_stats$yards[index]
     } else if (stat_id == 3) {
       row$first_down_rush <- 1
     } else if (stat_id == 4) {
@@ -211,6 +212,7 @@ sum_play_stats <- function(play_Id, stats) {
       row$punt_attempt <- 1
       row$punter_player_id <- play_stats$player.esbId[index]
       row$punter_player_name <- play_stats$player.displayName[index]
+      row$kick_distance <- play_stats$yards[index]
     } else if (stat_id == 32) {
       row$punt_attempt <- 1
       row$punter_player_id <- play_stats$player.esbId[index]
