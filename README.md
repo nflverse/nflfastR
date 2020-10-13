@@ -6,7 +6,9 @@
 <!-- badges: start -->
 
 [![CRAN
-status](https://www.r-pkg.org/badges/version/nflfastR)](https://CRAN.R-project.org/package=nflfastR)
+status](https://www.r-pkg.org/badges/version-last-release/nflfastR)](https://CRAN.R-project.org/package=nflfastR)
+[![CRAN
+downloads](http://cranlogs.r-pkg.org/badges/grand-total/nflfastR)](https://CRAN.R-project.org/package=nflfastR)
 [![Travis build
 status](https://travis-ci.com/mrcaseb/nflfastR.svg?branch=master)](https://travis-ci.com/mrcaseb/nflfastR)
 [![R build

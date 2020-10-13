@@ -24,6 +24,9 @@ multiple nflfastR functions for an easy creation of the nflfastR play-by-play da
 that creates columns `xpass` and `pass_oe`
 * Added the option `fast` (either `TRUE` or `FALSE`) to the function `decode_player_ids()`
 to activate the high efficient c++ decoder of the package `gsisdecoder`.
+* Fixed bug where plays with "backward pass" in play description were counted as pass plays
+(`pass` = 1)
+* Fixed missing kick distance on touchbacks and blocked punts (#53)
 
 # nflfastR 3.0.0
 
