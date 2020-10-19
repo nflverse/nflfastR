@@ -41,7 +41,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.0.0.9011</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.0.0.9012</span>
       </span>
     </div>
 
@@ -289,7 +289,7 @@
 <span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span><span class="op">(</span><span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span><span class="op">(</span><span class="st">'{length(games_2019)} games with nflfastR:'</span><span class="op">)</span><span class="op">)</span>
 <span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fast_scraper.html">fast_scraper</a></span><span class="op">(</span><span class="va">games_2019</span>, pp <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; 10 games with nflfastR:: 11.552 sec elapsed</span></pre></div>
+<span class="co">#&gt; 10 games with nflfastR:: 13.617 sec elapsed</span></pre></div>
 </div>
 <div id="example-3-completion-percentage-over-expected-cpoe" class="section level1">
 <h1 class="hasAnchor">
@@ -300,7 +300,7 @@
 <span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span><span class="op">(</span><span class="st">'loading all games from 2009'</span><span class="op">)</span>
 <span class="va">games_2009</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span><span class="op">(</span><span class="st">'https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2009.rds'</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">season_type</span> <span class="op">==</span> <span class="st">'REG'</span><span class="op">)</span>
 <span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; loading all games from 2009: 2.818 sec elapsed</span>
+<span class="co">#&gt; loading all games from 2009: 4.617 sec elapsed</span>
 <span class="va">games_2009</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">cpoe</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">group_by</span><span class="op">(</span><span class="va">passer_player_name</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">summarize</span><span class="op">(</span>cpoe <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">cpoe</span><span class="op">)</span>, Atts<span class="op">=</span><span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">Atts</span> <span class="op">&gt;</span> <span class="fl">200</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -716,11 +716,11 @@
 <p>Let’s say I just want to dump a database into the current working directory. Here we go!</p>
 <div class="sourceCode" id="cb13"><pre class="downlit">
 <span class="fu"><a href="../reference/update_db.html">update_db</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; ── Update nflfastR Play-by-Play Database ──────── nflfastR version 3.0.0.9011 ──</span>
+<span class="co">#&gt; ── Update nflfastR Play-by-Play Database ──────── nflfastR version 3.0.0.9012 ──</span>
 <span class="co">#&gt; ℹ Can't find the data table 'nflfastR_pbp' in your database. Will load the play by play data from scratch.</span>
 <span class="co">#&gt; ● Starting download of 22 seasons between 1999 and 2020...</span>
 <span class="co">#&gt; ● Checking for missing completed games...</span>
-<span class="co">#&gt; ℹ You have 5657 games and are missing 0.</span>
+<span class="co">#&gt; ℹ You have 5669 games and are missing 0.</span>
 <span class="co">#&gt; ✔ Database update completed</span>
 <span class="co">#&gt; ℹ Path to your db: './pbp_db'</span>
 <span class="co">#&gt; ── DONE ────────────────────────────────────────────────────────────────────────</span></pre></div>
@@ -728,20 +728,20 @@
 <p>Wait, that’s it? That’s it! What if it’s partway through the season and you want to make sure all the new games are added to the database? What do you run? <code><a href="../reference/update_db.html">update_db()</a></code>! (just make sure you’re in the directory the database is saved in or you supply the right file path)</p>
 <div class="sourceCode" id="cb14"><pre class="downlit">
 <span class="fu"><a href="../reference/update_db.html">update_db</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; ── Update nflfastR Play-by-Play Database ──────── nflfastR version 3.0.0.9011 ──</span>
+<span class="co">#&gt; ── Update nflfastR Play-by-Play Database ──────── nflfastR version 3.0.0.9012 ──</span>
 <span class="co">#&gt; ● Checking for missing completed games...</span>
-<span class="co">#&gt; ℹ You have 5657 games and are missing 0.</span>
+<span class="co">#&gt; ℹ You have 5669 games and are missing 0.</span>
 <span class="co">#&gt; ✔ Database update completed</span>
 <span class="co">#&gt; ℹ Path to your db: '/Users/runner/work/nflfastR/nflfastR/vignettes/pbp_db'</span>
 <span class="co">#&gt; ── DONE ────────────────────────────────────────────────────────────────────────</span></pre></div>
 <p>If it’s partway through a season and you want to re-build a season to allow for data corrections from the NFL to propagate into your database, you can specify one season to be rebuilt:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit">
 <span class="fu"><a href="../reference/update_db.html">update_db</a></span><span class="op">(</span>force_rebuild <span class="op">=</span> <span class="fl">2020</span><span class="op">)</span>
-<span class="co">#&gt; ── Update nflfastR Play-by-Play Database ──────── nflfastR version 3.0.0.9011 ──</span>
+<span class="co">#&gt; ── Update nflfastR Play-by-Play Database ──────── nflfastR version 3.0.0.9012 ──</span>
 <span class="co">#&gt; ● Purging 2020 season(s) from the data table 'nflfastR_pbp' in your connected database...</span>
 <span class="co">#&gt; ● Starting download of the 2020 season(s)...</span>
 <span class="co">#&gt; ● Checking for missing completed games...</span>
-<span class="co">#&gt; ℹ You have 5657 games and are missing 0.</span>
+<span class="co">#&gt; ℹ You have 5669 games and are missing 0.</span>
 <span class="co">#&gt; ✔ Database update completed</span>
 <span class="co">#&gt; ℹ Path to your db: '/Users/runner/work/nflfastR/nflfastR/vignettes/pbp_db'</span>
 <span class="co">#&gt; ── DONE ────────────────────────────────────────────────────────────────────────</span></pre></div>
@@ -805,7 +805,7 @@
 <span class="co">#&gt;    pass mean_epa</span>
 <span class="co">#&gt;   &lt;dbl&gt;    &lt;dbl&gt;</span>
 <span class="co">#&gt; 1     0  -0.0994</span>
-<span class="co">#&gt; 2     1   0.0725</span></pre></div>
+<span class="co">#&gt; 2     1   0.0726</span></pre></div>
 <p>So far, everything has stayed in the database. If you want to bring a query into memory, just use <code>collect()</code> at the end:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit">
 <span class="va">russ</span> <span class="op">&lt;-</span> <span class="va">pbp_db</span> <span class="op">%&gt;%</span>
