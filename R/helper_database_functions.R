@@ -97,7 +97,7 @@ update_db <- function(dbdir = ".",
   missing <- get_missing_games(completed_games, connection, tblname)
 
   # rebuild db if number of missing games is too large
-  if(length(missing) > 5) {
+  if(length(missing) > 16) {# limit set to >16 to make sure this doesn't get triggered on gameday (e.g. week 17)
     # message("The number of missing games is so large that rebuilding the database is more efficient.")
     build_db(tblname, connection, show_message = FALSE, rebuild = as.numeric(unique(stringr::str_sub(missing, 1, 4))))
     missing <- get_missing_games(completed_games, connection, tblname)
