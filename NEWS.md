@@ -1,4 +1,4 @@
-# nflfastR 3.1.0
+# nflfastR 3.1.1
 
 ## New features
 

@@ -1,3 +1,9 @@
+## Resbumission
+
+This is a resubmission. The package URL in `DESCRIPTION` was updated as the 
+original Github URL is now being redirected. A similar adjustment of the URL was 
+also made in `man/clean_pbp.Rd`
+
 ## Release summary
 
 This is a minor release that 
