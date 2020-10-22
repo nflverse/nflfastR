@@ -1,8 +1,8 @@
 ## Release summary
 
-This is a major release that 
-* adds the two exported functions `fast_scraper_roster()` as well as `decode_player_ids()`,
-* adds a new option to the exported function `update_db()` and
+This is a minor release that 
+* adds the new exported function `build_nflfastR_pbp()`
+* adds two new dependencies `usethis` and `gsisdecoder`
 * fixes some minor bugs.
 
 ## Test environments
@@ -30,6 +30,4 @@ This is a major release that
 
 ## R CMD check results
 
-0 errors | 0 warnings | 1 note
-
-* unable to verify current time -> this is a R CMD Check problem
+0 errors | 0 warnings | 0 notes
