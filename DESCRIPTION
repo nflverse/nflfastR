@@ -1,7 +1,7 @@
 Type: Package
 Package: nflfastR
 Title: Functions to Efficiently Access NFL Play by Play Data
-Version: 3.0.0.9012
+Version: 3.1.1
 Authors@R: 
     c(person(given = "Sebastian",
              family = "Carl",
@@ -29,7 +29,7 @@ Authors@R:
 Description: A set of functions to access National Football League play-by-play 
   data from <https://www.nfl.com/>.
 License: MIT + file LICENSE
-URL: https://mrcaseb.github.io/nflfastR/, https://github.com/mrcaseb/nflfastR
+URL: https://www.nflfastr.com/, https://github.com/mrcaseb/nflfastR
 BugReports: https://github.com/mrcaseb/nflfastR/issues
 Depends: 
     R (>= 3.5.0)
