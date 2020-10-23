@@ -163,10 +163,10 @@ wp_model_select <- function(pbp) {
       "half_seconds_remaining",
       "game_seconds_remaining",
       "ExpScoreDiff_Time_Ratio",
-      "ep",
       "score_differential",
       "down",
       "ydstogo",
+      "yardline_100",
       "home",
       "posteam_timeouts_remaining",
       "defteam_timeouts_remaining"
@@ -188,10 +188,10 @@ wp_spread_model_select <- function(pbp) {
       "half_seconds_remaining",
       "game_seconds_remaining",
       "ExpScoreDiff_Time_Ratio",
-      "ep",
       "score_differential",
       "down",
       "ydstogo",
+      "yardline_100",
       "home",
       "posteam_timeouts_remaining",
       "defteam_timeouts_remaining"
@@ -214,7 +214,8 @@ prepare_wp_data <- function(pbp) {
     dplyr::mutate(
       ExpScoreDiff = .data$ep + .data$score_differential,
       posteam_spread = dplyr::if_else(.data$home == 1, .data$spread_line, -1 * .data$spread_line),
-      spread_time = .data$posteam_spread * log(3600 / (50 + (3600 - .data$game_seconds_remaining))),
+      elapsed_share = (3600 - .data$game_seconds_remaining) / 3600,
+      spread_time = .data$posteam_spread * exp(-4 * .data$elapsed_share),
       ExpScoreDiff_Time_Ratio = .data$ExpScoreDiff / (.data$game_seconds_remaining + 1)
     )
 

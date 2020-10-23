@@ -141,10 +141,11 @@ cp_model <- xgboost::xgboost(params = params, data = full_train, nrounds = nroun
 ################################################################################
 
 model_data <- pbp_data %>%
+  filter(Winner != "TIE") %>%
   make_model_mutations() %>%
   prepare_wp_data() %>%
   mutate(label = ifelse(posteam == Winner, 1, 0)) %>%
-  filter(qtr <= 4 & !is.na(ep) & !is.na(score_differential) & !is.na(play_type) & !is.na(label)) %>%
+  filter(qtr <= 4 & !is.na(ep) & !is.na(score_differential) & !is.na(play_type) & !is.na(label), !is.na(yardline_100)) %>%
   select(
     label,
     receive_2h_ko,
@@ -152,28 +153,28 @@ model_data <- pbp_data %>%
     half_seconds_remaining,
     game_seconds_remaining,
     ExpScoreDiff_Time_Ratio,
-    ep,
     score_differential,
     down,
     ydstogo,
+    yardline_100,
     home,
     posteam_timeouts_remaining,
     defteam_timeouts_remaining
   )
 
 
-nrounds = 170
+nrounds = 760
 params <-
   list(
     booster = "gbtree",
     objective = "binary:logistic",
     eval_metric = c("logloss"),
-    eta = 0.075,
-    gamma = 3,
-    subsample=0.8,
-    colsample_bytree=0.8,
+    eta = 0.02,
+    gamma = 0.3445502,
+    subsample = 0.7204741,
+    colsample_bytree = 0.5714286,
     max_depth = 5,
-    min_child_weight = .9
+    min_child_weight = 14
   )
 
 
@@ -181,8 +182,8 @@ full_train = xgboost::xgb.DMatrix(model.matrix(~.+0, data = model_data %>% selec
                                   label = model_data$label)
 wp_model_spread <- xgboost::xgboost(params = params, data = full_train, nrounds = nrounds, verbose = 2)
 
-#importance <- xgboost::xgb.importance(feature_names = colnames(wp_model_spread), model = wp_model_spread)
-#xgboost::xgb.ggplot.importance(importance_matrix = importance)
+importance <- xgboost::xgb.importance(feature_names = colnames(wp_model_spread), model = wp_model_spread)
+xgboost::xgb.ggplot.importance(importance_matrix = importance)
 
 #xgboost::xgb.plot.tree(model = wp_model_spread, trees = 1, show_node_id = TRUE)
 

@@ -104,6 +104,7 @@ drop.cols <- c(
 #' \item{spread_line (how many points home team was favored by)}
 #' \item{down}
 #' \item{ydstogo}
+#' \item{yardline_100}
 #' \item{posteam_timeouts_remaining}
 #' \item{defteam_timeouts_remaining}
 #' }
@@ -127,7 +128,8 @@ calculate_win_probability <- function(pbp_data) {
         home = dplyr::if_else(.data$posteam == .data$home_team, 1, 0),
         ExpScoreDiff = .data$ep + .data$score_differential,
         posteam_spread = dplyr::if_else(.data$home == 1, .data$spread_line, -1 * .data$spread_line),
-        spread_time = .data$posteam_spread * log(3600 / (50 + (3600 - .data$game_seconds_remaining))),
+        elapsed_share = (3600 - .data$game_seconds_remaining) / 3600,
+        spread_time = .data$posteam_spread * exp(-4 * .data$elapsed_share),
         ExpScoreDiff_Time_Ratio = .data$ExpScoreDiff / (.data$game_seconds_remaining + 1)
       )
   )
