@@ -1,3 +1,7 @@
+# nflfastR (development version)
+
+* performance update for win probability model with point spread (`vegas_wp`)
+
 # nflfastR 3.1.1
 
 ## New features
