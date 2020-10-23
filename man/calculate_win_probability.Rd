@@ -23,7 +23,7 @@ must be present: receive_h2_ko (1 if game is in 1st half and possession
 team will receive 2nd half kickoff, 0 otherwise), ep (expected points),
 home_team, posteam, half_seconds_remaining, game_seconds_remaining,
 spread_line (how many points home team was favored by), down, ydstogo,
-posteam_timeouts_remaining, defteam_timeouts_remaining
+yardline_100, posteam_timeouts_remaining, defteam_timeouts_remaining
 }
 \details{
 Computes win probability for provided plays. Returns the data with
@@ -40,6 +40,7 @@ must be present:
 \item{spread_line (how many points home team was favored by)}
 \item{down}
 \item{ydstogo}
+\item{yardline_100}
 \item{posteam_timeouts_remaining}
 \item{defteam_timeouts_remaining}
 }

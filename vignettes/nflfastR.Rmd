@@ -189,6 +189,7 @@ data <- tibble::tibble(
   'spread_line' = c(0, 5, 10, 15),
   'down' = 1,
   'ydstogo' = 10,
+  'yardline_100' = 75,
   'posteam_timeouts_remaining' = 3,
   'defteam_timeouts_remaining' = 3
 )
