@@ -1,6 +1,7 @@
 # nflfastR (development version)
 
-* performance update for win probability model with point spread (`vegas_wp`)
+* Performance update for win probability model with point spread (`vegas_wp`)
+* Added `yardline_100` as an input to both win probability models (not having it included was an oversight)
 
 # nflfastR 3.1.1
 
