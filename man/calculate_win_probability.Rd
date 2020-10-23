@@ -40,6 +40,7 @@ must be present:
 \item{spread_line (how many points home team was favored by)}
 \item{down}
 \item{ydstogo}
+\item{yardline_100}
 \item{posteam_timeouts_remaining}
 \item{defteam_timeouts_remaining}
 }
