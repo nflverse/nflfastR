@@ -87,7 +87,7 @@ drop.cols <- c(
 #' team will receive 2nd half kickoff, 0 otherwise), ep (expected points),
 #' home_team, posteam, half_seconds_remaining, game_seconds_remaining,
 #' spread_line (how many points home team was favored by), down, ydstogo,
-#' posteam_timeouts_remaining, defteam_timeouts_remaining
+#' yardline_100, posteam_timeouts_remaining, defteam_timeouts_remaining
 #'
 #' @param pbp_data Play-by-play dataset to estimate win probability for.
 #' @details Computes win probability for provided plays. Returns the data with
