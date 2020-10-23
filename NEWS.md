@@ -1,32 +1,44 @@
-# nflfastR (development version)
+# nflfastR 3.1.1
 
-* More fixes for `fixed_drive` which was not incrementing properly on drives
-that began following a timeout
-* Fixed more bugs in EPA and win probability on PATs and kickoffs with penalties
-* Fixed a bug where scoring probabilities weren't adding to 1 on field goal attempts
-near the end of a half
+## New features
+
+### Database Function `update_db()`
+
+* The argument `force_rebuild` of the function `update_db()` is now of hybrid 
+type. It can rebuild the play by play data table either for the whole nflfastR 
+era (with `force_rebuild = TRUE`) or just for specified seasons 
+(e.g. `force_rebuild = 2019:2020`).
+The latter is intended to be used for running seasons because the NFL fixes bugs
+in the play by play data during the week and we recommend to rebuild the current 
+season every Thursday.
 * Fixed a bug where `update_db()` disconnected the connection to a database provided 
 by the argument `db_connection` (#102)
 * Fixed a bug where `update_db()` didn't build a fresh database without providing
 the argument `force_rebuild`
 * `update_db()` no longer removes the complete data table when a numeric argument 
 `force_rebuild` is passed but only removes the rows within the table (#109)
-* The argument `force_rebuild` of the function `update_db()` is now of hybrid 
-type. It can rebuild the play by play data table either for the whole nflfastR 
-era (with `force_rebuild = TRUE`) or just for specified seasons (e.g. `force_rebuild = 2019:2020`).
-The latter is intended to be used for running seasons because the NFL fixes bugs
-in the play by play data during the week and we recommend to rebuild the current 
-season every Thursday.
-* Messages to the user are now created with the new dependency `usethis`
+
+### New Functions
+
 * Added the new function `build_nflfastR_pbp()`, a convenient wrapper around 
 multiple nflfastR functions for an easy creation of the nflfastR play-by-play data set
 * Added a function that applies our experimental expected pass model, `add_xpass()`,
 that creates columns `xpass` and `pass_oe`
-* Added the option `fast` (either `TRUE` or `FALSE`) to the function `decode_player_ids()`
-to activate the high efficient C++ decoder of the package [`gsisdecoder`](https://cran.r-project.org/package=gsisdecoder).
-* Fixed bug where plays with "backward pass" in play description were counted as pass plays
-(`pass` = 1)
+
+## Minor improvements and fixes
+
+* More fixes for `fixed_drive` which was not incrementing properly on drives
+that began following a timeout
+* Fixed more bugs in EPA and win probability on PATs and kickoffs with penalties
+* Fixed a bug where scoring probabilities weren't adding to 1 on field goal 
+attempts near the end of a half
+* Messages to the user are now created with the new dependency `usethis`
+* Fixed bug where plays with "backward pass" in play description were counted as 
+pass plays (`pass` = 1)
 * Fixed missing kick distance on touchbacks and blocked punts (#53)
+* Added the option `fast` (either `TRUE` or `FALSE`) to the function 
+`decode_player_ids()` to activate the high efficient C++ decoder of the package 
+[`gsisdecoder`](https://cran.r-project.org/package=gsisdecoder)
 
 # nflfastR 3.0.0
 
