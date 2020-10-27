@@ -23,7 +23,7 @@ add_series_data <- function(pbp) {
         # a new drive
         .data$fixed_drive != dplyr::lag(.data$fixed_drive) |
           # or a first down on the prior play
-          dplyr::lag(.data$first_down_rush == 1) | dplyr::lag(.data$first_down_pass) == 1 | dplyr::lag(.data$first_down_penalty) == 1 |
+          dplyr::lag(.data$first_down_rush) == 1 | dplyr::lag(.data$first_down_pass) == 1 | dplyr::lag(.data$first_down_penalty) == 1 |
           # or the first play
           .data$row == 1,
         1, 0
