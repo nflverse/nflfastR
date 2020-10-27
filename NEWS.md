@@ -2,6 +2,7 @@
 
 * Performance update for win probability model with point spread (`vegas_wp`)
 * Added `yardline_100` as an input to both win probability models (not having it included was an oversight)
+* Fixed a bug where `series` didn't increment on rushing first downs (#132, thanks to @saiemgilani)
 
 # nflfastR 3.1.1
 
