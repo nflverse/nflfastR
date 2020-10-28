@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   beginners_guide: beginners_guide.html
   nflfastR: nflfastR.html
-last_built: 2020-10-23T13:07Z
+last_built: 2020-10-28T15:14Z
 urls:
   reference: https://mrcaseb.github.io/nflfastR//reference
   article: https://mrcaseb.github.io/nflfastR//articles
