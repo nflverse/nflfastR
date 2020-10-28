@@ -1,7 +1,7 @@
 Type: Package
 Package: nflfastR
 Title: Functions to Efficiently Access NFL Play by Play Data
-Version: 3.1.1.9000
+Version: 3.1.1.9001
 Authors@R: 
     c(person(given = "Sebastian",
              family = "Carl",
