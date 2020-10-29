@@ -1,8 +1,9 @@
-url: https://mrcaseb.github.io/nflfastR/
+url: https://www.nflfastr.com/
 
 template:
   params:
     bootswatch: yeti
+    ganalytics: G-8FNRBBEHML
   opengraph:
     image:
       src: https://raw.githubusercontent.com/mrcaseb/nflfastR/master/man/figures/card.png
@@ -31,7 +32,7 @@ home:
   title: An R package to quickly obtain clean and tidy NFL play by play data
   links:
   - text: nflfastR beginner's guide
-    href: https://mrcaseb.github.io/nflfastR/articles/beginners_guide.html
+    href: articles/beginners_guide.html
   - text: nflfastR stats landing page
     href: https://rbsdm.com/stats/
   - text: Lee Sharpe's nfl game data
