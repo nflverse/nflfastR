@@ -1,51 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://mrcaseb.github.io/nflfastR//index.html</loc>
+    <loc>https://www.nflfastr.com//index.html</loc>
   </url>
   <url>
-    <loc>https://mrcaseb.github.io/nflfastR//reference/add_qb_epa.html</loc>
+    <loc>https://www.nflfastr.com//reference/add_qb_epa.html</loc>
   </url>
   <url>
-    <loc>https://mrcaseb.github.io/nflfastR//reference/add_xpass.html</loc>
+    <loc>https://www.nflfastr.com//reference/add_xpass.html</loc>
   </url>
   <url>
-    <loc>https://mrcaseb.github.io/nflfastR//reference/add_xyac.html</loc>
+    <loc>https://www.nflfastr.com//reference/add_xyac.html</loc>
   </url>
   <url>
-    <loc>https://mrcaseb.github.io/nflfastR//reference/build_nflfastR_pbp.html</loc>
+    <loc>https://www.nflfastr.com//reference/build_nflfastR_pbp.html</loc>
   </url>
   <url>
-    <loc>https://mrcaseb.github.io/nflfastR//reference/calculate_expected_points.html</loc>
+    <loc>https://www.nflfastr.com//reference/calculate_expected_points.html</loc>
   </url>
   <url>
-    <loc>https://mrcaseb.github.io/nflfastR//reference/calculate_win_probability.html</loc>
+    <loc>https://www.nflfastr.com//reference/calculate_win_probability.html</loc>
   </url>
   <url>
-    <loc>https://mrcaseb.github.io/nflfastR//reference/clean_pbp.html</loc>
+    <loc>https://www.nflfastr.com//reference/clean_pbp.html</loc>
   </url>
   <url>
-    <loc>https://mrcaseb.github.io/nflfastR//reference/decode_player_ids.html</loc>
+    <loc>https://www.nflfastr.com//reference/decode_player_ids.html</loc>
   </url>
   <url>
-    <loc>https://mrcaseb.github.io/nflfastR//reference/fast_scraper.html</loc>
+    <loc>https://www.nflfastr.com//reference/fast_scraper.html</loc>
   </url>
   <url>
-    <loc>https://mrcaseb.github.io/nflfastR//reference/fast_scraper_roster.html</loc>
+    <loc>https://www.nflfastr.com//reference/fast_scraper_roster.html</loc>
   </url>
   <url>
-    <loc>https://mrcaseb.github.io/nflfastR//reference/fast_scraper_schedules.html</loc>
+    <loc>https://www.nflfastr.com//reference/fast_scraper_schedules.html</loc>
   </url>
   <url>
-    <loc>https://mrcaseb.github.io/nflfastR//reference/teams_colors_logos.html</loc>
+    <loc>https://www.nflfastr.com//reference/teams_colors_logos.html</loc>
   </url>
   <url>
-    <loc>https://mrcaseb.github.io/nflfastR//reference/update_db.html</loc>
+    <loc>https://www.nflfastr.com//reference/update_db.html</loc>
   </url>
   <url>
-    <loc>https://mrcaseb.github.io/nflfastR//articles/beginners_guide.html</loc>
+    <loc>https://www.nflfastr.com//articles/beginners_guide.html</loc>
   </url>
   <url>
-    <loc>https://mrcaseb.github.io/nflfastR//articles/nflfastR.html</loc>
+    <loc>https://www.nflfastr.com//articles/nflfastR.html</loc>
   </url>
 </urlset>
