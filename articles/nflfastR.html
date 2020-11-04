@@ -17,7 +17,9 @@
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Get started with nflfastR">
+<script src="../pkgdown.js"></script><!-- docsearch --><script src="../docsearch.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.3/docsearch.min.css" integrity="sha256-QOSRU/ra9ActyXkIBbiIB144aDBdtvXBcNc3OTNuX/Q=" crossorigin="anonymous">
+<link href="../docsearch.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Get started with nflfastR">
 <meta property="og:description" content="nflfastR">
 <meta property="og:image" content="https://raw.githubusercontent.com/mrcaseb/nflfastR/master/man/figures/card.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -119,7 +121,13 @@
   </a>
 </li>
       </ul>
+<form class="navbar-form navbar-right hidden-xs hidden-sm" role="search">
+        <div class="form-group">
+          <input type="search" class="form-control" name="search-input" id="search-input" placeholder="Search..." aria-label="Search for..." autocomplete="off">
 </div>
+      </form>
+      
+    </div>
 <!--/.nav-collapse -->
   </div>
 <!--/.container -->
@@ -296,7 +304,7 @@
 <span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span><span class="op">(</span><span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span><span class="op">(</span><span class="st">'{length(games_2019)} games with nflfastR:'</span><span class="op">)</span><span class="op">)</span>
 <span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fast_scraper.html">fast_scraper</a></span><span class="op">(</span><span class="va">games_2019</span>, pp <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; 10 games with nflfastR:: 14.24 sec elapsed</span></pre></div>
+<span class="co">#&gt; 10 games with nflfastR:: 14.195 sec elapsed</span></pre></div>
 </div>
 <div id="example-3-completion-percentage-over-expected-cpoe" class="section level1">
 <h1 class="hasAnchor">
@@ -307,7 +315,7 @@
 <span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span><span class="op">(</span><span class="st">'loading all games from 2009'</span><span class="op">)</span>
 <span class="va">games_2009</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span><span class="op">(</span><span class="st">'https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2009.rds'</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">season_type</span> <span class="op">==</span> <span class="st">'REG'</span><span class="op">)</span>
 <span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; loading all games from 2009: 2.971 sec elapsed</span>
+<span class="co">#&gt; loading all games from 2009: 2.973 sec elapsed</span>
 <span class="va">games_2009</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">cpoe</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">group_by</span><span class="op">(</span><span class="va">passer_player_name</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">summarize</span><span class="op">(</span>cpoe <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">cpoe</span><span class="op">)</span>, Atts<span class="op">=</span><span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">Atts</span> <span class="op">&gt;</span> <span class="fl">200</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -728,7 +736,7 @@
 <span class="co">#&gt; ℹ Can't find the data table 'nflfastR_pbp' in your database. Will load the play by play data from scratch.</span>
 <span class="co">#&gt; ● Starting download of 22 seasons between 1999 and 2020...</span>
 <span class="co">#&gt; ● Checking for missing completed games...</span>
-<span class="co">#&gt; ℹ You have 5685 games and are missing 0.</span>
+<span class="co">#&gt; ℹ You have 5699 games and are missing 0.</span>
 <span class="co">#&gt; ✔ Database update completed</span>
 <span class="co">#&gt; ℹ Path to your db: './pbp_db'</span>
 <span class="co">#&gt; ── DONE ────────────────────────────────────────────────────────────────────────</span></pre></div>
@@ -738,7 +746,7 @@
 <span class="fu"><a href="../reference/update_db.html">update_db</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; ── Update nflfastR Play-by-Play Database ──────── nflfastR version 3.1.1.9001 ──</span>
 <span class="co">#&gt; ● Checking for missing completed games...</span>
-<span class="co">#&gt; ℹ You have 5685 games and are missing 0.</span>
+<span class="co">#&gt; ℹ You have 5699 games and are missing 0.</span>
 <span class="co">#&gt; ✔ Database update completed</span>
 <span class="co">#&gt; ℹ Path to your db: '/Users/runner/work/nflfastR/nflfastR/vignettes/pbp_db'</span>
 <span class="co">#&gt; ── DONE ────────────────────────────────────────────────────────────────────────</span></pre></div>
@@ -749,7 +757,7 @@
 <span class="co">#&gt; ● Purging 2020 season(s) from the data table 'nflfastR_pbp' in your connected database...</span>
 <span class="co">#&gt; ● Starting download of the 2020 season(s)...</span>
 <span class="co">#&gt; ● Checking for missing completed games...</span>
-<span class="co">#&gt; ℹ You have 5685 games and are missing 0.</span>
+<span class="co">#&gt; ℹ You have 5699 games and are missing 0.</span>
 <span class="co">#&gt; ✔ Database update completed</span>
 <span class="co">#&gt; ℹ Path to your db: '/Users/runner/work/nflfastR/nflfastR/vignettes/pbp_db'</span>
 <span class="co">#&gt; ── DONE ────────────────────────────────────────────────────────────────────────</span></pre></div>
@@ -812,7 +820,7 @@
 <span class="co">#&gt; #   [/Users/runner/work/nflfastR/nflfastR/vignettes/pbp_db]</span>
 <span class="co">#&gt;    pass mean_epa</span>
 <span class="co">#&gt;   &lt;dbl&gt;    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1     0  -0.0996</span>
+<span class="co">#&gt; 1     0  -0.0995</span>
 <span class="co">#&gt; 2     1   0.0732</span></pre></div>
 <p>So far, everything has stayed in the database. If you want to bring a query into memory, just use <code>collect()</code> at the end:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit">
@@ -822,7 +830,7 @@
   <span class="fu">collect</span><span class="op">(</span><span class="op">)</span>
 
 <span class="va">russ</span>
-<span class="co">#&gt; # A tibble: 5,954 x 2</span>
+<span class="co">#&gt; # A tibble: 6,000 x 2</span>
 <span class="co">#&gt;    desc                                                                      epa</span>
 <span class="co">#&gt;    &lt;chr&gt;                                                                   &lt;dbl&gt;</span>
 <span class="co">#&gt;  1 (14:12) 3-R.Wilson pass short right to 18-S.Rice to SEA 34 for 9 yar…  1.13  </span>
@@ -835,7 +843,7 @@
 <span class="co">#&gt;  8 (:27) 3-R.Wilson sacked at SEA 17 for -5 yards (51-P.Lenon). Penalty… -1.13  </span>
 <span class="co">#&gt;  9 (14:28) (Shotgun) 3-R.Wilson pass short right to 17-B.Edwards to SEA…  1.94  </span>
 <span class="co">#&gt; 10 (13:59) 3-R.Wilson pass incomplete deep left to 87-B.Obomanu.         -0.453 </span>
-<span class="co">#&gt; # … with 5,944 more rows</span></pre></div>
+<span class="co">#&gt; # … with 5,990 more rows</span></pre></div>
 <p>So we’ve searched through about 1 million rows of data across 300+ columns and only brought about 5,500 rows and two columns into memory. Pretty neat! This is how I supply the data to the shiny apps on rbsdm.com without running out of memory on the server. Now there’s only one more thing to remember. When you’re finished doing what you need with the database:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit">
 <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html">dbDisconnect</a></span><span class="op">(</span><span class="va">connection</span><span class="op">)</span></pre></div>
@@ -1212,7 +1220,20 @@
 </div>
 
   
-
-
-  </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.1/docsearch.min.js" integrity="sha256-GKvGqXDznoRYHCwKXGnuchvKSwmx9SRMrZOTh2g4Sb0=" crossorigin="anonymous"></script><script>
+  docsearch({
+    
+    
+    apiKey: 'e3fe78f73c8f37b971f8119095349ecb',
+    indexName: 'nflfastr',
+    inputSelector: 'input#search-input.form-control',
+    transformData: function(hits) {
+      return hits.map(function (hit) {
+        hit.url = updateHitURL(hit);
+        return hit;
+      });
+    }
+  });
+</script>
+</body>
 </html>
