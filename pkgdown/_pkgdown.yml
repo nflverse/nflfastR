@@ -4,6 +4,9 @@ template:
   params:
     bootswatch: yeti
     ganalytics: G-8FNRBBEHML
+    docsearch:
+      api_key: e3fe78f73c8f37b971f8119095349ecb
+      index_name: nflfastr
   opengraph:
     image:
       src: https://raw.githubusercontent.com/mrcaseb/nflfastR/master/man/figures/card.png
