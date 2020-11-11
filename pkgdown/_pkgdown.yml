@@ -43,7 +43,7 @@ home:
 
 navbar:
   structure:
-    left:  [home, intro, reference, news, articles, tutorials, osf]
+    left:  [home, intro, reference, news, articles, tutorials]
     right: [data, stats, games, twitter, github]
   components:
     twitter:
@@ -58,9 +58,6 @@ navbar:
     stats:
       icon: "fas fa-chart-line fa-lg"
       href: https://rbsdm.com/stats/
-    osf:
-      text: "Open Source Football"
-      href: https://www.opensourcefootball.com/
     reference:
       text: "Functions"
       href: reference/index.html
@@ -71,3 +68,5 @@ navbar:
         href: articles/beginners_guide.html
       - text: nflfastR models
         href: https://www.opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/
+      - text: Open Source Football
+        href: https://www.opensourcefootball.com/
