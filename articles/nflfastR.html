@@ -83,10 +83,10 @@
     <li>
       <a href="https://www.opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/">nflfastR models</a>
     </li>
+    <li>
+      <a href="https://www.opensourcefootball.com/">Open Source Football</a>
+    </li>
   </ul>
-</li>
-<li>
-  <a href="https://www.opensourcefootball.com/">Open Source Football</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -338,7 +338,7 @@
 <span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span><span class="op">(</span><span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span><span class="op">(</span><span class="st">'{length(games_2019)} games with nflfastR:'</span><span class="op">)</span><span class="op">)</span>
 <span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fast_scraper.html">fast_scraper</a></span><span class="op">(</span><span class="va">games_2019</span>, pp <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; 10 games with nflfastR:: 14.45 sec elapsed</span></pre></div>
+<span class="co">#&gt; 10 games with nflfastR:: 12.433 sec elapsed</span></pre></div>
 </div>
 <div id="example-3-completion-percentage-over-expected-cpoe" class="section level2">
 <h2 class="hasAnchor">
@@ -349,7 +349,7 @@
 <span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span><span class="op">(</span><span class="st">'loading all games from 2009'</span><span class="op">)</span>
 <span class="va">games_2009</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span><span class="op">(</span><span class="st">'https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2009.rds'</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">season_type</span> <span class="op">==</span> <span class="st">'REG'</span><span class="op">)</span>
 <span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; loading all games from 2009: 2.905 sec elapsed</span>
+<span class="co">#&gt; loading all games from 2009: 2.874 sec elapsed</span>
 <span class="va">games_2009</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">cpoe</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">passer_player_name</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>cpoe <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">cpoe</span><span class="op">)</span>, Atts<span class="op">=</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">Atts</span> <span class="op">&gt;</span> <span class="fl">200</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -771,7 +771,7 @@
 <span class="co">#&gt; ℹ Can't find the data table 'nflfastR_pbp' in your database. Will load the play by play data from scratch.</span>
 <span class="co">#&gt; ● Starting download of 22 seasons between 1999 and 2020...</span>
 <span class="co">#&gt; ● Checking for missing completed games...</span>
-<span class="co">#&gt; ℹ You have 5700 games and are missing 0.</span>
+<span class="co">#&gt; ℹ You have 5713 games and are missing 0.</span>
 <span class="co">#&gt; ✔ Database update completed</span>
 <span class="co">#&gt; ℹ Path to your db: './pbp_db'</span>
 <span class="co">#&gt; ── DONE ────────────────────────────────────────────────────────────────────────</span></pre></div>
@@ -781,7 +781,7 @@
 <span class="fu"><a href="../reference/update_db.html">update_db</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; ── Update nflfastR Play-by-Play Database ──────── nflfastR version 3.1.1.9001 ──</span>
 <span class="co">#&gt; ● Checking for missing completed games...</span>
-<span class="co">#&gt; ℹ You have 5700 games and are missing 0.</span>
+<span class="co">#&gt; ℹ You have 5713 games and are missing 0.</span>
 <span class="co">#&gt; ✔ Database update completed</span>
 <span class="co">#&gt; ℹ Path to your db: '/Users/runner/work/nflfastR/nflfastR/vignettes/pbp_db'</span>
 <span class="co">#&gt; ── DONE ────────────────────────────────────────────────────────────────────────</span></pre></div>
@@ -792,7 +792,7 @@
 <span class="co">#&gt; ● Purging 2020 season(s) from the data table 'nflfastR_pbp' in your connected database...</span>
 <span class="co">#&gt; ● Starting download of the 2020 season(s)...</span>
 <span class="co">#&gt; ● Checking for missing completed games...</span>
-<span class="co">#&gt; ℹ You have 5700 games and are missing 0.</span>
+<span class="co">#&gt; ℹ You have 5713 games and are missing 0.</span>
 <span class="co">#&gt; ✔ Database update completed</span>
 <span class="co">#&gt; ℹ Path to your db: '/Users/runner/work/nflfastR/nflfastR/vignettes/pbp_db'</span>
 <span class="co">#&gt; ── DONE ────────────────────────────────────────────────────────────────────────</span></pre></div>
@@ -856,7 +856,7 @@
 <span class="co">#&gt;    pass mean_epa</span>
 <span class="co">#&gt;   &lt;dbl&gt;    &lt;dbl&gt;</span>
 <span class="co">#&gt; 1     0  -0.0995</span>
-<span class="co">#&gt; 2     1   0.0732</span></pre></div>
+<span class="co">#&gt; 2     1   0.0736</span></pre></div>
 <p>So far, everything has stayed in the database. If you want to bring a query into memory, just use <code><a href="https://dplyr.tidyverse.org/reference/compute.html">collect()</a></code> at the end:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit">
 <span class="va">russ</span> <span class="op">&lt;-</span> <span class="va">pbp_db</span> <span class="op">%&gt;%</span>
@@ -865,7 +865,7 @@
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html">collect</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="va">russ</span>
-<span class="co">#&gt; # A tibble: 6,000 x 2</span>
+<span class="co">#&gt; # A tibble: 6,050 x 2</span>
 <span class="co">#&gt;    desc                                                                      epa</span>
 <span class="co">#&gt;    &lt;chr&gt;                                                                   &lt;dbl&gt;</span>
 <span class="co">#&gt;  1 (14:12) 3-R.Wilson pass short right to 18-S.Rice to SEA 34 for 9 yar…  1.13  </span>
@@ -878,7 +878,7 @@
 <span class="co">#&gt;  8 (:27) 3-R.Wilson sacked at SEA 17 for -5 yards (51-P.Lenon). Penalty… -1.13  </span>
 <span class="co">#&gt;  9 (14:28) (Shotgun) 3-R.Wilson pass short right to 17-B.Edwards to SEA…  1.94  </span>
 <span class="co">#&gt; 10 (13:59) 3-R.Wilson pass incomplete deep left to 87-B.Obomanu.         -0.453 </span>
-<span class="co">#&gt; # … with 5,990 more rows</span></pre></div>
+<span class="co">#&gt; # … with 6,040 more rows</span></pre></div>
 <p>So we’ve searched through about 1 million rows of data across 300+ columns and only brought about 5,500 rows and two columns into memory. Pretty neat! This is how I supply the data to the shiny apps on rbsdm.com without running out of memory on the server. Now there’s only one more thing to remember. When you’re finished doing what you need with the database:</p>
 <div class="sourceCode" id="cb23"><pre class="downlit">
 <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html">dbDisconnect</a></span><span class="op">(</span><span class="va">connection</span><span class="op">)</span></pre></div>
