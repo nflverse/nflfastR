@@ -4,6 +4,7 @@
 * Added `yardline_100` as an input to both win probability models (not having it included was an oversight)
 * Fixed a bug where `series` was increased on PATs
 * Fixed a bug affecting the week 10 Raiders-Broncos game
+* Added the column `team_wordmark` - which contains URLs to the team's wordmarks - to the included data frame `?teams_colors_logos`
 
 # nflfastR 3.1.1
 
