@@ -49,7 +49,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.1.1.9002</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.1.1.9003</span>
       </span>
     </div>
 
@@ -881,7 +881,7 @@
 <p>Let’s make some more figures. The <code>team_colors_logos</code> dataframe is provided in the <code>nflfastR</code> package, so since we have already loaded the package, it’s ready to use.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">teams_colors_logos</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 6 x 10</span>
+<span class="co">#&gt; # A tibble: 6 x 11</span>
 <span class="co">#&gt;   team_abbr team_name team_id team_nick team_color team_color2 team_color3</span>
 <span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;      </span>
 <span class="co">#&gt; 1 ARI       Arizona … 3800    Cardinals #97233f    #000000     #ffb612    </span>
@@ -890,8 +890,8 @@
 <span class="co">#&gt; 4 BUF       Buffalo … 0610    Bills     #00338d    #c60c30     #0c2e82    </span>
 <span class="co">#&gt; 5 CAR       Carolina… 0750    Panthers  #0085ca    #000000     #bfc0bf    </span>
 <span class="co">#&gt; 6 CHI       Chicago … 0810    Bears     #0b162a    #c83803     #0b162a    </span>
-<span class="co">#&gt; # … with 3 more variables: team_color4 &lt;chr&gt;, team_logo_wikipedia &lt;chr&gt;,</span>
-<span class="co">#&gt; #   team_logo_espn &lt;chr&gt;</span></pre></div>
+<span class="co">#&gt; # … with 4 more variables: team_color4 &lt;chr&gt;, team_logo_wikipedia &lt;chr&gt;,</span>
+<span class="co">#&gt; #   team_logo_espn &lt;chr&gt;, team_wordmark &lt;glue&gt;</span></pre></div>
 <p>Let’s join this to the <code>qbs</code> dataframe we created:</p>
 <div class="sourceCode" id="cb29"><pre class="downlit">
 <span class="va">qbs</span> <span class="op">&lt;-</span> <span class="va">qbs</span> <span class="op">%&gt;%</span>
