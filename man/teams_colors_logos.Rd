@@ -18,10 +18,12 @@ information, including franchises in multiple cities:
   \item{team_color4}{Quaternary color}
   \item{team_logo_wikipedia}{Url to Team logo on wikipedia}
   \item{team_logo_espn}{Url to higher quality logo on espn}
+  \item{team_wordmark}{Url to team wordmarks}
 }
 The colors are taken from Lee Sharpe's teamcolors.csv who has taken them from the
 `teamcolors` package created by Ben Baumer and Gregory Matthews.
 The Wikipeadia logo urls are taken from Lee Sharpe's logos.csv
+Team wordmarks from nfl.com
 }
 \usage{
 teams_colors_logos
