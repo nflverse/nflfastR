@@ -580,7 +580,7 @@ valid_games <- c(
 # helper function to manually fill in fields for problematic games
 fix_bad_games <- function(pbp) {
 
-  pbp %>%
+  fixed <- pbp %>%
     mutate(
       #if team has the ball and scored, make them the scoring team
       td_team = dplyr::if_else(
@@ -624,6 +624,8 @@ fix_bad_games <- function(pbp) {
         .data$timeout_team
       )
     )
+
+  return(fixed)
 
 }
 
