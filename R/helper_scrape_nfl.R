@@ -62,6 +62,20 @@ get_pbp_nfl <- function(id, dir = NULL) {
       game_id <- raw_data$data$viewer$gameDetail$id
       home_team <- raw_data$data$viewer$gameDetail$homeTeam$abbreviation
       away_team <- raw_data$data$viewer$gameDetail$visitorTeam$abbreviation
+
+      # if home team and away team are the same, the game is messed up and needs fixing
+      if (home_team == away_team) {
+
+        # get correct home and away from the game ID
+        id_parts <- stringr::str_split(id, "_")
+        away_team <- id_parts[[1]][3]
+        home_team <- id_parts[[1]][4]
+        bad_game <- 1
+
+      } else {
+        bad_game <- 0
+      }
+
       weather <- dplyr::if_else(
         is.null(raw_data$data$viewer$gameDetail$weather$shortDescription),
         NA_character_,
@@ -85,8 +99,11 @@ get_pbp_nfl <- function(id, dir = NULL) {
 
       plays <- raw_data$data$viewer$gameDetail$plays %>% dplyr::mutate(game_id = as.character(game_id))
 
-      #fill missing posteam info for this time
-      if ((home_team == 'JAC' | away_team == 'JAC') & season <= 2015) {
+      #fill missing posteam info for this
+      if (
+        ((home_team == 'JAC' | away_team == 'JAC') & season <= 2015) |
+          bad_game == 1
+        ) {
         plays <- plays %>%
           dplyr::mutate(
             possessionTeam.abbreviation = stringr::str_extract(plays$prePlayByPlay, '[A-Z]{2,3}(?=\\s)'),
@@ -257,6 +274,12 @@ get_pbp_nfl <- function(id, dir = NULL) {
           drive_real_start_time = as.character(.data$drive_real_start_time)
         ) %>%
         dplyr::mutate_all(dplyr::na_if, "")
+
+      # fix for games where home_team == away_team and fields are messed up
+      if (bad_game == 1) {
+        combined <- combined %>%
+          fix_bad_games()
+      }
 
       # nfl didn't fill in first downs on this game
       if (id == '2018_01_ATL_PHI') {
@@ -553,3 +576,56 @@ valid_games <- c(
   "2020_17_TEN_HOU",
   "2020_17_WAS_PHI"
 )
+
+# helper function to manually fill in fields for problematic games
+fix_bad_games <- function(pbp) {
+
+  pbp %>%
+    mutate(
+      #if team has the ball and scored, make them the scoring team
+      td_team = dplyr::if_else(
+          .data$drive_how_ended_description == 'Touchdown' & !is.na(.data$td_team),
+        .data$posteam, .data$td_team
+      ),
+      #if team defensive team score, fill in the right team
+      td_team = dplyr::if_else(
+        #game involving the jags
+          #defensive TD
+          .data$drive_how_ended_description != 'Touchdown' & !is.na(.data$td_team),
+        #if home team has ball, then away team scored, otherwise home team scored
+        dplyr::if_else(.data$posteam == .data$home_team, .data$away_team, .data$home_team),
+        .data$td_team
+      ),
+      # fill in return team
+      return_team = dplyr::if_else(
+        !is.na(.data$return_team),
+        dplyr::if_else(
+          # if the home team has the ball, return team is away team (this is before we flip posteam for kickoffs)
+          .data$posteam == .data$home_team, .data$away_team, .data$home_team
+        ),
+        .data$return_team
+      ),
+      fumble_recovery_1_team = dplyr::if_else(
+        !is.na(.data$fumble_recovery_1_team),
+        # assign possession based on fumble_lost
+        dplyr::case_when(
+          .data$fumble_lost == 1 & .data$posteam == .data$home_team ~ .data$away_team,
+          .data$fumble_lost == 1 & .data$posteam == .data$away_team ~ .data$home_team,
+          .data$fumble_lost == 0 & .data$posteam == .data$home_team ~ .data$home_team,
+          .data$fumble_lost == 0 & .data$posteam == .data$away_team ~ .data$away_team
+        ),
+        .data$fumble_recovery_1_team
+      ),
+      timeout_team = dplyr::if_else(
+        # if there's a timeout in the affected seasons
+        !is.na(.data$timeout_team),
+        # extract from play description
+        stringr::str_extract(.data$play_description, "(?<=Timeout #[1-3] by )[:upper:]+"),
+        .data$timeout_team
+      )
+    )
+
+}
+
+
+
