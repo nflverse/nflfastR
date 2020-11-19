@@ -1,7 +1,12 @@
 # nflfastR 3.2.0
 
+## Models
+
 * Performance update for win probability model with point spread (`vegas_wp`)
 * Added `yardline_100` as an input to both win probability models (not having it included was an oversight)
+
+## Minor improvements and fixes
+
 * Fixed a bug where `series` was increased on PATs
 * Fixed a bug affecting the week 10 Raiders-Broncos game
 * Added the column `team_wordmark` - which contains URLs to the team's wordmarks - to the included data frame `?teams_colors_logos`
