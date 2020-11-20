@@ -98,7 +98,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.1.1.9004</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.2.0</span>
       </span>
     </div>
 
@@ -192,18 +192,28 @@
       <small>Source: <a href='https://github.com/mrcaseb/nflfastR/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="nflfastr-development-version" class="section level1">
-<h1 class="page-header" data-toc-text="development version">
-<a href="#nflfastr-development-version" class="anchor"></a>nflfastR (development version)<small> Unreleased </small>
+    <div id="nflfastr-320" class="section level1">
+<h1 class="page-header" data-toc-text="3.2.0">
+<a href="#nflfastr-320" class="anchor"></a>nflfastR 3.2.0<small> Unreleased </small>
 </h1>
+<div id="models" class="section level2">
+<h2 class="hasAnchor">
+<a href="#models" class="anchor"></a>Models</h2>
 <ul>
 <li>Performance update for win probability model with point spread (<code>vegas_wp</code>)</li>
 <li>Added <code>yardline_100</code> as an input to both win probability models (not having it included was an oversight)</li>
+</ul>
+</div>
+<div id="minor-improvements-and-fixes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#minor-improvements-and-fixes" class="anchor"></a>Minor improvements and fixes</h2>
+<ul>
 <li>Fixed a bug where <code>series</code> was increased on PATs</li>
 <li>Fixed a bug affecting the week 10 Raiders-Broncos game</li>
 <li>Added the column <code>team_wordmark</code> - which contains URLs to the team’s wordmarks - to the included data frame <code><a href="../reference/teams_colors_logos.html">?teams_colors_logos</a></code>
 </li>
 </ul>
+</div>
 </div>
     <div id="nflfastr-311" class="section level1">
 <h1 class="page-header" data-toc-text="3.1.1">
@@ -235,9 +245,9 @@
 </ul>
 </div>
 </div>
-<div id="minor-improvements-and-fixes" class="section level2">
+<div id="minor-improvements-and-fixes-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-improvements-and-fixes" class="anchor"></a>Minor improvements and fixes</h2>
+<a href="#minor-improvements-and-fixes-1" class="anchor"></a>Minor improvements and fixes</h2>
 <ul>
 <li>More fixes for <code>fixed_drive</code> which was not incrementing properly on drives that began following a timeout</li>
 <li>Fixed more bugs in EPA and win probability on PATs and kickoffs with penalties</li>
@@ -272,9 +282,9 @@
 <li>Added new option <code>db_connection</code> to <code><a href="../reference/update_db.html">update_db()</a></code> to allow advanced users to use other DBI drivers, such as <code>RMariaDB::MariaDB()</code>, <code>RPostgres::Postgres()</code> or <code>odbc::odbc()</code> (please see <a href="https://dbplyr.tidyverse.org/articles/dbplyr.html">dbplyr</a> for more information)</li>
 </ul>
 </div>
-<div id="minor-improvements-and-fixes-1" class="section level2">
+<div id="minor-improvements-and-fixes-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-improvements-and-fixes-1" class="anchor"></a>Minor improvements and fixes</h2>
+<a href="#minor-improvements-and-fixes-2" class="anchor"></a>Minor improvements and fixes</h2>
 <ul>
 <li>
 <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> now fixes some bugs in jersey numbers</li>
@@ -378,9 +388,9 @@
 <h1 class="page-header" data-toc-text="2.1.0">
 <a href="#nflfastr-210" class="anchor"></a>nflfastR 2.1.0<small> Unreleased </small>
 </h1>
-<div id="models" class="section level3">
+<div id="models-1" class="section level3">
 <h3 class="hasAnchor">
-<a href="#models" class="anchor"></a>Models</h3>
+<a href="#models-1" class="anchor"></a>Models</h3>
 <ul>
 <li>Removed <code>week</code> from Expected Points models along with an update of <code>vignette("nflfastR-models")</code> and <code>vignette("examples")</code>
 </li>
@@ -489,9 +499,9 @@
 <h1 class="page-header" data-toc-text="2.0.0">
 <a href="#nflfastr-200" class="anchor"></a>nflfastR 2.0.0<small> Unreleased </small>
 </h1>
-<div id="models-1" class="section level3">
+<div id="models-2" class="section level3">
 <h3 class="hasAnchor">
-<a href="#models-1" class="anchor"></a>Models</h3>
+<a href="#models-2" class="anchor"></a>Models</h3>
 <ul>
 <li><p>Added new models for Expected Points, Win Probability and Completion Probability and removed <code>nflscrapR</code> dependency. This is a <strong>major</strong> change as we are stepping away from the well established <code>nflscrapR</code> models. But we believe it is a good step forward. See <code>data-raw/MODEL-README.md</code> for detailed model information.</p></li>
 <li><p>Added internal functions for <code>EPA</code> and <code>WPA</code> to <code>helper_add_ep_wp.R</code>.</p></li>
