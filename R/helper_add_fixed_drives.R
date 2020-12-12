@@ -35,6 +35,11 @@ add_drive_results <- function(d) {
           & !is.na(dplyr::lag(.data$posteam)),
         0,
         .data$new_drive),
+      # if same team has the ball as prior play, but prior play was a punt with lost fumble, it's a new drive
+      new_drive = dplyr::if_else(
+        .data$posteam == dplyr::lag(.data$posteam) & dplyr::lag(.data$fumble_lost == 1) & dplyr::lag(.data$play_type) == "punt",
+        1, .data$new_drive
+      ),
       # first observation of a half is also a new drive
       new_drive = dplyr::if_else(.data$row == 1, 1, .data$new_drive),
       # if there's a missing, make it not a new drive (0)
@@ -49,8 +54,8 @@ add_drive_results <- function(d) {
         .data$field_goal_result == "made" ~ "Field goal",
         .data$field_goal_result %in% c("blocked", "missed") ~ "Missed field goal",
         .data$safety == 1 ~ "Safety",
-        .data$interception == 1 | .data$fumble_lost == 1 ~ "Turnover",
         .data$play_type == "punt" | .data$punt_attempt == 1 ~ "Punt",
+        .data$interception == 1 | .data$fumble_lost == 1 ~ "Turnover",
         .data$down == 4 & .data$yards_gained < .data$ydstogo & .data$play_type != "no_play" ~ "Turnover on downs",
         .data$desc %in% c("END GAME", "END QUARTER 2", "END QUARTER 4") ~ "End of half"
       )

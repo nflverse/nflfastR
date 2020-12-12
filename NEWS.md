@@ -1,3 +1,7 @@
+# nflfastR (development version)
+
+* Fix bug where `fixed_drive` and `series` weren't updating after muffed punt [(issue)](https://github.com/mrcaseb/nflfastR/issues/144)
+
 # nflfastR 3.2.0
 
 ## Models
