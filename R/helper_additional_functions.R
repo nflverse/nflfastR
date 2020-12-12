@@ -96,15 +96,19 @@ clean_pbp <- function(pbp, ...) {
         ),
         #if no pass is thrown, there shouldn't be a receiver
         receiver = dplyr::if_else(
-          stringr::str_detect(.data$desc, ' pass'), .data$receiver, NA_character_
+          stringr::str_detect(.data$desc, ' pass '), .data$receiver, NA_character_
         ),
         # if there's a pass, sack, or scramble, it's a pass play...
-        pass = dplyr::if_else(stringr::str_detect(.data$desc, "( pass)|(sacked)|(scramble)"), 1, 0),
+        pass = dplyr::if_else(stringr::str_detect(.data$desc, "( pass )|(sacked)|(scramble)"), 1, 0),
         # ...unless it says "backwards pass" and there's a rusher
         pass = dplyr::if_else(
           stringr::str_detect(.data$desc, "(backward pass)|(Backward pass)") & !is.na(.data$rusher),
           0, .data$pass
           ),
+        # and make sure there's no pass on a kickoff (sometimes there's forward pass on kickoff but that's not a pass play)
+        pass = dplyr::if_else(
+          .data$kickoff_attempt == 1, 0, .data$pass
+        ),
         #if there's a rusher and it wasn't a QB kneel or pass play, it's a run play
         rush = dplyr::if_else(!is.na(.data$rusher) & .data$qb_kneel == 0 & .data$pass == 0, 1, 0),
         #fix some common QBs with inconsistent names
