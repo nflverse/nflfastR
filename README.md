@@ -21,21 +21,21 @@ Follow](https://img.shields.io/twitter/follow/nflfastR.svg?style=social)](https:
 `nflfastR` is a set of functions to efficiently scrape NFL play-by-play
 data. `nflfastR` expands upon the features of nflscrapR:
 
-  - The package contains NFL play-by-play data back to 1999
-  - As suggested by the package name, it obtains games **much** faster
-  - Includes completion probability (`cp`), completion percentage over
+-   The package contains NFL play-by-play data back to 1999
+-   As suggested by the package name, it obtains games **much** faster
+-   Includes completion probability (`cp`), completion percentage over
     expected (`cpoe`), and expected yards after the catch (`xyac_epa`
     and `xyac_mean_yardage`) in play-by-play going back to 2006
-  - Includes drive information, including drive starting position and
+-   Includes drive information, including drive starting position and
     drive result
-  - Includes series information, including series number and series
+-   Includes series information, including series number and series
     success
-  - Hosts [a repository of play-by-play data going back
-    to 1999](https://github.com/guga31bb/nflfastR-data) for very quick
+-   Hosts [a repository of play-by-play data going back to
+    1999](https://github.com/guga31bb/nflfastR-data) for very quick
     access
-  - Features models for Expected Points, Win Probability, Completion
+-   Features models for Expected Points, Win Probability, Completion
     Probability, and Yards After the Catch (see section below)
-  - Includes a function `update_db()` that creates and updates a
+-   Includes a function `update_db()` that creates and updates a
     database
 
 We owe a debt of gratitude to the original
@@ -48,18 +48,14 @@ and inspiration this package would not exist.
 The easiest way to get nflfastR is to install it from
 [CRAN](https://cran.r-project.org/package=nflfastR) with:
 
-``` r
-install.packages("nflfastR")
-```
+    install.packages("nflfastR")
 
 To get a bug fix or to use a feature from the development version, you
 can install the development version of nflfastR from
 [GitHub](https://github.com/mrcaseb/nflfastR/) with:
 
-``` r
-if (!requireNamespace("remotes", quietly = TRUE)) {install.packages("remotes")}
-remotes::install_github("mrcaseb/nflfastR")
-```
+    if (!requireNamespace("remotes", quietly = TRUE)) {install.packages("remotes")}
+    remotes::install_github("mrcaseb/nflfastR")
 
 ## Usage
 
@@ -105,30 +101,30 @@ incorporating the pre-game spread.
 
 ## Special thanks
 
-  - To [Nick Shoemaker](https://twitter.com/WeightRoomShoe) for [finding
-    and making available JSON-formatted NFL play-by-play back
-    to 1999](https://github.com/CroppedClamp/nfl_pbps) (`nflfastR` uses
+-   To [Nick Shoemaker](https://twitter.com/WeightRoomShoe) for [finding
+    and making available JSON-formatted NFL play-by-play back to
+    1999](https://github.com/CroppedClamp/nfl_pbps) (`nflfastR` uses
     this source for 1999-2010)
-  - To [Lau Sze Yui](https://twitter.com/903124S) for developing a
+-   To [Lau Sze Yui](https://twitter.com/903124S) for developing a
     scraping function to access JSON-formatted NFL play-by-play
     beginning in 2011.
-  - To [Lee Sharpe](https://twitter.com/LeeSharpeNFL) for curating a
+-   To [Lee Sharpe](https://twitter.com/LeeSharpeNFL) for curating a
     resource for game information
-  - To [Timo Riske](https://twitter.com/PFF_Moo), [Lau Sze
+-   To [Timo Riske](https://twitter.com/PFF_Moo), [Lau Sze
     Yui](https://twitter.com/903124S), [Sean
     Clement](https://twitter.com/SeanfromSeabeck), and [Daniel
     Houston](https://twitter.com/CowboysStats) for many helpful
     discussions regarding the development of the new `nflfastR` models
-  - To [Zach Feldman](https://twitter.com/ZachFeldman3) and [Josh
+-   To [Zach Feldman](https://twitter.com/ZachFeldman3) and [Josh
     Hermsmeyer](https://twitter.com/friscojosh) for many helpful
     discussions about CPOE models as well as [Peter
     Owen](https://twitter.com/JSmoovesBrekkie) for [many helpful
     suggestions for the CP
     model](https://twitter.com/JSmoovesBrekkie/status/1268885950626623490)
-  - To [Florian Schmitt](https://twitter.com/Flosch1006) for the logo
+-   To [Florian Schmitt](https://twitter.com/Flosch1006) for the logo
     design
-  - The many users who found and reported bugs in `nflfastR` 1.0
-  - And of course, the original
+-   The many users who found and reported bugs in `nflfastR` 1.0
+-   And of course, the original
     [`nflscrapR`](https://github.com/maksimhorowitz/nflscrapR) team,
     Maksim Horowitz, Ronald Yurko, and Samuel Ventura, whose work
     represented a dramatic step forward for the state of public NFL
