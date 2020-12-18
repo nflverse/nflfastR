@@ -38,7 +38,7 @@ library(nflfastR)
 library(tidyverse)
 ```
 
-## Example 1: replicate nflscrapR with fast_scraper
+# Example 1: replicate nflscrapR with fast_scraper
 
 The functionality of `nflscrapR` can be duplicated by using `fast_scraper()`. This obtains the same information contained in `nflscrapR` (plus some extra) but much more quickly. To compare to `nflscrapR`, we use their data repository as the program no longer functions now that the NFL has taken down the old Gamecenter feed. Note that EP differs from nflscrapR as we use a newer era-adjusted model (more on this in [this post on Open Source Football](https://www.opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/)).
 
@@ -58,7 +58,7 @@ fast_scraper('2019_10_SEA_SF') %>%
   knitr::kable(digits = 3)
 ```
 
-## Example 2: scrape a batch of games very quickly with fast_scraper and parallel processing
+# Example 2: scrape a batch of games very quickly with fast_scraper and parallel processing
 
 This is a demonstration of `nflfastR`'s capabilities. While `nflfastR` can scrape a batch of games very quickly, **please be respectful of Github's servers and use the [data repository](https://github.com/guga31bb/nflfastR-data) which hosts all the scraped and cleaned data** whenever possible. The only reason to ever actually use the scraper is if it's in the middle of the season and we haven't updated the repository with recent games (but we will try to keep it updated).
 ``` {r ex2-bigscrape, warning = FALSE, message = FALSE}
@@ -70,7 +70,7 @@ f <- fast_scraper(games_2019, pp = TRUE)
 tictoc::toc()
 ```
 
-## Example 3: completion percentage over expected (CPOE)
+# Example 3: Completion Percentage Over Expected (CPOE)
 
 Let's look at CPOE leaders from the 2009 regular season.
 
@@ -87,7 +87,7 @@ games_2009 %>% filter(!is.na(cpoe)) %>% group_by(passer_player_name) %>%
   knitr::kable(digits = 1)
 ```
 
-## Example 4: using drive information
+# Example 4: Using Drive Information
 
 When working with `nflfastR`, drive results are automatically included. We use `fixed_drive` and `fixed_drive_result` since the NFL-provided information is a bit wonky. Let's look at how much more likely teams were to score starting from 1st & 10 at their own 20 yard line in 2015 (the last year before touchbacks on kickoffs changed to the 25) than in 2000.
 ``` {r ex4, warning = FALSE, message = FALSE}
@@ -105,7 +105,7 @@ pbp %>% filter(season_type == 'REG' & down == 1 & ydstogo == 10 & yardline_100 =
 
 So about 23% of 1st & 10 plays from teams' own 20 would see the drive end up in a score in 2000, compared to 30% in 2015. This has implications for Expected Points models (see `vignette("nflfastR-models")`).
 
-## Example 5: Plot offensive and defensive EPA per play for a given season
+# Example 5: Plot offensive and defensive EPA per play for a given season
 
 Let's build the **[NFL team tiers](https://rbsdm.com/stats/stats/)** using offensive and defensive expected points added per play for the 2005 regular season. The logo urls of the espn logos are integrated into the `?teams_colors_logos` data frame which is delivered with the package. 
 
@@ -140,7 +140,7 @@ offense %>%
   scale_y_reverse()
 ```
 
-## Example 6: Expected Points calculator
+# Example 6: Expected Points calculator
 We have provided a calculator for working with the Expected Points model. Here is an example of how to use it, looking for how the Expected Points on a drive beginning following a touchback has changed over time.
 
 While I have put in `'SEA'` for `home_team` and `posteam`, this only matters for figuring out whether the team with the ball is the home team (there's no actual effect for given team; it would be the same no matter what team is supplied).
@@ -191,7 +191,7 @@ nflfastR::calculate_expected_points(data) %>%
 So for 2018 and 2019, 1st & 10 from a home team's own 25 yard line had higher EP in domes than at home, which is to be expected.
 
 
-## Example 7: Win probability calculator
+# Example 7: Win probability calculator
 We have also provided a calculator for working with the win probability models. Here is an example of how to use it, looking for how the win probability to begin the game depends on the pre-game spread.
 
 While I have put in `'SEA'` for `home_team` and `posteam`, this only matters for figuring out whether the team with the ball is the home team (there's no actual effect for given team; it would be the same no matter what team is supplied).
@@ -220,7 +220,7 @@ nflfastR::calculate_win_probability(data) %>%
 
 Not surprisingly, `vegas_wp` increases with the amount a team was coming into the game favored by. Weirdly, the model thinks home teams are more likely to win even when the spread is 0. I'm not sure how much to believe the model on that one, but leaving `home` in the model did make the model better at out of sample predictions, so who knows.
 
-## Example 8: Using the built-in database function
+# Example 8: Using the built-in database function
 
 If you're comfortable using `dplyr` functions to manipulate and tidy data, you're ready to use a database. Why should you use a database?
 
@@ -338,7 +338,7 @@ dbDisconnect(connection)
 
 For more details on using a database with `nflfastR`, see [Thomas Mock's life-changing post here](https://themockup.blog/posts/2019-04-28-nflfastr-dbplyr-rsqlite/).
 
-## Example 9: working with the expected yards after catch model
+# Example 9: working with the expected yards after catch model
 
 The variables in `xyac` are as follows:
 
@@ -381,7 +381,7 @@ games_2015 %>%
 
 The presence of so many running backs on this list suggests that even though it takes into account target depth and pass direction, the model doesn't do a great job capturing space. Alternatively, running backs might be better at generating yards after the catch since running with the football is their primary role.
 
-## Example 10: Working with roster and position data
+# Example 10: Working with roster and position data
 
 At long last, there's a way to merge the new play-by-play data with roster information. The easy part is getting the rosters:
 
