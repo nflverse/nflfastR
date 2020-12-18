@@ -1,6 +1,7 @@
 # nflfastR (development version)
 
 * Fix bug where `fixed_drive` and `series` weren't updating after muffed punt (#144)
+* Fixed bug induced by the above (#149)
 * Fix bug where some special teams plays were incorrectly being labeled as pass plays (#125)
 
 # nflfastR 3.2.0
