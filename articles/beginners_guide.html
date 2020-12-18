@@ -49,7 +49,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.2.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.2.0.9001</span>
       </span>
     </div>
 
@@ -57,7 +57,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -92,31 +92,31 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/guga31bb/nflfastR-data">
-    <span class="fas fa fas fa-database fa-lg"></span>
+    <span class="fas fa-database fa-lg"></span>
      
   </a>
 </li>
 <li>
   <a href="https://rbsdm.com/stats/">
-    <span class="fas fa fas fa-chart-line fa-lg"></span>
+    <span class="fas fa-chart-line fa-lg"></span>
      
   </a>
 </li>
 <li>
   <a href="http://nflgamedata.com/">
-    <span class="fas fa fas fa-football-ball fa-lg"></span>
+    <span class="fas fa-football-ball fa-lg"></span>
      
   </a>
 </li>
 <li>
   <a href="http://twitter.com/nflfastR">
-    <span class="fab fa fab fa-twitter fa-lg"></span>
+    <span class="fab fa-twitter fa-lg"></span>
      
   </a>
 </li>
 <li>
   <a href="https://github.com/mrcaseb/nflfastR/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -136,8 +136,7 @@
 
       
 
-      </header><script src="beginners_guide_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="beginners_guide_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="beginners_guide_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+      </header><script src="beginners_guide_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>A beginner’s guide to nflfastR</h1>
@@ -176,7 +175,7 @@
 <p>Okay, now here’s the stuff you’re going to want to start putting into your R script. The following loads <code>tidyverse</code>, which contains a lot of helper functions for working with data, and <code>ggrepel</code> and <code>ggimage</code> for making figures, along with <code>nflfastR</code>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://github.com/slowkow/ggrepel">ggrepel</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/slowkow/ggrepel">ggrepel</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/GuangchuangYu/ggimage">ggimage</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.nflfastr.com/">nflfastR</a></span><span class="op">)</span></code></pre></div>
 <p>This one is optional but makes R prefer not to display numbers in scientific notation, which I find very annoying:</p>
@@ -589,7 +588,7 @@
 <span class="co">#&gt; # A tibble: 6 x 5</span>
 <span class="co">#&gt;   posteam defteam desc                                                rush  pass</span>
 <span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;                                              &lt;dbl&gt; &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 &lt;NA&gt;    &lt;NA&gt;    GAME                                                   0     0</span>
+<span class="co">#&gt; 1 &lt;NA&gt;    &lt;NA&gt;    GAME                                                   0    NA</span>
 <span class="co">#&gt; 2 ATL     MIN     5-D.Bailey kicks 65 yards from MIN 35 to end zone…     0     0</span>
 <span class="co">#&gt; 3 ATL     MIN     (15:00) 2-M.Ryan sacked at ATL 17 for -8 yards (5…     0     1</span>
 <span class="co">#&gt; 4 ATL     MIN     (14:20) 24-D.Freeman right tackle to ATL 21 for 4…     1     0</span>
@@ -1195,7 +1194,7 @@
 <span class="co">#&gt;   defteam season def_rush_epa def_pass_epa</span>
 <span class="co">#&gt;   &lt;chr&gt;    &lt;int&gt;        &lt;dbl&gt;        &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 TB        2002      -0.0755       -0.292</span>
-<span class="co">#&gt; 2 NE        2019      -0.164        -0.244</span>
+<span class="co">#&gt; 2 NE        2019      -0.168        -0.243</span>
 <span class="co">#&gt; 3 JAX       2017      -0.141        -0.224</span>
 <span class="co">#&gt; 4 NYJ       2009      -0.103        -0.220</span>
 <span class="co">#&gt; 5 LA        2003      -0.0543       -0.214</span></code></pre></div>
@@ -1273,7 +1272,7 @@
 <span class="co">#&gt; 3 SEA     2014  12          140      0.0216        0.139       -0.231 </span>
 <span class="co">#&gt; 4 SEA     2015  10          146     -0.102         0.249       -0.148 </span>
 <span class="co">#&gt; 5 SEA     2016  10.5         62     -0.126         0.102       -0.207 </span>
-<span class="co">#&gt; 6 SEA     2017   9           34     -0.189         0.0569      -0.122 </span>
+<span class="co">#&gt; 6 SEA     2017   9           34     -0.192         0.0590      -0.122 </span>
 <span class="co">#&gt; 7 SEA     2018  10           81     -0.0273        0.210       -0.131 </span>
 <span class="co">#&gt; 8 SEA     2019  11            7     -0.136         0.120       -0.0930</span>
 <span class="co">#&gt; 9 SEA     2020  NA           NA     NA            NA           NA     </span>
@@ -1317,8 +1316,8 @@
 <span class="co">#&gt; wins                1.00       0.92         0.43         0.70        -0.29</span>
 <span class="co">#&gt; point_diff          0.92       1.00         0.48         0.76        -0.33</span>
 <span class="co">#&gt; off_rush_epa        0.43       0.48         1.00         0.40         0.06</span>
-<span class="co">#&gt; off_pass_epa        0.70       0.76         0.40         1.00        -0.02</span>
-<span class="co">#&gt; def_rush_epa       -0.29      -0.33         0.06        -0.02         1.00</span>
+<span class="co">#&gt; off_pass_epa        0.70       0.76         0.40         1.00        -0.01</span>
+<span class="co">#&gt; def_rush_epa       -0.29      -0.33         0.06        -0.01         1.00</span>
 <span class="co">#&gt; def_pass_epa       -0.57      -0.62        -0.04        -0.10         0.30</span>
 <span class="co">#&gt; prior_off_rush_epa  0.23       0.26         0.33         0.22         0.02</span>
 <span class="co">#&gt; prior_off_pass_epa  0.29       0.32         0.18         0.46        -0.01</span>
@@ -1366,12 +1365,12 @@
 <span class="co">#&gt; off_rush_epa       0.40       0.47         0.37         1.00             0.19</span>
 <span class="co">#&gt; prior_point_diff   0.43       0.44         0.39         0.19             1.00</span>
 <span class="co">#&gt; prior_off_pass_epa 0.34       0.36         0.45         0.11             0.78</span>
-<span class="co">#&gt; prior_off_rush_epa 0.24       0.25         0.16         0.24             0.46</span>
+<span class="co">#&gt; prior_off_rush_epa 0.24       0.25         0.16         0.25             0.46</span>
 <span class="co">#&gt;                    prior_off_pass_epa prior_off_rush_epa</span>
 <span class="co">#&gt; wins                             0.34               0.24</span>
 <span class="co">#&gt; point_diff                       0.36               0.25</span>
 <span class="co">#&gt; off_pass_epa                     0.45               0.16</span>
-<span class="co">#&gt; off_rush_epa                     0.11               0.24</span>
+<span class="co">#&gt; off_rush_epa                     0.11               0.25</span>
 <span class="co">#&gt; prior_point_diff                 0.78               0.46</span>
 <span class="co">#&gt; prior_off_pass_epa               1.00               0.35</span>
 <span class="co">#&gt; prior_off_rush_epa               0.35               1.00</span></code></pre></div>
@@ -1389,10 +1388,10 @@
 <span class="co">#&gt; off_pass_epa       0.68       0.73         1.00         0.47             0.34</span>
 <span class="co">#&gt; off_rush_epa       0.47       0.51         0.47         1.00             0.25</span>
 <span class="co">#&gt; prior_point_diff   0.28       0.36         0.34         0.25             1.00</span>
-<span class="co">#&gt; prior_off_pass_epa 0.23       0.28         0.45         0.30             0.74</span>
+<span class="co">#&gt; prior_off_pass_epa 0.22       0.28         0.45         0.30             0.74</span>
 <span class="co">#&gt; prior_off_rush_epa 0.23       0.28         0.30         0.42             0.50</span>
 <span class="co">#&gt;                    prior_off_pass_epa prior_off_rush_epa</span>
-<span class="co">#&gt; wins                             0.23               0.23</span>
+<span class="co">#&gt; wins                             0.22               0.23</span>
 <span class="co">#&gt; point_diff                       0.28               0.28</span>
 <span class="co">#&gt; off_pass_epa                     0.45               0.30</span>
 <span class="co">#&gt; off_rush_epa                     0.30               0.42</span>
@@ -1414,22 +1413,22 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Residuals:</span>
 <span class="co">#&gt;    Min     1Q Median     3Q    Max </span>
-<span class="co">#&gt; -7.720 -1.861  0.114  2.165  7.108 </span>
+<span class="co">#&gt; -7.719 -1.864  0.115  2.172  7.108 </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Coefficients:</span>
 <span class="co">#&gt;                    Estimate Std. Error t value             Pr(&gt;|t|)    </span>
-<span class="co">#&gt; (Intercept)          7.9120     0.4011  19.726 &lt; 0.0000000000000002 ***</span>
-<span class="co">#&gt; prior_off_pass_epa   6.4692     1.2921   5.007          0.000000882 ***</span>
-<span class="co">#&gt; prior_off_rush_epa   6.5021     2.3488   2.768              0.00594 ** </span>
-<span class="co">#&gt; prior_def_pass_epa  -3.5875     1.7354  -2.067              0.03945 *  </span>
-<span class="co">#&gt; prior_def_rush_epa  -6.0287     2.4400  -2.471              0.01396 *  </span>
+<span class="co">#&gt; (Intercept)           7.913      0.401  19.731 &lt; 0.0000000000000002 ***</span>
+<span class="co">#&gt; prior_off_pass_epa    6.463      1.292   5.002          0.000000903 ***</span>
+<span class="co">#&gt; prior_off_rush_epa    6.499      2.349   2.767              0.00597 ** </span>
+<span class="co">#&gt; prior_def_pass_epa   -3.587      1.734  -2.068              0.03934 *  </span>
+<span class="co">#&gt; prior_def_rush_epa   -6.020      2.441  -2.466              0.01413 *  </span>
 <span class="co">#&gt; ---</span>
 <span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Residual standard error: 2.823 on 347 degrees of freedom</span>
 <span class="co">#&gt;   (32 observations deleted due to missingness)</span>
-<span class="co">#&gt; Multiple R-squared:  0.1684, Adjusted R-squared:  0.1589 </span>
-<span class="co">#&gt; F-statistic: 17.57 on 4 and 347 DF,  p-value: 0.0000000000003811</span></code></pre></div>
+<span class="co">#&gt; Multiple R-squared:  0.1682, Adjusted R-squared:  0.1586 </span>
+<span class="co">#&gt; F-statistic: 17.54 on 4 and 347 DF,  p-value: 0.0000000000003996</span></code></pre></div>
 <p>I’m actually pretty surprised passing offense isn’t higher here. How does this compare to simply using point differential?</p>
 <div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fit2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">wins</span> <span class="op">~</span> <span class="va">prior_point_diff</span>, data <span class="op">=</span> <span class="va">data</span><span class="op">)</span>
