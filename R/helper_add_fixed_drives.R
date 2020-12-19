@@ -37,7 +37,11 @@ add_drive_results <- function(d) {
         .data$new_drive),
       # if same team has the ball as prior play, but prior play was a punt with lost fumble, it's a new drive
       new_drive = dplyr::if_else(
-        .data$posteam == dplyr::lag(.data$posteam) & dplyr::lag(.data$fumble_lost == 1) & dplyr::lag(.data$play_type) == "punt",
+        # this line is to prevent it from overwriting already-defined new drives with NA
+        # when there's a timeout on prior line
+        .data$new_drive != 1 &
+          # same team has ball after lost fumble on punt
+          .data$posteam == dplyr::lag(.data$posteam) & dplyr::lag(.data$fumble_lost == 1) & dplyr::lag(.data$play_type) == "punt",
         1, .data$new_drive
       ),
       # first observation of a half is also a new drive
