@@ -4,6 +4,7 @@
 * Fixed bug induced by fixing the above (#149)
 * Fix bug where some special teams plays were incorrectly being labeled as pass plays (#125)
 * Fix bug where points for safeties were given to the `defteam` instead of the `posteam` (#152)
+* Fix bug where a muffed punt TD was given to the wrong team in a 2011 Jaguars game (#154)
 
 # nflfastR 3.2.0
 
