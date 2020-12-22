@@ -217,6 +217,8 @@ get_pbp_nfl <- function(id, dir = NULL) {
             dplyr::if_else(.data$posteam == .data$home_team, .data$away_team, .data$home_team),
             .data$td_team
           ),
+          # fix muffed punt td in JAC game
+          td_team = dplyr::if_else(id == "2011_14_TB_JAX" & .data$play_id == 1343, 'JAC', .data$td_team),
           # fill in return team for the JAX games
           return_team = dplyr::if_else(
             !is.na(.data$return_team) & .data$season <= 2015 & (.data$home_team == 'JAC' | .data$away_team == 'JAC'),
