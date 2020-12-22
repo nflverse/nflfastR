@@ -207,7 +207,20 @@ get_pbp_cdns <- function(gameId, dir = NULL) {
           order_sequence = NA_real_,
           time_of_day = NA_character_,
           special_teams_play = NA_real_,
-          st_play_type = NA_character_
+          st_play_type = NA_character_,
+          # there seems to be no easy way to find the safety scoring team. Will hard code the plays
+          # as there are only 6 of them in the game center data
+          safety_team = dplyr::case_when(
+            .data$safety == 1 & .data$game_id == "1999_04_PHI_NYG" & .data$play_id == 827  ~ .data$posteam,
+            .data$safety == 1 & .data$game_id == "2000_03_ATL_CAR" & .data$play_id == 3423 ~ .data$posteam,
+            .data$safety == 1 & .data$game_id == "2000_16_OAK_SEA" & .data$play_id == 3590 ~ .data$posteam,
+            .data$safety == 1 & .data$game_id == "2001_14_DAL_SEA" & .data$play_id == 2552 ~ .data$posteam,
+            .data$safety == 1 & .data$game_id == "2003_03_NO_TEN"  & .data$play_id == 416  ~ .data$posteam,
+            .data$safety == 1 & .data$game_id == "2009_08_STL_DET" & .data$play_id == 987  ~ .data$posteam,
+            .data$safety == 1 & .data$posteam == .data$home_team ~ .data$away_team,
+            .data$safety == 1 & .data$posteam == .data$away_team ~ .data$home_team,
+            TRUE ~ NA_character_
+          )
         ) %>%
         dplyr::group_by(.data$drive) %>%
         dplyr::mutate(
