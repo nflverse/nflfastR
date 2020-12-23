@@ -34,6 +34,8 @@ authors:
 home:
   title: An R package to quickly obtain clean and tidy NFL play by play data
   links:
+  - text: nflfastR Discord chat
+    href: https://discord.gg/5Er2FBnnQa
   - text: nflfastR beginner's guide
     href: articles/beginners_guide.html
   - text: nflfastR stats landing page
@@ -44,7 +46,7 @@ home:
 navbar:
   structure:
     left:  [home, intro, reference, news, articles, tutorials]
-    right: [data, stats, games, twitter, github]
+    right: [data, stats, games, twitter, discord,  github]
   components:
     twitter:
       icon: "fab fa-twitter fa-lg"
@@ -61,6 +63,9 @@ navbar:
     reference:
       text: "Functions"
       href: reference/index.html
+    discord:
+      icon: "fab fa-discord fa-lg"
+      href: https://discord.gg/5Er2FBnnQa
     articles:
       text: "Articles"
       menu:
