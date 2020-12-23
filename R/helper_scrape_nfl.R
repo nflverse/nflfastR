@@ -24,7 +24,7 @@ get_pbp_nfl <- function(id, dir = NULL) {
 
       #testing
       #id = '2019_01_GB_CHI'
-      #id = '2015_01_CAR_JAX'
+      # id = '2015_01_CAR_JAX'
       #id = '2011_01_NO_GB'
 
       season <- substr(id, 1, 4)
@@ -217,6 +217,8 @@ get_pbp_nfl <- function(id, dir = NULL) {
             dplyr::if_else(.data$posteam == .data$home_team, .data$away_team, .data$home_team),
             .data$td_team
           ),
+          # fix muffed punt td in JAC game
+          td_team = dplyr::if_else(id == "2011_14_TB_JAX" & .data$play_id == 1343, 'JAC', .data$td_team),
           # fill in return team for the JAX games
           return_team = dplyr::if_else(
             !is.na(.data$return_team) & .data$season <= 2015 & (.data$home_team == 'JAC' | .data$away_team == 'JAC'),
@@ -271,7 +273,9 @@ get_pbp_nfl <- function(id, dir = NULL) {
             id == '2012_16_BUF_MIA' & .data$play_id == 2571 ~ '8:31',
             TRUE ~ .data$time
           ),
-          drive_real_start_time = as.character(.data$drive_real_start_time)
+          drive_real_start_time = as.character(.data$drive_real_start_time),
+          # get the safety team to ensure the correct team gets the points
+          safety_team = dplyr::if_else(.data$safety == 1, .data$scoring_team_abbreviation, NA_character_)
         ) %>%
         dplyr::mutate_all(dplyr::na_if, "")
 

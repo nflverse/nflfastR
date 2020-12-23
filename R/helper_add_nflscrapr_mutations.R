@@ -426,7 +426,11 @@ add_nflscrapr_mutations <- function(pbp) {
       ),
       home_points_scored = dplyr::if_else(
         .data$defteam == .data$home_team &
-          (.data$safety == 1 | .data$two_point_return == 1 | .data$defensive_two_point_conv == 1),
+          (.data$two_point_return == 1 | .data$defensive_two_point_conv == 1),
+        2, .data$home_points_scored
+      ),
+      home_points_scored = dplyr::if_else(
+        .data$safety_team == .data$home_team & .data$safety == 1,
         2, .data$home_points_scored
       ),
       away_points_scored = dplyr::if_else(
@@ -456,7 +460,11 @@ add_nflscrapr_mutations <- function(pbp) {
       ),
       away_points_scored = dplyr::if_else(
         .data$defteam == .data$away_team &
-          (.data$safety == 1 | .data$two_point_return == 1 | .data$defensive_two_point_conv == 1),
+          (.data$two_point_return == 1 | .data$defensive_two_point_conv == 1),
+        2, .data$away_points_scored
+      ),
+      away_points_scored = dplyr::if_else(
+        .data$safety_team == .data$away_team & .data$safety == 1,
         2, .data$away_points_scored
       ),
       home_points_scored = dplyr::if_else(
