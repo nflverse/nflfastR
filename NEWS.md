@@ -5,6 +5,7 @@
 * Fix bug where some special teams plays were incorrectly being labeled as pass plays (#125)
 * Fix bug where points for safeties were given to the `defteam` instead of the `posteam` (#152)
 * Fix bug where a muffed punt TD was given to the wrong team in a 2011 Jaguars game (#154)
+* Win probability is now calculated prior to PAT attempts rather than using WP on the ensuing kickoff
 
 # nflfastR 3.2.0
 

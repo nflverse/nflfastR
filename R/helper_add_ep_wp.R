@@ -797,12 +797,104 @@ add_wp_variables <- function(pbp_data) {
   OffWinProb[regular_i] <- get_preds_wp(regular_df)
   OffWinProb_spread[regular_i] <- get_preds_wp_spread(regular_df)
 
-  ## PATs are messed up, set to NA WP for plays down is missing
-  # for kickoffs, this will get overwritten by the fix after this
+  ## set to NA WP for plays down is missing
+  # for kickoffs and PATs, these will get overwritten by the fixes after this
 
   down_na <- which(is.na(pbp_data$down))
   OffWinProb[down_na] <- NA_real_
   OffWinProb_spread[down_na] <- NA_real_
+
+  ## start PAT fix
+
+  make_pat_prob <- as.numeric(mgcv::predict.bam(fg_model, newdata = pbp_data %>% mutate(yardline_100 = 15), type="response"))
+  make_pat_prob <- make_pat_prob[1]
+
+  pat_data <- pbp_data
+
+  # plays with 1 point PAT attempts
+  pat_i <- which(
+    (pbp_data$kickoff_attempt == 0 &
+       !(stringr::str_detect(pbp_data$desc, 'Onside Kick')) &
+       (stringr::str_detect(pbp_data$desc, 'Kick formation')) &
+       is.na(pbp_data$down)) |
+      # or has PAT indicators
+      stringr::str_detect(pbp_data$desc, 'extra point') |
+      !is.na(pbp_data$extra_point_result)
+    )
+
+  # plays with 2 point PAT attempts
+  two_pt_i <- which(
+    (pbp_data$kickoff_attempt == 0 &
+       !(stringr::str_detect(pbp_data$desc, 'Onside Kick')) &
+       (stringr::str_detect(pbp_data$desc, 'Pass formation')) &
+       is.na(pbp_data$down)) |
+      # or has PAT indicators
+      stringr::str_detect(pbp_data$desc, 'TWO-POINT CONVERSION ATTEMPT')  |
+      !is.na(pbp_data$two_point_conv_result)
+  )
+
+  # make df of post-PAT plays
+  pat_data <- pbp_data %>%
+    dplyr::mutate(
+      # swap timeouts
+      to_pos = .data$posteam_timeouts_remaining,
+      to_def = .data$defteam_timeouts_remaining,
+      posteam_timeouts_remaining = .data$to_def,
+      defteam_timeouts_remaining = .data$to_pos,
+      # swap score
+      score_differential = -.data$score_differential,
+      # 1st and 10
+      down = 1,
+      ydstogo = 10,
+      # flip receive_2h_ko var
+      receive_2h_ko = case_when(
+        .data$qtr <= 2 & .data$receive_2h_ko == 0 ~ 1,
+        .data$qtr <= 2 & .data$receive_2h_ko == 1 ~ 0,
+        TRUE ~ .data$receive_2h_ko
+      ),
+      # switch posteam
+      posteam = if_else(.data$home_team == .data$posteam, .data$away_team, .data$home_team),
+      yardline_100 = 75
+    ) %>%
+    select(-"ep") %>%
+    calculate_expected_points() %>%
+    dplyr::mutate(
+      home = case_when(
+        .data$home == 0 ~ 1,
+        .data$home == 1 ~ 0
+      ),
+      # ExpScoreDiff = .data$ep + .data$score_differential,
+      posteam_spread = dplyr::if_else(.data$home == 1, .data$spread_line, -1 * .data$spread_line),
+      elapsed_share = (3600 - .data$game_seconds_remaining) / 3600,
+      spread_time = .data$posteam_spread * exp(-4 * .data$elapsed_share)
+      # ExpScoreDiff_Time_Ratio = .data$ExpScoreDiff / (.data$game_seconds_remaining + 1)
+    )
+
+  ## start with spread version
+  # get pat if 0, 1, or 2
+  pat_0 <- get_preds_wp_spread(pat_data %>% add_esdtr())
+  pat_1 <- get_preds_wp_spread(pat_data %>% dplyr::mutate(score_differential = .data$score_differential - 1) %>% add_esdtr())
+  pat_2 <- get_preds_wp_spread(pat_data %>% dplyr::mutate(score_differential = .data$score_differential - 2) %>% add_esdtr())
+
+  # Using nflscrapR version of 2pt make prob on 2nd line here
+  pat_go_for_1 <- 1 - (make_pat_prob * pat_1 + (1 - make_pat_prob) * pat_0)
+  pat_go_for_2 <- 1 - (0.4735 * pat_2 + (1 - 0.4735) * pat_0)
+
+  OffWinProb_spread[two_pt_i] <- pat_go_for_2[two_pt_i]
+  OffWinProb_spread[pat_i] <- pat_go_for_1[pat_i]
+
+  ## repeat for non-spread version
+  # get pat if 0, 1, or 2
+  pat_0 <- get_preds_wp(pat_data %>% add_esdtr())
+  pat_1 <- get_preds_wp(pat_data %>% dplyr::mutate(score_differential = .data$score_differential - 1) %>% add_esdtr())
+  pat_2 <- get_preds_wp(pat_data %>% dplyr::mutate(score_differential = .data$score_differential - 2) %>% add_esdtr())
+
+  # Using nflscrapR version of 2pt make prob on 2nd line here
+  pat_go_for_1 <- 1 - (make_pat_prob * pat_1 + (1 - make_pat_prob) * pat_0)
+  pat_go_for_2 <- 1 - (0.4735 * pat_2 + (1 - 0.4735) * pat_0)
+
+  OffWinProb[two_pt_i] <- pat_go_for_2[two_pt_i]
+  OffWinProb[pat_i] <- pat_go_for_1[pat_i]
 
   ## end PAT fix
 
@@ -814,6 +906,7 @@ add_wp_variables <- function(pbp_data) {
                                     ifelse(season < 2016,
                                            80, 75))
   # Now first down:
+  kickoff_data$down <- rep(1,nrow(pbp_data))
   kickoff_data$down1 <- rep(1,nrow(pbp_data))
   kickoff_data$down2 <- rep(0,nrow(pbp_data))
   kickoff_data$down3 <- rep(0,nrow(pbp_data))
@@ -847,38 +940,6 @@ add_wp_variables <- function(pbp_data) {
       .data$vegas_wp, .direction = "up"
     ) %>%
     dplyr::mutate(
-      #because other team will have the ball so WP from their perspective
-      #this is for backfilling WP on PATs
-      wp =
-        dplyr::if_else(
-          # added to deal with XP being last play of half and same team getting 2nd half kickoff
-          # make sure there's not end of half on next line with same posteam on line after that
-          !(.data$qtr == 2 & dplyr::lead(.data$qtr, 2) == 3 & dplyr::lead(.data$posteam, 2) == .data$posteam) &
-            # not a kickoff and has NA down
-          ((.data$kickoff_attempt == 0 &
-            !(stringr::str_detect(.data$desc, 'Onside Kick')) &
-            (stringr::str_detect(.data$desc, 'Kick formation') | stringr::str_detect(.data$desc, 'Pass formation')) &
-             is.na(.data$down)) |
-            # or has PAT indicators
-            stringr::str_detect(.data$desc, 'TWO-POINT CONVERSION ATTEMPT') | stringr::str_detect(.data$desc, 'extra point') |
-            !is.na(.data$two_point_conv_result) |
-            !is.na(.data$extra_point_result)),
-          1 - .data$wp, .data$wp),
-      vegas_wp =
-        dplyr::if_else(
-          # added to deal with XP being last play of half and same team getting 2nd half kickoff
-          # make sure there's not end of half on next line with same posteam on line after that
-          !(.data$qtr == 2 & dplyr::lead(.data$qtr, 2) == 3 & dplyr::lead(.data$posteam, 2) == .data$posteam) &
-            # not a kickoff and has NA down
-            ((.data$kickoff_attempt == 0 &
-                !(stringr::str_detect(.data$desc, 'Onside Kick')) &
-                (stringr::str_detect(.data$desc, 'Kick formation') | stringr::str_detect(.data$desc, 'Pass formation')) &
-                is.na(.data$down)) |
-               # or has PAT indicators
-               stringr::str_detect(.data$desc, 'TWO-POINT CONVERSION ATTEMPT') | stringr::str_detect(.data$desc, 'extra point') |
-               !is.na(.data$two_point_conv_result) |
-               !is.na(.data$extra_point_result)),
-          1 - .data$vegas_wp, .data$vegas_wp),
       wp = dplyr::if_else(is.na(.data$posteam), NA_real_, .data$wp),
       def_wp = 1 - .data$wp,
       home_wp = dplyr::if_else(.data$posteam == .data$home_team,
@@ -1067,6 +1128,18 @@ add_wp_variables <- function(pbp_data) {
 }
 
 
+# helper function to get expected score diff to time ratio
+# needed after flipping teams in WP for getting PAT WP
+add_esdtr <- function(data) {
+
+  data %>%
+    dplyr::mutate(
+      ExpScoreDiff = .data$ep + .data$score_differential,
+      ExpScoreDiff_Time_Ratio = .data$ExpScoreDiff / (.data$game_seconds_remaining + 1)
+    ) %>%
+    return()
+
+}
 
 
 #################################################################
