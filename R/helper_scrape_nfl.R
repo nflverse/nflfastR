@@ -275,7 +275,8 @@ get_pbp_nfl <- function(id, dir = NULL) {
           ),
           drive_real_start_time = as.character(.data$drive_real_start_time),
           # get the safety team to ensure the correct team gets the points
-          safety_team = dplyr::if_else(.data$safety == 1, .data$scoring_team_abbreviation, NA_character_)
+          # usage of base ifelse is important here for non-scoring games (i.e. early live games)
+          safety_team = ifelse(.data$safety == 1, .data$scoring_team_abbreviation, NA_character_)
         ) %>%
         dplyr::mutate_all(dplyr::na_if, "")
 
