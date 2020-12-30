@@ -25,7 +25,10 @@ Authors@R:
       person(given = "Samuel",
              family = "Ventura",
              role = "ctb",
-             email = "samventura22@gmail.com"))
+             email = "samventura22@gmail.com"),
+      person(given = "Tan",
+             family = "Ho",
+             role = "ctb"))
 Description: A set of functions to access National Football League play-by-play 
   data from <https://www.nfl.com/>.
 License: MIT + file LICENSE

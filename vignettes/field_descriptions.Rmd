@@ -1,10 +1,5 @@
 ---
 title: "Field Descriptions"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{field_descriptions}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
@@ -23,4 +18,3 @@ DT::datatable(nflfastR::field_descriptions,options = list(scrollX = TRUE, pageLe
 ```{r eval = !with_dt}
 knitr::kable(nflfastR::field_descriptions)
 ```
-
