@@ -1,7 +1,9 @@
-library(tidyverse)
-library(unglue)
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(usethis)
 
-x <- read_lines("data-raw/variable_list.txt")
+x <- readLines("data-raw/variable_list.txt")
 
 field_descriptions <- tibble(x = x) %>%
   separate(x,"{",into = c(NA,"Field","Description")) %>%
