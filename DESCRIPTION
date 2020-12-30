@@ -1,7 +1,7 @@
 Type: Package
 Package: nflfastR
 Title: Functions to Efficiently Access NFL Play by Play Data
-Version: 3.2.0.9004
+Version: 3.2.0.9005
 Authors@R: 
     c(person(given = "Sebastian",
              family = "Carl",
@@ -57,11 +57,14 @@ Imports:
     xgboost (>= 1.1)
 Suggests: 
     DBI,
+    DT,
     furrr,
     future,
     rmarkdown,
     RSQLite,
-    testthat
+    testthat,
+    knitr
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
+VignetteBuilder: knitr

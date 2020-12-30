@@ -1,0 +1,26 @@
+---
+title: "Field Descriptions"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{field_descriptions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  comment = "#>"
+)
+
+with_dt <- requireNamespace("DT")
+```
+
+```{r eval = with_dt}
+DT::datatable(nflfastR::field_descriptions,options = list(scrollX = TRUE, pageLength = 25), filter = "top", rownames = FALSE)
+```
+
+```{r eval = !with_dt}
+nflfastR::field_descriptions
+```
+
