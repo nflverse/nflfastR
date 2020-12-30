@@ -73,6 +73,11 @@ guide](https://www.nflfastr.com/articles/beginners_guide.html)**, which
 we recommend to all those who are looking for an introduction to
 nflfastR with R.
 
+You can find column names and descriptions in the **[Field
+Descriptions](https://www.nflfastr.com/articles/field_descriptions.html)**
+article, or by accessing the `field_descriptions` dataframe from the
+package.
+
 ## Data repository
 
 Even though `nflfastR` is very fast, **for historical games we recommend

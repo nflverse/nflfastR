@@ -41,4 +41,6 @@
 #'  \item{description}{Description of column}
 #' }
 #'
+#' @seealso \url{https://www.nflfastr.com/articles/field_descriptions.html}
+#'
 "field_descriptions"

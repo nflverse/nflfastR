@@ -58,6 +58,8 @@ remotes::install_github("mrcaseb/nflfastR")
 
 We have provided some application examples in the **[Getting Started](https://www.nflfastr.com/articles/nflfastR.html)** article. However, these require a basic knowledge of R. For this reason we have the **[nflfastR beginner's guide](https://www.nflfastr.com/articles/beginners_guide.html)**, which we recommend to all those who are looking for an introduction to nflfastR with R.
 
+You can find column names and descriptions in the **[Field Descriptions](https://www.nflfastr.com/articles/field_descriptions.html)** article, or by accessing the `field_descriptions` dataframe from the package.
+
 ## Data repository
 
 Even though `nflfastR` is very fast, **for historical games we recommend downloading the data from [here](https://github.com/guga31bb/nflfastR-data)**. These data sets include play-by-play data of complete seasons going back to 1999 and we will update them in 2020 once the season starts. The files contain both regular season and postseason data, and one can use game_type or week to figure out which games occurred in the postseason. Data are available as .csv.gz, .parquet, or .rds.

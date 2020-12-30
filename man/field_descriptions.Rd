@@ -9,7 +9,7 @@ A dataframe with two columns: field, and description.
 
 \describe{
  \item{field}{Name of column as shown in PBP dataframe}
- \item{description}{Description of column, including type and source}
+ \item{description}{Description of column}
 }
 }
 \usage{
