@@ -21,6 +21,6 @@ DT::datatable(nflfastR::field_descriptions,options = list(scrollX = TRUE, pageLe
 ```
 
 ```{r eval = !with_dt}
-nflfastR::field_descriptions
+knitr::kable(nflfastR::field_descriptions)
 ```
 
