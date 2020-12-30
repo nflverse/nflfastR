@@ -9,4 +9,4 @@ field_descriptions <- tibble(x = x) %>%
   separate(x,"{",into = c(NA,"Field","Description")) %>%
   mutate_all(str_remove_all,"\\}")
 
-usethis::use_data(field_descriptions)
+usethis::use_data(field_descriptions,overwrite = TRUE)

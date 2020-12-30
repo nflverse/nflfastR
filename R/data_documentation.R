@@ -28,3 +28,17 @@
 #' Team wordmarks from nfl.com
 #'
 "teams_colors_logos"
+
+#' PBP column descriptions
+#'
+#' This dataframe describes the columns of the play-by-play data created by the \code{build_nflfastr_pbp()} function.
+#'
+#' @docType data
+#' @format  A dataframe with two columns: field, and description.
+#'
+#' \describe{
+#'  \item{field}{Name of column as shown in PBP dataframe}
+#'  \item{description}{Description of column}
+#' }
+#'
+"field_descriptions"
