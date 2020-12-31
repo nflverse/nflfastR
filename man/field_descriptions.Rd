@@ -18,4 +18,7 @@ field_descriptions
 \description{
 This dataframe describes the columns of the play-by-play data created by the \code{build_nflfastr_pbp()} function.
 }
+\seealso{
+\url{https://www.nflfastr.com/articles/field_descriptions.html}
+}
 \keyword{datasets}
