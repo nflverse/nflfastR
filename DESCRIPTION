@@ -65,9 +65,7 @@ Suggests:
     future,
     rmarkdown,
     RSQLite,
-    testthat,
-    knitr
+    testthat
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
-VignetteBuilder: knitr
