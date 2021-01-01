@@ -1,0 +1,23 @@
+---
+title: "Field Descriptions"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  comment = "#>"
+)
+
+with_dt <- requireNamespace("DT")
+
+load("field_descriptions.rda")
+
+```
+
+```{r eval = with_dt}
+DT::datatable(field_descriptions,options = list(scrollX = TRUE, pageLength = 25), filter = "top", rownames = FALSE)
+```
+
+```{r eval = !with_dt}
+knitr::kable(field_descriptions)
+```

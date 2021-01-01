@@ -1,7 +1,7 @@
 Type: Package
 Package: nflfastR
 Title: Functions to Efficiently Access NFL Play by Play Data
-Version: 3.2.0.9004
+Version: 3.2.0.9005
 Authors@R: 
     c(person(given = "Sebastian",
              family = "Carl",
@@ -25,7 +25,10 @@ Authors@R:
       person(given = "Samuel",
              family = "Ventura",
              role = "ctb",
-             email = "samventura22@gmail.com"))
+             email = "samventura22@gmail.com"),
+      person(given = "Tan",
+             family = "Ho",
+             role = "ctb"))
 Description: A set of functions to access National Football League play-by-play 
   data from <https://www.nfl.com/>.
 License: MIT + file LICENSE
@@ -57,6 +60,7 @@ Imports:
     xgboost (>= 1.1)
 Suggests: 
     DBI,
+    DT,
     furrr,
     future,
     rmarkdown,
