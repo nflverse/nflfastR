@@ -9,7 +9,6 @@ source('R/helper_add_ep_wp.R')
 source('R/helper_add_cp_cpoe.R')
 source('R/helper_add_nflscrapr_mutations.R')
 
-set.seed(2013) #GoHawks
 
 ################################################################################
 # Estimate EP model
@@ -90,6 +89,8 @@ model_data <- model_data %>%
 
 full_train = xgboost::xgb.DMatrix(model.matrix(~.+0, data = model_data %>% select(-label, -Total_W_Scaled)),
                                   label = model_data$label, weight = model_data$Total_W_Scaled)
+
+set.seed(2013) #GoHawks
 ep_model <- xgboost::xgboost(params = params, data = full_train, nrounds = nrounds, verbose = 2)
 
 ################################################################################
@@ -133,6 +134,7 @@ params <-
 
 full_train = xgboost::xgb.DMatrix(model.matrix(~.+0, data = model_vars %>% dplyr::select(-complete_pass)),
                                   label = model_vars$complete_pass)
+set.seed(2013) #GoHawks
 cp_model <- xgboost::xgboost(params = params, data = full_train, nrounds = nrounds, verbose = 2)
 
 
@@ -140,7 +142,8 @@ cp_model <- xgboost::xgboost(params = params, data = full_train, nrounds = nroun
 # Estimate WP model: spread
 ################################################################################
 
-model_data <- pbp_data %>%
+model_data <-
+  readRDS(url('https://github.com/guga31bb/metrics/blob/master/wp_tuning/cal_data.rds?raw=true')) %>%
   filter(Winner != "TIE") %>%
   make_model_mutations() %>%
   prepare_wp_data() %>%
@@ -150,36 +153,39 @@ model_data <- pbp_data %>%
     label,
     receive_2h_ko,
     spread_time,
+    home,
     half_seconds_remaining,
     game_seconds_remaining,
-    ExpScoreDiff_Time_Ratio,
+    Diff_Time_Ratio,
     score_differential,
     down,
     ydstogo,
     yardline_100,
-    home,
     posteam_timeouts_remaining,
     defteam_timeouts_remaining
   )
 
 
-nrounds = 760
+nrounds = 534
 params <-
   list(
     booster = "gbtree",
     objective = "binary:logistic",
     eval_metric = c("logloss"),
-    eta = 0.02,
-    gamma = 0.3445502,
-    subsample = 0.7204741,
-    colsample_bytree = 0.5714286,
+    eta = 0.05,
+    gamma = .79012017,
+    subsample= 0.9224245,
+    colsample_bytree= 5/12,
     max_depth = 5,
-    min_child_weight = 14
+    min_child_weight = 7,
+    monotone_constraints =
+      "(0, 0, 0, 0, 0, 1, 1, -1, -1, -1, 1, -1)"
   )
 
 
 full_train = xgboost::xgb.DMatrix(model.matrix(~.+0, data = model_data %>% select(-label)),
                                   label = model_data$label)
+set.seed(2013) #GoHawks
 wp_model_spread <- xgboost::xgboost(params = params, data = full_train, nrounds = nrounds, verbose = 2)
 
 importance <- xgboost::xgb.importance(feature_names = colnames(wp_model_spread), model = wp_model_spread)
@@ -214,10 +220,16 @@ params <-
 
 full_train = xgboost::xgb.DMatrix(model.matrix(~.+0, data = model_data %>% select(-label)),
                                   label = model_data$label)
+set.seed(2013) #GoHawks
 wp_model <- xgboost::xgboost(params = params, data = full_train, nrounds = nrounds, verbose = 2)
 
 
+
+
+################################################################################
 # save models to use in package
+################################################################################
+
 usethis::use_data(ep_model, wp_model, wp_model_spread, fg_model, cp_model, internal = TRUE, overwrite = TRUE)
 
 

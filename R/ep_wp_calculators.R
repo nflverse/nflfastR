@@ -84,18 +84,17 @@ drop.cols <- c(
 #' for provided plays. Returns the data with
 #' probabilities of winning the game. The following columns
 #' must be present: receive_h2_ko (1 if game is in 1st half and possession
-#' team will receive 2nd half kickoff, 0 otherwise), ep (expected points),
+#' team will receive 2nd half kickoff, 0 otherwise),
 #' home_team, posteam, half_seconds_remaining, game_seconds_remaining,
 #' spread_line (how many points home team was favored by), down, ydstogo,
 #' yardline_100, posteam_timeouts_remaining, defteam_timeouts_remaining
 #'
 #' @param pbp_data Play-by-play dataset to estimate win probability for.
 #' @details Computes win probability for provided plays. Returns the data with
-#' probabilities of each scoring event and EP added. The following columns
+#' spread and non-spread-adjusted win probabilities. The following columns
 #' must be present:
 #' \itemize{
 #' \item{receive_2h_ko (1 if game is in 1st half and possession team will receive 2nd half kickoff, 0 otherwise)}
-#' \item{ep (expected points)}
 #' \item{score_differential}
 #' \item{home_team}
 #' \item{posteam}
@@ -126,11 +125,10 @@ calculate_win_probability <- function(pbp_data) {
       dplyr::select(-any_of(drop.cols.wp)) %>%
       dplyr::mutate(
         home = dplyr::if_else(.data$posteam == .data$home_team, 1, 0),
-        ExpScoreDiff = .data$ep + .data$score_differential,
         posteam_spread = dplyr::if_else(.data$home == 1, .data$spread_line, -1 * .data$spread_line),
         elapsed_share = (3600 - .data$game_seconds_remaining) / 3600,
         spread_time = .data$posteam_spread * exp(-4 * .data$elapsed_share),
-        ExpScoreDiff_Time_Ratio = .data$ExpScoreDiff / (.data$game_seconds_remaining + 1)
+        Diff_Time_Ratio = .data$score_differential / (exp(-4 * .data$elapsed_share))
       )
   )
 

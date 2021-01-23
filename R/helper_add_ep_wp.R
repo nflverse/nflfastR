@@ -160,14 +160,14 @@ wp_model_select <- function(pbp) {
   pbp <- pbp %>%
     dplyr::select(
       "receive_2h_ko",
+      "home",
       "half_seconds_remaining",
       "game_seconds_remaining",
-      "ExpScoreDiff_Time_Ratio",
+      "Diff_Time_Ratio",
       "score_differential",
       "down",
       "ydstogo",
       "yardline_100",
-      "home",
       "posteam_timeouts_remaining",
       "defteam_timeouts_remaining"
     )
@@ -185,14 +185,14 @@ wp_spread_model_select <- function(pbp) {
     dplyr::select(
       "receive_2h_ko",
       "spread_time",
+      "home",
       "half_seconds_remaining",
       "game_seconds_remaining",
-      "ExpScoreDiff_Time_Ratio",
+      "Diff_Time_Ratio",
       "score_differential",
       "down",
       "ydstogo",
       "yardline_100",
-      "home",
       "posteam_timeouts_remaining",
       "defteam_timeouts_remaining"
     )
@@ -212,11 +212,10 @@ prepare_wp_data <- function(pbp) {
     ) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(
-      ExpScoreDiff = .data$ep + .data$score_differential,
       posteam_spread = dplyr::if_else(.data$home == 1, .data$spread_line, -1 * .data$spread_line),
       elapsed_share = (3600 - .data$game_seconds_remaining) / 3600,
       spread_time = .data$posteam_spread * exp(-4 * .data$elapsed_share),
-      ExpScoreDiff_Time_Ratio = .data$ExpScoreDiff / (.data$game_seconds_remaining + 1)
+      Diff_Time_Ratio = .data$score_differential / (exp(-4 * .data$elapsed_share))
     )
 
   return(pbp)
@@ -863,11 +862,9 @@ add_wp_variables <- function(pbp_data) {
         .data$home == 0 ~ 1,
         .data$home == 1 ~ 0
       ),
-      # ExpScoreDiff = .data$ep + .data$score_differential,
       posteam_spread = dplyr::if_else(.data$home == 1, .data$spread_line, -1 * .data$spread_line),
       elapsed_share = (3600 - .data$game_seconds_remaining) / 3600,
       spread_time = .data$posteam_spread * exp(-4 * .data$elapsed_share)
-      # ExpScoreDiff_Time_Ratio = .data$ExpScoreDiff / (.data$game_seconds_remaining + 1)
     )
 
   ## start with spread version
@@ -1134,8 +1131,7 @@ add_esdtr <- function(data) {
 
   data %>%
     dplyr::mutate(
-      ExpScoreDiff = .data$ep + .data$score_differential,
-      ExpScoreDiff_Time_Ratio = .data$ExpScoreDiff / (.data$game_seconds_remaining + 1)
+      Diff_Time_Ratio = .data$score_differential / (exp(-4 * .data$elapsed_share))
     ) %>%
     return()
 
@@ -1323,23 +1319,22 @@ add_air_yac_wp_variables <- function(pbp_data) {
   pass_pbp_data <- pbp_data[pass_plays_i,]
 
   pass_pbp_data <- pass_pbp_data %>%
-    dplyr::mutate(ExpScoreDiff = .data$ep + .data$air_epa + .data$score_differential,
+    dplyr::mutate(
                   half_seconds_remaining = .data$half_seconds_remaining - 5.704673,
                   game_seconds_remaining = .data$game_seconds_remaining - 5.704673,
-                  ExpScoreDiff_Time_Ratio = .data$ExpScoreDiff / (.data$game_seconds_remaining + 1),
+                  Diff_Time_Ratio = .data$score_differential / (exp(-4 * .data$elapsed_share)),
                   Turnover_Ind = dplyr::if_else(.data$down == 4 & .data$air_yards < .data$ydstogo,
                                                 1, 0),
-                  ExpScoreDiff = dplyr::if_else(.data$Turnover_Ind == 1,
-                                                -1 * .data$ExpScoreDiff, .data$ExpScoreDiff),
-                  ExpScoreDiff_Time_Ratio = dplyr::if_else(.data$Turnover_Ind == 1,
-                                                           -1 * .data$ExpScoreDiff_Time_Ratio,
-                                                           .data$ExpScoreDiff_Time_Ratio),
+                  Diff_Time_Ratio = dplyr::if_else(.data$Turnover_Ind == 1,
+                                                           -1 * .data$Diff_Time_Ratio,
+                                                           .data$Diff_Time_Ratio),
                   posteam_timeouts_remaining = dplyr::if_else(.data$Turnover_Ind == 1,
                                                               .data$defeam_timeouts_pre,
                                                         .data$posteam_timeouts_pre),
                   defteam_timeouts_remaining = dplyr::if_else(.data$Turnover_Ind == 1,
                                                               .data$posteam_timeouts_pre,
-                                                              .data$defeam_timeouts_pre))
+                                                              .data$defeam_timeouts_pre)
+                  )
 
   # Calculate the airWP:
   pass_pbp_data$airWP <- get_preds_wp(pass_pbp_data)
