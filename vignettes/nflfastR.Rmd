@@ -21,8 +21,10 @@ nflfastR processes and cleans up play-by-play data and adds variables through [i
 ```{r}
 library(nflfastR)
 library(dplyr, warn.conflicts = FALSE)
-ids <- fast_scraper_schedules(2017:2019) %>% filter(game_type == "SB") %>% pull(game_id)
-pbp <- build_nflfastR_pbp(ids)
+ids <- nflfastR::fast_scraper_schedules(2017:2019) %>%
+  dplyr::filter(game_type == "SB") %>%
+  dplyr::pull(game_id)
+pbp <- nflfastR::build_nflfastR_pbp(ids)
 ```
 
 In most cases, however, it is not necessary to execute this function for individual games, because nflfastR provides both a [data repository](https://github.com/guga31bb/nflfastR-data) and the second main play-by-play function: `update_db()`. Please see [Example 8: Using the built-in database function] for how to work with that function.
@@ -45,16 +47,18 @@ The functionality of `nflscrapR` can be duplicated by using `fast_scraper()`. Th
 This example also uses the built-in function `clean_pbp()` to create a 'name' column for the primary player involved (the QB on pass play or ball-carrier on run play).
 
 ``` {r ex1-nflscrapR, warning = FALSE, message = FALSE}
-read_csv(url('https://github.com/ryurko/nflscrapR-data/blob/master/play_by_play_data/regular_season/reg_pbp_2019.csv?raw=true')) %>%
-  filter(home_team == 'SF' & away_team == 'SEA') %>%
-  select(desc, play_type, ep, epa, home_wp) %>% head(5) %>% 
+readr::read_csv(url("https://github.com/ryurko/nflscrapR-data/blob/master/play_by_play_data/regular_season/reg_pbp_2019.csv?raw=true")) %>%
+  dplyr::filter(home_team == "SF" & away_team == "SEA") %>%
+  dplyr::select(desc, play_type, ep, epa, home_wp) %>%
+  utils::head(5) %>%
   knitr::kable(digits = 3)
 ```
 
 ``` {r ex1-fs, warning = FALSE, message = FALSE}
-fast_scraper('2019_10_SEA_SF') %>%
-  clean_pbp() %>%
-  select(desc, play_type, ep, epa, home_wp, name) %>% head(6) %>% 
+nflfastR::fast_scraper("2019_10_SEA_SF") %>%
+  nflfastR::clean_pbp() %>%
+  dplyr::select(desc, play_type, ep, epa, home_wp, name) %>%
+  utils::head(6) %>%
   knitr::kable(digits = 3)
 ```
 
@@ -62,11 +66,13 @@ fast_scraper('2019_10_SEA_SF') %>%
 
 This is a demonstration of `nflfastR`'s capabilities. While `nflfastR` can scrape a batch of games very quickly, **please be respectful of Github's servers and use the [data repository](https://github.com/guga31bb/nflfastR-data) which hosts all the scraped and cleaned data** whenever possible. The only reason to ever actually use the scraper is if it's in the middle of the season and we haven't updated the repository with recent games (but we will try to keep it updated).
 ``` {r ex2-bigscrape, warning = FALSE, message = FALSE}
-#get list of some games from 2019
-games_2019 <- fast_scraper_schedules(2019) %>% head(10) %>% pull(game_id)
+# get list of some games from 2019
+games_2019 <- nflfastR::fast_scraper_schedules(2019) %>%
+  utils::head(10) %>%
+  dplyr::pull(game_id)
 
-tictoc::tic(glue::glue('{length(games_2019)} games with nflfastR:'))
-f <- fast_scraper(games_2019, pp = TRUE)
+tictoc::tic(glue::glue("{length(games_2019)} games with nflfastR:"))
+f <- nflfastR::fast_scraper(games_2019, pp = TRUE)
 tictoc::toc()
 ```
 
@@ -76,14 +82,16 @@ Let's look at CPOE leaders from the 2009 regular season.
 
 As discussed above, `nflfastR` has a data repository for old seasons, so there's no need to actually scrape them. Let's use that here (the below reads .rds files, but .csv and .parquet are also available).
 ``` {r ex3-cpoe, warning = FALSE, message = FALSE}
-tictoc::tic('loading all games from 2009')
-games_2009 <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2009.rds')) %>% filter(season_type == 'REG')
+tictoc::tic("loading all games from 2009")
+games_2009 <- readRDS(url("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2009.rds")) %>% dplyr::filter(season_type == "REG")
 tictoc::toc()
-games_2009 %>% filter(!is.na(cpoe)) %>% group_by(passer_player_name) %>%
-  summarize(cpoe = mean(cpoe), Atts=n()) %>%
-  filter(Atts > 200) %>%
-  arrange(-cpoe) %>%
-  head(5) %>% 
+games_2009 %>%
+  dplyr::filter(!is.na(cpoe)) %>%
+  dplyr::group_by(passer_player_name) %>%
+  dplyr::summarize(cpoe = mean(cpoe), Atts = n()) %>%
+  dplyr::filter(Atts > 200) %>%
+  dplyr::arrange(-cpoe) %>%
+  utils::head(5) %>%
   knitr::kable(digits = 1)
 ```
 
@@ -91,15 +99,16 @@ games_2009 %>% filter(!is.na(cpoe)) %>% group_by(passer_player_name) %>%
 
 When working with `nflfastR`, drive results are automatically included. We use `fixed_drive` and `fixed_drive_result` since the NFL-provided information is a bit wonky. Let's look at how much more likely teams were to score starting from 1st & 10 at their own 20 yard line in 2015 (the last year before touchbacks on kickoffs changed to the 25) than in 2000.
 ``` {r ex4, warning = FALSE, message = FALSE}
-games_2000 <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2000.rds'))
-games_2015 <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2015.rds'))
+games_2000 <- readRDS(url("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2000.rds"))
+games_2015 <- readRDS(url("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2015.rds"))
 
-pbp <- bind_rows(games_2000, games_2015)
+pbp <- dplyr::bind_rows(games_2000, games_2015)
 
-pbp %>% filter(season_type == 'REG' & down == 1 & ydstogo == 10 & yardline_100 == 80) %>%
-  mutate(drive_score = if_else(fixed_drive_result %in% c("Touchdown", "Field Goal"), 1, 0)) %>%
-  group_by(season) %>%
-  summarize(drive_score = mean(drive_score)) %>% 
+pbp %>%
+  dplyr::filter(season_type == "REG" & down == 1 & ydstogo == 10 & yardline_100 == 80) %>%
+  dplyr::mutate(drive_score = dplyr::if_else(fixed_drive_result %in% c("Touchdown", "Field Goal"), 1, 0)) %>%
+  dplyr::group_by(season) %>%
+  dplyr::summarize(drive_score = mean(drive_score)) %>%
   knitr::kable(digits = 3)
 ```
 
@@ -112,32 +121,37 @@ Let's build the **[NFL team tiers](https://rbsdm.com/stats/stats/)** using offen
 Let's also use the included helper function `clean_pbp()`, which creates "rush" and "pass" columns that (a) properly count sacks and scrambles as pass plays and (b) properly include plays with penalties. Using this, we can keep only rush or pass plays.
 ```{r ex5, warning = FALSE, message = FALSE, results = 'hide', fig.keep = 'all', dpi = 600}
 library(ggimage)
-pbp <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2005.rds')) %>%
-  filter(season_type == 'REG') %>% filter(!is.na(posteam) & (rush == 1 | pass == 1))
-offense <- pbp %>% group_by(posteam) %>% summarise(off_epa = mean(epa, na.rm = TRUE))
-defense <- pbp %>% group_by(defteam) %>% summarise(def_epa = mean(epa, na.rm = TRUE))
-logos <- teams_colors_logos %>% select(team_abbr, team_logo_espn)
+pbp <- readRDS(url("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2005.rds")) %>%
+  dplyr::filter(season_type == "REG") %>%
+  dplyr::filter(!is.na(posteam) & (rush == 1 | pass == 1))
+offense <- pbp %>%
+  dplyr::group_by(posteam) %>%
+  dplyr::summarise(off_epa = mean(epa, na.rm = TRUE))
+defense <- pbp %>%
+  dplyr::group_by(defteam) %>%
+  dplyr::summarise(def_epa = mean(epa, na.rm = TRUE))
+logos <- teams_colors_logos %>% dplyr::select(team_abbr, team_logo_espn)
 
 offense %>%
-  inner_join(defense, by = c("posteam" = "defteam")) %>%
-  inner_join(logos, by = c("posteam" = "team_abbr")) %>%
-  ggplot(aes(x = off_epa, y = def_epa)) +
-  geom_abline(slope = -1.5, intercept = c(.4, .3, .2, .1, 0, -.1, -.2, -.3), alpha = .2) +
-  geom_hline(aes(yintercept = mean(off_epa)), color = "red", linetype = "dashed") +
-  geom_vline(aes(xintercept = mean(def_epa)), color = "red", linetype = "dashed") +
-  geom_image(aes(image = team_logo_espn), size = 0.05, asp = 16 / 9) +
-  labs(
+  dplyr::inner_join(defense, by = c("posteam" = "defteam")) %>%
+  dplyr::inner_join(logos, by = c("posteam" = "team_abbr")) %>%
+  ggplot2::ggplot(aes(x = off_epa, y = def_epa)) +
+  ggplot2::geom_abline(slope = -1.5, intercept = c(.4, .3, .2, .1, 0, -.1, -.2, -.3), alpha = .2) +
+  ggplot2::geom_hline(aes(yintercept = mean(off_epa)), color = "red", linetype = "dashed") +
+  ggplot2::geom_vline(aes(xintercept = mean(def_epa)), color = "red", linetype = "dashed") +
+  ggimage::geom_image(aes(image = team_logo_espn), size = 0.05, asp = 16 / 9) +
+  ggplot2::labs(
     x = "Offense EPA/play",
     y = "Defense EPA/play",
     caption = "Data: @nflfastR",
     title = "2005 NFL Offensive and Defensive EPA per Play"
   ) +
-  theme_bw() +
-  theme(
+  ggplot2::theme_bw() +
+  ggplot2::theme(
     aspect.ratio = 9 / 16,
-    plot.title = element_text(size = 12, hjust = 0.5, face = "bold")
+    plot.title = ggplot2::element_text(size = 12, hjust = 0.5, face = "bold")
   ) +
-  scale_y_reverse()
+  ggplot2::scale_y_reverse()
 ```
 
 # Example 6: Expected Points calculator
@@ -148,19 +162,19 @@ While I have put in `'SEA'` for `home_team` and `posteam`, this only matters for
 ``` {r ex6a}
 data <- tibble::tibble(
   "season" = 1999:2019,
-  'home_team' = 'SEA',
-  'posteam' = 'SEA',
-  'roof' = 'outdoors',
-  'half_seconds_remaining' = 1800,
-  'yardline_100' = c(rep(80, 17), rep(75, 4)),
-  'down' = 1,
-  'ydstogo' = 10,
-  'posteam_timeouts_remaining' = 3,
-  'defteam_timeouts_remaining' = 3
+  "home_team" = "SEA",
+  "posteam" = "SEA",
+  "roof" = "outdoors",
+  "half_seconds_remaining" = 1800,
+  "yardline_100" = c(rep(80, 17), rep(75, 4)),
+  "down" = 1,
+  "ydstogo" = 10,
+  "posteam_timeouts_remaining" = 3,
+  "defteam_timeouts_remaining" = 3
 )
 
 nflfastR::calculate_expected_points(data) %>%
-  select(season, yardline_100, td_prob, ep) %>% 
+  dplyr::select(season, yardline_100, td_prob, ep) %>%
   knitr::kable(digits = 2)
 ```
 
@@ -172,19 +186,19 @@ We could compare the most recent four years to the expectation for playing in a 
 data <- tibble::tibble(
   "season" = 2016:2019,
   "week" = 5,
-  'home_team' = 'SEA',
-  'posteam' = 'SEA',
-  'roof' = 'dome',
-  'half_seconds_remaining' = 1800,
-  'yardline_100' = c(rep(75, 4)),
-  'down' = 1,
-  'ydstogo' = 10,
-  'posteam_timeouts_remaining' = 3,
-  'defteam_timeouts_remaining' = 3
+  "home_team" = "SEA",
+  "posteam" = "SEA",
+  "roof" = "dome",
+  "half_seconds_remaining" = 1800,
+  "yardline_100" = c(rep(75, 4)),
+  "down" = 1,
+  "ydstogo" = 10,
+  "posteam_timeouts_remaining" = 3,
+  "defteam_timeouts_remaining" = 3
 )
 
 nflfastR::calculate_expected_points(data) %>%
-  select(season, yardline_100, td_prob, ep) %>% 
+  dplyr::select(season, yardline_100, td_prob, ep) %>%
   knitr::kable(digits = 2)
 ```
 
@@ -198,22 +212,22 @@ While I have put in `'SEA'` for `home_team` and `posteam`, this only matters for
 
 ``` {r ex7}
 data <- tibble::tibble(
-  'receive_2h_ko' = 0,
-  'home_team' = 'SEA',
-  'posteam' = 'SEA',
-  'score_differential' = 0,
-  'half_seconds_remaining' = 1800,
-  'game_seconds_remaining' = 3600,
-  'spread_line' = c(1, 3, 4, 7, 14),
-  'down' = 1,
-  'ydstogo' = 10,
-  'yardline_100' = 75,
-  'posteam_timeouts_remaining' = 3,
-  'defteam_timeouts_remaining' = 3
+  "receive_2h_ko" = 0,
+  "home_team" = "SEA",
+  "posteam" = "SEA",
+  "score_differential" = 0,
+  "half_seconds_remaining" = 1800,
+  "game_seconds_remaining" = 3600,
+  "spread_line" = c(1, 3, 4, 7, 14),
+  "down" = 1,
+  "ydstogo" = 10,
+  "yardline_100" = 75,
+  "posteam_timeouts_remaining" = 3,
+  "defteam_timeouts_remaining" = 3
 )
 
 nflfastR::calculate_win_probability(data) %>%
-  select(spread_line, wp, vegas_wp) %>% 
+  dplyr::select(spread_line, wp, vegas_wp) %>%
   knitr::kable(digits = 2)
 ```
 
@@ -258,7 +272,7 @@ There's exactly one function in `nflfastR` that works with databases: `update_db
 Let's say I just want to dump a database into the current working directory. Here we go!
 
 ``` {r create-db}
-update_db()
+nflfastR::update_db()
 ```
 
 This created a database in the current directory called `pbp_db`.
@@ -266,13 +280,13 @@ This created a database in the current directory called `pbp_db`.
 Wait, that's it? That's it! What if it's partway through the season and you want to make sure all the new games are added to the database? What do you run? `update_db()`! (just make sure you're in the directory the database is saved in or you supply the right file path)
 
 ``` {r update-db}
-update_db()
+nflfastR::update_db()
 ```
 
 If it's partway through a season and you want to re-build a season to allow for data corrections from the NFL to propagate into your database, you can specify one season to be rebuilt:
 
 ``` {r update-db-yr}
-update_db(force_rebuild = 2020)
+nflfastR::update_db(force_rebuild = 2020)
 ```
 
 ## Connect to database
@@ -280,21 +294,21 @@ update_db(force_rebuild = 2020)
 Now we can make a connection to the database. This is the only part that will look a little bit foreign, but all you need to know is where your database is located. If it's in your current working directory, this will work:
 
 ``` {r}
-connection <- dbConnect(SQLite(), "./pbp_db")
+connection <- DBI::dbConnect(RSQLite::SQLite(), "./pbp_db")
 connection
 ```
 
 It looks like nothing happened, but we now have a connection to the database. Now we're ready to do stuff. If you aren't familiar with databases, they're organized around tables. Here's how to see which tables are present in our database: 
 
 ``` {r}
-dbListTables(connection)
+DBI::dbListTables(connection)
 ```
 
 Since we went with the defaults, there's a table called `nflfastR_pbp`. Another useful function is to see the fields (i.e., columns) in a table:
 
 ``` {r}
-dbListFields(connection, "nflfastR_pbp") %>%
-  head(10)
+DBI::dbListFields(connection, "nflfastR_pbp") %>%
+  utils::head(10)
 ```
 
 This is the same list as the list of columns in `nflfastR` play-by-play. Notice we had to supply the name of the table above (`"nflfastR_pbp"`). 
@@ -302,29 +316,29 @@ This is the same list as the list of columns in `nflfastR` play-by-play. Notice 
 With all that out of the way, there's only a couple more things to learn. The main driver here is `tbl`, which helps get output with a specific table in a database:
 
 ``` {r}
-pbp_db <- tbl(connection, "nflfastR_pbp")
+pbp_db <- dplyr::tbl(connection, "nflfastR_pbp")
 ```
 
 And now, everything will magically just "work": you can forget you're even working with a database!
 
 ``` {r}
 pbp_db %>%
-  group_by(season) %>%
-  summarize(n=n())
+  dplyr::group_by(season) %>%
+  dplyr::summarize(n = dplyr::n())
 
 pbp_db %>%
-  filter(rush == 1 | pass == 1, down <= 2, !is.na(epa), !is.na(posteam)) %>%
-  group_by(pass) %>%
-  summarize(mean_epa = mean(epa))
+  dplyr::filter(rush == 1 | pass == 1, down <= 2, !is.na(epa), !is.na(posteam)) %>%
+  dplyr::group_by(pass) %>%
+  dplyr::summarize(mean_epa = mean(epa))
 ```
 
 So far, everything has stayed in the database. If you want to bring a query into memory, just use `collect()` at the end:
 
 ``` {r}
 russ <- pbp_db %>%
-  filter(name == "R.Wilson" & posteam == "SEA") %>%
-  select(desc, epa) %>%
-  collect()
+  dplyr::filter(name == "R.Wilson" & posteam == "SEA") %>%
+  dplyr::select(desc, epa) %>%
+  dplyr::collect()
 
 russ
 ```
@@ -332,7 +346,7 @@ russ
 So we've searched through about 1 million rows of data across 300+ columns and only brought about 5,500 rows and two columns into memory. Pretty neat! This is how I supply the data to the shiny apps on rbsdm.com without running out of memory on the server. Now there's only one more thing to remember. When you're finished doing what you need with the database:
 
 ``` {r}
-dbDisconnect(connection)
+DBI::dbDisconnect(connection)
 ```
 
 For more details on using a database with `nflfastR`, see [Thomas Mock's life-changing post here](https://themockup.blog/posts/2019-04-28-nflfastr-dbplyr-rsqlite/).
@@ -358,24 +372,23 @@ Some other notes:
 Let's create measures for EPA and first downs over expected in 2015:
 
 ``` {r ex9-xyac, warning = FALSE, message = FALSE}
-games_2015 %>% 
-  group_by(receiver, receiver_id, posteam) %>%
-  mutate(tgt = sum(complete_pass + incomplete_pass)) %>%
-  filter(tgt >= 50) %>%
-  filter(complete_pass == 1, air_yards < yardline_100, !is.na(xyac_epa)) %>%
-  summarize(
+games_2015 %>%
+  dplyr::group_by(receiver, receiver_id, posteam) %>%
+  dplyr::mutate(tgt = sum(complete_pass + incomplete_pass)) %>%
+  dplyr::filter(tgt >= 50) %>%
+  dplyr::filter(complete_pass == 1, air_yards < yardline_100, !is.na(xyac_epa)) %>%
+  dplyr::summarize(
     epa_oe = mean(yac_epa - xyac_epa),
     actual_fd = mean(first_down),
     expected_fd = mean(xyac_fd),
     fd_oe = mean(first_down - xyac_fd),
-    rec = n()
-    ) %>%
-  ungroup() %>%
-  select(receiver, posteam, actual_fd, expected_fd, fd_oe, epa_oe, rec) %>%
-  arrange(-epa_oe) %>% 
-  head(10) %>%
+    rec = dplyr::n()
+  ) %>%
+  dplyr::ungroup() %>%
+  dplyr::select(receiver, posteam, actual_fd, expected_fd, fd_oe, epa_oe, rec) %>%
+  dplyr::arrange(-epa_oe) %>%
+  utils::head(10) %>%
   knitr::kable(digits = 3)
-
 ```
 
 The presence of so many running backs on this list suggests that even though it takes into account target depth and pass direction, the model doesn't do a great job capturing space. Alternatively, running backs might be better at generating yards after the catch since running with the football is their primary role.
@@ -390,24 +403,24 @@ roster <- nflfastR::fast_scraper_roster(2019)
 
 Now let's load play-by-play data from 2019:
 ``` {r roster_pbp_load}
-games_2019 <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2019.rds'))
+games_2019 <- readRDS(url("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2019.rds"))
 ```
 
 Here is what the new player IDs look like:
 
 ``` {r roster_pbp}
 games_2019 %>%
-  filter(rush == 1 | pass == 1, posteam == "SEA") %>%
-  select(desc, name, id)
+  dplyr::filter(rush == 1 | pass == 1, posteam == "SEA") %>%
+  dplyr::select(desc, name, id)
 ```
 
 But these IDs aren't very useful. So we need to decode them using the new function `decode_player_ids`:
 
 ``` {r roster_decode_ex}
 games_2019 %>%
-  filter(rush == 1 | pass == 1, posteam == "SEA") %>%
+  dplyr::filter(rush == 1 | pass == 1, posteam == "SEA") %>%
   nflfastR::decode_player_ids() %>%
-  select(desc, name, id)
+  dplyr::select(desc, name, id)
 ```
 
 So now we have the familiar GSIS IDs. Let's apply this to the whole dataframe:
@@ -419,25 +432,25 @@ decoded_pbp <- games_2019 %>%
 
 Now we're ready to join to the roster data using these IDs:
 ``` {r decode_join}
-joined <- decoded_pbp %>% 
-  filter(!is.na(receiver_id)) %>%
-  select(posteam, season, desc, receiver, receiver_id, epa) %>%
-  left_join(roster, by = c('receiver_id' = 'gsis_id'))
+joined <- decoded_pbp %>%
+  dplyr::filter(!is.na(receiver_id)) %>%
+  dplyr::select(posteam, season, desc, receiver, receiver_id, epa) %>%
+  dplyr::left_join(roster, by = c("receiver_id" = "gsis_id"))
 ```
 
 ``` {r decode_table}
-#the real work is done, this just makes a table and has it look nice
+# the real work is done, this just makes a table and has it look nice
 joined %>%
-  filter(position %in% c('WR', 'TE', 'RB')) %>%
-  group_by(receiver_id, receiver, position) %>%
-  summarize(tot_epa = sum(epa), n=n()) %>%
-  arrange(-tot_epa) %>%
-  ungroup() %>%
-  group_by(position) %>%
-  mutate(position_rank = 1:n()) %>%
-  filter(position_rank <= 5) %>%
+  dplyr::filter(position %in% c("WR", "TE", "RB")) %>%
+  dplyr::group_by(receiver_id, receiver, position) %>%
+  dplyr::summarize(tot_epa = sum(epa), n = n()) %>%
+  dplyr::arrange(-tot_epa) %>%
+  dplyr::ungroup() %>%
+  dplyr::group_by(position) %>%
+  dplyr::mutate(position_rank = 1:n()) %>%
+  dplyr::filter(position_rank <= 5) %>%
   dplyr::rename(Pos_Rank = position_rank, Player = receiver, Pos = position, Tgt = n, EPA = tot_epa) %>%
-  select(Player, Pos, Pos_Rank, Tgt, EPA) %>%
+  dplyr::select(Player, Pos, Pos_Rank, Tgt, EPA) %>%
   knitr::kable(digits = 0)
 ```
 
