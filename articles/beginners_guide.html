@@ -49,7 +49,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.2.0.9005</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.2.0.9006</span>
       </span>
     </div>
 
@@ -693,7 +693,6 @@
       <span class="op">)</span> <span class="op">%&gt;%</span>
     <span class="fu">arrange</span><span class="op">(</span><span class="op">-</span><span class="va">mean_epa</span><span class="op">)</span> <span class="op">%&gt;%</span>
     <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">plays</span> <span class="op">&gt;</span> <span class="fl">20</span><span class="op">)</span>
-<span class="co">#&gt; `summarise()` ungrouping output (override with `.groups` argument)</span>
 <span class="co">#&gt; # A tibble: 3 x 5</span>
 <span class="co">#&gt;   rusher     mean_epa success_rate   ypc plays</span>
 <span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;</span>
@@ -710,7 +709,6 @@
       mean_epa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">epa</span><span class="op">)</span>, success_rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">success</span><span class="op">)</span>, ypc<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">yards_gained</span><span class="op">)</span>, plays<span class="op">=</span><span class="fu">n</span><span class="op">(</span><span class="op">)</span>
       <span class="op">)</span> <span class="op">%&gt;%</span>
     <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">plays</span> <span class="op">&gt;</span> <span class="fl">20</span><span class="op">)</span>
-<span class="co">#&gt; `summarise()` ungrouping output (override with `.groups` argument)</span>
 <span class="co">#&gt; # A tibble: 3 x 5</span>
 <span class="co">#&gt;   rusher     mean_epa success_rate   ypc plays</span>
 <span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;</span>
@@ -751,10 +749,9 @@
   <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">group_by</span><span class="op">(</span><span class="va">home</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">summarize</span><span class="op">(</span>epa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">epa</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; `summarise()` ungrouping output (override with `.groups` argument)</span>
 <span class="co">#&gt; # A tibble: 2 x 2</span>
 <span class="co">#&gt;    home     epa</span>
-<span class="co">#&gt;   &lt;dbl&gt;   &lt;dbl&gt;</span>
+<span class="co">#&gt; * &lt;dbl&gt;   &lt;dbl&gt;</span>
 <span class="co">#&gt; 1     0  0.0214</span>
 <span class="co">#&gt; 2     1 -0.0164</span></code></pre></div>
 <p>Note that EPA/play is similar for home teams and away teams because <code>home</code> is already built into the <code>nflfastR</code> EPA model, so this result is expected. Actually, away EPA/play is actually somewhat higher, presumably because away teams out-performed their usual in 2019 as homefield advantage continues to decline generally.</p>
@@ -772,10 +769,9 @@
   <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">group_by</span><span class="op">(</span><span class="va">depth</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">summarize</span><span class="op">(</span>cp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">cp</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; `summarise()` ungrouping output (override with `.groups` argument)</span>
 <span class="co">#&gt; # A tibble: 4 x 2</span>
 <span class="co">#&gt;   depth       cp</span>
-<span class="co">#&gt;   &lt;chr&gt;    &lt;dbl&gt;</span>
+<span class="co">#&gt; * &lt;chr&gt;    &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 Deep     0.367</span>
 <span class="co">#&gt; 2 Medium   0.573</span>
 <span class="co">#&gt; 3 Negative 0.847</span>
@@ -792,7 +788,6 @@
     <span class="fu">group_by</span><span class="op">(</span><span class="va">posteam</span><span class="op">)</span> <span class="op">%&gt;%</span>
     <span class="fu">summarize</span><span class="op">(</span>mean_pass <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">pass</span><span class="op">)</span>, plays <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
     <span class="fu">arrange</span><span class="op">(</span><span class="op">-</span><span class="va">mean_pass</span><span class="op">)</span>
-<span class="co">#&gt; `summarise()` ungrouping output (override with `.groups` argument)</span>
 <span class="va">schotty</span>
 <span class="co">#&gt; # A tibble: 32 x 3</span>
 <span class="co">#&gt;    posteam mean_pass plays</span>
@@ -837,10 +832,9 @@
 <code class="sourceCode R"><span class="va">pbp</span> <span class="op">%&gt;%</span>
   <span class="fu">group_by</span><span class="op">(</span><span class="va">season</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">summarize</span><span class="op">(</span>n <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; `summarise()` ungrouping output (override with `.groups` argument)</span>
 <span class="co">#&gt; # A tibble: 5 x 2</span>
 <span class="co">#&gt;   season     n</span>
-<span class="co">#&gt;    &lt;int&gt; &lt;int&gt;</span>
+<span class="co">#&gt; *  &lt;int&gt; &lt;int&gt;</span>
 <span class="co">#&gt; 1   2015 48869</span>
 <span class="co">#&gt; 2   2016 48419</span>
 <span class="co">#&gt; 3   2017 47997</span>
@@ -851,10 +845,9 @@
 <code class="sourceCode R"><span class="va">pbp</span> <span class="op">%&gt;%</span>
   <span class="fu">group_by</span><span class="op">(</span><span class="va">play_type</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">summarize</span><span class="op">(</span>n <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; `summarise()` ungrouping output (override with `.groups` argument)</span>
 <span class="co">#&gt; # A tibble: 10 x 2</span>
 <span class="co">#&gt;    play_type       n</span>
-<span class="co">#&gt;    &lt;chr&gt;       &lt;int&gt;</span>
+<span class="co">#&gt;  * &lt;chr&gt;       &lt;int&gt;</span>
 <span class="co">#&gt;  1 extra_point  6115</span>
 <span class="co">#&gt;  2 field_goal   5138</span>
 <span class="co">#&gt;  3 kickoff     13525</span>
@@ -883,7 +876,7 @@
   <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">n_dropbacks</span> <span class="op">&gt;</span> <span class="fl">100</span> <span class="op">&amp;</span> <span class="va">n_plays</span> <span class="op">&gt;</span> <span class="fl">1000</span><span class="op">)</span>
-<span class="co">#&gt; `summarise()` regrouping output by 'id' (override with `.groups` argument)</span></code></pre></div>
+<span class="co">#&gt; `summarise()` has grouped output by 'id'. You can override using the `.groups` argument.</span></code></pre></div>
 <p>Lots of new stuff here. First, we’re grouping by <code>id</code> and <code>name</code> to make sure we’re getting unique players; i.e., if two players have the same name (like Javorius Allen and Josh Allen both being J.Allen), we are also using their id to differntiate them. <code>qb_epa</code> is an <code>nflfastR</code> creation that is equal to EPA in all instances except for when a pass is completed and a fumble is lost, in which case a QB gets “credit” for the play up to the spot the fumble was lost (making EPA function like passing yards). The <code>last</code> part in the <code>summarize</code> comment gets the last team that a player was observed playing with.</p>
 <p>My way of getting a dataset with only quarterbacks without joining to external roster data is to make sure they hit some number of dropbacks. In this case, filtering with <code>n_dropbacks &gt; 100</code> makes sure we’re only including quarterbacks. The <code>ungroup()</code> near the end is good practice after grouping to make sure you don’t get weird behavior with the data you created down the line.</p>
 <p>Let’s make some more figures. The <code>team_colors_logos</code> dataframe is provided in the <code>nflfastR</code> package, so since we have already loaded the package, it’s ready to use.</p>
@@ -988,43 +981,43 @@
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">games</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span><span class="op">(</span><span class="st">"http://www.habitatring.com/games.rds"</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">games</span><span class="op">)</span>
-<span class="co">#&gt; tibble [5,839 × 36] (S3: tbl_df/tbl/data.frame)</span>
-<span class="co">#&gt;  $ game_id         : chr [1:5839] "1999_01_MIN_ATL" "1999_01_KC_CHI" "1999_01_PIT_CLE" "1999_01_OAK_GB" ...</span>
-<span class="co">#&gt;  $ season          : int [1:5839] 1999 1999 1999 1999 1999 1999 1999 1999 1999 1999 ...</span>
-<span class="co">#&gt;  $ game_type       : chr [1:5839] "REG" "REG" "REG" "REG" ...</span>
-<span class="co">#&gt;  $ week            : int [1:5839] 1 1 1 1 1 1 1 1 1 1 ...</span>
-<span class="co">#&gt;  $ gameday         : chr [1:5839] "1999-09-12" "1999-09-12" "1999-09-12" "1999-09-12" ...</span>
-<span class="co">#&gt;  $ weekday         : chr [1:5839] "Sunday" "Sunday" "Sunday" "Sunday" ...</span>
-<span class="co">#&gt;  $ gametime        : chr [1:5839] NA NA NA NA ...</span>
-<span class="co">#&gt;  $ away_team       : chr [1:5839] "MIN" "KC" "PIT" "OAK" ...</span>
-<span class="co">#&gt;  $ away_score      : int [1:5839] 17 17 43 24 14 3 10 30 25 28 ...</span>
-<span class="co">#&gt;  $ home_team       : chr [1:5839] "ATL" "CHI" "CLE" "GB" ...</span>
-<span class="co">#&gt;  $ home_score      : int [1:5839] 14 20 0 28 31 41 19 28 24 20 ...</span>
-<span class="co">#&gt;  $ location        : chr [1:5839] "Home" "Home" "Home" "Home" ...</span>
-<span class="co">#&gt;  $ result          : int [1:5839] -3 3 -43 4 17 38 9 -2 -1 -8 ...</span>
-<span class="co">#&gt;  $ total           : int [1:5839] 31 37 43 52 45 44 29 58 49 48 ...</span>
-<span class="co">#&gt;  $ overtime        : int [1:5839] 0 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="co">#&gt;  $ old_game_id     : chr [1:5839] "1999091210" "1999091206" "1999091213" "1999091208" ...</span>
-<span class="co">#&gt;  $ away_rest       : int [1:5839] 7 7 7 7 7 7 7 7 7 7 ...</span>
-<span class="co">#&gt;  $ home_rest       : int [1:5839] 7 7 7 7 7 7 7 7 7 7 ...</span>
-<span class="co">#&gt;  $ away_moneyline  : int [1:5839] NA NA NA NA NA NA NA NA NA NA ...</span>
-<span class="co">#&gt;  $ home_moneyline  : int [1:5839] NA NA NA NA NA NA NA NA NA NA ...</span>
-<span class="co">#&gt;  $ spread_line     : num [1:5839] -4 -3 -6 9 -3 5.5 3.5 7 -3 9.5 ...</span>
-<span class="co">#&gt;  $ away_spread_odds: int [1:5839] NA NA NA NA NA NA NA NA NA NA ...</span>
-<span class="co">#&gt;  $ home_spread_odds: int [1:5839] NA NA NA NA NA NA NA NA NA NA ...</span>
-<span class="co">#&gt;  $ total_line      : num [1:5839] 49 38 37 43 45.5 49 38 44.5 37 42 ...</span>
-<span class="co">#&gt;  $ under_odds      : int [1:5839] NA NA NA NA NA NA NA NA NA NA ...</span>
-<span class="co">#&gt;  $ over_odds       : int [1:5839] NA NA NA NA NA NA NA NA NA NA ...</span>
-<span class="co">#&gt;  $ div_game        : int [1:5839] 0 0 1 0 1 0 1 1 1 0 ...</span>
-<span class="co">#&gt;  $ roof            : chr [1:5839] "dome" "outdoors" "outdoors" "outdoors" ...</span>
-<span class="co">#&gt;  $ surface         : chr [1:5839] "astroturf" "grass" "grass" "grass" ...</span>
-<span class="co">#&gt;  $ temp            : int [1:5839] NA 80 78 67 NA 76 NA 73 75 NA ...</span>
-<span class="co">#&gt;  $ wind            : int [1:5839] NA 12 12 10 NA 8 NA 5 3 NA ...</span>
-<span class="co">#&gt;  $ away_coach      : chr [1:5839] "Dennis Green" "Gunther Cunningham" "Bill Cowher" "Jon Gruden" ...</span>
-<span class="co">#&gt;  $ home_coach      : chr [1:5839] "Dan Reeves" "Dick Jauron" "Chris Palmer" "Ray Rhodes" ...</span>
-<span class="co">#&gt;  $ referee         : chr [1:5839] "Gerry Austin" "Phil Luckett" "Bob McElwee" "Tony Corrente" ...</span>
-<span class="co">#&gt;  $ stadium_id      : chr [1:5839] "ATL00" "CHI98" "CLE00" "GNB00" ...</span>
-<span class="co">#&gt;  $ stadium         : chr [1:5839] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...</span></code></pre></div>
+<span class="co">#&gt; tibble [5,851 × 36] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt;  $ game_id         : chr [1:5851] "1999_01_MIN_ATL" "1999_01_KC_CHI" "1999_01_PIT_CLE" "1999_01_OAK_GB" ...</span>
+<span class="co">#&gt;  $ season          : int [1:5851] 1999 1999 1999 1999 1999 1999 1999 1999 1999 1999 ...</span>
+<span class="co">#&gt;  $ game_type       : chr [1:5851] "REG" "REG" "REG" "REG" ...</span>
+<span class="co">#&gt;  $ week            : int [1:5851] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="co">#&gt;  $ gameday         : chr [1:5851] "1999-09-12" "1999-09-12" "1999-09-12" "1999-09-12" ...</span>
+<span class="co">#&gt;  $ weekday         : chr [1:5851] "Sunday" "Sunday" "Sunday" "Sunday" ...</span>
+<span class="co">#&gt;  $ gametime        : chr [1:5851] NA NA NA NA ...</span>
+<span class="co">#&gt;  $ away_team       : chr [1:5851] "MIN" "KC" "PIT" "OAK" ...</span>
+<span class="co">#&gt;  $ away_score      : int [1:5851] 17 17 43 24 14 3 10 30 25 28 ...</span>
+<span class="co">#&gt;  $ home_team       : chr [1:5851] "ATL" "CHI" "CLE" "GB" ...</span>
+<span class="co">#&gt;  $ home_score      : int [1:5851] 14 20 0 28 31 41 19 28 24 20 ...</span>
+<span class="co">#&gt;  $ location        : chr [1:5851] "Home" "Home" "Home" "Home" ...</span>
+<span class="co">#&gt;  $ result          : int [1:5851] -3 3 -43 4 17 38 9 -2 -1 -8 ...</span>
+<span class="co">#&gt;  $ total           : int [1:5851] 31 37 43 52 45 44 29 58 49 48 ...</span>
+<span class="co">#&gt;  $ overtime        : int [1:5851] 0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="co">#&gt;  $ old_game_id     : chr [1:5851] "1999091210" "1999091206" "1999091213" "1999091208" ...</span>
+<span class="co">#&gt;  $ away_rest       : int [1:5851] 7 7 7 7 7 7 7 7 7 7 ...</span>
+<span class="co">#&gt;  $ home_rest       : int [1:5851] 7 7 7 7 7 7 7 7 7 7 ...</span>
+<span class="co">#&gt;  $ away_moneyline  : int [1:5851] NA NA NA NA NA NA NA NA NA NA ...</span>
+<span class="co">#&gt;  $ home_moneyline  : int [1:5851] NA NA NA NA NA NA NA NA NA NA ...</span>
+<span class="co">#&gt;  $ spread_line     : num [1:5851] -4 -3 -6 9 -3 5.5 3.5 7 -3 9.5 ...</span>
+<span class="co">#&gt;  $ away_spread_odds: int [1:5851] NA NA NA NA NA NA NA NA NA NA ...</span>
+<span class="co">#&gt;  $ home_spread_odds: int [1:5851] NA NA NA NA NA NA NA NA NA NA ...</span>
+<span class="co">#&gt;  $ total_line      : num [1:5851] 49 38 37 43 45.5 49 38 44.5 37 42 ...</span>
+<span class="co">#&gt;  $ under_odds      : int [1:5851] NA NA NA NA NA NA NA NA NA NA ...</span>
+<span class="co">#&gt;  $ over_odds       : int [1:5851] NA NA NA NA NA NA NA NA NA NA ...</span>
+<span class="co">#&gt;  $ div_game        : int [1:5851] 0 0 1 0 1 0 1 1 1 0 ...</span>
+<span class="co">#&gt;  $ roof            : chr [1:5851] "dome" "outdoors" "outdoors" "outdoors" ...</span>
+<span class="co">#&gt;  $ surface         : chr [1:5851] "astroturf" "grass" "grass" "grass" ...</span>
+<span class="co">#&gt;  $ temp            : int [1:5851] NA 80 78 67 NA 76 NA 73 75 NA ...</span>
+<span class="co">#&gt;  $ wind            : int [1:5851] NA 12 12 10 NA 8 NA 5 3 NA ...</span>
+<span class="co">#&gt;  $ away_coach      : chr [1:5851] "Dennis Green" "Gunther Cunningham" "Bill Cowher" "Jon Gruden" ...</span>
+<span class="co">#&gt;  $ home_coach      : chr [1:5851] "Dan Reeves" "Dick Jauron" "Chris Palmer" "Ray Rhodes" ...</span>
+<span class="co">#&gt;  $ referee         : chr [1:5851] "Gerry Austin" "Phil Luckett" "Bob McElwee" "Tony Corrente" ...</span>
+<span class="co">#&gt;  $ stadium_id      : chr [1:5851] "ATL00" "CHI98" "CLE00" "GNB00" ...</span>
+<span class="co">#&gt;  $ stadium         : chr [1:5851] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...</span></code></pre></div>
 <p>To start, we want to create a dataframe where each row is a team-season observation, listing how many games they won. There are multiple ways to do this, but I’m going to just take the home and away results and bind together. As an example, here’s what the <code>home</code> results look like:</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">home</span> <span class="op">&lt;-</span> <span class="va">games</span> <span class="op">%&gt;%</span>
@@ -1097,7 +1090,7 @@
     wins <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">win</span><span class="op">)</span>,
     point_diff <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; `summarise()` regrouping output by 'team' (override with `.groups` argument)</span>
+<span class="co">#&gt; `summarise()` has grouped output by 'team'. You can override using the `.groups` argument.</span>
 
 <span class="va">team_wins</span> <span class="op">%&gt;%</span>
   <span class="fu">arrange</span><span class="op">(</span><span class="op">-</span><span class="va">wins</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -1109,7 +1102,7 @@
 <span class="co">#&gt; 2 CAR     2015    15        192</span>
 <span class="co">#&gt; 3 GB      2011    15        201</span>
 <span class="co">#&gt; 4 PIT     2004    15        121</span>
-<span class="co">#&gt; 5 ARI     2015    14        200</span></code></pre></div>
+<span class="co">#&gt; 5 BAL     2019    14        249</span></code></pre></div>
 <p>Again, we’re making sure the data looks like it “should” by checking the 5 seasons with the most wins, and making sure it looks right.</p>
 <p>Now that the team-season win and point differential data is ready, we need to go back to the <code>nflfastR</code> data to get EPA/play.</p>
 </div>
@@ -1135,7 +1128,7 @@
   <span class="fu">group_by</span><span class="op">(</span><span class="va">posteam</span>, <span class="va">season</span>, <span class="va">pass</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu">summarize</span><span class="op">(</span>epa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">epa</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>
-<span class="co">#&gt; `summarise()` regrouping output by 'posteam', 'season' (override with `.groups` argument)</span>
+<span class="co">#&gt; `summarise()` has grouped output by 'posteam', 'season'. You can override using the `.groups` argument.</span>
 <span class="co">#&gt; # A tibble: 4 x 4</span>
 <span class="co">#&gt; # Groups:   posteam, season [2]</span>
 <span class="co">#&gt;   posteam season  pass     epa</span>
@@ -1151,7 +1144,7 @@
   <span class="fu">summarize</span><span class="op">(</span>epa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">epa</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">pass</span>, values_from <span class="op">=</span> <span class="va">epa</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>
-<span class="co">#&gt; `summarise()` regrouping output by 'posteam', 'season' (override with `.groups` argument)</span>
+<span class="co">#&gt; `summarise()` has grouped output by 'posteam', 'season'. You can override using the `.groups` argument.</span>
 <span class="co">#&gt; # A tibble: 4 x 4</span>
 <span class="co">#&gt; # Groups:   posteam, season [4]</span>
 <span class="co">#&gt;   posteam season    `0`     `1`</span>
@@ -1168,7 +1161,7 @@
   <span class="fu">summarize</span><span class="op">(</span>epa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">epa</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">pass</span>, values_from <span class="op">=</span> <span class="va">epa</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">rename</span><span class="op">(</span>off_pass_epa <span class="op">=</span> <span class="va">`1`</span>, off_rush_epa <span class="op">=</span> <span class="va">`0`</span><span class="op">)</span>
-<span class="co">#&gt; `summarise()` regrouping output by 'posteam', 'season' (override with `.groups` argument)</span></code></pre></div>
+<span class="co">#&gt; `summarise()` has grouped output by 'posteam', 'season'. You can override using the `.groups` argument.</span></code></pre></div>
 <p>Note that variable names that are numbers need to be surrounded in tick marks for this to work.</p>
 <p>Now we can repeat the same process for defense:</p>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
@@ -1177,7 +1170,7 @@
   <span class="fu">summarize</span><span class="op">(</span>epa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">epa</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">pass</span>, values_from <span class="op">=</span> <span class="va">epa</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">rename</span><span class="op">(</span>def_pass_epa <span class="op">=</span> <span class="va">`1`</span>, def_rush_epa <span class="op">=</span> <span class="va">`0`</span><span class="op">)</span>
-<span class="co">#&gt; `summarise()` regrouping output by 'defteam', 'season' (override with `.groups` argument)</span></code></pre></div>
+<span class="co">#&gt; `summarise()` has grouped output by 'defteam', 'season'. You can override using the `.groups` argument.</span></code></pre></div>
 <p>Let’s do another sanity check looking at the top 5 pass offenses and defenses:</p>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#top 5 offenses</span>
@@ -1218,7 +1211,6 @@
   <span class="fu">group_by</span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">summarize</span><span class="op">(</span>n<span class="op">=</span><span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">arrange</span><span class="op">(</span><span class="va">n</span><span class="op">)</span>
-<span class="co">#&gt; `summarise()` ungrouping output (override with `.groups` argument)</span>
 <span class="co">#&gt; # A tibble: 35 x 2</span>
 <span class="co">#&gt;    team      n</span>
 <span class="co">#&gt;    &lt;chr&gt; &lt;int&gt;</span>
@@ -1250,7 +1242,6 @@
   <span class="fu">group_by</span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">summarize</span><span class="op">(</span>n<span class="op">=</span><span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">arrange</span><span class="op">(</span><span class="va">n</span><span class="op">)</span>
-<span class="co">#&gt; `summarise()` ungrouping output (override with `.groups` argument)</span>
 <span class="co">#&gt; # A tibble: 32 x 2</span>
 <span class="co">#&gt;    team      n</span>
 <span class="co">#&gt;    &lt;chr&gt; &lt;int&gt;</span>
@@ -1284,7 +1275,7 @@
 <span class="co">#&gt; 6 SEA     2017   9           34     -0.192         0.0590      -0.122 </span>
 <span class="co">#&gt; 7 SEA     2018  10           81     -0.0273        0.210       -0.131 </span>
 <span class="co">#&gt; 8 SEA     2019  11            7     -0.136         0.120       -0.0930</span>
-<span class="co">#&gt; 9 SEA     2020  NA           NA     NA            NA           NA     </span>
+<span class="co">#&gt; 9 SEA     2020  12           88     NA            NA           NA     </span>
 <span class="co">#&gt; # … with 1 more variable: def_pass_epa &lt;dbl&gt;</span></code></pre></div>
 <p>Now we’re getting really close to doing what we want! Next we need to create new columns for prior year EPA, and let’s do point differential too.</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
@@ -1370,17 +1361,17 @@
 <span class="co">#&gt;                    wins point_diff off_pass_epa off_rush_epa prior_point_diff</span>
 <span class="co">#&gt; wins               1.00       0.92         0.73         0.40             0.43</span>
 <span class="co">#&gt; point_diff         0.92       1.00         0.79         0.47             0.44</span>
-<span class="co">#&gt; off_pass_epa       0.73       0.79         1.00         0.37             0.38</span>
+<span class="co">#&gt; off_pass_epa       0.73       0.79         1.00         0.37             0.39</span>
 <span class="co">#&gt; off_rush_epa       0.40       0.47         0.37         1.00             0.19</span>
-<span class="co">#&gt; prior_point_diff   0.43       0.44         0.38         0.19             1.00</span>
-<span class="co">#&gt; prior_off_pass_epa 0.33       0.35         0.45         0.11             0.78</span>
-<span class="co">#&gt; prior_off_rush_epa 0.24       0.24         0.16         0.25             0.45</span>
+<span class="co">#&gt; prior_point_diff   0.43       0.44         0.39         0.19             1.00</span>
+<span class="co">#&gt; prior_off_pass_epa 0.34       0.36         0.45         0.11             0.78</span>
+<span class="co">#&gt; prior_off_rush_epa 0.24       0.25         0.16         0.25             0.46</span>
 <span class="co">#&gt;                    prior_off_pass_epa prior_off_rush_epa</span>
-<span class="co">#&gt; wins                             0.33               0.24</span>
-<span class="co">#&gt; point_diff                       0.35               0.24</span>
+<span class="co">#&gt; wins                             0.34               0.24</span>
+<span class="co">#&gt; point_diff                       0.36               0.25</span>
 <span class="co">#&gt; off_pass_epa                     0.45               0.16</span>
 <span class="co">#&gt; off_rush_epa                     0.11               0.25</span>
-<span class="co">#&gt; prior_point_diff                 0.78               0.45</span>
+<span class="co">#&gt; prior_point_diff                 0.78               0.46</span>
 <span class="co">#&gt; prior_off_pass_epa               1.00               0.35</span>
 <span class="co">#&gt; prior_off_rush_epa               0.35               1.00</span></code></pre></div>
 <div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
@@ -1422,22 +1413,21 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Residuals:</span>
 <span class="co">#&gt;     Min      1Q  Median      3Q     Max </span>
-<span class="co">#&gt; -7.7210 -1.8570  0.0338  2.1639  7.1089 </span>
+<span class="co">#&gt; -7.7012 -1.8902  0.0704  2.2593  7.0859 </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Coefficients:</span>
 <span class="co">#&gt;                    Estimate Std. Error t value             Pr(&gt;|t|)    </span>
-<span class="co">#&gt; (Intercept)          7.9244     0.4025  19.686 &lt; 0.0000000000000002 ***</span>
-<span class="co">#&gt; prior_off_pass_epa   6.3648     1.2970   4.907           0.00000142 ***</span>
-<span class="co">#&gt; prior_off_rush_epa   6.5344     2.3581   2.771              0.00589 ** </span>
-<span class="co">#&gt; prior_def_pass_epa  -3.6930     1.7407  -2.122              0.03458 *  </span>
-<span class="co">#&gt; prior_def_rush_epa  -6.0434     2.4502  -2.466              0.01413 *  </span>
+<span class="co">#&gt; (Intercept)          7.9612     0.3875  20.544 &lt; 0.0000000000000002 ***</span>
+<span class="co">#&gt; prior_off_pass_epa   6.5677     1.2787   5.136          0.000000449 ***</span>
+<span class="co">#&gt; prior_off_rush_epa   5.9476     2.2722   2.618              0.00921 ** </span>
+<span class="co">#&gt; prior_def_pass_epa  -4.0719     1.6410  -2.481              0.01352 *  </span>
+<span class="co">#&gt; prior_def_rush_epa  -5.1522     2.3330  -2.208              0.02781 *  </span>
 <span class="co">#&gt; ---</span>
 <span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Residual standard error: 2.834 on 347 degrees of freedom</span>
-<span class="co">#&gt;   (32 observations deleted due to missingness)</span>
-<span class="co">#&gt; Multiple R-squared:  0.1664, Adjusted R-squared:  0.1568 </span>
-<span class="co">#&gt; F-statistic: 17.32 on 4 and 347 DF,  p-value: 0.0000000000005775</span></code></pre></div>
+<span class="co">#&gt; Residual standard error: 2.86 on 379 degrees of freedom</span>
+<span class="co">#&gt; Multiple R-squared:  0.1635, Adjusted R-squared:  0.1547 </span>
+<span class="co">#&gt; F-statistic: 18.53 on 4 and 379 DF,  p-value: 0.00000000000006419</span></code></pre></div>
 <p>I’m actually pretty surprised passing offense isn’t higher here. How does this compare to simply using point differential?</p>
 <div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fit2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">wins</span> <span class="op">~</span> <span class="va">prior_point_diff</span>, data <span class="op">=</span> <span class="va">data</span><span class="op">)</span>
@@ -1449,19 +1439,18 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Residuals:</span>
 <span class="co">#&gt;     Min      1Q  Median      3Q     Max </span>
-<span class="co">#&gt; -7.0998 -1.8304  0.1488  2.0836  7.4529 </span>
+<span class="co">#&gt; -7.0962 -1.9454  0.1553  2.1461  7.4514 </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Coefficients:</span>
 <span class="co">#&gt;                  Estimate Std. Error t value            Pr(&gt;|t|)    </span>
-<span class="co">#&gt; (Intercept)      8.000000   0.149038  53.677 &lt;0.0000000000000002 ***</span>
-<span class="co">#&gt; prior_point_diff 0.012939   0.001469   8.807 &lt;0.0000000000000002 ***</span>
+<span class="co">#&gt; (Intercept)      8.000000   0.144078   55.53 &lt;0.0000000000000002 ***</span>
+<span class="co">#&gt; prior_point_diff 0.012897   0.001416    9.11 &lt;0.0000000000000002 ***</span>
 <span class="co">#&gt; ---</span>
 <span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Residual standard error: 2.796 on 350 degrees of freedom</span>
-<span class="co">#&gt;   (32 observations deleted due to missingness)</span>
-<span class="co">#&gt; Multiple R-squared:  0.1814, Adjusted R-squared:  0.1791 </span>
-<span class="co">#&gt; F-statistic: 77.56 on 1 and 350 DF,  p-value: &lt; 0.00000000000000022</span></code></pre></div>
+<span class="co">#&gt; Residual standard error: 2.823 on 382 degrees of freedom</span>
+<span class="co">#&gt; Multiple R-squared:  0.1785, Adjusted R-squared:  0.1763 </span>
+<span class="co">#&gt; F-statistic: 82.99 on 1 and 382 DF,  p-value: &lt; 0.00000000000000022</span></code></pre></div>
 <p>So R2 is somewhat higher for just point differential. This isn’t surprising as we’ve thrown away special teams plays and haven’t attempted to make any adjustments for things like fumble luck that we know can improve EPA’s predictive power.</p>
 </div>
 <div id="predictions" class="section level3">
@@ -1488,9 +1477,9 @@
 <span class="co">#&gt;        &lt;dbl&gt; &lt;chr&gt;</span>
 <span class="co">#&gt; 1       11.4 BAL  </span>
 <span class="co">#&gt; 2       10.2 SF   </span>
-<span class="co">#&gt; 3        9.7 NE   </span>
-<span class="co">#&gt; 4        9.7 NO   </span>
-<span class="co">#&gt; 5        9.6 DAL</span></code></pre></div>
+<span class="co">#&gt; 3        9.8 NE   </span>
+<span class="co">#&gt; 4        9.6 DAL  </span>
+<span class="co">#&gt; 5        9.6 NO</span></code></pre></div>
 <p>This mostly checks out.</p>
 <p>What if we just used simple point differential to predict?</p>
 <div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
@@ -1514,7 +1503,7 @@
 <span class="co">#&gt; 1       11.2 BAL  </span>
 <span class="co">#&gt; 2       10.5 NE   </span>
 <span class="co">#&gt; 3       10.2 SF   </span>
-<span class="co">#&gt; 4        9.9 KC   </span>
+<span class="co">#&gt; 4        9.8 KC   </span>
 <span class="co">#&gt; 5        9.5 DAL</span></code></pre></div>
 <p>Not surprisingly, this looks pretty similar. These are very basic models that don’t incorporate schedule, roster changes, etc. For example, a better model would take into account Tom Brady no longer playing for the Patriots. But hopefully this has been useful!</p>
 </div>

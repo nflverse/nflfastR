@@ -56,7 +56,7 @@
 <meta property="og:description" content="for provided plays. Returns the data with
 probabilities of winning the game. The following columns
 must be present: receive_h2_ko (1 if game is in 1st half and possession
-team will receive 2nd half kickoff, 0 otherwise), ep (expected points),
+team will receive 2nd half kickoff, 0 otherwise),
 home_team, posteam, half_seconds_remaining, game_seconds_remaining,
 spread_line (how many points home team was favored by), down, ydstogo,
 yardline_100, posteam_timeouts_remaining, defteam_timeouts_remaining" />
@@ -105,7 +105,7 @@ yardline_100, posteam_timeouts_remaining, defteam_timeouts_remaining" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.2.0.9005</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.2.0.9006</span>
       </span>
     </div>
 
@@ -213,7 +213,7 @@ yardline_100, posteam_timeouts_remaining, defteam_timeouts_remaining" />
     <p>for provided plays. Returns the data with
 probabilities of winning the game. The following columns
 must be present: receive_h2_ko (1 if game is in 1st half and possession
-team will receive 2nd half kickoff, 0 otherwise), ep (expected points),
+team will receive 2nd half kickoff, 0 otherwise),
 home_team, posteam, half_seconds_remaining, game_seconds_remaining,
 spread_line (how many points home team was favored by), down, ydstogo,
 yardline_100, posteam_timeouts_remaining, defteam_timeouts_remaining</p>
@@ -241,10 +241,9 @@ yardline_100, posteam_timeouts_remaining, defteam_timeouts_remaining</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Computes win probability for provided plays. Returns the data with
-probabilities of each scoring event and EP added. The following columns
+spread and non-spread-adjusted win probabilities. The following columns
 must be present:</p><ul>
 <li><p>receive_2h_ko (1 if game is in 1st half and possession team will receive 2nd half kickoff, 0 otherwise)</p></li>
-<li><p>ep (expected points)</p></li>
 <li><p>score_differential</p></li>
 <li><p>home_team</p></li>
 <li><p>posteam</p></li>
