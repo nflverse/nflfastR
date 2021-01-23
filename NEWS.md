@@ -7,6 +7,8 @@
 * Fix bug where a muffed punt TD was given to the wrong team in a 2011 Jaguars game (#154)
 * Win probability is now calculated prior to PAT attempts rather than using WP on the ensuing kickoff
 * Added field descriptions dataframe and article
+* Tuned spread-adjusted win probability model one final (?) time. Expected points is now no longer 
+required for `calculate_win_probability()`
 
 # nflfastR 3.2.0
 
