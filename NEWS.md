@@ -9,6 +9,8 @@
 * Added field descriptions dataframe and article
 * Tuned spread-adjusted win probability model one final (?) time. Expected points is now no longer 
 required for `calculate_win_probability()`
+* Improved performance of internal functions that speed up the rebuilding process in `update_db()`
+(added `qs` and `curl` to dependencies.)
 
 # nflfastR 3.2.0
 
