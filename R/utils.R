@@ -76,10 +76,15 @@ load_pbp <- function(seasons, in_db = FALSE, ...) {
   return(out)
 }
 
-single_season <- function(season, p, dbConnection = NULL, tablename = NULL) {
-  pbp <- readRDS(url(
-    glue::glue("https://github.com/guga31bb/nflfastR-data/blob/master/data/play_by_play_{season}.rds?raw=true")
-  ))
+single_season <- function(season, p, dbConnection = NULL, tablename = NULL, qs = FALSE) {
+  if (isTRUE(qs)){
+    .url <- glue::glue("https://github.com/guga31bb/nflfastR-data/blob/master/data/play_by_play_{season}.qs?raw=true")
+    pbp <- qs_from_url(.url)
+  }
+  if (isFALSE(qs)) {
+    .url <- glue::glue("https://github.com/guga31bb/nflfastR-data/blob/master/data/play_by_play_{season}.rds?raw=true")
+    pbp <- readRDS(url(.url))
+  }
   if (!is.null(dbConnection) && !is.null(tablename)) {
     DBI::dbWriteTable(dbConnection, tablename, pbp, append = TRUE)
     out <- NULL
@@ -139,3 +144,5 @@ single_season_ngs <- function(season, type, p) {
   p(sprintf("season=%g", season))
   return(ret)
 }
+
+qs_from_url <- function(url) qs::qdeserialize(curl::curl_fetch_memory(url)$content)
