@@ -57,17 +57,16 @@ load_pbp <- function(seasons, in_db = FALSE, ..., qs = FALSE) {
     usethis::ui_info("It is recommended to use parallel processing when trying to load {season_count} seasons.\nPlease consider using {usethis::ui_code('future::plan(\"multisession\")')}. Will go on sequentially...")
   }
 
-  progressr::with_progress({
-    p <- progressr::progressor(along = seasons)
+  p <- progressr::progressor(along = seasons)
 
-    if (isFALSE(in_db)) {
-      out <- furrr::future_map_dfr(seasons, single_season, p, ..., qs = qs)
-    }
-    if (isTRUE(in_db)) {
-      purrr::walk(seasons, single_season, p, ..., qs = qs)
-      out <- NULL
-    }
-  })
+  if (isFALSE(in_db)) {
+    out <- furrr::future_map_dfr(seasons, single_season, p, ..., qs = qs)
+  }
+
+  if (isTRUE(in_db)) {
+    purrr::walk(seasons, single_season, p, ..., qs = qs)
+    out <- NULL
+  }
 
   return(out)
 }
