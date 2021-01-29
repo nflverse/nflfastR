@@ -40,7 +40,7 @@ rule_footer <- function(x) {
 
 # helper that loads multiple seasons from the datarepo either into memory
 # or writes it into a db using some forwarded arguments in the dots
-load_pbp <- function(seasons, in_db = FALSE, ...) {
+load_pbp <- function(seasons, in_db = FALSE, ..., qs = FALSE) {
   most_recent <- dplyr::if_else(
     lubridate::month(lubridate::today("America/New_York")) >= 9,
     lubridate::year(lubridate::today("America/New_York")),
@@ -53,23 +53,19 @@ load_pbp <- function(seasons, in_db = FALSE, ...) {
 
   season_count <- length(seasons)
 
-  if (season_count >= 10 & !requireNamespace("furrr", quietly = TRUE)) {
-    pp <- FALSE
-    usethis::ui_info("It is recommended to use parallel processing when trying to load {season_count} seasons but the package {usethis::ui_value('furrr')} is not installed.\nPlease consider installing it with {usethis::ui_code('install.packages(\"furrr\")')}. Will go on sequentially...")
-  } else if (season_count >= 10 & requireNamespace("furrr", quietly = TRUE)) {
-    pp <- TRUE
-  } else {
-    pp <- FALSE
+  if (season_count >= 3 && any(class(future::plan()) %in% "sequential") && isFALSE(in_db)) {
+    usethis::ui_info("It is recommended to use parallel processing when trying to load {season_count} seasons.\nPlease consider using {usethis::ui_code('future::plan(\"multisession\")')}. Will go on sequentially...")
   }
 
   progressr::with_progress({
     p <- progressr::progressor(along = seasons)
 
-    if (pp == TRUE & !in_db) {
-      future::plan("multiprocess")
-      out <- furrr::future_map_dfr(seasons, single_season, p, ...)
-    } else {
-      out <- purrr::map_dfr(seasons, single_season, p, ...)
+    if (isFALSE(in_db)) {
+      out <- furrr::future_map_dfr(seasons, single_season, p, ..., qs = qs)
+    }
+    if (isTRUE(in_db)) {
+      purrr::walk(seasons, single_season, p, ..., qs = qs)
+      out <- NULL
     }
   })
 
