@@ -16,13 +16,15 @@ build_nflfastR_pbp(
 \arguments{
 \item{game_ids}{Vector of character ids (see details for further information).}
 
-\item{source}{Character - \code{nfl} for the NFL.com page or \code{old} for the old gamecenter. For \code{old}, old_game_id must be supplied}
+\item{source}{\ifelse{html}{\figure{lifecycle-deprecated.svg}{options: alt='Deprecated lifecycle'}}{\strong{Deprecated}} has no effect and will be
+removed in a future release.}
 
-\item{pp}{Logical - either \code{TRUE} or \code{FALSE} (see details for further information)}
+\item{pp}{\ifelse{html}{\figure{lifecycle-deprecated.svg}{options: alt='Deprecated lifecycle'}}{\strong{Deprecated}} has no effect and will be
+removed in a future release.}
 
 \item{...}{Additional arguments passed to the scraping functions (for internal use)}
 
-\item{decode}{If \code{TRUE}, the function \code{\link{decode_player_ids}} will be executed.}
+\item{decode}{If \code{TRUE}, the function \code{\link[=decode_player_ids]{decode_player_ids()}} will be executed.}
 
 \item{rules}{If \code{FALSE}, printing of the header and footer in the console output will be suppressed.}
 }
@@ -33,17 +35,17 @@ An nflfastR play-by-play data frame like it can be loaded from \url{https://gith
 \code{build_nflfastR_pbp} is a convenient wrapper around 5 nflfastR functions:
 
 \itemize{
- \item{\code{\link{fast_scraper}}}
- \item{\code{\link{clean_pbp}}}
- \item{\code{\link{add_qb_epa}}}
- \item{\code{\link{add_xyac}}}
- \item{\code{\link{decode_player_ids}}}
+\item{\code{\link[=fast_scraper]{fast_scraper()}}}
+\item{\code{\link[=clean_pbp]{clean_pbp()}}}
+\item{\code{\link[=add_qb_epa]{add_qb_epa()}}}
+\item{\code{\link[=add_xyac]{add_xyac()}}}
+\item{\code{\link[=decode_player_ids]{decode_player_ids()}}}
 }
 
 Please see the documentation of each function to learn about the output.
 }
 \details{
-To load valid game_ids please use the package function \code{\link{fast_scraper_schedules}}.
+To load valid game_ids please use the package function \code{\link[=fast_scraper_schedules]{fast_scraper_schedules()}}.
 
 The \code{source} parameter controls from which source the data is being
 loaded. The old parameters \code{rs} as well as \code{gc}

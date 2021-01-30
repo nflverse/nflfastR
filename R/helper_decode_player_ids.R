@@ -7,25 +7,25 @@
 #' Decode the player IDs in nflfastR play-by-ply data
 #'
 #' @inheritParams clean_pbp
-#' @param fast If \code{TRUE} the IDs will be decoded with the high efficient
-#' function \link[gsisdecoder]{decode_ids}. If \code{FALSE} an nflfastR internal
+#' @param fast If `TRUE` the IDs will be decoded with the high efficient
+#' function [decode_ids][gsisdecoder::decode_ids]. If `FALSE` an nflfastR internal
 #' function will be used for decoding (it is generally not recommended to do this,
-#' unless there is a problem with \link[gsisdecoder]{decode_ids}
+#' unless there is a problem with [decode_ids][gsisdecoder::decode_ids]
 #' which can take several days to fix on CRAN.)
 #'
-#' @description Takes all columns ending with \code{'player_id'} as well as the
-#' variables \code{'passer_id'}, \code{'rusher_id'}, \code{'receiver_id'} and \code{'id'}
+#' @description Takes all columns ending with `'player_id'` as well as the
+#' variables `'passer_id'`, `'rusher_id'`, `'receiver_id'` and `'id'`
 #' of an nflfastR play-by-play data set and decodes the player IDs to the commonly
 #' known GSIS ID format 00-00xxxxx.
 #'
-#' The function uses by default the high efficient \link[gsisdecoder]{decode_ids}
-#' of the package \href{https://cran.r-project.org/package=gsisdecoder}{\code{gsisdecoder}}.
+#' The function uses by default the high efficient [decode_ids][gsisdecoder::decode_ids]
+#' of the package [`gsisdecoder`](https://cran.r-project.org/package=gsisdecoder).
 #' In the unlikely event that there is a problem with this function, an nflfastR
-#' internal decoder can be used with the option \code{fast = FALSE}. In that case
-#' the function requires the package \code{furrr} if the data frame
-#' \code{pbp} has more than 4500 rows.
+#' internal decoder can be used with the option `fast = FALSE`. In that case
+#' the function requires the package `furrr` if the data frame
+#' `pbp` has more than 4500 rows.
 #'
-#' @return The input data frame of the parameter \code{pbp} with decoded player IDs.
+#' @return The input data frame of the parameter `pbp` with decoded player IDs.
 #' @importFrom rlang .data
 #' @importFrom dplyr mutate_at vars mutate pull
 #' @importFrom tidyselect any_of ends_with

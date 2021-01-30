@@ -7,14 +7,14 @@
 decode_player_ids(pbp, ..., fast = TRUE)
 }
 \arguments{
-\item{pbp}{is a Data frame of play-by-play data scraped using \code{\link{fast_scraper}}.}
+\item{pbp}{is a Data frame of play-by-play data scraped using \code{\link[=fast_scraper]{fast_scraper()}}.}
 
 \item{...}{Additional arguments passed to a message function (for internal use).}
 
 \item{fast}{If \code{TRUE} the IDs will be decoded with the high efficient
-function \link[gsisdecoder]{decode_ids}. If \code{FALSE} an nflfastR internal
+function \link[gsisdecoder:decode_ids]{decode_ids}. If \code{FALSE} an nflfastR internal
 function will be used for decoding (it is generally not recommended to do this,
-unless there is a problem with \link[gsisdecoder]{decode_ids}
+unless there is a problem with \link[gsisdecoder:decode_ids]{decode_ids}
 which can take several days to fix on CRAN.)}
 }
 \value{
@@ -26,7 +26,7 @@ variables \code{'passer_id'}, \code{'rusher_id'}, \code{'receiver_id'} and \code
 of an nflfastR play-by-play data set and decodes the player IDs to the commonly
 known GSIS ID format 00-00xxxxx.
 
-The function uses by default the high efficient \link[gsisdecoder]{decode_ids}
+The function uses by default the high efficient \link[gsisdecoder:decode_ids]{decode_ids}
 of the package \href{https://cran.r-project.org/package=gsisdecoder}{\code{gsisdecoder}}.
 In the unlikely event that there is a problem with this function, an nflfastR
 internal decoder can be used with the option \code{fast = FALSE}. In that case

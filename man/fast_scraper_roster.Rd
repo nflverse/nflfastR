@@ -4,12 +4,13 @@
 \alias{fast_scraper_roster}
 \title{Get team rosters for multiple seasons}
 \usage{
-fast_scraper_roster(seasons, pp = FALSE)
+fast_scraper_roster(seasons, pp = lifecycle::deprecated())
 }
 \arguments{
 \item{seasons}{A vector of 4-digit years associated with given NFL seasons}
 
-\item{pp}{Logical - either \code{TRUE} or \code{FALSE} (see details for further information)}
+\item{pp}{\ifelse{html}{\figure{lifecycle-deprecated.svg}{options: alt='Deprecated lifecycle'}}{\strong{Deprecated}} has no effect and will be
+removed in a future release.}
 }
 \value{
 Data frame where each individual row represents a player in
@@ -43,9 +44,6 @@ Given years return a dataset with each player listed as part of the roster.
 }
 \details{
 The roster data is accessed via the free to use Sleeper API.
-The \code{pp} parameter controls if the scraper should use parallel processing.
-Please note that the initiating process takes a few seconds which means it
-may be better to set \code{pp = FALSE} if you are scraping just a few seasons.
 }
 \examples{
 \donttest{

@@ -5,11 +5,11 @@
 
 #' Clean Play by Play Data
 #'
-#' @param pbp is a Data frame of play-by-play data scraped using \code{\link{fast_scraper}}.
+#' @param pbp is a Data frame of play-by-play data scraped using [fast_scraper()].
 #' @param ... Additional arguments passed to a message function (for internal use).
 #' @details Build columns that capture what happens on all plays, including
 #' penalties, using string extraction from play description.
-#' Loosely based on Ben's nflfastR guide (\url{https://www.nflfastr.com/articles/beginners_guide.html})
+#' Loosely based on Ben's nflfastR guide (<https://www.nflfastr.com/articles/beginners_guide.html>)
 #' but updated to work with the RS data, which has a different player format in
 #' the play description; e.g. 24-M.Lynch instead of M.Lynch.
 #' The function also standardizes team abbreviations so that, for example,
