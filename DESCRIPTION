@@ -11,13 +11,13 @@ Authors@R:
              family = "Baldwin",
              role = c("cre", "aut"),
              email = "bbaldwin206@gmail.com"),
-      person(given = "Lee", 
+      person(given = "Lee",
              family = "Sharpe",
              role = "ctb"),
-      person(given = "Maksim", 
+      person(given = "Maksim",
              family = "Horowitz",
              role = "ctb",
-             email = "maksim.horowitz@gmail.com"), 
+             email = "maksim.horowitz@gmail.com"),
       person(given = "Ron",
              family = "Yurko",
              role = "ctb",
@@ -29,10 +29,11 @@ Authors@R:
       person(given = "Tan",
              family = "Ho",
              role = "ctb"))
-Description: A set of functions to access National Football League play-by-play 
-  data from <https://www.nfl.com/>.
+Description: A set of functions to access National Football
+    League play-by-play data from <https://www.nfl.com/>.
 License: MIT + file LICENSE
-URL: https://www.nflfastr.com/, https://github.com/mrcaseb/nflfastR
+URL: https://www.nflfastr.com/,
+    https://github.com/mrcaseb/nflfastR
 BugReports: https://github.com/mrcaseb/nflfastR/issues
 Depends: 
     R (>= 3.5.0)
@@ -41,6 +42,8 @@ Imports:
     crayon (>= 1.3.4),
     curl,
     dplyr,
+    furrr,
+    future,
     glue,
     gsisdecoder,
     httr,
@@ -52,8 +55,8 @@ Imports:
     progressr (>= 0.6.0),
     purrr (>= 0.3.0),
     qs (>= 0.23.5),
-    stats,
     rlang,
+    stats,
     stringr (>= 1.3.0),
     tibble (>= 3.0),
     tidyr (>= 1.0.0),
@@ -63,8 +66,6 @@ Imports:
 Suggests: 
     DBI,
     DT,
-    furrr,
-    future,
     rmarkdown,
     RSQLite,
     testthat
