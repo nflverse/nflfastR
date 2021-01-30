@@ -39,14 +39,15 @@
 #' @importFrom stats predict
 #' @export
 calculate_expected_points <- function(pbp_data) {
+
+   # drop existing values of ep and the probs before making new ones
+  pbp_datata <- pbp_data %>% dplyr::select(-tidyselect::any_of(drop.cols))
+
   suppressWarnings(
     model_data <- pbp_data %>%
-      # drop existing values of ep and the probs before making new ones
-      dplyr::select(-any_of(drop.cols)) %>%
       make_model_mutations() %>%
       ep_model_select()
   )
-
 
   preds <- as.data.frame(
     matrix(stats::predict(ep_model, as.matrix(model_data)), ncol = 7, byrow = TRUE)
@@ -119,10 +120,12 @@ drop.cols <- c(
 #' @importFrom tibble as_tibble
 #' @export
 calculate_win_probability <- function(pbp_data) {
+
+  # drop existing values of ep and the probs before making new ones
+  pbp_data <- pbp_data %>% dplyr::select(-tidyselect::any_of(drop.cols.wp))
+
   suppressWarnings(
     model_data <- pbp_data %>%
-      # drop existing values of ep and the probs before making new ones
-      dplyr::select(-any_of(drop.cols.wp)) %>%
       dplyr::mutate(
         home = dplyr::if_else(.data$posteam == .data$home_team, 1, 0),
         posteam_spread = dplyr::if_else(.data$home == 1, .data$spread_line, -1 * .data$spread_line),

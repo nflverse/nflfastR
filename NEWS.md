@@ -9,6 +9,7 @@
 * Added field descriptions dataframe and article
 * Tuned spread-adjusted win probability model one final (?) time. Expected points is now no longer 
 required for `calculate_win_probability()`
+* Fixed a bug where `calculate_expected_points()` and `calculate_win_probability()` duplicated some existing variables instead of replacing them (#170)
 
 # nflfastR 3.2.0
 
