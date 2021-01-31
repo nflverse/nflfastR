@@ -10,7 +10,14 @@
 * Tuned spread-adjusted win probability model one final (?) time. Expected points is now no longer 
 required for `calculate_win_probability()`
 * Improved performance of internal functions that speed up the rebuilding process in `update_db()`
-(added `qs` and `curl` to dependencies.)
+(added `qs` and `curl` to dependencies)
+* Deprecated the arguments `source` and `pp` all across the package. Using them will cause a 
+warning. Parallel processing has to be activated by choosing an appropriate `future::plan()` before
+calling the relevant functions.
+* The function `build_nflfastR_pbp()` will now run `decode_player_ids()` by default (can be deactivated with
+the argument `decode = TRUE`). 
+* The function `build_nflfastR_pbp()` will now run `add_xpass()`. This means there will be new variables in the
+dataset!
 
 # nflfastR 3.2.0
 
