@@ -103,7 +103,7 @@ ydstogo, posteam_timeouts_remaining, defteam_timeouts_remaining" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.2.0.9006</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.2.0.9007</span>
       </span>
     </div>
 
@@ -258,6 +258,52 @@ must be present:</p><ul>
 </ul>
 
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>Attaching package: ‘dplyr’</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:stats’:</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    filter, lag</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:base’:</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    intersect, setdiff, setequal, union</span></div><div class='input'><span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'>tibble</span><span class='fu'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span><span class='op'>(</span>
+<span class='st'>"season"</span> <span class='op'>=</span> <span class='fl'>1999</span><span class='op'>:</span><span class='fl'>2019</span>,
+<span class='st'>"home_team"</span> <span class='op'>=</span> <span class='st'>"SEA"</span>,
+<span class='st'>"posteam"</span> <span class='op'>=</span> <span class='st'>"SEA"</span>,
+<span class='st'>"roof"</span> <span class='op'>=</span> <span class='st'>"outdoors"</span>,
+<span class='st'>"half_seconds_remaining"</span> <span class='op'>=</span> <span class='fl'>1800</span>,
+<span class='st'>"yardline_100"</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>80</span>, <span class='fl'>17</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>75</span>, <span class='fl'>4</span><span class='op'>)</span><span class='op'>)</span>,
+<span class='st'>"down"</span> <span class='op'>=</span> <span class='fl'>1</span>,
+<span class='st'>"ydstogo"</span> <span class='op'>=</span> <span class='fl'>10</span>,
+<span class='st'>"posteam_timeouts_remaining"</span> <span class='op'>=</span> <span class='fl'>3</span>,
+<span class='st'>"defteam_timeouts_remaining"</span> <span class='op'>=</span> <span class='fl'>3</span>
+<span class='op'>)</span>
+
+<span class='fu'>nflfastR</span><span class='fu'>::</span><span class='fu'>calculate_expected_points</span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>season</span>, <span class='va'>yardline_100</span>, <span class='va'>td_prob</span>, <span class='va'>ep</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;    season yardline_100   td_prob        ep
+#&gt; 1    1999           80 0.3342112 0.6378878
+#&gt; 2    2000           80 0.3342112 0.6378878
+#&gt; 3    2001           80 0.3342112 0.6378878
+#&gt; 4    2002           80 0.3431796 0.8167660
+#&gt; 5    2003           80 0.3431796 0.8167660
+#&gt; 6    2004           80 0.3431796 0.8167660
+#&gt; 7    2005           80 0.3431796 0.8167660
+#&gt; 8    2006           80 0.3445111 0.8136176
+#&gt; 9    2007           80 0.3445111 0.8136176
+#&gt; 10   2008           80 0.3445111 0.8136176
+#&gt; 11   2009           80 0.3445111 0.8136176
+#&gt; 12   2010           80 0.3445111 0.8136176
+#&gt; 13   2011           80 0.3445111 0.8136176
+#&gt; 14   2012           80 0.3445111 0.8136176
+#&gt; 15   2013           80 0.3445111 0.8136176
+#&gt; 16   2014           80 0.3522740 0.9822985
+#&gt; 17   2015           80 0.3522740 0.9822985
+#&gt; 18   2016           75 0.3771672 1.4573911
+#&gt; 19   2017           75 0.3771672 1.4573911
+#&gt; 20   2018           75 0.4067504 1.4740978
+#&gt; 21   2019           75 0.4067504 1.4740978</div><div class='input'><span class='co'># }</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
