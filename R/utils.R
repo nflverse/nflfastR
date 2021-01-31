@@ -54,7 +54,11 @@ load_pbp <- function(seasons, in_db = FALSE, ..., qs = FALSE) {
   season_count <- length(seasons)
 
   if (season_count >= 3 && any(class(future::plan()) %in% "sequential") && isFALSE(in_db)) {
-    usethis::ui_info("It is recommended to use parallel processing when trying to load {season_count} seasons.\nPlease consider using {usethis::ui_code('future::plan(\"multisession\")')}. Will go on sequentially...")
+    usethis::ui_info(c(
+      "It is recommended to use parallel processing when trying to load {season_count} seasons.",
+      "Please consider running {usethis::ui_code('future::plan(\"multisession\")')}!",
+      "Will go on sequentially..."
+    ))
   }
 
   p <- progressr::progressor(along = seasons)
@@ -98,7 +102,7 @@ load_ngs <- function(seasons, type) {
 
   most_recent <- dplyr::if_else(
     lubridate::month(lubridate::today("America/New_York")) >= 9,
-    lubridate::year(lubridate::today("America/New_York")) ,
+    lubridate::year(lubridate::today("America/New_York")),
     lubridate::year(lubridate::today("America/New_York")) - 1
   )
 
@@ -108,34 +112,31 @@ load_ngs <- function(seasons, type) {
 
   season_count <- length(seasons)
 
-  if (season_count >= 10 & !requireNamespace("furrr", quietly = TRUE)) {
-    pp <- FALSE
-    usethis::ui_info("It is recommended to use parallel processing when trying to load {season_count} seasons but the package {usethis::ui_value('furrr')} is not installed.\nPlease consider installing it with {usethis::ui_code('install.packages(\"furrr\")')}. Will go on sequentially...")
-  } else if (season_count >= 10 & requireNamespace("furrr", quietly = TRUE)) {
-    pp <- TRUE
-  } else {
-    pp <- FALSE
-  }
+  if (season_count >= 3 && any(class(future::plan()) %in% "sequential")) {
+    usethis::ui_info(c(
+      "It is recommended to use parallel processing when trying to load {season_count} seasons.",
+      "Please consider running {usethis::ui_code('future::plan(\"multisession\")')}!",
+      "Will go on sequentially..."
+    ))  }
 
-  progressr::with_progress({
-    p <- progressr::progressor(along = seasons)
+  p <- progressr::progressor(along = seasons)
 
-    if (pp == TRUE) {
-      future::plan("multiprocess")
-      out <- furrr::future_map_dfr(seasons, single_season_ngs, type, p)
-    } else {
-      out <- purrr::map_dfr(seasons, single_season_ngs, type, p)
-    }
-
-  })
+  out <- furrr::future_map_dfr(seasons, single_season_ngs, type, p)
 
   return(out)
 }
 
-single_season_ngs <- function(season, type, p) {
-  ret <- readRDS(url(
-    glue::glue("https://github.com/mrcaseb/nfl-data/blob/master/data/ngs/ngs_{season}_{type}.rds?raw=true")
-  ))
+single_season_ngs <- function(season, type, p, qs = FALSE) {
+
+  if (isTRUE(qs)){
+    .url <- glue::glue("https://github.com/mrcaseb/nfl-data/blob/master/data/ngs/ngs_{season}_{type}.qs?raw=true")
+    ret <- qs_from_url(.url)
+  }
+  if (isFALSE(qs)) {
+    .url <- glue::glue("https://github.com/mrcaseb/nfl-data/blob/master/data/ngs/ngs_{season}_{type}.rds?raw=true")
+    ret <- readRDS(url(.url))
+  }
+
   p(sprintf("season=%g", season))
   return(ret)
 }
