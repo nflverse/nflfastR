@@ -46,3 +46,23 @@ must be present:
 \item{defteam_timeouts_remaining}
 }
 }
+\examples{
+\donttest{
+library(dplyr)
+data <- tibble::tibble(
+"season" = 1999:2019,
+"home_team" = "SEA",
+"posteam" = "SEA",
+"roof" = "outdoors",
+"half_seconds_remaining" = 1800,
+"yardline_100" = c(rep(80, 17), rep(75, 4)),
+"down" = 1,
+"ydstogo" = 10,
+"posteam_timeouts_remaining" = 3,
+"defteam_timeouts_remaining" = 3
+)
+
+nflfastR::calculate_expected_points(data) \%>\%
+  dplyr::select(season, yardline_100, td_prob, ep)
+}
+}
