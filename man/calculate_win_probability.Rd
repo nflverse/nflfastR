@@ -44,3 +44,25 @@ must be present:
 \item{defteam_timeouts_remaining}
 }
 }
+\examples{
+\donttest{
+library(dplyr)
+data <- tibble::tibble(
+"receive_2h_ko" = 0,
+"home_team" = "SEA",
+"posteam" = "SEA",
+"score_differential" = 0,
+"half_seconds_remaining" = 1800,
+"game_seconds_remaining" = 3600,
+"spread_line" = c(1, 3, 4, 7, 14),
+"down" = 1,
+"ydstogo" = 10,
+"yardline_100" = 75,
+"posteam_timeouts_remaining" = 3,
+"defteam_timeouts_remaining" = 3
+)
+
+nflfastR::calculate_win_probability(data) \%>\%
+  dplyr::select(spread_line, wp, vegas_wp)
+}
+}

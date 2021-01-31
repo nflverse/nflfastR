@@ -38,15 +38,35 @@
 #' @importFrom tidyselect any_of
 #' @importFrom stats predict
 #' @export
+#' @examples
+#' \donttest{
+#' library(dplyr)
+#' data <- tibble::tibble(
+#' "season" = 1999:2019,
+#' "home_team" = "SEA",
+#' "posteam" = "SEA",
+#' "roof" = "outdoors",
+#' "half_seconds_remaining" = 1800,
+#' "yardline_100" = c(rep(80, 17), rep(75, 4)),
+#' "down" = 1,
+#' "ydstogo" = 10,
+#' "posteam_timeouts_remaining" = 3,
+#' "defteam_timeouts_remaining" = 3
+#' )
+#'
+#' nflfastR::calculate_expected_points(data) %>%
+#'   dplyr::select(season, yardline_100, td_prob, ep)
+#' }
 calculate_expected_points <- function(pbp_data) {
+
+   # drop existing values of ep and the probs before making new ones
+  pbp_data <- pbp_data %>% dplyr::select(-tidyselect::any_of(drop.cols))
+
   suppressWarnings(
     model_data <- pbp_data %>%
-      # drop existing values of ep and the probs before making new ones
-      dplyr::select(-any_of(drop.cols)) %>%
       make_model_mutations() %>%
       ep_model_select()
   )
-
 
   preds <- as.data.frame(
     matrix(stats::predict(ep_model, as.matrix(model_data)), ncol = 7, byrow = TRUE)
@@ -118,11 +138,34 @@ drop.cols <- c(
 #' @importFrom stats predict
 #' @importFrom tibble as_tibble
 #' @export
+#' @examples
+#' \donttest{
+#' library(dplyr)
+#' data <- tibble::tibble(
+#' "receive_2h_ko" = 0,
+#' "home_team" = "SEA",
+#' "posteam" = "SEA",
+#' "score_differential" = 0,
+#' "half_seconds_remaining" = 1800,
+#' "game_seconds_remaining" = 3600,
+#' "spread_line" = c(1, 3, 4, 7, 14),
+#' "down" = 1,
+#' "ydstogo" = 10,
+#' "yardline_100" = 75,
+#' "posteam_timeouts_remaining" = 3,
+#' "defteam_timeouts_remaining" = 3
+#' )
+#'
+#' nflfastR::calculate_win_probability(data) %>%
+#'   dplyr::select(spread_line, wp, vegas_wp)
+#' }
 calculate_win_probability <- function(pbp_data) {
+
+  # drop existing values of ep and the probs before making new ones
+  pbp_data <- pbp_data %>% dplyr::select(-tidyselect::any_of(drop.cols.wp))
+
   suppressWarnings(
     model_data <- pbp_data %>%
-      # drop existing values of ep and the probs before making new ones
-      dplyr::select(-any_of(drop.cols.wp)) %>%
       dplyr::mutate(
         home = dplyr::if_else(.data$posteam == .data$home_team, 1, 0),
         posteam_spread = dplyr::if_else(.data$home == 1, .data$spread_line, -1 * .data$spread_line),

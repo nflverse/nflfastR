@@ -855,8 +855,6 @@ add_wp_variables <- function(pbp_data) {
       posteam = if_else(.data$home_team == .data$posteam, .data$away_team, .data$home_team),
       yardline_100 = 75
     ) %>%
-    select(-"ep") %>%
-    calculate_expected_points() %>%
     dplyr::mutate(
       home = case_when(
         .data$home == 0 ~ 1,
