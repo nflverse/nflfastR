@@ -21,9 +21,7 @@
 #' The function uses by default the high efficient [decode_ids][gsisdecoder::decode_ids]
 #' of the package [`gsisdecoder`](https://cran.r-project.org/package=gsisdecoder).
 #' In the unlikely event that there is a problem with this function, an nflfastR
-#' internal decoder can be used with the option `fast = FALSE`. In that case
-#' the function requires the package `furrr` if the data frame
-#' `pbp` has more than 4500 rows.
+#' internal decoder can be used with the option `fast = FALSE`.
 #'
 #' @return The input data frame of the parameter `pbp` with decoded player IDs.
 #' @importFrom rlang .data
@@ -38,26 +36,24 @@
 #' decode_player_ids(data.frame(
 #'   name = c("P.Mahomes", "B.Baldwin", "P.Mahomes", "S.Carl", "J.Jones"),
 #'   id = c(
-#'   "32013030-2d30-3033-3338-3733fa30c4fa",
-#'   NA_character_,
-#'   "00-0033873",
-#'   NA_character_,
-#'   "32013030-2d30-3032-3739-3434d4d3846d"
+#'     "32013030-2d30-3033-3338-3733fa30c4fa",
+#'     NA_character_,
+#'     "00-0033873",
+#'     NA_character_,
+#'     "32013030-2d30-3032-3739-3434d4d3846d"
 #'   )
 #' ))
 #' }
 decode_player_ids <- function(pbp, ..., fast = TRUE) {
-  if (!fast) {
-    if (!requireNamespace("furrr", quietly = TRUE) & nrow(pbp) > 4500) {
-      usethis::ui_stop("Package {usethis::ui_value('furrr')} required to decode big data frames. Please install it with {usethis::ui_code('install.packages(\"furrr\")')}.")
-    } else if (requireNamespace("furrr", quietly = TRUE) & nrow(pbp) > 4500) {
-      usethis::ui_todo("Start decoding player ids, please wait...")
-      future::plan("multiprocess")
-      pp <- TRUE
-    } else {
-      usethis::ui_todo("Start decoding player ids, please wait...")
-      pp <- FALSE
+  if (isFALSE(fast)) {
+    if (nrow(pbp) > 1000 && any(class(future::plan()) %in% "sequential")) {
+      usethis::ui_info(c(
+        "It is recommended to use parallel processing when trying to to decode big data frames.",
+        "Please consider running {usethis::ui_code('future::plan(\"multisession\")')}!",
+        "Will go on sequentially..."
+      ))
     }
+    usethis::ui_todo("Start decoding player ids, please wait...")
 
     ret <- pbp %>%
       dplyr::mutate_at(
@@ -67,7 +63,7 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
         ),
         decode_ids, pp
       )
-  } else if (fast) {
+  } else if (isTRUE(fast)) {
     if (!requireNamespace("gsisdecoder", quietly = TRUE)) {
       usethis::ui_stop("Package {usethis::ui_value('gsisdecoder')} required for fast decoding. Please install it with {usethis::ui_code('install.packages(\"gsisdecoder\")')}.")
     }
@@ -89,13 +85,8 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
   return(ret)
 }
 
-decode_ids <- function(var, parproc = FALSE) {
-  if (parproc == TRUE) {
-    ret <- furrr::future_map_chr(var, convert_to_gsis_id)
-  } else {
-    ret <- purrr::map_chr(var, convert_to_gsis_id)
-  }
-  return(ret)
+decode_ids <- function(var) {
+  furrr::future_map_chr(var, convert_to_gsis_id)
 }
 
 convert_to_gsis_id <- function(new_id) {

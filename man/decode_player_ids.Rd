@@ -29,9 +29,7 @@ known GSIS ID format 00-00xxxxx.
 The function uses by default the high efficient \link[gsisdecoder:decode_ids]{decode_ids}
 of the package \href{https://cran.r-project.org/package=gsisdecoder}{\code{gsisdecoder}}.
 In the unlikely event that there is a problem with this function, an nflfastR
-internal decoder can be used with the option \code{fast = FALSE}. In that case
-the function requires the package \code{furrr} if the data frame
-\code{pbp} has more than 4500 rows.
+internal decoder can be used with the option \code{fast = FALSE}.
 }
 \examples{
 \donttest{
@@ -39,11 +37,11 @@ the function requires the package \code{furrr} if the data frame
 decode_player_ids(data.frame(
   name = c("P.Mahomes", "B.Baldwin", "P.Mahomes", "S.Carl", "J.Jones"),
   id = c(
-  "32013030-2d30-3033-3338-3733fa30c4fa",
-  NA_character_,
-  "00-0033873",
-  NA_character_,
-  "32013030-2d30-3032-3739-3434d4d3846d"
+    "32013030-2d30-3033-3338-3733fa30c4fa",
+    NA_character_,
+    "00-0033873",
+    NA_character_,
+    "32013030-2d30-3032-3739-3434d4d3846d"
   )
 ))
 }
