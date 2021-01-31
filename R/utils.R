@@ -142,3 +142,11 @@ single_season_ngs <- function(season, type, p, qs = FALSE) {
 }
 
 qs_from_url <- function(url) qs::qdeserialize(curl::curl_fetch_memory(url)$content)
+
+read_raw_rds <- function(raw) {
+  con <- gzcon(rawConnection(raw))
+  ret <- readRDS(con)
+  close(con)
+  return(ret)
+}
+
