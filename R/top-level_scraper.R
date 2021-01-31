@@ -360,13 +360,13 @@ fast_scraper <- function(game_ids,
   }
 
   if (lifecycle::is_present(pp)) {
-    lifecycle::deprecate_stop(
+    lifecycle::deprecate_warn(
       when = "4.0.0",
       what = "fast_scraper(pp = )",
       details = glue::glue(
         "We have dropped the in-package activation of parallel processing as ",
         "this is considered bad practice.\n",
-        "Please choose an appropriate plan before calling the function, e.g.",
+        "Please choose an appropriate plan before calling the function, e.g. ",
         "{usethis::ui_code('future::plan(\"multisession\")')}"
       )
     )
@@ -457,7 +457,7 @@ fast_scraper <- function(game_ids,
 #' @export
 fast_scraper_roster <- function(seasons, pp = lifecycle::deprecated()) {
   if (lifecycle::is_present(pp)) {
-    lifecycle::deprecate_stop(
+    lifecycle::deprecate_warn(
       when = "4.0.0",
       what = "fast_scraper_roster(pp = )",
       details = glue::glue(
@@ -525,7 +525,7 @@ fast_scraper_roster <- function(seasons, pp = lifecycle::deprecated()) {
 #' }
 fast_scraper_schedules <- function(seasons, pp = lifecycle::deprecated()) {
   if (lifecycle::is_present(pp)) {
-    lifecycle::deprecate_stop(
+    lifecycle::deprecate_warn(
       when = "4.0.0",
       what = "fast_scraper_schedules(pp = )",
       details = glue::glue(
