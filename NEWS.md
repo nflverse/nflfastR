@@ -13,7 +13,13 @@ required for `calculate_win_probability()`
 (added `qs` and `curl` to dependencies)
 * Deprecated the arguments `source` and `pp` all across the package. Using them will cause a 
 warning. Parallel processing has to be activated by choosing an appropriate `future::plan()` before
-calling the relevant functions.
+calling the relevant functions. 
+Alternatively, and this is recommended, **the default plan can be stored as an environment variable in the R user profile**. This can be done by running 
+`usethis::edit_r_environ()`, adding the line `R_FUTURE_PLAN="multisession"` 
+(`"multisession"` is just an example here, please choose the appropriate plan) and
+afterwards saving and restarting R. Once this is done each future will be resolved with the chosen plan without having to call `future::plan()` or even `library(future)`.
+For more information on possible plans please see
+[the future package Readme](https://github.com/HenrikBengtsson/future/blob/develop/README.md).
 * The function `build_nflfastR_pbp()` will now run `decode_player_ids()` by default (can be deactivated with
 the argument `decode = TRUE`). 
 * The function `build_nflfastR_pbp()` will now run `add_xpass()`. This means there will be new variables in the
