@@ -39,23 +39,19 @@ Depends:
     R (>= 3.5.0)
 Imports: 
     cli (>= 1.1.0),
-    crayon (>= 1.3.4),
     curl,
     dplyr,
     furrr,
     future,
     glue,
     gsisdecoder,
-    httr,
     janitor,
-    jsonlite,
     lubridate,
     lifecycle (>= 0.2.0),
     magrittr,
     mgcv,
     progressr (>= 0.6.0),
     purrr (>= 0.3.0),
-    qs (>= 0.23.5),
     rlang,
     stats,
     stringr (>= 1.3.0),
@@ -67,6 +63,9 @@ Imports:
 Suggests: 
     DBI,
     DT,
+    httr,
+    jsonlite,
+    qs (>= 0.23.5),
     rmarkdown,
     RSQLite,
     testthat

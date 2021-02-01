@@ -45,5 +45,9 @@ by Lee Sharpe.
 \donttest{
 # Get schedules for the whole 2015 - 2018 seasons
 fast_scraper_schedules(2015:2018)
+\dontshow{
+# Close open connections for R CMD Check
+future::plan("sequential")
+}
 }
 }

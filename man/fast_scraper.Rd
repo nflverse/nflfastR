@@ -360,5 +360,9 @@ To load valid game_ids please use the package function \code{\link{fast_scraper_
 \donttest{
 # Get pbp data for two games
 fast_scraper(c("2019_01_GB_CHI", "2013_21_SEA_DEN"))
+\dontshow{
+# Close open connections for R CMD Check
+future::plan("sequential")
+}
 }
 }

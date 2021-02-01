@@ -52,5 +52,9 @@ To load valid game_ids please use the package function \code{\link[=fast_scraper
 \donttest{
 # Build nflfastR pbp for the 2018 and 2019 Super Bowls
 build_nflfastR_pbp(c("2018_21_NE_LA", "2019_21_SF_KC"))
+\dontshow{
+# Close open connections for R CMD Check
+future::plan("sequential")
+}
 }
 }

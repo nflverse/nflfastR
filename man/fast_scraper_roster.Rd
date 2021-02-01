@@ -49,5 +49,9 @@ The roster data is accessed via the free to use Sleeper API.
 \donttest{
 # Roster of the 2019 and 2020 seasons
 fast_scraper_roster(2019:2020)
+\dontshow{
+# Close open connections for R CMD Check
+future::plan("sequential")
+}
 }
 }
