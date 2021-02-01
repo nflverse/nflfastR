@@ -61,7 +61,7 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
           tidyselect::any_of(c("passer_id", "rusher_id", "receiver_id", "id")),
           tidyselect::ends_with("player_id")
         ),
-        decode_ids, pp
+        decode_ids
       )
   } else if (isTRUE(fast)) {
     if (!requireNamespace("gsisdecoder", quietly = TRUE)) {
