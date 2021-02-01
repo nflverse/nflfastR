@@ -19,7 +19,7 @@ custom_mode <- function(x, na.rm = TRUE) {
 rule_header <- function(x) {
   rlang::inform(
     cli::rule(
-      left = crayon::bold(x),
+      left = glue::glue("\033[1m{x}\033[22m"),#crayon::bold(x),
       right = paste0("nflfastR version ", utils::packageVersion("nflfastR")),
       width = getOption("width")
     )
@@ -29,7 +29,7 @@ rule_header <- function(x) {
 rule_footer <- function(x) {
   rlang::inform(
     cli::rule(
-      left = crayon::bold(x),
+      left = glue::glue("\033[1m{x}\033[22m"),#crayon::bold(x),
       width = getOption("width")
     )
   )
@@ -53,7 +53,7 @@ load_pbp <- function(seasons, in_db = FALSE, ..., qs = FALSE) {
 
   season_count <- length(seasons)
 
-  if (season_count >= 3 && any(class(future::plan()) %in% "sequential") && isFALSE(in_db)) {
+  if (season_count >= 3 && inherits(future::plan(), "sequential") && isFALSE(in_db)) {
     usethis::ui_info(c(
       "It is recommended to use parallel processing when trying to load {season_count} seasons.",
       "Please consider running {usethis::ui_code('future::plan(\"multisession\")')}!",
@@ -112,7 +112,7 @@ load_ngs <- function(seasons, type) {
 
   season_count <- length(seasons)
 
-  if (season_count >= 3 && any(class(future::plan()) %in% "sequential")) {
+  if (season_count >= 3 && inherits(future::plan(), "sequential")) {
     usethis::ui_info(c(
       "It is recommended to use parallel processing when trying to load {season_count} seasons.",
       "Please consider running {usethis::ui_code('future::plan(\"multisession\")')}!",
@@ -159,6 +159,6 @@ maybe_valid <- function(id) {
     is.character(id),
     substr(id, 1, 4) %in% 1999:format(Sys.Date(), "%Y"),
     substr(id, 6, 7) %in% seq_len(22),
-    str_extract_all(id, "(?<=_)[:upper:]{2,3}")[[1]] %in% teams_colors_logos$team_abbr
+    str_extract_all(id, "(?<=_)[:upper:]{2,3}")[[1]] %in% nflfastR::teams_colors_logos$team_abbr
   )
 }
