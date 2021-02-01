@@ -2,27 +2,27 @@ context("scrapers")
 
 source('helpers.R')
 
-test_that("Scraper with source nfl works for an old and new game at once: no pp", {
+test_that("Scraper works for an old and new game at once", {
 
-  x2 <- fast_scraper(game_ids, pp = F) %>%
+  x2 <- fast_scraper(game_ids) %>%
     extract_desc()
 
   expect_identical(x2[1], desc_1_nfl_source)
   expect_identical(x2[2], desc_2_nfl_source)
 })
 
-test_that("Scraper with source live works for an old and new game at once: no pp", {
-
-  x4 <- fast_scraper(old_game_ids, source = "old", pp = F) %>%
-    extract_desc()
-
-  expect_identical(x4[1], desc_1_nfl_source)
-  expect_identical(x4[2], desc_2_live_source)
-})
+# test_that("Scraper with source live works for an old and new game at once: no pp", {
+#
+#   x4 <- fast_scraper(old_game_ids, source = "old", pp = F) %>%
+#     extract_desc()
+#
+#   expect_identical(x4[1], desc_1_nfl_source)
+#   expect_identical(x4[2], desc_2_live_source)
+# })
 
 test_that("Wrapper with source nfl works for an old and new game at once", {
 
-  wrapper <- build_nflfastR_pbp(game_ids)
+  wrapper <- build_nflfastR_pbp(game_ids, decode = FALSE)
 
   descriptions <- wrapper %>%
     extract_desc()
