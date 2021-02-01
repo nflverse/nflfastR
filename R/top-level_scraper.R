@@ -372,10 +372,10 @@ fast_scraper <- function(game_ids,
     )
   }
 
-  if (length(game_ids) <= 4 && any(class(future::plan()) %in% "sequential")) {
+  if (length(game_ids) > 1 && any(class(future::plan()) %in% "sequential")) {
     usethis::ui_info(
       c(
-        "It is recommended to use parallel processing when trying to load {length(game_ids)} games.",
+        "It is recommended to use parallel processing when trying to load multiple games.",
         "Please consider running {usethis::ui_code('future::plan(\"multisession\")')}!",
         "Will go on sequentially..."
       )
@@ -469,10 +469,10 @@ fast_scraper_roster <- function(seasons, pp = lifecycle::deprecated()) {
     )
   }
 
-  if (length(seasons) >= 5 && any(class(future::plan()) %in% "sequential")) {
+  if (length(seasons) > 1 && any(class(future::plan()) %in% "sequential")) {
     usethis::ui_info(
       c(
-        "It is recommended to use parallel processing when trying to load {length(seasons)} seasons.",
+        "It is recommended to use parallel processing when trying to load multiple seasons.",
         "Please consider running {usethis::ui_code('future::plan(\"multisession\")')}!",
         "Will go on sequentially..."
       )
@@ -536,10 +536,10 @@ fast_scraper_schedules <- function(seasons, pp = lifecycle::deprecated()) {
       )
     )
   }
-  if (length(seasons) >= 5 && any(class(future::plan()) %in% "sequential")) {
+  if (length(seasons) > 1 && any(class(future::plan()) %in% "sequential")) {
     usethis::ui_info(
       c(
-        "It is recommended to use parallel processing when trying to load {length(seasons)} seasons.",
+        "It is recommended to use parallel processing when trying to load multiple seasons.",
         "Please consider running {usethis::ui_code('future::plan(\"multisession\")')}!",
         "Will go on sequentially..."
       )
