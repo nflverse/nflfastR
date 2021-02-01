@@ -345,6 +345,10 @@
 #' \donttest{
 #' # Get pbp data for two games
 #' fast_scraper(c("2019_01_GB_CHI", "2013_21_SEA_DEN"))
+#' \dontshow{
+#' # Close open connections for R CMD Check
+#' future::plan("sequential")
+#' }
 #' }
 fast_scraper <- function(game_ids,
                          source = lifecycle::deprecated(),
@@ -372,7 +376,7 @@ fast_scraper <- function(game_ids,
     )
   }
 
-  if (length(game_ids) > 1 && any(class(future::plan()) %in% "sequential")) {
+  if (length(game_ids) > 1 && inherits(future::plan(), "sequential")) {
     usethis::ui_info(
       c(
         "It is recommended to use parallel processing when trying to load multiple games.",
@@ -397,7 +401,7 @@ fast_scraper <- function(game_ids,
     if (purrr::is_empty(pbp) == FALSE) {
       usethis::ui_done("Download finished. Adding variables...")
       pbp <- pbp %>%
-        add_game_data(source) %>%
+        add_game_data() %>%
         add_nflscrapr_mutations() %>%
         add_ep() %>%
         add_air_yac_ep() %>%
@@ -453,6 +457,10 @@ fast_scraper <- function(game_ids,
 #' \donttest{
 #' # Roster of the 2019 and 2020 seasons
 #' fast_scraper_roster(2019:2020)
+#' \dontshow{
+#' # Close open connections for R CMD Check
+#' future::plan("sequential")
+#' }
 #' }
 #' @export
 fast_scraper_roster <- function(seasons, pp = lifecycle::deprecated()) {
@@ -469,7 +477,7 @@ fast_scraper_roster <- function(seasons, pp = lifecycle::deprecated()) {
     )
   }
 
-  if (length(seasons) > 1 && any(class(future::plan()) %in% "sequential")) {
+  if (length(seasons) > 1 && inherits(future::plan(), "sequential")) {
     usethis::ui_info(
       c(
         "It is recommended to use parallel processing when trying to load multiple seasons.",
@@ -522,6 +530,10 @@ fast_scraper_roster <- function(seasons, pp = lifecycle::deprecated()) {
 #'\donttest{
 #' # Get schedules for the whole 2015 - 2018 seasons
 #' fast_scraper_schedules(2015:2018)
+#' \dontshow{
+#' # Close open connections for R CMD Check
+#' future::plan("sequential")
+#' }
 #' }
 fast_scraper_schedules <- function(seasons, pp = lifecycle::deprecated()) {
   if (lifecycle::is_present(pp)) {
@@ -536,7 +548,7 @@ fast_scraper_schedules <- function(seasons, pp = lifecycle::deprecated()) {
       )
     )
   }
-  if (length(seasons) > 1 && any(class(future::plan()) %in% "sequential")) {
+  if (length(seasons) > 1 && inherits(future::plan(), "sequential")) {
     usethis::ui_info(
       c(
         "It is recommended to use parallel processing when trying to load multiple seasons.",
