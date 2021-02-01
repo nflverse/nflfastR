@@ -37,9 +37,9 @@ get_pbp_gc <- function(gameId, dir = NULL, qs = FALSE) {
       if (is.null(dir)) {
         path <- "https://raw.githubusercontent.com/guga31bb/nflfastR-raw/master/raw"
 
-        if(isFALSE(qs)) fetched <- curl::curl_fetch_memory(glue::glue("{path}/{season}/{id}.rds"))
+        if(isFALSE(qs)) fetched <- curl::curl_fetch_memory(glue::glue("{path}/{season}/{gameId}.rds"))
 
-        if(isTRUE(qs)) fetched <- curl::curl_fetch_memory(glue::glue("{path}/{season}/{id}.qs"))
+        if(isTRUE(qs)) fetched <- curl::curl_fetch_memory(glue::glue("{path}/{season}/{gameId}.qs"))
 
         if (fetched$status_code == 404) {
           warning(warn <- 3)
@@ -54,8 +54,8 @@ get_pbp_gc <- function(gameId, dir = NULL, qs = FALSE) {
       } else {
         # build path to locally stored game files. This functionality is primarily
         # for the data repo maintainer
-        if(isFALSE(qs)) p <- glue::glue("{dir}/{season}/{id}.rds")
-        if(isTRUE(qs)) p <- glue::glue("{dir}/{season}/{id}.qs")
+        if(isFALSE(qs)) p <- glue::glue("{dir}/{season}/{gameId}.rds")
+        if(isTRUE(qs)) p <- glue::glue("{dir}/{season}/{gameId}.qs")
 
         if (file.exists(p) == FALSE) {
           warning(warn <- 5)
