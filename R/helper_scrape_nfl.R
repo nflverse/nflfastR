@@ -8,7 +8,6 @@
 #
 # @param id Specifies the game
 
-#' @importFrom httr HEAD
 #' @importFrom glue glue
 #' @import dplyr
 #' @importFrom tibble as_tibble

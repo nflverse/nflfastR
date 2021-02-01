@@ -4,13 +4,6 @@
 # Code Style Guide: styler::tidyverse_style()
 ################################################################################
 
-#' @importFrom httr GET content
-#' @importFrom glue glue
-#' @importFrom jsonlite fromJSON
-#' @importFrom purrr pluck map_df
-#' @importFrom janitor clean_names
-#' @import dplyr
-#' @importFrom rlang .data
 get_pbp_highlights <- function(gameId) {
   highlights <- data.frame()
   tryCatch(

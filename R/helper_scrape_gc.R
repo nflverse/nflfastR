@@ -9,7 +9,6 @@
 # @param gameId Specifies the game
 
 #' @importFrom glue glue
-#' @importFrom httr HEAD
 #' @importFrom purrr pluck map_dfr map_df map_chr
 #' @importFrom stringr str_extract str_sub str_detect str_split
 #' @import dplyr
