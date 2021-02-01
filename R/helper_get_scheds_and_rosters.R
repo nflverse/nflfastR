@@ -5,7 +5,6 @@
 ################################################################################
 
 #' @importFrom glue glue
-#' @importFrom httr HEAD
 #' @importFrom tibble tibble
 get_scheds_and_rosters <- function(season, type) {
   out <- tibble::tibble()
@@ -19,15 +18,15 @@ get_scheds_and_rosters <- function(season, type) {
 
       warn <- 0
 
-      request <- httr::HEAD(url = path)
+      fetched <- curl::curl_fetch_memory(path)
 
-      if (request$status_code == 404) {
+      if (fetched$status_code == 404) {
         warning(warn <- 2)
-      } else if (request$status_code == 500) {
+      } else if (fetched$status_code == 500) {
         warning(warn <- 1)
       }
 
-      out <- readRDS(url(path))
+      out <- read_raw_rds(fetched$content)
     },
     error = function(e) {
       message("The following error has occured:")
