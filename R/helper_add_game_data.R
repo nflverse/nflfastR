@@ -6,64 +6,34 @@
 
 # Thanks Lee!
 #' @import dplyr
-#' @importFrom httr HEAD
 #' @importFrom glue glue
 #' @importFrom rlang .data
-add_game_data <- function(pbp, source = "nfl") {
+add_game_data <- function(pbp) {
   out <- pbp
   tryCatch(
     expr = {
       url <- "https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true"
 
-      request <- httr::HEAD(url)
+      fetched <- curl::curl_fetch_memory(url)
 
-      if (request$status_code %in% c(404, 500)) {
+      if (fetched$status_code %in% c(404, 500)) {
         warning(warn <- 1)
       }
 
-      if (source != "old") {
-
-        out <- out %>%
-          dplyr::left_join(
-            readRDS(url(url)) %>%
-              dplyr::select(
-                "game_id", "old_game_id", "away_score", "home_score", "location", "result", "total",
-                "spread_line", "total_line", "div_game", "roof", "surface", "temp", "wind",
-                "home_coach", "away_coach", "stadium", "stadium_id", "gameday"
-              ) %>%
-              dplyr::rename(game_stadium = "stadium"),
-            by = c("game_id")
-          ) %>%
-          dplyr::mutate(
-            game_date = .data$gameday
-          )
-
-      } else {
-
-        out <- out %>%
-          dplyr::select(-"week") %>%
-          dplyr::left_join(
-            readRDS(url(url)) %>%
-              dplyr::rename(
-                actual_id = .data$game_id
-              ) %>%
-              dplyr::select(
-                "actual_id", "old_game_id", "week", "away_score", "home_score", "location", "result", "total",
-                "spread_line", "total_line", "div_game", "roof", "surface", "temp", "wind",
-                "home_coach", "away_coach", "stadium", "stadium_id", "gameday"
-              ) %>%
-              dplyr::rename(game_stadium = "stadium"),
-            by = c("game_id" = "old_game_id")
-          ) %>%
-          dplyr::mutate(
-            game_date = .data$gameday
-          ) %>%
-          dplyr::rename(
-            old_game_id = .data$game_id,
-            game_id = .data$actual_id
-          )
-
-      }
+      out <- out %>%
+        dplyr::left_join(
+          read_raw_rds(fetched$content) %>%
+            dplyr::select(
+              "game_id", "old_game_id", "away_score", "home_score", "location", "result", "total",
+              "spread_line", "total_line", "div_game", "roof", "surface", "temp", "wind",
+              "home_coach", "away_coach", "stadium", "stadium_id", "gameday"
+            ) %>%
+            dplyr::rename(game_stadium = "stadium"),
+          by = c("game_id")
+        ) %>%
+        dplyr::mutate(
+          game_date = .data$gameday
+        )
 
       usethis::ui_done("added game variables")
     },
