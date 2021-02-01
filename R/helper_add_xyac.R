@@ -37,7 +37,7 @@ add_xyac <- function(pbp, ...) {
 
     # prepare_xyac_data helper function shown below
     passes <- prepare_xyac_data(pbp) %>%
-      filter(.data$valid_pass == 1, .data$distance_to_goal != 0)
+      dplyr::filter(.data$valid_pass == 1, .data$distance_to_goal != 0)
 
     if (!nrow(passes) == 0) {
       # initialize xyac_model to avoid R CMD check note
@@ -59,7 +59,7 @@ add_xyac <- function(pbp, ...) {
           tibble::as_tibble() %>%
           dplyr::rename(prob = "value") %>%
           dplyr::bind_cols(
-            purrr::map_dfr(seq_along(passes$index), function(x) {
+            furrr::future_map_dfr(seq_along(passes$index), function(x) {
               tibble::tibble(
                 "yac" = -5:70,
                 "index" = passes$index[[x]],
