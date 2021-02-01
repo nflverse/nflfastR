@@ -16,7 +16,7 @@
 #' @importFrom tibble tibble
 #' @importFrom tidyr unnest_wider unnest
 #' @importFrom rlang .data
-get_pbp_gc <- function(gameId, dir = NULL) {
+get_pbp_gc <- function(gameId, dir = NULL, qs = FALSE) {
   combined <- data.frame()
   tryCatch(
     expr = {
@@ -35,27 +35,34 @@ get_pbp_gc <- function(gameId, dir = NULL) {
       season <- as.integer(substr(gameId, 1, 4))
 
       if (is.null(dir)) {
-        # postseason games are in here too
-        url <- glue::glue("https://raw.githubusercontent.com/guga31bb/nflfastR-raw/master/raw/{season}/{gameId}.rds")
+        path <- "https://raw.githubusercontent.com/guga31bb/nflfastR-raw/master/raw"
 
-        request <- httr::HEAD(url = url)
+        if(isFALSE(qs)) fetched <- curl::curl_fetch_memory(glue::glue("{path}/{season}/{id}.rds"))
 
-        if (request$status_code == 404) {
+        if(isTRUE(qs)) fetched <- curl::curl_fetch_memory(glue::glue("{path}/{season}/{id}.qs"))
+
+        if (fetched$status_code == 404) {
           warning(warn <- 3)
-        } else if (request$status_code == 500) {
+        } else if (fetched$status_code == 500) {
           warning(warn <- 4)
         }
 
-        raw <- readRDS(url(url))
+        if(isFALSE(qs)) raw <- read_raw_rds(fetched$content)
+
+        if(isTRUE(qs)) raw <- qs::qdeserialize(fetched$content)
 
       } else {
         # build path to locally stored game files. This functionality is primarily
         # for the data repo maintainer
-        p <- glue::glue("{dir}/{season}/{gameId}.rds")
+        if(isFALSE(qs)) p <- glue::glue("{dir}/{season}/{id}.rds")
+        if(isTRUE(qs)) p <- glue::glue("{dir}/{season}/{id}.qs")
+
         if (file.exists(p) == FALSE) {
           warning(warn <- 5)
         }
-        raw <- readRDS(p)
+
+        if(isFALSE(qs)) raw <- readRDS(p)
+        if(isTRUE(qs)) raw <- qs::qread(p)
       }
 
       game_json <- raw %>% purrr::pluck(1)
@@ -84,7 +91,7 @@ get_pbp_gc <- function(gameId, dir = NULL) {
 
       # list of plays
       # each play has "players" column which is a list of player stats from the play
-      plays <- suppressWarnings(purrr::map_dfr(seq_along(drives), function(x) {
+      plays <- suppressWarnings(furrr::future_map_dfr(seq_along(drives), function(x) {
           cbind(
             "drive" = x,
             data.frame(do.call(
@@ -102,7 +109,7 @@ get_pbp_gc <- function(gameId, dir = NULL) {
       plays$away_team <- game_json$away$abbr
 
       # get df with 1 line per statId
-      stats <- purrr::map_dfr(seq_along(plays$play_id), function(x) {
+      stats <- furrr::future_map_dfr(seq_along(plays$play_id), function(x) {
           dplyr::bind_rows(plays[x, ]$players[[1]], .id = "player_id") %>%
             dplyr::mutate(play_id = plays[x, ]$play_id)
         }
@@ -123,9 +130,9 @@ get_pbp_gc <- function(gameId, dir = NULL) {
         )
 
 
-      pbp_stats <- purrr::map(unique(stats$playId), function(x) {
-        sum_play_stats(x, stats = stats)
-      })
+      pbp_stats <- furrr::future_map(unique(stats$playId), function(x, s) {
+        sum_play_stats(x, s)
+      }, stats)
 
       pbp_stats <- dplyr::bind_rows(pbp_stats)
 
@@ -199,11 +206,11 @@ get_pbp_gc <- function(gameId, dir = NULL) {
           ),
 
           # have to do all this nonsense to make goal_to_go and yardline_side for compatibility with later functions
-          yardline_side = purrr::map_chr(
+          yardline_side = furrr::future_map_chr(
             stringr::str_split(.data$yardline, " "),
             function(x) x[1]
           ),
-          yardline_number = as.numeric(purrr::map_chr(
+          yardline_number = as.numeric(furrr::future_map_chr(
             stringr::str_split(.data$yardline, " "),
             function(x) x[2]
           )),
