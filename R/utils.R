@@ -150,3 +150,15 @@ read_raw_rds <- function(raw) {
   return(ret)
 }
 
+# helper to make sure the output of the
+# schedule scraper is not named 'invalid' if the source file not yet exists
+#' @importFrom stringr str_extract_all
+maybe_valid <- function(id) {
+  all(
+    length(id) == 1,
+    is.character(id),
+    substr(id, 1, 4) %in% 1999:format(Sys.Date(), "%Y"),
+    substr(id, 6, 7) %in% seq_len(22),
+    str_extract_all(id, "(?<=_)[:upper:]{2,3}")[[1]] %in% teams_colors_logos$team_abbr
+  )
+}
