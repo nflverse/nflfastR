@@ -37,7 +37,7 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
 
         if(isTRUE(qs)) fetched <- curl::curl_fetch_memory(glue::glue("{path}/{season}/{id}.qs"))
 
-        if (fetched$status_code == 404 & id %in% valid_games) {
+        if (fetched$status_code == 404 & maybe_valid(id)) {
           warning(warn <- 3)
         } else if (fetched$status_code == 500) {
           warning(warn <- 2)
@@ -159,9 +159,9 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
       # if I don't put this here it breaks
       suppressWarnings(
         pbp_stats <-
-          purrr::map(unique(stats$playId), function(x) {
-            sum_play_stats(x, stats = stats)
-          })
+          furrr::future_map(unique(stats$playId), function(x, s) {
+            sum_play_stats(x, s)
+          }, stats)
       )
 
       pbp_stats <- dplyr::bind_rows(pbp_stats)
@@ -190,11 +190,11 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
         dplyr::mutate(
           posteam_id = .data$posteam,
           # have to do all this nonsense to make goal_to_go and yardline_side for compatibility with later functions
-          yardline_side = purrr::map_chr(
+          yardline_side = furrr::future_map_chr(
             stringr::str_split(.data$yardline, " "),
             function(x) x[1]
           ),
-          yardline_number = as.numeric(purrr::map_chr(
+          yardline_number = as.numeric(furrr::future_map_chr(
             stringr::str_split(.data$yardline, " "),
             function(x) x[2]
           )),
@@ -327,11 +327,6 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
   )
   return(combined)
 }
-
-
-# hard coded 2020 regular season game ids to make sure the output of the
-# schedule scraper is not named 'invalid' if the source file not yet exists
-valid_games <- c("")
 
 # helper function to manually fill in fields for problematic games
 fix_bad_games <- function(pbp) {
