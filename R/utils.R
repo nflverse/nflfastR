@@ -41,6 +41,11 @@ rule_footer <- function(x) {
 # helper that loads multiple seasons from the datarepo either into memory
 # or writes it into a db using some forwarded arguments in the dots
 load_pbp <- function(seasons, in_db = FALSE, ..., qs = FALSE) {
+
+  if (isTRUE(qs) && !is_installed("qs")) {
+    usethis::ui_stop("Package {usethis::ui_value('qs')} required for argument {usethis::ui_value('qs = TRUE')}. Please install it.")
+  }
+
   most_recent <- dplyr::if_else(
     lubridate::month(lubridate::today("America/New_York")) >= 9,
     lubridate::year(lubridate::today("America/New_York")),
@@ -152,7 +157,6 @@ read_raw_rds <- function(raw) {
 
 # helper to make sure the output of the
 # schedule scraper is not named 'invalid' if the source file not yet exists
-#' @importFrom stringr str_extract_all
 maybe_valid <- function(id) {
   all(
     length(id) == 1,
@@ -162,3 +166,7 @@ maybe_valid <- function(id) {
     str_extract_all(id, "(?<=_)[:upper:]{2,3}")[[1]] %in% nflfastR::teams_colors_logos$team_abbr
   )
 }
+
+is_installed <- function(pkg) requireNamespace(pkg, quietly = TRUE)
+
+load_lees_games <- function() readRDS(url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true"))

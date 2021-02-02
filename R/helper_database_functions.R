@@ -44,7 +44,6 @@
 #' of or the complete play by play data table within the database (please see details for further information)
 #' @param db_connection A `DBIConnection` object, as returned by
 #' [DBI::dbConnect()] (please see details for further information)
-#' @importFrom rlang .data
 #' @export
 update_db <- function(dbdir = ".",
                       dbname = "pbp_db",
@@ -54,9 +53,9 @@ update_db <- function(dbdir = ".",
 
   rule_header("Update nflfastR Play-by-Play Database")
 
-  if (!requireNamespace("DBI", quietly = TRUE) |
-    (!requireNamespace("RSQLite", quietly = TRUE) & is.null(db_connection))) {
-    usethis::ui_stop("Packages {usethis::ui_value('DBI')} and {usethis::ui_value('RSQLite')} needed for database communication. Please install them.")
+  if (!is_installed("DBI") | !is_installed("purrr") |
+      (!is_installed("RSQLite") & is.null(db_connection))) {
+    usethis::ui_stop("Packages {usethis::ui_value('DBI')}, {usethis::ui_value('RSQLite')} and {usethis::ui_value('purrr')} required for database communication. Please install them.")
   }
 
   if (any(force_rebuild == "NEW")) {
@@ -87,7 +86,7 @@ update_db <- function(dbdir = ".",
 
   # get completed games using Lee's file (thanks Lee!)
   usethis::ui_todo("Checking for missing completed games...")
-  completed_games <- readRDS(url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true")) %>%
+  completed_games <- load_lees_games() %>%
     # completed games since 1999, excluding the broken games
     dplyr::filter(.data$season >= 1999, !is.na(.data$result), !.data$game_id %in% c("1999_01_BAL_STL", "2000_06_BUF_MIA", "2000_03_SD_KC")) %>%
     dplyr::arrange(.data$gameday) %>%
@@ -105,20 +104,7 @@ update_db <- function(dbdir = ".",
 
   # if there's missing games, scrape and write to db
   if (length(missing) > 0) {
-    if (!requireNamespace("furrr", quietly = TRUE)) {
-      is_installed_furrr <- FALSE
-      usethis::ui_info("Package {usethis::ui_value('furrr')} not installed. Can't use parallel processing. Please consider installing it.")
-      usethis::ui_info("Will go on sequentially...")
-    } else {
-      is_installed_furrr <- TRUE
-    }
-
-    # prevent the fast_scraper() warning for pp = TRUE with less than 5 games
-    if (is_installed_furrr == TRUE & length(missing) < 5) {
-      is_installed_furrr <- FALSE
-    }
-
-    new_pbp <- build_nflfastR_pbp(missing, pp = is_installed_furrr, rules = FALSE)
+    new_pbp <- build_nflfastR_pbp(missing, rules = FALSE)
 
     if (nrow(new_pbp) == 0) {
       usethis::ui_oops("Raw data of new games are not yet ready. Please try again in about 10 minutes.")
@@ -137,7 +123,7 @@ update_db <- function(dbdir = ".",
 # this is a helper function to build nflfastR database from Scratch
 build_db <- function(tblname = "nflfastR_pbp", db_conn, rebuild = FALSE, show_message = TRUE) {
 
-  valid_seasons <- readRDS(url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true")) %>%
+  valid_seasons <- load_lees_games() %>%
     dplyr::filter(.data$season >= 1999 & !is.na(.data$result)) %>%
     dplyr::group_by(.data$season) %>%
     dplyr::summarise() %>%

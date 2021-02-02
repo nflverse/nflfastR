@@ -28,11 +28,6 @@
 #' @param rules If `FALSE`, printing of the header and footer in the console output will be suppressed.
 #' @return An nflfastR play-by-play data frame like it can be loaded from <https://github.com/guga31bb/nflfastR-data>.
 #' @details To load valid game_ids please use the package function [fast_scraper_schedules()].
-#' @importFrom rlang .data
-#' @importFrom dplyr mutate_at vars mutate pull
-#' @importFrom tidyselect any_of ends_with
-#' @importFrom tibble tibble
-#' @importFrom stringr str_sub str_replace_all str_length
 #' @export
 #' @examples
 #' \donttest{
@@ -69,6 +64,10 @@ build_nflfastR_pbp <- function(game_ids,
         "{usethis::ui_code('future::plan(\"multisession\")')}"
       )
     )
+  }
+
+  if (isTRUE(decode) && !is_installed("gsisdecoder")) {
+    usethis::ui_stop("Package {usethis::ui_value('gsisdecoder')} required for decoding. Please install it with {usethis::ui_code('install.packages(\"gsisdecoder\")')}.")
   }
 
   if (isTRUE(rules)) rule_header("Build nflfastR Play-by-Play Data")
