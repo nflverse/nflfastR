@@ -7,16 +7,12 @@
 # Build a tidy version of scraped NFL data
 #
 # @param id Specifies the game
-
-#' @importFrom glue glue
-#' @import dplyr
-#' @importFrom tibble as_tibble
-#' @importFrom janitor clean_names
-#' @importFrom tidyr unnest
-#' @importFrom purrr map_df map_chr
-#' @importFrom stringr str_extract str_split str_detect
-#' @importFrom rlang .data
 get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
+
+  if (isTRUE(qs) && !is_installed("qs")) {
+    usethis::ui_stop("Package {usethis::ui_value('qs')} required for argument {usethis::ui_value('qs = TRUE')}. Please install it.")
+  }
+
   combined <- data.frame()
   tryCatch(
     expr = {
@@ -331,7 +327,7 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
 fix_bad_games <- function(pbp) {
 
   fixed <- pbp %>%
-    mutate(
+    dplyr::mutate(
       #if team has the ball and scored, make them the scoring team
       td_team = dplyr::if_else(
           .data$drive_how_ended_description == 'Touchdown' & !is.na(.data$td_team),

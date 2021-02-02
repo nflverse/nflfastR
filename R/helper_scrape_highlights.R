@@ -20,7 +20,7 @@ get_pbp_highlights <- function(gameId) {
         httr::content(as = "text", encoding = "UTF-8") %>%
         jsonlite::fromJSON(flatten = TRUE)
 
-      if (is.null(raw_data %>% purrr::pluck("drives"))) {
+      if (is.null(raw_data[["drives"]])) {
         warning(warn <- 2)
       }
 

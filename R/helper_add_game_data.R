@@ -5,9 +5,6 @@
 ################################################################################
 
 # Thanks Lee!
-#' @import dplyr
-#' @importFrom glue glue
-#' @importFrom rlang .data
 add_game_data <- function(pbp) {
   out <- pbp
   tryCatch(
@@ -43,7 +40,7 @@ add_game_data <- function(pbp) {
     },
     warning = function(w) {
       if (warn == 1) {
-        message(glue::glue("Warning: The data hosting servers are down, so we can't add game data in the moment!"))
+        message("Warning: The data hosting servers are down, so we can't add game data in the moment!")
       } else {
         message("The following warning has occured:")
         message(w)

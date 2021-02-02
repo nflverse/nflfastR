@@ -8,10 +8,6 @@
 ##  starts at 1, each new drive, numbers shared across both teams
 ## fixed_drive_result =
 ##  result of  given drive
-
-#' @import dplyr
-#' @importFrom rlang .data
-#' @importFrom stats na.omit
 add_drive_results <- function(d) {
   drive_df <- d %>%
     dplyr::group_by(.data$game_id, .data$game_half) %>%

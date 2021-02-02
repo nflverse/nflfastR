@@ -8,14 +8,12 @@
 #
 # @param gameId Specifies the game
 
-#' @importFrom glue glue
-#' @importFrom purrr pluck map_dfr map_df map_chr
-#' @importFrom stringr str_extract str_sub str_detect str_split
-#' @import dplyr
-#' @importFrom tibble tibble
-#' @importFrom tidyr unnest_wider unnest
-#' @importFrom rlang .data
 get_pbp_gc <- function(gameId, dir = NULL, qs = FALSE) {
+
+  if (isTRUE(qs) && !is_installed("qs")) {
+    usethis::ui_stop("Package {usethis::ui_value('qs')} required for argument {usethis::ui_value('qs = TRUE')}. Please install it.")
+  }
+
   combined <- data.frame()
   tryCatch(
     expr = {
@@ -64,7 +62,7 @@ get_pbp_gc <- function(gameId, dir = NULL, qs = FALSE) {
         if(isTRUE(qs)) raw <- qs::qread(p)
       }
 
-      game_json <- raw %>% purrr::pluck(1)
+      game_json <- raw[[1]]
 
       date_parse <- names(raw)[1] %>% stringr::str_extract(pattern = "[0-9]{8}")
       date_year <- stringr::str_sub(date_parse, 1, 4)

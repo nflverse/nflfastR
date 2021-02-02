@@ -4,10 +4,6 @@
 # Code Style Guide: styler::tidyverse_style()
 ################################################################################
 
-#' @import dplyr
-#' @importFrom lubridate period_to_seconds ms
-#' @importFrom stringr str_detect str_extract str_trim str_remove_all
-#' @importFrom rlang .data
 add_nflscrapr_mutations <- function(pbp) {
 
   #testing only
@@ -538,8 +534,6 @@ kickoff_finder <- "(Offside on Free Kick)|(Delay of Kickoff)|(Onside Kick format
 
 
 ##some steps to prepare the data for the EP/WP/CP/FG models
-#' @import dplyr
-#' @importFrom rlang .data
 make_model_mutations <- function(pbp) {
 
   pbp <- pbp %>%

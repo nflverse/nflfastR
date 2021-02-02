@@ -24,11 +24,6 @@
 #' internal decoder can be used with the option `fast = FALSE`.
 #'
 #' @return The input data frame of the parameter `pbp` with decoded player IDs.
-#' @importFrom rlang .data
-#' @importFrom dplyr mutate_at vars mutate pull
-#' @importFrom tidyselect any_of ends_with
-#' @importFrom tibble tibble
-#' @importFrom stringr str_sub str_replace_all str_length
 #' @export
 #' @examples
 #' \donttest{
@@ -64,7 +59,7 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
         decode_ids
       )
   } else if (isTRUE(fast)) {
-    if (!requireNamespace("gsisdecoder", quietly = TRUE)) {
+    if (!is_installed("gsisdecoder")) {
       usethis::ui_stop("Package {usethis::ui_value('gsisdecoder')} required for fast decoding. Please install it with {usethis::ui_code('install.packages(\"gsisdecoder\")')}.")
     }
 

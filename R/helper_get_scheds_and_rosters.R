@@ -4,8 +4,6 @@
 # Code Style Guide: styler::tidyverse_style()
 ################################################################################
 
-#' @importFrom glue glue
-#' @importFrom tibble tibble
 get_scheds_and_rosters <- function(season, type) {
   out <- tibble::tibble()
   tryCatch(

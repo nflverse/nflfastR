@@ -7,14 +7,6 @@
 # Data exist since 2009
 #
 # @param gameId Specifies the game
-
-#' @importFrom glue glue
-#' @importFrom purrr pluck map_dfr map_df map_chr
-#' @importFrom stringr str_extract str_sub str_detect str_split
-#' @import dplyr
-#' @importFrom tibble tibble
-#' @importFrom tidyr unnest_wider unnest
-#' @importFrom rlang .data
 get_pbp_cdns <- function(gameId, dir = NULL) {
   combined <- data.frame()
   tryCatch(
@@ -51,8 +43,9 @@ get_pbp_cdns <- function(gameId, dir = NULL) {
 
       game_json <- request %>%
         httr::content(as = "text", encoding = "UTF-8") %>%
-        jsonlite::fromJSON(flatten = TRUE) %>%
-        pluck(1)
+        jsonlite::fromJSON(flatten = TRUE)
+
+      game_json <- game_json[[1]]
 
       # excluding last element since it's "crntdrv" and not an actual
       drives <- game_json$drives[-length(game_json$drives)]

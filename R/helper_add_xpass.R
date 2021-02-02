@@ -17,9 +17,6 @@
 #' \item{pass_oe}{Dropback percent over expected on a given play scaled from 0 to 100.}
 #' }
 #' @export
-#' @import dplyr
-#' @importFrom rlang .data
-
 add_xpass <- function(pbp, ...) {
 
   plays <- prepare_xpass_data(pbp)
@@ -88,7 +85,7 @@ prepare_xpass_data <- function(pbp) {
       )
     ) %>%
     make_model_mutations() %>%
-    select(
+    dplyr::select(
       "valid_play",
       "down",
       "ydstogo",

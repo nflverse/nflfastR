@@ -16,8 +16,6 @@
 #' \item{xyac_mean_yardage}{Average expected yards after the catch based on where the ball was caught.}
 #' \item{xyac_median_yardage}{Median expected yards after the catch based on where the ball was caught.}
 #' }
-#' @importFrom rlang .data
-#' @importFrom xgboost getinfo
 #' @export
 add_xyac <- function(pbp, ...) {
 

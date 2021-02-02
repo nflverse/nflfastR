@@ -41,11 +41,6 @@
 #' \item{qb_epa}{Gives QB credit for EPA for up to the point where a receiver lost a fumble after a completed catch and makes EPA work more like passing yards on plays with fumbles.}
 #' }
 #' @export
-#' @import dplyr
-#' @importFrom stringr str_detect str_extract str_replace_all
-#' @importFrom glue glue
-#' @importFrom rlang .data
-#' @importFrom tidyselect any_of
 clean_pbp <- function(pbp, ...) {
   if (nrow(pbp) == 0) {
     usethis::ui_info("Nothing to clean. Return passed data frame.")
@@ -268,9 +263,6 @@ team_name_fn <- function(var) {
   )
 }
 
-#' @importFrom tibble tibble
-#' @importFrom rlang .data
-#' @importFrom dplyr left_join mutate case_when
 update_ids <- function(var, id_map) {
   join <- tibble::tibble(id = var) %>%
     dplyr::left_join(id_map, by = c("id" = "gsis_id")) %>%
@@ -285,14 +277,11 @@ update_ids <- function(var, id_map) {
 
 #' Compute QB epa
 #'
-#'@inheritParams clean_pbp
+#' @inheritParams clean_pbp
 #' @details Add the variable 'qb_epa', which gives QB credit for EPA for up to the point where
 #' a receiver lost a fumble after a completed catch and makes EPA work more
 #' like passing yards on plays with fumbles
 #' @export
-#' @import dplyr
-#' @importFrom rlang .data
-#' @importFrom tidyselect any_of
 add_qb_epa <- function(pbp, ...) {
 
   if (nrow(pbp) == 0) {

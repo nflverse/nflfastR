@@ -10,9 +10,6 @@
 ## series_success =
 ##  1: scored touchdown, gained enough yards for first down
 ##  0: everything else
-#' @import dplyr
-#' @importFrom tidyr replace_na
-#' @importFrom rlang .data
 add_series_data <- function(pbp) {
   out <-
     pbp %>%
