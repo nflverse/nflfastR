@@ -21,7 +21,7 @@ afterwards saving and restarting R. Once this is done each future will be resolv
 For more information on possible plans please see
 [the future package Readme](https://github.com/HenrikBengtsson/future/blob/develop/README.md).
 * The function `build_nflfastR_pbp()` will now run `decode_player_ids()` by default (can be deactivated with
-the argument `decode = TRUE`). 
+the argument `decode = FALSE`). 
 * The function `build_nflfastR_pbp()` will now run `add_xpass()`. This means there will be new variables in the
 dataset!
 * Fixed a bug where `calculate_expected_points()` and `calculate_win_probability()` duplicated some existing variables instead of replacing them (#170)

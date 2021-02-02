@@ -56,11 +56,9 @@ load_pbp <- function(seasons, in_db = FALSE, ..., qs = FALSE) {
     usethis::ui_stop("Please pass valid seasons between 1999 and {most_recent}")
   }
 
-  season_count <- length(seasons)
-
-  if (season_count >= 3 && inherits(future::plan(), "sequential") && isFALSE(in_db)) {
+  if (length(seasons) > 1 && inherits(future::plan(), "sequential") && isFALSE(in_db)) {
     usethis::ui_info(c(
-      "It is recommended to use parallel processing when trying to load {season_count} seasons.",
+      "It is recommended to use parallel processing when trying to load multiple seasons.",
       "Please consider running {usethis::ui_code('future::plan(\"multisession\")')}!",
       "Will go on sequentially..."
     ))
@@ -115,11 +113,9 @@ load_ngs <- function(seasons, type) {
     usethis::ui_stop("Please pass valid seasons between 2016 and {most_recent}")
   }
 
-  season_count <- length(seasons)
-
-  if (season_count >= 3 && inherits(future::plan(), "sequential")) {
+  if (length(seasons) > 1 && inherits(future::plan(), "sequential")) {
     usethis::ui_info(c(
-      "It is recommended to use parallel processing when trying to load {season_count} seasons.",
+      "It is recommended to use parallel processing when trying to load multiple seasons.",
       "Please consider running {usethis::ui_code('future::plan(\"multisession\")')}!",
       "Will go on sequentially..."
     ))  }
