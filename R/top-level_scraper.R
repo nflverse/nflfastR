@@ -398,7 +398,7 @@ fast_scraper <- function(game_ids,
       return(plays)
     }, p, ...)
 
-    if (purrr::is_empty(pbp) == FALSE) {
+    if (length(pbp) != 0) {
       usethis::ui_done("Download finished. Adding variables...")
       pbp <- pbp %>%
         add_game_data() %>%
