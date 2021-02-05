@@ -62,8 +62,8 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
     if (!is_installed("gsisdecoder")) {
       usethis::ui_stop("Package {usethis::ui_value('gsisdecoder')} required for fast decoding. Please install it with {usethis::ui_code('install.packages(\"gsisdecoder\")')}.")
     }
-
-    usethis::ui_todo("Start decoding player ids...")
+    # No need to inform that decoding starts since it's very fast
+    # usethis::ui_todo("Start decoding player ids...")
 
     ret <- pbp %>%
       dplyr::mutate_at(
@@ -75,7 +75,7 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
       )
   }
 
-  message_completed("Decoding completed.", ...)
+  message_completed("Decoding of player ids completed", ...)
 
   return(ret)
 }
