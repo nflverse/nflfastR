@@ -158,7 +158,7 @@ maybe_valid <- function(id) {
     length(id) == 1,
     is.character(id),
     substr(id, 1, 4) %in% 1999:format(Sys.Date(), "%Y"),
-    substr(id, 6, 7) %in% seq_len(22),
+    as.integer(substr(id, 6, 7)) %in% seq_len(22),
     str_extract_all(id, "(?<=_)[:upper:]{2,3}")[[1]] %in% nflfastR::teams_colors_logos$team_abbr
   )
 }
@@ -166,3 +166,32 @@ maybe_valid <- function(id) {
 is_installed <- function(pkg) requireNamespace(pkg, quietly = TRUE)
 
 load_lees_games <- function() readRDS(url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true"))
+
+load_raw_game <- function(game_id, qs = FALSE){
+
+  if (isTRUE(qs) && !is_installed("qs")) {
+    usethis::ui_stop("Package {usethis::ui_value('qs')} required for argument {usethis::ui_value('qs = TRUE')}. Please install it.")
+  }
+
+  season <- substr(game_id, 1, 4)
+  path <- "https://raw.githubusercontent.com/guga31bb/nflfastR-raw/master/raw"
+
+  if(isFALSE(qs)) fetched <- curl::curl_fetch_memory(glue::glue("{path}/{season}/{game_id}.rds"))
+
+  if(isTRUE(qs)) fetched <- curl::curl_fetch_memory(glue::glue("{path}/{season}/{game_id}.qs"))
+
+  if (fetched$status_code == 404 & maybe_valid(game_id)) {
+    usethis::ui_stop("The requested GameID {game_id} is not loaded yet, please try again later!")
+  } else if (fetched$status_code == 500) {
+    usethis::ui_stop("The data hosting servers are down, please try again later!")
+  } else if (fetched$status_code == 404) {
+    usethis::ui_stop("The requested GameID {game_id} is invalid!")
+  }
+
+  if(isFALSE(qs)) raw_data <- read_raw_rds(fetched$content)
+
+  if(isTRUE(qs)) raw_data <- qs::qdeserialize(fetched$content)
+
+  return(raw_data)
+
+}
