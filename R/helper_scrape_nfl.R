@@ -249,6 +249,19 @@ get_pbp_nfl <- function(id, dir = NULL) {
             ),
             .data$timeout_team
           ),
+          # Also fix penalty team for JAC games
+          penalty_team = dplyr::if_else(
+            # if there's a penalty_team in the affected seasons
+            !is.na(.data$penalty_team) & .data$season <= 2015 & (.data$home_team == 'JAC' | .data$away_team == 'JAC'),
+            # extract from play description
+            # make it JAC instead of JAX to be consistent with everything else
+            dplyr::if_else(
+              stringr::str_extract(.data$play_description, "(?<=PENALTY on )[:upper:]{2,3}") == "JAX",
+              "JAC",
+              stringr::str_extract(.data$play_description, "(?<=PENALTY on )[:upper:]{2,3}")
+            ),
+            .data$penalty_team
+          ),
           yardline_side = dplyr::if_else(
             .data$season <= 2015 & .data$yardline_side == 'JAX',
             'JAC', .data$yardline_side
