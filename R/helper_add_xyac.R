@@ -25,7 +25,7 @@ add_xyac <- function(pbp, ...) {
     # testing only
     # pbp <- g
 
-    usethis::ui_todo("Computing xyac...")
+    rlang::inform(paste0("\033[31m*\033[39m", " Computing xyac... (", "\033[33mi\033[39m", " This is a heavy task, please be patient)"))
 
     pbp <- pbp %>% dplyr::select(-tidyselect::any_of(drop.cols.xyac))
 
