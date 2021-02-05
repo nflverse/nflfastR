@@ -41,7 +41,7 @@
 #' }
 decode_player_ids <- function(pbp, ..., fast = TRUE) {
   if (isFALSE(fast)) {
-    if (nrow(pbp) > 1000 && inherits(future::plan(), "sequential")) {
+    if (nrow(pbp) > 1000 && is_sequential()) {
       usethis::ui_info(c(
         "It is recommended to use parallel processing when trying to to decode big data frames.",
         "Please consider running {usethis::ui_code('future::plan(\"multisession\")')}!",

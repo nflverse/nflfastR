@@ -376,7 +376,7 @@ fast_scraper <- function(game_ids,
     )
   }
 
-  if (length(game_ids) > 1 && inherits(future::plan(), "sequential")) {
+  if (length(game_ids) > 1 && is_sequential()) {
     usethis::ui_info(
       c(
         "It is recommended to use parallel processing when trying to load multiple games.",
@@ -477,7 +477,7 @@ fast_scraper_roster <- function(seasons, pp = lifecycle::deprecated()) {
     )
   }
 
-  if (length(seasons) > 1 && inherits(future::plan(), "sequential")) {
+  if (length(seasons) > 1 && is_sequential()) {
     usethis::ui_info(
       c(
         "It is recommended to use parallel processing when trying to load multiple seasons.",
@@ -548,7 +548,7 @@ fast_scraper_schedules <- function(seasons, pp = lifecycle::deprecated()) {
       )
     )
   }
-  if (length(seasons) > 1 && inherits(future::plan(), "sequential")) {
+  if (length(seasons) > 1 && is_sequential()) {
     usethis::ui_info(
       c(
         "It is recommended to use parallel processing when trying to load multiple seasons.",

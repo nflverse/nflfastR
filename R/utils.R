@@ -142,8 +142,10 @@ single_season_ngs <- function(season, type, p, qs = FALSE) {
   return(ret)
 }
 
+# read qs files form an url
 qs_from_url <- function(url) qs::qdeserialize(curl::curl_fetch_memory(url)$content)
 
+# read rds that has been pre-fetched
 read_raw_rds <- function(raw) {
   con <- gzcon(rawConnection(raw))
   ret <- readRDS(con)
@@ -163,10 +165,13 @@ maybe_valid <- function(id) {
   )
 }
 
+# check if a package is installed
 is_installed <- function(pkg) requireNamespace(pkg, quietly = TRUE)
 
+# load Lee Sharpe's games file
 load_lees_games <- function() readRDS(url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true"))
 
+# load raw game files esp. for debugging
 load_raw_game <- function(game_id, qs = FALSE){
 
   if (isTRUE(qs) && !is_installed("qs")) {
@@ -195,3 +200,6 @@ load_raw_game <- function(game_id, qs = FALSE){
   return(raw_data)
 
 }
+
+# Identify sessions with sequential future resolving
+is_sequential <- function() inherits(future::plan(), "sequential")
