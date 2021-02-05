@@ -98,7 +98,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.2.0.9007</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.2.0.9008</span>
       </span>
     </div>
 
@@ -216,6 +216,8 @@
 <li>Tuned spread-adjusted win probability model one final (?) time. Expected points is now no longer required for <code><a href="../reference/calculate_win_probability.html">calculate_win_probability()</a></code>
 </li>
 <li>Fixed a bug where <code><a href="../reference/calculate_expected_points.html">calculate_expected_points()</a></code> and <code><a href="../reference/calculate_win_probability.html">calculate_win_probability()</a></code> duplicated some existing variables instead of replacing them (<a href='https://github.com/mrcaseb/nflfastR/issues/170'>#170</a>)</li>
+<li>Fixed a bug where <code>penalty_type</code> wasn’t <code>"no_play"</code> although it should have been (<a href='https://github.com/mrcaseb/nflfastR/issues/172'>#172</a>)</li>
+<li>Fixed a bug where <code>penalty_team</code> could be incorrect in games of the Jaguars in the seasons 2011 - 2015 (<a href='https://github.com/mrcaseb/nflfastR/issues/174'>#174</a>)</li>
 </ul>
 </div>
     <div id="nflfastr-320" class="section level1">
