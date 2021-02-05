@@ -245,6 +245,9 @@ add_nflscrapr_mutations <- function(pbp) {
       # Create a play type column: either pass, run, field_goal, extra_point,
       # kickoff, punt, qb_kneel, qb_spike, or no_play (which includes timeouts and
       # penalties):
+      # but first reset the penalty fix variable in case it's trash
+      penalty_fix = dplyr::if_else(.data$penalty == 1 & .data$play_type_nfl == "PENALTY", 0, penalty_fix),
+
       play_type = dplyr::if_else(
         (.data$penalty == 0 |
           (.data$penalty == 1 & .data$penalty_fix == 1)) &
