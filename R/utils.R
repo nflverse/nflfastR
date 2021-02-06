@@ -159,7 +159,7 @@ maybe_valid <- function(id) {
   all(
     length(id) == 1,
     is.character(id),
-    substr(id, 1, 4) %in% 1999:format(Sys.Date(), "%Y"),
+    substr(id, 1, 4) %in% seq.int(1999, as.integer(format(Sys.Date(), "%Y")) + 1, 1),
     as.integer(substr(id, 6, 7)) %in% seq_len(22),
     str_extract_all(id, "(?<=_)[:upper:]{2,3}")[[1]] %in% nflfastR::teams_colors_logos$team_abbr
   )
