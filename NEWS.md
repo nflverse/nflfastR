@@ -12,6 +12,7 @@ required for `calculate_win_probability()`
 * Fixed a bug where `calculate_expected_points()` and `calculate_win_probability()` duplicated some existing variables instead of replacing them (#170)
 * Fixed a bug where `penalty_type` wasn't `"no_play"` although it should have been (#172)
 * Fixed a bug where `penalty_team` could be incorrect in games of the Jaguars in the seasons 2011 - 2015 (#174)
+* Added columns `vegas_wpa` and `vegas_home_wpa` which contain Win Probability Added from the spread-adjusted WPA model
 
 # nflfastR 3.2.0
 
