@@ -493,9 +493,7 @@ add_ep_variables <- function(pbp_data) {
                              .data$two_point_pass_reception_good == 0 &
                              .data$safety == 1,
                            -2 - .data$ExpPts, .data$EPA),
-      # Defense touchdown
-      #EPA = dplyr::if_else(touchdown == 1 & td_team == defteam,
-      #                     -7 - ExpPts, EPA),
+
       # Change of possession without defense scoring
       # and no timeout, two minute warning, or quarter end follows:
       EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
@@ -512,9 +510,10 @@ add_ep_variables <- function(pbp_data) {
                              .data$safety == 0 &
                              .data$posteam != dplyr::lead(.data$posteam) &
                              !is.na(dplyr::lead(.data$play_type)) &
+                             # next play: no timeout or timeout from a real play (ie challenge)
                              (dplyr::lead(.data$timeout) == 0 |
                                 (dplyr::lead(.data$timeout) == 1 &
-                                   dplyr::lead(.data$play_type) != "no_play")),
+                                   dplyr::lead(.data$play_type) != "no_play" | stringr::str_detect(dplyr::lead(.data$desc), ' pass '))),
                            -dplyr::lead(.data$ExpPts) - .data$ExpPts, .data$EPA),
 
       # Same thing except for when timeouts and end of play follow:
@@ -530,31 +529,13 @@ add_ep_variables <- function(pbp_data) {
                              .data$two_point_pass_good == 0 &
                              .data$two_point_pass_reception_good == 0 &
                              .data$safety == 0 &
+                             # next play type is missing
                              (is.na(dplyr::lead(.data$play_type)) |
+                                # or next play is timeout and has no play
                                 (dplyr::lead(.data$timeout) == 1 &
-                                   dplyr::lead(.data$play_type) == "no_play")) &
+                                   dplyr::lead(.data$play_type) == "no_play" & !stringr::str_detect(dplyr::lead(.data$desc), ' pass '))) &
                              .data$posteam != dplyr::lead(.data$posteam, 2),
                            -dplyr::lead(.data$ExpPts, 2) - .data$ExpPts, .data$EPA),
-
-      # Same thing except for when back to back rows of end of
-      # play that can potentially occur because the NFL likes to
-      # make my life difficult:
-      EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
-                             .data$extra_point_good == 0 &
-                             .data$extra_point_failed == 0 &
-                             .data$extra_point_blocked == 0 &
-                             .data$extra_point_aborted == 0 &
-                             .data$two_point_rush_failed == 0 &
-                             .data$two_point_pass_failed == 0 &
-                             .data$two_point_pass_reception_failed == 0 &
-                             .data$two_point_rush_good == 0 &
-                             .data$two_point_pass_good == 0 &
-                             .data$two_point_pass_reception_good == 0 &
-                             .data$safety == 0 &
-                             (is.na(dplyr::lead(.data$play_type)) &
-                                is.na(dplyr::lead(.data$play_type, 2))) &
-                             .data$posteam != dplyr::lead(.data$posteam, 3),
-                           -dplyr::lead(.data$ExpPts, 3) - .data$ExpPts, .data$EPA),
 
       # Team keeps possession and no timeout or end of play follows:
       EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
@@ -600,6 +581,27 @@ add_ep_variables <- function(pbp_data) {
                              .data$posteam == dplyr::lead(.data$posteam, 2),
                            dplyr::lead(.data$ExpPts, 2) - .data$ExpPts, .data$EPA),
 
+
+      # Same thing except for when back to back rows of end of
+      # play that can potentially occur because the NFL likes to
+      # make my life difficult:
+      EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
+                             .data$extra_point_good == 0 &
+                             .data$extra_point_failed == 0 &
+                             .data$extra_point_blocked == 0 &
+                             .data$extra_point_aborted == 0 &
+                             .data$two_point_rush_failed == 0 &
+                             .data$two_point_pass_failed == 0 &
+                             .data$two_point_pass_reception_failed == 0 &
+                             .data$two_point_rush_good == 0 &
+                             .data$two_point_pass_good == 0 &
+                             .data$two_point_pass_reception_good == 0 &
+                             .data$safety == 0 &
+                             (is.na(dplyr::lead(.data$play_type)) &
+                                is.na(dplyr::lead(.data$play_type, 2))) &
+                             .data$posteam != dplyr::lead(.data$posteam, 3),
+                           -dplyr::lead(.data$ExpPts, 3) - .data$ExpPts, .data$EPA),
+
       # Same as above but when two rows without play info follow:
       EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
                              .data$extra_point_good == 0 &
@@ -615,9 +617,9 @@ add_ep_variables <- function(pbp_data) {
                              .data$safety == 0 &
                              (
                                #next play is missing play type or has timeout
-                               ( is.na(dplyr::lead(.data$play_type)) | (dplyr::lead(.data$timeout) == 1 & dplyr::lead(.data$play_type) == "no_play") ) &
+                               ( is.na(dplyr::lead(.data$play_type)) | (dplyr::lead(.data$timeout) == 1 & dplyr::lead(.data$play_type) == "no_play" & !stringr::str_detect(dplyr::lead(.data$desc), ' pass ')) ) &
                                  #same for play after that
-                                 ( is.na(dplyr::lead(.data$play_type, 2)) | (dplyr::lead(.data$timeout, 2) == 1 & dplyr::lead(.data$play_type, 2) == "no_play") )
+                                 ( is.na(dplyr::lead(.data$play_type, 2)) | (dplyr::lead(.data$timeout, 2) == 1 & dplyr::lead(.data$play_type, 2) == "no_play" & !stringr::str_detect(dplyr::lead(.data$desc, 2), ' pass ')) )
                              ) &
                              .data$posteam == dplyr::lead(.data$posteam, 3),
                            dplyr::lead(.data$ExpPts, 3) - .data$ExpPts, .data$EPA)) %>%
