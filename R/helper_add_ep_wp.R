@@ -540,6 +540,10 @@ add_ep_variables <- function(pbp_data) {
                                          .data$sp == 0 &
                                          !is.na(.data$play_type),
                                        0 - .data$ep, .data$epa),
+                  epa = dplyr::if_else(.data$desc == "END QUARTER 2", NA_real_, .data$epa),
+                  epa = dplyr::if_else(.data$desc == "GAME", NA_real_, .data$epa),
+                  ep = dplyr::if_else(.data$desc == "END QUARTER 2", NA_real_, .data$ep),
+                  ep = dplyr::if_else(.data$desc == "GAME", NA_real_, .data$ep),
                   home_team_epa = dplyr::if_else(.data$posteam == .data$home_team,
                                                  .data$epa, -.data$epa),
                   away_team_epa = dplyr::if_else(.data$posteam == .data$away_team,
