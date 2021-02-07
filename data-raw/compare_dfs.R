@@ -25,7 +25,7 @@ compare_pbp <- function(id, cols) {
       vegas_home_wp = round(vegas_home_wp, 2)
     )
 
-  sum <- summary(arsenal::comparedf(new_pbp, repo_pbp))
+  sum <- arsenal::diffs(arsenal::comparedf(new_pbp, repo_pbp))
   dfs <- bind_cols(new_pbp, repo_pbp)
 
   return(
@@ -47,7 +47,7 @@ compared <- compare_pbp(
 compared[[1]]
 
 # get row numbers of things with differences
-obs <- compared[[1]]$diffs.table$..row.names.. %>% unique()
+obs <- compared[[1]]$..row.names.. %>% unique()
 
 # dfs with differences
 compared[[2]][obs, ]
