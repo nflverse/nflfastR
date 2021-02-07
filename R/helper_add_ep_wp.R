@@ -432,6 +432,8 @@ add_ep_variables <- function(pbp_data) {
     pbp_data_ep$ExpPts[st_penalty_i_2] <- NA_real_
   }
 
+  pbp_data_ep$ExpPts[missing_i] <- NA_real_
+
   #################################################################
   # Calculate EPA:
 
@@ -446,27 +448,42 @@ add_ep_variables <- function(pbp_data) {
     dplyr::group_by(.data$game_id) %>%
     dplyr::mutate(# Now conditionally assign the EPA, first for possession team
       # touchdowns:
-      EPA = dplyr::if_else(!is.na(.data$td_team),
+      ep = .data$ExpPts,
+      tmp_posteam = .data$posteam
+    ) %>%
+    tidyr::fill(
+      .data$ep, .direction = "up"
+    ) %>%
+    tidyr::fill(
+      .data$tmp_posteam, .direction = "up"
+    ) %>%
+    dplyr::mutate(
+      # get epa for non-scoring plays
+      home_ep = dplyr::if_else(.data$tmp_posteam == .data$home_team, .data$ep, - .data$ep),
+      home_epa = dplyr::lead(home_ep) - .data$home_ep,
+      epa = dplyr::if_else(.data$tmp_posteam == .data$home_team, .data$home_epa, -.data$home_epa),
+
+      # td
+      epa = dplyr::if_else(!is.na(.data$td_team),
                            dplyr::if_else(.data$td_team == .data$posteam,
-                                          7 - .data$ExpPts, -7 - .data$ExpPts),
-                           0),
-      #                     7 - ExpPts, 0),
+                                          7 - .data$ep, -7 - .data$ep),
+                           epa),
       # Offense field goal:
-      EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 1,
-                           3 - .data$ExpPts, .data$EPA),
+      epa = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 1,
+                           3 - .data$ep, .data$epa),
       # Offense extra-point:
-      EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
+      epa = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
                              .data$extra_point_good == 1,
-                           1 - .data$ExpPts, .data$EPA),
+                           1 - .data$ep, .data$epa),
       # Offense two-point conversion:
-      EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
+      epa = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
                              .data$extra_point_good == 0 &
                              (.data$two_point_rush_good == 1 |
                                 .data$two_point_pass_good == 1 |
                                 .data$two_point_pass_reception_good == 1),
-                           2 - .data$ExpPts, .data$EPA),
+                           2 - .data$ep, .data$epa),
       # Failed PAT (both 1 and 2):
-      EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
+      epa = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
                              .data$extra_point_good == 0 &
                              ((.data$extra_point_failed == 1 |
                                  .data$extra_point_blocked == 1 |
@@ -474,13 +491,13 @@ add_ep_variables <- function(pbp_data) {
                                 (.data$two_point_rush_failed == 1 |
                                    .data$two_point_pass_failed == 1 |
                                    .data$two_point_pass_reception_failed == 1)),
-                           0 - .data$ExpPts, .data$EPA),
+                           0 - .data$ep, .data$epa),
       # Opponent scores defensive 2 point:
-      EPA = dplyr::if_else(
-        .data$defensive_two_point_conv == 1, -2 - .data$ExpPts, .data$EPA
+      epa = dplyr::if_else(
+        .data$defensive_two_point_conv == 1, -2 - .data$ep, .data$epa
       ),
       # Opponent safety:
-      EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
+      epa = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
                              .data$extra_point_good == 0 &
                              .data$extra_point_failed == 0 &
                              .data$extra_point_blocked == 0 &
@@ -492,140 +509,12 @@ add_ep_variables <- function(pbp_data) {
                              .data$two_point_pass_good == 0 &
                              .data$two_point_pass_reception_good == 0 &
                              .data$safety == 1,
-                           -2 - .data$ExpPts, .data$EPA),
+                           -2 - .data$ep, .data$epa)
 
-      # Change of possession without defense scoring
-      # and no timeout, two minute warning, or quarter end follows:
-      EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
-                             .data$extra_point_good == 0 &
-                             .data$extra_point_failed == 0 &
-                             .data$extra_point_blocked == 0 &
-                             .data$extra_point_aborted == 0 &
-                             .data$two_point_rush_failed == 0 &
-                             .data$two_point_pass_failed == 0 &
-                             .data$two_point_pass_reception_failed == 0 &
-                             .data$two_point_rush_good == 0 &
-                             .data$two_point_pass_good == 0 &
-                             .data$two_point_pass_reception_good == 0 &
-                             .data$safety == 0 &
-                             .data$posteam != dplyr::lead(.data$posteam) &
-                             !is.na(dplyr::lead(.data$play_type)) &
-                             # next play: no timeout or timeout from a real play (ie challenge)
-                             (dplyr::lead(.data$timeout) == 0 |
-                                (dplyr::lead(.data$timeout) == 1 &
-                                   dplyr::lead(.data$play_type) != "no_play" | stringr::str_detect(dplyr::lead(.data$desc), ' pass '))),
-                           -dplyr::lead(.data$ExpPts) - .data$ExpPts, .data$EPA),
-
-      # Same thing except for when timeouts and end of play follow:
-      EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
-                             .data$extra_point_good == 0 &
-                             .data$extra_point_failed == 0 &
-                             .data$extra_point_blocked == 0 &
-                             .data$extra_point_aborted == 0 &
-                             .data$two_point_rush_failed == 0 &
-                             .data$two_point_pass_failed == 0 &
-                             .data$two_point_pass_reception_failed == 0 &
-                             .data$two_point_rush_good == 0 &
-                             .data$two_point_pass_good == 0 &
-                             .data$two_point_pass_reception_good == 0 &
-                             .data$safety == 0 &
-                             # next play type is missing
-                             (is.na(dplyr::lead(.data$play_type)) |
-                                # or next play is timeout and has no play
-                                (dplyr::lead(.data$timeout) == 1 &
-                                   dplyr::lead(.data$play_type) == "no_play" & !stringr::str_detect(dplyr::lead(.data$desc), ' pass '))) &
-                             .data$posteam != dplyr::lead(.data$posteam, 2),
-                           -dplyr::lead(.data$ExpPts, 2) - .data$ExpPts, .data$EPA),
-
-      # Team keeps possession and no timeout or end of play follows:
-      EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
-                             .data$extra_point_good == 0 &
-                             .data$extra_point_failed == 0 &
-                             .data$extra_point_blocked == 0 &
-                             .data$extra_point_aborted == 0 &
-                             .data$two_point_rush_failed == 0 &
-                             .data$two_point_pass_failed == 0 &
-                             .data$two_point_pass_reception_failed == 0 &
-                             .data$two_point_rush_good == 0 &
-                             .data$two_point_pass_good == 0 &
-                             .data$two_point_pass_reception_good == 0 &
-                             .data$safety == 0 &
-                             .data$posteam == dplyr::lead(.data$posteam) &
-                             !is.na(dplyr::lead(.data$play_type)) &
-                             # no timeout on next line
-                             (dplyr::lead(.data$timeout) == 0 |
-                                #or timeout caused by failed challenge
-                                (dplyr::lead(.data$timeout) == 1 &
-                                   (dplyr::lead(.data$play_type) != "no_play" | stringr::str_detect(dplyr::lead(.data$desc), ' pass ')))),
-                           dplyr::lead(.data$ExpPts) - .data$ExpPts, .data$EPA),
-
-      # Same but timeout or end of play follows:
-      EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
-                             .data$extra_point_good == 0 &
-                             .data$extra_point_failed == 0 &
-                             .data$extra_point_blocked == 0 &
-                             .data$extra_point_aborted == 0 &
-                             .data$two_point_rush_failed == 0 &
-                             .data$two_point_pass_failed == 0 &
-                             .data$two_point_pass_reception_failed == 0 &
-                             .data$two_point_rush_good == 0 &
-                             .data$two_point_pass_good == 0 &
-                             .data$two_point_pass_reception_good == 0 &
-                             .data$safety == 0 &
-                             #missing play type
-                             (is.na(dplyr::lead(.data$play_type)) |
-                                #or timeout without a pass play
-                                (dplyr::lead(.data$timeout) == 1 &
-                                   dplyr::lead(.data$play_type) == "no_play" &
-                                    !stringr::str_detect(dplyr::lead(.data$desc), ' pass '))) &
-                             .data$posteam == dplyr::lead(.data$posteam, 2),
-                           dplyr::lead(.data$ExpPts, 2) - .data$ExpPts, .data$EPA),
-
-
-      # Same thing except for when back to back rows of end of
-      # play that can potentially occur because the NFL likes to
-      # make my life difficult:
-      EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
-                             .data$extra_point_good == 0 &
-                             .data$extra_point_failed == 0 &
-                             .data$extra_point_blocked == 0 &
-                             .data$extra_point_aborted == 0 &
-                             .data$two_point_rush_failed == 0 &
-                             .data$two_point_pass_failed == 0 &
-                             .data$two_point_pass_reception_failed == 0 &
-                             .data$two_point_rush_good == 0 &
-                             .data$two_point_pass_good == 0 &
-                             .data$two_point_pass_reception_good == 0 &
-                             .data$safety == 0 &
-                             (is.na(dplyr::lead(.data$play_type)) &
-                                is.na(dplyr::lead(.data$play_type, 2))) &
-                             .data$posteam != dplyr::lead(.data$posteam, 3),
-                           -dplyr::lead(.data$ExpPts, 3) - .data$ExpPts, .data$EPA),
-
-      # Same as above but when two rows without play info follow:
-      EPA = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
-                             .data$extra_point_good == 0 &
-                             .data$extra_point_failed == 0 &
-                             .data$extra_point_blocked == 0 &
-                             .data$extra_point_aborted == 0 &
-                             .data$two_point_rush_failed == 0 &
-                             .data$two_point_pass_failed == 0 &
-                             .data$two_point_pass_reception_failed == 0 &
-                             .data$two_point_rush_good == 0 &
-                             .data$two_point_pass_good == 0 &
-                             .data$two_point_pass_reception_good == 0 &
-                             .data$safety == 0 &
-                             (
-                               #next play is missing play type or has timeout
-                               ( is.na(dplyr::lead(.data$play_type)) | (dplyr::lead(.data$timeout) == 1 & dplyr::lead(.data$play_type) == "no_play" & !stringr::str_detect(dplyr::lead(.data$desc), ' pass ')) ) &
-                                 #same for play after that
-                                 ( is.na(dplyr::lead(.data$play_type, 2)) | (dplyr::lead(.data$timeout, 2) == 1 & dplyr::lead(.data$play_type, 2) == "no_play" & !stringr::str_detect(dplyr::lead(.data$desc, 2), ' pass ')) )
-                             ) &
-                             .data$posteam == dplyr::lead(.data$posteam, 3),
-                           dplyr::lead(.data$ExpPts, 3) - .data$ExpPts, .data$EPA)) %>%
+      ) %>%
     # Now rename each of the expected points columns to match the style of
     # the updated code:
-    dplyr::rename(ep = "ExpPts", epa = "EPA",
+    dplyr::rename(
                   no_score_prob = "No_Score_Prob",
                   opp_fg_prob = "Opp_Field_Goal_Prob",
                   opp_safety_prob = "Opp_Safety_Prob",
@@ -634,36 +523,11 @@ add_ep_variables <- function(pbp_data) {
                   safety_prob = "Safety_Prob",
                   td_prob = "Touchdown_Prob",
                   extra_point_prob = "ExPoint_Prob",
-                  two_point_conversion_prob = "TwoPoint_Prob") %>%
+                  two_point_conversion_prob = "TwoPoint_Prob"
+                  ) %>%
     # Create columns with cumulative epa totals for both teams:
-    dplyr::mutate(ep = dplyr::if_else(.data$timeout == 1 & .data$play_type == "no_play" &
-                                        !stringr::str_detect(.data$desc, ' pass ') &
-                                        !stringr::str_detect(.data$desc, ' sacked ') &
-                                        !stringr::str_detect(.data$desc, ' scramble ') &
-                                        !stringr::str_detect(.data$desc, ' punts ') &
-                                        !stringr::str_detect(.data$desc, ' up the middle ') &
-                                        !stringr::str_detect(.data$desc, ' left end ') &
-                                        !stringr::str_detect(.data$desc, ' left guard ') &
-                                        !stringr::str_detect(.data$desc, ' left tackle ') &
-                                        !stringr::str_detect(.data$desc, ' right end ') &
-                                        !stringr::str_detect(.data$desc, ' right guard ') &
-                                        !stringr::str_detect(.data$desc, ' right tackle ')
-                                      ,
-                                      dplyr::lead(.data$ep), .data$ep),
-                  epa = dplyr::if_else(.data$timeout == 1 & .data$play_type == "no_play" &
-                                         !stringr::str_detect(.data$desc, ' pass ') &
-                                         !stringr::str_detect(.data$desc, ' sacked ') &
-                                         !stringr::str_detect(.data$desc, ' scramble ') &
-                                         !stringr::str_detect(.data$desc, ' punts ') &
-                                         !stringr::str_detect(.data$desc, ' up the middle ') &
-                                         !stringr::str_detect(.data$desc, ' left end ') &
-                                         !stringr::str_detect(.data$desc, ' left guard ') &
-                                         !stringr::str_detect(.data$desc, ' left tackle ') &
-                                         !stringr::str_detect(.data$desc, ' right end ') &
-                                         !stringr::str_detect(.data$desc, ' right guard ') &
-                                         !stringr::str_detect(.data$desc, ' right tackle ')
-                                       ,
-                                       0, .data$epa),
+    dplyr::mutate(
+
                   # Change epa for plays occurring at end of half with no scoring
                   # plays to be just the difference between 0 and starting ep:
                   epa = dplyr::if_else(((.data$qtr == 2 &
