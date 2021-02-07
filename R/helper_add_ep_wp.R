@@ -470,18 +470,18 @@ add_ep_variables <- function(pbp_data) {
                            epa),
       # Offense field goal:
       epa = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 1,
-                           3 - .data$ep, .data$epa),
+                           3 - .data$ep, .data$epa, missing = .data$epa),
       # Offense extra-point:
       epa = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
                              .data$extra_point_good == 1,
-                           1 - .data$ep, .data$epa),
+                           1 - .data$ep, .data$epa, missing = .data$epa),
       # Offense two-point conversion:
       epa = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
                              .data$extra_point_good == 0 &
                              (.data$two_point_rush_good == 1 |
                                 .data$two_point_pass_good == 1 |
                                 .data$two_point_pass_reception_good == 1),
-                           2 - .data$ep, .data$epa),
+                           2 - .data$ep, .data$epa, missing = .data$epa),
       # Failed PAT (both 1 and 2):
       epa = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
                              .data$extra_point_good == 0 &
@@ -491,10 +491,10 @@ add_ep_variables <- function(pbp_data) {
                                 (.data$two_point_rush_failed == 1 |
                                    .data$two_point_pass_failed == 1 |
                                    .data$two_point_pass_reception_failed == 1)),
-                           0 - .data$ep, .data$epa),
+                           0 - .data$ep, .data$epa, missing = .data$epa),
       # Opponent scores defensive 2 point:
       epa = dplyr::if_else(
-        .data$defensive_two_point_conv == 1, -2 - .data$ep, .data$epa
+        .data$defensive_two_point_conv == 1, -2 - .data$ep, .data$epa, missing = .data$epa
       ),
       # Opponent safety:
       epa = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
@@ -509,7 +509,7 @@ add_ep_variables <- function(pbp_data) {
                              .data$two_point_pass_good == 0 &
                              .data$two_point_pass_reception_good == 0 &
                              .data$safety == 1,
-                           -2 - .data$ep, .data$epa)
+                           -2 - .data$ep, .data$epa, missing = .data$epa)
 
       ) %>%
     # Now rename each of the expected points columns to match the style of
