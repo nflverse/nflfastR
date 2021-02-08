@@ -9,4 +9,5 @@ field_descriptions <- tibble(x = x) %>%
   separate(x,"{",into = c(NA,"Field","Description")) %>%
   mutate_all(str_remove_all,"\\}")
 
-usethis::use_data(field_descriptions,overwrite = TRUE)
+# usethis::use_data(field_descriptions,overwrite = TRUE)
+save(field_descriptions, file = "vignettes/field_descriptions.rda")
