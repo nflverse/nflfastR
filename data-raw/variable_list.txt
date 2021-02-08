@@ -340,3 +340,5 @@
 #' \item{xyac_fd}{Probability play earns a first down based on where the ball was caught.}
 #' \item{xyac_mean_yardage}{Average expected yards after the catch based on where the ball was caught.}
 #' \item{xyac_median_yardage}{Median expected yards after the catch based on where the ball was caught.}
+#' \item{xpass}{Probability of dropback scaled from 0 to 1.}
+#' \item{pass_oe}{Dropback percent over expected on a given play scaled from 0 to 100.}
