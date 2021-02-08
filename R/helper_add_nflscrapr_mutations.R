@@ -54,31 +54,24 @@ add_nflscrapr_mutations <- function(pbp) {
       ),
       # Make the possession team for kickoffs be the return team, since that is
       # more intuitive from the EPA / WPA point of view:
-      posteam = dplyr::if_else(
+      posteam = dplyr::case_when(
         # kickoff_finder is defined below
-        .data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, kickoff_finder),
-        dplyr::if_else(
-          .data$posteam_type == "home",
-          .data$away_team, .data$home_team
-        ),
-        .data$posteam
+        (.data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, kickoff_finder)) & .data$posteam_type == "home" ~ .data$away_team,
+        (.data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, kickoff_finder)) & .data$posteam_type == "away" ~ .data$home_team,
+        TRUE ~ .data$posteam
       ),
-      defteam = dplyr::if_else(
-        .data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, kickoff_finder),
-        dplyr::if_else(
-          .data$posteam_type == "home",
-          .data$home_team, .data$away_team
-        ),
-        .data$defteam
+      defteam = dplyr::case_when(
+        # kickoff_finder is defined below
+        (.data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, kickoff_finder)) & .data$posteam_type == "home" ~ .data$home_team,
+        (.data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, kickoff_finder)) & .data$posteam_type == "away" ~ .data$away_team,
+        TRUE ~ .data$defteam
       ),
       # Now flip the posteam_type as well:
-      posteam_type = dplyr::if_else(
-        .data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, kickoff_finder),
-        dplyr::if_else(
-          .data$posteam_type == "home",
-          "away", "home"
-        ),
-        .data$posteam_type
+      posteam_type = dplyr::case_when(
+        # kickoff_finder is defined below
+        (.data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, kickoff_finder)) & .data$posteam == .data$home_team ~ "home",
+        (.data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, kickoff_finder)) & .data$posteam == .data$away_team ~ "away",
+        TRUE ~ .data$posteam_type
       ),
       yardline = dplyr::if_else(.data$yardline == "50", "MID 50", .data$yardline),
       yardline = dplyr::if_else(
@@ -246,7 +239,7 @@ add_nflscrapr_mutations <- function(pbp) {
       # kickoff, punt, qb_kneel, qb_spike, or no_play (which includes timeouts and
       # penalties):
       # but first reset the penalty fix variable in case it's trash
-      penalty_fix = dplyr::if_else(.data$penalty == 1 & .data$play_type_nfl == "PENALTY", 0, penalty_fix),
+      penalty_fix = dplyr::if_else(.data$penalty == 1 & .data$play_type_nfl == "PENALTY", 0, .data$penalty_fix),
 
       play_type = dplyr::if_else(
         (.data$penalty == 0 |
@@ -314,6 +307,9 @@ add_nflscrapr_mutations <- function(pbp) {
         (.data$penalty == 0 |
            (.data$penalty == 1 & .data$penalty_fix == 1)) & .data$qb_kneel == 1,
         "qb_kneel", .data$play_type
+      ),
+      play_type = dplyr::if_else(
+        is.na(.data$penalty) & is.na(.data$play_type) & stringr::str_detect(.data$play_description, " offsetting"), "no_play", play_type
       ),
       # Indicator for QB dropbacks (exclude spikes and kneels):
       qb_dropback = dplyr::if_else(

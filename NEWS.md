@@ -12,6 +12,8 @@ required for `calculate_win_probability()`
 * Fixed a bug where `calculate_expected_points()` and `calculate_win_probability()` duplicated some existing variables instead of replacing them (#170)
 * Fixed a bug where `penalty_type` wasn't `"no_play"` although it should have been (#172)
 * Fixed a bug where `penalty_team` could be incorrect in games of the Jaguars in the seasons 2011 - 2015 (#174)
+* Fixed a bug related to the calculation of EPA on plays before a failed pass interference challenge in a few 2019 games (#175)
+* Fixed a bug related to lots of fields with `NA` on offsetting penalties (#44)
 * Added columns `vegas_wpa` and `vegas_home_wpa` which contain Win Probability Added from the spread-adjusted WPA model
 
 # nflfastR 3.2.0
