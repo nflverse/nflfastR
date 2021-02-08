@@ -93,6 +93,8 @@
 #' \item{home_wp}{Estimated win probability for the home team.}
 #' \item{away_wp}{Estimated win probability for the away team.}
 #' \item{wpa}{Win probability added (WPA) for the posteam.}
+#' \item{vegas_wpa}{Win probability added (WPA) for the posteam: spread_adjusted model.}
+#' \item{vegas_home_wpa}{Win probability added (WPA) for the home team: spread_adjusted model.}
 #' \item{home_wp_post}{Estimated win probability for the home team at the end of the play.}
 #' \item{away_wp_post}{Estimated win probability for the away team at the end of the play.}
 #' \item{vegas_wp}{Estimated win probabiity for the posteam given the current situation at the start of the given play, incorporating pre-game Vegas line.}
