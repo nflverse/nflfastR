@@ -203,3 +203,42 @@ load_raw_game <- function(game_id, qs = FALSE){
 
 # Identify sessions with sequential future resolving
 is_sequential <- function() inherits(future::plan(), "sequential")
+
+check_stat_ids <- function(seasons, stat_ids){
+
+  if (is_sequential()) {
+    usethis::ui_info(c(
+        "It is recommended to use parallel processing when using this function.",
+        "Please consider running {usethis::ui_code('future::plan(\"multisession\")')}!",
+        "Will go on sequentially..."
+    ))
+  }
+
+  games <- load_lees_games() %>%
+    dplyr::filter(!is.na(result), season %in% seasons) %>%
+    dplyr::pull(game_id)
+
+  p <- progressr::progressor(along = games)
+
+  furrr::future_map_dfr(games, function(id, stats, p){
+    raw_data <- load_raw_game(id)
+    plays <- janitor::clean_names(raw_data$data$viewer$gameDetail$plays) %>%
+      dplyr::select(play_id, play_stats)
+
+    p(sprintf("ID=%s", as.character(id)))
+
+    tidyr::unnest(plays, cols = c("play_stats")) %>%
+      janitor::clean_names() %>%
+      dplyr::filter(stat_id %in% stats) %>%
+      dplyr::mutate(game_id = as.character(id)) %>%
+      dplyr::select(
+        "game_id",
+        "play_id",
+        "stat_id",
+        "yards",
+        "team_abbr" = "team_abbreviation",
+        "player_name",
+        "gsis_player_id"
+      )
+  }, stat_ids, p)
+}
