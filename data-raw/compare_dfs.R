@@ -8,7 +8,12 @@ compare_pbp <- function(id, cols) {
   # no idea why this is necessary
   game <- id
 
-  new_pbp <- build_nflfastR_pbp(id) %>%
+  new_pbp <- build_nflfastR_pbp(
+    id
+    # comment this out to use the "normal" way
+    , dir = "../nflfastR-raw/raw_old"
+    ) %>%
+    filter(!stringr::str_detect(desc, "GAME")) %>%
     select(all_of(cols)) %>%
     # necessary to pass the equality checks
     mutate(
@@ -16,8 +21,10 @@ compare_pbp <- function(id, cols) {
       epa = round(epa, 2),
       vegas_home_wp = round(vegas_home_wp, 2)
     )
+
   repo_pbp <- readRDS(url(glue::glue("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_{s}.rds"))) %>%
     filter(game_id == game) %>%
+    filter(!stringr::str_detect(desc, "GAME")) %>%
     select(all_of(cols)) %>%
     mutate(
       ep = round(ep, 2),
@@ -25,8 +32,15 @@ compare_pbp <- function(id, cols) {
       vegas_home_wp = round(vegas_home_wp, 2)
     )
 
-  sum <- arsenal::diffs(arsenal::comparedf(new_pbp, repo_pbp))
-  dfs <- bind_cols(new_pbp, repo_pbp)
+  sum <- arsenal::diffs(arsenal::comparedf(
+    new_pbp %>% select(-desc),
+    repo_pbp %>% select(-desc)
+    ))
+  dfs <- bind_cols(
+    new_pbp %>% select(-desc),
+    repo_pbp %>% select(-desc))
+
+  dfs$desc <- new_pbp$desc
 
   return(
     list(sum, dfs)
@@ -35,8 +49,16 @@ compare_pbp <- function(id, cols) {
 
 }
 
-cols <- c("game_id", "play_id", "desc", "play_type", "posteam", "yardline_100", "down", "ydstogo", "ep", "epa", "vegas_home_wp")
-id <- "2020_16_MIN_NO"
+cols <- c(
+  # DO NOT REMOVE THESE ONES OR THE COMPARISON WILL BREAK
+  "play_id", "desc", "ep", "epa", "vegas_home_wp",
+
+  # here is stuff you can choose whether to include
+  "posteam", "home_team", "away_team"
+  # , "posteam_timeouts_remaining", "defteam_timeouts_remaining"
+  )
+
+id <- "2002_05_PHI_JAX"
 
 compared <- compare_pbp(
   id = id,
@@ -50,5 +72,10 @@ compared[[1]]
 obs <- compared[[1]]$..row.names.. %>% unique()
 
 # dfs with differences
-compared[[2]][obs, ]
+compared[[2]][obs, ] %>% arrange(play_id)
+
+# play description of plays with differences
+compared[[2]][obs, ] %>% arrange(play_id) %>% select(desc)
+
+
 
