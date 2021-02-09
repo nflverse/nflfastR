@@ -98,7 +98,7 @@ add_nflscrapr_mutations <- function(pbp) {
       ),
       # Add column for replay or challenge:
       replay_or_challenge = stringr::str_detect(
-        .data$play_description, "(Replay Official reviewed)|( challenge(d)? )") %>%
+        .data$play_description, "(Replay Official reviewed)|( challenge(d)? )|(Challenged)") %>%
         as.numeric(),
       # Result of replay or challenge:
       replay_or_challenge_result = dplyr::if_else(
@@ -342,6 +342,20 @@ add_nflscrapr_mutations <- function(pbp) {
       # temporary columns that will not be included):
       # Initialize both home and away to have 3 timeouts for each
       # half except overtime where they have 2:
+
+      # extract timeouts from failed challenges when it's not otherwise there
+      tmp_timeout = stringr::str_extract(.data$play_description, "(?<=by\\s)[:upper:]{2,3}(?=\\s)"),
+      timeout_team = dplyr::if_else(
+        .data$replay_or_challenge == 1 & .data$timeout == 1 & is.na(timeout_team), .data$tmp_timeout, .data$timeout_team
+
+      ),
+      timeout_team = dplyr::if_else(
+        .data$season <= 2015 & (.data$home_team %in% c("JAC", "JAX") | .data$away_team %in% c("JAC", "JAX")) & .data$timeout_team == "JAX",
+        "JAC",
+        .data$timeout_team
+      ),
+
+
       home_timeouts_remaining = dplyr::if_else(
         .data$quarter %in% c(1, 2, 3, 4),
         3, 2
