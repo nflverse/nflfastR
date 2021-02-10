@@ -43,7 +43,9 @@ An nflfastR play-by-play data frame like it can be loaded from \url{https://gith
 \item{\code{\link[=decode_player_ids]{decode_player_ids()}}}
 }
 
-Please see the documentation of each function to learn about the output.
+Please see either the documentation of each function or
+\href{https://www.nflfastr.com/articles/field_descriptions.html}{the nflfastR Field Descriptions website}
+to learn about the output.
 }
 \details{
 To load valid game_ids please use the package function \code{\link[=fast_scraper_schedules]{fast_scraper_schedules()}}.

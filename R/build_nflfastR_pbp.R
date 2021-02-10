@@ -21,7 +21,9 @@
 #'  \item{[decode_player_ids()]}
 #' }
 #'
-#' Please see the documentation of each function to learn about the output.
+#' Please see either the documentation of each function or
+#' [the nflfastR Field Descriptions website](https://www.nflfastr.com/articles/field_descriptions.html)
+#' to learn about the output.
 #'
 #' @inheritParams fast_scraper
 #' @param decode If `TRUE`, the function [decode_player_ids()] will be executed.
