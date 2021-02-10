@@ -11,7 +11,7 @@ test_that("Scraper works for an old and new game at once", {
   expect_identical(x2[2], desc_2_nfl_source)
 })
 
-test_that("Wrapper with source nfl works for an old and new game at once", {
+test_that("Wrapper works for an old and new game at once", {
 
   wrapper <- build_nflfastR_pbp(game_ids)
 

@@ -12,7 +12,6 @@ extract_desc <- function(pbp) {
 }
 
 # for checking play descriptions after scraping
-# the first is the same for both sources since it's a 2009 game
 desc_1_nfl_source <- "(15:00) J.Anderson to ATL 22 for 3 yards (K.Wong, E.McDaniel)."
 desc_2_nfl_source <- "(15:00) 33-A.Jones left tackle to GB 25 for no gain (58-R.Smith)."
 
