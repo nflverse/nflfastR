@@ -20,7 +20,7 @@
 # @importFrom purrr walk
 #' @importFrom progressr progressor
 # @importFrom qs qdeserialize qread
-#' @importFrom rlang .data inform
+#' @importFrom rlang .data inform dots_list
 # @importFrom RSQLite SQLite
 #' @importFrom stats predict na.omit
 #' @importFrom stringr str_sub str_replace_all str_length str_extract str_detect str_trim str_remove_all str_split str_extract_all
