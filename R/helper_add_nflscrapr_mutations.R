@@ -309,7 +309,7 @@ add_nflscrapr_mutations <- function(pbp) {
         "qb_kneel", .data$play_type
       ),
       play_type = dplyr::if_else(
-        is.na(.data$penalty) & is.na(.data$play_type) & stringr::str_detect(.data$play_description, " offsetting"), "no_play", play_type
+        is.na(.data$penalty) & is.na(.data$play_type) & stringr::str_detect(.data$play_description, " offsetting"), "no_play", .data$play_type
       ),
       # Indicator for QB dropbacks (exclude spikes and kneels):
       qb_dropback = dplyr::if_else(
@@ -346,7 +346,7 @@ add_nflscrapr_mutations <- function(pbp) {
       # extract timeouts from failed challenges when it's not otherwise there
       tmp_timeout = stringr::str_extract(.data$play_description, "(?<=by\\s)[:upper:]{2,3}(?=\\s)"),
       timeout_team = dplyr::if_else(
-        .data$replay_or_challenge == 1 & .data$timeout == 1 & is.na(timeout_team), .data$tmp_timeout, .data$timeout_team
+        .data$replay_or_challenge == 1 & .data$timeout == 1 & is.na(.data$timeout_team), .data$tmp_timeout, .data$timeout_team
 
       ),
       timeout_team = dplyr::if_else(
