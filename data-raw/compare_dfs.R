@@ -59,6 +59,10 @@ cols <- c(
   )
 
 id <- "2002_05_PHI_JAX"
+id <- "2006_01_MIA_PIT"
+id <- "2006_02_PIT_JAX"
+id <- "2006_03_JAX_IND"
+id <- "2006_04_JAX_WAS"
 
 compared <- compare_pbp(
   id = id,
@@ -70,6 +74,9 @@ compared[[1]]
 
 # get row numbers of things with differences
 obs <- compared[[1]]$..row.names.. %>% unique()
+
+# dfs
+compared[[2]] %>% arrange(play_id)
 
 # dfs with differences
 compared[[2]][obs, ] %>% arrange(play_id)
