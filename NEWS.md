@@ -25,6 +25,7 @@ the argument `decode = FALSE`).
 * The function `build_nflfastR_pbp()` will now run `add_xpass()`. This means there will be new variables in the
 dataset!
 * Fixed a bug where `calculate_expected_points()` and `calculate_win_probability()` duplicated some existing variables instead of replacing them (#170)
+* Added the new function `load_pbp()` that loads complete seasons into memory for fast access of the play-by-play data
 
 # nflfastR 3.2.0
 
