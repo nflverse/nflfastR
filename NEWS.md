@@ -14,6 +14,7 @@ required for `calculate_win_probability()`
 * Fixed a bug where `penalty_team` could be incorrect in games of the Jaguars in the seasons 2011 - 2015 (#174)
 * Fixed a bug related to the calculation of EPA on plays before a failed pass interference challenge in a few 2019 games (#175)
 * Fixed a bug related to lots of fields with `NA` on offsetting penalties (#44)
+* Switched data source for 2001-2010 to what is used for 2011 and on
 
 # nflfastR 3.2.0
 

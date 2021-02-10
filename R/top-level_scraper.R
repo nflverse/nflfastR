@@ -359,7 +359,7 @@ fast_scraper <- function(game_ids, source = "nfl", pp = FALSE, ..., in_builder =
       progressr::with_progress({
         p <- progressr::progressor(along = game_ids)
         pbp <- purrr::map_dfr(game_ids, function(x, ...){
-          if (substr(x, 1, 4) < 2011 & source == "nfl") {
+          if (substr(x, 1, 4) < 2001 & source == "nfl") {
             plays <- get_pbp_gc(x, ...)
           } else if (source == "nfl") {
             plays <- get_pbp_nfl(x, ...)
@@ -402,7 +402,7 @@ fast_scraper <- function(game_ids, source = "nfl", pp = FALSE, ..., in_builder =
         p <- progressr::progressor(along = game_ids)
         future::plan("multiprocess")
         pbp <- furrr::future_map_dfr(game_ids, function(x, ...){
-          if (substr(x, 1, 4) < 2011 & source == "nfl") {
+          if (substr(x, 1, 4) < 2001 & source == "nfl") {
             plays <- get_pbp_gc(x, ...)
           } else if (source == "nfl") {
             plays <- get_pbp_nfl(x, ...)
