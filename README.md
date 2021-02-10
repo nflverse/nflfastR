@@ -117,10 +117,11 @@ incorporating the pre-game spread.
   - To [Nick Shoemaker](https://twitter.com/WeightRoomShoe) for [finding
     and making available JSON-formatted NFL play-by-play back
     to 1999](https://github.com/CroppedClamp/nfl_pbps) (`nflfastR` uses
-    this source for 1999-2010)
+    this source for 1999 and 2000 and previously also used it for
+    2001-2010)
   - To [Lau Sze Yui](https://twitter.com/903124S) for developing a
     scraping function to access JSON-formatted NFL play-by-play
-    beginning in 2011.
+    beginning in 2001.
   - To [Lee Sharpe](https://twitter.com/LeeSharpeNFL) for curating a
     resource for game information
   - To [Timo Riske](https://twitter.com/PFF_Moo), [Lau Sze
