@@ -30,6 +30,8 @@
 #' @param rules If `FALSE`, printing of the header and footer in the console output will be suppressed.
 #' @return An nflfastR play-by-play data frame like it can be loaded from <https://github.com/guga31bb/nflfastR-data>.
 #' @details To load valid game_ids please use the package function [fast_scraper_schedules()].
+#' @seealso For information on parallel processing and progress updates please
+#' see [nflfastR].
 #' @export
 #' @examples
 #' \donttest{

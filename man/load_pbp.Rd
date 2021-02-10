@@ -22,19 +22,13 @@ all given \code{seasons}
 Loads multiple seasons from the nflfastR datarepo either into memory
 or writes them into a database using some forwarded arguments in the dots.
 }
-\details{
-The function is able to show progress updates using \code{\link[progressr:progressor]{progressr::progressor()}}
-if they are turned on before the function is called. This can be done with\preformatted{progressr::handlers(global = TRUE)
-load_pbp(seasons)
-}
-
-or with\preformatted{load_pbp(seasons) \%>\%
-  progressr::with_progress()
-}
-}
 \examples{
 \donttest{
 pbp <- load_pbp(2019:2020, qs = TRUE)
 dplyr::glimpse(pbp)
 }
+}
+\seealso{
+For information on parallel processing and progress updates please
+see \link{nflfastR}.
 }

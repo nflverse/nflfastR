@@ -19,7 +19,8 @@
 #' @param ... Additional arguments passed to the scraping functions (for internal use)
 #' @param in_builder If \code{TRUE}, the final message will be suppressed (for usage inside of \code{\link{build_nflfastR_pbp}}).
 #' @details To load valid game_ids please use the package function \code{\link{fast_scraper_schedules}}.
-#'
+#' @seealso For information on parallel processing and progress updates please
+#' see [nflfastR].
 #' @return Data frame where each individual row represents a single play for
 #' all passed game_ids containing the following
 #' detailed information (description partly extracted from nflscrapR):
@@ -428,6 +429,8 @@ fast_scraper <- function(game_ids,
 #' @param pp `r lifecycle::badge("deprecated")` has no effect and will be
 #'   removed in a future release.
 #' @details The roster data is accessed via the free to use Sleeper API.
+#' @seealso For information on parallel processing and progress updates please
+#' see [nflfastR].
 #' @return Data frame where each individual row represents a player in
 #' the roster of the given team and season containing the following information:
 #' \describe{
@@ -505,6 +508,8 @@ fast_scraper_roster <- function(seasons, pp = lifecycle::deprecated()) {
 #'   removed in a future release.
 #' @details This functions now incorporates the games file provided and maintained
 #' by Lee Sharpe.
+#' @seealso For information on parallel processing and progress updates please
+#' see [nflfastR].
 #' @return Data frame containing the following detailed game information:
 #' \describe{
 #' \item{game_id}{Character identifier including season, week, away team and home team}

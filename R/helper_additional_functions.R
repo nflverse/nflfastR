@@ -16,6 +16,8 @@
 #' the Chargers are always represented by 'LAC' regardless of which year it was.
 #' The function also standardizes player IDs for players appearing in both the
 #' older era (1999-2010) and the new era (2011+).
+#' @seealso For information on parallel processing and progress updates please
+#' see [nflfastR].
 #' @return The input Data Frame of the paramter 'pbp' with the following columns
 #' added:
 #' \describe{

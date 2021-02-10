@@ -10,17 +10,8 @@
 #' @return The complete nflfastR dataset as returned by [build_nflfastR_pbp()] for
 #' all given `seasons`
 #'
-#' @details The function is able to show progress updates using [progressr::progressor()]
-#' if they are turned on before the function is called. This can be done with
-#' ```
-#' progressr::handlers(global = TRUE)
-#' load_pbp(seasons)
-#' ```
-#' or with
-#' ```
-#' load_pbp(seasons) %>%
-#'   progressr::with_progress()
-#' ```
+#' @seealso For information on parallel processing and progress updates please
+#' see [nflfastR].
 #' @examples
 #' \donttest{
 #' pbp <- load_pbp(2019:2020, qs = TRUE)

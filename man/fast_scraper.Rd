@@ -366,3 +366,7 @@ future::plan("sequential")
 }
 }
 }
+\seealso{
+For information on parallel processing and progress updates please
+see \link{nflfastR}.
+}
