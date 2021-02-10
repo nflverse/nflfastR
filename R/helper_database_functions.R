@@ -151,7 +151,7 @@ build_db <- function(tblname = "nflfastR_pbp", db_conn, rebuild = FALSE, show_me
 
   if (!is.null(seasons)) {
     # this function lives in R/utils.R
-    load_pbp(seasons, in_db = TRUE, dbConnection = db_conn, tablename = tblname)
+    load_pbp(seasons, dbConnection = db_conn, tablename = tblname, qs = is_installed("qs"))
   }
 }
 
