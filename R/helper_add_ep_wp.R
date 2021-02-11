@@ -442,14 +442,14 @@ add_ep_variables <- function(pbp_data) {
     dplyr::mutate(
       # get epa for non-scoring plays
       home_ep = dplyr::if_else(.data$tmp_posteam == .data$home_team, .data$ep, - .data$ep),
-      home_epa = dplyr::lead(home_ep) - .data$home_ep,
+      home_epa = dplyr::lead(.data$home_ep) - .data$home_ep,
       epa = dplyr::if_else(.data$tmp_posteam == .data$home_team, .data$home_epa, -.data$home_epa),
 
       # td
       epa = dplyr::if_else(!is.na(.data$td_team),
                            dplyr::if_else(.data$td_team == .data$posteam,
                                           7 - .data$ep, -7 - .data$ep),
-                           epa),
+                           .data$epa),
       # Offense field goal:
       epa = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 1,
                            3 - .data$ep, .data$epa, missing = .data$epa),

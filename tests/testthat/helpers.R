@@ -12,12 +12,9 @@ extract_desc <- function(pbp) {
 }
 
 # for checking play descriptions after scraping
-# the first is the same for both sources since it's a 2009 game
-desc_1_nfl_source <- "(14:53) B.Roethlisberger pass short left to H.Ward to PIT 47 for 5 yards (C.Hope)."
+desc_1_nfl_source <- "(15:00) J.Anderson to ATL 22 for 3 yards (K.Wong, E.McDaniel)."
 desc_2_nfl_source <- "(15:00) 33-A.Jones left tackle to GB 25 for no gain (58-R.Smith)."
 
-desc_2_live_source <- "(15:00) A.Jones left tackle to GB 25 for no gain (R.Smith)."
-
 # sample games we'll use to check with
-game_ids <- c("2009_01_TEN_PIT", "2019_01_GB_CHI")
-old_game_ids <- c("2009091000", "2019090500")
+game_ids <- c("1999_01_MIN_ATL", "2019_01_GB_CHI")
+
