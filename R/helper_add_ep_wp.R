@@ -834,8 +834,11 @@ add_wp_variables <- function(pbp_data) {
         .data$vegas_home_wp
       ),
       vegas_home_wpa = dplyr::lead(.data$vegas_home_wp) - .data$vegas_home_wp,
-      vegas_wpa = dplyr::if_else(.data$tmp_posteam == .data$home_team, .data$vegas_home_wpa, -.data$vegas_home_wpa)
-    )
+      vegas_wpa = dplyr::if_else(.data$tmp_posteam == .data$home_team, .data$vegas_home_wpa, -.data$vegas_home_wpa),
+      vegas_wpa = dplyr::if_else(
+        stringr::str_detect(tolower(.data$desc), " kneels "), NA_real_, .data$vegas_wpa
+        )
+      )
 
   # For now follow the code from before, will need to update later:
   # Create the possible WPA values
