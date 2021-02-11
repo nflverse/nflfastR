@@ -451,14 +451,14 @@ Not surprisingly, all 5 of the top 5 WRs in terms of EPA added come in ahead of 
 
 ## Replicating official stats
 
-The columns like `name`, `passer`, etc are `nflfastR`-created columns that mimic "real" football: i.e., excluding plays with spikes, counting scrambles and sacks as pass plays, etc. But if you're trying to replicate official statistics -- perhaps for fantasy purposes -- use the `*_player_name` and `*_player_id` columns.
+The columns like `name`, `passer`, `fantasy` etc are `nflfastR`-created columns that mimic "real" football: i.e., excluding plays with spikes, counting scrambles and sacks as pass plays, etc. But if you're trying to replicate official statistics -- perhaps for fantasy purposes -- use the `*_player_name` and `*_player_id` columns.
 
 [Let's try to replicate this page of passing leaders](https://www.nfl.com/stats/player-stats/).
 
 ``` {r stats}
 nflfastR:::load_pbp(2020) %>%
   filter(week <= 17, complete_pass == 1 | incomplete_pass == 1 | interception == 1, !is.na(down)) %>%
-  group_by(passer_player_name) %>%
+  group_by(passer_player_name, posteam) %>%
   summarize(
     yards = sum(yards_gained),
     tds = sum(touchdown == 1 & td_team == posteam),
@@ -477,7 +477,7 @@ We can do the same for rush attempts to replicate the [NFL leaderboard](https://
 ``` {r stats_rush}
 nflfastR:::load_pbp(2020) %>%
   filter(week <= 17, !is.na(down)) %>%
-  group_by(rusher_player_name) %>%
+  group_by(rusher_player_name, posteam) %>%
   summarize(
     yards = sum(yards_gained),
     tds = sum(touchdown == 1 & td_team == posteam),
@@ -489,6 +489,27 @@ nflfastR:::load_pbp(2020) %>%
 ```
 
 This matches up exactly.
+
+## Fantasy stats
+
+What if we want total yards from scrimmage? Now we can use the `fantasy_player_name` column, which is the rusher on rush plays and receiver on receiving plays.
+
+``` {r stats_fantasy}
+nflfastR:::load_pbp(2020) %>%
+  filter(week <= 17, !is.na(down)) %>%
+  group_by(fantasy_player_name, posteam) %>%
+  summarize(
+    yards = sum(yards_gained),
+    tds = sum(touchdown == 1 & td_team == posteam),
+    touches = sum(rush_attempt + complete_pass),
+    receptions = sum(complete_pass)
+  ) %>%
+  arrange(-yards) %>%
+  head(10) %>%
+  knitr::kable(digits = 0)
+```
+
+Looking at the [PFR scrimmage stats](https://www.pro-football-reference.com/years/2020/scrimmage.htm), these columns are an exact match.
 
 ## The `drive` column looks wacky
 
