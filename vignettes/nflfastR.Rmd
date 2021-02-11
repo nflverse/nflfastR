@@ -470,7 +470,7 @@ nflfastR:::load_pbp(2020) %>%
   knitr::kable(digits = 0)
 ```
 
-These match the official stats on NFL.com with the exception of Watson missing 22 passing yards (maybe a bug related to laterals?).
+These match the official stats on NFL.com with the exception of Watson missing 22 passing yards (this is a bug related to laterals where he's missing yardage from the final play of the week 16 game against the Bengals).
 
 We can do the same for rush attempts to replicate the [NFL leaderboard](https://www.nfl.com/stats/player-stats/category/rushing/2020/POST/all/rushingyards/desc):
 
