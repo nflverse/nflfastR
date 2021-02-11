@@ -104,7 +104,7 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
 
       #fill missing posteam info for this
       if (
-        ((home_team == 'JAC' | away_team == 'JAC') & season <= 2015) |
+        ((home_team %in% c("JAC", "JAX") | away_team %in% c("JAC", "JAX")) & season <= 2015) |
           bad_game == 1
         ) {
         plays <- plays %>%
@@ -118,6 +118,10 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
               .data$possessionTeam.abbreviation == 'JAX', 'JAC', .data$possessionTeam.abbreviation
             )
           )
+
+        # for these old games, we're making everything JAC instead of JAX
+        home_team <- dplyr::if_else(home_team == "JAX", "JAC", home_team)
+        away_team <- dplyr::if_else(away_team == "JAX", "JAC", away_team)
       }
 
       drives <- raw_data$data$viewer$gameDetail$drives %>%
@@ -206,14 +210,14 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
           st_play_type = as.character(.data$st_play_type),
           #if JAC has the ball and scored, make them the scoring team
           td_team = dplyr::if_else(
-            .data$season <= 2015 & .data$posteam == 'JAC' &
+            .data$season <= 2015 & .data$posteam %in% c("JAC", "JAX") &
               .data$drive_how_ended_description == 'Touchdown' & !is.na(.data$td_team),
             'JAC', .data$td_team
           ),
           #if JAC involved in a game and defensive team score, fill in the right team
           td_team = dplyr::if_else(
             #game involving the jags
-            .data$season <= 2015 & (.data$home_team == 'JAC' | .data$away_team == 'JAC') &
+            .data$season <= 2015 & (.data$home_team %in% c("JAC", "JAX") | .data$away_team %in% c("JAC", "JAX")) &
               #defensive TD
               .data$drive_how_ended_description != 'Touchdown' & !is.na(.data$td_team),
             #if home team has ball, then away team scored, otherwise home team scored
@@ -224,7 +228,7 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
           td_team = dplyr::if_else(id == "2011_14_TB_JAX" & .data$play_id == 1343, 'JAC', .data$td_team),
           # fill in return team for the JAX games
           return_team = dplyr::if_else(
-            !is.na(.data$return_team) & .data$season <= 2015 & (.data$home_team == 'JAC' | .data$away_team == 'JAC'),
+            !is.na(.data$return_team) & .data$season <= 2015 & (.data$home_team %in% c("JAC", "JAX") | .data$away_team %in% c("JAC", "JAX")),
             dplyr::if_else(
               # if the home team has the ball, return team is away team (this is before we flip posteam for kickoffs)
               .data$posteam == .data$home_team, .data$away_team, .data$home_team
@@ -232,7 +236,7 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
             .data$return_team
           ),
           fumble_recovery_1_team = dplyr::if_else(
-            !is.na(.data$fumble_recovery_1_team) & .data$season <= 2015 & (.data$home_team == 'JAC' | .data$away_team == 'JAC'),
+            !is.na(.data$fumble_recovery_1_team) & .data$season <= 2015 & (.data$home_team %in% c("JAC", "JAX") | .data$away_team %in% c("JAC", "JAX")),
             # assign possession based on fumble_lost
             dplyr::case_when(
               .data$fumble_lost == 1 & .data$posteam == .data$home_team ~ .data$away_team,
@@ -244,7 +248,7 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
           ),
           timeout_team = dplyr::if_else(
             # if there's a timeout in the affected seasons
-            !is.na(.data$timeout_team) & .data$season <= 2015 & (.data$home_team == 'JAC' | .data$away_team == 'JAC'),
+            !is.na(.data$timeout_team) & .data$season <= 2015 & (.data$home_team %in% c("JAC", "JAX") | .data$away_team %in% c("JAC", "JAX")),
             # extract from play description
             # make it JAC instead of JAX to be consistent with everything else
             dplyr::if_else(
@@ -255,7 +259,7 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
           # Also fix penalty team for JAC games
           penalty_team = dplyr::if_else(
             # if there's a penalty_team in the affected seasons
-            !is.na(.data$penalty_team) & .data$season <= 2015 & (.data$home_team == 'JAC' | .data$away_team == 'JAC'),
+            !is.na(.data$penalty_team) & .data$season <= 2015 & (.data$home_team %in% c("JAC", "JAX") | .data$away_team %in% c("JAC", "JAX")),
             # extract from play description
             # make it JAC instead of JAX to be consistent with everything else
             dplyr::if_else(
