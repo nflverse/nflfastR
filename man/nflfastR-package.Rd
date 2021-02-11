@@ -14,59 +14,60 @@ A set of functions to access National Football
 \section{Parallel Processing and Progress Updates in nflfastR}{
 \subsection{Preface}{
 
-Prior to nflfastR v4.0 parallel processing could be activated with an
+Prior to nflfastR v4.0, parallel processing could be activated with an
 argument \code{pp} in the relevant functions and progress updates were always
-shown. Both of these methods were bad practice and therefore removed
+shown. Both of these methods are bad practice and were therefore removed
 in nflfastR v4.0
 
-The next sections will describe how to make nflfastR work in parallel processes
-and show progress updates only if the user really wants to.
+The next sections describe how to make nflfastR work in parallel processes
+and show progress updates if the user wants to.
 }
 
 \subsection{More Speed Using Parallel Processing}{
 
-Nearly all functions across the nflfastR package support parallel processing
+Nearly all nflfastR functions support parallel processing
 using \code{\link[furrr:future_map]{furrr::future_map()}} if it is enabled by a call to \code{\link[future:plan]{future::plan()}}
 prior to the function call.
-Please see the documentation of the aforementioned functions for detailed
-information.
+Please see the documentation of the functions for detailed information.
 
-As an example the following code block will resolve all function calls in the
-current session using multiple sessions in the background:\preformatted{future::plan("multisession")
-load_pbp(seasons)
-build_nflfastR_pbp(game_ids)
+As an example, the following code block will resolve all function calls in the
+current session using multiple sessions in the background and load play-by-play
+data for the 2018 through 2020 seasons or build them freshly for the 2018 and
+2019 SUper Bowls:\preformatted{future::plan("multisession")
+load_pbp(2018:2020)
+build_nflfastR_pbp(c("2018_21_NE_LA", "2019_21_SF_KC"))
 }
 
-It is recommended to chose a default parallel processing method and save it
+We recommended choosing a default parallel processing method and saving it
 as an environment variable in the R user profile to make sure all futures
 will be resolved with the chosen method by default.
 This can be done by following the below given steps.
 
-Run the following line and the user profile should be opened automatically.
+First, run the following line and the user profile should be opened automatically.
 If you haven't saved any environment variables yet, this will be an empty file.\preformatted{usethis::edit_r_environ()
 }
 
-In the now opened file add the next line, save and restart your R session.
+In the opened file add the next line, then save the file and restart your R session.
 Please note that this example sets "multisession" as default. For most users
 this should be the appropriate plan but please make sure it truly is.\preformatted{R_FUTURE_PLAN="multisession"
 }
 
-After the session is freshly started please check if the above method worked
+After the session is freshly retarted please check if the above method worked
 by running the next line. If the output is \code{FALSE} you successfully set up a
 default non-sequential \code{\link[future:plan]{future::plan()}}. If the output is \code{TRUE} all functions
-will behave like they were called with \code{\link[purrr:map]{purrr::map()}}.\preformatted{inherits(future::plan(), "sequential")
+will behave like they were called with \code{\link[purrr:map]{purrr::map()}} and NOT in multisession.\preformatted{inherits(future::plan(), "sequential")
 }
 }
 
 \subsection{Get Progress Updates while Functions are Running}{
 
-Most functions across the nflfastR package are able to show progress updates
+Most nflfastR functions are able to show progress updates
 using \code{\link[progressr:progressor]{progressr::progressor()}} if they are turned on before the function is
 called. There are at least two basic ways to do this by either activating
 progress updates globally (for the current session) with\preformatted{progressr::handlers(global = TRUE)
 }
 
-or by piping the function call into \code{\link[progressr:with_progress]{progressr::with_progress()}}:\preformatted{load_pbp(seasons) \%>\%
+or by piping the function call into \code{\link[progressr:with_progress]{progressr::with_progress()}}:\preformatted{load_pbp(2018:2020) \%>\%
   progressr::with_progress()
 }
 

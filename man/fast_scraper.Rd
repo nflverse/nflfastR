@@ -198,14 +198,32 @@ detailed information (description partly extracted from nflscrapR):
 \item{lateral_recovery}{Binary indicator for if a lateral occurred on a fumble recovery.}
 \item{passer_player_id}{Unique identifier for the player that attempted the pass.}
 \item{passer_player_name}{String name for the player that attempted the pass.}
+\item{passing_yards}{Numeric yards by the passer_player_name, including yards gained in pass plays with laterals.
+This should equal official passing statistics.}
 \item{receiver_player_id}{Unique identifier for the receiver that was targeted on the pass.}
 \item{receiver_player_name}{String name for the targeted receiver.}
+\item{receiving_yards}{Numeric yards by the receiver_player_name, excluding yards gained in pass plays with laterals.
+This should equal official receiving statistics but could miss yards gained in pass plays with laterals.
+Please see the description of \code{lateral_receiver_player_name} for further information.}
 \item{rusher_player_id}{Unique identifier for the player that attempted the run.}
 \item{rusher_player_name}{String name for the player that attempted the run.}
-\item{lateral_receiver_player_id}{Unique identifier for the player that received the lateral on a reception.}
-\item{lateral_receiver_player_name}{String name for the player that received the lateral on a reception.}
-\item{lateral_rusher_player_id}{Unique identifier for the player that received the lateral on a run.}
-\item{lateral_rusher_player_name}{String name for the player that received the lateral on a run.}
+\item{rushing_yards}{Numeric yards by the rusher_player_name, excluding yards gained in rush plays with laterals.
+This should equal official rushing statistics but could miss yards gained in rush plays with laterals.
+Please see the description of \code{lateral_rusher_player_name} for further information.}
+\item{lateral_receiver_player_id}{Unique identifier for the player that received the last(!) lateral on a pass play.}
+\item{lateral_receiver_player_name}{String name for the player that received the last(!) lateral on a pass play.
+If there were multiple laterals in the same play, this will only be the last player who received a lateral.
+Please see \url{https://github.com/mrcaseb/nfl-data/tree/master/data/lateral_yards}
+for a list of plays where multiple players recorded lateral receiving yards.}
+\item{lateral_receiving_yards}{Numeric yards by the \code{lateral_receiver_player_name} in pass plays with laterals.
+Please see the description of \code{lateral_receiver_player_name} for further information.}
+\item{lateral_rusher_player_id}{Unique identifier for the player that received the last(!) lateral on a run play.}
+\item{lateral_rusher_player_name}{String name for the player that received the last(!) lateral on a run play.
+If there were multiple laterals in the same play, this will only be the last player who received a lateral.
+Please see \url{https://github.com/mrcaseb/nfl-data/tree/master/data/lateral_yards}
+for a list of plays where multiple players recorded lateral rushing yards.}
+\item{lateral_rushing_yards}{Numeric yards by the \code{lateral_rusher_player_name} in run plays with laterals.
+Please see the description of \code{lateral_rusher_player_name} for further information.}
 \item{lateral_sack_player_id}{Unique identifier for the player that received the lateral on a sack.}
 \item{lateral_sack_player_name}{String name for the player that received the lateral on a sack.}
 \item{interception_player_id}{Unique identifier for the player that intercepted the pass.}

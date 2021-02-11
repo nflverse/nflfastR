@@ -30,6 +30,7 @@ dataset!
 * Fixed a bug where `penalty_team` could be incorrect in games of the Jaguars in the seasons 2011 - 2015 (#174)
 * Fixed a bug related to the calculation of EPA on plays before a failed pass interference challenge in a few 2019 games (#175)
 * Fixed a bug related to lots of fields with `NA` on offsetting penalties (#44)
+* Added the new variables `rushing_yards`, `lateral_rushing_yards`, `passing_yards`, `receiving_yards`, `lateral_receiving_yards` to fix an old bug where `yards_gained` gets overwritten on plays with laterals.
 
 # nflfastR 3.2.0
 

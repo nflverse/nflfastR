@@ -16,8 +16,17 @@ tidy_play_stats_row <-
     x <- NA_character_
   }) %>%
   modify_at(c(
-    "air_yards", "yards_after_catch", "penalty_yards", "kick_distance",
-    "fumble_recovery_1_yards", "fumble_recovery_2_yards"
+    "air_yards",
+    "yards_after_catch",
+    "penalty_yards",
+    "kick_distance",
+    "fumble_recovery_1_yards",
+    "fumble_recovery_2_yards",
+    "rushing_yards",
+    "lateral_rushing_yards",
+    "passing_yards",
+    "receiving_yards",
+    "lateral_receiving_yards"
   ), as.integer)
 
 usethis::use_data(
@@ -211,7 +220,13 @@ pbp_stat_columns <-
     "defensive_extra_point_attempt",
     "defensive_extra_point_conv",
     "penalty_fix",
-    "return_penalty_fix"
+    "return_penalty_fix",
+    #new in nflfastR v4.0
+    "rushing_yards",
+    "lateral_rushing_yards",
+    "passing_yards",
+    "receiving_yards",
+    "lateral_receiving_yards"
   )
 
 indicator_stats <- c(
