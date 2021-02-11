@@ -51,7 +51,7 @@ clean_pbp <- function(pbp, ...) {
     usethis::ui_info("Nothing to clean. Return passed data frame.")
     r <- pbp
   } else{
-    rlang::inform(paste0(crayon::red(cli::symbol$bullet), " Cleaning up play-by-play... (", crayon::yellow(cli::symbol$info), " If you run this with a lot of seasons this could take a few minutes.)"))
+    rlang::inform(paste0(crayon::red(cli::symbol$bullet), " Cleaning up play-by-play..."))
 
     # Load id map to standardize player ids for players that were active before 2011
     # and in or after 2011 meaning they appear with old gsis_ids and new ids
@@ -213,7 +213,30 @@ clean_pbp <- function(pbp, ...) {
         dplyr::vars(.data$passer_id, .data$rusher_id, .data$receiver_id, .data$id, ends_with("player_id")),
         update_ids, legacy_id_map) %>%
       dplyr::arrange(.data$index) %>%
-      dplyr::select(-"index")
+      dplyr::select(-"index") %>%
+      # add action player
+      dplyr::mutate(
+        fantasy_player_name = case_when(
+          !is.na(.data$rusher_player_name) ~ .data$rusher_player_name,
+          is.na(.data$rusher_player_name) & !is.na(.data$receiver_player_name) ~ .data$receiver_player_name,
+          TRUE ~ NA_character_
+        ),
+        fantasy_player_id = case_when(
+          !is.na(.data$rusher_player_id) ~ .data$rusher_player_id,
+          is.na(.data$rusher_player_id) & !is.na(.data$receiver_player_id) ~ .data$receiver_player_id,
+          TRUE ~ NA_character_
+        ),
+        fantasy = case_when(
+          !is.na(.data$rusher) ~ .data$rusher,
+          is.na(.data$rusher) & !is.na(.data$receiver) ~ .data$receiver,
+          TRUE ~ NA_character_
+        ),
+        fantasy_id = case_when(
+          !is.na(.data$rusher_id) ~ .data$rusher_id,
+          is.na(.data$rusher_id) & !is.na(.data$receiver_id) ~ .data$receiver_id,
+          TRUE ~ NA_character_
+        )
+      )
   }
 
   message_completed("Cleaning completed", ...)

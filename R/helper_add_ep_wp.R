@@ -833,7 +833,7 @@ add_wp_variables <- function(pbp_data) {
         ),
         .data$vegas_home_wp
       ),
-      vegas_home_wpa = dplyr::lead(vegas_home_wp) - .data$vegas_home_wp,
+      vegas_home_wpa = dplyr::lead(.data$vegas_home_wp) - .data$vegas_home_wp,
       vegas_wpa = dplyr::if_else(.data$tmp_posteam == .data$home_team, .data$vegas_home_wpa, -.data$vegas_home_wpa)
     )
 
