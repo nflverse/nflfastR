@@ -19,18 +19,19 @@
 #'
 #' As an example, the following code block will resolve all function calls in the
 #' current session using multiple sessions in the background and load play-by-play
-#' data for the 2018 through 2020 seasons:
+#' data for the 2018 through 2020 seasons or build them freshly for the 2018 and
+#' 2019 SUper Bowls:
 #' ```
 #' future::plan("multisession")
 #' load_pbp(2018:2020)
-#' build_nflfastR_pbp(game_ids)
+#' build_nflfastR_pbp(c("2018_21_NE_LA", "2019_21_SF_KC"))
 #' ```
 #' We recommended choosing a default parallel processing method and saving it
 #' as an environment variable in the R user profile to make sure all futures
 #' will be resolved with the chosen method by default.
 #' This can be done by following the below given steps.
 #'
-#' First, tun the following line and the user profile should be opened automatically.
+#' First, run the following line and the user profile should be opened automatically.
 #' If you haven't saved any environment variables yet, this will be an empty file.
 #' ```
 #' usethis::edit_r_environ()
