@@ -334,6 +334,10 @@
 #' \item{name}{Name of the 'passer' if it is not 'NA', or name of the 'rusher' otherwise.}
 #' \item{jersey_number}{Jersey number of the player listed in the 'name' column.}
 #' \item{id}{ID of the player in the 'name' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
+#' \item{fantasy}{Name of the rusher on rush players or receiver on pass plays.}
+#' \item{fantasy_id}{ID of the rusher on rush players or receiver on pass plays.}
+#' \item{fantasy_player_name}{Name of the rusher on rush players or receiver on pass plays (from official stats).}
+#' \item{fantasy_player_id}{ID of the rusher on rush players or receiver on pass plays (from official stats).}
 #' \item{qb_epa}{Gives QB credit for EPA for up to the point where a receiver lost a fumble after a completed catch and makes EPA work more like passing yards on plays with fumbles.}
 #' \item{xyac_epa}{Expected value of EPA gained after the catch, starting from where the catch was made. Zero yards after the catch would be listed as zero EPA.}
 #' \item{xyac_success}{Probability play earns positive EPA (relative to where play started) based on where ball was caught.}
