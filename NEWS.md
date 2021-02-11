@@ -13,24 +13,17 @@ required for `calculate_win_probability()`
 (added `qs` and `curl` to dependencies)
 * Deprecated the arguments `source` and `pp` all across the package. Using them will cause a 
 warning. Parallel processing has to be activated by choosing an appropriate `future::plan()` before
-calling the relevant functions. 
-Alternatively, and this is recommended, **the default plan can be stored as an environment variable in the R user profile**. This can be done by running 
-`usethis::edit_r_environ()`, adding the line `R_FUTURE_PLAN="multisession"` 
-(`"multisession"` is just an example here, please choose the appropriate plan) and
-afterwards saving and restarting R. Once this is done each future will be resolved with the chosen plan without having to call `future::plan()` or even `library(future)`.
-For more information on possible plans please see
-[the future package Readme](https://github.com/HenrikBengtsson/future/blob/develop/README.md).
+calling the relevant functions. For more information please see [the package documentation](https://www.nflfastr.com/reference/nflfastR.html).
 * The function `build_nflfastR_pbp()` will now run `decode_player_ids()` by default (can be deactivated with
 the argument `decode = FALSE`). 
-* The function `build_nflfastR_pbp()` will now run `add_xpass()`. This means there will be new variables in the
-dataset!
+* The function `build_nflfastR_pbp()` will now run `add_xpass()` and add the new variables `xpass` and `pass_oe`
 * Fixed a bug where `calculate_expected_points()` and `calculate_win_probability()` duplicated some existing variables instead of replacing them (#170)
 * Added the new function `load_pbp()` that loads complete seasons into memory for fast access of the play-by-play data
 * Fixed a bug where `penalty_type` wasn't `"no_play"` although it should have been (#172)
 * Fixed a bug where `penalty_team` could be incorrect in games of the Jaguars in the seasons 2011 - 2015 (#174)
 * Fixed a bug related to the calculation of EPA on plays before a failed pass interference challenge in a few 2019 games (#175)
 * Fixed a bug related to lots of fields with `NA` on offsetting penalties (#44)
-* Added the new variables `rushing_yards`, `lateral_rushing_yards`, `passing_yards`, `receiving_yards`, `lateral_receiving_yards` to fix an old bug where `yards_gained` gets overwritten on plays with laterals.
+* Added the new variables `rushing_yards`, `lateral_rushing_yards`, `passing_yards`, `receiving_yards`, `lateral_receiving_yards` to fix an old bug where `yards_gained` gets overwritten on plays with laterals (#115).
 
 # nflfastR 3.2.0
 

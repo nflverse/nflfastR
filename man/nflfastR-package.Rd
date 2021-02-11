@@ -57,6 +57,9 @@ by running the next line. If the output is \code{FALSE} you successfully set up 
 default non-sequential \code{\link[future:plan]{future::plan()}}. If the output is \code{TRUE} all functions
 will behave like they were called with \code{\link[purrr:map]{purrr::map()}} and NOT in multisession.\preformatted{inherits(future::plan(), "sequential")
 }
+
+For more information on possible plans please see
+\href{https://github.com/HenrikBengtsson/future/blob/develop/README.md}{the future package Readme}.
 }
 
 \subsection{Get Progress Updates while Functions are Running}{

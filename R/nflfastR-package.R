@@ -49,6 +49,8 @@
 #' ```
 #' inherits(future::plan(), "sequential")
 #' ```
+#' For more information on possible plans please see
+#' [the future package Readme](https://github.com/HenrikBengtsson/future/blob/develop/README.md).
 #'
 #' ## Get Progress Updates while Functions are Running
 #'
