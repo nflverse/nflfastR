@@ -44,6 +44,7 @@
 #' \item{jersey_number}{Jersey number of the player listed in the 'name' column.}
 #' \item{id}{ID of the player in the 'name' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
 #' \item{qb_epa}{Gives QB credit for EPA for up to the point where a receiver lost a fumble after a completed catch and makes EPA work more like passing yards on plays with fumbles.}
+#' \item{out_of_bounds}{1 if play description contains ran ob, pushed ob, or sacked ob; 0 otherwise.}
 #' }
 #' @export
 #' @import dplyr
@@ -240,6 +241,9 @@ clean_pbp <- function(pbp, ...) {
           !is.na(.data$rusher_id) ~ .data$rusher_id,
           is.na(.data$rusher_id) & !is.na(.data$receiver_id) ~ .data$receiver_id,
           TRUE ~ NA_character_
+        ),
+        out_of_bounds = dplyr::if_else(
+          stringr::str_detect(.data$desc, "(ran ob)|(pushed ob)|(sacked ob)"), 1, 0
         )
       )
   }
