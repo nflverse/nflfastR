@@ -16,6 +16,7 @@ required for `calculate_win_probability()`
 * Fixed a bug related to lots of fields with `NA` on offsetting penalties (#44)
 * Switched data source for 2001-2010 to what is used for 2011 and on
 * Added columns `vegas_wpa` and `vegas_home_wpa` which contain Win Probability Added from the spread-adjusted WPA model
+* Fix bug in `epa` when possession team changes at end of 1st or 3rd quarter (#182)
 
 # nflfastR 3.2.0
 
