@@ -88,7 +88,7 @@ build_nflfastR_pbp <- function(game_ids,
 
   if (isTRUE(rules)) rule_header("Build nflfastR Play-by-Play Data")
 
-  game_count <- length(game_ids)
+  game_count <- ifelse(is.vector(game_ids), length(game_ids), nrow(game_ids))
   builder <- TRUE
 
   if (game_count > 1) {
