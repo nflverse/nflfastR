@@ -24,6 +24,7 @@ the argument `decode = FALSE`).
 * Fixed a bug related to the calculation of EPA on plays before a failed pass interference challenge in a few 2019 games (#175)
 * Fixed a bug related to lots of fields with `NA` on offsetting penalties (#44)
 * Added the new variables `rushing_yards`, `lateral_rushing_yards`, `passing_yards`, `receiving_yards`, `lateral_receiving_yards` to fix an old bug where `yards_gained` gets overwritten on plays with laterals (#115).
+* The functions `fast_scraper()` and `build_nflfastR_pbp()` now allow the output of `fast_scraper_schedules()` directly as input so it's not necessary anymore to pull the `game_id` first.
 
 # nflfastR 3.2.0
 

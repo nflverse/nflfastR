@@ -14,7 +14,8 @@ build_nflfastR_pbp(
 )
 }
 \arguments{
-\item{game_ids}{Vector of character ids (see details for further information).}
+\item{game_ids}{Vector of character ids or a data frame including the variable
+\code{game_id} (see details for further information).}
 
 \item{source}{\ifelse{html}{\figure{lifecycle-deprecated.svg}{options: alt='Deprecated lifecycle'}}{\strong{Deprecated}} has no effect and will be
 removed in a future release.}
@@ -54,6 +55,14 @@ To load valid game_ids please use the package function \code{\link[=fast_scraper
 \donttest{
 # Build nflfastR pbp for the 2018 and 2019 Super Bowls
 build_nflfastR_pbp(c("2018_21_NE_LA", "2019_21_SF_KC"))
+
+# It is also possible to directly use the
+# output of `fast_scraper_schedules` as input
+library(dplyr, warn.conflicts = FALSE)
+fast_scraper_schedules(2020) \%>\%
+  tail(3) \%>\%
+  build_nflfastR_pbp()
+
 \dontshow{
 # Close open connections for R CMD Check
 future::plan("sequential")

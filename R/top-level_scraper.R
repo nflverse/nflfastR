@@ -11,14 +11,17 @@
 #'   information to the output of this function, it is recommended to use
 #'   \code{\link{build_nflfastR_pbp}} instead.
 #'
-#' @param game_ids Vector of character ids (see details for further information).
+#' @param game_ids Vector of character ids or a data frame including the variable
+#' `game_id` (see details for further information).
 #' @param source `r lifecycle::badge("deprecated")` has no effect and will be
 #'   removed in a future release.
 #' @param pp `r lifecycle::badge("deprecated")` has no effect and will be
 #'   removed in a future release.
 #' @param ... Additional arguments passed to the scraping functions (for internal use)
 #' @param in_builder If \code{TRUE}, the final message will be suppressed (for usage inside of \code{\link{build_nflfastR_pbp}}).
-#' @details To load valid game_ids please use the package function \code{\link{fast_scraper_schedules}}.
+#' @details To load valid game_ids please use the package function
+#' \code{\link{fast_scraper_schedules}} (the function can directly handle the
+#' output of that function)
 #' @seealso For information on parallel processing and progress updates please
 #' see [nflfastR].
 #' @return Data frame where each individual row represents a single play for
@@ -364,6 +367,14 @@
 #' \donttest{
 #' # Get pbp data for two games
 #' fast_scraper(c("2019_01_GB_CHI", "2013_21_SEA_DEN"))
+#'
+#' # It is also possible to directly use the
+#' # output of `fast_scraper_schedules` as input
+#' library(dplyr, warn.conflicts = FALSE)
+#' fast_scraper_schedules(2020) %>%
+#'   tail(3) %>%
+#'   fast_scraper()
+#'
 #' \dontshow{
 #' # Close open connections for R CMD Check
 #' future::plan("sequential")
@@ -394,6 +405,10 @@ fast_scraper <- function(game_ids,
       )
     )
   }
+
+  if (!is.vector(game_ids) && is.data.frame(game_ids)) game_ids <- game_ids$game_id
+
+  if (!is.vector(game_ids)) usethis::ui_stop("Param {usethis::ui_code('game_ids')} is not a valid vector!")
 
   if (length(game_ids) > 1 && is_sequential()) {
     usethis::ui_info(

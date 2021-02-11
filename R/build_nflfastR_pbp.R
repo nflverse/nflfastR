@@ -37,6 +37,14 @@
 #' \donttest{
 #' # Build nflfastR pbp for the 2018 and 2019 Super Bowls
 #' build_nflfastR_pbp(c("2018_21_NE_LA", "2019_21_SF_KC"))
+#'
+#' # It is also possible to directly use the
+#' # output of `fast_scraper_schedules` as input
+#' library(dplyr, warn.conflicts = FALSE)
+#' fast_scraper_schedules(2020) %>%
+#'   tail(3) %>%
+#'   build_nflfastR_pbp()
+#'
 #' \dontshow{
 #' # Close open connections for R CMD Check
 #' future::plan("sequential")
@@ -69,6 +77,10 @@ build_nflfastR_pbp <- function(game_ids,
       )
     )
   }
+
+  if (!is.vector(game_ids) && is.data.frame(game_ids)) game_ids <- game_ids$game_id
+
+  if (!is.vector(game_ids)) usethis::ui_stop("Param {usethis::ui_code('game_ids')} is not a valid vector!")
 
   if (isTRUE(decode) && !is_installed("gsisdecoder")) {
     usethis::ui_stop("Package {usethis::ui_value('gsisdecoder')} required for decoding. Please install it with {usethis::ui_code('install.packages(\"gsisdecoder\")')}.")

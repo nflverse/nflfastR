@@ -13,7 +13,8 @@ fast_scraper(
 )
 }
 \arguments{
-\item{game_ids}{Vector of character ids (see details for further information).}
+\item{game_ids}{Vector of character ids or a data frame including the variable
+\code{game_id} (see details for further information).}
 
 \item{source}{\ifelse{html}{\figure{lifecycle-deprecated.svg}{options: alt='Deprecated lifecycle'}}{\strong{Deprecated}} has no effect and will be
 removed in a future release.}
@@ -372,12 +373,22 @@ information to the output of this function, it is recommended to use
 \code{\link{build_nflfastR_pbp}} instead.
 }
 \details{
-To load valid game_ids please use the package function \code{\link{fast_scraper_schedules}}.
+To load valid game_ids please use the package function
+\code{\link{fast_scraper_schedules}} (the function can directly handle the
+output of that function)
 }
 \examples{
 \donttest{
 # Get pbp data for two games
 fast_scraper(c("2019_01_GB_CHI", "2013_21_SEA_DEN"))
+
+# It is also possible to directly use the
+# output of `fast_scraper_schedules` as input
+library(dplyr, warn.conflicts = FALSE)
+fast_scraper_schedules(2020) \%>\%
+  tail(3) \%>\%
+  fast_scraper()
+
 \dontshow{
 # Close open connections for R CMD Check
 future::plan("sequential")
