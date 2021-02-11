@@ -31,12 +31,11 @@ added:
 \item{passer_id}{ID of the player in the 'passer' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
 \item{rusher_id}{ID of the player in the 'rusher' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
 \item{receiver_id}{ID of the player in the 'receiver' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
-\item{fantasy_id}{ID of the rusher on rush players or receiver on pass players.}
 \item{name}{Name of the 'passer' if it is not 'NA', or name of the 'rusher' otherwise.}
-\item{fantasy}{Name of the rusher on rush players or receiver on pass plays.}
-\item{fantasy_id}{ID of the rusher on rush players or receiver on pass plays.}
-\item{fantasy_player_name}{Name of the rusher on rush players or receiver on pass plays (from official stats).}
-\item{fantasy_player_id}{ID of the rusher on rush players or receiver on pass plays (from official stats).}
+\item{fantasy}{Name of the rusher on rush plays or receiver on pass plays.}
+\item{fantasy_id}{ID of the rusher on rush plays or receiver on pass plays.}
+\item{fantasy_player_name}{Name of the rusher on rush plays or receiver on pass plays (from official stats).}
+\item{fantasy_player_id}{ID of the rusher on rush plays or receiver on pass plays (from official stats).}
 \item{jersey_number}{Jersey number of the player listed in the 'name' column.}
 \item{id}{ID of the player in the 'name' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
 \item{qb_epa}{Gives QB credit for EPA for up to the point where a receiver lost a fumble after a completed catch and makes EPA work more like passing yards on plays with fumbles.}
