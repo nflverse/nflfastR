@@ -36,14 +36,14 @@ add_nflscrapr_mutations <- function(pbp) {
     dplyr::arrange(.data$order_sequence, .data$quarter, !is.na(.data$quarter_seconds_remaining), -.data$quarter_seconds_remaining, !is.na(.data$drive), .data$drive, .data$index, .by_group = TRUE) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(
-      # Fill in the rows with missing posteam with the lag:
+      # Fill in the rows with missing posteam with the lead:
       posteam = dplyr::if_else(
         (.data$quarter_end == 1 | .data$posteam == ""),
-        dplyr::lag(.data$posteam),
+        dplyr::lead(.data$posteam),
         .data$posteam),
       posteam_id = dplyr::if_else(
         (.data$quarter_end == 1 | .data$posteam_id == ""),
-        dplyr::lag(.data$posteam_id),
+        dplyr::lead(.data$posteam_id),
         .data$posteam_id),
       # Denote whether the home or away team has possession:
       posteam_type = dplyr::if_else(.data$posteam == .data$home_team, "home", "away"),
