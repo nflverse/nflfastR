@@ -101,7 +101,7 @@ When working with `nflfastR`, drive results are automatically included. We use `
 games_2000 <- nflfastR::load_pbp(2000)
 games_2015 <- nflfastR::load_pbp(2015)
 pbp <- dplyr::bind_rows(games_2000, games_2015)
-pbp %>%
+nflfastR::load_pbp(c(2000, 2015)) %>%
   dplyr::filter(season_type == "REG" & down == 1 & ydstogo == 10 & yardline_100 == 80) %>%
   dplyr::mutate(drive_score = dplyr::if_else(fixed_drive_result %in% c("Touchdown", "Field goal"), 1, 0)) %>%
   dplyr::group_by(season) %>%
