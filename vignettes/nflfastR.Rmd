@@ -8,6 +8,8 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+future::plan("multisession")
+options(dplyr.summarise.inform = FALSE)
 ```
 
 If you are new to R or are having trouble understanding the code in the below sections we highly recommend the **nflfastR beginner's guide** in `vignette("beginners_guide")`.
@@ -28,6 +30,12 @@ pbp <- nflfastR::build_nflfastR_pbp(ids)
 ```
 
 In most cases, however, it is not necessary to execute this function for individual games, because nflfastR provides both a [data repository](https://github.com/guga31bb/nflfastR-data) and the second main play-by-play function: `update_db()`. Please see [Example 8: Using the built-in database function] for how to work with that function.
+
+The easiest way to access the data in the data repository is the new function `load_pbp()`. It can load multiple seasons directly into memory and supports the efficient data format [`qs`](https://github.com/traversc/qs). Loading all play-by-play data of the 2018-2020 seasons is as easy as 
+
+```{r}
+pbp <- nflfastR::load_pbp(2018:2020, qs = TRUE)
+```
 
 Joining roster data to the play-by-play dataset is possible as well. The data can be accessed with the function `fast_scraper_roster()` and it's application is demonstrated in [Example 10: Working with roster and position data].
 
@@ -62,9 +70,10 @@ nflfastR::fast_scraper("2019_10_SEA_SF") %>%
   knitr::kable(digits = 3)
 ```
 
-# Example 2: scrape a batch of games very quickly with fast_scraper and parallel processing
+# Example 2: scrape a batch of games very quickly with fast_scraper
 
 This is a demonstration of `nflfastR`'s capabilities. While `nflfastR` can scrape a batch of games very quickly, **please be respectful of Github's servers and use the [data repository](https://github.com/guga31bb/nflfastR-data) which hosts all the scraped and cleaned data** whenever possible. The only reason to ever actually use the scraper is if it's in the middle of the season and we haven't updated the repository with recent games (but we will try to keep it updated).
+
 ``` {r ex2-bigscrape, warning = FALSE, message = FALSE}
 # get list of some games from 2019
 games_2019 <- nflfastR::fast_scraper_schedules(2019) %>%
@@ -72,7 +81,7 @@ games_2019 <- nflfastR::fast_scraper_schedules(2019) %>%
   dplyr::pull(game_id)
 
 tictoc::tic(glue::glue("{length(games_2019)} games with nflfastR:"))
-f <- nflfastR::fast_scraper(games_2019, pp = TRUE)
+f <- nflfastR::fast_scraper(games_2019)
 tictoc::toc()
 ```
 
@@ -80,10 +89,11 @@ tictoc::toc()
 
 Let's look at CPOE leaders from the 2009 regular season.
 
-As discussed above, `nflfastR` has a data repository for old seasons, so there's no need to actually scrape them. Let's use that here (the below reads .rds files, but .csv and .parquet are also available).
+As discussed above, `nflfastR` has a data repository for old seasons, so there's no need to actually scrape them. Let's use that here (the below uses `load_pbp()`, but .csv and .parquet are also available).
+
 ``` {r ex3-cpoe, warning = FALSE, message = FALSE}
 tictoc::tic("loading all games from 2009")
-games_2009 <- readRDS(url("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2009.rds")) %>% dplyr::filter(season_type == "REG")
+games_2009 <- nflfastR::load_pbp(2009) %>% dplyr::filter(season_type == "REG")
 tictoc::toc()
 games_2009 %>%
   dplyr::filter(!is.na(cpoe)) %>%
@@ -98,30 +108,31 @@ games_2009 %>%
 # Example 4: Using Drive Information
 
 When working with `nflfastR`, drive results are automatically included. We use `fixed_drive` and `fixed_drive_result` since the NFL-provided information is a bit wonky. Let's look at how much more likely teams were to score starting from 1st & 10 at their own 20 yard line in 2015 (the last year before touchbacks on kickoffs changed to the 25) than in 2000.
+
 ``` {r ex4, warning = FALSE, message = FALSE}
-games_2000 <- readRDS(url("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2000.rds"))
-games_2015 <- readRDS(url("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2015.rds"))
+pbp <- nflfastR::load_pbp(c(2003, 2020), qs = TRUE)
 
-pbp <- dplyr::bind_rows(games_2000, games_2015)
-
-pbp %>%
+out <- pbp %>%
   dplyr::filter(season_type == "REG" & down == 1 & ydstogo == 10 & yardline_100 == 80) %>%
   dplyr::mutate(drive_score = dplyr::if_else(fixed_drive_result %in% c("Touchdown", "Field Goal"), 1, 0)) %>%
   dplyr::group_by(season) %>%
-  dplyr::summarize(drive_score = mean(drive_score)) %>%
+  dplyr::summarize(drive_score = mean(drive_score))
+
+out %>% 
   knitr::kable(digits = 3)
 ```
 
-So about 23% of 1st & 10 plays from teams' own 20 would see the drive end up in a score in 2000, compared to 30% in 2015. This has implications for Expected Points models (see `vignette("nflfastR-models")`).
+So `r scales::percent(out$drive_score[1], accuracy = 0.1)` of 1st & 10 plays from teams' own 20 would see the drive end up in a score in 2003, compared to `r scales::percent(out$drive_score[2], accuracy = 0.1)` in 2020. This has implications for Expected Points models (see `vignette("nflfastR-models")`).
 
 # Example 5: Plot offensive and defensive EPA per play for a given season
 
 Let's build the **[NFL team tiers](https://rbsdm.com/stats/stats/)** using offensive and defensive expected points added per play for the 2005 regular season. The logo urls of the espn logos are integrated into the `?teams_colors_logos` data frame which is delivered with the package. 
 
 Let's also use the included helper function `clean_pbp()`, which creates "rush" and "pass" columns that (a) properly count sacks and scrambles as pass plays and (b) properly include plays with penalties. Using this, we can keep only rush or pass plays.
+
 ```{r ex5, warning = FALSE, message = FALSE, results = 'hide', fig.keep = 'all', dpi = 600}
 library(ggimage)
-pbp <- readRDS(url("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2005.rds")) %>%
+pbp <- nflfastR::load_pbp(2005, qs = TRUE) %>%
   dplyr::filter(season_type == "REG") %>%
   dplyr::filter(!is.na(posteam) & (rush == 1 | pass == 1))
 offense <- pbp %>%
@@ -155,6 +166,7 @@ offense %>%
 ```
 
 # Example 6: Expected Points calculator
+
 We have provided a calculator for working with the Expected Points model. Here is an example of how to use it, looking for how the Expected Points on a drive beginning following a touchback has changed over time.
 
 While I have put in `'SEA'` for `home_team` and `posteam`, this only matters for figuring out whether the team with the ball is the home team (there's no actual effect for given team; it would be the same no matter what team is supplied).
@@ -243,11 +255,11 @@ If you're comfortable using `dplyr` functions to manipulate and tidy data, you'r
 
 ## Start: install and load packages
 
-To start, we need to install the two packages required for this that aren't installed automatically when `nflfastR` installs: `DBI` and `RSQLite` (advanced users can use other types of databases, but this example will use SQLite):
+To start, we need to install the two packages required for this that aren't installed automatically when `nflfastR` installs: `DBI` and `RSQLite` (advanced users can use other types of databases, but this example will use SQLite. The `if` statements make sure the packages won't be updated if they are already installed):
 
 ``` {r eval = FALSE}
-install.packages("DBI")
-install.packages("RSQLite")
+if (!require("DBI")) install.packages("DBI")
+if (!require("RSQLite")) install.packages("RSQLite")
 ```
 
 As with always, you only need to install these once. They don't need to be loaded to build the database because `nflfastR` knows how to use them, but we do need them later on when working with the database.
@@ -259,7 +271,7 @@ library(RSQLite)
 
 ## Build database
 
-There's exactly one function in `nflfastR` that works with databases: `update_db`. Some notes:
+There's exactly one function in `nflfastR` that works with databases: `update_db()`. Some notes:
 
 * If you use `update_db()` with no arguments, it will build a SQLite database called `pbp_db` in your current working directory, with play-by-play data in a table called `nflfastR_pbp`.
 * You can specify a different directory with `dbdir`.
@@ -267,7 +279,7 @@ There's exactly one function in `nflfastR` that works with databases: `update_db
 * You can specify a different table name with `tblname`.
 * If you want to rebuild the database from scratch for whatever reason, supply `force_rebuild = TRUE`. This is primarily intended for the case when we update the play-by-play data in the data repo due to fixing a bug and you want to force the database to be wiped and updated.
 * If you want to rebuild specified seasons, this can also be supplied to `force_rebuild` (e.g. `force_rebuild = c(2019, 2020)`).
-* The parameter `db_connection` is intended for advanced users who want to use other DBI drivers, such as MariaDB, Postgres or odbc. Please note that `dbdir` and `dbname` are dropped when a `db_connection` is provided but the argument `tblname` will still be used to write the data table into the database.
+* The parameter `db_connection` is intended for advanced users who want to use other [DBI drivers](https://dbi.r-dbi.org/reference/dbidriver-class), such as MariaDB, Postgres or odbc. Please note that `dbdir` and `dbname` are dropped when a `db_connection` is provided but the argument `tblname` will still be used to write the data table into the database.
 
 Let's say I just want to dump a database into the current working directory. Here we go!
 
@@ -329,7 +341,7 @@ pbp_db %>%
 pbp_db %>%
   dplyr::filter(rush == 1 | pass == 1, down <= 2, !is.na(epa), !is.na(posteam)) %>%
   dplyr::group_by(pass) %>%
-  dplyr::summarize(mean_epa = mean(epa))
+  dplyr::summarize(mean_epa = mean(epa, na.rm = TRUE))
 ```
 
 So far, everything has stayed in the database. If you want to bring a query into memory, just use `collect()` at the end:
@@ -343,7 +355,7 @@ russ <- pbp_db %>%
 russ
 ```
 
-So we've searched through about 1 million rows of data across 300+ columns and only brought about 5,500 rows and two columns into memory. Pretty neat! This is how I supply the data to the shiny apps on rbsdm.com without running out of memory on the server. Now there's only one more thing to remember. When you're finished doing what you need with the database:
+So we've searched through about 1 million rows of data across 300+ columns and only brought about `r round(nrow(russ), -1)` rows and two columns into memory. Pretty neat! This is how I supply the data to the shiny apps on rbsdm.com without running out of memory on the server. Now there's only one more thing to remember. When you're finished doing what you need with the database:
 
 ``` {r}
 DBI::dbDisconnect(connection)
@@ -372,7 +384,7 @@ Some other notes:
 Let's create measures for EPA and first downs over expected in 2015:
 
 ``` {r ex9-xyac, warning = FALSE, message = FALSE}
-games_2015 %>%
+nflfastR::load_pbp(2015, qs = TRUE) %>%
   dplyr::group_by(receiver, receiver_id, posteam) %>%
   dplyr::mutate(tgt = sum(complete_pass + incomplete_pass)) %>%
   dplyr::filter(tgt >= 50) %>%
@@ -403,7 +415,7 @@ roster <- nflfastR::fast_scraper_roster(2019)
 
 Now let's load play-by-play data from 2019:
 ``` {r roster_pbp_load}
-games_2019 <- readRDS(url("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2019.rds"))
+games_2019 <- nflfastR::load_pbp(2019)
 ```
 
 Here is what the new player IDs look like:
