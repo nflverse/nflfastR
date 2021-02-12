@@ -27,7 +27,7 @@ ids <- nflfastR::fast_scraper_schedules(2017:2019) %>%
 pbp <- nflfastR::build_nflfastR_pbp(ids)
 ```
 
-In most cases, however, it is not necessary to execute this function for individual games, because nflfastR provides both a [data repository](https://github.com/guga31bb/nflfastR-data) and the second main play-by-play function: `update_db()`. Please see [Example 8: Using the built-in database function] for how to work with that function.
+In most cases, however, it is not necessary to use this function for individual games, because nflfastR provides both a [data repository](https://github.com/guga31bb/nflfastR-data) and two main play-by-play functions: `load_pbp()` and `update_db()`. We cover `load_pbp()` below, and please see [Example 8: Using the built-in database function] for how to work with the database function `update_db()`.
 
 Joining roster data to the play-by-play dataset is possible as well. The data can be accessed with the function `fast_scraper_roster()` and it's application is demonstrated in [Example 10: Working with roster and position data].
 
@@ -70,7 +70,6 @@ This is a demonstration of `nflfastR`'s capabilities. While `nflfastR` can scrap
 games_2019 <- nflfastR::fast_scraper_schedules(2019) %>%
   utils::head(10) %>%
   dplyr::pull(game_id)
-
 tictoc::tic(glue::glue("{length(games_2019)} games with nflfastR:"))
 f <- nflfastR::fast_scraper(games_2019, pp = TRUE)
 tictoc::toc()
@@ -80,10 +79,10 @@ tictoc::toc()
 
 Let's look at CPOE leaders from the 2009 regular season.
 
-As discussed above, `nflfastR` has a data repository for old seasons, so there's no need to actually scrape them. Let's use that here (the below reads .rds files, but .csv and .parquet are also available).
+As discussed above, `nflfastR` has a data repository for old seasons, so there's no need to actually scrape them. Let's use that here with the convenience function `load_pbp()` which fetches data from the repository (for non-R users, .csv and .parquet are also available in the [data repository](https://github.com/guga31bb/nflfastR-data)).
 ``` {r ex3-cpoe, warning = FALSE, message = FALSE}
 tictoc::tic("loading all games from 2009")
-games_2009 <- readRDS(url("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2009.rds")) %>% dplyr::filter(season_type == "REG")
+games_2009 <- nflfastR::load_pbp(2009) %>% dplyr::filter(season_type == "REG")
 tictoc::toc()
 games_2009 %>%
   dplyr::filter(!is.na(cpoe)) %>%
@@ -99,14 +98,12 @@ games_2009 %>%
 
 When working with `nflfastR`, drive results are automatically included. We use `fixed_drive` and `fixed_drive_result` since the NFL-provided information is a bit wonky. Let's look at how much more likely teams were to score starting from 1st & 10 at their own 20 yard line in 2015 (the last year before touchbacks on kickoffs changed to the 25) than in 2000.
 ``` {r ex4, warning = FALSE, message = FALSE}
-games_2000 <- readRDS(url("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2000.rds"))
-games_2015 <- readRDS(url("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2015.rds"))
-
+games_2000 <- nflfastR::load_pbp(2000)
+games_2015 <- nflfastR::load_pbp(2015)
 pbp <- dplyr::bind_rows(games_2000, games_2015)
-
-pbp %>%
+nflfastR::load_pbp(c(2000, 2015)) %>%
   dplyr::filter(season_type == "REG" & down == 1 & ydstogo == 10 & yardline_100 == 80) %>%
-  dplyr::mutate(drive_score = dplyr::if_else(fixed_drive_result %in% c("Touchdown", "Field Goal"), 1, 0)) %>%
+  dplyr::mutate(drive_score = dplyr::if_else(fixed_drive_result %in% c("Touchdown", "Field goal"), 1, 0)) %>%
   dplyr::group_by(season) %>%
   dplyr::summarize(drive_score = mean(drive_score)) %>%
   knitr::kable(digits = 3)
@@ -121,7 +118,7 @@ Let's build the **[NFL team tiers](https://rbsdm.com/stats/stats/)** using offen
 Let's also use the included helper function `clean_pbp()`, which creates "rush" and "pass" columns that (a) properly count sacks and scrambles as pass plays and (b) properly include plays with penalties. Using this, we can keep only rush or pass plays.
 ```{r ex5, warning = FALSE, message = FALSE, results = 'hide', fig.keep = 'all', dpi = 600}
 library(ggimage)
-pbp <- readRDS(url("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2005.rds")) %>%
+pbp <- nflfastR::load_pbp(2005) %>%
   dplyr::filter(season_type == "REG") %>%
   dplyr::filter(!is.na(posteam) & (rush == 1 | pass == 1))
 offense <- pbp %>%
@@ -131,7 +128,6 @@ defense <- pbp %>%
   dplyr::group_by(defteam) %>%
   dplyr::summarise(def_epa = mean(epa, na.rm = TRUE))
 logos <- teams_colors_logos %>% dplyr::select(team_abbr, team_logo_espn)
-
 offense %>%
   dplyr::inner_join(defense, by = c("posteam" = "defteam")) %>%
   dplyr::inner_join(logos, by = c("posteam" = "team_abbr")) %>%
@@ -172,7 +168,6 @@ data <- tibble::tibble(
   "posteam_timeouts_remaining" = 3,
   "defteam_timeouts_remaining" = 3
 )
-
 nflfastR::calculate_expected_points(data) %>%
   dplyr::select(season, yardline_100, td_prob, ep) %>%
   knitr::kable(digits = 2)
@@ -196,7 +191,6 @@ data <- tibble::tibble(
   "posteam_timeouts_remaining" = 3,
   "defteam_timeouts_remaining" = 3
 )
-
 nflfastR::calculate_expected_points(data) %>%
   dplyr::select(season, yardline_100, td_prob, ep) %>%
   knitr::kable(digits = 2)
@@ -225,7 +219,6 @@ data <- tibble::tibble(
   "posteam_timeouts_remaining" = 3,
   "defteam_timeouts_remaining" = 3
 )
-
 nflfastR::calculate_win_probability(data) %>%
   dplyr::select(spread_line, wp, vegas_wp) %>%
   knitr::kable(digits = 2)
@@ -325,7 +318,6 @@ And now, everything will magically just "work": you can forget you're even worki
 pbp_db %>%
   dplyr::group_by(season) %>%
   dplyr::summarize(n = dplyr::n())
-
 pbp_db %>%
   dplyr::filter(rush == 1 | pass == 1, down <= 2, !is.na(epa), !is.na(posteam)) %>%
   dplyr::group_by(pass) %>%
@@ -339,7 +331,6 @@ russ <- pbp_db %>%
   dplyr::filter(name == "R.Wilson" & posteam == "SEA") %>%
   dplyr::select(desc, epa) %>%
   dplyr::collect()
-
 russ
 ```
 
@@ -372,7 +363,7 @@ Some other notes:
 Let's create measures for EPA and first downs over expected in 2015:
 
 ``` {r ex9-xyac, warning = FALSE, message = FALSE}
-games_2015 %>%
+nflfastR::load_pbp(2015) %>%
   dplyr::group_by(receiver, receiver_id, posteam) %>%
   dplyr::mutate(tgt = sum(complete_pass + incomplete_pass)) %>%
   dplyr::filter(tgt >= 50) %>%
@@ -403,7 +394,7 @@ roster <- nflfastR::fast_scraper_roster(2019)
 
 Now let's load play-by-play data from 2019:
 ``` {r roster_pbp_load}
-games_2019 <- readRDS(url("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2019.rds"))
+games_2019 <- nflfastR::load_pbp(2019)
 ```
 
 Here is what the new player IDs look like:
@@ -455,3 +446,76 @@ joined %>%
 ```
 
 Not surprisingly, all 5 of the top 5 WRs in terms of EPA added come in ahead of the top RB. Note that the number of targets won't match official stats because we're including plays with penalties.
+
+# Frequent issues
+
+## Replicating official stats
+
+The columns like `name`, `passer`, `fantasy` etc are `nflfastR`-created columns that mimic "real" football: i.e., excluding plays with spikes, counting scrambles and sacks as pass plays, etc. But if you're trying to replicate official statistics -- perhaps for fantasy purposes -- use the `*_player_name` and `*_player_id` columns.
+
+[Let's try to replicate this page of passing leaders](https://www.nfl.com/stats/player-stats/).
+
+``` {r stats}
+nflfastR::load_pbp(2020) %>%
+  filter(week <= 17, complete_pass == 1 | incomplete_pass == 1 | interception == 1, !is.na(down)) %>%
+  group_by(passer_player_name, posteam) %>%
+  summarize(
+    yards = sum(yards_gained),
+    tds = sum(touchdown == 1 & td_team == posteam),
+    ints = sum(interception),
+    att = n()
+            ) %>%
+  arrange(-yards) %>%
+  head(10) %>%
+  knitr::kable(digits = 0)
+```
+
+These match the official stats on NFL.com with the exception of Watson missing 22 passing yards (this is a bug related to laterals where he's missing yardage from the final play of the week 16 game against the Bengals).
+
+We can do the same for rush attempts to replicate the [NFL leaderboard](https://www.nfl.com/stats/player-stats/category/rushing/2020/POST/all/rushingyards/desc):
+
+``` {r stats_rush}
+nflfastR::load_pbp(2020) %>%
+  filter(week <= 17, !is.na(down)) %>%
+  group_by(rusher_player_name, posteam) %>%
+  summarize(
+    yards = sum(yards_gained),
+    tds = sum(touchdown == 1 & td_team == posteam),
+    att = n()
+            ) %>%
+  arrange(-yards) %>%
+  head(10) %>%
+  knitr::kable(digits = 0)
+```
+
+This matches up exactly.
+
+## Fantasy stats
+
+What if we want total yards from scrimmage? Now we can use the `fantasy_player_name` column, which is the rusher on rush plays and receiver on receiving plays.
+
+``` {r stats_fantasy}
+nflfastR::load_pbp(2020) %>%
+  filter(week <= 17, !is.na(down)) %>%
+  group_by(fantasy_player_name, posteam) %>%
+  summarize(
+    yards = sum(yards_gained),
+    tds = sum(touchdown == 1 & td_team == posteam),
+    touches = sum(rush_attempt + complete_pass),
+    receptions = sum(complete_pass)
+  ) %>%
+  arrange(-yards) %>%
+  head(10) %>%
+  knitr::kable(digits = 0)
+```
+
+Looking at the [PFR scrimmage stats](https://www.pro-football-reference.com/years/2020/scrimmage.htm), these columns are an exact match.
+
+## The `drive` column looks wacky
+
+Used `fixed_drive` and `fixed_drive_result` instead. See Example 4 above.
+
+## Why are there so many win probability columns?
+
+`vegas_wp` and `vegas_home_wp` incorporate the pregame spread and are much better models. 
+

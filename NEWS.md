@@ -15,6 +15,10 @@ required for `calculate_win_probability()`
 * Fixed a bug related to the calculation of EPA on plays before a failed pass interference challenge in a few 2019 games (#175)
 * Fixed a bug related to lots of fields with `NA` on offsetting penalties (#44)
 * Switched data source for 2001-2010 to what is used for 2011 and on
+* Added columns `vegas_wpa` and `vegas_home_wpa` which contain Win Probability Added from the spread-adjusted WPA model
+* Fix bug in `epa` when possession team changes at end of 1st or 3rd quarter (#182)
+* Added column `out_of_bounds`
+* Added columns `fantasy`, `fantasy_id`, `fantasy_player_name`, and `fantasy_player_id` that indicate the rusher or receiver on the play
 
 # nflfastR 3.2.0
 
