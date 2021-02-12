@@ -20,7 +20,7 @@ select_variables <- function(pbp) {
 }
 
 # columns that are not in gamecenter that we created
-new_cols <- c("season", "cp", "cpoe", "series", "series_success", "series_result")
+new_cols <- c("season", "cp", "cpoe", "series", "series_success", "series_result", "vegas_home_wpa", "vegas_wpa")
 
 # original nflscrapr columns
 nflscrapr_cols <-

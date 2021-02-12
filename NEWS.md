@@ -26,6 +26,10 @@ the argument `decode = FALSE`).
 * Added the new variables `rushing_yards`, `lateral_rushing_yards`, `passing_yards`, `receiving_yards`, `lateral_receiving_yards` to fix an old bug where `yards_gained` gets overwritten on plays with laterals (#115).
 * The functions `fast_scraper()` and `build_nflfastR_pbp()` now allow the output of `fast_scraper_schedules()` directly as input so it's not necessary anymore to pull the `game_id` first.
 * Switched data source for 2001-2010 to what is used for 2011 and on
+* Added columns `vegas_wpa` and `vegas_home_wpa` which contain Win Probability Added from the spread-adjusted WPA model
+* Fix bug in `epa` when possession team changes at end of 1st or 3rd quarter (#182)
+* Added column `out_of_bounds`
+* Added columns `fantasy`, `fantasy_id`, `fantasy_player_name`, and `fantasy_player_id` that indicate the rusher or receiver on the play
 
 # nflfastR 3.2.0
 

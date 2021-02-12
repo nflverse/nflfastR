@@ -776,12 +776,18 @@ add_wp_variables <- function(pbp_data) {
   pbp_data <- pbp_data %>%
     dplyr::mutate(
       wp = OffWinProb,
-      vegas_wp = OffWinProb_spread) %>%
+      vegas_wp = OffWinProb_spread,
+      # for figuring out posteam on NA posteam lines
+      tmp_posteam = .data$posteam
+      ) %>%
     tidyr::fill(
       .data$wp, .direction = "up"
     ) %>%
     tidyr::fill(
       .data$vegas_wp, .direction = "up"
+    ) %>%
+    tidyr::fill(
+      .data$tmp_posteam, .direction = "up"
     ) %>%
     dplyr::mutate(
       wp = dplyr::if_else(is.na(.data$posteam), NA_real_, .data$wp),
@@ -792,9 +798,8 @@ add_wp_variables <- function(pbp_data) {
                                .data$wp, .data$def_wp),
 
       #add columns for WP taking into account spread
-      vegas_wp = dplyr::if_else(is.na(.data$posteam), NA_real_, .data$vegas_wp),
-      vegas_home_wp = dplyr::if_else(.data$posteam == .data$home_team,
-                                     .data$vegas_wp, 1 - .data$vegas_wp),
+      # vegas_wp = dplyr::if_else(is.na(.data$posteam), NA_real_, .data$vegas_wp),
+      vegas_home_wp = dplyr::if_else(.data$tmp_posteam == .data$home_team, .data$vegas_wp, 1 - .data$vegas_wp),
       #make 1 or 0 the final win prob
       vegas_home_wp = dplyr::if_else(
         stringr::str_detect(
@@ -806,8 +811,13 @@ add_wp_variables <- function(pbp_data) {
           .data$home_score == .data$away_score ~ .5
         ),
         .data$vegas_home_wp
+      ),
+      vegas_home_wpa = dplyr::lead(.data$vegas_home_wp) - .data$vegas_home_wp,
+      vegas_wpa = dplyr::if_else(.data$tmp_posteam == .data$home_team, .data$vegas_home_wpa, -.data$vegas_home_wpa),
+      vegas_wpa = dplyr::if_else(
+        stringr::str_detect(tolower(.data$desc), " kneels "), NA_real_, .data$vegas_wpa
+        )
       )
-    )
 
   # For now follow the code from before, will need to update later:
   # Create the possible WPA values

@@ -4,7 +4,7 @@
 # Code Style Guide: styler::tidyverse_style()
 ################################################################################
 
-#' Decode the player IDs in nflfastR play-by-ply data
+#' Decode the player IDs in nflfastR play-by-play data
 #'
 #' @inheritParams clean_pbp
 #' @param fast If `TRUE` the IDs will be decoded with the high efficient
@@ -13,10 +13,10 @@
 #' unless there is a problem with [decode_ids][gsisdecoder::decode_ids]
 #' which can take several days to fix on CRAN.)
 #'
-#' @description Takes all columns ending with `'player_id'` as well as the
-#' variables `'passer_id'`, `'rusher_id'`, `'receiver_id'` and `'id'`
-#' of an nflfastR play-by-play data set and decodes the player IDs to the commonly
-#' known GSIS ID format 00-00xxxxx.
+#' @description Takes all columns ending with \code{'player_id'} as well as the
+#' variables \code{'passer_id'}, \code{'rusher_id'}, \code{'fantasy_id'},
+#' \code{'receiver_id'}, and \code{'id'} of an nflfastR play-by-play data set
+#' and decodes the player IDs to the commonly known GSIS ID format 00-00xxxxx.
 #'
 #' The function uses by default the high efficient [decode_ids][gsisdecoder::decode_ids]
 #' of the package [`gsisdecoder`](https://cran.r-project.org/package=gsisdecoder).
@@ -53,7 +53,7 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
     ret <- pbp %>%
       dplyr::mutate_at(
         dplyr::vars(
-          tidyselect::any_of(c("passer_id", "rusher_id", "receiver_id", "id")),
+          tidyselect::any_of(c("passer_id", "rusher_id", "receiver_id", "id", "fantasy_id")),
           tidyselect::ends_with("player_id")
         ),
         decode_ids

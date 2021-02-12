@@ -38,9 +38,14 @@
 #' \item{rusher_id}{ID of the player in the 'rusher' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
 #' \item{receiver_id}{ID of the player in the 'receiver' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
 #' \item{name}{Name of the 'passer' if it is not 'NA', or name of the 'rusher' otherwise.}
+#' \item{fantasy}{Name of the rusher on rush plays or receiver on pass plays.}
+#' \item{fantasy_id}{ID of the rusher on rush plays or receiver on pass plays.}
+#' \item{fantasy_player_name}{Name of the rusher on rush plays or receiver on pass plays (from official stats).}
+#' \item{fantasy_player_id}{ID of the rusher on rush plays or receiver on pass plays (from official stats).}
 #' \item{jersey_number}{Jersey number of the player listed in the 'name' column.}
 #' \item{id}{ID of the player in the 'name' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
 #' \item{qb_epa}{Gives QB credit for EPA for up to the point where a receiver lost a fumble after a completed catch and makes EPA work more like passing yards on plays with fumbles.}
+#' \item{out_of_bounds}{1 if play description contains ran ob, pushed ob, or sacked ob; 0 otherwise.}
 #' }
 #' @export
 clean_pbp <- function(pbp, ...) {
@@ -210,7 +215,35 @@ clean_pbp <- function(pbp, ...) {
         dplyr::vars(.data$passer_id, .data$rusher_id, .data$receiver_id, .data$id, ends_with("player_id")),
         update_ids, legacy_id_map) %>%
       dplyr::arrange(.data$index) %>%
-      dplyr::select(-"index")
+      dplyr::select(-"index") %>%
+      # add action player
+      dplyr::mutate(
+        fantasy_player_name = case_when(
+          !is.na(.data$rusher_player_name) ~ .data$rusher_player_name,
+          is.na(.data$rusher_player_name) & !is.na(.data$receiver_player_name) ~ .data$receiver_player_name,
+          TRUE ~ NA_character_
+        ),
+        fantasy_player_id = case_when(
+          !is.na(.data$rusher_player_id) ~ .data$rusher_player_id,
+          is.na(.data$rusher_player_id) & !is.na(.data$receiver_player_id) ~ .data$receiver_player_id,
+          TRUE ~ NA_character_
+        ),
+        fantasy = case_when(
+          !is.na(.data$rusher) ~ .data$rusher,
+          is.na(.data$rusher) & !is.na(.data$receiver) ~ .data$receiver,
+          .data$qb_scramble == 1 ~ .data$passer,
+          TRUE ~ NA_character_
+        ),
+        fantasy_id = case_when(
+          !is.na(.data$rusher_id) ~ .data$rusher_id,
+          is.na(.data$rusher_id) & !is.na(.data$receiver_id) ~ .data$receiver_id,
+          .data$qb_scramble == 1 ~ .data$passer_id,
+          TRUE ~ NA_character_
+        ),
+        out_of_bounds = dplyr::if_else(
+          stringr::str_detect(.data$desc, "(ran ob)|(pushed ob)|(sacked ob)"), 1, 0
+        )
+      )
   }
 
   message_completed("Cleaning completed", ...)

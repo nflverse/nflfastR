@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_decode_player_ids.R
 \name{decode_player_ids}
 \alias{decode_player_ids}
-\title{Decode the player IDs in nflfastR play-by-ply data}
+\title{Decode the player IDs in nflfastR play-by-play data}
 \usage{
 decode_player_ids(pbp, ..., fast = TRUE)
 }
@@ -22,9 +22,9 @@ The input data frame of the parameter \code{pbp} with decoded player IDs.
 }
 \description{
 Takes all columns ending with \code{'player_id'} as well as the
-variables \code{'passer_id'}, \code{'rusher_id'}, \code{'receiver_id'} and \code{'id'}
-of an nflfastR play-by-play data set and decodes the player IDs to the commonly
-known GSIS ID format 00-00xxxxx.
+variables \code{'passer_id'}, \code{'rusher_id'}, \code{'fantasy_id'},
+\code{'receiver_id'}, and \code{'id'} of an nflfastR play-by-play data set
+and decodes the player IDs to the commonly known GSIS ID format 00-00xxxxx.
 
 The function uses by default the high efficient \link[gsisdecoder:decode_ids]{decode_ids}
 of the package \href{https://cran.r-project.org/package=gsisdecoder}{\code{gsisdecoder}}.

@@ -32,43 +32,35 @@ add_nflscrapr_mutations <- function(pbp) {
     dplyr::arrange(.data$order_sequence, .data$quarter, !is.na(.data$quarter_seconds_remaining), -.data$quarter_seconds_remaining, !is.na(.data$drive), .data$drive, .data$index, .by_group = TRUE) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(
-      # Fill in the rows with missing posteam with the lag:
-      posteam = dplyr::if_else(
-        (.data$quarter_end == 1 | .data$posteam == ""),
-        dplyr::lag(.data$posteam),
-        .data$posteam),
-      posteam_id = dplyr::if_else(
-        (.data$quarter_end == 1 | .data$posteam_id == ""),
-        dplyr::lag(.data$posteam_id),
-        .data$posteam_id),
-      # Denote whether the home or away team has possession:
-      posteam_type = dplyr::if_else(.data$posteam == .data$home_team, "home", "away"),
-      # Column denoting which team is on defense:
-      defteam = dplyr::if_else(
-        .data$posteam_type == "home",
-        .data$away_team, .data$home_team
-      ),
+
       # Make the possession team for kickoffs be the return team, since that is
       # more intuitive from the EPA / WPA point of view:
       posteam = dplyr::case_when(
         # kickoff_finder is defined below
-        (.data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, kickoff_finder)) & .data$posteam_type == "home" ~ .data$away_team,
-        (.data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, kickoff_finder)) & .data$posteam_type == "away" ~ .data$home_team,
+        (.data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, kickoff_finder)) & .data$posteam == .data$home_team ~ .data$away_team,
+        (.data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, kickoff_finder)) & .data$posteam == .data$away_team ~ .data$home_team,
         TRUE ~ .data$posteam
       ),
-      defteam = dplyr::case_when(
-        # kickoff_finder is defined below
-        (.data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, kickoff_finder)) & .data$posteam_type == "home" ~ .data$home_team,
-        (.data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, kickoff_finder)) & .data$posteam_type == "away" ~ .data$away_team,
-        TRUE ~ .data$defteam
+
+      # Fill in the rows with missing posteam with the lead:
+      posteam = dplyr::if_else(
+        (.data$quarter_end == 1 | .data$posteam == ""),
+        dplyr::lead(.data$posteam),
+        .data$posteam),
+      posteam_id = dplyr::if_else(
+        (.data$quarter_end == 1 | .data$posteam_id == ""),
+        dplyr::lead(.data$posteam_id),
+        .data$posteam_id),
+
+      # Denote whether the home or away team has possession:
+      posteam_type = dplyr::if_else(.data$posteam == .data$home_team, "home", "away"),
+
+      # Column denoting which team is on defense:
+      defteam = dplyr::if_else(
+        .data$posteam == .data$home_team,
+        .data$away_team, .data$home_team
       ),
-      # Now flip the posteam_type as well:
-      posteam_type = dplyr::case_when(
-        # kickoff_finder is defined below
-        (.data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, kickoff_finder)) & .data$posteam == .data$home_team ~ "home",
-        (.data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, kickoff_finder)) & .data$posteam == .data$away_team ~ "away",
-        TRUE ~ .data$posteam_type
-      ),
+
       yardline = dplyr::if_else(.data$yardline == "50", "MID 50", .data$yardline),
       yardline = dplyr::if_else(
         nchar(.data$yardline) == 0 | is.null(.data$yardline) | .data$yardline == "NULL" | is.na(.data$yardline),
