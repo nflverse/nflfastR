@@ -234,11 +234,13 @@ clean_pbp <- function(pbp, ...) {
         fantasy = case_when(
           !is.na(.data$rusher) ~ .data$rusher,
           is.na(.data$rusher) & !is.na(.data$receiver) ~ .data$receiver,
+          .data$qb_scramble == 1 ~ .data$passer,
           TRUE ~ NA_character_
         ),
         fantasy_id = case_when(
           !is.na(.data$rusher_id) ~ .data$rusher_id,
           is.na(.data$rusher_id) & !is.na(.data$receiver_id) ~ .data$receiver_id,
+          .data$qb_scramble == 1 ~ .data$passer_id,
           TRUE ~ NA_character_
         ),
         out_of_bounds = dplyr::if_else(
