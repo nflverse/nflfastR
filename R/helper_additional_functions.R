@@ -16,7 +16,7 @@
 #' the Chargers are always represented by 'LAC' regardless of which year it was.
 #' @seealso For information on parallel processing and progress updates please
 #' see [nflfastR].
-#' @return The input Data Frame of the paramter 'pbp' with the following columns
+#' @return The input Data Frame of the parameter 'pbp' with the following columns
 #' added:
 #' \describe{
 #' \item{success}{Binary indicator wheter epa > 0 in the given play. }

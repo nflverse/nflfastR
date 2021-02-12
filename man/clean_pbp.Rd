@@ -12,7 +12,7 @@ clean_pbp(pbp, ...)
 \item{...}{Additional arguments passed to a message function (for internal use).}
 }
 \value{
-The input Data Frame of the paramter 'pbp' with the following columns
+The input Data Frame of the parameter 'pbp' with the following columns
 added:
 \describe{
 \item{success}{Binary indicator wheter epa > 0 in the given play. }
