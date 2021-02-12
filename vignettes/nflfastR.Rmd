@@ -110,11 +110,11 @@ games_2009 %>%
 When working with `nflfastR`, drive results are automatically included. We use `fixed_drive` and `fixed_drive_result` since the NFL-provided information is a bit wonky. Let's look at how much more likely teams were to score starting from 1st & 10 at their own 20 yard line in 2015 (the last year before touchbacks on kickoffs changed to the 25) than in 2000.
 
 ``` {r ex4, warning = FALSE, message = FALSE}
-pbp <- nflfastR::load_pbp(c(2003, 2020), qs = TRUE)
+pbp <- nflfastR::load_pbp(c(2003, 2015), qs = TRUE)
 
 out <- pbp %>%
   dplyr::filter(season_type == "REG" & down == 1 & ydstogo == 10 & yardline_100 == 80) %>%
-  dplyr::mutate(drive_score = dplyr::if_else(fixed_drive_result %in% c("Touchdown", "Field Goal"), 1, 0)) %>%
+  dplyr::mutate(drive_score = dplyr::if_else(fixed_drive_result %in% c("Touchdown", "Field goal"), 1, 0)) %>%
   dplyr::group_by(season) %>%
   dplyr::summarize(drive_score = mean(drive_score))
 
@@ -122,7 +122,7 @@ out %>%
   knitr::kable(digits = 3)
 ```
 
-So `r scales::percent(out$drive_score[1], accuracy = 0.1)` of 1st & 10 plays from teams' own 20 would see the drive end up in a score in 2003, compared to `r scales::percent(out$drive_score[2], accuracy = 0.1)` in 2020. This has implications for Expected Points models (see `vignette("nflfastR-models")`).
+So `r scales::percent(out$drive_score[1], accuracy = 0.1)` of 1st & 10 plays from teams' own 20 would see the drive end up in a score in 2003, compared to `r scales::percent(out$drive_score[2], accuracy = 0.1)` in 2015. This has implications for Expected Points models (see `vignette("nflfastR-models")`).
 
 # Example 5: Plot offensive and defensive EPA per play for a given season
 
