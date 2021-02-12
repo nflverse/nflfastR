@@ -33,10 +33,6 @@
 #' \item{safety_prob}{probability next score safety this half.}
 #' \item{td_prob}{probability text score touchdown this half.}
 #' }
-#' @importFrom rlang .data
-#' @importFrom dplyr select mutate bind_cols
-#' @importFrom tidyselect any_of
-#' @importFrom stats predict
 #' @export
 #' @examples
 #' \donttest{
@@ -132,11 +128,6 @@ drop.cols <- c(
 #' \item{wp}{win probability.}
 #' \item{vegas_wp}{win probability taking into account pre-game spread.}
 #' }
-#' @importFrom rlang .data
-#' @importFrom dplyr select mutate if_else rename bind_cols
-#' @importFrom tidyselect any_of
-#' @importFrom stats predict
-#' @importFrom tibble as_tibble
 #' @export
 #' @examples
 #' \donttest{

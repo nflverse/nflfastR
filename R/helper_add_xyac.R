@@ -16,8 +16,6 @@
 #' \item{xyac_mean_yardage}{Average expected yards after the catch based on where the ball was caught.}
 #' \item{xyac_median_yardage}{Median expected yards after the catch based on where the ball was caught.}
 #' }
-#' @importFrom rlang .data
-#' @importFrom xgboost getinfo
 #' @export
 add_xyac <- function(pbp, ...) {
 
@@ -27,7 +25,7 @@ add_xyac <- function(pbp, ...) {
     # testing only
     # pbp <- g
 
-    usethis::ui_todo("Computing xyac...")
+    rlang::inform(paste0("\033[31m*\033[39m", " Computing xyac... (", "\033[33mi\033[39m", " This is a heavy task, please be patient)"))
 
     pbp <- pbp %>% dplyr::select(-tidyselect::any_of(drop.cols.xyac))
 
@@ -37,7 +35,7 @@ add_xyac <- function(pbp, ...) {
 
     # prepare_xyac_data helper function shown below
     passes <- prepare_xyac_data(pbp) %>%
-      filter(.data$valid_pass == 1, .data$distance_to_goal != 0)
+      dplyr::filter(.data$valid_pass == 1, .data$distance_to_goal != 0)
 
     if (!nrow(passes) == 0) {
       # initialize xyac_model to avoid R CMD check note
@@ -59,7 +57,7 @@ add_xyac <- function(pbp, ...) {
           tibble::as_tibble() %>%
           dplyr::rename(prob = "value") %>%
           dplyr::bind_cols(
-            purrr::map_dfr(seq_along(passes$index), function(x) {
+            furrr::future_map_dfr(seq_along(passes$index), function(x) {
               tibble::tibble(
                 "yac" = -5:70,
                 "index" = passes$index[[x]],

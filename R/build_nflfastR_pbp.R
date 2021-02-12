@@ -10,46 +10,85 @@
 #' Build a Complete nflfastR Data Set
 #'
 #' @description
-#' \code{build_nflfastR_pbp} is a convenient wrapper around 5 nflfastR functions:
+#' `build_nflfastR_pbp` is a convenient wrapper around 6 nflfastR functions:
 #'
 #' \itemize{
-#'  \item{\code{\link{fast_scraper}}}
-#'  \item{\code{\link{clean_pbp}}}
-#'  \item{\code{\link{add_qb_epa}}}
-#'  \item{\code{\link{add_xyac}}}
-#'  \item{\code{\link{decode_player_ids}}}
+#'  \item{[fast_scraper()]}
+#'  \item{[clean_pbp()]}
+#'  \item{[add_qb_epa()]}
+#'  \item{[add_xyac()]}
+#'  \item{[add_xpass()]}
+#'  \item{[decode_player_ids()]}
 #' }
 #'
-#' Please see the documentation of each function to learn about the output.
+#' Please see either the documentation of each function or
+#' [the nflfastR Field Descriptions website](https://www.nflfastr.com/articles/field_descriptions.html)
+#' to learn about the output.
 #'
 #' @inheritParams fast_scraper
-#' @param decode If \code{TRUE}, the function \code{\link{decode_player_ids}} will be executed.
-#' @param rules If \code{FALSE}, printing of the header and footer in the console output will be suppressed.
-#' @return An nflfastR play-by-play data frame like it can be loaded from \url{https://github.com/guga31bb/nflfastR-data}.
-#' @details To load valid game_ids please use the package function \code{\link{fast_scraper_schedules}}.
-#'
-#' The \code{source} parameter controls from which source the data is being
-#' loaded. The old parameters \code{rs} as well as \code{gc}
-#' are not valid anymore. Please use \code{nfl} or \code{old}.
-#'
-#' The \code{pp} parameter controls if the scraper should use parallel processing.
-#' Please note that the initiating process takes a few seconds which means it
-#' may be better to set \code{pp = FALSE} if you are scraping just a few games.
-#' @importFrom rlang .data
-#' @importFrom dplyr mutate_at vars mutate pull
-#' @importFrom tidyselect any_of ends_with
-#' @importFrom tibble tibble
-#' @importFrom stringr str_sub str_replace_all str_length
+#' @param decode If `TRUE`, the function [decode_player_ids()] will be executed.
+#' @param rules If `FALSE`, printing of the header and footer in the console output will be suppressed.
+#' @return An nflfastR play-by-play data frame like it can be loaded from <https://github.com/guga31bb/nflfastR-data>.
+#' @details To load valid game_ids please use the package function [fast_scraper_schedules()].
+#' @seealso For information on parallel processing and progress updates please
+#' see [nflfastR].
 #' @export
 #' @examples
 #' \donttest{
 #' # Build nflfastR pbp for the 2018 and 2019 Super Bowls
 #' build_nflfastR_pbp(c("2018_21_NE_LA", "2019_21_SF_KC"))
+#'
+#' # It is also possible to directly use the
+#' # output of `fast_scraper_schedules` as input
+#' library(dplyr, warn.conflicts = FALSE)
+#' fast_scraper_schedules(2020) %>%
+#'   tail(3) %>%
+#'   build_nflfastR_pbp()
+#'
+#' \dontshow{
+#' # Close open connections for R CMD Check
+#' future::plan("sequential")
 #' }
-build_nflfastR_pbp <- function(game_ids, source = "nfl", pp = FALSE, ..., decode = FALSE, rules = TRUE) {
-  if (rules) rule_header("Build nflfastR Play-by-Play Data")
+#' }
+build_nflfastR_pbp <- function(game_ids,
+                               source = lifecycle::deprecated(),
+                               pp = lifecycle::deprecated(),
+                               ...,
+                               decode = TRUE,
+                               rules = TRUE) {
 
-  game_count <- length(game_ids)
+  if (lifecycle::is_present(source)) {
+    lifecycle::deprecate_warn(
+      when = "4.0.0",
+      what = "build_nflfastR_pbp(source = )",
+      details = "The source argument isn't used anymore and will be dropped in a future release."
+    )
+  }
+
+  if (lifecycle::is_present(pp)) {
+    lifecycle::deprecate_warn(
+      when = "4.0.0",
+      what = "build_nflfastR_pbp(pp = )",
+      details = glue::glue(
+        "We have dropped the in-package activation of parallel processing as ",
+        "this is considered bad practice.\n",
+        "Please choose an appropriate plan before calling the function, e.g. ",
+        "{usethis::ui_code('future::plan(\"multisession\")')}"
+      )
+    )
+  }
+
+  if (!is.vector(game_ids) && is.data.frame(game_ids)) game_ids <- game_ids$game_id
+
+  if (!is.vector(game_ids)) usethis::ui_stop("Param {usethis::ui_code('game_ids')} is not a valid vector!")
+
+  if (isTRUE(decode) && !is_installed("gsisdecoder")) {
+    usethis::ui_stop("Package {usethis::ui_value('gsisdecoder')} required for decoding. Please install it with {usethis::ui_code('install.packages(\"gsisdecoder\")')}.")
+  }
+
+  if (isTRUE(rules)) rule_header("Build nflfastR Play-by-Play Data")
+
+  game_count <- ifelse(is.vector(game_ids), length(game_ids), nrow(game_ids))
   builder <- TRUE
 
   if (game_count > 1) {
@@ -61,14 +100,14 @@ build_nflfastR_pbp <- function(game_ids, source = "nfl", pp = FALSE, ..., decode
   ret <- fast_scraper(game_ids = game_ids, source = source, pp = pp, ..., in_builder = builder) %>%
     clean_pbp(in_builder = builder) %>%
     add_qb_epa(in_builder = builder) %>%
-    add_xyac(in_builder = builder) #%>%
-    # add_xpass(in_builder = builder)
+    add_xyac(in_builder = builder) %>%
+    add_xpass(in_builder = builder)
 
-  if (decode) {
+  if (isTRUE(decode)) {
     ret <- decode_player_ids(ret, in_builder = builder)
   }
 
-  if (rules) rule_footer("DONE")
+  if (isTRUE(rules)) rule_footer("DONE")
 
   return(ret)
 }

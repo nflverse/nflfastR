@@ -6,45 +6,44 @@
 
 #' Update or Create a nflfastR Play-by-Play Database
 #'
-#' \code{update_db} updates or creates a database with \code{nflfastR}
+#' `update_db` updates or creates a database with `nflfastR`
 #' play by play data of all completed games since 1999.
 #'
-#' @details This function creates and updates a data table with the name \code{tblname}
-#' within a SQLite database (other drivers via \code{db_connection}) located in
-#' \code{dbdir} and named \code{dbname}.
+#' @details This function creates and updates a data table with the name `tblname`
+#' within a SQLite database (other drivers via `db_connection`) located in
+#' `dbdir` and named `dbname`.
 #' The data table combines all play by play data for every available game back
 #' to the 1999 season and adds the most recent completed games as soon as they
-#' are available for \code{nflfastR}.
+#' are available for `nflfastR`.
 #'
-#' The argument \code{force_rebuild} is of hybrid type. It can rebuild the play
-#' by play data table either for the whole nflfastR era (with \code{force_rebuild = TRUE})
-#' or just for specified seasons (e.g. \code{force_rebuild = c(2019, 2020)}).
+#' The argument `force_rebuild` is of hybrid type. It can rebuild the play
+#' by play data table either for the whole nflfastR era (with `force_rebuild = TRUE`)
+#' or just for specified seasons (e.g. `force_rebuild = c(2019, 2020)`).
 #' Please note the following behavior:
 #' \itemize{
-#'  \item{\code{force_rebuild = TRUE}}{: The data table with the name \code{tblname}
+#'  \item{`force_rebuild = TRUE`}{: The data table with the name `tblname`
 #'   will be removed completely and rebuilt from scratch. This is helpful when
 #'   new columns are added during the Off-Season.}
-#'  \item{\code{force_rebuild = c(2019, 2020)}}{: The data table with the name \code{tblname}
+#'  \item{`force_rebuild = c(2019, 2020)`}{: The data table with the name `tblname`
 #'  will be preserved and only rows from the 2019 and 2020 seasons will be
 #'  deleted and re-added. This is intended to be used for ongoing seasons because
 #'  the NFL fixes bugs in the underlying data during the week and we recommend
 #'  rebuilding the current season every Thursday during the season.}
 #' }
 #'
-#' The parameter \code{db_connection} is intended for advanced users who want
+#' The parameter `db_connection` is intended for advanced users who want
 #' to use other DBI drivers, such as MariaDB, Postgres or odbc. Please note that
-#' the arguments \code{dbdir} and \code{dbname} are dropped in case a \code{db_connection}
-#' is provided but the argument \code{tblname} will still be used to write the
+#' the arguments `dbdir` and `dbname` are dropped in case a `db_connection`
+#' is provided but the argument `tblname` will still be used to write the
 #' data table into the database.
 #'
 #' @param dbdir Directory in which the database is or shall be located
-#' @param dbname File name of an existing or desired SQLite database within \code{dbdir}
+#' @param dbname File name of an existing or desired SQLite database within `dbdir`
 #' @param tblname The name of the play by play data table within the database
 #' @param force_rebuild Hybrid parameter (logical or numeric) to rebuild parts
 #' of or the complete play by play data table within the database (please see details for further information)
-#' @param db_connection A \code{DBIConnection} object, as returned by
-#' \code{\link[DBI]{dbConnect}} (please see details for further information)
-#' @importFrom rlang .data
+#' @param db_connection A `DBIConnection` object, as returned by
+#' [DBI::dbConnect()] (please see details for further information)
 #' @export
 update_db <- function(dbdir = ".",
                       dbname = "pbp_db",
@@ -54,9 +53,9 @@ update_db <- function(dbdir = ".",
 
   rule_header("Update nflfastR Play-by-Play Database")
 
-  if (!requireNamespace("DBI", quietly = TRUE) |
-    (!requireNamespace("RSQLite", quietly = TRUE) & is.null(db_connection))) {
-    usethis::ui_stop("Packages {usethis::ui_value('DBI')} and {usethis::ui_value('RSQLite')} needed for database communication. Please install them.")
+  if (!is_installed("DBI") | !is_installed("purrr") |
+      (!is_installed("RSQLite") & is.null(db_connection))) {
+    usethis::ui_stop("Packages {usethis::ui_value('DBI')}, {usethis::ui_value('RSQLite')} and {usethis::ui_value('purrr')} required for database communication. Please install them.")
   }
 
   if (any(force_rebuild == "NEW")) {
@@ -87,7 +86,7 @@ update_db <- function(dbdir = ".",
 
   # get completed games using Lee's file (thanks Lee!)
   usethis::ui_todo("Checking for missing completed games...")
-  completed_games <- readRDS(url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true")) %>%
+  completed_games <- load_lees_games() %>%
     # completed games since 1999, excluding the broken games
     dplyr::filter(.data$season >= 1999, !is.na(.data$result), !.data$game_id %in% c("1999_01_BAL_STL", "2000_06_BUF_MIA", "2000_03_SD_KC")) %>%
     dplyr::arrange(.data$gameday) %>%
@@ -105,20 +104,7 @@ update_db <- function(dbdir = ".",
 
   # if there's missing games, scrape and write to db
   if (length(missing) > 0) {
-    if (!requireNamespace("furrr", quietly = TRUE)) {
-      is_installed_furrr <- FALSE
-      usethis::ui_info("Package {usethis::ui_value('furrr')} not installed. Can't use parallel processing. Please consider installing it.")
-      usethis::ui_info("Will go on sequentially...")
-    } else {
-      is_installed_furrr <- TRUE
-    }
-
-    # prevent the fast_scraper() warning for pp = TRUE with less than 5 games
-    if (is_installed_furrr == TRUE & length(missing) < 5) {
-      is_installed_furrr <- FALSE
-    }
-
-    new_pbp <- build_nflfastR_pbp(missing, pp = is_installed_furrr, rules = FALSE)
+    new_pbp <- build_nflfastR_pbp(missing, rules = FALSE)
 
     if (nrow(new_pbp) == 0) {
       usethis::ui_oops("Raw data of new games are not yet ready. Please try again in about 10 minutes.")
@@ -137,7 +123,7 @@ update_db <- function(dbdir = ".",
 # this is a helper function to build nflfastR database from Scratch
 build_db <- function(tblname = "nflfastR_pbp", db_conn, rebuild = FALSE, show_message = TRUE) {
 
-  valid_seasons <- readRDS(url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true")) %>%
+  valid_seasons <- load_lees_games() %>%
     dplyr::filter(.data$season >= 1999 & !is.na(.data$result)) %>%
     dplyr::group_by(.data$season) %>%
     dplyr::summarise() %>%
@@ -165,7 +151,7 @@ build_db <- function(tblname = "nflfastR_pbp", db_conn, rebuild = FALSE, show_me
 
   if (!is.null(seasons)) {
     # this function lives in R/utils.R
-    load_pbp(seasons, in_db = TRUE, dbConnection = db_conn, tablename = tblname)
+    load_pbp(seasons, dbConnection = db_conn, tablename = tblname, qs = is_installed("qs"))
   }
 }
 

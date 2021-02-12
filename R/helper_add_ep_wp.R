@@ -7,15 +7,12 @@
 # For now those functions are only a call to nflscrapR but we may want to
 # use other models and epa wpa definitions. This is the place where this
 # could happen
-#' @importFrom magrittr "%>%"
 add_ep <- function(pbp) {
   out <- pbp %>% add_ep_variables()
   usethis::ui_done("added ep variables")
   return(out)
 }
 
-#' @importFrom dplyr filter mutate
-#' @importFrom rlang .data
 add_air_yac_ep <- function(pbp) {
   if (nrow(pbp %>% dplyr::filter(!is.na(.data$air_yards))) == 0) {
     out <- pbp %>%
@@ -49,15 +46,12 @@ add_air_yac_ep <- function(pbp) {
   return(out)
 }
 
-#' @importFrom magrittr "%>%"
 add_wp <- function(pbp) {
   out <- pbp %>% add_wp_variables()
   usethis::ui_done("added wp variables")
   return(out)
 }
 
-#' @importFrom dplyr filter mutate
-#' @importFrom rlang .data
 add_air_yac_wp <- function(pbp) {
   if (nrow(pbp %>% dplyr::filter(!is.na(.data$air_yards))) == 0) {
     out <- pbp %>%
@@ -93,7 +87,6 @@ add_air_yac_wp <- function(pbp) {
 
 #get predictions for a set of pbp data
 #for predict stage
-#' @importFrom stats predict
 get_preds <- function(pbp) {
 
   preds <- as.data.frame(
@@ -108,7 +101,6 @@ get_preds <- function(pbp) {
 
 #get predictions for a set of pbp data
 #for predict stage
-#' @importFrom stats predict
 get_preds_wp <- function(pbp) {
 
   preds <- stats::predict(wp_model, as.matrix(pbp %>% wp_model_select()))
@@ -118,7 +110,6 @@ get_preds_wp <- function(pbp) {
 
 #get predictions for a set of pbp data
 #for predict stage
-#' @importFrom stats predict
 get_preds_wp_spread <- function(pbp) {
 
   preds <- stats::predict(wp_model_spread, as.matrix(pbp %>% wp_spread_model_select()))
@@ -130,7 +121,6 @@ get_preds_wp_spread <- function(pbp) {
 
 #get the columns needed for ep predictions
 #making sure they're in the right order
-#' @importFrom dplyr select
 ep_model_select <- function(pbp) {
 
   pbp <- pbp %>%
@@ -154,7 +144,6 @@ ep_model_select <- function(pbp) {
 
 #get the columns needed for wp predictions
 #making sure they're in the right order
-#' @importFrom dplyr select
 wp_model_select <- function(pbp) {
 
   pbp <- pbp %>%
@@ -178,7 +167,6 @@ wp_model_select <- function(pbp) {
 
 #get the columns needed for wp predictions
 #making sure they're in the right order
-#' @importFrom dplyr select
 wp_spread_model_select <- function(pbp) {
 
   pbp <- pbp %>%
@@ -200,9 +188,6 @@ wp_spread_model_select <- function(pbp) {
   return(pbp)
 
 }
-#' @importFrom dplyr group_by mutate ungroup if_else first
-#' @importFrom stats na.omit
-#' @importFrom rlang .data
 prepare_wp_data <- function(pbp) {
 
   pbp <- pbp %>%
@@ -225,9 +210,6 @@ prepare_wp_data <- function(pbp) {
 
 #add ep variables
 #All of these are heavily borrowed from nflscrapR (Maksim Horowitz, Ronald Yurko, and Samuel Ventura)
-#' @import dplyr
-#' @importFrom rlang .data
-#' @importFrom mgcv predict.bam
 add_ep_variables <- function(pbp_data) {
 
   #testing
@@ -582,9 +564,6 @@ add_ep_variables <- function(pbp_data) {
 
 #################################################################
 # Calculate WP and WPA:
-#' @import dplyr
-#' @importFrom stringr str_detect
-#' @importFrom rlang .data
 add_wp_variables <- function(pbp_data) {
 
   #testing only
@@ -1020,8 +999,6 @@ add_esdtr <- function(data) {
 # air and YAC EP:
 # as with the rest, heavily borrowed from nflscrapR:
 # https://github.com/maksimhorowitz/nflscrapR/blob/master/R/add_ep_wp_variables.R
-#' @import dplyr
-#' @importFrom rlang .data
 add_air_yac_ep_variables <- function(pbp_data) {
 
   #testing
@@ -1178,8 +1155,6 @@ add_air_yac_ep_variables <- function(pbp_data) {
 # air and YAC WP:
 # as with the rest, heavily borrowed from nflscrapR:
 # https://github.com/maksimhorowitz/nflscrapR/blob/master/R/add_ep_wp_variables.R
-#' @import dplyr
-#' @importFrom rlang .data
 add_air_yac_wp_variables <- function(pbp_data) {
 
   #testing

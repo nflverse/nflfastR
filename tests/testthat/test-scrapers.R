@@ -13,7 +13,7 @@ test_that("Scraper works for an old and new game at once", {
 
 test_that("Wrapper works for an old and new game at once", {
 
-  wrapper <- build_nflfastR_pbp(game_ids)
+  wrapper <- build_nflfastR_pbp(game_ids, decode = FALSE)
 
   descriptions <- wrapper %>%
     extract_desc()

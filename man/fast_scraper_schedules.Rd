@@ -4,12 +4,13 @@
 \alias{fast_scraper_schedules}
 \title{Get NFL Season Schedules}
 \usage{
-fast_scraper_schedules(seasons, pp = FALSE)
+fast_scraper_schedules(seasons, pp = lifecycle::deprecated())
 }
 \arguments{
 \item{seasons}{Vector of numeric or character 4 digit seasons}
 
-\item{pp}{Logical - either \code{TRUE} or \code{FALSE} (see details for further information)}
+\item{pp}{\ifelse{html}{\figure{lifecycle-deprecated.svg}{options: alt='Deprecated lifecycle'}}{\strong{Deprecated}} has no effect and will be
+removed in a future release.}
 }
 \value{
 Data frame containing the following detailed game information:
@@ -39,14 +40,18 @@ Get NFL Season Schedules
 \details{
 This functions now incorporates the games file provided and maintained
 by Lee Sharpe.
-
-The \code{pp} parameter controls if the scraper should use parallel processing.
-Please note that the initiating process takes a few seconds which means it
-may be better to set \code{pp = FALSE} if you are scraping less than 10 seasons.
 }
 \examples{
 \donttest{
 # Get schedules for the whole 2015 - 2018 seasons
 fast_scraper_schedules(2015:2018)
+\dontshow{
+# Close open connections for R CMD Check
+future::plan("sequential")
 }
+}
+}
+\seealso{
+For information on parallel processing and progress updates please
+see \link{nflfastR}.
 }

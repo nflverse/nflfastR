@@ -168,14 +168,19 @@
 #' \item{lateral_recovery}{Binary indicator for if a lateral occurred on a fumble recovery.}
 #' \item{passer_player_id}{Unique identifier for the player that attempted the pass.}
 #' \item{passer_player_name}{String name for the player that attempted the pass.}
+#' \item{passing_yards}{Numeric yards by the passer_player_name, including yards gained in pass plays with laterals. This should equal official passing statistics.}
 #' \item{receiver_player_id}{Unique identifier for the receiver that was targeted on the pass.}
 #' \item{receiver_player_name}{String name for the targeted receiver.}
+#' \item{receiving_yards}{Numeric yards by the receiver_player_name, excluding yards gained in pass plays with laterals. This should equal official receiving statistics but could miss yards gained in pass plays with laterals. Please see the description of `lateral_receiver_player_name` for further information.}
 #' \item{rusher_player_id}{Unique identifier for the player that attempted the run.}
 #' \item{rusher_player_name}{String name for the player that attempted the run.}
-#' \item{lateral_receiver_player_id}{Unique identifier for the player that received the lateral on a reception.}
-#' \item{lateral_receiver_player_name}{String name for the player that received the lateral on a reception.}
-#' \item{lateral_rusher_player_id}{Unique identifier for the player that received the lateral on a run.}
-#' \item{lateral_rusher_player_name}{String name for the player that received the lateral on a run.}
+#' \item{rushing_yards}{Numeric yards by the rusher_player_name, excluding yards gained in rush plays with laterals. This should equal official rushing statistics but could miss yards gained in rush plays with laterals. Please see the description of `lateral_rusher_player_name` for further information.}
+#' \item{lateral_receiver_player_id}{Unique identifier for the player that received the last(!) lateral on a pass play.}
+#' \item{lateral_receiver_player_name}{String name for the player that received the last(!) lateral on a pass play. If there were multiple laterals in the same play, this will only be the last player who received a lateral. Please see <https://github.com/mrcaseb/nfl-data/tree/master/data/lateral_yards> for a list of plays where multiple players recorded lateral receiving yards.}
+#' \item{lateral_receiving_yards}{Numeric yards by the `lateral_receiver_player_name` in pass plays with laterals. Please see the description of `lateral_receiver_player_name` for further information.}
+#' \item{lateral_rusher_player_id}{Unique identifier for the player that received the last(!) lateral on a run play.}
+#' \item{lateral_rusher_player_name}{String name for the player that received the last(!) lateral on a run play. If there were multiple laterals in the same play, this will only be the last player who received a lateral. Please see <https://github.com/mrcaseb/nfl-data/tree/master/data/lateral_yards> for a list of plays where multiple players recorded lateral rushing yards.}
+#' \item{lateral_rushing_yards}{Numeric yards by the `lateral_rusher_player_name` in run plays with laterals. Please see the description of `lateral_rusher_player_name` for further information.}
 #' \item{lateral_sack_player_id}{Unique identifier for the player that received the lateral on a sack.}
 #' \item{lateral_sack_player_name}{String name for the player that received the lateral on a sack.}
 #' \item{interception_player_id}{Unique identifier for the player that intercepted the pass.}
@@ -267,8 +272,8 @@
 #' \item{series}{Starts at 1, each new first down increments, numbers shared across both teams NA: kickoffs, extra point/two point conversion attempts, non-plays, no posteam}
 #' \item{series_success}{1: scored touchdown, gained enough yards for first down.}
 #' \item{series_result}{Possible values: First down, Touchdown, Opp touchdown, Field goal, Missed field goal, Safety, Turnover, Punt, Turnover on downs, QB kneel, End of half}
-#' \item{start_time}{Kickoff time in eastern time zone.}
 #' \item{order_sequence}{Column provided by NFL to fix out-of-order plays. Available 2011 and beyond with source "nfl".}
+#' \item{start_time}{Kickoff time in eastern time zone.}
 #' \item{time_of_day}{Time of day of play in UTC "HH:MM:SS" format. Available 2011 and beyond with source "nfl".}
 #' \item{stadium}{Game site name.}
 #' \item{weather}{String describing the weather including temperature, humidity and wind (direction and speed). Doesn't change during the game!}
@@ -280,6 +285,8 @@
 #' \item{st_play_type}{Type of special teams play from NFL source. Available 2011 and beyond with source "nfl".}
 #' \item{end_clock_time}{Game time at the end of a given play.}
 #' \item{end_yard_line}{String indicating the yardline at the end of the given play consisting of team half and yard line number.}
+#' \item{fixed_drive}{Manually created drive number in a game.}
+#' \item{fixed_drive_result}{Manually created drive result.}
 #' \item{drive_real_start_time}{Local day time when the drive started (currently not used by the NFL and therefore mostly 'NA').}
 #' \item{drive_play_count}{Numeric value of how many regular plays happened in a given drive.}
 #' \item{drive_time_of_possession}{Time of possession in a given drive.}
@@ -297,8 +304,6 @@
 #' \item{drive_end_yard_line}{String indicating where a given drive ended consisting of team half and yard line number.}
 #' \item{drive_play_id_started}{Play_id of the first play in the given drive.}
 #' \item{drive_play_id_ended}{Play_id of the last play in the given drive.}
-#' \item{fixed_drive}{Manually created drive number in a game.}
-#' \item{fixed_drive_result}{Manually created drive result.}
 #' \item{away_score}{Total points scored by the away team.}
 #' \item{home_score}{Total points scored by the home team.}
 #' \item{location}{Either 'Home' o 'Neutral' indicating if the home team played at home or at a neutral site. }
@@ -324,26 +329,26 @@
 #' \item{receiver_jersey_number}{Jersey number of the receiver.}
 #' \item{pass}{Binary indicator if the play was a pass play (sacks and scrambles included).}
 #' \item{rush}{Binary indicator if the play was a rushing play.}
-#' \item{special}{Binary indicator if the play was a special teams play.}
 #' \item{first_down}{Binary indicator if the play ended in a first down.}
 #' \item{aborted_play}{Binary indicator if the play description indicates "Aborted".}
+#' \item{special}{Binary indicator if the play was a special teams play.}
 #' \item{play}{Binary indicator: 1 if the play was a 'normal' play (including penalties), 0 otherwise.}
-#' \item{passer_id}{ID of the player in the 'passer' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
-#' \item{rusher_id}{ID of the player in the 'rusher' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
-#' \item{receiver_id}{ID of the player in the 'receiver' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
+#' \item{passer_id}{ID of the player in the 'passer' column.}
+#' \item{rusher_id}{ID of the player in the 'rusher' column.}
+#' \item{receiver_id}{ID of the player in the 'receiver' column.}
 #' \item{name}{Name of the 'passer' if it is not 'NA', or name of the 'rusher' otherwise.}
 #' \item{jersey_number}{Jersey number of the player listed in the 'name' column.}
-#' \item{id}{ID of the player in the 'name' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
-#' \item{fantasy}{Name of the rusher on rush plays or receiver on pass plays.}
-#' \item{fantasy_id}{ID of the rusher on rush plays or receiver on pass plays.}
+#' \item{id}{ID of the player in the 'name' column.}
 #' \item{fantasy_player_name}{Name of the rusher on rush plays or receiver on pass plays (from official stats).}
 #' \item{fantasy_player_id}{ID of the rusher on rush plays or receiver on pass plays (from official stats).}
+#' \item{fantasy}{Name of the rusher on rush plays or receiver on pass plays.}
+#' \item{fantasy_id}{ID of the rusher on rush plays or receiver on pass plays.}
 #' \item{out_of_bounds}{1 if play description contains ran ob, pushed ob, or sacked ob; 0 otherwise.}
 #' \item{qb_epa}{Gives QB credit for EPA for up to the point where a receiver lost a fumble after a completed catch and makes EPA work more like passing yards on plays with fumbles.}
 #' \item{xyac_epa}{Expected value of EPA gained after the catch, starting from where the catch was made. Zero yards after the catch would be listed as zero EPA.}
-#' \item{xyac_success}{Probability play earns positive EPA (relative to where play started) based on where ball was caught.}
-#' \item{xyac_fd}{Probability play earns a first down based on where the ball was caught.}
 #' \item{xyac_mean_yardage}{Average expected yards after the catch based on where the ball was caught.}
 #' \item{xyac_median_yardage}{Median expected yards after the catch based on where the ball was caught.}
+#' \item{xyac_success}{Probability play earns positive EPA (relative to where play started) based on where ball was caught.}
+#' \item{xyac_fd}{Probability play earns a first down based on where the ball was caught.}
 #' \item{xpass}{Probability of dropback scaled from 0 to 1.}
 #' \item{pass_oe}{Dropback percent over expected on a given play scaled from 0 to 100.}

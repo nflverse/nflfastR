@@ -4,14 +4,23 @@
 \alias{fast_scraper}
 \title{Get NFL Play by Play Data}
 \usage{
-fast_scraper(game_ids, source = "nfl", pp = FALSE, ..., in_builder = FALSE)
+fast_scraper(
+  game_ids,
+  source = lifecycle::deprecated(),
+  pp = lifecycle::deprecated(),
+  ...,
+  in_builder = FALSE
+)
 }
 \arguments{
-\item{game_ids}{Vector of character ids (see details for further information).}
+\item{game_ids}{Vector of character ids or a data frame including the variable
+\code{game_id} (see details for further information).}
 
-\item{source}{Character - \code{nfl} for the NFL.com page or \code{old} for the old gamecenter. For \code{old}, old_game_id must be supplied}
+\item{source}{\ifelse{html}{\figure{lifecycle-deprecated.svg}{options: alt='Deprecated lifecycle'}}{\strong{Deprecated}} has no effect and will be
+removed in a future release.}
 
-\item{pp}{Logical - either \code{TRUE} or \code{FALSE} (see details for further information)}
+\item{pp}{\ifelse{html}{\figure{lifecycle-deprecated.svg}{options: alt='Deprecated lifecycle'}}{\strong{Deprecated}} has no effect and will be
+removed in a future release.}
 
 \item{...}{Additional arguments passed to the scraping functions (for internal use)}
 
@@ -192,14 +201,32 @@ detailed information (description partly extracted from nflscrapR):
 \item{lateral_recovery}{Binary indicator for if a lateral occurred on a fumble recovery.}
 \item{passer_player_id}{Unique identifier for the player that attempted the pass.}
 \item{passer_player_name}{String name for the player that attempted the pass.}
+\item{passing_yards}{Numeric yards by the passer_player_name, including yards gained in pass plays with laterals.
+This should equal official passing statistics.}
 \item{receiver_player_id}{Unique identifier for the receiver that was targeted on the pass.}
 \item{receiver_player_name}{String name for the targeted receiver.}
+\item{receiving_yards}{Numeric yards by the receiver_player_name, excluding yards gained in pass plays with laterals.
+This should equal official receiving statistics but could miss yards gained in pass plays with laterals.
+Please see the description of \code{lateral_receiver_player_name} for further information.}
 \item{rusher_player_id}{Unique identifier for the player that attempted the run.}
 \item{rusher_player_name}{String name for the player that attempted the run.}
-\item{lateral_receiver_player_id}{Unique identifier for the player that received the lateral on a reception.}
-\item{lateral_receiver_player_name}{String name for the player that received the lateral on a reception.}
-\item{lateral_rusher_player_id}{Unique identifier for the player that received the lateral on a run.}
-\item{lateral_rusher_player_name}{String name for the player that received the lateral on a run.}
+\item{rushing_yards}{Numeric yards by the rusher_player_name, excluding yards gained in rush plays with laterals.
+This should equal official rushing statistics but could miss yards gained in rush plays with laterals.
+Please see the description of \code{lateral_rusher_player_name} for further information.}
+\item{lateral_receiver_player_id}{Unique identifier for the player that received the last(!) lateral on a pass play.}
+\item{lateral_receiver_player_name}{String name for the player that received the last(!) lateral on a pass play.
+If there were multiple laterals in the same play, this will only be the last player who received a lateral.
+Please see \url{https://github.com/mrcaseb/nfl-data/tree/master/data/lateral_yards}
+for a list of plays where multiple players recorded lateral receiving yards.}
+\item{lateral_receiving_yards}{Numeric yards by the \code{lateral_receiver_player_name} in pass plays with laterals.
+Please see the description of \code{lateral_receiver_player_name} for further information.}
+\item{lateral_rusher_player_id}{Unique identifier for the player that received the last(!) lateral on a run play.}
+\item{lateral_rusher_player_name}{String name for the player that received the last(!) lateral on a run play.
+If there were multiple laterals in the same play, this will only be the last player who received a lateral.
+Please see \url{https://github.com/mrcaseb/nfl-data/tree/master/data/lateral_yards}
+for a list of plays where multiple players recorded lateral rushing yards.}
+\item{lateral_rushing_yards}{Numeric yards by the \code{lateral_rusher_player_name} in run plays with laterals.
+Please see the description of \code{lateral_rusher_player_name} for further information.}
 \item{lateral_sack_player_id}{Unique identifier for the player that received the lateral on a sack.}
 \item{lateral_sack_player_name}{String name for the player that received the lateral on a sack.}
 \item{interception_player_id}{Unique identifier for the player that intercepted the pass.}
@@ -342,22 +369,35 @@ detailed information (description partly extracted from nflscrapR):
 }
 }
 \description{
-Get NFL Play by Play Data
+Load and parse NFL play-by-play data and add all of the original
+nflfastR variables. As nflfastR now provides multiple functions which add
+information to the output of this function, it is recommended to use
+\code{\link{build_nflfastR_pbp}} instead.
 }
 \details{
-To load valid game_ids please use the package function \code{\link{fast_scraper_schedules}}.
-
-The \code{source} parameter controls from which source the data is being
-loaded. The old parameters \code{rs} as well as \code{gc}
-are not valid anymore. Please use \code{nfl} or \code{old}.
-
-The \code{pp} parameter controls if the scraper should use parallel processing.
-Please note that the initiating process takes a few seconds which means it
-may be better to set \code{pp = FALSE} if you are scraping just a few games.
+To load valid game_ids please use the package function
+\code{\link{fast_scraper_schedules}} (the function can directly handle the
+output of that function)
 }
 \examples{
 \donttest{
 # Get pbp data for two games
 fast_scraper(c("2019_01_GB_CHI", "2013_21_SEA_DEN"))
+
+# It is also possible to directly use the
+# output of `fast_scraper_schedules` as input
+library(dplyr, warn.conflicts = FALSE)
+fast_scraper_schedules(2020) \%>\%
+  tail(3) \%>\%
+  fast_scraper()
+
+\dontshow{
+# Close open connections for R CMD Check
+future::plan("sequential")
 }
+}
+}
+\seealso{
+For information on parallel processing and progress updates please
+see \link{nflfastR}.
 }

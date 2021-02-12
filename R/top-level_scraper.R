@@ -1,25 +1,29 @@
 ################################################################################
 # Author: Sebastian Carl
-# Purpose: Top-Level functions which will be made availabe through the package
+# Purpose: Top-Level functions which will be made available through the package
 # Code Style Guide: styler::tidyverse_style()
 ################################################################################
 
 #' Get NFL Play by Play Data
 #'
-#' @param game_ids Vector of character ids (see details for further information).
-#' @param source Character - \code{nfl} for the NFL.com page or \code{old} for the old gamecenter. For \code{old}, old_game_id must be supplied
-#' @param pp Logical - either \code{TRUE} or \code{FALSE} (see details for further information)
+#' @description Load and parse NFL play-by-play data and add all of the original
+#'   nflfastR variables. As nflfastR now provides multiple functions which add
+#'   information to the output of this function, it is recommended to use
+#'   \code{\link{build_nflfastR_pbp}} instead.
+#'
+#' @param game_ids Vector of character ids or a data frame including the variable
+#' `game_id` (see details for further information).
+#' @param source `r lifecycle::badge("deprecated")` has no effect and will be
+#'   removed in a future release.
+#' @param pp `r lifecycle::badge("deprecated")` has no effect and will be
+#'   removed in a future release.
 #' @param ... Additional arguments passed to the scraping functions (for internal use)
 #' @param in_builder If \code{TRUE}, the final message will be suppressed (for usage inside of \code{\link{build_nflfastR_pbp}}).
-#' @details To load valid game_ids please use the package function \code{\link{fast_scraper_schedules}}.
-#'
-#' The \code{source} parameter controls from which source the data is being
-#' loaded. The old parameters \code{rs} as well as \code{gc}
-#' are not valid anymore. Please use \code{nfl} or \code{old}.
-#'
-#' The \code{pp} parameter controls if the scraper should use parallel processing.
-#' Please note that the initiating process takes a few seconds which means it
-#' may be better to set \code{pp = FALSE} if you are scraping just a few games.
+#' @details To load valid game_ids please use the package function
+#' \code{\link{fast_scraper_schedules}} (the function can directly handle the
+#' output of that function)
+#' @seealso For information on parallel processing and progress updates please
+#' see [nflfastR].
 #' @return Data frame where each individual row represents a single play for
 #' all passed game_ids containing the following
 #' detailed information (description partly extracted from nflscrapR):
@@ -194,14 +198,32 @@
 #' \item{lateral_recovery}{Binary indicator for if a lateral occurred on a fumble recovery.}
 #' \item{passer_player_id}{Unique identifier for the player that attempted the pass.}
 #' \item{passer_player_name}{String name for the player that attempted the pass.}
+#' \item{passing_yards}{Numeric yards by the passer_player_name, including yards gained in pass plays with laterals.
+#' This should equal official passing statistics.}
 #' \item{receiver_player_id}{Unique identifier for the receiver that was targeted on the pass.}
 #' \item{receiver_player_name}{String name for the targeted receiver.}
+#' \item{receiving_yards}{Numeric yards by the receiver_player_name, excluding yards gained in pass plays with laterals.
+#' This should equal official receiving statistics but could miss yards gained in pass plays with laterals.
+#' Please see the description of `lateral_receiver_player_name` for further information.}
 #' \item{rusher_player_id}{Unique identifier for the player that attempted the run.}
 #' \item{rusher_player_name}{String name for the player that attempted the run.}
-#' \item{lateral_receiver_player_id}{Unique identifier for the player that received the lateral on a reception.}
-#' \item{lateral_receiver_player_name}{String name for the player that received the lateral on a reception.}
-#' \item{lateral_rusher_player_id}{Unique identifier for the player that received the lateral on a run.}
-#' \item{lateral_rusher_player_name}{String name for the player that received the lateral on a run.}
+#' \item{rushing_yards}{Numeric yards by the rusher_player_name, excluding yards gained in rush plays with laterals.
+#' This should equal official rushing statistics but could miss yards gained in rush plays with laterals.
+#' Please see the description of `lateral_rusher_player_name` for further information.}
+#' \item{lateral_receiver_player_id}{Unique identifier for the player that received the last(!) lateral on a pass play.}
+#' \item{lateral_receiver_player_name}{String name for the player that received the last(!) lateral on a pass play.
+#' If there were multiple laterals in the same play, this will only be the last player who received a lateral.
+#' Please see \url{https://github.com/mrcaseb/nfl-data/tree/master/data/lateral_yards}
+#' for a list of plays where multiple players recorded lateral receiving yards.}
+#' \item{lateral_receiving_yards}{Numeric yards by the `lateral_receiver_player_name` in pass plays with laterals.
+#' Please see the description of `lateral_receiver_player_name` for further information.}
+#' \item{lateral_rusher_player_id}{Unique identifier for the player that received the last(!) lateral on a run play.}
+#' \item{lateral_rusher_player_name}{String name for the player that received the last(!) lateral on a run play.
+#' If there were multiple laterals in the same play, this will only be the last player who received a lateral.
+#' Please see \url{https://github.com/mrcaseb/nfl-data/tree/master/data/lateral_yards}
+#' for a list of plays where multiple players recorded lateral rushing yards.}
+#' \item{lateral_rushing_yards}{Numeric yards by the `lateral_rusher_player_name` in run plays with laterals.
+#' Please see the description of `lateral_rusher_player_name` for further information.}
 #' \item{lateral_sack_player_id}{Unique identifier for the player that received the lateral on a sack.}
 #' \item{lateral_sack_player_name}{String name for the player that received the lateral on a sack.}
 #' \item{interception_player_id}{Unique identifier for the player that intercepted the pass.}
@@ -347,153 +369,103 @@
 #' \donttest{
 #' # Get pbp data for two games
 #' fast_scraper(c("2019_01_GB_CHI", "2013_21_SEA_DEN"))
-#' }
-fast_scraper <- function(game_ids, source = "nfl", pp = FALSE, ..., in_builder = FALSE) {
-
-  # Error handling to correct source type
-  if (!source %in% c("nfl", "old")) {
-    usethis::ui_stop("You tried to specify a source that isn't the new NFL web page or the old source.\nPlease remove source from your request, use {usethis::ui_code('source = \"nfl\"')}, or {usethis::ui_code('source = \"old\"')}.")
-  }
-
-  # No parallel processing demanded -> use purrr
-  if (pp == FALSE) {
-    suppressWarnings({
-      progressr::with_progress({
-        p <- progressr::progressor(along = game_ids)
-        pbp <- purrr::map_dfr(game_ids, function(x, ...){
-          if (substr(x, 1, 4) < 2001 & source == "nfl") {
-            plays <- get_pbp_gc(x, ...)
-          } else if (source == "nfl") {
-            plays <- get_pbp_nfl(x, ...)
-          } else {
-            plays <- get_pbp_cdns(x, ...)
-          }
-          p(sprintf("x=%s", as.character(x)))
-          return(plays)
-        }, ...)
-      })
-
-      if(purrr::is_empty(pbp) == FALSE) {
-        usethis::ui_done("Download finished. Adding variables...")
-        pbp <- pbp %>%
-          add_game_data(source) %>%
-          add_nflscrapr_mutations() %>%
-          add_ep() %>%
-          add_air_yac_ep() %>%
-          add_wp() %>%
-          add_air_yac_wp() %>%
-          add_cp() %>%
-          add_drive_results() %>%
-          add_series_data() %>%
-          select_variables()
-      }
-    })
-  }
-
-  # User wants parallel processing: check if the required package is installed.
-  # Stop and Error when missing
-  else if (pp == TRUE & !requireNamespace("furrr", quietly = TRUE)) {
-    usethis::ui_stop("Package {usethis::ui_value('furrr')} needed for parallel processing. Please install it with {usethis::ui_code('install.packages(\"furrr\")')}.")
-  }
-  else {
-    if (length(game_ids)<=4){
-      usethis::ui_info("You have passed only {length(game_ids)} GameID(s) to parallel processing.\nPlease note that the initiating process takes a few seconds\nand consider using {usethis::ui_code('pp = FALSE')} for a small number of games.\n")
-    }
-    suppressWarnings({
-      progressr::with_progress({
-        p <- progressr::progressor(along = game_ids)
-        future::plan("multiprocess")
-        pbp <- furrr::future_map_dfr(game_ids, function(x, ...){
-          if (substr(x, 1, 4) < 2001 & source == "nfl") {
-            plays <- get_pbp_gc(x, ...)
-          } else if (source == "nfl") {
-            plays <- get_pbp_nfl(x, ...)
-          } else {
-            plays <- get_pbp_cdns(x, ...)
-          }
-          p(sprintf("x=%s", as.character(x)))
-          return(plays)
-        }, ...)
-      })
-
-      if(purrr::is_empty(pbp) == FALSE) {
-        usethis::ui_done("Download finished. Adding variables...")
-        pbp <- pbp %>%
-          add_game_data(source) %>%
-          add_nflscrapr_mutations() %>%
-          add_ep() %>%
-          add_air_yac_ep() %>%
-          add_wp() %>%
-          add_air_yac_wp() %>%
-          add_cp() %>%
-          add_drive_results() %>%
-          add_series_data() %>%
-          select_variables()
-      }
-    })
-  }
-  if (!in_builder) {usethis::ui_done("{usethis::ui_field('Procedure completed.')}")}
-  return(pbp)
-}
-
-
-#' Get NFL Play by Play Highlight Clips
 #'
-#' @param game_ids Vector of numeric or character ids
-#' @param pp Logical - either \code{TRUE} or \code{FALSE} (see details for further information)
-#' @details To load valid game_ids please use the package function \code{\link{fast_scraper_schedules}}.
-#' The \code{pp} parameter controls if the scraper should use parallel processing.
-#' Please note that the initiating process takes a few seconds which means it
-#' may be better to set \code{pp = FALSE} if you are scraping just a few games.
-#' @return Data frame containing game_id, play_id for all plays with available
-#' highlightclip and the clip url
-# @export
-#' @noRd
-#' @examples
-#' \donttest{
-#' # Get highlight clips for two 2019 games using parallel processing
-#' # game_ids <- c("2019090804", "2019101700")
-#' # clips <- fast_scraper_clips(game_ids, pp = TRUE)
+#' # It is also possible to directly use the
+#' # output of `fast_scraper_schedules` as input
+#' library(dplyr, warn.conflicts = FALSE)
+#' fast_scraper_schedules(2020) %>%
+#'   tail(3) %>%
+#'   fast_scraper()
+#'
+#' \dontshow{
+#' # Close open connections for R CMD Check
+#' future::plan("sequential")
 #' }
-fast_scraper_clips <- function(game_ids, pp = FALSE) {
-  stop("The NFL removed the public available data feed. We are working on a new solution.\n Meanwhile please check https://github.com/guga31bb/nflfastR-data/tree/master/legacy-data for data of the seasons 2000-2019")
-
-  scraper_func <- get_pbp_highlights
-
-  # No parallel processing demanded -> use purrr
-  if (pp == FALSE) {
-    suppressWarnings(
-      clips <- purrr::map_dfr(game_ids, scraper_func)
+#' }
+fast_scraper <- function(game_ids,
+                         source = lifecycle::deprecated(),
+                         pp = lifecycle::deprecated(),
+                         ...,
+                         in_builder = FALSE) {
+  if (lifecycle::is_present(source)) {
+    lifecycle::deprecate_warn(
+      when = "4.0.0",
+      what = "fast_scraper(source = )",
+      details = "The source argument isn't used anymore and will be dropped in a future release."
     )
   }
 
-  # User wants parallel processing: check if the required package is installed.
-  # Stop and Error when missing
-  else if (pp == TRUE & !requireNamespace("furrr", quietly = TRUE)) {
-    stop("Package \"furrr\" needed for parallel processing. Please install/load it.")
+  if (lifecycle::is_present(pp)) {
+    lifecycle::deprecate_warn(
+      when = "4.0.0",
+      what = "fast_scraper(pp = )",
+      details = glue::glue(
+        "We have dropped the in-package activation of parallel processing as ",
+        "this is considered bad practice.\n",
+        "Please choose an appropriate plan before calling the function, e.g. ",
+        "{usethis::ui_code('future::plan(\"multisession\")')}"
+      )
+    )
   }
-  else {
-    if (length(game_ids)<=4){
-      message(glue::glue("You have passed only {length(game_ids)} GameIDs to parallel processing.\nPlease note that the initiating process takes a few seconds\nand consider using pp=FALSE for a small number of games."))
+
+  if (!is.vector(game_ids) && is.data.frame(game_ids)) game_ids <- game_ids$game_id
+
+  if (!is.vector(game_ids)) usethis::ui_stop("Param {usethis::ui_code('game_ids')} is not a valid vector!")
+
+  if (length(game_ids) > 1 && is_sequential()) {
+    usethis::ui_info(
+      c(
+        "It is recommended to use parallel processing when trying to load multiple games.",
+        "Please consider running {usethis::ui_code('future::plan(\"multisession\")')}!",
+        "Will go on sequentially..."
+      )
+    )
+  }
+
+  suppressWarnings({
+    p <- progressr::progressor(along = game_ids)
+    pbp <- furrr::future_map_dfr(game_ids, function(x, p, ...) {
+      if (substr(x, 1, 4) < 2001) {
+        plays <- get_pbp_gc(x, ...)
+      } else {
+        plays <- get_pbp_nfl(x, ...)
+      }
+      p(sprintf("ID=%s", as.character(x)))
+      return(plays)
+    }, p, ...)
+
+    if (length(pbp) != 0) {
+      usethis::ui_done("Download finished. Adding variables...")
+      pbp <- pbp %>%
+        add_game_data() %>%
+        add_nflscrapr_mutations() %>%
+        add_ep() %>%
+        add_air_yac_ep() %>%
+        add_wp() %>%
+        add_air_yac_wp() %>%
+        add_cp() %>%
+        add_drive_results() %>%
+        add_series_data() %>%
+        select_variables()
     }
-    suppressWarnings({
-      future::plan("multiprocess")
-      clips <- furrr::future_map_dfr(game_ids, scraper_func, .progress = TRUE)
-    })
+  })
+
+  if (!in_builder) {
+    usethis::ui_done("{usethis::ui_field('Procedure completed.')}")
   }
-  return(clips)
+  return(pbp)
 }
 
 #' Get team rosters for multiple seasons
 #'
-#' Given years return a dataset with each player listed as part of the roster.
+#' @description Given years return a dataset with each player listed as part of the roster.
 #'
 #' @param seasons A vector of 4-digit years associated with given NFL seasons
-#' @param pp Logical - either \code{TRUE} or \code{FALSE} (see details for further information)
+#' @param pp `r lifecycle::badge("deprecated")` has no effect and will be
+#'   removed in a future release.
 #' @details The roster data is accessed via the free to use Sleeper API.
-#' The \code{pp} parameter controls if the scraper should use parallel processing.
-#' Please note that the initiating process takes a few seconds which means it
-#' may be better to set \code{pp = FALSE} if you are scraping just a few seasons.
+#' @seealso For information on parallel processing and progress updates please
+#' see [nflfastR].
 #' @return Data frame where each individual row represents a player in
 #' the roster of the given team and season containing the following information:
 #' \describe{
@@ -523,58 +495,56 @@ fast_scraper_clips <- function(game_ids, pp = FALSE) {
 #' \donttest{
 #' # Roster of the 2019 and 2020 seasons
 #' fast_scraper_roster(2019:2020)
+#' \dontshow{
+#' # Close open connections for R CMD Check
+#' future::plan("sequential")
+#' }
 #' }
 #' @export
-fast_scraper_roster <- function(seasons, pp = FALSE) {
-
-  # No parallel processing demanded -> use purrr
-  if (pp == FALSE) {
-    suppressWarnings(
-      progressr::with_progress({
-        p <- progressr::progressor(along = seasons)
-        ret <- purrr::map_dfr(seasons, function(x){
-          out <- get_scheds_and_rosters(x, "roster")
-          p(sprintf("x=%s", as.integer(x)))
-          return(out)
-        })
-      })
+fast_scraper_roster <- function(seasons, pp = lifecycle::deprecated()) {
+  if (lifecycle::is_present(pp)) {
+    lifecycle::deprecate_warn(
+      when = "4.0.0",
+      what = "fast_scraper_roster(pp = )",
+      details = glue::glue(
+        "We have dropped the in-package activation of parallel processing as ",
+        "this is considered bad practice.\n",
+        "Please choose an appropriate plan before calling the function, e.g.",
+        "{usethis::ui_code('future::plan(\"multisession\")')}"
+      )
     )
   }
 
-  # User wants parallel processing: check if the required package is installed.
-  # Stop and Error when missing
-  else if (pp == TRUE & !requireNamespace("furrr", quietly = TRUE)) {
-    usethis::ui_stop("Package {usethis::ui_value('furrr')} needed for parallel processing. Please install it with {usethis::ui_code('install.packages(\"furrr\")')}.")
+  if (length(seasons) > 1 && is_sequential()) {
+    usethis::ui_info(
+      c(
+        "It is recommended to use parallel processing when trying to load multiple seasons.",
+        "Please consider running {usethis::ui_code('future::plan(\"multisession\")')}!",
+        "Will go on sequentially..."
+      )
+    )
   }
-  else {
-    if (length(seasons)<=10){
-      usethis::ui_info("You have passed only {length(seasons)} season(s) to parallel processing.\nPlease note that the initiating process takes a few seconds\nand consider using {usethis::ui_code('pp = FALSE')} for a small number of seasons.")
-    }
-    suppressWarnings({
-      progressr::with_progress({
-        p <- progressr::progressor(along = seasons)
-        future::plan("multiprocess")
-        ret <- furrr::future_map_dfr(seasons, function(x){
-          out <- get_scheds_and_rosters(x, "roster")
-          p(sprintf("x=%s", as.integer(x)))
-          return(out)
-        })
-      })
-    })
-  }
+
+  suppressWarnings({
+    p <- progressr::progressor(along = seasons)
+    ret <- furrr::future_map_dfr(seasons, function(x, p) {
+      out <- get_scheds_and_rosters(x, "roster")
+      p(sprintf("season=%s", as.integer(x)))
+      return(out)
+    }, p)
+  })
   return(ret)
 }
 
 #' Get NFL Season Schedules
 #'
 #' @param seasons Vector of numeric or character 4 digit seasons
-#' @param pp Logical - either \code{TRUE} or \code{FALSE} (see details for further information)
+#' @param pp `r lifecycle::badge("deprecated")` has no effect and will be
+#'   removed in a future release.
 #' @details This functions now incorporates the games file provided and maintained
 #' by Lee Sharpe.
-#'
-#' The \code{pp} parameter controls if the scraper should use parallel processing.
-#' Please note that the initiating process takes a few seconds which means it
-#' may be better to set \code{pp = FALSE} if you are scraping less than 10 seasons.
+#' @seealso For information on parallel processing and progress updates please
+#' see [nflfastR].
 #' @return Data frame containing the following detailed game information:
 #' \describe{
 #' \item{game_id}{Character identifier including season, week, away team and home team}
@@ -600,43 +570,41 @@ fast_scraper_roster <- function(seasons, pp = FALSE) {
 #'\donttest{
 #' # Get schedules for the whole 2015 - 2018 seasons
 #' fast_scraper_schedules(2015:2018)
+#' \dontshow{
+#' # Close open connections for R CMD Check
+#' future::plan("sequential")
 #' }
-fast_scraper_schedules <- function(seasons, pp = FALSE) {
-
-  # No parallel processing demanded -> use purrr
-  if (pp == FALSE) {
-    suppressWarnings(
-      progressr::with_progress({
-        p <- progressr::progressor(along = seasons)
-        ret <- purrr::map_dfr(seasons, function(x){
-          out <- get_scheds_and_rosters(x, "schedule")
-          p(sprintf("x=%s", as.integer(x)))
-          return(out)
-        })
-      })
+#' }
+fast_scraper_schedules <- function(seasons, pp = lifecycle::deprecated()) {
+  if (lifecycle::is_present(pp)) {
+    lifecycle::deprecate_warn(
+      when = "4.0.0",
+      what = "fast_scraper_schedules(pp = )",
+      details = glue::glue(
+        "We have dropped the in-package activation of parallel processing as ",
+        "this is considered bad practice.\n",
+        "Please choose an appropriate plan before calling the function, e.g.",
+        "{usethis::ui_code('future::plan(\"multisession\")')}"
+      )
+    )
+  }
+  if (length(seasons) > 1 && is_sequential()) {
+    usethis::ui_info(
+      c(
+        "It is recommended to use parallel processing when trying to load multiple seasons.",
+        "Please consider running {usethis::ui_code('future::plan(\"multisession\")')}!",
+        "Will go on sequentially..."
+      )
     )
   }
 
-  # User wants parallel processing: check if the required package is installed.
-  # Stop and Error when missing
-  else if (pp == TRUE & !requireNamespace("furrr", quietly = TRUE)) {
-    usethis::ui_stop("Package {usethis::ui_value('furrr')} needed for parallel processing. Please install it with {usethis::ui_code('install.packages(\"furrr\")')}.")
-  }
-  else {
-    if (length(seasons)<=10){
-      usethis::ui_info("You have passed only {length(seasons)} season(s) to parallel processing.\nPlease note that the initiating process takes a few seconds\nand consider using {usethis::ui_code('pp = FALSE')} for a small number of seasons.")
-    }
-    suppressWarnings({
-      progressr::with_progress({
-        p <- progressr::progressor(along = seasons)
-        future::plan("multiprocess")
-        ret <- furrr::future_map_dfr(seasons, function(x){
-          out <- get_scheds_and_rosters(x, "schedule")
-          p(sprintf("x=%s", as.integer(x)))
-          return(out)
-        })
-      })
-    })
-  }
+  suppressWarnings({
+    p <- progressr::progressor(along = seasons)
+    ret <- furrr::future_map_dfr(seasons, function(x, p) {
+      out <- get_scheds_and_rosters(x, "schedule")
+      p(sprintf("season=%s", as.integer(x)))
+      return(out)
+    }, p)
+  })
   return(ret)
 }

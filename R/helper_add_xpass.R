@@ -6,20 +6,17 @@
 #' Add expected pass columns
 #'
 #' @inheritParams clean_pbp
-#' @description Build columns from the expected dropback model will return \code{NA} on data prior to 2006
+#' @description Build columns from the expected dropback model will return `NA` on data prior to 2006
 #' since that was before NFL started marking scrambles. Must be run on a dataframe that has already had
-#' \code{\link{clean_pbp}} run on it, such as data from the data repository or
-#' \code{\link{build_nflfastR_pbp}} or built using the database function \code{\link{update_db}}.
-#' @return The input Data Frame of the parameter \code{pbp} with the following columns
+#' [clean_pbp()] run on it, such as data from the data repository or
+#' [build_nflfastR_pbp()] or built using the database function [update_db()].
+#' @return The input Data Frame of the parameter `pbp` with the following columns
 #' added:
 #' \describe{
 #' \item{xpass}{Probability of dropback scaled from 0 to 1.}
 #' \item{pass_oe}{Dropback percent over expected on a given play scaled from 0 to 100.}
 #' }
 #' @export
-#' @import dplyr
-#' @importFrom rlang .data
-
 add_xpass <- function(pbp, ...) {
 
   plays <- prepare_xpass_data(pbp)
@@ -88,7 +85,7 @@ prepare_xpass_data <- function(pbp) {
       )
     ) %>%
     make_model_mutations() %>%
-    select(
+    dplyr::select(
       "valid_play",
       "down",
       "ydstogo",

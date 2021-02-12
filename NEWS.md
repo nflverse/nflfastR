@@ -9,11 +9,22 @@
 * Added field descriptions dataframe and article
 * Tuned spread-adjusted win probability model one final (?) time. Expected points is now no longer 
 required for `calculate_win_probability()`
+* Improved performance of internal functions that speed up the rebuilding process in `update_db()`
+(added `qs` and `curl` to dependencies)
+* Deprecated the arguments `source` and `pp` all across the package. Using them will cause a 
+warning. Parallel processing has to be activated by choosing an appropriate `future::plan()` before
+calling the relevant functions. For more information please see [the package documentation](https://www.nflfastr.com/reference/nflfastR.html).
+* The function `build_nflfastR_pbp()` will now run `decode_player_ids()` by default (can be deactivated with
+the argument `decode = FALSE`). 
+* The function `build_nflfastR_pbp()` will now run `add_xpass()` and add the new variables `xpass` and `pass_oe`
 * Fixed a bug where `calculate_expected_points()` and `calculate_win_probability()` duplicated some existing variables instead of replacing them (#170)
+* Added the new function `load_pbp()` that loads complete seasons into memory for fast access of the play-by-play data
 * Fixed a bug where `penalty_type` wasn't `"no_play"` although it should have been (#172)
 * Fixed a bug where `penalty_team` could be incorrect in games of the Jaguars in the seasons 2011 - 2015 (#174)
 * Fixed a bug related to the calculation of EPA on plays before a failed pass interference challenge in a few 2019 games (#175)
 * Fixed a bug related to lots of fields with `NA` on offsetting penalties (#44)
+* Added the new variables `rushing_yards`, `lateral_rushing_yards`, `passing_yards`, `receiving_yards`, `lateral_receiving_yards` to fix an old bug where `yards_gained` gets overwritten on plays with laterals (#115).
+* The functions `fast_scraper()` and `build_nflfastR_pbp()` now allow the output of `fast_scraper_schedules()` directly as input so it's not necessary anymore to pull the `game_id` first.
 * Switched data source for 2001-2010 to what is used for 2011 and on
 * Added columns `vegas_wpa` and `vegas_home_wpa` which contain Win Probability Added from the spread-adjusted WPA model
 * Fix bug in `epa` when possession team changes at end of 1st or 3rd quarter (#182)
