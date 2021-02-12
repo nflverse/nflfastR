@@ -333,12 +333,12 @@
 #' \item{aborted_play}{Binary indicator if the play description indicates "Aborted".}
 #' \item{special}{Binary indicator if the play was a special teams play.}
 #' \item{play}{Binary indicator: 1 if the play was a 'normal' play (including penalties), 0 otherwise.}
-#' \item{passer_id}{ID of the player in the 'passer' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
-#' \item{rusher_id}{ID of the player in the 'rusher' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
-#' \item{receiver_id}{ID of the player in the 'receiver' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
+#' \item{passer_id}{ID of the player in the 'passer' column.}
+#' \item{rusher_id}{ID of the player in the 'rusher' column.}
+#' \item{receiver_id}{ID of the player in the 'receiver' column.}
 #' \item{name}{Name of the 'passer' if it is not 'NA', or name of the 'rusher' otherwise.}
 #' \item{jersey_number}{Jersey number of the player listed in the 'name' column.}
-#' \item{id}{ID of the player in the 'name' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
+#' \item{id}{ID of the player in the 'name' column.}
 #' \item{fantasy_player_name}{Name of the rusher on rush plays or receiver on pass plays (from official stats).}
 #' \item{fantasy_player_id}{ID of the rusher on rush plays or receiver on pass plays (from official stats).}
 #' \item{fantasy}{Name of the rusher on rush plays or receiver on pass plays.}
