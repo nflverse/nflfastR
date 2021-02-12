@@ -50,7 +50,7 @@ install.packages("nflfastR")
 To get a bug fix or to use a feature from the development version, you can install the development version of nflfastR from [GitHub](https://github.com/mrcaseb/nflfastR/) with:
 
 ``` {r eval = FALSE}
-if (!requireNamespace("remotes", quietly = TRUE)) {install.packages("remotes")}
+if (!require("remotes")) install.packages("remotes")
 remotes::install_github("mrcaseb/nflfastR")
 ```
 
