@@ -14,8 +14,6 @@
 #' the play description; e.g. 24-M.Lynch instead of M.Lynch.
 #' The function also standardizes team abbreviations so that, for example,
 #' the Chargers are always represented by 'LAC' regardless of which year it was.
-#' The function also standardizes player IDs for players appearing in both the
-#' older era (1999-2010) and the new era (2011+).
 #' @seealso For information on parallel processing and progress updates please
 #' see [nflfastR].
 #' @return The input Data Frame of the paramter 'pbp' with the following columns
@@ -34,16 +32,16 @@
 #' \item{first_down}{Binary indicator if the play ended in a first down.}
 #' \item{aborted_play}{Binary indicator if the play description indicates "Aborted".}
 #' \item{play}{Binary indicator: 1 if the play was a 'normal' play (including penalties), 0 otherwise.}
-#' \item{passer_id}{ID of the player in the 'passer' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
-#' \item{rusher_id}{ID of the player in the 'rusher' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
-#' \item{receiver_id}{ID of the player in the 'receiver' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
+#' \item{passer_id}{ID of the player in the 'passer' column.}
+#' \item{rusher_id}{ID of the player in the 'rusher' column.}
+#' \item{receiver_id}{ID of the player in the 'receiver' column.}
 #' \item{name}{Name of the 'passer' if it is not 'NA', or name of the 'rusher' otherwise.}
 #' \item{fantasy}{Name of the rusher on rush plays or receiver on pass plays.}
 #' \item{fantasy_id}{ID of the rusher on rush plays or receiver on pass plays.}
 #' \item{fantasy_player_name}{Name of the rusher on rush plays or receiver on pass plays (from official stats).}
 #' \item{fantasy_player_id}{ID of the rusher on rush plays or receiver on pass plays (from official stats).}
 #' \item{jersey_number}{Jersey number of the player listed in the 'name' column.}
-#' \item{id}{ID of the player in the 'name' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)}
+#' \item{id}{ID of the player in the 'name' column.}
 #' \item{qb_epa}{Gives QB credit for EPA for up to the point where a receiver lost a fumble after a completed catch and makes EPA work more like passing yards on plays with fumbles.}
 #' \item{out_of_bounds}{1 if play description contains ran ob, pushed ob, or sacked ob; 0 otherwise.}
 #' }
@@ -52,12 +50,8 @@ clean_pbp <- function(pbp, ...) {
   if (nrow(pbp) == 0) {
     usethis::ui_info("Nothing to clean. Return passed data frame.")
     r <- pbp
-  } else{ #              crayon::red(cli::symbol$bullet)                       crayon::yellow(cli::symbol$info)
-    rlang::inform(paste0("\033[31m*\033[39m", " Cleaning up play-by-play... (", "\033[33mi\033[39m", " This is a heavy task, please be patient)"))
-
-    # Load id map to standardize player ids for players that were active before 2011
-    # and in or after 2011 meaning they appear with old gsis_ids and new ids
-    legacy_id_map <- readRDS(url("https://github.com/guga31bb/nflfastR-data/blob/master/roster-data/legacy_id_map.rds?raw=true"))
+  } else{
+    usethis::ui_todo("Cleaning up play-by-play...")
 
     # drop existing values of clean_pbp
     pbp <- pbp %>% dplyr::select(-tidyselect::any_of(drop.cols))
@@ -211,9 +205,6 @@ clean_pbp <- function(pbp, ...) {
         jersey_number = dplyr::if_else(!is.na(.data$passer_jersey_number), .data$passer_jersey_number, .data$rusher_jersey_number),
         id = dplyr::if_else(!is.na(.data$passer_id), .data$passer_id, .data$rusher_id)
       ) %>%
-      dplyr::mutate_at(
-        dplyr::vars(.data$passer_id, .data$rusher_id, .data$receiver_id, .data$id, ends_with("player_id")),
-        update_ids, legacy_id_map) %>%
       dplyr::arrange(.data$index) %>%
       dplyr::select(-"index") %>%
       # add action player
@@ -296,18 +287,6 @@ team_name_fn <- function(var) {
       "OAK" = "LV"
     )
   )
-}
-
-update_ids <- function(var, id_map) {
-  join <- tibble::tibble(id = var) %>%
-    dplyr::left_join(id_map, by = c("id" = "gsis_id")) %>%
-    dplyr::mutate(
-      out_id = dplyr::case_when(
-        is.na(.data$new_id) ~ .data$id,
-        TRUE ~ .data$new_id
-      )
-    )
-  return(join$out_id)
 }
 
 #' Compute QB epa
