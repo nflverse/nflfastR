@@ -20,7 +20,7 @@ select_variables <- function(pbp) {
 }
 
 # columns that are not in gamecenter that we created
-new_cols <- c("season", "cp", "cpoe", "series", "series_success", "series_result", "vegas_home_wpa", "vegas_wpa")
+new_cols <- c("season", "cp", "cpoe", "series", "series_success", "series_result")
 
 # original nflscrapr columns
 nflscrapr_cols <-
@@ -49,7 +49,7 @@ nflscrapr_cols <-
     "total_home_comp_yac_epa", "total_away_comp_yac_epa",
     "total_home_raw_air_epa", "total_away_raw_air_epa", "total_home_raw_yac_epa",
     "total_away_raw_yac_epa",
-    "wp", "def_wp", "home_wp", "away_wp", "wpa", "home_wp_post", "away_wp_post",
+    "wp", "def_wp", "home_wp", "away_wp", "wpa", "vegas_wpa", "vegas_home_wpa", "home_wp_post", "away_wp_post",
     "vegas_wp", "vegas_home_wp",
     "total_home_rush_wpa", "total_away_rush_wpa",
     "total_home_pass_wpa", "total_away_pass_wpa", "air_wpa", "yac_wpa", "comp_air_wpa", "comp_yac_wpa",
