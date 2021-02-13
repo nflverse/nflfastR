@@ -6,7 +6,7 @@
 
 * Deprecated the arguments `source` and `pp` all across the package. Using them will cause a 
 warning. Parallel processing has to be activated by choosing an appropriate `future::plan()` before
-calling the relevant functions. For more information please see [the package documentation](https://www.nflfastr.com/reference/nflfastR.html).
+calling the relevant functions. For more information please see [the package documentation](https://www.nflfastr.com/reference/nflfastR-package.html).
 * The function `build_nflfastR_pbp()` will now run `decode_player_ids()` by default (can be deactivated with the argument `decode = FALSE`). 
 * The function `build_nflfastR_pbp()` will now run `add_xpass()` by default and add the new variables `xpass` and `pass_oe`.
 * The functions `fast_scraper()` and `build_nflfastR_pbp()` now allow the output of `fast_scraper_schedules()` directly as input so it's not necessary anymore to pull the `game_id` first.

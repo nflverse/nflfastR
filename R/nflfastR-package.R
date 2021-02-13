@@ -20,7 +20,7 @@
 #' As an example, the following code block will resolve all function calls in the
 #' current session using multiple sessions in the background and load play-by-play
 #' data for the 2018 through 2020 seasons or build them freshly for the 2018 and
-#' 2019 SUper Bowls:
+#' 2019 Super Bowls:
 #' ```
 #' future::plan("multisession")
 #' load_pbp(2018:2020)

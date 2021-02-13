@@ -121,7 +121,7 @@ out %>%
   knitr::kable(digits = 3)
 ```
 
-So `r scales::percent(out$drive_score[1], accuracy = 0.1)` of 1st & 10 plays from teams' own 20 would see the drive end up in a score in 2003, compared to `r scales::percent(out$drive_score[2], accuracy = 0.1)` in 2015. This has implications for Expected Points models (see `vignette("nflfastR-models")`).
+So `r scales::percent(out$drive_score[1], accuracy = 0.1)` of 1st & 10 plays from teams' own 20 would see the drive end up in a score in 2003, compared to `r scales::percent(out$drive_score[2], accuracy = 0.1)` in 2015. This has implications for Expected Points models (see [this article](https://www.opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/)).
 
 # Example 5: Plot offensive and defensive EPA per play for a given season
 

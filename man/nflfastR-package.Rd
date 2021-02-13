@@ -33,7 +33,7 @@ Please see the documentation of the functions for detailed information.
 As an example, the following code block will resolve all function calls in the
 current session using multiple sessions in the background and load play-by-play
 data for the 2018 through 2020 seasons or build them freshly for the 2018 and
-2019 SUper Bowls:\preformatted{future::plan("multisession")
+2019 Super Bowls:\preformatted{future::plan("multisession")
 load_pbp(2018:2020)
 build_nflfastR_pbp(c("2018_21_NE_LA", "2019_21_SF_KC"))
 }
