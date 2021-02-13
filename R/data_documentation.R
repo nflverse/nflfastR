@@ -28,3 +28,20 @@
 #' Team wordmarks from nfl.com
 #'
 "teams_colors_logos"
+
+#' nflfastR Field Descriptions
+#'
+#' @docType data
+#' @format A data frame including names and descriptions of all variables in
+#' an nflfastR dataset.
+#' @seealso The searchable table on the
+#' [nflfastR website](https://www.nflfastr.com/articles/field_descriptions.html)
+"field_descriptions"
+
+#' NFL Stat IDs and their Meanings
+#'
+#' @docType data
+#' @format A data frame including NFL stat IDs, names and descriptions used in
+#' an nflfastR dataset.
+#' @source \url{http://www.nflgsis.com/gsis/Documentation/Partners/StatIDs.html}
+"stat_ids"
