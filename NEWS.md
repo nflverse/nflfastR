@@ -13,7 +13,7 @@ calling the relevant functions. For more information please see [the package doc
 
 ### New Functions and Variables
 
-* Added the new function `load_pbp()` that loads complete seasons into memory for fast access of the play-by-play data
+* Added the new function `load_pbp()` that loads complete seasons into memory for fast access of the play-by-play data.
 * Added the new variables `rushing_yards`, `lateral_rushing_yards`, `passing_yards`, `receiving_yards`, `lateral_receiving_yards` to fix an old bug where `yards_gained` gets overwritten on plays with laterals (#115).
 * Added columns `vegas_wpa` and `vegas_home_wpa` which contain Win Probability Added from the spread-adjusted WP model
 * Added column `out_of_bounds`
