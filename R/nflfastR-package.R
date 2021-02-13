@@ -78,6 +78,7 @@
 #' @importFrom cli rule
 #' @importFrom curl curl_fetch_memory
 # @importFrom DBI dbConnect dbExistsTable dbWriteTable dbDisconnect dbRemoveTable dbExecute dbGetInfo
+#' @import fastrmodels
 #' @importFrom furrr future_map_chr future_map_dfr future_map
 #' @importFrom future plan
 #' @importFrom glue glue glue_sql

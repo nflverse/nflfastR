@@ -30,11 +30,6 @@ tidy_play_stats_row <-
   ), as.integer)
 
 usethis::use_data(
-  ep_model,
-  wp_model,
-  wp_model_spread,
-  fg_model,
-  cp_model,
   tidy_play_stats_row,
   internal = TRUE,
   overwrite = TRUE

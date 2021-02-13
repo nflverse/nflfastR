@@ -13,7 +13,7 @@ add_cp <- function(pbp) {
   passes <- prepare_cp_data(pbp)
 
   if (!nrow(passes %>% dplyr::filter(.data$valid_pass == 1)) == 0) {
-    pred <- stats::predict(cp_model, as.matrix(passes %>% dplyr::select(-"complete_pass", -"valid_pass"))) %>%
+    pred <- stats::predict(fastrmodels::cp_model, as.matrix(passes %>% dplyr::select(-"complete_pass", -"valid_pass"))) %>%
       tibble::as_tibble() %>%
       dplyr::rename(cp = "value") %>%
       dplyr::bind_cols(passes) %>%

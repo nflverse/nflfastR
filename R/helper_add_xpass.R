@@ -6,10 +6,11 @@
 #' Add expected pass columns
 #'
 #' @inheritParams clean_pbp
-#' @description Build columns from the expected dropback model will return `NA` on data prior to 2006
-#' since that was before NFL started marking scrambles. Must be run on a dataframe that has already had
-#' [clean_pbp()] run on it, such as data from the data repository or
-#' [build_nflfastR_pbp()] or built using the database function [update_db()].
+#' @description Build columns from the expected dropback model. Will return
+#' `NA` on data prior to 2006 since that was before NFL started marking scrambles.
+#' Must be run on a dataframe that has already had [clean_pbp()] run on it.
+#' Note that the functions [build_nflfastR_pbp()] and
+#' the database function [update_db()] already include this function.
 #' @return The input Data Frame of the parameter `pbp` with the following columns
 #' added:
 #' \describe{
@@ -18,45 +19,32 @@
 #' }
 #' @export
 add_xpass <- function(pbp, ...) {
-
   plays <- prepare_xpass_data(pbp)
 
   if (!nrow(plays %>% dplyr::filter(.data$valid_play == 1)) == 0) {
-
     usethis::ui_todo("Computing xpass...")
 
-    xpass_model <- NULL
-    suppressWarnings(
-      # load the model from github because it is too big for the package
-      try(
-        load(url("https://github.com/guga31bb/nflfastR-data/blob/master/models/xpass_model.Rdata?raw=true")),
-        silent = TRUE
-      )
-    )
+    pred <- stats::predict(
+      fastrmodels::xpass_model,
+      as.matrix(plays %>% dplyr::select(-"valid_play"))
+      ) %>%
+      tibble::as_tibble() %>%
+      dplyr::rename(xpass = "value") %>%
+      dplyr::bind_cols(plays) %>%
+      dplyr::select("xpass", "valid_play")
 
-    if (!is.null(xpass_model)) {
-      pred <- stats::predict(xpass_model, as.matrix(plays %>% dplyr::select(-"valid_play"))) %>%
-        tibble::as_tibble() %>%
-        dplyr::rename(xpass = "value") %>%
-        dplyr::bind_cols(plays) %>%
-        dplyr::select("xpass", "valid_play")
+    pbp <- pbp %>%
+      dplyr::bind_cols(pred) %>%
+      dplyr::mutate(
+        xpass = dplyr::if_else(
+          .data$valid_play == 1, .data$xpass, NA_real_
+        ),
+        pass_oe = dplyr::if_else(!is.na(.data$xpass), 100 * (.data$pass - .data$xpass), NA_real_),
+        pass_oe = dplyr::if_else(.data$rush == 0 & .data$pass == 0, NA_real_, .data$pass_oe)
+      ) %>%
+      dplyr::select(-"valid_play")
 
-      pbp <- pbp %>%
-        dplyr::bind_cols(pred) %>%
-        dplyr::mutate(
-          xpass = dplyr::if_else(
-            .data$valid_play == 1, .data$xpass, NA_real_
-          ),
-          pass_oe = dplyr::if_else(!is.na(.data$xpass), 100 * (.data$pass - .data$xpass), NA_real_),
-          pass_oe = dplyr::if_else(.data$rush == 0 & .data$pass == 0, NA_real_, .data$pass_oe)
-        ) %>%
-        dplyr::select(-"valid_play")
-
-      message_completed("added xpass and pass_oe", ...)
-
-    } else {# means xpass_model isn't available
-      usethis::ui_oops("This function needs to download the model data from GitHub. Please check your Internet connection and try again!")
-    }
+    message_completed("added xpass and pass_oe", ...)
   } else {
     pbp <- pbp %>%
       dplyr::mutate(
