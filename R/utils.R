@@ -18,7 +18,7 @@ custom_mode <- function(x, na.rm = TRUE) {
 rule_header <- function(x) {
   rlang::inform(
     cli::rule(
-      left = glue::glue("\033[1m{x}\033[22m"),#crayon::bold(x),
+      left = ifelse(is_installed("crayon"), crayon::bold(x), glue::glue("\033[1m{x}\033[22m")),
       right = paste0("nflfastR version ", utils::packageVersion("nflfastR")),
       width = getOption("width")
     )
@@ -28,7 +28,7 @@ rule_header <- function(x) {
 rule_footer <- function(x) {
   rlang::inform(
     cli::rule(
-      left = glue::glue("\033[1m{x}\033[22m"),#crayon::bold(x),
+      left = ifelse(is_installed("crayon"), crayon::bold(x), glue::glue("\033[1m{x}\033[22m")),
       width = getOption("width")
     )
   )
