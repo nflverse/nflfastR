@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Add expected yards after completion (xyac) variables — add_xyac • nflfastR</title>
+<title>nflfastR: Functions to Efficiently Access NFL Play by Play Data — nflfastR-package • nflfastR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -52,8 +52,10 @@
 
 
 
-<meta property="og:title" content="Add expected yards after completion (xyac) variables — add_xyac" />
-<meta property="og:description" content="Add expected yards after completion (xyac) variables" />
+<meta property="og:title" content="nflfastR: Functions to Efficiently Access NFL Play by Play Data — nflfastR-package" />
+<meta property="og:description" content="
+A set of functions to access National Football
+    League play-by-play data from &amp;lt;https://www.nfl.com/&amp;gt;." />
 <meta property="og:image" content="https://raw.githubusercontent.com/mrcaseb/nflfastR/master/man/figures/card.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:creator" content="@nflfastR" />
@@ -198,45 +200,109 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Add expected yards after completion (xyac) variables</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mrcaseb/nflfastR/blob/master/R/helper_add_xyac.R'><code>R/helper_add_xyac.R</code></a></small>
-    <div class="hidden name"><code>add_xyac.Rd</code></div>
+    <h1>nflfastR: Functions to Efficiently Access NFL Play by Play Data</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mrcaseb/nflfastR/blob/master/R/nflfastR-package.R'><code>R/nflfastR-package.R</code></a></small>
+    <div class="hidden name"><code>nflfastR-package.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Add expected yards after completion (xyac) variables</p>
+    <p><img src='figures/logo.png' align='right' alt='logo' width='120' /></p>
+<p>A set of functions to access National Football
+    League play-by-play data from &lt;https://www.nfl.com/&gt;.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>add_xyac</span><span class='op'>(</span><span class='va'>pbp</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>pbp</th>
-      <td><p>is a Data frame of play-by-play data scraped using <code><a href='fast_scraper.html'>fast_scraper()</a></code>.</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>Additional arguments passed to a message function (for internal use).</p></td>
-    </tr>
-    </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+    <h2 class="hasAnchor" id="parallel-processing-and-progress-updates-in-nflfastr"><a class="anchor" href="#parallel-processing-and-progress-updates-in-nflfastr"></a>Parallel Processing and Progress Updates in nflfastR</h2>
 
-    <p>The input Data Frame of the parameter 'pbp' with the following columns
-added:</p><dl>
-<dt>xyac_epa</dt><dd><p>Expected value of EPA gained after the catch, starting from where the catch was made. Zero yards after the catch would be listed as zero EPA.</p></dd>
-<dt>xyac_success</dt><dd><p>Probability play earns positive EPA (relative to where play started) based on where ball was caught.</p></dd>
-<dt>xyac_fd</dt><dd><p>Probability play earns a first down based on where the ball was caught.</p></dd>
-<dt>xyac_mean_yardage</dt><dd><p>Average expected yards after the catch based on where the ball was caught.</p></dd>
-<dt>xyac_median_yardage</dt><dd><p>Median expected yards after the catch based on where the ball was caught.</p></dd>
+    
+<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Preface</h3>
 
-</dl>
 
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+<p>Prior to nflfastR v4.0, parallel processing could be activated with an
+argument <code>pp</code> in the relevant functions and progress updates were always
+shown. Both of these methods are bad practice and were therefore removed
+in nflfastR v4.0</p>
+<p>The next sections describe how to make nflfastR work in parallel processes
+and show progress updates if the user wants to.</p>
 
-    <p>Build columns that capture what we should expect after the catch.</p>
+<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>More Speed Using Parallel Processing</h3>
+
+
+<p>Nearly all nflfastR functions support parallel processing
+using <code><a href='https://rdrr.io/pkg/furrr/man/future_map.html'>furrr::future_map()</a></code> if it is enabled by a call to <code><a href='https://rdrr.io/pkg/future/man/plan.html'>future::plan()</a></code>
+prior to the function call.
+Please see the documentation of the functions for detailed information.</p>
+<p>As an example, the following code block will resolve all function calls in the
+current session using multiple sessions in the background and load play-by-play
+data for the 2018 through 2020 seasons or build them freshly for the 2018 and
+2019 SUper Bowls:</p><pre><span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/future/man/plan.html'>plan</a></span><span class='op'>(</span><span class='st'>"multisession"</span><span class='op'>)</span>
+<span class='fu'><a href='load_pbp.html'>load_pbp</a></span><span class='op'>(</span><span class='fl'>2018</span><span class='op'>:</span><span class='fl'>2020</span><span class='op'>)</span>
+<span class='fu'><a href='build_nflfastR_pbp.html'>build_nflfastR_pbp</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"2018_21_NE_LA"</span>, <span class='st'>"2019_21_SF_KC"</span><span class='op'>)</span><span class='op'>)</span>
+</pre>
+
+<p>We recommended choosing a default parallel processing method and saving it
+as an environment variable in the R user profile to make sure all futures
+will be resolved with the chosen method by default.
+This can be done by following the below given steps.</p>
+<p>First, run the following line and the user profile should be opened automatically.
+If you haven't saved any environment variables yet, this will be an empty file.</p><pre><span class='fu'>usethis</span><span class='fu'>::</span><span class='fu'><a href='https://usethis.r-lib.org/reference/edit.html'>edit_r_environ</a></span><span class='op'>(</span><span class='op'>)</span>
+</pre>
+
+<p>In the opened file add the next line, then save the file and restart your R session.
+Please note that this example sets "multisession" as default. For most users
+this should be the appropriate plan but please make sure it truly is.</p><pre><span class='va'>R_FUTURE_PLAN</span><span class='op'>=</span><span class='st'>"multisession"</span>
+</pre>
+
+<p>After the session is freshly retarted please check if the above method worked
+by running the next line. If the output is <code>FALSE</code> you successfully set up a
+default non-sequential <code><a href='https://rdrr.io/pkg/future/man/plan.html'>future::plan()</a></code>. If the output is <code>TRUE</code> all functions
+will behave like they were called with <code><a href='https://purrr.tidyverse.org/reference/map.html'>purrr::map()</a></code> and NOT in multisession.</p><pre><span class='fu'><a href='https://rdrr.io/r/base/class.html'>inherits</a></span><span class='op'>(</span><span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/future/man/plan.html'>plan</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='st'>"sequential"</span><span class='op'>)</span>
+</pre>
+
+<p>For more information on possible plans please see
+<a href='https://github.com/HenrikBengtsson/future/blob/develop/README.md'>the future package Readme</a>.</p>
+
+<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Get Progress Updates while Functions are Running</h3>
+
+
+<p>Most nflfastR functions are able to show progress updates
+using <code><a href='https://rdrr.io/pkg/progressr/man/progressor.html'>progressr::progressor()</a></code> if they are turned on before the function is
+called. There are at least two basic ways to do this by either activating
+progress updates globally (for the current session) with</p><pre><span class='fu'>progressr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/progressr/man/handlers.html'>handlers</a></span><span class='op'>(</span>global <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+</pre>
+
+<p>or by piping the function call into <code><a href='https://rdrr.io/pkg/progressr/man/with_progress.html'>progressr::with_progress()</a></code>:</p><pre><span class='fu'><a href='load_pbp.html'>load_pbp</a></span><span class='op'>(</span><span class='fl'>2018</span><span class='op'>:</span><span class='fl'>2020</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>progressr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/progressr/man/with_progress.html'>with_progress</a></span><span class='op'>(</span><span class='op'>)</span>
+</pre>
+
+<p>For more information how to work with progress handlers please see <a href='https://rdrr.io/pkg/progressr/man/progressr.html'>progressr::progressr</a>.</p>
+
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>Useful links:</p><ul>
+<li><p><a href='https://www.nflfastr.com/'>https://www.nflfastr.com/</a></p></li>
+<li><p><a href='https://github.com/mrcaseb/nflfastR'>https://github.com/mrcaseb/nflfastR</a></p></li>
+<li><p>Report bugs at <a href='https://github.com/mrcaseb/nflfastR/issues'>https://github.com/mrcaseb/nflfastR/issues</a></p></li>
+</ul>
+
+</div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p><strong>Maintainer</strong>: Ben Baldwin <a href='mailto:bbaldwin206@gmail.com'>bbaldwin206@gmail.com</a></p>
+<p>Authors:</p><ul>
+<li><p>Sebastian Carl <a href='mailto:mrcaseb@gmail.com'>mrcaseb@gmail.com</a></p></li>
+</ul>
+
+<p>Other contributors:</p><ul>
+<li><p>Lee Sharpe [contributor]</p></li>
+<li><p>Maksim Horowitz <a href='mailto:maksim.horowitz@gmail.com'>maksim.horowitz@gmail.com</a> [contributor]</p></li>
+<li><p>Ron Yurko <a href='mailto:ryurko@stat.cmu.edu'>ryurko@stat.cmu.edu</a> [contributor]</p></li>
+<li><p>Samuel Ventura <a href='mailto:samventura22@gmail.com'>samventura22@gmail.com</a> [contributor]</p></li>
+<li><p>Tan Ho [contributor]</p></li>
+</ul>
+
+
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

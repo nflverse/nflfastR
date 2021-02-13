@@ -99,7 +99,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.2.0.9010</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.2.0.9013</span>
       </span>
     </div>
 
@@ -214,7 +214,7 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>pbp</th>
-      <td><p>is a Data frame of play-by-play data scraped using <code><a href='fast_scraper.html'>fast_scraper</a></code>.</p></td>
+      <td><p>is a Data frame of play-by-play data scraped using <code><a href='fast_scraper.html'>fast_scraper()</a></code>.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -224,7 +224,7 @@
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>The input Data Frame of the paramter 'pbp' with the following columns
+    <p>The input Data Frame of the parameter 'pbp' with the following columns
 added:</p><dl>
 <dt>success</dt><dd><p>Binary indicator wheter epa &gt; 0 in the given play.</p></dd>
 <dt>passer</dt><dd><p>Name of the dropback player (scrambles included) including plays with penalties.</p></dd>
@@ -239,13 +239,18 @@ added:</p><dl>
 <dt>first_down</dt><dd><p>Binary indicator if the play ended in a first down.</p></dd>
 <dt>aborted_play</dt><dd><p>Binary indicator if the play description indicates "Aborted".</p></dd>
 <dt>play</dt><dd><p>Binary indicator: 1 if the play was a 'normal' play (including penalties), 0 otherwise.</p></dd>
-<dt>passer_id</dt><dd><p>ID of the player in the 'passer' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)</p></dd>
-<dt>rusher_id</dt><dd><p>ID of the player in the 'rusher' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)</p></dd>
-<dt>receiver_id</dt><dd><p>ID of the player in the 'receiver' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)</p></dd>
+<dt>passer_id</dt><dd><p>ID of the player in the 'passer' column.</p></dd>
+<dt>rusher_id</dt><dd><p>ID of the player in the 'rusher' column.</p></dd>
+<dt>receiver_id</dt><dd><p>ID of the player in the 'receiver' column.</p></dd>
 <dt>name</dt><dd><p>Name of the 'passer' if it is not 'NA', or name of the 'rusher' otherwise.</p></dd>
+<dt>fantasy</dt><dd><p>Name of the rusher on rush plays or receiver on pass plays.</p></dd>
+<dt>fantasy_id</dt><dd><p>ID of the rusher on rush plays or receiver on pass plays.</p></dd>
+<dt>fantasy_player_name</dt><dd><p>Name of the rusher on rush plays or receiver on pass plays (from official stats).</p></dd>
+<dt>fantasy_player_id</dt><dd><p>ID of the rusher on rush plays or receiver on pass plays (from official stats).</p></dd>
 <dt>jersey_number</dt><dd><p>Jersey number of the player listed in the 'name' column.</p></dd>
-<dt>id</dt><dd><p>ID of the player in the 'name' column (NOTE: ids vary pre and post 2011 but are consistent for each player. Please see details for further information)</p></dd>
+<dt>id</dt><dd><p>ID of the player in the 'name' column.</p></dd>
 <dt>qb_epa</dt><dd><p>Gives QB credit for EPA for up to the point where a receiver lost a fumble after a completed catch and makes EPA work more like passing yards on plays with fumbles.</p></dd>
+<dt>out_of_bounds</dt><dd><p>1 if play description contains ran ob, pushed ob, or sacked ob; 0 otherwise.</p></dd>
 
 </dl>
 
@@ -257,9 +262,11 @@ Loosely based on Ben's nflfastR guide (<a href='https://www.nflfastr.com/article
 but updated to work with the RS data, which has a different player format in
 the play description; e.g. 24-M.Lynch instead of M.Lynch.
 The function also standardizes team abbreviations so that, for example,
-the Chargers are always represented by 'LAC' regardless of which year it was.
-The function also standardizes player IDs for players appearing in both the
-older era (1999-2010) and the new era (2011+).</p>
+the Chargers are always represented by 'LAC' regardless of which year it was.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>For information on parallel processing and progress updates please
+see <a href='nflfastR-package.html'>nflfastR</a>.</p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

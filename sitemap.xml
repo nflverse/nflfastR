@@ -37,6 +37,12 @@
     <loc>https://www.nflfastr.com//reference/fast_scraper_schedules.html</loc>
   </url>
   <url>
+    <loc>https://www.nflfastr.com//reference/load_pbp.html</loc>
+  </url>
+  <url>
+    <loc>https://www.nflfastr.com//reference/nflfastR-package.html</loc>
+  </url>
+  <url>
     <loc>https://www.nflfastr.com//reference/teams_colors_logos.html</loc>
   </url>
   <url>

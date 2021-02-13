@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Decode the player IDs in nflfastR play-by-ply data — decode_player_ids • nflfastR</title>
+<title>Decode the player IDs in nflfastR play-by-play data — decode_player_ids • nflfastR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -52,17 +52,15 @@
 
 
 
-<meta property="og:title" content="Decode the player IDs in nflfastR play-by-ply data — decode_player_ids" />
+<meta property="og:title" content="Decode the player IDs in nflfastR play-by-play data — decode_player_ids" />
 <meta property="og:description" content="Takes all columns ending with 'player_id' as well as the
-variables 'passer_id', 'rusher_id', 'receiver_id' and 'id'
-of an nflfastR play-by-play data set and decodes the player IDs to the commonly
-known GSIS ID format 00-00xxxxx.
+variables 'passer_id', 'rusher_id', 'fantasy_id',
+'receiver_id', and 'id' of an nflfastR play-by-play data set
+and decodes the player IDs to the commonly known GSIS ID format 00-00xxxxx.
 The function uses by default the high efficient decode_ids
 of the package gsisdecoder.
 In the unlikely event that there is a problem with this function, an nflfastR
-internal decoder can be used with the option fast = FALSE. In that case
-the function requires the package furrr if the data frame
-pbp has more than 4500 rows." />
+internal decoder can be used with the option fast = FALSE." />
 <meta property="og:image" content="https://raw.githubusercontent.com/mrcaseb/nflfastR/master/man/figures/card.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:creator" content="@nflfastR" />
@@ -108,7 +106,7 @@ pbp has more than 4500 rows." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.2.0.9010</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.2.0.9013</span>
       </span>
     </div>
 
@@ -207,22 +205,20 @@ pbp has more than 4500 rows." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Decode the player IDs in nflfastR play-by-ply data</h1>
+    <h1>Decode the player IDs in nflfastR play-by-play data</h1>
     <small class="dont-index">Source: <a href='https://github.com/mrcaseb/nflfastR/blob/master/R/helper_decode_player_ids.R'><code>R/helper_decode_player_ids.R</code></a></small>
     <div class="hidden name"><code>decode_player_ids.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p>Takes all columns ending with <code>'player_id'</code> as well as the
-variables <code>'passer_id'</code>, <code>'rusher_id'</code>, <code>'receiver_id'</code> and <code>'id'</code>
-of an nflfastR play-by-play data set and decodes the player IDs to the commonly
-known GSIS ID format 00-00xxxxx.</p>
+variables <code>'passer_id'</code>, <code>'rusher_id'</code>, <code>'fantasy_id'</code>,
+<code>'receiver_id'</code>, and <code>'id'</code> of an nflfastR play-by-play data set
+and decodes the player IDs to the commonly known GSIS ID format 00-00xxxxx.</p>
 <p>The function uses by default the high efficient <a href='https://rdrr.io/pkg/gsisdecoder/man/decode_ids.html'>decode_ids</a>
 of the package <a href='https://cran.r-project.org/package=gsisdecoder'><code>gsisdecoder</code></a>.
 In the unlikely event that there is a problem with this function, an nflfastR
-internal decoder can be used with the option <code>fast = FALSE</code>. In that case
-the function requires the package <code>furrr</code> if the data frame
-<code>pbp</code> has more than 4500 rows.</p>
+internal decoder can be used with the option <code>fast = FALSE</code>.</p>
     </div>
 
     <pre class="usage"><span class='fu'>decode_player_ids</span><span class='op'>(</span><span class='va'>pbp</span>, <span class='va'>...</span>, fast <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
@@ -232,7 +228,7 @@ the function requires the package <code>furrr</code> if the data frame
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>pbp</th>
-      <td><p>is a Data frame of play-by-play data scraped using <code><a href='fast_scraper.html'>fast_scraper</a></code>.</p></td>
+      <td><p>is a Data frame of play-by-play data scraped using <code><a href='fast_scraper.html'>fast_scraper()</a></code>.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -258,14 +254,14 @@ which can take several days to fix on CRAN.)</p></td>
 <span class='fu'>decode_player_ids</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>
   name <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"P.Mahomes"</span>, <span class='st'>"B.Baldwin"</span>, <span class='st'>"P.Mahomes"</span>, <span class='st'>"S.Carl"</span>, <span class='st'>"J.Jones"</span><span class='op'>)</span>,
   id <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>
-  <span class='st'>"32013030-2d30-3033-3338-3733fa30c4fa"</span>,
-  <span class='cn'>NA_character_</span>,
-  <span class='st'>"00-0033873"</span>,
-  <span class='cn'>NA_character_</span>,
-  <span class='st'>"32013030-2d30-3032-3739-3434d4d3846d"</span>
+    <span class='st'>"32013030-2d30-3033-3338-3733fa30c4fa"</span>,
+    <span class='cn'>NA_character_</span>,
+    <span class='st'>"00-0033873"</span>,
+    <span class='cn'>NA_character_</span>,
+    <span class='st'>"32013030-2d30-3032-3739-3434d4d3846d"</span>
   <span class='op'>)</span>
 <span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'><span style='color: #BB0000;'>●</span><span> Start decoding player ids...</span></div><div class='output co'>#&gt; <span class='message'></span><span style='color: #00BB00;'>✔</span><span> </span><span style='color: #00BB00;'>Decoding completed.</span><span></span></div><div class='output co'>#&gt;        name         id
+</div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span><span> </span><span style='color: #00BB00;'>Decoding of player ids completed</span><span></span></div><div class='output co'>#&gt;        name         id
 #&gt; 1 P.Mahomes 00-0033873
 #&gt; 2 B.Baldwin       &lt;NA&gt;
 #&gt; 3 P.Mahomes 00-0033873

@@ -100,7 +100,7 @@ play by play data of all completed games since 1999." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.2.0.9010</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.2.0.9013</span>
       </span>
     </div>
 
@@ -240,7 +240,7 @@ of or the complete play by play data table within the database (please see detai
     <tr>
       <th>db_connection</th>
       <td><p>A <code>DBIConnection</code> object, as returned by
-<code><a href='https://dbi.r-dbi.org/reference/dbConnect.html'>dbConnect</a></code> (please see details for further information)</p></td>
+<code><a href='https://dbi.r-dbi.org/reference/dbConnect.html'>DBI::dbConnect()</a></code> (please see details for further information)</p></td>
     </tr>
     </table>
 
@@ -257,13 +257,13 @@ by play data table either for the whole nflfastR era (with <code>force_rebuild =
 or just for specified seasons (e.g. <code>force_rebuild = c(2019, 2020)</code>).
 Please note the following behavior:</p><ul>
 <li><p><code>force_rebuild = TRUE</code>: The data table with the name <code>tblname</code>
-  will be removed completely and rebuilt from scratch. This is helpful when
-  new columns are added during the Off-Season.</p></li>
+will be removed completely and rebuilt from scratch. This is helpful when
+new columns are added during the Off-Season.</p></li>
 <li><p><code>force_rebuild = c(2019, 2020)</code>: The data table with the name <code>tblname</code>
- will be preserved and only rows from the 2019 and 2020 seasons will be
- deleted and re-added. This is intended to be used for ongoing seasons because
- the NFL fixes bugs in the underlying data during the week and we recommend
- rebuilding the current season every Thursday during the season.</p></li>
+will be preserved and only rows from the 2019 and 2020 seasons will be
+deleted and re-added. This is intended to be used for ongoing seasons because
+the NFL fixes bugs in the underlying data during the week and we recommend
+rebuilding the current season every Thursday during the season.</p></li>
 </ul>
 
 <p>The parameter <code>db_connection</code> is intended for advanced users who want

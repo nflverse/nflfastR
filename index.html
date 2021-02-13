@@ -20,8 +20,8 @@
 <script src="pkgdown.js"></script><!-- docsearch --><script src="docsearch.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.3/docsearch.min.css" integrity="sha256-QOSRU/ra9ActyXkIBbiIB144aDBdtvXBcNc3OTNuX/Q=" crossorigin="anonymous">
 <link href="docsearch.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="An R package to quickly obtain clean and tidy NFL play by play data">
-<meta property="og:description" content="A set of functions to access National Football League play-by-play 
-  data from &lt;https://www.nfl.com/&gt;.">
+<meta property="og:description" content="A set of functions to access National Football
+    League play-by-play data from &lt;https://www.nfl.com/&gt;.">
 <meta property="og:image" content="https://raw.githubusercontent.com/mrcaseb/nflfastR/master/man/figures/card.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@nflfastR">
@@ -50,7 +50,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.2.0.9010</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.2.0.9013</span>
       </span>
     </div>
 
@@ -174,7 +174,7 @@
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"nflfastR"</span><span class="op">)</span></code></pre></div>
 <p>To get a bug fix or to use a feature from the development version, you can install the development version of nflfastR from <a href="https://github.com/mrcaseb/nflfastR/">GitHub</a> with:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span><span class="op">(</span><span class="st">"remotes"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span><span class="op">}</span>
+<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://remotes.r-lib.org">"remotes"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"mrcaseb/nflfastR"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="usage" class="section level2">
@@ -202,8 +202,8 @@
 <h2 class="hasAnchor">
 <a href="#special-thanks" class="anchor"></a>Special thanks</h2>
 <ul>
-<li>To <a href="https://twitter.com/WeightRoomShoe">Nick Shoemaker</a> for <a href="https://github.com/CroppedClamp/nfl_pbps">finding and making available JSON-formatted NFL play-by-play back to 1999</a> (<code>nflfastR</code> uses this source for 1999-2010)</li>
-<li>To <a href="https://twitter.com/903124S">Lau Sze Yui</a> for developing a scraping function to access JSON-formatted NFL play-by-play beginning in 2011.</li>
+<li>To <a href="https://twitter.com/WeightRoomShoe">Nick Shoemaker</a> for <a href="https://github.com/CroppedClamp/nfl_pbps">finding and making available JSON-formatted NFL play-by-play back to 1999</a> (<code>nflfastR</code> uses this source for 1999 and 2000 and previously also used it for 2001-2010)</li>
+<li>To <a href="https://twitter.com/903124S">Lau Sze Yui</a> for developing a scraping function to access JSON-formatted NFL play-by-play beginning in 2001.</li>
 <li>To <a href="https://twitter.com/LeeSharpeNFL">Lee Sharpe</a> for curating a resource for game information</li>
 <li>To <a href="https://twitter.com/PFF_Moo">Timo Riske</a>, <a href="https://twitter.com/903124S">Lau Sze Yui</a>, <a href="https://twitter.com/SeanfromSeabeck">Sean Clement</a>, and <a href="https://twitter.com/CowboysStats">Daniel Houston</a> for many helpful discussions regarding the development of the new <code>nflfastR</code> models</li>
 <li>To <a href="https://twitter.com/ZachFeldman3">Zach Feldman</a> and <a href="https://twitter.com/friscojosh">Josh Hermsmeyer</a> for many helpful discussions about CPOE models as well as <a href="https://twitter.com/JSmoovesBrekkie">Peter Owen</a> for <a href="https://twitter.com/JSmoovesBrekkie/status/1268885950626623490">many helpful suggestions for the CP model</a>
