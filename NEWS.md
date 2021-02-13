@@ -23,7 +23,7 @@ calling the relevant functions. For more information please see [the package doc
 
 * Tuned spread-adjusted win probability model one final (?) time. Expected points is now no longer 
 required for `calculate_win_probability()`
-* Added field descriptions `vignette(field_descriptions)` with a searchable list of all nflfastR variables
+* Added field descriptions `vignette("field_descriptions")` with a searchable list of all nflfastR variables
 * Switched data source for 2001-2010 to what is used for 2011 and on
 
 ## Minor improvements and fixes
