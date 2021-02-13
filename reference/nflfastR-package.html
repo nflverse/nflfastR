@@ -236,7 +236,7 @@ Please see the documentation of the functions for detailed information.</p>
 <p>As an example, the following code block will resolve all function calls in the
 current session using multiple sessions in the background and load play-by-play
 data for the 2018 through 2020 seasons or build them freshly for the 2018 and
-2019 SUper Bowls:</p><pre><span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/future/man/plan.html'>plan</a></span><span class='op'>(</span><span class='st'>"multisession"</span><span class='op'>)</span>
+2019 Super Bowls:</p><pre><span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/future/man/plan.html'>plan</a></span><span class='op'>(</span><span class='st'>"multisession"</span><span class='op'>)</span>
 <span class='fu'><a href='load_pbp.html'>load_pbp</a></span><span class='op'>(</span><span class='fl'>2018</span><span class='op'>:</span><span class='fl'>2020</span><span class='op'>)</span>
 <span class='fu'><a href='build_nflfastR_pbp.html'>build_nflfastR_pbp</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"2018_21_NE_LA"</span>, <span class='st'>"2019_21_SF_KC"</span><span class='op'>)</span><span class='op'>)</span>
 </pre>
