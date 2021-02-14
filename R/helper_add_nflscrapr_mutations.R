@@ -30,7 +30,6 @@ add_nflscrapr_mutations <- function(pbp) {
     # the !is.na(drive), drive part is to make the initial GAME line show up first
     # https://stackoverflow.com/questions/43343590/how-to-sort-putting-nas-first-in-dplyr
     dplyr::arrange(.data$order_sequence, .data$quarter, !is.na(.data$quarter_seconds_remaining), -.data$quarter_seconds_remaining, !is.na(.data$drive), .data$drive, .data$index, .by_group = TRUE) %>%
-    dplyr::ungroup() %>%
     dplyr::mutate(
 
       # Make the possession team for kickoffs be the return team, since that is
