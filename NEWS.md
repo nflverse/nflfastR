@@ -45,6 +45,7 @@ required for `calculate_win_probability()`
 * Fixed a bug related to lots of fields with `NA` on offsetting penalties (#44)
 * Fixed a bug in `epa` when possession team changes at end of 1st or 3rd quarter (#182)
 * Fixed a bug where various functions have left open connections
+* `vegas_wp` is now `NA` on final line since there is no possession team
 
 
 # nflfastR 3.2.0
