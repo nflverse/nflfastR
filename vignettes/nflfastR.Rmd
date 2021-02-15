@@ -474,7 +474,7 @@ We can do the same for rush attempts to replicate the [NFL leaderboard](https://
 
 ``` {r stats_rush}
 data <- nflfastR::load_pbp(2020) %>%
-  dplyr::filter(week <= 17, !is.na(down), !is.na(rusher_player_name), play_type == "run")
+  dplyr::filter(week <= 17, !is.na(down), !is.na(rusher_player_name), play_type %in% c("run", "qb_kneel"))
 
 rushes <- data %>%
   dplyr::group_by(rusher_player_id, posteam) %>%
