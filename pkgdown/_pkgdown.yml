@@ -91,8 +91,10 @@ reference:
       - calculate_win_probability
   - title: Documentation
     contents:
-      - teams_colors_logos
       - nflfastR-package
+      - teams_colors_logos
+      - field_descriptions
+      - stat_ids
   - title: Lower Level Functions
     desc: >
       These functions are wrapped in the above listed main functions and

@@ -65,7 +65,7 @@ calculate_expected_points <- function(pbp_data) {
   )
 
   preds <- as.data.frame(
-    matrix(stats::predict(ep_model, as.matrix(model_data)), ncol = 7, byrow = TRUE)
+    matrix(stats::predict(fastrmodels::ep_model, as.matrix(model_data)), ncol = 7, byrow = TRUE)
   )
 
   colnames(preds) <- c(

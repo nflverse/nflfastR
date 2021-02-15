@@ -90,7 +90,7 @@ add_air_yac_wp <- function(pbp) {
 get_preds <- function(pbp) {
 
   preds <- as.data.frame(
-    matrix(stats::predict(ep_model, as.matrix(pbp %>% ep_model_select())), ncol=7, byrow=TRUE)
+    matrix(stats::predict(fastrmodels::ep_model, as.matrix(pbp %>% ep_model_select())), ncol=7, byrow=TRUE)
   )
 
   colnames(preds) <- c("Touchdown","Opp_Touchdown","Field_Goal","Opp_Field_Goal",
@@ -103,7 +103,7 @@ get_preds <- function(pbp) {
 #for predict stage
 get_preds_wp <- function(pbp) {
 
-  preds <- stats::predict(wp_model, as.matrix(pbp %>% wp_model_select()))
+  preds <- stats::predict(fastrmodels::wp_model, as.matrix(pbp %>% wp_model_select()))
 
   return(preds)
 }
@@ -112,7 +112,7 @@ get_preds_wp <- function(pbp) {
 #for predict stage
 get_preds_wp_spread <- function(pbp) {
 
-  preds <- stats::predict(wp_model_spread, as.matrix(pbp %>% wp_spread_model_select()))
+  preds <- stats::predict(fastrmodels::wp_model_spread, as.matrix(pbp %>% wp_spread_model_select()))
 
   return(preds)
 }
@@ -250,7 +250,7 @@ add_ep_variables <- function(pbp_data) {
   missed_fg_ep_preds[end_game_i, "No_Score"] <- 1
 
   # Get the probability of making the field goal:
-  make_fg_prob <- as.numeric(mgcv::predict.bam(fg_model, newdata = pbp_data, type="response"))
+  make_fg_prob <- as.numeric(mgcv::predict.bam(fastrmodels::fg_model, newdata = pbp_data, type="response"))
 
   # Multiply each value of the missed_fg_ep_preds by the 1 - make_fg_prob
   missed_fg_ep_preds <- missed_fg_ep_preds * (1 - make_fg_prob)
@@ -654,7 +654,7 @@ add_wp_variables <- function(pbp_data) {
 
   ## start PAT fix
 
-  make_pat_prob <- as.numeric(mgcv::predict.bam(fg_model, newdata = pbp_data %>% mutate(yardline_100 = 15), type="response"))
+  make_pat_prob <- as.numeric(mgcv::predict.bam(fastrmodels::fg_model, newdata = pbp_data %>% mutate(yardline_100 = 15), type="response"))
   make_pat_prob <- make_pat_prob[1]
 
   pat_data <- pbp_data

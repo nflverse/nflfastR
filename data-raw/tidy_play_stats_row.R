@@ -30,11 +30,6 @@ tidy_play_stats_row <-
   ), as.integer)
 
 usethis::use_data(
-  ep_model,
-  wp_model,
-  wp_model_spread,
-  fg_model,
-  cp_model,
   tidy_play_stats_row,
   internal = TRUE,
   overwrite = TRUE
@@ -178,6 +173,7 @@ pbp_stat_columns <-
     "assist_tackle_4_player_name",
     "assist_tackle_4_team",
     # new for stat ID 80 -> tackle_with_assist
+    "tackle_with_assist",
     "tackle_with_assist_1_player_id",
     "tackle_with_assist_1_player_name",
     "tackle_with_assist_1_team",

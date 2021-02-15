@@ -278,6 +278,13 @@
 #' \item{assist_tackle_4_player_id}{Unique identifier of one of the players with a tackle assist.}
 #' \item{assist_tackle_4_player_name}{String name of one of the players with a tackle assist.}
 #' \item{assist_tackle_4_team}{Team of one of the players with a tackle assist.}
+#' \item{tackle_with_assist}{Binary indicator for if there has been a tackle with assist.}
+#' \item{tackle_with_assist_1_player_id}{Unique identifier of one of the players with a tackle with assist.}
+#' \item{tackle_with_assist_1_player_name}{String name of one of the players with a tackle with assist.}
+#' \item{tackle_with_assist_1_team}{Team of one of the players with a tackle with assist.}
+#' \item{tackle_with_assist_2_player_id}{Unique identifier of one of the players with a tackle with assist.}
+#' \item{tackle_with_assist_2_player_name}{String name of one of the players with a tackle with assist.}
+#' \item{tackle_with_assist_2_team}{Team of one of the players with a tackle with assist.}
 #' \item{pass_defense_1_player_id}{Unique identifier of one of the players with a pass defense.}
 #' \item{pass_defense_1_player_name}{String name of one of the players with a pass defense.}
 #' \item{pass_defense_2_player_id}{Unique identifier of one of the players with a pass defense.}

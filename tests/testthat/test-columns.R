@@ -4,6 +4,8 @@ source('helpers.R')
 
 test_that("Columns identical across old and new sources", {
 
+  skip_on_cran()
+
   g1 <- fast_scraper(game_ids[1])
   g2 <- fast_scraper(game_ids[2])
 

@@ -26,7 +26,7 @@
 #' load_pbp(2018:2020)
 #' build_nflfastR_pbp(c("2018_21_NE_LA", "2019_21_SF_KC"))
 #' ```
-#' We recommended choosing a default parallel processing method and saving it
+#' We recommend choosing a default parallel processing method and saving it
 #' as an environment variable in the R user profile to make sure all futures
 #' will be resolved with the chosen method by default.
 #' This can be done by following the below given steps.
@@ -78,6 +78,7 @@
 #' @importFrom cli rule
 #' @importFrom curl curl_fetch_memory
 # @importFrom DBI dbConnect dbExistsTable dbWriteTable dbDisconnect dbRemoveTable dbExecute dbGetInfo
+#' @import fastrmodels
 #' @importFrom furrr future_map_chr future_map_dfr future_map
 #' @importFrom future plan
 #' @importFrom glue glue glue_sql

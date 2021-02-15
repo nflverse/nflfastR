@@ -4,6 +4,8 @@ source('helpers.R')
 
 test_that("Scraper works for an old and new game at once", {
 
+  skip_on_cran()
+
   x2 <- fast_scraper(game_ids) %>%
     extract_desc()
 
@@ -12,6 +14,8 @@ test_that("Scraper works for an old and new game at once", {
 })
 
 test_that("Wrapper works for an old and new game at once", {
+
+  skip_on_cran()
 
   wrapper <- build_nflfastR_pbp(game_ids, decode = FALSE)
 
@@ -44,6 +48,8 @@ test_that("Wrapper works for an old and new game at once", {
 })
 
 test_that("Decoding player IDs works", {
+
+  skip_on_cran()
 
   wrapper <- build_nflfastR_pbp(game_ids, decode = TRUE)
 

@@ -15,4 +15,5 @@ stat_ids <- "http://www.nflgsis.com/gsis/Documentation/Partners/StatIDs_files/sh
   dplyr::ungroup() %>%
   dplyr::mutate(comment = stringr::str_squish(comment))
 
-save(stat_ids, file = "data-raw/stat_ids.rda")
+# save(stat_ids, file = "data-raw/stat_ids.rda")
+usethis::use_data(stat_ids, overwrite = TRUE)

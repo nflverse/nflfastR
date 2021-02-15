@@ -20,8 +20,9 @@ added:
 }
 }
 \description{
-Build columns from the expected dropback model will return \code{NA} on data prior to 2006
-since that was before NFL started marking scrambles. Must be run on a dataframe that has already had
-\code{\link[=clean_pbp]{clean_pbp()}} run on it, such as data from the data repository or
-\code{\link[=build_nflfastR_pbp]{build_nflfastR_pbp()}} or built using the database function \code{\link[=update_db]{update_db()}}.
+Build columns from the expected dropback model. Will return
+\code{NA} on data prior to 2006 since that was before NFL started marking scrambles.
+Must be run on a dataframe that has already had \code{\link[=clean_pbp]{clean_pbp()}} run on it.
+Note that the functions \code{\link[=build_nflfastR_pbp]{build_nflfastR_pbp()}} and
+the database function \code{\link[=update_db]{update_db()}} already include this function.
 }

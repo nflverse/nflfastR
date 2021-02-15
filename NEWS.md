@@ -18,6 +18,7 @@ calling the relevant functions. For more information please see [the package doc
 * Added columns `vegas_wpa` and `vegas_home_wpa` which contain Win Probability Added from the spread-adjusted WP model
 * Added column `out_of_bounds`
 * Added columns `fantasy`, `fantasy_id`, `fantasy_player_name`, and `fantasy_player_id` that indicate the rusher or receiver on the play
+* Added columns `tackle_with_assist`, `tackle_with_assist_1_player_id`, `tackle_with_assist_1_player_name`, `tackle_with_assist_1_team`, `tackle_with_assist_2_player_id`, `tackle_with_assist_2_player_name`, `tackle_with_assist_2_team`
 
 ### Models and Miscellaneous
 
@@ -25,6 +26,8 @@ calling the relevant functions. For more information please see [the package doc
 required for `calculate_win_probability()`
 * Added field descriptions `vignette("field_descriptions")` with a searchable list of all nflfastR variables
 * Switched data source for 2001-2010 to what is used for 2011 and on
+* All models have been moved to the [fastrmodels](https://cran.r-project.org/package=fastrmodels) package
+* Added the data frames `?field_descriptions` and `?stat_ids` to the package
 
 ## Minor improvements and fixes
 
@@ -41,7 +44,8 @@ required for `calculate_win_probability()`
 * Fixed a bug where `penalty_team` could be incorrect in games of the Jaguars in the seasons 2011 - 2015 (#174)
 * Fixed a bug related to the calculation of `epa` on plays before a failed pass interference challenge in a few 2019 games (#175)
 * Fixed a bug related to lots of fields with `NA` on offsetting penalties (#44)
-* Fix bug in `epa` when possession team changes at end of 1st or 3rd quarter (#182)
+* Fixed a bug in `epa` when possession team changes at end of 1st or 3rd quarter (#182)
+* Fixed a bug where various functions have left open connections
 * `vegas_wp` is now `NA` on final line since there is no possession team
 
 
