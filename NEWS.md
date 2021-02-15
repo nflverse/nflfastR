@@ -18,6 +18,7 @@ calling the relevant functions. For more information please see [the package doc
 * Added columns `vegas_wpa` and `vegas_home_wpa` which contain Win Probability Added from the spread-adjusted WP model
 * Added column `out_of_bounds`
 * Added columns `fantasy`, `fantasy_id`, `fantasy_player_name`, and `fantasy_player_id` that indicate the rusher or receiver on the play
+* Added columns `tackle_with_assist`, `tackle_with_assist_1_player_id`, `tackle_with_assist_1_player_name`, `tackle_with_assist_1_team`, `tackle_with_assist_2_player_id`, `tackle_with_assist_2_player_name`, `tackle_with_assist_2_team`
 
 ### Models and Miscellaneous
 
