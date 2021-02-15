@@ -812,6 +812,14 @@ add_wp_variables <- function(pbp_data) {
         ),
         .data$vegas_home_wp
       ),
+      # make wp of posteam on last line NA because there's no posteam
+      vegas_wp = dplyr::if_else(
+        stringr::str_detect(
+          tolower(.data$desc), "(end of game)|(end game)"
+        ),
+        NA_real_,
+        .data$vegas_wp
+      ),
       vegas_home_wpa = dplyr::lead(.data$vegas_home_wp) - .data$vegas_home_wp,
       vegas_wpa = dplyr::if_else(.data$tmp_posteam == .data$home_team, .data$vegas_home_wpa, -.data$vegas_home_wpa),
       vegas_wpa = dplyr::if_else(

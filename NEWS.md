@@ -42,6 +42,7 @@ required for `calculate_win_probability()`
 * Fixed a bug related to the calculation of `epa` on plays before a failed pass interference challenge in a few 2019 games (#175)
 * Fixed a bug related to lots of fields with `NA` on offsetting penalties (#44)
 * Fix bug in `epa` when possession team changes at end of 1st or 3rd quarter (#182)
+* `vegas_wp` is now `NA` on final line since there is no possession team
 
 
 # nflfastR 3.2.0
