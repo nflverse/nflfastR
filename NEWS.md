@@ -25,6 +25,8 @@ calling the relevant functions. For more information please see [the package doc
 required for `calculate_win_probability()`
 * Added field descriptions `vignette("field_descriptions")` with a searchable list of all nflfastR variables
 * Switched data source for 2001-2010 to what is used for 2011 and on
+* All models have been moved to the [fastrmodels](https://cran.r-project.org/package=fastrmodels) package
+* Added the data frames `?field_descriptions` and `?stat_ids` to the package
 
 ## Minor improvements and fixes
 
@@ -41,7 +43,8 @@ required for `calculate_win_probability()`
 * Fixed a bug where `penalty_team` could be incorrect in games of the Jaguars in the seasons 2011 - 2015 (#174)
 * Fixed a bug related to the calculation of `epa` on plays before a failed pass interference challenge in a few 2019 games (#175)
 * Fixed a bug related to lots of fields with `NA` on offsetting penalties (#44)
-* Fix bug in `epa` when possession team changes at end of 1st or 3rd quarter (#182)
+* Fixed a bug in `epa` when possession team changes at end of 1st or 3rd quarter (#182)
+* Fixed a bug where various functions have left open connections
 
 
 # nflfastR 3.2.0
