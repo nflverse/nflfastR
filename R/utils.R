@@ -61,7 +61,12 @@ maybe_valid <- function(id) {
 is_installed <- function(pkg) requireNamespace(pkg, quietly = TRUE)
 
 # load Lee Sharpe's games file
-load_lees_games <- function() readRDS(url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true"))
+load_lees_games <- function(){
+  con <- url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true")
+  dat <- readRDS(con)
+  close(con)
+  dat
+}
 
 # load raw game files esp. for debugging
 load_raw_game <- function(game_id, qs = FALSE){
@@ -177,7 +182,9 @@ single_season_ngs <- function(season, type, p, qs = FALSE) {
   }
   if (isFALSE(qs)) {
     .url <- glue::glue("https://github.com/mrcaseb/nfl-data/blob/master/data/ngs/ngs_{season}_{type}.rds?raw=true")
-    ret <- readRDS(url(.url))
+    con <- url(.url)
+    ret <- readRDS(con)
+    close(con)
   }
 
   p(sprintf("season=%g", season))
