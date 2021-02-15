@@ -474,11 +474,12 @@ We can do the same for rush attempts to replicate the [NFL leaderboard](https://
 
 ``` {r stats_rush}
 data <- nflfastR::load_pbp(2020) %>%
-  dplyr::filter(week <= 17, !is.na(down), !is.na(rusher_player_name))
+  dplyr::filter(week <= 17, !is.na(down), !is.na(rusher_player_name), play_type == "run")
 
 rushes <- data %>%
-  dplyr::group_by(rusher_player_name, rusher_player_id, posteam) %>%
+  dplyr::group_by(rusher_player_id, posteam) %>%
   dplyr::summarize(
+    rusher_player_name = dplyr::first(rusher_player_name),
     yards = sum(rushing_yards, na.rm = T),
     tds = sum(touchdown == 1 & td_team == posteam),
     att = dplyr::n()
@@ -487,7 +488,7 @@ rushes <- data %>%
 
 laterals <- data %>%
   filter(!is.na(lateral_rusher_player_name)) %>%
-  dplyr::group_by(lateral_rusher_player_name, lateral_rusher_player_id) %>%
+  dplyr::group_by(lateral_rusher_player_id) %>%
   dplyr::summarize(
     lateral_yards = sum(lateral_rushing_yards, na.rm = T),
     lateral_tds = sum(touchdown == 1 & td_team == posteam),
@@ -495,12 +496,11 @@ laterals <- data %>%
   ) %>%
   ungroup() %>%
   dplyr::rename(
-    rusher_player_name = lateral_rusher_player_name,
     rusher_player_id = lateral_rusher_player_id
   )
 
 rushes %>%
-  dplyr::left_join(laterals, by = c("rusher_player_name", "rusher_player_id")) %>%
+  dplyr::left_join(laterals, by = c("rusher_player_id")) %>%
   dplyr::mutate(
     lateral_yards = dplyr::if_else(is.na(lateral_yards), 0, lateral_yards),
     lateral_att = dplyr::if_else(is.na(lateral_att), 0L, lateral_att),
