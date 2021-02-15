@@ -1,4 +1,4 @@
-# nflfastR (development version)
+# nflfastR 4.0.0
 
 ## Breaking changes
 

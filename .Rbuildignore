@@ -21,3 +21,4 @@
 ^CRAN-RELEASE$
 ^man/figures/readme-cp-model-1\.png$
 ^man/figures/readme-epa-model-1\.png$
+^revdep$
