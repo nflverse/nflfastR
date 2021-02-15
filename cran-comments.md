@@ -8,6 +8,9 @@ This is a major release that
 * add new exported data
 * fixes bugs
 
+The latest internal test on CRAN were failing due to changes in the infrastructure
+the package is depending on. We made sure this won't happen in the future.
+
 ## Test environments
 
 * local R installation, R 4.0.3
