@@ -503,10 +503,9 @@ rushes %>%
   dplyr::left_join(laterals, by = c("rusher_player_id")) %>%
   dplyr::mutate(
     lateral_yards = dplyr::if_else(is.na(lateral_yards), 0, lateral_yards),
-    lateral_att = dplyr::if_else(is.na(lateral_att), 0L, lateral_att),
     lateral_tds = dplyr::if_else(is.na(lateral_tds), 0L, lateral_tds)
     ) %>%
-  dplyr::mutate(yards = yards + lateral_yards, att = att + lateral_att, tds = tds + lateral_tds) %>%
+  dplyr::mutate(yards = yards + lateral_yards, tds = tds + lateral_tds) %>%
   dplyr::arrange(-yards) %>%
   dplyr::select(rusher_player_name, posteam, yards, att, tds) %>%
   utils::head(10) %>%
