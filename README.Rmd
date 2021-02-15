@@ -20,8 +20,8 @@ knitr::opts_chunk$set(
 [![CRAN downloads](http://cranlogs.r-pkg.org/badges/grand-total/nflfastR)](https://CRAN.R-project.org/package=nflfastR)
 [![Travis build status](https://travis-ci.com/mrcaseb/nflfastR.svg?branch=master)](https://travis-ci.com/mrcaseb/nflfastR)
 [![R build status](https://github.com/mrcaseb/nflfastR/workflows/R-CMD-check/badge.svg)](https://github.com/mrcaseb/nflfastR/actions)
-[![Discord Chat](https://img.shields.io/discord/308323056592486420.svg)](https://discord.gg/5Er2FBnnQa) 
-[![Twitter Follow](https://img.shields.io/twitter/follow/nflfastR.svg?style=social)](https://twitter.com/nflfastR)
+[![Discord Chat](https://img.shields.io/discord/308323056592486420.svg)](https://discord.com/invite/5Er2FBnnQa) 
+<!-- [![Twitter Follow](https://img.shields.io/twitter/follow/nflfastR.svg?style=social)](https://twitter.com/nflfastR) -->
 <!-- ![GitHub release (latest by date)](https://img.shields.io/github/v/release/mrcaseb/nflfastR?label=development%20version) -->
 <!-- badges: end -->
 
@@ -148,11 +148,11 @@ knitr::include_graphics('https://github.com/mrcaseb/nflfastR/raw/master/man/figu
 
 ## Special thanks
 
-* To [Nick Shoemaker](https://twitter.com/WeightRoomShoe) for [finding and making available JSON-formatted NFL play-by-play back to 1999](https://github.com/CroppedClamp/nfl_pbps) (`nflfastR` uses this source for 1999 and 2000 and previously also used it for 2001-2010)
-* To [Lau Sze Yui](https://twitter.com/903124S) for developing a scraping function to access JSON-formatted NFL play-by-play beginning in 2001.
-* To [Lee Sharpe](https://twitter.com/LeeSharpeNFL) for curating a resource for game information
-* To [Timo Riske](https://twitter.com/PFF_Moo), [Lau Sze Yui](https://twitter.com/903124S), [Sean Clement](https://twitter.com/SeanfromSeabeck), and [Daniel Houston](https://twitter.com/CowboysStats) for many helpful discussions regarding the development of the new `nflfastR` models
-* To [Zach Feldman](https://twitter.com/ZachFeldman3) and [Josh Hermsmeyer](https://twitter.com/friscojosh) for many helpful discussions about CPOE models as well as [Peter Owen](https://twitter.com/JSmoovesBrekkie) for [many helpful suggestions for the CP model](https://twitter.com/JSmoovesBrekkie/status/1268885950626623490)
-* To [Florian Schmitt](https://twitter.com/Flosch1006) for the logo design
+* To Nick Shoemaker for [finding and making available JSON-formatted NFL play-by-play back to 1999](https://github.com/CroppedClamp/nfl_pbps) (`nflfastR` uses this source for 1999 and 2000 and previously also used it for 2001-2010)
+* To Lau Sze Yui for developing a scraping function to access JSON-formatted NFL play-by-play beginning in 2001.
+* To Lee Sharpe for curating a resource for game information
+* To Timo Riske, Lau Sze Yui, Sean Clement, and Daniel Houston for many helpful discussions regarding the development of the new `nflfastR` models
+* To Zach Feldman and Josh Hermsmeyer for many helpful discussions about CPOE models as well as Peter Owen for many helpful suggestions for the CP model
+* To Florian Schmitt for the logo design
 * The many users who found and reported bugs in `nflfastR` 1.0
 * And of course, the original [`nflscrapR`](https://github.com/maksimhorowitz/nflscrapR) team, Maksim Horowitz, Ronald Yurko, and Samuel Ventura, whose work represented a dramatic step forward for the state of public NFL research
