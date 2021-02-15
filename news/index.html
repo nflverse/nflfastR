@@ -98,7 +98,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.2.0.9013</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.2.0.9015</span>
       </span>
     </div>
 
@@ -228,6 +228,8 @@
 <li>Added column <code>out_of_bounds</code>
 </li>
 <li>Added columns <code>fantasy</code>, <code>fantasy_id</code>, <code>fantasy_player_name</code>, and <code>fantasy_player_id</code> that indicate the rusher or receiver on the play</li>
+<li>Added columns <code>tackle_with_assist</code>, <code>tackle_with_assist_1_player_id</code>, <code>tackle_with_assist_1_player_name</code>, <code>tackle_with_assist_1_team</code>, <code>tackle_with_assist_2_player_id</code>, <code>tackle_with_assist_2_player_name</code>, <code>tackle_with_assist_2_team</code>
+</li>
 </ul>
 </div>
 <div id="models-and-miscellaneous" class="section level3">
@@ -238,6 +240,8 @@
 </li>
 <li>Added field descriptions <code><a href="../articles/field_descriptions.html">vignette("field_descriptions")</a></code> with a searchable list of all nflfastR variables</li>
 <li>Switched data source for 2001-2010 to what is used for 2011 and on</li>
+<li>All models have been moved to the <a href="https://cran.r-project.org/package=fastrmodels">fastrmodels</a> package</li>
+<li>Added the data frames <code><a href="../reference/field_descriptions.html">?field_descriptions</a></code> and <code><a href="../reference/stat_ids.html">?stat_ids</a></code> to the package</li>
 </ul>
 </div>
 </div>
@@ -257,7 +261,10 @@
 <li>Fixed a bug where <code>penalty_team</code> could be incorrect in games of the Jaguars in the seasons 2011 - 2015 (<a href='https://github.com/mrcaseb/nflfastR/issues/174'>#174</a>)</li>
 <li>Fixed a bug related to the calculation of <code>epa</code> on plays before a failed pass interference challenge in a few 2019 games (<a href='https://github.com/mrcaseb/nflfastR/issues/175'>#175</a>)</li>
 <li>Fixed a bug related to lots of fields with <code>NA</code> on offsetting penalties (<a href='https://github.com/mrcaseb/nflfastR/issues/44'>#44</a>)</li>
-<li>Fix bug in <code>epa</code> when possession team changes at end of 1st or 3rd quarter (<a href='https://github.com/mrcaseb/nflfastR/issues/182'>#182</a>)</li>
+<li>Fixed a bug in <code>epa</code> when possession team changes at end of 1st or 3rd quarter (<a href='https://github.com/mrcaseb/nflfastR/issues/182'>#182</a>)</li>
+<li>Fixed a bug where various functions have left open connections</li>
+<li>
+<code>vegas_wp</code> is now <code>NA</code> on final line since there is no possession team</li>
 </ul>
 </div>
 </div>
