@@ -26,7 +26,7 @@
 #' load_pbp(2018:2020)
 #' build_nflfastR_pbp(c("2018_21_NE_LA", "2019_21_SF_KC"))
 #' ```
-#' We recommended choosing a default parallel processing method and saving it
+#' We recommend choosing a default parallel processing method and saving it
 #' as an environment variable in the R user profile to make sure all futures
 #' will be resolved with the chosen method by default.
 #' This can be done by following the below given steps.
