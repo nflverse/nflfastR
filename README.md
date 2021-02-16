@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# **nflfastR** <img src="man/figures/logo.png" align="right" style="width:25%;min-width:120px;"/>
+# **nflfastR** <img src="man/figures/logo.png" align="right" width="25%" min-width="120px"/>
 
 <!-- badges: start -->
 
