@@ -7,15 +7,15 @@
 get_player_stats(pbp, weekly = FALSE)
 }
 \arguments{
-\item{pbp}{A Data frame of NFL play-by-play data \strong{with decoded player IDs}
-typically loaded with \code{\link[=load_pbp]{load_pbp()}} or \code{\link[=build_nflfastR_pbp]{build_nflfastR_pbp()}}.
-For ID decoding please see \code{\link[=decode_player_ids]{decode_player_ids()}}.}
+\item{pbp}{A Data frame of NFL play-by-play data typically loaded with
+\code{\link[=load_pbp]{load_pbp()}} or \code{\link[=build_nflfastR_pbp]{build_nflfastR_pbp()}}.}
 
 \item{weekly}{If \code{TRUE}, returns week-by-week stats, otherwise, stats
 for the entire Data frame.}
 }
 \value{
-A data frame including the following columns:
+A data frame including the following columns (all ID columns are
+decoded to the gsis ID format):
 \describe{
 \item{player_id}{ID of the player. Use this to join to other sources.}
 \item{player_name}{Name of the player}

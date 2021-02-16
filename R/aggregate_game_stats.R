@@ -5,14 +5,14 @@
 
 #' Get Official Game Stats
 #'
-#' @param pbp A Data frame of NFL play-by-play data **with decoded player IDs**
-#' typically loaded with [load_pbp()] or [build_nflfastR_pbp()].
-#' For ID decoding please see [decode_player_ids()].
+#' @param pbp A Data frame of NFL play-by-play data typically loaded with
+#' [load_pbp()] or [build_nflfastR_pbp()].
 #' @param weekly If `TRUE`, returns week-by-week stats, otherwise, stats
 #' for the entire Data frame.
 #' @description Build columns that aggregate official passing, rushing, and receiving stats
 #' either at the game level or at the level of the entire data frame passed.
-#' @return A data frame including the following columns:
+#' @return A data frame including the following columns (all ID columns are
+#' decoded to the gsis ID format):
 #' \describe{
 #' \item{player_id}{ID of the player. Use this to join to other sources.}
 #' \item{player_name}{Name of the player}
@@ -78,11 +78,14 @@ get_player_stats <- function(pbp, weekly = FALSE) {
   close(con)
 
   # get down to plays that count in official stats
-  data <- pbp %>%
-    dplyr::filter(
-      !is.na(.data$down),
-      .data$play_type %in% c("pass", "qb_kneel", "qb_spike", "run")
-    )
+  suppressMessages({
+    data <- pbp %>%
+      dplyr::filter(
+        !is.na(.data$down),
+        .data$play_type %in% c("pass", "qb_kneel", "qb_spike", "run")
+      ) %>%
+      decode_player_ids()
+  })
 
   # get passing stats
   pass_df <- data %>%
