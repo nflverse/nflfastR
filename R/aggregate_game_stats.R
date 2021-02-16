@@ -3,13 +3,15 @@
 # Stlyeguide: styler::tidyverse_style()
 ################################################################################
 
-#' Get official game stats
+#' Get Official Game Stats
 #'
-#' @param df is a Data frame of play-by-play data scraped using [fast_scraper()].
+#' @param pbp A Data frame of NFL play-by-play data **with decoded player IDs**
+#' typically loaded with [load_pbp()] or [build_nflfastR_pbp()].
+#' For ID decoding please see [decode_player_ids()].
 #' @param weekly If `TRUE`, returns week-by-week stats, otherwise, stats
-#' for the entire Data frame. This is the default.
-#' @details Build columns that aggregate official passing, rushing, and receiving stats
-#' at the game level or at the level of the entire df passed.
+#' for the entire Data frame.
+#' @description Build columns that aggregate official passing, rushing, and receiving stats
+#' either at the game level or at the level of the entire data frame passed.
 #' @return A data frame including the following columns:
 #' \describe{
 #' \item{player_id}{ID of the player. Use this to join to other sources.}
@@ -24,20 +26,26 @@
 #' pbp <- nflfastR::load_pbp(2020)
 #' get_player_stats(pbp)
 #' }
-get_player_stats <- function(df, weekly = TRUE) {
+get_player_stats <- function(pbp, weekly = TRUE) {
 
   # load plays with multiple laterals
   con <- url("https://github.com/mrcaseb/nfl-data/blob/master/data/lateral_yards/multiple_lateral_yards.rds?raw=true")
   mult_lats <- readRDS(con) %>%
     dplyr::mutate(
-      season = substr(game_id, 1, 4) %>% as.integer(),
-      week = substr(game_id, 6, 7) %>% as.integer()
+      season = substr(.data$game_id, 1, 4) %>% as.integer(),
+      week = substr(.data$game_id, 6, 7) %>% as.integer()
     ) %>%
-    dplyr::filter(yards != 0)
+    dplyr::filter(.data$yards != 0) %>%
+    # the list includes all plays with multiple laterals
+    # and all receivers. Since the last one already is in the
+    # pbp data, we have to drop him here so the entry isn't duplicated
+    dplyr::group_by(.data$game_id, .data$play_id) %>%
+    dplyr::slice(seq_len(dplyr::n() - 1)) %>%
+    dplyr::ungroup()
   close(con)
 
   # get down to plays that count in official stats
-  data <- df %>%
+  data <- pbp %>%
     dplyr::filter(
       !is.na(.data$down),
       .data$play_type %in% c("pass", "qb_kneel", "qb_spike", "run")
@@ -82,8 +90,14 @@ get_player_stats <- function(df, weekly = TRUE) {
       lateral_att = dplyr::n()
     ) %>%
     dplyr::ungroup() %>%
-    dplyr::rename(
-      rusher_player_id = .data$lateral_rusher_player_id
+    dplyr::rename(rusher_player_id = .data$lateral_rusher_player_id) %>%
+    dplyr::bind_rows(
+      mult_lats %>%
+        dplyr::filter(
+          .data$type == "lateral_rushing" & .data$season %in% data$season & .data$week %in% data$week
+        ) %>%
+        dplyr::select("season", "week", "rusher_player_id" = .data$gsis_player_id, "lateral_yards" = .data$yards) %>%
+        dplyr::mutate(lateral_tds = 0L, lateral_att = 1L)
     )
 
   # rush df: join
@@ -123,8 +137,14 @@ get_player_stats <- function(df, weekly = TRUE) {
       lateral_att = dplyr::n()
     ) %>%
     dplyr::ungroup() %>%
-    dplyr::rename(
-      receiver_player_id = .data$lateral_receiver_player_id
+    dplyr::rename(receiver_player_id = .data$lateral_receiver_player_id) %>%
+    dplyr::bind_rows(
+      mult_lats %>%
+        dplyr::filter(
+          .data$type == "lateral_receiving" & .data$season %in% data$season & .data$week %in% data$week
+        ) %>%
+        dplyr::select("season", "week", "receiver_player_id" = .data$gsis_player_id, "lateral_yards" = .data$yards) %>%
+        dplyr::mutate(lateral_tds = 0L, lateral_att = 1L)
     )
 
   # rec df: join
