@@ -2,30 +2,35 @@
 % Please edit documentation in R/aggregate_game_stats.R
 \name{get_player_stats}
 \alias{get_player_stats}
-\title{Get official game stats}
+\title{Get Official Game Stats}
 \usage{
-get_player_stats(df, weekly = TRUE)
+get_player_stats(pbp, weekly = TRUE)
 }
 \arguments{
-\item{df}{is a Data frame of play-by-play data scraped using \code{\link[=fast_scraper]{fast_scraper()}}.}
+\item{pbp}{A Data frame of NFL play-by-play data \strong{with decoded player IDs}
+typically loaded with \code{\link[=load_pbp]{load_pbp()}} or \code{\link[=build_nflfastR_pbp]{build_nflfastR_pbp()}}.
+For ID decoding please see \code{\link[=decode_player_ids]{decode_player_ids()}}.}
 
-\item{weekly}{Defaults to TRUE. If true, returns week-by-week stats, otherwise, stats
-for the entire dataframe.}
+\item{weekly}{If \code{TRUE}, returns week-by-week stats, otherwise, stats
+for the entire Data frame.}
 }
 \value{
-The following columns
+A data frame including the following columns:
 \describe{
 \item{player_id}{ID of the player. Use this to join to other sources.}
 \item{player_name}{Name of the player}
-\item{season}{Season if \code{weekly} is TRUE}
-\item{week}{Week if \code{weekly} is TRUE}
+\item{season}{Season if \code{weekly} is \code{TRUE}}
+\item{week}{Week if \code{weekly} is \code{TRUE}}
 \item{other_things}{fill this out}
 }
 }
 \description{
-Get official game stats
-}
-\details{
 Build columns that aggregate official passing, rushing, and receiving stats
-at the game level or at the level of the entire df passed.
+either at the game level or at the level of the entire data frame passed.
+}
+\examples{
+\donttest{
+pbp <- nflfastR::load_pbp(2020)
+get_player_stats(pbp)
+}
 }

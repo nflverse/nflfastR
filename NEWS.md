@@ -1,3 +1,7 @@
+# nflfastR (development version)
+
+* Added the function `get_player_stats()` that aggregates official passing, rushing, and receiving stats either at game level or overall
+
 # nflfastR 4.0.0
 
 ## Breaking changes
