@@ -4,7 +4,7 @@
 \alias{get_player_stats}
 \title{Get Official Game Stats}
 \usage{
-get_player_stats(pbp, weekly = TRUE)
+get_player_stats(pbp, weekly = FALSE)
 }
 \arguments{
 \item{pbp}{A Data frame of NFL play-by-play data \strong{with decoded player IDs}
@@ -19,6 +19,7 @@ A data frame including the following columns:
 \describe{
 \item{player_id}{ID of the player. Use this to join to other sources.}
 \item{player_name}{Name of the player}
+\item{recent_team}{Most recent team player appears in \code{pbp} with.}
 \item{season}{Season if \code{weekly} is \code{TRUE}}
 \item{week}{Week if \code{weekly} is \code{TRUE}}
 \item{completions}{The number of completed passes.}

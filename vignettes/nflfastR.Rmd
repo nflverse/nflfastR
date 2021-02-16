@@ -445,15 +445,13 @@ joined %>%
 
 Not surprisingly, all 5 of the top 5 WRs in terms of EPA added come in ahead of the top RB. Note that the number of targets won't match official stats because we're including plays with penalties.
 
-# Frequent issues
-
-## Replicating official stats
+# Example 11: Replicating official stats
 
 The columns like `name`, `passer`, `fantasy` etc are `nflfastR`-created columns that mimic "real" football: i.e., excluding plays with spikes, counting scrambles and sacks as pass plays, etc. But if you're trying to replicate official statistics -- perhaps for fantasy purposes -- use the `*_player_name` and `*_player_id` columns.
 
 [Let's try to replicate this page of passing leaders](https://www.nfl.com/stats/player-stats/).
 
-``` {r stats}
+``` {r stats1}
 nflfastR::load_pbp(2020) %>%
   dplyr::filter(week <= 17, complete_pass == 1 | incomplete_pass == 1 | interception == 1, !is.na(down)) %>%
   dplyr::group_by(passer_player_name, posteam) %>%
@@ -468,65 +466,48 @@ nflfastR::load_pbp(2020) %>%
   knitr::kable(digits = 0)
 ```
 
-These match the official stats on NFL.com. Note that we're using `passing_yards` here because `yards_gained` is not equal to passing yards on plays with laterals.
+These match the official stats on NFL.com (note the filter for `week <= 17` since official stats only count regular season games). Note that we're using `passing_yards` here because `yards_gained` is not equal to passing yards on plays with laterals.
 
-We can do the same for rush attempts to replicate the [NFL leaderboard](https://www.nfl.com/stats/player-stats/category/rushing/2020/POST/all/rushingyards/desc):
+While the above works, we've also provided a function that does this all for you: `get_player_stats()`. This function takes an `nflfastR` play-by-play dataframe as an input along with one other argument, `weekly`, which defaults to FALSE. When `weekly` is true, a week-by-week dataframe is returned (rather than an aggregate over the whole provided dataframe). Let's again replicate the top 10 players in passing yards:
 
-``` {r stats_rush}
-data <- nflfastR::load_pbp(2020) %>%
-  dplyr::filter(week <= 17, !is.na(down), !is.na(rusher_player_name), play_type %in% c("run", "qb_kneel"))
-
-rushes <- data %>%
-  dplyr::group_by(rusher_player_id, posteam) %>%
-  dplyr::summarize(
-    rusher_player_name = dplyr::first(rusher_player_name),
-    yards = sum(rushing_yards, na.rm = T),
-    tds = sum(touchdown == 1 & td_team == posteam),
-    att = dplyr::n()
-  ) %>%
-  ungroup()
-
-laterals <- data %>%
-  filter(!is.na(lateral_rusher_player_name)) %>%
-  dplyr::group_by(lateral_rusher_player_id) %>%
-  dplyr::summarize(
-    lateral_yards = sum(lateral_rushing_yards, na.rm = T),
-    lateral_tds = sum(touchdown == 1 & td_team == posteam),
-    lateral_att = dplyr::n()
-  ) %>%
-  ungroup() %>%
-  dplyr::rename(
-    rusher_player_id = lateral_rusher_player_id
-  )
-
-rushes %>%
-  dplyr::left_join(laterals, by = c("rusher_player_id")) %>%
-  dplyr::mutate(
-    lateral_yards = dplyr::if_else(is.na(lateral_yards), 0, lateral_yards),
-    lateral_tds = dplyr::if_else(is.na(lateral_tds), 0L, lateral_tds)
-    ) %>%
-  dplyr::mutate(yards = yards + lateral_yards, tds = tds + lateral_tds) %>%
-  dplyr::arrange(-yards) %>%
-  dplyr::select(rusher_player_name, posteam, yards, att, tds) %>%
+``` {r stats2}
+nflfastR::load_pbp(2020) %>%
+  dplyr::filter(week <= 17) %>%
+  nflfastR::get_player_stats() %>%
+  dplyr::arrange(-passing_yards) %>%
+  dplyr::select(player_name, recent_team, completions, attempts, passing_yards, passing_tds, interceptions) %>%
   utils::head(10) %>%
   knitr::kable(digits = 0)
 ```
 
-This matches up exactly, though note the steps we had to go through to correctly account for yards gained on laterals (otherwise we would be missing 2 rushing yards from Chubb in the table above).
+We can do the same for rush attempts to replicate the [NFL leaderboard](https://www.nfl.com/stats/player-stats/category/rushing/2020/POST/all/rushingyards/desc):
+
+``` {r stats_rush}
+nflfastR::load_pbp(2020) %>%
+  dplyr::filter(week <= 17) %>%
+  nflfastR::get_player_stats() %>%
+  dplyr::arrange(-rushing_yards) %>%
+  dplyr::select(player_name, recent_team, carries, rushing_yards, rushing_tds, rushing_fumbles_lost) %>%
+  utils::head(10) %>%
+  knitr::kable(digits = 0)
+```
+
+Again, this matches up exactly, though note the steps we had to go through to correctly account for yards gained on laterals (otherwise we would be missing 2 rushing yards from Chubb in the table above).
 
 ## Fantasy stats
 
-What if we want total yards from scrimmage? Now we can use the `fantasy_player_name` column, which is the rusher on rush plays and receiver on receiving plays.
+What if we want total yards from scrimmage? The harder way is to use the `fantasy_player_name` column, which is the rusher on rush plays and receiver on receiving plays:
 
 ``` {r stats_fantasy}
 nflfastR::load_pbp(2020) %>%
   dplyr::filter(week <= 17, !is.na(down)) %>%
   dplyr::group_by(fantasy_player_name, posteam) %>%
   dplyr::summarize(
-    yards = sum(yards_gained),
-    tds = sum(touchdown == 1 & td_team == posteam),
+    carries = sum(rush_attempt),
+    receptions = sum(complete_pass),
     touches = sum(rush_attempt + complete_pass),
-    receptions = sum(complete_pass)
+    yards = sum(yards_gained),
+    tds = sum(touchdown == 1 & td_team == posteam)
   ) %>%
   dplyr::arrange(-yards) %>%
   utils::head(10) %>%
@@ -535,11 +516,36 @@ nflfastR::load_pbp(2020) %>%
 
 Looking at the [PFR scrimmage stats](https://www.pro-football-reference.com/years/2020/scrimmage.htm), these columns are an exact match.
 
+But we could also just use the `get_player_stats()` function again:
+
+``` {r stats_fantasy2}
+nflfastR::load_pbp(2020) %>%
+  dplyr::filter(week <= 17) %>%
+  nflfastR::get_player_stats() %>%
+  dplyr::mutate(
+    yards = rushing_yards + receiving_yards, 
+    touches = carries + receptions, 
+    tds = rushing_tds + receiving_tds
+  ) %>%
+  dplyr::arrange(-yards) %>%
+  dplyr::select(player_name, recent_team, carries, receptions, touches, yards, tds) %>%
+  utils::head(10) %>%
+  knitr::kable(digits = 0)
+```
+
+And we get the same thing.
+
+# Frequent issues
+
 ## The `drive` column looks wacky
 
 Used `fixed_drive` and `fixed_drive_result` instead. See [Example 4: Using Drive Information].
 
 ## Why are there so many win probability columns?
 
-`vegas_wp` and `vegas_home_wp` incorporate the pregame spread and are much better models. 
+`vegas_wp` and `vegas_home_wp` incorporate the pregame spread and are much better models.
+
+## I'm trying to do X. Help!
+
+Please ask [in the Discord channel](https://discord.gg/5Er2FBnnQa).
 
