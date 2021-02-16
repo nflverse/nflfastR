@@ -51,7 +51,7 @@ get_player_stats <- function(df, weekly = TRUE) {
     dplyr::summarize(
       name_rush = dplyr::first(.data$rusher_player_name),
       yards = sum(.data$rushing_yards, na.rm = T),
-      tds = sum(.data$touchdown == 1 & .data$td_team == posteam),
+      tds = sum(.data$touchdown == 1 & .data$td_team == .data$posteam),
       carries = dplyr::n(),
       fumble_lost_rush = sum(.data$fumble_lost)
     ) %>%
@@ -93,7 +93,7 @@ get_player_stats <- function(df, weekly = TRUE) {
       yards = sum(.data$receiving_yards, na.rm = T),
       rec = sum(.data$complete_pass ==1),
       tgt = dplyr::n(),
-      tds = sum(.data$touchdown == 1 & .data$td_team == posteam),
+      tds = sum(.data$touchdown == 1 & .data$td_team == .data$posteam),
       fumble_lost_rec = sum(.data$fumble_lost)
     ) %>%
     dplyr::ungroup()
