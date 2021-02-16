@@ -24,104 +24,104 @@ get_player_stats <- function(df, weekly = TRUE) {
   # get down to plays that count in official stats
   data <- df %>%
     dplyr::filter(
-      !is.na(down),
-      play_type %in% c("pass", "qb_kneel", "qb_spike", "run")
+      !is.na(.data$down),
+      .data$play_type %in% c("pass", "qb_kneel", "qb_spike", "run")
     )
 
   # get passing stats
   pass_df <- data %>%
-    dplyr::filter(play_type %in% c("pass", "qb_spike")) %>%
-    dplyr::group_by(passer_player_id, week, season) %>%
+    dplyr::filter(.data$play_type %in% c("pass", "qb_spike")) %>%
+    dplyr::group_by(.data$passer_player_id, .data$week, .data$season) %>%
     dplyr::summarize(
-      name_pass = dplyr::first(passer_player_name),
-      passing_yards = sum(passing_yards, na.rm = T),
-      pass_tds = sum(touchdown == 1 & td_team == posteam & complete_pass == 1),
-      ints = sum(interception),
-      att = sum(complete_pass == 1 | incomplete_pass == 1 | interception == 1),
-      cmp = sum(complete_pass == 1),
-      fumble_lost_sack = sum(fumble_lost)
+      name_pass = dplyr::first(.data$passer_player_name),
+      passing_yards = sum(.data$passing_yards, na.rm = T),
+      pass_tds = sum(.data$touchdown == 1 & .data$td_team == .data$posteam & .data$complete_pass == 1),
+      ints = sum(.data$interception),
+      att = sum(.data$complete_pass == 1 | .data$incomplete_pass == 1 | .data$interception == 1),
+      cmp = sum(.data$complete_pass == 1),
+      fumble_lost_sack = sum(.data$fumble_lost)
     ) %>%
-    dplyr::rename(player_id = passer_player_id) %>%
+    dplyr::rename(player_id = .data$passer_player_id) %>%
     dplyr::ungroup()
 
   # rush df 1: primary rusher
   rushes <- data %>%
-    dplyr::filter(play_type %in% c("run", "qb_kneel")) %>%
-    dplyr::group_by(rusher_player_id, week, season) %>%
+    dplyr::filter(.data$play_type %in% c("run", "qb_kneel")) %>%
+    dplyr::group_by(.data$rusher_player_id, .data$week, .data$season) %>%
     dplyr::summarize(
-      name_rush = dplyr::first(rusher_player_name),
-      yards = sum(rushing_yards, na.rm = T),
-      tds = sum(touchdown == 1 & td_team == posteam),
+      name_rush = dplyr::first(.data$rusher_player_name),
+      yards = sum(.data$rushing_yards, na.rm = T),
+      tds = sum(.data$touchdown == 1 & .data$td_team == posteam),
       carries = dplyr::n(),
-      fumble_lost_rush = sum(fumble_lost)
+      fumble_lost_rush = sum(.data$fumble_lost)
     ) %>%
     dplyr::ungroup()
 
   # rush df 2: lateral
   laterals <- data %>%
-    dplyr::filter(!is.na(lateral_rusher_player_id)) %>%
-    dplyr::group_by(lateral_rusher_player_id, week, season) %>%
+    dplyr::filter(!is.na(.data$lateral_rusher_player_id)) %>%
+    dplyr::group_by(.data$lateral_rusher_player_id, .data$week, .data$season) %>%
     dplyr::summarize(
-      lateral_yards = sum(lateral_rushing_yards, na.rm = T),
-      lateral_tds = sum(touchdown == 1 & td_team == posteam),
+      lateral_yards = sum(.data$lateral_rushing_yards, na.rm = T),
+      lateral_tds = sum(.data$touchdown == 1 & .data$td_team == .data$posteam),
       lateral_att = dplyr::n()
     ) %>%
     dplyr::ungroup() %>%
     dplyr::rename(
-      rusher_player_id = lateral_rusher_player_id
+      rusher_player_id = .data$lateral_rusher_player_id
     )
 
   # rush df: join
   rush_df <- rushes %>%
     dplyr::left_join(laterals, by = c("rusher_player_id", "week", "season")) %>%
     dplyr::mutate(
-      lateral_yards = dplyr::if_else(is.na(lateral_yards), 0, lateral_yards),
-      lateral_tds = dplyr::if_else(is.na(lateral_tds), 0L, lateral_tds)
+      lateral_yards = dplyr::if_else(is.na(.data$lateral_yards), 0, .data$lateral_yards),
+      lateral_tds = dplyr::if_else(is.na(.data$lateral_tds), 0L, .data$lateral_tds)
     ) %>%
-    dplyr::mutate(rushing_yards = yards + lateral_yards, tds_rush = tds + lateral_tds) %>%
-    dplyr::rename(player_id = rusher_player_id) %>%
-    dplyr::select(player_id, week, season, name_rush, rushing_yards, carries, tds_rush, fumble_lost_rush) %>%
+    dplyr::mutate(rushing_yards = .data$yards + .data$lateral_yards, tds_rush = .data$tds + .data$lateral_tds) %>%
+    dplyr::rename(player_id = .data$rusher_player_id) %>%
+    dplyr::select("player_id", "week", "season", "name_rush", "rushing_yards", "carries", "tds_rush", "fumble_lost_rush") %>%
     dplyr::ungroup()
 
 
   # receiver df 1: primary receiver
   rec <- data %>%
-    dplyr::filter(!is.na(receiver_player_id)) %>%
-    dplyr::group_by(receiver_player_id, week, season) %>%
+    dplyr::filter(!is.na(.data$receiver_player_id)) %>%
+    dplyr::group_by(.data$receiver_player_id, .data$week, .data$season) %>%
     dplyr::summarize(
-      name_receiver = dplyr::first(receiver_player_name),
-      yards = sum(receiving_yards, na.rm = T),
-      rec = sum(complete_pass ==1),
+      name_receiver = dplyr::first(.data$receiver_player_name),
+      yards = sum(.data$receiving_yards, na.rm = T),
+      rec = sum(.data$complete_pass ==1),
       tgt = dplyr::n(),
-      tds = sum(touchdown == 1 & td_team == posteam),
-      fumble_lost_rec = sum(fumble_lost)
+      tds = sum(.data$touchdown == 1 & .data$td_team == posteam),
+      fumble_lost_rec = sum(.data$fumble_lost)
     ) %>%
     dplyr::ungroup()
 
   # receiver df 2: lateral
   laterals <- data %>%
-    dplyr::filter(!is.na(lateral_receiver_player_id)) %>%
-    dplyr::group_by(lateral_receiver_player_id, week, season) %>%
+    dplyr::filter(!is.na(.data$lateral_receiver_player_id)) %>%
+    dplyr::group_by(.data$lateral_receiver_player_id, .data$week, .data$season) %>%
     dplyr::summarize(
-      lateral_yards = sum(lateral_receiving_yards, na.rm = T),
-      lateral_tds = sum(touchdown == 1 & td_team == posteam),
+      lateral_yards = sum(.data$lateral_receiving_yards, na.rm = T),
+      lateral_tds = sum(.data$touchdown == 1 & .data$td_team == .data$posteam),
       lateral_att = dplyr::n()
     ) %>%
     dplyr::ungroup() %>%
     dplyr::rename(
-      receiver_player_id = lateral_receiver_player_id
+      receiver_player_id = .data$lateral_receiver_player_id
     )
 
   # rec df: join
   rec_df <- rec %>%
     dplyr::left_join(laterals, by = c("receiver_player_id", "week", "season")) %>%
     dplyr::mutate(
-      lateral_yards = dplyr::if_else(is.na(lateral_yards), 0, lateral_yards),
-      lateral_tds = dplyr::if_else(is.na(lateral_tds), 0L, lateral_tds)
+      lateral_yards = dplyr::if_else(is.na(.data$lateral_yards), 0, .data$lateral_yards),
+      lateral_tds = dplyr::if_else(is.na(.data$lateral_tds), 0L, .data$lateral_tds)
     ) %>%
-    dplyr::mutate(receiving_yards = yards + lateral_yards, tds_rec = tds + lateral_tds) %>%
-    dplyr::rename(player_id = receiver_player_id) %>%
-    dplyr::select(player_id, week, season, name_receiver, receiving_yards, rec, tgt, tds_rec, fumble_lost_rec)
+    dplyr::mutate(receiving_yards = .data$yards + .data$lateral_yards, tds_rec = .data$tds + .data$lateral_tds) %>%
+    dplyr::rename(player_id = .data$receiver_player_id) %>%
+    dplyr::select("player_id", "week", "season", "name_receiver", "receiving_yards", "rec", "tgt", "tds_rec", "fumble_lost_rec")
 
   # combine all the stats together
   player_df <- pass_df %>%
@@ -129,15 +129,15 @@ get_player_stats <- function(df, weekly = TRUE) {
     dplyr::full_join(rec_df, by = c("player_id", "week", "season")) %>%
     dplyr::mutate(
       player_name = dplyr::case_when(
-        !is.na(name_pass) ~ name_pass,
-        !is.na(name_rush) ~ name_rush,
-        TRUE ~ name_receiver
+        !is.na(.data$name_pass) ~ .data$name_pass,
+        !is.na(.data$name_rush) ~ .data$name_rush,
+        TRUE ~ .data$name_receiver
       )
     ) %>%
     dplyr::select(
-      player_id, player_name, season, week, cmp, att, passing_yards, pass_tds, ints, fumble_lost_sack,
-      carries, rushing_yards, tds_rush, fumble_lost_rush,
-      rec, tgt, receiving_yards, tds_rec, fumble_lost_rec
+      "player_id", "player_name", "season", "week", "cmp", "att", "passing_yards", "pass_tds", "ints", "fumble_lost_sack",
+      "carries", "rushing_yards", "tds_rush", "fumble_lost_rush",
+      "rec", "tgt", "receiving_yards", "tds_rec", "fumble_lost_rec"
     ) %>%
     replace(is.na(.), 0) %>%
     dplyr::ungroup()
@@ -145,23 +145,23 @@ get_player_stats <- function(df, weekly = TRUE) {
   # if user doesn't want week-by-week input, aggregate the whole df
   if (weekly == FALSE) {
     player_df <- player_df %>%
-      dplyr::group_by(player_id, player_name) %>%
+      dplyr::group_by(.data$player_id, .data$player_name) %>%
       dplyr::summarise(
-        cmp = sum(cmp),
-        att = sum(att),
-        passing_yards = sum(passing_yards),
-        pass_tds = sum(pass_tds),
-        ints = sum(ints),
-        fumble_lost_sack = sum(fumble_lost_sack),
-        carries = sum(carries),
-        rushing_yards = sum(rushing_yards),
-        tds_rush = sum(tds_rush),
-        fumble_lost_rush = sum(fumble_lost_rush),
-        rec = sum(rec),
-        tgt = sum(tgt),
-        receiving_yards = sum(receiving_yards),
-        tds_rec = sum(tds_rec),
-        fumble_lost_rec = sum(fumble_lost_rec)
+        cmp = sum(.data$cmp),
+        att = sum(.data$att),
+        passing_yards = sum(.data$passing_yards),
+        pass_tds = sum(.data$pass_tds),
+        ints = sum(.data$ints),
+        fumble_lost_sack = sum(.data$fumble_lost_sack),
+        carries = sum(.data$carries),
+        rushing_yards = sum(.data$rushing_yards),
+        tds_rush = sum(.data$tds_rush),
+        fumble_lost_rush = sum(.data$fumble_lost_rush),
+        rec = sum(.data$rec),
+        tgt = sum(.data$tgt),
+        receiving_yards = sum(.data$receiving_yards),
+        tds_rec = sum(.data$tds_rec),
+        fumble_lost_rec = sum(.data$fumble_lost_rec)
       ) %>%
       dplyr::ungroup()
   }
