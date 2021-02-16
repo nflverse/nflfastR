@@ -80,7 +80,8 @@ get_player_stats <- function(df, weekly = TRUE) {
     ) %>%
     dplyr::mutate(rushing_yards = yards + lateral_yards, tds_rush = tds + lateral_tds) %>%
     dplyr::rename(player_id = rusher_player_id) %>%
-    dplyr::select(player_id, week, season, name_rush, rushing_yards, carries, tds_rush, fumble_lost_rush)
+    dplyr::select(player_id, week, season, name_rush, rushing_yards, carries, tds_rush, fumble_lost_rush) %>%
+    dplyr::ungroup()
 
 
   # receiver df 1: primary receiver
@@ -138,7 +139,8 @@ get_player_stats <- function(df, weekly = TRUE) {
       carries, rushing_yards, tds_rush, fumble_lost_rush,
       rec, tgt, receiving_yards, tds_rec, fumble_lost_rec
     ) %>%
-    replace(is.na(.), 0)
+    replace(is.na(.), 0) %>%
+    dplyr::ungroup()
 
   # if user doesn't want week-by-week input, aggregate the whole df
   if (weekly == FALSE) {
@@ -160,7 +162,8 @@ get_player_stats <- function(df, weekly = TRUE) {
         receiving_yards = sum(receiving_yards),
         tds_rec = sum(tds_rec),
         fumble_lost_rec = sum(fumble_lost_rec)
-      )
+      ) %>%
+      dplyr::ungroup()
   }
 
   return(player_df)
