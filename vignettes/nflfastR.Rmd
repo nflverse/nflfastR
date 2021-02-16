@@ -400,7 +400,7 @@ The presence of so many running backs on this list suggests that even though it 
 
 # Example 10: Working with roster and position data
 
-At long last, there's a way to merge the new play-by-play data with roster information. The easy part is getting the rosters:
+At long last, there's a way to merge the new play-by-play data with roster information. Use the function to get the rosters:
 
 ``` {r roster}
 roster <- nflfastR::fast_scraper_roster(2019)
@@ -411,33 +411,17 @@ Now let's load play-by-play data from 2019:
 games_2019 <- nflfastR::load_pbp(2019)
 ```
 
-Here is what the new player IDs look like:
+Here is what the player IDs look like because `nflfastR` now automatically decodes IDs to look like the old format with GSIS IDs:
 
 ``` {r roster_pbp}
 games_2019 %>%
   dplyr::filter(rush == 1 | pass == 1, posteam == "SEA") %>%
-  dplyr::select(desc, name, id)
-```
-
-But these IDs aren't very useful. So we need to decode them using the new function `decode_player_ids`:
-
-``` {r roster_decode_ex}
-games_2019 %>%
-  dplyr::filter(rush == 1 | pass == 1, posteam == "SEA") %>%
-  nflfastR::decode_player_ids() %>%
-  dplyr::select(desc, name, id)
-```
-
-So now we have the familiar GSIS IDs. Let's apply this to the whole dataframe:
-
-``` {r pbp_decode}
-decoded_pbp <- games_2019 %>%
-  nflfastR::decode_player_ids()
+  dplyr::select(name, id)
 ```
 
 Now we're ready to join to the roster data using these IDs:
 ``` {r decode_join}
-joined <- decoded_pbp %>%
+joined <- games_2019 %>%
   dplyr::filter(!is.na(receiver_id)) %>%
   dplyr::select(posteam, season, desc, receiver, receiver_id, epa) %>%
   dplyr::left_join(roster, by = c("receiver_id" = "gsis_id"))
@@ -474,7 +458,7 @@ nflfastR::load_pbp(2020) %>%
   dplyr::filter(week <= 17, complete_pass == 1 | incomplete_pass == 1 | interception == 1, !is.na(down)) %>%
   dplyr::group_by(passer_player_name, posteam) %>%
   dplyr::summarize(
-    yards = sum(yards_gained),
+    yards = sum(passing_yards, na.rm = T),
     tds = sum(touchdown == 1 & td_team == posteam),
     ints = sum(interception),
     att = dplyr::n()
@@ -484,25 +468,51 @@ nflfastR::load_pbp(2020) %>%
   knitr::kable(digits = 0)
 ```
 
-These match the official stats on NFL.com with the exception of Watson missing 22 passing yards (this is a bug related to laterals where he's missing yardage from the final play of the week 16 game against the Bengals).
+These match the official stats on NFL.com. Note that we're using `passing_yards` here because `yards_gained` is not equal to passing yards on plays with laterals.
 
 We can do the same for rush attempts to replicate the [NFL leaderboard](https://www.nfl.com/stats/player-stats/category/rushing/2020/POST/all/rushingyards/desc):
 
 ``` {r stats_rush}
-nflfastR::load_pbp(2020) %>%
-  dplyr::filter(week <= 17, !is.na(down)) %>%
-  dplyr::group_by(rusher_player_name, posteam) %>%
+data <- nflfastR::load_pbp(2020) %>%
+  dplyr::filter(week <= 17, !is.na(down), !is.na(rusher_player_name), play_type %in% c("run", "qb_kneel"))
+
+rushes <- data %>%
+  dplyr::group_by(rusher_player_id, posteam) %>%
   dplyr::summarize(
-    yards = sum(yards_gained),
+    rusher_player_name = dplyr::first(rusher_player_name),
+    yards = sum(rushing_yards, na.rm = T),
     tds = sum(touchdown == 1 & td_team == posteam),
     att = dplyr::n()
   ) %>%
+  ungroup()
+
+laterals <- data %>%
+  filter(!is.na(lateral_rusher_player_name)) %>%
+  dplyr::group_by(lateral_rusher_player_id) %>%
+  dplyr::summarize(
+    lateral_yards = sum(lateral_rushing_yards, na.rm = T),
+    lateral_tds = sum(touchdown == 1 & td_team == posteam),
+    lateral_att = dplyr::n()
+  ) %>%
+  ungroup() %>%
+  dplyr::rename(
+    rusher_player_id = lateral_rusher_player_id
+  )
+
+rushes %>%
+  dplyr::left_join(laterals, by = c("rusher_player_id")) %>%
+  dplyr::mutate(
+    lateral_yards = dplyr::if_else(is.na(lateral_yards), 0, lateral_yards),
+    lateral_tds = dplyr::if_else(is.na(lateral_tds), 0L, lateral_tds)
+    ) %>%
+  dplyr::mutate(yards = yards + lateral_yards, tds = tds + lateral_tds) %>%
   dplyr::arrange(-yards) %>%
+  dplyr::select(rusher_player_name, posteam, yards, att, tds) %>%
   utils::head(10) %>%
   knitr::kable(digits = 0)
 ```
 
-This matches up exactly.
+This matches up exactly, though note the steps we had to go through to correctly account for yards gained on laterals (otherwise we would be missing 2 rushing yards from Chubb in the table above).
 
 ## Fantasy stats
 
