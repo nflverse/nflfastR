@@ -6,19 +6,24 @@
 #' Get official game stats
 #'
 #' @param df is a Data frame of play-by-play data scraped using [fast_scraper()].
-#' @param weekly Defaults to TRUE. If true, returns week-by-week stats, otherwise, stats
-#' for the entire dataframe.
+#' @param weekly If `TRUE`, returns week-by-week stats, otherwise, stats
+#' for the entire Data frame. This is the default.
 #' @details Build columns that aggregate official passing, rushing, and receiving stats
 #' at the game level or at the level of the entire df passed.
-#' @return The following columns
+#' @return A data frame including the following columns:
 #' \describe{
 #' \item{player_id}{ID of the player. Use this to join to other sources.}
 #' \item{player_name}{Name of the player}
-#' \item{season}{Season if `weekly` is TRUE}
-#' \item{week}{Week if `weekly` is TRUE}
+#' \item{season}{Season if `weekly` is `TRUE`}
+#' \item{week}{Week if `weekly` is `TRUE`}
 #' \item{other_things}{fill this out}
 #' }
 #' @export
+#' @examples
+#' \donttest{
+#' pbp <- nflfastR::load_pbp(2020)
+#' get_player_stats(pbp)
+#' }
 get_player_stats <- function(df, weekly = TRUE) {
 
   # get down to plays that count in official stats
@@ -144,7 +149,7 @@ get_player_stats <- function(df, weekly = TRUE) {
   player_df[is.na(player_df)] = 0
 
   # if user doesn't want week-by-week input, aggregate the whole df
-  if (weekly == FALSE) {
+  if (isFALSE(weekly)) {
     player_df <- player_df %>%
       dplyr::group_by(.data$player_id, .data$player_name) %>%
       dplyr::summarise(
