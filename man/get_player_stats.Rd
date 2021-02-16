@@ -21,30 +21,32 @@ A data frame including the following columns:
 \item{player_name}{Name of the player}
 \item{season}{Season if \code{weekly} is \code{TRUE}}
 \item{week}{Week if \code{weekly} is \code{TRUE}}
-\item{cmp}{The number of completed passes.}
-\item{att}{The number of pass attempts as defined by the NFL.}
+\item{completions}{The number of completed passes.}
+\item{attempts}{The number of pass attempts as defined by the NFL.}
 \item{passing_yards}{Yards gained on pass plays.}
-\item{pass_tds}{The number of passing touchdowns.}
-\item{ints}{The number of interceptions thrown.}
-\item{fumble_lost_sack}{The number of sacks with a lost fumble.}
-\item{carries}{The number of rush attempts (incl. scrambles). Rushes after
-a lateral reception don't count as carry.}
-\item{rushing_yards}{Yards gained when rushing with the ball (incl. scrambles).
-Also includes yards gained after receiving a lateral on a play that started
+\item{passing_tds}{The number of passing touchdowns.}
+\item{interceptions}{The number of interceptions thrown.}
+\item{sack_fumbles_lost}{The number of sacks with a lost fumble.}
+\item{passing_air_yards}{Passing air yards.}
+\item{carries}{The number of official rush attempts (incl. scrambles and kneel downs).
+Rushes after a lateral reception don't count as carry.}
+\item{rushing_yards}{Yards gained when rushing with the ball (incl. scrambles and kneel downs).
+Also includes yards gained after obtaining a lateral on a play that started
 with a rushing attempt.}
-\item{tds_rush}{The number of rushing touchdowns (incl. scrambles).
-Also includes touchdowns after receiving a lateral on a play that started
+\item{rushing_tds}{The number of rushing touchdowns (incl. scrambles).
+Also includes touchdowns after obtaining a lateral on a play that started
 with a rushing attempt.}
-\item{fumble_lost_rush}{The number of rushes with a lost fumble.}
-\item{rec}{The number of pass receptions. Lateral receptions officially
+\item{rushing_fumbles_lost}{The number of rushes with a lost fumble.}
+\item{receptions}{The number of pass receptions. Lateral receptions officially
 don't count as reception.}
-\item{tgt}{The number of pass plays where the player was the targeted receiver.}
+\item{targets}{The number of pass plays where the player was the targeted receiver.}
 \item{receiving_yards}{Yards gained after a pass reception. Includes yards
 gained after receiving a lateral on a play that started as a pass play.}
-\item{tds_rec}{The number of touchdowns following a pass reception.
+\item{receiving_tds}{The number of touchdowns following a pass reception.
 Also includes touchdowns after receiving a lateral on a play that started
 as a pass play.}
-\item{fumble_lost_rec}{The number of fumbles after a pass reception.}
+\item{receiving_air_yards}{Receiving air yards.}
+\item{receiving_fumbles_lost}{The number of fumbles after a pass reception.}
 }
 }
 \description{
