@@ -191,7 +191,11 @@ get_player_stats <- function(pbp, weekly = TRUE) {
       lateral_yards = dplyr::if_else(is.na(.data$lateral_yards), 0, .data$lateral_yards),
       lateral_tds = dplyr::if_else(is.na(.data$lateral_tds), 0L, .data$lateral_tds)
     ) %>%
-    dplyr::mutate(receiving_yards = .data$yards + .data$lateral_yards, receiving_tds = .data$tds + .data$lateral_tds) %>%
+    dplyr::mutate(
+      receiving_yards = .data$yards + .data$lateral_yards,
+      receiving_tds = .data$tds + .data$lateral_tds,
+      receiving_yards_after_catch = .data$receiving_yards_after_catch + .data$lateral_yards
+      ) %>%
     dplyr::rename(player_id = .data$receiver_player_id) %>%
     dplyr::select("player_id", "week", "season", "name_receiver", "receiving_yards", "receiving_air_yards", "receiving_yards_after_catch", "receptions", "targets", "receiving_tds", "receiving_fumbles_lost")
 
