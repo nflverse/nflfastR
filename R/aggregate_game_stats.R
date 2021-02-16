@@ -26,6 +26,16 @@
 #' }
 get_player_stats <- function(df, weekly = TRUE) {
 
+  # load plays with multiple laterals
+  con <- url("https://github.com/mrcaseb/nfl-data/blob/master/data/lateral_yards/multiple_lateral_yards.rds?raw=true")
+  mult_lats <- readRDS(con) %>%
+    dplyr::mutate(
+      season = substr(game_id, 1, 4) %>% as.integer(),
+      week = substr(game_id, 6, 7) %>% as.integer()
+    ) %>%
+    dplyr::filter(yards != 0)
+  close(con)
+
   # get down to plays that count in official stats
   data <- df %>%
     dplyr::filter(
@@ -39,7 +49,7 @@ get_player_stats <- function(df, weekly = TRUE) {
     dplyr::group_by(.data$passer_player_id, .data$week, .data$season) %>%
     dplyr::summarize(
       name_pass = dplyr::first(.data$passer_player_name),
-      passing_yards = sum(.data$passing_yards, na.rm = T),
+      passing_yards = sum(.data$passing_yards, na.rm = TRUE),
       pass_tds = sum(.data$touchdown == 1 & .data$td_team == .data$posteam & .data$complete_pass == 1),
       ints = sum(.data$interception),
       att = sum(.data$complete_pass == 1 | .data$incomplete_pass == 1 | .data$interception == 1),
@@ -55,7 +65,7 @@ get_player_stats <- function(df, weekly = TRUE) {
     dplyr::group_by(.data$rusher_player_id, .data$week, .data$season) %>%
     dplyr::summarize(
       name_rush = dplyr::first(.data$rusher_player_name),
-      yards = sum(.data$rushing_yards, na.rm = T),
+      yards = sum(.data$rushing_yards, na.rm = TRUE),
       tds = sum(.data$touchdown == 1 & .data$td_team == .data$posteam),
       carries = dplyr::n(),
       fumble_lost_rush = sum(.data$fumble_lost)
@@ -67,7 +77,7 @@ get_player_stats <- function(df, weekly = TRUE) {
     dplyr::filter(!is.na(.data$lateral_rusher_player_id)) %>%
     dplyr::group_by(.data$lateral_rusher_player_id, .data$week, .data$season) %>%
     dplyr::summarize(
-      lateral_yards = sum(.data$lateral_rushing_yards, na.rm = T),
+      lateral_yards = sum(.data$lateral_rushing_yards, na.rm = TRUE),
       lateral_tds = sum(.data$touchdown == 1 & .data$td_team == .data$posteam),
       lateral_att = dplyr::n()
     ) %>%
@@ -95,7 +105,7 @@ get_player_stats <- function(df, weekly = TRUE) {
     dplyr::group_by(.data$receiver_player_id, .data$week, .data$season) %>%
     dplyr::summarize(
       name_receiver = dplyr::first(.data$receiver_player_name),
-      yards = sum(.data$receiving_yards, na.rm = T),
+      yards = sum(.data$receiving_yards, na.rm = TRUE),
       rec = sum(.data$complete_pass == 1),
       tgt = dplyr::n(),
       tds = sum(.data$touchdown == 1 & .data$td_team == .data$posteam),
@@ -108,7 +118,7 @@ get_player_stats <- function(df, weekly = TRUE) {
     dplyr::filter(!is.na(.data$lateral_receiver_player_id)) %>%
     dplyr::group_by(.data$lateral_receiver_player_id, .data$week, .data$season) %>%
     dplyr::summarize(
-      lateral_yards = sum(.data$lateral_receiving_yards, na.rm = T),
+      lateral_yards = sum(.data$lateral_receiving_yards, na.rm = TRUE),
       lateral_tds = sum(.data$touchdown == 1 & .data$td_team == .data$posteam),
       lateral_att = dplyr::n()
     ) %>%
