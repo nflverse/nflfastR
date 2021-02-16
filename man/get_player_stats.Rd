@@ -27,7 +27,8 @@ A data frame including the following columns:
 \item{passing_tds}{The number of passing touchdowns.}
 \item{interceptions}{The number of interceptions thrown.}
 \item{sack_fumbles_lost}{The number of sacks with a lost fumble.}
-\item{passing_air_yards}{Passing air yards.}
+\item{passing_air_yards}{Passing air yards (includes incomplete passes).}
+\item{passing_yards_after_catch}{Passing yards.}
 \item{carries}{The number of official rush attempts (incl. scrambles and kneel downs).
 Rushes after a lateral reception don't count as carry.}
 \item{rushing_yards}{Yards gained when rushing with the ball (incl. scrambles and kneel downs).
@@ -45,7 +46,8 @@ gained after receiving a lateral on a play that started as a pass play.}
 \item{receiving_tds}{The number of touchdowns following a pass reception.
 Also includes touchdowns after receiving a lateral on a play that started
 as a pass play.}
-\item{receiving_air_yards}{Receiving air yards.}
+\item{receiving_air_yards}{Receiving air yards (includes incomplete passes).}
+\item{receiving_yards_after_catch}{Yards after the catch gained on plays in which player was receiver.}
 \item{receiving_fumbles_lost}{The number of fumbles after a pass reception.}
 }
 }

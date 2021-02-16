@@ -24,7 +24,8 @@
 #' \item{passing_tds}{The number of passing touchdowns.}
 #' \item{interceptions}{The number of interceptions thrown.}
 #' \item{sack_fumbles_lost}{The number of sacks with a lost fumble.}
-#' \item{passing_air_yards}{Passing air yards.}
+#' \item{passing_air_yards}{Passing air yards (includes incomplete passes).}
+#' \item{passing_yards_after_catch}{Passing yards.}
 #' \item{carries}{The number of official rush attempts (incl. scrambles and kneel downs).
 #' Rushes after a lateral reception don't count as carry.}
 #' \item{rushing_yards}{Yards gained when rushing with the ball (incl. scrambles and kneel downs).
@@ -42,7 +43,8 @@
 #' \item{receiving_tds}{The number of touchdowns following a pass reception.
 #' Also includes touchdowns after receiving a lateral on a play that started
 #' as a pass play.}
-#' \item{receiving_air_yards}{Receiving air yards.}
+#' \item{receiving_air_yards}{Receiving air yards (includes incomplete passes).}
+#' \item{receiving_yards_after_catch}{Yards after the catch gained on plays in which player was receiver.}
 #' \item{receiving_fumbles_lost}{The number of fumbles after a pass reception.}
 #' }
 #' @export
@@ -86,6 +88,7 @@ get_player_stats <- function(pbp, weekly = TRUE) {
     dplyr::filter(.data$play_type %in% c("pass", "qb_spike")) %>%
     dplyr::group_by(.data$passer_player_id, .data$week, .data$season) %>%
     dplyr::summarize(
+      passing_yards_after_catch = sum((.data$passing_yards - .data$air_yards) * .data$complete_pass, na.rm = T),
       name_pass = dplyr::first(.data$passer_player_name),
       passing_yards = sum(.data$passing_yards, na.rm = TRUE),
       passing_tds = sum(.data$touchdown == 1 & .data$td_team == .data$posteam & .data$complete_pass == 1),
@@ -150,6 +153,7 @@ get_player_stats <- function(pbp, weekly = TRUE) {
     dplyr::filter(!is.na(.data$receiver_player_id)) %>%
     dplyr::group_by(.data$receiver_player_id, .data$week, .data$season) %>%
     dplyr::summarize(
+      receiving_yards_after_catch = sum((.data$passing_yards - .data$air_yards) * .data$complete_pass, na.rm = T),
       name_receiver = dplyr::first(.data$receiver_player_name),
       yards = sum(.data$receiving_yards, na.rm = TRUE),
       receptions = sum(.data$complete_pass == 1),
@@ -189,7 +193,7 @@ get_player_stats <- function(pbp, weekly = TRUE) {
     ) %>%
     dplyr::mutate(receiving_yards = .data$yards + .data$lateral_yards, receiving_tds = .data$tds + .data$lateral_tds) %>%
     dplyr::rename(player_id = .data$receiver_player_id) %>%
-    dplyr::select("player_id", "week", "season", "name_receiver", "receiving_yards", "receiving_air_yards", "receptions", "targets", "receiving_tds", "receiving_fumbles_lost")
+    dplyr::select("player_id", "week", "season", "name_receiver", "receiving_yards", "receiving_air_yards", "receiving_yards_after_catch", "receptions", "targets", "receiving_tds", "receiving_fumbles_lost")
 
   # combine all the stats together
   player_df <- pass_df %>%
@@ -203,9 +207,9 @@ get_player_stats <- function(pbp, weekly = TRUE) {
       )
     ) %>%
     dplyr::select(
-      "player_id", "player_name", "season", "week", "completions", "attempts", "passing_yards", "passing_tds", "interceptions", "passing_air_yards", "sack_fumbles_lost",
+      "player_id", "player_name", "season", "week", "completions", "attempts", "passing_yards", "passing_tds", "interceptions", "passing_air_yards", "passing_yards_after_catch", "sack_fumbles_lost",
       "carries", "rushing_yards", "rushing_tds", "rushing_fumbles_lost",
-      "receptions", "targets", "receiving_yards", "receiving_tds", "receiving_air_yards", "receiving_fumbles_lost"
+      "receptions", "targets", "receiving_yards", "receiving_tds", "receiving_air_yards", "receiving_yards_after_catch", "receiving_fumbles_lost"
     )
 
   player_df[is.na(player_df)] <- 0
@@ -221,6 +225,7 @@ get_player_stats <- function(pbp, weekly = TRUE) {
         passing_tds = sum(.data$passing_tds),
         interceptions = sum(.data$interceptions),
         passing_air_yards = sum(.data$passing_air_yards),
+        passing_yards_after_catch = sum(.data$passing_yards_after_catch),
         sack_fumbles_lost = sum(.data$sack_fumbles_lost),
         carries = sum(.data$carries),
         rushing_yards = sum(.data$rushing_yards),
@@ -231,6 +236,7 @@ get_player_stats <- function(pbp, weekly = TRUE) {
         receiving_yards = sum(.data$receiving_yards),
         receiving_tds = sum(.data$receiving_tds),
         receiving_air_yards = sum(.data$receiving_air_yards),
+        receiving_yards_after_catch = sum(.data$receiving_yards_after_catch),
         receiving_fumbles_lost = sum(.data$receiving_fumbles_lost)
       ) %>%
       dplyr::ungroup()
