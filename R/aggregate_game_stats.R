@@ -96,7 +96,7 @@ get_player_stats <- function(df, weekly = TRUE) {
     dplyr::summarize(
       name_receiver = dplyr::first(.data$receiver_player_name),
       yards = sum(.data$receiving_yards, na.rm = T),
-      rec = sum(.data$complete_pass ==1),
+      rec = sum(.data$complete_pass == 1),
       tgt = dplyr::n(),
       tds = sum(.data$touchdown == 1 & .data$td_team == .data$posteam),
       fumble_lost_rec = sum(.data$fumble_lost)
@@ -143,10 +143,9 @@ get_player_stats <- function(df, weekly = TRUE) {
       "player_id", "player_name", "season", "week", "cmp", "att", "passing_yards", "pass_tds", "ints", "fumble_lost_sack",
       "carries", "rushing_yards", "tds_rush", "fumble_lost_rush",
       "rec", "tgt", "receiving_yards", "tds_rec", "fumble_lost_rec"
-    ) %>%
-    dplyr::ungroup()
+    )
 
-  player_df[is.na(player_df)] = 0
+  player_df[is.na(player_df)] <- 0
 
   # if user doesn't want week-by-week input, aggregate the whole df
   if (isFALSE(weekly)) {
@@ -173,5 +172,4 @@ get_player_stats <- function(df, weekly = TRUE) {
   }
 
   return(player_df)
-
 }
