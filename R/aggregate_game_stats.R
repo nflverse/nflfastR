@@ -105,9 +105,10 @@ get_player_stats <- function(pbp, weekly = TRUE) {
     dplyr::summarize(
       name_rush = dplyr::first(.data$rusher_player_name),
       yards = sum(.data$rushing_yards, na.rm = TRUE),
-      tds = sum(.data$touchdown == 1 & .data$td_team == .data$posteam),
+      # for TDs and lost fumbles, the player only scored them if he didn't lateral first
+      tds = sum(.data$touchdown == 1 & .data$td_team == .data$posteam & is.na(.data$lateral_rusher_player_id)),
       carries = dplyr::n(),
-      rushing_fumbles_lost = sum(.data$fumble_lost)
+      rushing_fumbles_lost = sum(.data$fumble_lost == 1 & is.na(.data$lateral_rusher_player_id))
     ) %>%
     dplyr::ungroup()
 
@@ -153,8 +154,8 @@ get_player_stats <- function(pbp, weekly = TRUE) {
       yards = sum(.data$receiving_yards, na.rm = TRUE),
       receptions = sum(.data$complete_pass == 1),
       targets = dplyr::n(),
-      tds = sum(.data$touchdown == 1 & .data$td_team == .data$posteam),
-      receiving_fumbles_lost = sum(.data$fumble_lost),
+      tds = sum(.data$touchdown == 1 & .data$td_team == .data$posteam & is.na(.data$lateral_receiver_player_id)),
+      receiving_fumbles_lost = sum(.data$fumble_lost == 1 & is.na(.data$lateral_receiver_player_id)),
       receiving_air_yards = sum(.data$air_yards, na.rm = T)
     ) %>%
     dplyr::ungroup()
