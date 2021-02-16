@@ -139,8 +139,9 @@ get_player_stats <- function(df, weekly = TRUE) {
       "carries", "rushing_yards", "tds_rush", "fumble_lost_rush",
       "rec", "tgt", "receiving_yards", "tds_rec", "fumble_lost_rec"
     ) %>%
-    replace(is.na(.), 0) %>%
     dplyr::ungroup()
+
+  player_df[is.na(player_df)] = 0
 
   # if user doesn't want week-by-week input, aggregate the whole df
   if (weekly == FALSE) {
