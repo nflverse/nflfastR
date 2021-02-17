@@ -9,7 +9,7 @@ fast_scraper_schedules(seasons, pp = lifecycle::deprecated())
 \arguments{
 \item{seasons}{Vector of numeric or character 4 digit seasons}
 
-\item{pp}{\ifelse{html}{\figure{lifecycle-deprecated.svg}{options: alt='Deprecated lifecycle'}}{\strong{Deprecated}} has no effect and will be
+\item{pp}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} has no effect and will be
 removed in a future release.}
 }
 \value{
