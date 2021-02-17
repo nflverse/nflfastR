@@ -92,7 +92,7 @@ get_player_stats <- function(pbp, weekly = FALSE) {
     dplyr::filter(.data$play_type %in% c("pass", "qb_spike")) %>%
     dplyr::group_by(.data$passer_player_id, .data$week, .data$season) %>%
     dplyr::summarize(
-      passing_yards_after_catch = sum((.data$passing_yards - .data$air_yards) * .data$complete_pass, na.rm = T),
+      passing_yards_after_catch = sum((.data$passing_yards - .data$air_yards) * .data$complete_pass, na.rm = TRUE),
       name_pass = dplyr::first(.data$passer_player_name),
       team_pass = dplyr::first(.data$posteam),
       passing_yards = sum(.data$passing_yards, na.rm = TRUE),
@@ -101,7 +101,7 @@ get_player_stats <- function(pbp, weekly = FALSE) {
       attempts = sum(.data$complete_pass == 1 | .data$incomplete_pass == 1 | .data$interception == 1),
       completions = sum(.data$complete_pass == 1),
       sack_fumbles_lost = sum(.data$fumble_lost),
-      passing_air_yards = sum(.data$air_yards, na.rm = T)
+      passing_air_yards = sum(.data$air_yards, na.rm = TRUE)
     ) %>%
     dplyr::rename(player_id = .data$passer_player_id) %>%
     dplyr::ungroup()
@@ -159,7 +159,7 @@ get_player_stats <- function(pbp, weekly = FALSE) {
     dplyr::filter(!is.na(.data$receiver_player_id)) %>%
     dplyr::group_by(.data$receiver_player_id, .data$week, .data$season) %>%
     dplyr::summarize(
-      receiving_yards_after_catch = sum((.data$passing_yards - .data$air_yards) * .data$complete_pass, na.rm = T),
+      receiving_yards_after_catch = sum((.data$passing_yards - .data$air_yards) * .data$complete_pass, na.rm = TRUE),
       name_receiver = dplyr::first(.data$receiver_player_name),
       team_receiver = dplyr::first(.data$posteam),
       yards = sum(.data$receiving_yards, na.rm = TRUE),
@@ -167,7 +167,7 @@ get_player_stats <- function(pbp, weekly = FALSE) {
       targets = dplyr::n(),
       tds = sum(.data$touchdown == 1 & .data$td_team == .data$posteam & is.na(.data$lateral_receiver_player_id)),
       receiving_fumbles_lost = sum(.data$fumble_lost == 1 & is.na(.data$lateral_receiver_player_id)),
-      receiving_air_yards = sum(.data$air_yards, na.rm = T)
+      receiving_air_yards = sum(.data$air_yards, na.rm = TRUE)
     ) %>%
     dplyr::ungroup()
 
