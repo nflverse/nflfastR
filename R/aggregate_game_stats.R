@@ -119,8 +119,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       name_rush = dplyr::first(.data$rusher_player_name),
       team_rush = dplyr::first(.data$posteam),
       yards = sum(.data$rushing_yards, na.rm = TRUE),
-      # for TDs and lost fumbles, the player only scored them if he didn't lateral first
-      tds = sum(.data$touchdown == 1 & .data$td_team == .data$posteam & is.na(.data$lateral_rusher_player_id)),
+      tds = sum(.data$td_player_id == .data$rusher_player_id, na.rm = TRUE),
       carries = dplyr::n(),
       rushing_fumbles_lost = sum(.data$fumble_lost == 1 & is.na(.data$lateral_rusher_player_id))
     ) %>%
@@ -132,7 +131,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     dplyr::group_by(.data$lateral_rusher_player_id, .data$week, .data$season) %>%
     dplyr::summarize(
       lateral_yards = sum(.data$lateral_rushing_yards, na.rm = TRUE),
-      lateral_tds = sum(.data$touchdown == 1 & .data$td_team == .data$posteam),
+      lateral_tds = sum(.data$td_player_id == .data$lateral_rusher_player_id, na.rm = TRUE),
       lateral_att = dplyr::n()
     ) %>%
     dplyr::ungroup() %>%
@@ -169,7 +168,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       yards = sum(.data$receiving_yards, na.rm = TRUE),
       receptions = sum(.data$complete_pass == 1),
       targets = dplyr::n(),
-      tds = sum(.data$touchdown == 1 & .data$td_team == .data$posteam & is.na(.data$lateral_receiver_player_id)),
+      tds = sum(.data$td_player_id == .data$receiver_player_id, na.rm = TRUE),
       receiving_fumbles_lost = sum(.data$fumble_lost == 1 & is.na(.data$lateral_receiver_player_id)),
       receiving_air_yards = sum(.data$air_yards, na.rm = TRUE),
       receiving_yards_after_catch = sum(.data$yards_after_catch, na.rm = TRUE)
@@ -182,7 +181,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     dplyr::group_by(.data$lateral_receiver_player_id, .data$week, .data$season) %>%
     dplyr::summarize(
       lateral_yards = sum(.data$lateral_receiving_yards, na.rm = TRUE),
-      lateral_tds = sum(.data$touchdown == 1 & .data$td_team == .data$posteam),
+      lateral_tds = sum(.data$td_player_id == .data$lateral_receiver_player_id, na.rm = TRUE),
       lateral_att = dplyr::n()
     ) %>%
     dplyr::ungroup() %>%
