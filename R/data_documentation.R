@@ -26,7 +26,10 @@
 #' `teamcolors` package created by Ben Baumer and Gregory Matthews.
 #' The Wikipeadia logo urls are taken from Lee Sharpe's logos.csv
 #' Team wordmarks from nfl.com
-#'
+#' @examples
+#' \donttest{
+#' teams_colors_logos
+#' }
 "teams_colors_logos"
 
 #' nflfastR Field Descriptions
@@ -36,6 +39,10 @@
 #' an nflfastR dataset.
 #' @seealso The searchable table on the
 #' [nflfastR website](https://www.nflfastr.com/articles/field_descriptions.html)
+#' @examples
+#' \donttest{
+#' field_descriptions
+#' }
 "field_descriptions"
 
 #' NFL Stat IDs and their Meanings
@@ -44,4 +51,8 @@
 #' @format A data frame including NFL stat IDs, names and descriptions used in
 #' an nflfastR dataset.
 #' @source \url{http://www.nflgsis.com/gsis/Documentation/Partners/StatIDs.html}
+#' @examples
+#' \donttest{
+#' stat_ids
+#' }
 "stat_ids"

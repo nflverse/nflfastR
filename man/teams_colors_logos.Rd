@@ -31,4 +31,9 @@ teams_colors_logos
 \description{
 NFL Team names, colors and logo urls.
 }
+\examples{
+\donttest{
+teams_colors_logos
+}
+}
 \keyword{datasets}
