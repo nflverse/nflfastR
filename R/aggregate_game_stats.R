@@ -56,13 +56,13 @@
 #' \donttest{
 #' pbp <- nflfastR::load_pbp(2020)
 #'
-#' weekly <- get_player_stats(pbp)
+#' weekly <- calculate_player_stats(pbp)
 #' dplyr::glimpse(weekly)
 #'
-#' overall <- get_player_stats(pbp, weekly = FALSE)
+#' overall <- calculate_player_stats(pbp, weekly = FALSE)
 #' dplyr::glimpse(overall)
 #' }
-get_player_stats <- function(pbp, weekly = FALSE) {
+calculate_player_stats <- function(pbp, weekly = FALSE) {
 
   # load plays with multiple laterals
   con <- url("https://github.com/mrcaseb/nfl-data/blob/master/data/lateral_yards/multiple_lateral_yards.rds?raw=true")
