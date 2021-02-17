@@ -54,6 +54,8 @@ sum_play_stats <- function(play_Id, stats) {
       row$yards_gained <- play_stats$yards[index]
       row$rushing_yards <- play_stats$yards[index]
       row$td_team <- play_stats$teamAbbr[index]
+      row$td_player_id <- play_stats$player.esbId[index]
+      row$td_player_name <- play_stats$player.displayName[index]
       row$penalty_fix <- 1
     } else if (stat_id == 12) {
       row$rush_attempt <- 1
@@ -71,6 +73,8 @@ sum_play_stats <- function(play_Id, stats) {
       row$lateral_rusher_player_id <- play_stats$player.esbId[index]
       row$lateral_rusher_player_name <- play_stats$player.displayName[index]
       row$td_team <- play_stats$teamAbbr[index]
+      row$td_player_id <- play_stats$player.esbId[index]
+      row$td_player_name <- play_stats$player.displayName[index]
       row$yards_gained <- play_stats$yards[index]
       row$lateral_rushing_yards <- play_stats$yards[index]
       row$penalty_fix <- 1
@@ -98,6 +102,8 @@ sum_play_stats <- function(play_Id, stats) {
       row$yards_gained <- play_stats$yards[index]
       row$passing_yards <- play_stats$yards[index]
       row$td_team <- play_stats$teamAbbr[index]
+      row$td_player_id <- play_stats$player.esbId[index]
+      row$td_player_name <- play_stats$player.displayName[index]
       row$penalty_fix <- 1
     } else if (stat_id == 19) {
       row$interception <- 1
@@ -128,6 +134,8 @@ sum_play_stats <- function(play_Id, stats) {
       row$receiver_player_id <- play_stats$player.esbId[index]
       row$receiver_player_name <- play_stats$player.displayName[index]
       row$td_team <- play_stats$teamAbbr[index]
+      row$td_player_id <- play_stats$player.esbId[index]
+      row$td_player_name <- play_stats$player.displayName[index]
       row$yards_gained <- play_stats$yards[index]
       row$receiving_yards <- play_stats$yards[index]
       row$penalty_fix <- 1
@@ -149,6 +157,8 @@ sum_play_stats <- function(play_Id, stats) {
       row$lateral_receiver_player_id <- play_stats$player.esbId[index]
       row$lateral_receiver_player_name <- play_stats$player.displayName[index]
       row$td_team <- play_stats$teamAbbr[index]
+      row$td_player_id <- play_stats$player.esbId[index]
+      row$td_player_name <- play_stats$player.displayName[index]
       row$yards_gained <- play_stats$yards[index]
       row$lateral_receiving_yards <- play_stats$yards[index]
       row$penalty_fix <- 1
@@ -166,6 +176,8 @@ sum_play_stats <- function(play_Id, stats) {
       row$interception_player_id <- play_stats$player.esbId[index]
       row$interception_player_name <- play_stats$player.displayName[index]
       row$td_team <- play_stats$teamAbbr[index]
+      row$td_player_id <- play_stats$player.esbId[index]
+      row$td_player_name <- play_stats$player.displayName[index]
       row$return_yards <- play_stats$yards[index]
       row$return_penalty_fix <- 1
     } else if (stat_id == 27) {
@@ -183,6 +195,8 @@ sum_play_stats <- function(play_Id, stats) {
       row$lateral_interception_player_id <- play_stats$player.esbId[index]
       row$lateral_interception_player_name <- play_stats$player.displayName[index]
       row$td_team <- play_stats$teamAbbr[index]
+      row$td_player_id <- play_stats$player.esbId[index]
+      row$td_player_name <- play_stats$player.displayName[index]
       row$return_yards <- play_stats$yards[index]
       row$return_penalty_fix <- 1
     } else if (stat_id == 29) {
@@ -219,6 +233,8 @@ sum_play_stats <- function(play_Id, stats) {
       row$punt_returner_player_id <- play_stats$player.esbId[index]
       row$punt_returner_player_name <- play_stats$player.displayName[index]
       row$td_team <- play_stats$teamAbbr[index]
+      row$td_player_id <- play_stats$player.esbId[index]
+      row$td_player_name <- play_stats$player.displayName[index]
       row$return_team <- play_stats$teamAbbr[index]
       row$return_yards <- play_stats$yards[index]
       row$return_penalty_fix <- 1
@@ -237,6 +253,8 @@ sum_play_stats <- function(play_Id, stats) {
       row$lateral_punt_returner_player_id <- play_stats$player.esbId[index]
       row$lateral_punt_returner_player_name <- play_stats$player.displayName[index]
       row$td_team <- play_stats$teamAbbr[index]
+      row$td_player_id <- play_stats$player.esbId[index]
+      row$td_player_name <- play_stats$player.displayName[index]
       row$return_yards <- play_stats$yards[index]
       row$return_team <- play_stats$teamAbbr[index]
       row$return_penalty_fix <- 1
@@ -291,6 +309,8 @@ sum_play_stats <- function(play_Id, stats) {
       row$kickoff_returner_player_id <- play_stats$player.esbId[index]
       row$kickoff_returner_player_name <- play_stats$player.displayName[index]
       row$td_team <- play_stats$teamAbbr[index]
+      row$td_player_id <- play_stats$player.esbId[index]
+      row$td_player_name <- play_stats$player.displayName[index]
       row$return_yards <- play_stats$yards[index]
       row$return_team <- play_stats$teamAbbr[index]
       row$return_penalty_fix <- 1
@@ -310,6 +330,8 @@ sum_play_stats <- function(play_Id, stats) {
       row$lateral_kickoff_returner_player_id <- play_stats$player.esbId[index]
       row$lateral_kickoff_returner_player_name <- play_stats$player.displayName[index]
       row$td_team <- play_stats$teamAbbr[index]
+      row$td_player_id <- play_stats$player.esbId[index]
+      row$td_player_name <- play_stats$player.displayName[index]
       row$return_yards <- play_stats$yards[index]
       row$return_team <- play_stats$teamAbbr[index]
       row$return_penalty_fix <- 1
@@ -515,6 +537,8 @@ sum_play_stats <- function(play_Id, stats) {
       row$touchdown <- 1
       row$fumble <- 1
       row$td_team <- play_stats$teamAbbr[index]
+      row$td_player_id <- play_stats$player.esbId[index]
+      row$td_player_name <- play_stats$player.displayName[index]
       row$fumble_recovery_1_player_id <-
         if_else(
           is.na(row$fumble_recovery_1_player_id),
@@ -575,6 +599,8 @@ sum_play_stats <- function(play_Id, stats) {
     } else if (stat_id == 58) {
       row$touchdown <- 1
       row$td_team <- play_stats$teamAbbr[index]
+      row$td_player_id <- play_stats$player.esbId[index]
+      row$td_player_name <- play_stats$player.displayName[index]
       row$fumble <- 1
       row$lateral_recovery <- 1
     } else if (stat_id == 59) {
@@ -637,6 +663,8 @@ sum_play_stats <- function(play_Id, stats) {
       row$touchdown <- 1
       row$return_touchdown <- 1
       row$td_team <- play_stats$teamAbbr[index]
+      row$td_player_id <- play_stats$player.esbId[index]
+      row$td_player_name <- play_stats$player.displayName[index]
       row$fumble <- 1
       row$fumble_recovery_1_player_id <-
         if_else(
@@ -699,6 +727,8 @@ sum_play_stats <- function(play_Id, stats) {
       row$touchdown <- 1
       row$return_touchdown <- 1
       row$td_team <- play_stats$teamAbbr[index]
+      row$td_player_id <- play_stats$player.esbId[index]
+      row$td_player_name <- play_stats$player.displayName[index]
       row$fumble <- 1
       row$lateral_recovery <- 1
     } else if (stat_id == 63) {
@@ -706,6 +736,8 @@ sum_play_stats <- function(play_Id, stats) {
     } else if (stat_id == 64) {
       row$touchdown <- 1
       row$td_team <- play_stats$teamAbbr[index]
+      row$td_player_id <- play_stats$player.esbId[index]
+      row$td_player_name <- play_stats$player.displayName[index]
     } else if (stat_id == 68) {
       row$timeout <- 1
       row$timeout_team <- play_stats$teamAbbr[index]
@@ -1128,6 +1160,8 @@ sum_play_stats <- function(play_Id, stats) {
       row$own_kickoff_recovery_td <- 1
       row$touchdown <- 1
       row$td_team <- play_stats$teamAbbr[index]
+      row$td_player_id <- play_stats$player.esbId[index]
+      row$td_player_name <- play_stats$player.displayName[index]
       row$kickoff_attempt <- 1
       row$own_kickoff_recovery_player_id <- play_stats$player.esbId[index]
       row$own_kickoff_recovery_player_name <- play_stats$player.displayName[index]
