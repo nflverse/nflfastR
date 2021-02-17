@@ -160,7 +160,6 @@ get_player_stats <- function(pbp, weekly = FALSE) {
     dplyr::filter(!is.na(.data$receiver_player_id)) %>%
     dplyr::group_by(.data$receiver_player_id, .data$week, .data$season) %>%
     dplyr::summarize(
-      receiving_yards_after_catch = sum((.data$passing_yards - .data$air_yards) * .data$complete_pass, na.rm = TRUE),
       name_receiver = dplyr::first(.data$receiver_player_name),
       team_receiver = dplyr::first(.data$posteam),
       yards = sum(.data$receiving_yards, na.rm = TRUE),
@@ -168,7 +167,7 @@ get_player_stats <- function(pbp, weekly = FALSE) {
       targets = dplyr::n(),
       tds = sum(.data$touchdown == 1 & .data$td_team == .data$posteam & is.na(.data$lateral_receiver_player_id)),
       receiving_fumbles_lost = sum(.data$fumble_lost == 1 & is.na(.data$lateral_receiver_player_id)),
-      receiving_air_yards = sum(.data$air_yards, na.rm = TRUE)
+      receiving_air_yards = sum(.data$air_yards * .data$complete_pass, na.rm = TRUE)
     ) %>%
     dplyr::ungroup()
 
@@ -202,7 +201,7 @@ get_player_stats <- function(pbp, weekly = FALSE) {
     dplyr::mutate(
       receiving_yards = .data$yards + .data$lateral_yards,
       receiving_tds = .data$tds + .data$lateral_tds,
-      receiving_yards_after_catch = .data$receiving_yards_after_catch + .data$lateral_yards
+      receiving_yards_after_catch = .data$receiving_yards - .data$receiving_air_yards
       ) %>%
     dplyr::rename(player_id = .data$receiver_player_id) %>%
     dplyr::select("player_id", "week", "season", "name_receiver", "team_receiver", "receiving_yards", "receiving_air_yards", "receiving_yards_after_catch", "receptions", "targets", "receiving_tds", "receiving_fumbles_lost")
@@ -227,7 +226,8 @@ get_player_stats <- function(pbp, weekly = FALSE) {
       "player_id", "player_name", "recent_team", "season", "week", "completions", "attempts", "passing_yards", "passing_tds", "interceptions", "passing_air_yards", "passing_yards_after_catch", "sack_fumbles_lost",
       "carries", "rushing_yards", "rushing_tds", "rushing_fumbles_lost",
       "receptions", "targets", "receiving_yards", "receiving_tds", "receiving_air_yards", "receiving_yards_after_catch", "receiving_fumbles_lost"
-    )
+    ) %>%
+    dplyr::arrange(.data$player_id, .data$season, .data$week)
 
   player_df[is.na(player_df)] <- 0
 
