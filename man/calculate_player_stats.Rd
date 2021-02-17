@@ -30,7 +30,9 @@ decoded to the gsis ID format):
 \item{interceptions}{The number of interceptions thrown.}
 \item{sack_fumbles_lost}{The number of sacks with a lost fumble.}
 \item{passing_air_yards}{Passing air yards (includes incomplete passes).}
-\item{passing_yards_after_catch}{Passing yards.}
+\item{passing_yards_after_catch}{Yards after the catch gained on plays in
+which player was the passer (this is an unofficial stat and may differ slightly
+between different sources).}
 \item{carries}{The number of official rush attempts (incl. scrambles and kneel downs).
 Rushes after a lateral reception don't count as carry.}
 \item{rushing_yards}{Yards gained when rushing with the ball (incl. scrambles and kneel downs).
