@@ -16,6 +16,7 @@
 #' \describe{
 #' \item{player_id}{ID of the player. Use this to join to other sources.}
 #' \item{player_name}{Name of the player}
+#' \item{games}{The number of games where the player recorded passing, rushing or receiving stats.}
 #' \item{recent_team}{Most recent team player appears in `pbp` with.}
 #' \item{season}{Season if `weekly` is `TRUE`}
 #' \item{week}{Week if `weekly` is `TRUE`}
@@ -235,6 +236,7 @@ get_player_stats <- function(pbp, weekly = FALSE) {
     player_df <- player_df %>%
       dplyr::group_by(.data$player_id, .data$player_name) %>%
       dplyr::summarise(
+        games = dplyr::n(),
         recent_team = dplyr::last(.data$recent_team),
         completions = sum(.data$completions),
         attempts = sum(.data$attempts),
