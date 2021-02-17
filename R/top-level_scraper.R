@@ -79,6 +79,8 @@
 #' \item{timeout}{Binary indicator for whether or not a timeout was called by either team.}
 #' \item{timeout_team}{String abbreviation for which team called the timeout.}
 #' \item{td_team}{String abbreviation for which team scored the touchdown.}
+#' \item{td_player_name}{String name of the player who scored a touchdown.}
+#' \item{td_player_id}{Unique identifier of the player who scored a touchdown.}
 #' \item{posteam_timeouts_remaining}{Number of timeouts remaining for the possession team.}
 #' \item{defteam_timeouts_remaining}{Number of timeouts remaining for the team on defense.}
 #' \item{total_home_score}{Score for the home team at the start of the play.}

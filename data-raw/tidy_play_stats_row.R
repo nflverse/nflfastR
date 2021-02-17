@@ -222,7 +222,10 @@ pbp_stat_columns <-
     "lateral_rushing_yards",
     "passing_yards",
     "receiving_yards",
-    "lateral_receiving_yards"
+    "lateral_receiving_yards",
+    # new in nflfastR v4.1
+    "td_player_id",
+    "td_player_name"
   )
 
 indicator_stats <- c(

@@ -1,6 +1,7 @@
 # nflfastR (development version)
 
 * Added the function `get_player_stats()` that aggregates official passing, rushing, and receiving stats either at game level or overall
+* Added the new columns `td_player_name` and `td_player_id` to clearly identify the player who scored a touchdown (this is especially helpful for plays with multiple fumbles or laterals resulting in a touchdown)
 
 # nflfastR 4.0.0
 
