@@ -539,7 +539,7 @@ And we get the same thing.
 
 ## The `drive` column looks wacky
 
-Used `fixed_drive` and `fixed_drive_result` instead. See [Example 4: Using Drive Information].
+Use `fixed_drive` and `fixed_drive_result` instead. See [Example 4: Using Drive Information].
 
 ## Why are there so many win probability columns?
 
@@ -547,5 +547,5 @@ Used `fixed_drive` and `fixed_drive_result` instead. See [Example 4: Using Drive
 
 ## I'm trying to do X. Help!
 
-Please ask [in the Discord channel](https://discord.gg/5Er2FBnnQa).
+Please ask [in the Discord channel](https://discord.com/invite/5Er2FBnnQa).
 
