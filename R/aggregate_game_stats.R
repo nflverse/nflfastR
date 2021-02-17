@@ -58,7 +58,7 @@
 #' \donttest{
 #' pbp <- nflfastR::load_pbp(2020)
 #'
-#' weekly <- calculate_player_stats(pbp)
+#' weekly <- calculate_player_stats(pbp, weekly = TRUE)
 #' dplyr::glimpse(weekly)
 #'
 #' overall <- calculate_player_stats(pbp, weekly = FALSE)
