@@ -49,7 +49,9 @@ gained after receiving a lateral on a play that started as a pass play.}
 Also includes touchdowns after receiving a lateral on a play that started
 as a pass play.}
 \item{receiving_air_yards}{Receiving air yards (includes incomplete passes).}
-\item{receiving_yards_after_catch}{Yards after the catch gained on plays in which player was receiver.}
+\item{receiving_yards_after_catch}{Yards after the catch gained on plays in
+which player was receiver (this is an unofficial stat and may differ slightly
+between different sources).}
 \item{receiving_fumbles_lost}{The number of fumbles after a pass reception.}
 }
 }
