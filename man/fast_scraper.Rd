@@ -16,10 +16,10 @@ fast_scraper(
 \item{game_ids}{Vector of character ids or a data frame including the variable
 \code{game_id} (see details for further information).}
 
-\item{source}{\ifelse{html}{\figure{lifecycle-deprecated.svg}{options: alt='Deprecated lifecycle'}}{\strong{Deprecated}} has no effect and will be
+\item{source}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} has no effect and will be
 removed in a future release.}
 
-\item{pp}{\ifelse{html}{\figure{lifecycle-deprecated.svg}{options: alt='Deprecated lifecycle'}}{\strong{Deprecated}} has no effect and will be
+\item{pp}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} has no effect and will be
 removed in a future release.}
 
 \item{...}{Additional arguments passed to the scraping functions (for internal use)}
@@ -82,6 +82,8 @@ detailed information (description partly extracted from nflscrapR):
 \item{timeout}{Binary indicator for whether or not a timeout was called by either team.}
 \item{timeout_team}{String abbreviation for which team called the timeout.}
 \item{td_team}{String abbreviation for which team scored the touchdown.}
+\item{td_player_name}{String name of the player who scored a touchdown.}
+\item{td_player_id}{Unique identifier of the player who scored a touchdown.}
 \item{posteam_timeouts_remaining}{Number of timeouts remaining for the possession team.}
 \item{defteam_timeouts_remaining}{Number of timeouts remaining for the team on defense.}
 \item{total_home_score}{Score for the home team at the start of the play.}

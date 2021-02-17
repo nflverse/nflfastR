@@ -34,7 +34,7 @@ nflscrapr_cols <-
     "desc", "play_type", "yards_gained", "shotgun", "no_huddle", "qb_dropback", "qb_kneel", "qb_spike",
     "qb_scramble", "pass_length", "pass_location", "air_yards", "yards_after_catch",
     "run_location", "run_gap", "field_goal_result", "kick_distance", "extra_point_result", "two_point_conv_result",
-    "home_timeouts_remaining", "away_timeouts_remaining", "timeout", "timeout_team", "td_team",
+    "home_timeouts_remaining", "away_timeouts_remaining", "timeout", "timeout_team", "td_team", "td_player_name", "td_player_id",
     "posteam_timeouts_remaining", "defteam_timeouts_remaining",
     "total_home_score", "total_away_score", "posteam_score",
     "defteam_score", "score_differential", "posteam_score_post",
