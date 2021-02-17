@@ -27,7 +27,9 @@
 #' \item{interceptions}{The number of interceptions thrown.}
 #' \item{sack_fumbles_lost}{The number of sacks with a lost fumble.}
 #' \item{passing_air_yards}{Passing air yards (includes incomplete passes).}
-#' \item{passing_yards_after_catch}{Passing yards.}
+#' \item{passing_yards_after_catch}{Yards after the catch gained on plays in
+#' which player was the passer (this is an unofficial stat and may differ slightly
+#' between different sources).}
 #' \item{carries}{The number of official rush attempts (incl. scrambles and kneel downs).
 #' Rushes after a lateral reception don't count as carry.}
 #' \item{rushing_yards}{Yards gained when rushing with the ball (incl. scrambles and kneel downs).
@@ -169,7 +171,8 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       targets = dplyr::n(),
       tds = sum(.data$touchdown == 1 & .data$td_team == .data$posteam & is.na(.data$lateral_receiver_player_id)),
       receiving_fumbles_lost = sum(.data$fumble_lost == 1 & is.na(.data$lateral_receiver_player_id)),
-      receiving_air_yards = sum(.data$air_yards * .data$complete_pass, na.rm = TRUE)
+      receiving_air_yards = sum(.data$air_yards, na.rm = TRUE),
+      receiving_yards_after_catch = sum(.data$yards_after_catch, na.rm = TRUE)
     ) %>%
     dplyr::ungroup()
 
@@ -203,7 +206,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     dplyr::mutate(
       receiving_yards = .data$yards + .data$lateral_yards,
       receiving_tds = .data$tds + .data$lateral_tds,
-      receiving_yards_after_catch = .data$receiving_yards - .data$receiving_air_yards
+      receiving_yards_after_catch = .data$receiving_yards_after_catch + .data$lateral_yards
       ) %>%
     dplyr::rename(player_id = .data$receiver_player_id) %>%
     dplyr::select("player_id", "week", "season", "name_receiver", "team_receiver", "receiving_yards", "receiving_air_yards", "receiving_yards_after_catch", "receptions", "targets", "receiving_tds", "receiving_fumbles_lost")
