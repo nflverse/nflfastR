@@ -105,7 +105,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       interceptions = sum(.data$interception),
       attempts = sum(.data$complete_pass == 1 | .data$incomplete_pass == 1 | .data$interception == 1),
       completions = sum(.data$complete_pass == 1),
-      sack_fumbles_lost = sum(.data$fumble_lost),
+      sack_fumbles_lost = sum(.data$fumble_lost == 1 & .data$complete_pass == 0),
       passing_air_yards = sum(.data$air_yards, na.rm = TRUE)
     ) %>%
     dplyr::rename(player_id = .data$passer_player_id) %>%
