@@ -372,7 +372,6 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       "receiving_first_downs", "receiving_epa", "receiving_2pt_conversions"
 
     ) %>%
-    dplyr::arrange(.data$player_id, .data$season, .data$week) %>%
     dplyr::filter(!is.na(.data$player_id))
 
   player_df[is.na(player_df)] <- 0
@@ -389,7 +388,9 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         -2 * (.data$sack_fumbles_lost + .data$rushing_fumbles_lost + .data$receiving_fumbles_lost),
 
       fantasy_points_ppr = .data$fantasy_points + .data$receptions
-    )
+    ) %>%
+    dplyr::arrange(.data$player_id, .data$season, .data$week)
+
 
   # if user doesn't want week-by-week input, aggregate the whole df
   if (isFALSE(weekly)) {
