@@ -37,7 +37,7 @@ The easiest way to access the data in the data repository is the new function `l
 pbp <- nflfastR::load_pbp(2018:2020, qs = TRUE)
 ```
 
-Joining roster data to the play-by-play dataset is possible as well. The data can be accessed with the function `fast_scraper_roster()` and it's application is demonstrated in [Example 10: Working with roster and position data].
+If you don't care to install `qs` for whatever reason, omit `qs = TRUE` from the above and it will work without it. Joining roster data to the play-by-play dataset is possible as well. The data can be accessed with the function `fast_scraper_roster()` and its application is demonstrated in [Example 10: Working with roster and position data].
 
 # Application Examples
 
@@ -72,7 +72,7 @@ nflfastR::fast_scraper("2019_10_SEA_SF") %>%
 
 # Example 2: scrape a batch of games very quickly with fast_scraper
 
-This is a demonstration of `nflfastR`'s capabilities. While `nflfastR` can scrape a batch of games very quickly, **please be respectful of Github's servers and use the [data repository](https://github.com/guga31bb/nflfastR-data) which hosts all the scraped and cleaned data** whenever possible. The only reason to ever actually use the scraper is if it's in the middle of the season and we haven't updated the repository with recent games (but we will try to keep it updated).
+This is a demonstration of `nflfastR`'s capabilities. While `nflfastR` can scrape a batch of games very quickly, **please be respectful of Github's servers and use the [data repository](https://github.com/guga31bb/nflfastR-data) which hosts all the scraped and cleaned data** whenever possible. The only reason to ever actually use the scraper is if it's in the middle of the season and we haven't updated the repository with recent games (but it is automatically updated overnight every day).
 
 ``` {r ex2-bigscrape, warning = FALSE, message = FALSE}
 # get list of some games from 2019
@@ -127,7 +127,7 @@ So `r scales::percent(out$drive_score[1], accuracy = 0.1)` of 1st & 10 plays fro
 
 Let's build the **[NFL team tiers](https://rbsdm.com/stats/stats/)** using offensive and defensive expected points added per play for the 2005 regular season. The logo urls of the espn logos are integrated into the `?teams_colors_logos` data frame which is delivered with the package. 
 
-Let's also use the included helper function `clean_pbp()`, which creates "rush" and "pass" columns that (a) properly count sacks and scrambles as pass plays and (b) properly include plays with penalties. Using this, we can keep only rush or pass plays.
+When using `load_pbp()`, the helper function `clean_pbp()` has already been run, which creates "rush" and "pass" columns that (a) properly count sacks and scrambles as pass plays and (b) properly include plays with penalties. Using this, we can keep only rush or pass plays.
 
 ```{r ex5, warning = FALSE, message = FALSE, results = 'hide', fig.keep = 'all', dpi = 600}
 library(ggimage)
@@ -449,6 +449,8 @@ Not surprisingly, all 5 of the top 5 WRs in terms of EPA added come in ahead of 
 
 The columns like `name`, `passer`, `fantasy` etc are `nflfastR`-created columns that mimic "real" football: i.e., excluding plays with spikes, counting scrambles and sacks as pass plays, etc. But if you're trying to replicate official statistics -- perhaps for fantasy purposes -- use the `*_player_name` and `*_player_id` columns.
 
+## Leaderboards
+
 [Let's try to replicate this page of passing leaders](https://www.nfl.com/stats/player-stats/).
 
 ``` {r stats1}
@@ -494,9 +496,9 @@ nflfastR::load_pbp(2020) %>%
 
 Again, this matches up exactly.
 
-## Fantasy stats
+## Yards from scrimmage
 
-What if we want total yards from scrimmage? We'll demonstrate two methods here. The harder way is to use the `fantasy_player_name` column, which is the rusher on rush plays and receiver on receiving plays:
+What if we want total yards from scrimmage? We'll demonstrate three methods here. The hardest way is to use the `fantasy_player_name` column, which is the rusher on rush plays and receiver on receiving plays:
 
 ``` {r stats_fantasy}
 nflfastR::load_pbp(2020) %>%
@@ -534,6 +536,55 @@ nflfastR::load_pbp(2020) %>%
 ```
 
 And we get the same thing.
+
+The third way is to use the `load_player_stats()` function, which loads a data frame of player-level stats for every week since 1999.
+
+``` {r stats_fantasy3}
+nflfastR::load_player_stats() %>%
+  dplyr::filter(season == 2020, week <= 17) %>%
+  dplyr::group_by(player_id) %>%
+  dplyr::summarize(
+    player_name = dplyr::first(player_name),
+    recent_team = dplyr::first(recent_team),
+    yards = sum(rushing_yards + receiving_yards),
+    touches = sum(carries + receptions),
+    carries = sum(carries),
+    receptions = sum(receptions),
+    tds = sum(rushing_tds + receiving_tds)
+  ) %>%
+  dplyr::ungroup() %>%
+  dplyr::arrange(-yards) %>%
+  dplyr::select(player_name, recent_team, carries, receptions, touches, yards, tds) %>%
+  utils::head(10) %>%
+  knitr::kable(digits = 0)
+```
+
+And again the output is identical.
+
+## Fantasy points
+
+Let's calculate PPR fantasy points per game in the first 16 weeks of the season among wide receivers who appeared in more than 5 games.
+
+``` {r stats_fantasy4}
+nflfastR::load_pbp(2020) %>%
+  dplyr::filter(week <= 16) %>%
+  nflfastR::calculate_player_stats() %>%
+  dplyr::mutate(
+    ppg = fantasy_points_ppr / games
+  ) %>%
+  filter(games > 5) %>%
+  # only keep the WRs
+  inner_join(
+    nflfastR::fast_scraper_roster(2020) %>% filter(position == "WR") %>% select(gsis_id),
+    by = c("player_id" = "gsis_id")
+  ) %>%
+  dplyr::arrange(-ppg) %>%
+  dplyr::select(player_name, recent_team, games, fantasy_points_ppr, ppg) %>%
+  utils::head(10) %>%
+  knitr::kable(digits = 1)
+```
+
+Comparing to [the FantasyPros website](https://www.fantasypros.com/nfl/reports/leaders/ppr-wr.php?year=2020&start=1&end=16), this is an exact match.
 
 # Frequent issues
 
