@@ -492,7 +492,7 @@ nflfastR::load_pbp(2020) %>%
   knitr::kable(digits = 0)
 ```
 
-Again, this matches up exactly, though note the steps we had to go through to correctly account for yards gained on laterals (otherwise we would be missing 2 rushing yards from Chubb in the table above).
+Again, this matches up exactly.
 
 ## Fantasy stats
 
@@ -516,7 +516,7 @@ nflfastR::load_pbp(2020) %>%
 
 Looking at the [PFR scrimmage stats](https://www.pro-football-reference.com/years/2020/scrimmage.htm), these columns are an exact match.
 
-But we could also just use the `get_player_stats()` function again:
+But we could also just do the easy way: using `get_player_stats()` again:
 
 ``` {r stats_fantasy2}
 nflfastR::load_pbp(2020) %>%
