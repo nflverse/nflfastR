@@ -6,7 +6,8 @@
 #' Get Official Game Stats
 #'
 #' @param pbp A Data frame of NFL play-by-play data typically loaded with
-#' [load_pbp()] or [build_nflfastR_pbp()].
+#' [load_pbp()] or [build_nflfastR_pbp()]. If the data doesn't include the variable
+#' `qb_epa`, the function `add_qb_epa()` will be called to add it.
 #' @param weekly If `TRUE`, returns week-by-week stats, otherwise, stats
 #' for the entire Data frame.
 #' @description Build columns that aggregate official passing, rushing, and receiving stats
@@ -32,7 +33,10 @@
 #' which player was the passer (this is an unofficial stat and may differ slightly
 #' between different sources).}
 #' \item{passing_first_downs}{First downs on pass attempts.}
-#' \item{passing_epa}{Total expected points added on pass attempts and sacks.}
+#' \item{passing_epa}{Total expected points added on pass attempts and sacks.
+#' NOTE: this uses the variable `qb_epa`, which gives QB credit for EPA for up
+#' to the point where a receiver lost a fumble after a completed catch and makes
+#' EPA work more like passing yards on plays with fumbles.}
 #' \item{passing_2pt_conversions}{Two-point conversion passes.}
 #' \item{carries}{The number of official rush attempts (incl. scrambles and kneel downs).
 #' Rushes after a lateral reception don't count as carry.}
@@ -105,6 +109,8 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       ) %>%
       decode_player_ids()
 
+    if (!"qb_epa" %in% names(data)) data <- add_qb_epa(data)
+
     # 2. for 2pt conversions only, get those plays
     two_points <- pbp %>%
       dplyr::filter(.data$two_point_conv_result == "success") %>%
@@ -140,7 +146,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       passing_air_yards = sum(.data$air_yards, na.rm = TRUE),
       sacks = sum(.data$sack),
       passing_first_downs = sum(.data$first_down_pass),
-      passing_epa = sum(.data$epa)
+      passing_epa = sum(.data$qb_epa)
     ) %>%
     dplyr::rename(player_id = .data$passer_player_id) %>%
     dplyr::ungroup()

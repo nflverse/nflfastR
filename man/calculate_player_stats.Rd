@@ -8,7 +8,8 @@ calculate_player_stats(pbp, weekly = FALSE)
 }
 \arguments{
 \item{pbp}{A Data frame of NFL play-by-play data typically loaded with
-\code{\link[=load_pbp]{load_pbp()}} or \code{\link[=build_nflfastR_pbp]{build_nflfastR_pbp()}}.}
+\code{\link[=load_pbp]{load_pbp()}} or \code{\link[=build_nflfastR_pbp]{build_nflfastR_pbp()}}. If the data doesn't include the variable
+\code{qb_epa}, the function \code{add_qb_epa()} will be called to add it.}
 
 \item{weekly}{If \code{TRUE}, returns week-by-week stats, otherwise, stats
 for the entire Data frame.}
@@ -35,7 +36,10 @@ decoded to the gsis ID format):
 which player was the passer (this is an unofficial stat and may differ slightly
 between different sources).}
 \item{passing_first_downs}{First downs on pass attempts.}
-\item{passing_epa}{Total expected points added on pass attempts and sacks.}
+\item{passing_epa}{Total expected points added on pass attempts and sacks.
+NOTE: this uses the variable \code{qb_epa}, which gives QB credit for EPA for up
+to the point where a receiver lost a fumble after a completed catch and makes
+EPA work more like passing yards on plays with fumbles.}
 \item{passing_2pt_conversions}{Two-point conversion passes.}
 \item{carries}{The number of official rush attempts (incl. scrambles and kneel downs).
 Rushes after a lateral reception don't count as carry.}
