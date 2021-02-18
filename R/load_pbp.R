@@ -63,7 +63,9 @@ single_season <- function(season, p, dbConnection = NULL, tablename = NULL, qs =
   }
   if (isFALSE(qs)) {
     .url <- glue::glue("https://github.com/guga31bb/nflfastR-data/blob/master/data/play_by_play_{season}.rds?raw=true")
-    pbp <- readRDS(url(.url))
+    con <- url(.url)
+    pbp <- readRDS(con)
+    close(con)
   }
   if (!is.null(dbConnection) && !is.null(tablename)) {
     DBI::dbWriteTable(dbConnection, tablename, pbp, append = TRUE)
