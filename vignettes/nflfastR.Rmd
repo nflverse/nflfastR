@@ -466,7 +466,7 @@ nflfastR::load_pbp(2020) %>%
   knitr::kable(digits = 0)
 ```
 
-These match the official stats on NFL.com (note the filter for `season_type == "REG"` since official stats only count regular season games and in preparation for an 18th regular season game it's better not to use the `week` column). Note that we're using `passing_yards` here because `yards_gained` is not equal to passing yards on plays with laterals.
+These match the official stats on NFL.com (note the filter for `season_type == "REG"` since official stats only count regular season games). Note that we're using `passing_yards` here because `yards_gained` is not equal to passing yards on plays with laterals.
 
 While the above works, we've also provided a function that does this all for you: `calculate_player_stats()`. This function takes an `nflfastR` play-by-play dataframe as an input along with one other argument, `weekly`, which defaults to FALSE. When `weekly` is true, a week-by-week dataframe is returned (rather than an aggregate over the whole provided dataframe). Let's again replicate the top 10 players in passing yards:
 
@@ -496,7 +496,7 @@ Again, this matches up exactly.
 
 ## Fantasy stats
 
-What if we want total yards from scrimmage? The harder way is to use the `fantasy_player_name` column, which is the rusher on rush plays and receiver on receiving plays:
+What if we want total yards from scrimmage? We'll demonstrate two methods here. The harder way is to use the `fantasy_player_name` column, which is the rusher on rush plays and receiver on receiving plays:
 
 ``` {r stats_fantasy}
 nflfastR::load_pbp(2020) %>%
@@ -516,7 +516,7 @@ nflfastR::load_pbp(2020) %>%
 
 Looking at the [PFR scrimmage stats](https://www.pro-football-reference.com/years/2020/scrimmage.htm), these columns are an exact match.
 
-But we could also just use the `calculate_player_stats()` function again:
+But we could also just use `calculate_player_stats()` again:
 
 ``` {r stats_fantasy2}
 nflfastR::load_pbp(2020) %>%
