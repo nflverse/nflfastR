@@ -325,6 +325,20 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
 
   player_df[is.na(player_df)] <- 0
 
+  player_df <- player_df %>%
+    dplyr::mutate(
+      fantasy_points =
+        1 / 25 * .data$passing_yards +
+        4 * .data$passing_tds +
+        -2 * .data$interceptions +
+        1 / 10 * (.data$rushing_yards + .data$receiving_yards) +
+        6 * (.data$rushing_tds + .data$receiving_tds) +
+        2 * (.data$passing_two_points + .data$rushing_two_points + .data$receiving_two_points) +
+        -2 * (.data$sack_fumbles_lost + .data$rushing_fumbles_lost + .data$receiving_fumbles_lost),
+
+      fantasy_points_ppr = .data$fantasy_points + .data$receptions
+    )
+
   # if user doesn't want week-by-week input, aggregate the whole df
   if (isFALSE(weekly)) {
     player_df <- player_df %>%
@@ -353,7 +367,9 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         receiving_air_yards = sum(.data$receiving_air_yards),
         receiving_yards_after_catch = sum(.data$receiving_yards_after_catch),
         receiving_fumbles_lost = sum(.data$receiving_fumbles_lost),
-        receiving_two_points = sum(.data$receiving_two_points)
+        receiving_two_points = sum(.data$receiving_two_points),
+        fantasy_points = sum(.data$fantasy_points),
+        fantasy_points_ppr = sum(.data$fantasy_points_ppr)
       ) %>%
       dplyr::ungroup()
   }
