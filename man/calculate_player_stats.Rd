@@ -28,11 +28,15 @@ decoded to the gsis ID format):
 \item{passing_yards}{Yards gained on pass plays.}
 \item{passing_tds}{The number of passing touchdowns.}
 \item{interceptions}{The number of interceptions thrown.}
+\item{sacks}{Number of times sacked.}
 \item{sack_fumbles_lost}{The number of sacks with a lost fumble.}
 \item{passing_air_yards}{Passing air yards (includes incomplete passes).}
 \item{passing_yards_after_catch}{Yards after the catch gained on plays in
 which player was the passer (this is an unofficial stat and may differ slightly
 between different sources).}
+\item{passing_first_downs}{First downs on pass attempts.}
+\item{passing_epa}{Total expected points added on pass attempts and sacks.}
+\item{passing_2pt_conversions}{Two-point conversion passes.}
 \item{carries}{The number of official rush attempts (incl. scrambles and kneel downs).
 Rushes after a lateral reception don't count as carry.}
 \item{rushing_yards}{Yards gained when rushing with the ball (incl. scrambles and kneel downs).
@@ -42,6 +46,9 @@ with a rushing attempt.}
 Also includes touchdowns after obtaining a lateral on a play that started
 with a rushing attempt.}
 \item{rushing_fumbles_lost}{The number of rushes with a lost fumble.}
+\item{rushing_first_downs}{First downs on rush attempts (incl. scrambles).}
+\item{rushing_epa}{Expected points added on rush attempts (incl. scrambles and kneel downs).}
+\item{rushing_2pt_conversions}{Two-point conversion rushes}
 \item{receptions}{The number of pass receptions. Lateral receptions officially
 don't count as reception.}
 \item{targets}{The number of pass plays where the player was the targeted receiver.}
@@ -50,11 +57,14 @@ gained after receiving a lateral on a play that started as a pass play.}
 \item{receiving_tds}{The number of touchdowns following a pass reception.
 Also includes touchdowns after receiving a lateral on a play that started
 as a pass play.}
-\item{receiving_air_yards}{Receiving air yards (includes incomplete passes).}
+\item{receiving_air_yards}{Receiving air yards (incl. incomplete passes).}
 \item{receiving_yards_after_catch}{Yards after the catch gained on plays in
 which player was receiver (this is an unofficial stat and may differ slightly
 between different sources).}
 \item{receiving_fumbles_lost}{The number of fumbles after a pass reception.}
+\item{receiving_2pt_conversions}{Two-point conversion receptions}
+\item{fantasy_points}{Standard fantasy points.}
+\item{fantasy_points_ppr}{PPR fantasy points.}
 }
 }
 \description{
