@@ -161,7 +161,8 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     # need a full join because players without passing stats that recorded
     # a passing two point (e.g. WRs) are dropped in any other join
     dplyr::full_join(pass_two_points, by = c("player_id", "week", "season", "name_pass", "team_pass")) %>%
-    dplyr::mutate(passing_2pt_conversions = dplyr::if_else(is.na(.data$passing_2pt_conversions), 0L, .data$passing_2pt_conversions))
+    dplyr::mutate(passing_2pt_conversions = dplyr::if_else(is.na(.data$passing_2pt_conversions), 0L, .data$passing_2pt_conversions)) %>%
+    dplyr::filter(!is.na(.data$player_id))
 
   pass_df[is.na(pass_df)] <- 0
 
@@ -242,7 +243,8 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     # need a full join because players without rushing stats that recorded
     # a rushing two point (mostly QBs) are dropped in any other join
     dplyr::full_join(rush_two_points, by = c("player_id", "week", "season", "name_rush", "team_rush")) %>%
-    dplyr::mutate(rushing_2pt_conversions = dplyr::if_else(is.na(.data$rushing_2pt_conversions), 0L, .data$rushing_2pt_conversions))
+    dplyr::mutate(rushing_2pt_conversions = dplyr::if_else(is.na(.data$rushing_2pt_conversions), 0L, .data$rushing_2pt_conversions)) %>%
+    dplyr::filter(!is.na(.data$player_id))
 
   rush_df[is.na(rush_df)] <- 0
 
@@ -327,7 +329,8 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     # need a full join because players without receiving stats that recorded
     # a receiving two point are dropped in any other join
     dplyr::full_join(rec_two_points, by = c("player_id", "week", "season", "name_receiver", "team_receiver")) %>%
-    dplyr::mutate(receiving_2pt_conversions = dplyr::if_else(is.na(.data$receiving_2pt_conversions), 0L, .data$receiving_2pt_conversions))
+    dplyr::mutate(receiving_2pt_conversions = dplyr::if_else(is.na(.data$receiving_2pt_conversions), 0L, .data$receiving_2pt_conversions)) %>%
+    dplyr::filter(!is.na(.data$player_id))
 
   rec_df[is.na(rec_df)] <- 0
 
@@ -369,7 +372,8 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       "receiving_first_downs", "receiving_epa", "receiving_2pt_conversions"
 
     ) %>%
-    dplyr::arrange(.data$player_id, .data$season, .data$week)
+    dplyr::arrange(.data$player_id, .data$season, .data$week) %>%
+    dplyr::filter(!is.na(.data$player_id))
 
   player_df[is.na(player_df)] <- 0
 
