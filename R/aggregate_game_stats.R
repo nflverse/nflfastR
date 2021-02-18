@@ -66,6 +66,9 @@
 #' }
 calculate_player_stats <- function(pbp, weekly = FALSE) {
 
+
+# Prepare data ------------------------------------------------------------
+
   # load plays with multiple laterals
   con <- url("https://github.com/mrcaseb/nfl-data/blob/master/data/lateral_yards/multiple_lateral_yards.rds?raw=true")
   mult_lats <- readRDS(con) %>%
@@ -90,7 +93,23 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         .data$play_type %in% c("pass", "qb_kneel", "qb_spike", "run")
       ) %>%
       decode_player_ids()
+
+    two_points <- pbp %>%
+      dplyr::filter(.data$two_point_conv_result == "success") %>%
+      dplyr::select(
+        "week", "season", "posteam",
+        "pass_attempt", "rush_attempt",
+        "passer_player_name", "passer_player_id",
+        "rusher_player_name", "rusher_player_id",
+        "lateral_rusher_player_name", "lateral_rusher_player_id",
+        "receiver_player_name", "receiver_player_id",
+        "lateral_receiver_player_name", "lateral_receiver_player_id"
+      ) %>%
+      decode_player_ids()
   })
+
+
+# Passing stats -----------------------------------------------------------
 
   # get passing stats
   pass_df <- data %>%
@@ -110,6 +129,28 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     ) %>%
     dplyr::rename(player_id = .data$passer_player_id) %>%
     dplyr::ungroup()
+
+  pass_two_points <- two_points %>%
+    dplyr::filter(.data$pass_attempt == 1) %>%
+    dplyr::group_by(.data$passer_player_id, .data$week, .data$season) %>%
+    dplyr::summarise(
+      # need name_pass and team_pass here for the full join in the next pipe
+      name_pass = custom_mode(.data$passer_player_name),
+      team_pass = custom_mode(.data$posteam),
+      passing_two_points = dplyr::n()
+    ) %>%
+    dplyr::rename(player_id = .data$passer_player_id) %>%
+    dplyr::ungroup()
+
+  pass_df <- pass_df %>%
+    # need a full join because players without passing stats that recorded
+    # a passing two point (e.g. WRs) are dropped in any other join
+    dplyr::full_join(pass_two_points, by = c("player_id", "week", "season", "name_pass", "team_pass")) %>%
+    dplyr::mutate(passing_two_points = dplyr::if_else(is.na(.data$passing_two_points), 0L, .data$passing_two_points))
+
+  pass_df[is.na(pass_df)] <- 0
+
+# Rushing stats -----------------------------------------------------------
 
   # rush df 1: primary rusher
   rushes <- data %>%
@@ -154,9 +195,31 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     ) %>%
     dplyr::mutate(rushing_yards = .data$yards + .data$lateral_yards, rushing_tds = .data$tds + .data$lateral_tds) %>%
     dplyr::rename(player_id = .data$rusher_player_id) %>%
-    dplyr::select("player_id", "week", "season", "name_rush", "team_rush", "rushing_yards", "carries", "rushing_tds", "rushing_fumbles_lost") %>%
+    dplyr::select("player_id", "week", "season", "name_rush", "team_rush",
+                  "rushing_yards", "carries", "rushing_tds", "rushing_fumbles_lost") %>%
     dplyr::ungroup()
 
+  rush_two_points <- two_points %>%
+    dplyr::filter(.data$rush_attempt == 1) %>%
+    dplyr::group_by(.data$rusher_player_id, .data$week, .data$season) %>%
+    dplyr::summarise(
+      # need name_rush and team_rush here for the full join in the next pipe
+      name_rush = custom_mode(.data$rusher_player_name),
+      team_rush = custom_mode(.data$posteam),
+      rushing_two_points = dplyr::n()
+    ) %>%
+    dplyr::rename(player_id = .data$rusher_player_id) %>%
+    dplyr::ungroup()
+
+  rush_df <- rush_df %>%
+    # need a full join because players without rushing stats that recorded
+    # a rushing two point (mostly QBs) are dropped in any other join
+    dplyr::full_join(rush_two_points, by = c("player_id", "week", "season", "name_rush", "team_rush")) %>%
+    dplyr::mutate(rushing_two_points = dplyr::if_else(is.na(.data$rushing_two_points), 0L, .data$rushing_two_points))
+
+  rush_df[is.na(rush_df)] <- 0
+
+# Receiving stats ---------------------------------------------------------
 
   # receiver df 1: primary receiver
   rec <- data %>%
@@ -208,7 +271,31 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       receiving_yards_after_catch = .data$receiving_yards_after_catch + .data$lateral_yards
       ) %>%
     dplyr::rename(player_id = .data$receiver_player_id) %>%
-    dplyr::select("player_id", "week", "season", "name_receiver", "team_receiver", "receiving_yards", "receiving_air_yards", "receiving_yards_after_catch", "receptions", "targets", "receiving_tds", "receiving_fumbles_lost")
+    dplyr::select("player_id", "week", "season", "name_receiver", "team_receiver",
+                  "receiving_yards", "receiving_air_yards", "receiving_yards_after_catch",
+                  "receptions", "targets", "receiving_tds", "receiving_fumbles_lost")
+
+  rec_two_points <- two_points %>%
+    dplyr::filter(.data$pass_attempt == 1) %>%
+    dplyr::group_by(.data$receiver_player_id, .data$week, .data$season) %>%
+    dplyr::summarise(
+      # need name_receiver and team_receiver here for the full join in the next pipe
+      name_receiver = custom_mode(.data$receiver_player_name),
+      team_receiver = custom_mode(.data$posteam),
+      receiving_two_points = dplyr::n()
+    ) %>%
+    dplyr::rename(player_id = .data$receiver_player_id) %>%
+    dplyr::ungroup()
+
+  rec_df <- rec_df %>%
+    # need a full join because players without receiving stats that recorded
+    # a receiving two point are dropped in any other join
+    dplyr::full_join(rec_two_points, by = c("player_id", "week", "season", "name_receiver", "team_receiver")) %>%
+    dplyr::mutate(receiving_two_points = dplyr::if_else(is.na(.data$receiving_two_points), 0L, .data$receiving_two_points))
+
+  rec_df[is.na(rec_df)] <- 0
+
+# Combine all stats -------------------------------------------------------
 
   # combine all the stats together
   player_df <- pass_df %>%
@@ -227,9 +314,12 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       )
     ) %>%
     dplyr::select(
-      "player_id", "player_name", "recent_team", "season", "week", "completions", "attempts", "passing_yards", "passing_tds", "interceptions", "passing_air_yards", "passing_yards_after_catch", "sack_fumbles_lost",
-      "carries", "rushing_yards", "rushing_tds", "rushing_fumbles_lost",
-      "receptions", "targets", "receiving_yards", "receiving_tds", "receiving_air_yards", "receiving_yards_after_catch", "receiving_fumbles_lost"
+      "player_id", "player_name", "recent_team", "season", "week",
+      "completions", "attempts", "passing_yards", "passing_tds", "interceptions",
+      "passing_air_yards", "passing_yards_after_catch", "sack_fumbles_lost", "passing_two_points",
+      "carries", "rushing_yards", "rushing_tds", "rushing_fumbles_lost", "rushing_two_points",
+      "receptions", "targets", "receiving_yards", "receiving_tds", "receiving_air_yards",
+      "receiving_yards_after_catch", "receiving_fumbles_lost", "receiving_two_points"
     ) %>%
     dplyr::arrange(.data$player_id, .data$season, .data$week)
 
@@ -250,17 +340,20 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         passing_air_yards = sum(.data$passing_air_yards),
         passing_yards_after_catch = sum(.data$passing_yards_after_catch),
         sack_fumbles_lost = sum(.data$sack_fumbles_lost),
+        passing_two_points = sum(.data$passing_two_points),
         carries = sum(.data$carries),
         rushing_yards = sum(.data$rushing_yards),
         rushing_tds = sum(.data$rushing_tds),
         rushing_fumbles_lost = sum(.data$rushing_fumbles_lost),
+        rushing_two_points = sum(.data$rushing_two_points),
         receptions = sum(.data$receptions),
         targets = sum(.data$targets),
         receiving_yards = sum(.data$receiving_yards),
         receiving_tds = sum(.data$receiving_tds),
         receiving_air_yards = sum(.data$receiving_air_yards),
         receiving_yards_after_catch = sum(.data$receiving_yards_after_catch),
-        receiving_fumbles_lost = sum(.data$receiving_fumbles_lost)
+        receiving_fumbles_lost = sum(.data$receiving_fumbles_lost),
+        receiving_two_points = sum(.data$receiving_two_points)
       ) %>%
       dplyr::ungroup()
   }
