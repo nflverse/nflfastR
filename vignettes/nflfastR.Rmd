@@ -485,14 +485,14 @@ We can do the same for rush attempts to replicate the [NFL leaderboard](https://
 ``` {r stats_rush}
 nflfastR::load_pbp(2020) %>%
   dplyr::filter(season_type == "REG") %>%
-  nflfastR::get_player_stats() %>%
+  nflfastR::calculate_player_stats() %>%
   dplyr::arrange(-rushing_yards) %>%
   dplyr::select(player_name, recent_team, carries, rushing_yards, rushing_tds, rushing_fumbles_lost) %>%
   utils::head(10) %>%
   knitr::kable(digits = 0)
 ```
 
-Again, this matches up exactly, though note the steps we had to go through to correctly account for yards gained on laterals (otherwise we would be missing 2 rushing yards from Chubb in the table above).
+Again, this matches up exactly.
 
 ## Fantasy stats
 
