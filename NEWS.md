@@ -1,6 +1,8 @@
 # nflfastR (development version)
 
+* Added the function `calculate_player_stats()` that aggregates official passing, rushing, and receiving stats either at game level or overall
 * Added the new columns `td_player_name` and `td_player_id` to clearly identify the player who scored a touchdown (this is especially helpful for plays with multiple fumbles or laterals resulting in a touchdown)
+* Added the function `load_player_stats()` that loads weekly player stats from 1999 to the most recent season
 
 # nflfastR 4.0.0
 

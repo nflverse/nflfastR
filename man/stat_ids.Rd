@@ -17,4 +17,9 @@ stat_ids
 \description{
 NFL Stat IDs and their Meanings
 }
+\examples{
+\donttest{
+stat_ids
+}
+}
 \keyword{datasets}

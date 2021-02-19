@@ -65,7 +65,7 @@ navbar:
       href: reference/index.html
     discord:
       icon: "fab fa-discord fa-lg"
-      href: https://discord.gg/5Er2FBnnQa
+      href: https://discord.com/invite/5Er2FBnnQa
     articles:
       text: "Articles"
       menu:
@@ -85,10 +85,12 @@ reference:
       - update_db
       - fast_scraper_roster
       - fast_scraper_schedules
+      - load_player_stats
   - title: Utility Functions
     contents:
       - calculate_expected_points
       - calculate_win_probability
+      - calculate_player_stats
   - title: Documentation
     contents:
       - nflfastR-package

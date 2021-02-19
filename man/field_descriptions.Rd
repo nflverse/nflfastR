@@ -14,6 +14,11 @@ field_descriptions
 \description{
 nflfastR Field Descriptions
 }
+\examples{
+\donttest{
+field_descriptions
+}
+}
 \seealso{
 The searchable table on the
 \href{https://www.nflfastr.com/articles/field_descriptions.html}{nflfastR website}
