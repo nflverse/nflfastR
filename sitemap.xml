@@ -19,6 +19,9 @@
     <loc>https://www.nflfastr.com//reference/calculate_expected_points.html</loc>
   </url>
   <url>
+    <loc>https://www.nflfastr.com//reference/calculate_player_stats.html</loc>
+  </url>
+  <url>
     <loc>https://www.nflfastr.com//reference/calculate_win_probability.html</loc>
   </url>
   <url>
@@ -41,6 +44,9 @@
   </url>
   <url>
     <loc>https://www.nflfastr.com//reference/load_pbp.html</loc>
+  </url>
+  <url>
+    <loc>https://www.nflfastr.com//reference/load_player_stats.html</loc>
   </url>
   <url>
     <loc>https://www.nflfastr.com//reference/nflfastR-package.html</loc>

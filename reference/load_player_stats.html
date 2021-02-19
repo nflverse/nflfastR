@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>NFL Team names, colors and logo urls. — teams_colors_logos • nflfastR</title>
+<title>Load Official Game Stats — load_player_stats • nflfastR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -52,8 +52,9 @@
 
 
 
-<meta property="og:title" content="NFL Team names, colors and logo urls. — teams_colors_logos" />
-<meta property="og:description" content="NFL Team names, colors and logo urls." />
+<meta property="og:title" content="Load Official Game Stats — load_player_stats" />
+<meta property="og:description" content="Loads weekly stats for all passers, rushers and receivers in the
+nflfastR play-by-play data from the 1999 season to the most recent season" />
 <meta property="og:image" content="https://raw.githubusercontent.com/mrcaseb/nflfastR/master/man/figures/card.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:creator" content="@nflfastR" />
@@ -198,57 +199,78 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>NFL Team names, colors and logo urls.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/mrcaseb/nflfastR/blob/master/R/data_documentation.R'><code>R/data_documentation.R</code></a></small>
-    <div class="hidden name"><code>teams_colors_logos.Rd</code></div>
+    <h1>Load Official Game Stats</h1>
+    <small class="dont-index">Source: <a href='https://github.com/mrcaseb/nflfastR/blob/master/R/load_player_stats.R'><code>R/load_player_stats.R</code></a></small>
+    <div class="hidden name"><code>load_player_stats.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>NFL Team names, colors and logo urls.</p>
+    <p>Loads weekly stats for all passers, rushers and receivers in the
+nflfastR play-by-play data from the 1999 season to the most recent season</p>
     </div>
 
-    <pre class="usage"><span class='va'>teams_colors_logos</span></pre>
+    <pre class="usage"><span class='fu'>load_player_stats</span><span class='op'>(</span>qs <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>qs</th>
+      <td><p>Whether to use the function <code><a href='https://rdrr.io/pkg/qs/man/qdeserialize.html'>qs::qdeserialize()</a></code> for more efficient loading.</p></td>
+    </tr>
+    </table>
 
-    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data frame with 36 rows and 10 variables containing NFL team level
-information, including franchises in multiple cities:</p><dl>
-<dt>team_abbr</dt><dd><p>Team abbreviation</p></dd>
-<dt>team_name</dt><dd><p>Complete Team name</p></dd>
-<dt>team_id</dt><dd><p>Team id used in the roster function</p></dd>
-<dt>team_nick</dt><dd><p>Nickname</p></dd>
-<dt>team_color</dt><dd><p>Primary color</p></dd>
-<dt>team_color2</dt><dd><p>Secondary color</p></dd>
-<dt>team_color3</dt><dd><p>Tertiary color</p></dd>
-<dt>team_color4</dt><dd><p>Quaternary color</p></dd>
-<dt>team_logo_wikipedia</dt><dd><p>Url to Team logo on wikipedia</p></dd>
-<dt>team_logo_espn</dt><dd><p>Url to higher quality logo on espn</p></dd>
-<dt>team_wordmark</dt><dd><p>Url to team wordmarks</p></dd>
+    <p>Weekly stats for all passers, rushers and receivers in the nflfastR
+play-by-play data from the 1999 season to the most recent season</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-</dl><p>The colors are taken from Lee Sharpe's teamcolors.csv who has taken them from the
-<code>teamcolors</code> package created by Ben Baumer and Gregory Matthews.
-The Wikipeadia logo urls are taken from Lee Sharpe's logos.csv
-Team wordmarks from nfl.com</p>
+    <div class='dont-index'><p>The function <code><a href='calculate_player_stats.html'>calculate_player_stats()</a></code> and the corresponding examples
+on <a href='https://www.nflfastr.com/articles/nflfastR.html#example-11-replicating-official-stats'>the nflfastR website</a></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='va'>teams_colors_logos</span>
-</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 36 x 11</span><span>
-#&gt;    team_abbr team_name team_id team_nick team_color team_color2 team_color3
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>      </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>      
-#&gt; </span><span style='color: #555555;'> 1</span><span> ARI       Arizona … 3800    Cardinals #97233f    #000000     #ffb612    
-#&gt; </span><span style='color: #555555;'> 2</span><span> ATL       Atlanta … 0200    Falcons   #a71930    #000000     #a5acaf    
-#&gt; </span><span style='color: #555555;'> 3</span><span> BAL       Baltimor… 0325    Ravens    #241773    #000000     #9e7c0c    
-#&gt; </span><span style='color: #555555;'> 4</span><span> BUF       Buffalo … 0610    Bills     #00338d    #c60c30     #0c2e82    
-#&gt; </span><span style='color: #555555;'> 5</span><span> CAR       Carolina… 0750    Panthers  #0085ca    #000000     #bfc0bf    
-#&gt; </span><span style='color: #555555;'> 6</span><span> CHI       Chicago … 0810    Bears     #0b162a    #c83803     #0b162a    
-#&gt; </span><span style='color: #555555;'> 7</span><span> CIN       Cincinna… 0920    Bengals   #000000    #fb4f14     #000000    
-#&gt; </span><span style='color: #555555;'> 8</span><span> CLE       Clevelan… 1050    Browns    #fb4f14    #22150c     #a5acaf    
-#&gt; </span><span style='color: #555555;'> 9</span><span> DAL       Dallas C… 1200    Cowboys   #002244    #b0b7bc     #acc0c6    
-#&gt; </span><span style='color: #555555;'>10</span><span> DEN       Denver B… 1400    Broncos   #002244    #fb4f14     #00234c    
-#&gt; </span><span style='color: #555555;'># … with 26 more rows, and 4 more variables: team_color4 </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,</span><span>
-#&gt; </span><span style='color: #555555;'>#   team_logo_wikipedia </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, team_logo_espn </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, team_wordmark </span><span style='color: #555555;font-style: italic;'>&lt;glue&gt;</span><span></div><div class='input'><span class='co'># }</span>
+<span class='va'>stats</span> <span class='op'>&lt;-</span> <span class='fu'>load_player_stats</span><span class='op'>(</span><span class='op'>)</span>
+<span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='va'>stats</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; Rows: 112,377
+#&gt; Columns: 36
+#&gt; $ player_id                   <span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> "00-0000003", "00-0000003", "00-0000003",…
+#&gt; $ player_name                 </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> "A.al-Jabbar", "A.al-Jabbar", "A.al-Jabba…
+#&gt; $ recent_team                 </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> "MIA", "MIA", "MIA", "CLE", "CLE", "CLE",…
+#&gt; $ season                      </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> 1999, 1999, 1999, 1999, 1999, 1999, 1999,…
+#&gt; $ week                        </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> 1, 2, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15,…
+#&gt; $ completions                 </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+#&gt; $ attempts                    </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+#&gt; $ passing_yards               </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+#&gt; $ passing_tds                 </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+#&gt; $ interceptions               </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+#&gt; $ sacks                       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+#&gt; $ sack_fumbles_lost           </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+#&gt; $ passing_air_yards           </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+#&gt; $ passing_yards_after_catch   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+#&gt; $ passing_first_downs         </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+#&gt; $ passing_epa                 </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+#&gt; $ passing_2pt_conversions     </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+#&gt; $ carries                     </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> 16, 9, 3, 6, 13, 9, 17, 7, 15, 10, 5, 13,…
+#&gt; $ rushing_yards               </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> 60, 33, 2, 27, 39, 23, 54, 11, 35, 29, 10…
+#&gt; $ rushing_tds                 </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+#&gt; $ rushing_fumbles_lost        </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+#&gt; $ rushing_first_downs         </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> 4, 1, 0, 0, 2, 1, 4, 0, 1, 1, 0, 2, 4, 0,…
+#&gt; $ rushing_epa                 </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> 6.24877114, -1.43495017, -1.53995173, 0.2…
+#&gt; $ rushing_2pt_conversions     </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+#&gt; $ receptions                  </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> 1, 3, 0, 2, 0, 1, 1, 2, 1, 1, 2, 1, 2, 0,…
+#&gt; $ targets                     </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> 1, 4, 1, 2, 0, 2, 1, 3, 1, 1, 2, 1, 3, 0,…
+#&gt; $ receiving_yards             </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> 7, 18, 0, 8, 0, 2, 7, 2, 1, 21, 7, 4, 7, …
+#&gt; $ receiving_tds               </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,…
+#&gt; $ receiving_fumbles_lost      </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+#&gt; $ receiving_air_yards         </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+#&gt; $ receiving_yards_after_catch </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+#&gt; $ receiving_first_downs       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0,…
+#&gt; $ receiving_epa               </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> 0.29237815, 0.37700888, -0.69957773, -0.2…
+#&gt; $ receiving_2pt_conversions   </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+#&gt; $ fantasy_points              </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> 12.7, 5.1, 0.2, 3.5, 3.9, 2.5, 6.1, 1.3, …
+#&gt; $ fantasy_points_ppr          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> 13.7, 8.1, 0.2, 5.5, 3.9, 3.5, 7.1, 3.3, …</div><div class='input'><span class='co'># }</span>
 </div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
