@@ -85,6 +85,7 @@ reference:
       - update_db
       - fast_scraper_roster
       - fast_scraper_schedules
+      - load_player_stats
   - title: Utility Functions
     contents:
       - calculate_expected_points

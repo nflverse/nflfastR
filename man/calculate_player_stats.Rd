@@ -86,3 +86,7 @@ overall <- calculate_player_stats(pbp, weekly = FALSE)
 dplyr::glimpse(overall)
 }
 }
+\seealso{
+The function \code{\link[=load_player_stats]{load_player_stats()}} and the corresponding examples
+on \href{https://www.nflfastr.com/articles/nflfastR.html#example-11-replicating-official-stats}{the nflfastR website}
+}

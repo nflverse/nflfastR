@@ -68,6 +68,8 @@
 #' \item{fantasy_points_ppr}{PPR fantasy points.}
 #' }
 #' @export
+#' @seealso The function [load_player_stats()] and the corresponding examples
+#' on [the nflfastR website](https://www.nflfastr.com/articles/nflfastR.html#example-11-replicating-official-stats)
 #' @examples
 #' \donttest{
 #' pbp <- nflfastR::load_pbp(2020)
