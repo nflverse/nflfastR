@@ -101,8 +101,9 @@ clean_pbp <- function(pbp, ...) {
           0, .data$pass
           ),
         # and make sure there's no pass on a kickoff (sometimes there's forward pass on kickoff but that's not a pass play)
-        pass = dplyr::if_else(
-          .data$kickoff_attempt == 1, 0, .data$pass
+        pass = dplyr::case_when(
+          .data$kickoff_attempt == 1 ~ 0,
+          TRUE~ .data$pass
         ),
         #if there's a rusher and it wasn't a QB kneel or pass play, it's a run play
         rush = dplyr::if_else(!is.na(.data$rusher) & .data$qb_kneel == 0 & .data$pass == 0, 1, 0),
