@@ -94,7 +94,7 @@ clean_pbp <- function(pbp, ...) {
           stringr::str_detect(.data$desc, ' pass '), .data$receiver, NA_character_
         ),
         # if there's a pass, sack, or scramble, it's a pass play...
-        pass = dplyr::if_else(stringr::str_detect(.data$desc, "( pass )|(sacked)|(scramble)"), 1, 0),
+        pass = dplyr::if_else(stringr::str_detect(.data$desc, "( pass )|(sacked)|(scramble)") | .data$qb_scramble == 1, 1, 0),
         # ...unless it says "backwards pass" and there's a rusher
         pass = dplyr::if_else(
           stringr::str_detect(.data$desc, "(backward pass)|(Backward pass)") & !is.na(.data$rusher),
