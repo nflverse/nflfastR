@@ -25,7 +25,8 @@ d <- dat %>%
     pbp %>% select(game_id, play_id, week, away_team, home_team, posteam, qtr, down, ydstogo, time),
     by = c("week", "away_team", "home_team", "posteam", "qtr", "down", "ydstogo", "time")
   ) %>%
-  mutate(scramble_id = paste0(game_id, "_", play_id))
+  mutate(scramble_id = paste0(game_id, "_", play_id)) %>%
+  filter(scramble_id != "2005_09_CIN_BAL_1725")
 
 scramble_fix <- d$scramble_id
 saveRDS(scramble_fix, file = "data-raw/scramble_fix.rds")
