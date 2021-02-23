@@ -18,7 +18,6 @@
 #' }
 #' @export
 add_xyac <- function(pbp, ...) {
-
   if (nrow(pbp) == 0) {
     usethis::ui_info("Nothing to do. Return passed data frame.")
   } else {
@@ -27,7 +26,7 @@ add_xyac <- function(pbp, ...) {
 
     # Need this ifelse because the else won't render correct on the pkgdown website
     # but we don't want crayon to be a hard dependency
-    if (is_installed("crayon")){
+    if (is_installed("crayon")) {
       rlang::inform(paste0(crayon::red(cli::symbol$bullet), " Computing xyac... (", crayon::yellow(cli::symbol$info), " This is a heavy task, please be patient)"))
     } else {
       rlang::inform(paste0("\033[31m*\033[39m", " Computing xyac... (", "\033[33mi\033[39m", " This is a heavy task, please be patient)"))
@@ -44,111 +43,114 @@ add_xyac <- function(pbp, ...) {
       dplyr::filter(.data$valid_pass == 1, .data$distance_to_goal != 0)
 
     if (!nrow(passes) == 0) {
-        xyac_vars <-
-          stats::predict(
-            fastrmodels::xyac_model,
-            as.matrix(passes %>% xyac_model_select())
+      join_data <- passes %>%
+        dplyr::select(
+          "index", "distance_to_goal", "season", "week", "home_team", "posteam", "roof",
+          "half_seconds_remaining", "down", "ydstogo",
+          "posteam_timeouts_remaining", "defteam_timeouts_remaining",
+          "original_spot" = "yardline_100", "original_ep" = "ep", "air_epa", "air_yards"
+        ) %>%
+        dplyr::mutate(
+          down = as.integer(.data$down),
+          ydstogo = as.integer(.data$ydstogo),
+          original_ydstogo = .data$ydstogo
+        ) %>%
+        dplyr::select("index":"ydstogo", "original_ydstogo", dplyr::everything())
+
+      xyac_vars <-
+        stats::predict(
+          fastrmodels::xyac_model,
+          as.matrix(passes %>% xyac_model_select())
+        ) %>%
+        tibble::as_tibble() %>%
+        dplyr::rename(prob = "value") %>%
+        dplyr::bind_cols(
+          tibble::tibble(
+            "yac" = rep_len(-5:70, length.out = nrow(passes) * 76),
+            "index" = rep(passes$index, times = rep_len(76, length.out = nrow(passes)))
           ) %>%
-          tibble::as_tibble() %>%
-          dplyr::rename(prob = "value") %>%
-          dplyr::bind_cols(
-            furrr::future_map_dfr(seq_along(passes$index), function(x) {
-              tibble::tibble(
-                "yac" = -5:70,
-                "index" = passes$index[[x]],
-                "distance_to_goal" = passes$distance_to_goal[[x]],
-                "season" = passes$season[[x]],
-                "week" = passes$week[[x]],
-                "home_team" = passes$home_team[[x]],
-                "posteam" = passes$posteam[[x]],
-                "roof" = passes$roof[[x]],
-                "half_seconds_remaining" = dplyr::if_else(
-                  passes$half_seconds_remaining[[x]] <= 6,
-                  0,
-                  passes$half_seconds_remaining[[x]] - 6
-                ),
-                "down" = as.integer(passes$down[[x]]),
-                "ydstogo" = as.integer(passes$ydstogo[[x]]),
-                "original_ydstogo" = as.integer(passes$ydstogo[[x]]),
-                "posteam_timeouts_remaining" = passes$posteam_timeouts_remaining[[x]],
-                "defteam_timeouts_remaining" = passes$defteam_timeouts_remaining[[x]],
-                "original_spot" = passes$yardline_100[[x]],
-                "original_ep" = passes$ep[[x]],
-                "air_epa" = passes$air_epa[[x]],
-                "air_yards" = passes$air_yards[[x]]
+            dplyr::left_join(join_data, by = "index") %>%
+            dplyr::mutate(
+              half_seconds_remaining = dplyr::if_else(
+                .data$half_seconds_remaining <= 6,
+                0,
+                .data$half_seconds_remaining - 6
               )
-            })
-          ) %>%
-          dplyr::group_by(.data$index) %>%
-          dplyr::mutate(
-            max_loss = dplyr::if_else(.data$distance_to_goal < 95, -5, .data$distance_to_goal - 99),
-            max_gain = dplyr::if_else(.data$distance_to_goal > 70, 70, .data$distance_to_goal),
-            cum_prob = cumsum(.data$prob),
-            prob = dplyr::case_when(
-              # truncate probs at loss greater than max loss
-              .data$yac == .data$max_loss ~ .data$cum_prob,
-              # same for gains bigger than possible
-              .data$yac == .data$max_gain ~ 1 - dplyr::lag(.data$cum_prob, 1),
-              TRUE ~ .data$prob
-            ),
-            # get end result for each possibility
-            yardline_100 = .data$distance_to_goal - .data$yac
-          ) %>%
-          dplyr::filter(.data$yac >= .data$max_loss, .data$yac <= .data$max_gain) %>%
-          dplyr::select(-.data$cum_prob) %>%
-          dplyr::mutate(
-            posteam_timeouts_pre = .data$posteam_timeouts_remaining,
-            defeam_timeouts_pre = .data$defteam_timeouts_remaining,
-            gain = .data$original_spot - .data$yardline_100,
-            turnover = dplyr::if_else(.data$down == 4 & .data$gain < .data$ydstogo, as.integer(1), as.integer(0)),
-            down = dplyr::if_else(.data$gain >= .data$ydstogo, 1, .data$down + 1),
-            ydstogo = dplyr::if_else(.data$gain >= .data$ydstogo, 10, .data$ydstogo - .data$gain),
-            # possession change if 4th down failed
-            down = dplyr::if_else(.data$turnover == 1, as.integer(1), as.integer(.data$down)),
-            ydstogo = dplyr::if_else(.data$turnover == 1, as.integer(10), as.integer(.data$ydstogo)),
-            # flip yardline_100 and timeouts for turnovers
-            yardline_100 = dplyr::if_else(.data$turnover == 1, as.integer(100 - .data$yardline_100), as.integer(.data$yardline_100)),
-            posteam_timeouts_remaining = dplyr::if_else(.data$turnover == 1,
-                                                        .data$defeam_timeouts_pre,
-                                                        .data$posteam_timeouts_pre),
-            defteam_timeouts_remaining = dplyr::if_else(.data$turnover == 1,
-                                                        .data$posteam_timeouts_pre,
-                                                        .data$defeam_timeouts_pre),
-            # ydstogo can't be bigger than yardline
-            ydstogo = dplyr::if_else(.data$ydstogo >= .data$yardline_100, as.integer(.data$yardline_100), as.integer(.data$ydstogo))
-          ) %>%
-          dplyr::ungroup() %>%
-          nflfastR::calculate_expected_points() %>%
-          dplyr::group_by(.data$index) %>%
-          dplyr::mutate(
-            ep = dplyr::case_when(
-              .data$yardline_100 == 0 ~ 7,
-              .data$turnover == 1 ~ -1 * .data$ep,
-              TRUE ~ ep
-            ),
-            epa = .data$ep - .data$original_ep,
-            wt_epa = .data$epa * .data$prob,
-            wt_yardln = .data$yardline_100 * .data$prob,
-            med = dplyr::if_else(
-              cumsum(.data$prob) > .5 & dplyr::lag(cumsum(.data$prob) < .5), .data$yac, as.integer(0)
             )
-          ) %>%
-          dplyr::summarise(
-            xyac_epa = sum(.data$wt_epa) - dplyr::first(.data$air_epa),
-            xyac_mean_yardage = (dplyr::first(.data$original_spot) - dplyr::first(.data$air_yards)) - sum(.data$wt_yardln),
-            xyac_median_yardage = max(.data$med),
-            xyac_success = sum((.data$ep > .data$original_ep) * .data$prob),
-            xyac_fd = sum((.data$gain >= .data$original_ydstogo) * .data$prob)
-          ) %>%
-          dplyr::ungroup()
+        ) %>%
+        dplyr::group_by(.data$index) %>%
+        dplyr::mutate(
+          max_loss = dplyr::if_else(.data$distance_to_goal < 95, -5, .data$distance_to_goal - 99),
+          max_gain = dplyr::if_else(.data$distance_to_goal > 70, 70, .data$distance_to_goal),
+          cum_prob = cumsum(.data$prob),
+          prob = dplyr::case_when(
+            # truncate probs at loss greater than max loss
+            .data$yac == .data$max_loss ~ .data$cum_prob,
+            # same for gains bigger than possible
+            .data$yac == .data$max_gain ~ 1 - dplyr::lag(.data$cum_prob, 1),
+            TRUE ~ .data$prob
+          ),
+          # get end result for each possibility
+          yardline_100 = .data$distance_to_goal - .data$yac
+        ) %>%
+        dplyr::filter(.data$yac >= .data$max_loss, .data$yac <= .data$max_gain) %>%
+        dplyr::select(-.data$cum_prob) %>%
+        dplyr::mutate(
+          posteam_timeouts_pre = .data$posteam_timeouts_remaining,
+          defeam_timeouts_pre = .data$defteam_timeouts_remaining,
+          gain = .data$original_spot - .data$yardline_100,
+          turnover = dplyr::if_else(.data$down == 4 & .data$gain < .data$ydstogo, as.integer(1), as.integer(0)),
+          down = dplyr::if_else(.data$gain >= .data$ydstogo, 1, .data$down + 1),
+          ydstogo = dplyr::if_else(.data$gain >= .data$ydstogo, 10, .data$ydstogo - .data$gain),
+          # possession change if 4th down failed
+          down = dplyr::if_else(.data$turnover == 1, as.integer(1), as.integer(.data$down)),
+          ydstogo = dplyr::if_else(.data$turnover == 1, as.integer(10), as.integer(.data$ydstogo)),
+          # flip yardline_100 and timeouts for turnovers
+          yardline_100 = dplyr::if_else(.data$turnover == 1, as.integer(100 - .data$yardline_100), as.integer(.data$yardline_100)),
+          posteam_timeouts_remaining = dplyr::if_else(
+            .data$turnover == 1,
+            .data$defeam_timeouts_pre,
+            .data$posteam_timeouts_pre
+          ),
+          defteam_timeouts_remaining = dplyr::if_else(
+            .data$turnover == 1,
+            .data$posteam_timeouts_pre,
+            .data$defeam_timeouts_pre
+          ),
+          # ydstogo can't be bigger than yardline
+          ydstogo = dplyr::if_else(.data$ydstogo >= .data$yardline_100, as.integer(.data$yardline_100), as.integer(.data$ydstogo))
+        ) %>%
+        dplyr::ungroup() %>%
+        nflfastR::calculate_expected_points() %>%
+        dplyr::group_by(.data$index) %>%
+        dplyr::mutate(
+          ep = dplyr::case_when(
+            .data$yardline_100 == 0 ~ 7,
+            .data$turnover == 1 ~ -1 * .data$ep,
+            TRUE ~ ep
+          ),
+          epa = .data$ep - .data$original_ep,
+          wt_epa = .data$epa * .data$prob,
+          wt_yardln = .data$yardline_100 * .data$prob,
+          med = dplyr::if_else(
+            cumsum(.data$prob) > .5 & dplyr::lag(cumsum(.data$prob) < .5), .data$yac, as.integer(0)
+          )
+        ) %>%
+        dplyr::summarise(
+          xyac_epa = sum(.data$wt_epa) - dplyr::first(.data$air_epa),
+          xyac_mean_yardage = (dplyr::first(.data$original_spot) - dplyr::first(.data$air_yards)) - sum(.data$wt_yardln),
+          xyac_median_yardage = max(.data$med),
+          xyac_success = sum((.data$ep > .data$original_ep) * .data$prob),
+          xyac_fd = sum((.data$gain >= .data$original_ydstogo) * .data$prob)
+        ) %>%
+        dplyr::ungroup()
 
-        pbp <- pbp %>%
-          dplyr::left_join(xyac_vars, by = "index") %>%
-          dplyr::select(-.data$index)
+      pbp <- pbp %>%
+        dplyr::left_join(xyac_vars, by = "index") %>%
+        dplyr::select(-.data$index)
 
-        message_completed("added xyac variables", ...)
-
-    } else {# means no valid pass plays in the pbp
+      message_completed("added xyac variables", ...)
+    } else { # means no valid pass plays in the pbp
       pbp <- pbp %>%
         dplyr::mutate(
           xyac_epa = NA_real_,
