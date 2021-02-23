@@ -574,6 +574,9 @@ make_model_mutations <- function(pbp) {
 
 
 fix_scrambles <- function(pbp) {
+  # skip below code if 2005 is not in the data
+  if (!2005 %in% pbp$season) return(pbp)
+
   pbp %>%
     dplyr::mutate(
       scramble_id = paste0(.data$game_id, "_", .data$play_id),
