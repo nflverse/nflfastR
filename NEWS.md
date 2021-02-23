@@ -4,6 +4,7 @@
 * Added the new columns `td_player_name` and `td_player_id` to clearly identify the player who scored a touchdown (this is especially helpful for plays with multiple fumbles or laterals resulting in a touchdown)
 * Added the function `load_player_stats()` that loads weekly player stats from 1999 to the most recent season
 * The variable `qb_scramble` was predominantly broken for the 2005 season because of missing scramble indicators in the play description. This has been mostly fixed using data of Football Outsiders (thanks to Aaron Schatz!). Some notes on this fix: Weeks 1-16 are based on charting. Weeks 17-21 are guesses (basically every QB run except those that were a) a loss, b) no gain, or c) on 3/4 down with 1-2 to go). Plays nullified by penalty are not included.
+* Fix bug in `drive` that was causing incorrect overtime win probabilities (#194)
 
 # nflfastR 4.0.0
 

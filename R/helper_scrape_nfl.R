@@ -273,21 +273,6 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
             .data$season <= 2015 & .data$yardline_side == 'JAX',
             'JAC', .data$yardline_side
           ),
-          #if there's some random missing drive, fill in with previous drive
-          #this fixes a bug with plays appearing out of order after defensive TDs
-          drive = dplyr::if_else(
-            !is.na(dplyr::lag(.data$drive)) & !is.na(dplyr::lead(.data$drive)),
-            dplyr::lag(.data$drive), .data$drive
-          ),
-          #fix for drives being messed up in this game
-          drive = dplyr::case_when(
-            id == '2012_04_NO_GB' & .data$play_id == 1085 ~ 4,
-            id == '2012_16_BUF_MIA' & .data$play_id == 2571 ~ 15,
-            id == '2015_16_CHI_TB' & .data$play_id == 2182 ~ 14,
-            id == '2019_12_IND_HOU' & .data$play_id == 2579 ~ 12,
-            id == '2019_12_IND_HOU' & .data$play_id == 2544 ~ 11,
-            TRUE ~ .data$drive
-          ),
           time = dplyr::case_when(
             id == '2012_04_NO_GB' & .data$play_id == 1085 ~ '3:34',
             id == '2012_16_BUF_MIA' & .data$play_id == 2571 ~ '8:31',
