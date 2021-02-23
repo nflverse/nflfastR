@@ -42,8 +42,7 @@
 #' \item{fantasy_player_id}{ID of the rusher on rush plays or receiver on pass plays (from official stats).}
 #' \item{jersey_number}{Jersey number of the player listed in the 'name' column.}
 #' \item{id}{ID of the player in the 'name' column.}
-#' \item{qb_epa}{Gives QB credit for EPA for up to the point where a receiver lost a fumble after a completed catch and makes EPA work more like passing yards on plays with fumbles.}
-#' \item{out_of_bounds}{1 if play description contains ran ob, pushed ob, or sacked ob; 0 otherwise.}
+#' \item{out_of_bounds}{= 1 if play description contains "ran ob", "pushed ob", or "sacked ob"; = 0 otherwise.}
 #' }
 #' @export
 clean_pbp <- function(pbp, ...) {
@@ -265,7 +264,8 @@ drop.cols <- c(
   "success", "passer", "rusher", "receiver", "pass", "rush", "special",
   "first_down", "play", "passer_id", "rusher_id", "receiver_id", "name", "id",
   "passer_jersey_number", "rusher_jersey_number", "receiver_jersey_number",
-  "jersey_number"
+  "jersey_number", "aborted_play", "fantasy", "fantasy_id", "fantasy_player_name",
+  "fantasy_player_id", "out_of_bounds"
 )
 
 # fixes team names on columns with yard line
