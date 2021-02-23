@@ -3,6 +3,8 @@ library(tidyverse)
 pbp <- nflfastR::load_pbp(2005) %>%
   dplyr::select(game_id, play_id, week, desc, away_team, home_team, posteam, qtr, down, ydstogo, time)
 
+# Thank you to Aaron Schatz and Football Outsiders
+# For the charting data to fix scrambles in 2005
 s <- readxl::read_xlsx("data-raw/scrambles_2005.xlsx") %>%
   janitor::clean_names()
 
