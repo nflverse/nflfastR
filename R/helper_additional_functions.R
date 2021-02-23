@@ -85,6 +85,10 @@ clean_pbp <- function(pbp, ...) {
           stringr::str_detect(.data$desc, glue::glue('{abnormal_play}')) ~ .data$passer_player_name,
           TRUE ~ .data$passer
         ),
+        passer = dplyr::case_when(
+          is.na(.data$passer) & .data$qb_scramble == 1 & !is.na(.data$rusher) & .data$season == 2005 ~ .data$rusher,
+          TRUE ~ .data$passer
+        ),
         #finally, for rusher, if there was already a passer (eg from scramble), set rusher to NA
         rusher = dplyr::if_else(
           !is.na(.data$passer), NA_character_, .data$rusher
@@ -103,7 +107,7 @@ clean_pbp <- function(pbp, ...) {
         # and make sure there's no pass on a kickoff (sometimes there's forward pass on kickoff but that's not a pass play)
         pass = dplyr::case_when(
           .data$kickoff_attempt == 1 ~ 0,
-          TRUE~ .data$pass
+          TRUE ~ .data$pass
         ),
         #if there's a rusher and it wasn't a QB kneel or pass play, it's a run play
         rush = dplyr::if_else(!is.na(.data$rusher) & .data$qb_kneel == 0 & .data$pass == 0, 1, 0),
