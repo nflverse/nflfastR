@@ -45,7 +45,7 @@ add_series_data <- function(pbp) {
         .data$interception == 1 | .data$fumble_lost == 1 ~ "Turnover",
         .data$down == 4 & .data$yards_gained < .data$ydstogo & .data$play_type != "no_play" ~ "Turnover on downs",
         .data$qb_kneel == 1 ~ "QB kneel",
-        .data$desc %in% c("END GAME", "END QUARTER 2", "END QUARTER 4") ~ "End of half"
+        stringr::str_detect(.data$desc, "(END QUARTER 2)|(END QUARTER 4)|(END GAME)") ~ "End of half"
       )
     ) %>%
     dplyr::group_by(.data$game_id, .data$series) %>%
