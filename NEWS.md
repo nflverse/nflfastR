@@ -5,7 +5,7 @@
 * Added the function `load_player_stats()` that loads weekly player stats from 1999 to the most recent season
 * Fix bug in `drive` that was causing incorrect overtime win probabilities (#194)
 * The performance of `add_xyac()` has been significantly improved
-* Fixed a bug where `posteam` was not `NA` on end of quarter 2 (or end of quarter 4 in overtime games) causing wrong value for `fixed_drive` and `fixed_drive_result`
+* Fixed a bug where `posteam` was not `NA` on end of quarter 2 (or end of quarter 4 in overtime games) causing wrong values for `fixed_drive` and `fixed_drive_result`
 
 # nflfastR 4.0.0
 
