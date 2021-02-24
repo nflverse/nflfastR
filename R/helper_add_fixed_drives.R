@@ -10,6 +10,13 @@
 ##  result of  given drive
 add_drive_results <- function(d) {
   drive_df <- d %>%
+    dplyr::mutate(
+      old_posteam = .data$posteam,
+      posteam = dplyr::case_when(
+        .data$own_kickoff_recovery == 1 ~ .data$defteam,
+        TRUE ~ .data$posteam
+      )
+    ) %>%
     dplyr::group_by(.data$game_id, .data$game_half) %>%
     dplyr::mutate(
       row = 1:dplyr::n(),
@@ -72,7 +79,8 @@ add_drive_results <- function(d) {
         )
     ) %>%
     dplyr::ungroup() %>%
-    dplyr::select(-"row", -"new_drive", -"tmp_result")
+    dplyr::mutate(posteam = .data$old_posteam) %>%
+    dplyr::select(-"row", -"new_drive", -"tmp_result", -"old_posteam")
 
   usethis::ui_done("added fixed drive variables")
   return(drive_df)

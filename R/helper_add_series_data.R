@@ -13,6 +13,13 @@
 add_series_data <- function(pbp) {
   out <-
     pbp %>%
+    dplyr::mutate(
+      old_posteam = .data$posteam,
+      posteam = dplyr::case_when(
+        .data$own_kickoff_recovery == 1 ~ .data$defteam,
+        TRUE ~ .data$posteam
+      )
+    ) %>%
     dplyr::group_by(.data$game_id, .data$game_half) %>%
     dplyr::mutate(
       row = 1:dplyr::n(),
@@ -63,7 +70,8 @@ add_series_data <- function(pbp) {
       )
     ) %>%
     dplyr::ungroup() %>%
-    dplyr::select(-"row", -"tmp_result", -"new_series")
+    dplyr::mutate(posteam = .data$old_posteam) %>%
+    dplyr::select(-"row", -"tmp_result", -"new_series", -"old_posteam")
 
   usethis::ui_done("added series variables")
   return(out)
