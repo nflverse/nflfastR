@@ -4,6 +4,7 @@
 * Added the new columns `td_player_name` and `td_player_id` to clearly identify the player who scored a touchdown (this is especially helpful for plays with multiple fumbles or laterals resulting in a touchdown)
 * Added the function `load_player_stats()` that loads weekly player stats from 1999 to the most recent season
 * Fix bug in `drive` that was causing incorrect overtime win probabilities (#194)
+* The performance of `add_xyac()` has been significantly improved
 
 # nflfastR 4.0.0
 
