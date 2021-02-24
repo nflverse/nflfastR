@@ -54,7 +54,7 @@ add_nflscrapr_mutations <- function(pbp) {
       # remove posteam from END Q2 plays or END Q4 plays (when game goes in OT)
       # because it doesn't make sense and breaks fixed_drive and fixed_drive_result
       posteam = dplyr::if_else(
-        .data$play_description %in% c("END QUARTER 2", "END QUARTER 4"),
+        stringr::str_detect(.data$desc, "(END QUARTER 2)|(END QUARTER 4)"),
         NA_character_, .data$posteam
       ),
 
