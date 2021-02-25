@@ -209,6 +209,7 @@
 <li>Added the function <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> that aggregates official passing, rushing, and receiving stats either at game level or overall</li>
 <li>Added the new columns <code>td_player_name</code> and <code>td_player_id</code> to clearly identify the player who scored a touchdown (this is especially helpful for plays with multiple fumbles or laterals resulting in a touchdown)</li>
 <li>Added the function <code><a href="../reference/load_player_stats.html">load_player_stats()</a></code> that loads weekly player stats from 1999 to the most recent season</li>
+<li>The variable <code>qb_scramble</code> was incomplete for the 2005 season because of missing scramble indicators in the play description. This has been mostly fixed courtesy of charting data from Football Outsiders (with thanks to Aaron Schatz!). Some notes on this fix: Weeks 1-16 are based on charting. Weeks 17-21 are guesses (basically every QB run except those that were a) a loss, b) no gain, or c) on 3/4 down with 1-2 to go). Plays nullified by penalty are not included.</li>
 <li>Fix bug in <code>drive</code> that was causing incorrect overtime win probabilities (<a href='https://github.com/mrcaseb/nflfastR/issues/194'>#194</a>)</li>
 <li>The performance of <code><a href="../reference/add_xyac.html">add_xyac()</a></code> has been significantly improved</li>
 </ul>
