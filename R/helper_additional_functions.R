@@ -42,8 +42,7 @@
 #' \item{fantasy_player_id}{ID of the rusher on rush plays or receiver on pass plays (from official stats).}
 #' \item{jersey_number}{Jersey number of the player listed in the 'name' column.}
 #' \item{id}{ID of the player in the 'name' column.}
-#' \item{qb_epa}{Gives QB credit for EPA for up to the point where a receiver lost a fumble after a completed catch and makes EPA work more like passing yards on plays with fumbles.}
-#' \item{out_of_bounds}{1 if play description contains ran ob, pushed ob, or sacked ob; 0 otherwise.}
+#' \item{out_of_bounds}{= 1 if play description contains "ran ob", "pushed ob", or "sacked ob"; = 0 otherwise.}
 #' }
 #' @export
 clean_pbp <- function(pbp, ...) {
@@ -86,24 +85,30 @@ clean_pbp <- function(pbp, ...) {
           stringr::str_detect(.data$desc, glue::glue('{abnormal_play}')) ~ .data$passer_player_name,
           TRUE ~ .data$passer
         ),
-        #finally, for rusher, if there was already a passer (eg from scramble), set rusher to NA
+        # fix the plays where scramble was fixed using charting data in 2005
+        passer = dplyr::case_when(
+          is.na(.data$passer) & .data$qb_scramble == 1 & !is.na(.data$rusher) & .data$season == 2005 ~ .data$rusher,
+          TRUE ~ .data$passer
+        ),
+        # finally, for rusher, if there was already a passer (eg from scramble), set rusher to NA
         rusher = dplyr::if_else(
           !is.na(.data$passer), NA_character_, .data$rusher
         ),
-        #if no pass is thrown, there shouldn't be a receiver
+        # if no pass is thrown, there shouldn't be a receiver
         receiver = dplyr::if_else(
           stringr::str_detect(.data$desc, ' pass '), .data$receiver, NA_character_
         ),
         # if there's a pass, sack, or scramble, it's a pass play...
-        pass = dplyr::if_else(stringr::str_detect(.data$desc, "( pass )|(sacked)|(scramble)"), 1, 0),
+        pass = dplyr::if_else(stringr::str_detect(.data$desc, "( pass )|(sacked)|(scramble)") | .data$qb_scramble == 1, 1, 0),
         # ...unless it says "backwards pass" and there's a rusher
         pass = dplyr::if_else(
           stringr::str_detect(.data$desc, "(backward pass)|(Backward pass)") & !is.na(.data$rusher),
           0, .data$pass
           ),
         # and make sure there's no pass on a kickoff (sometimes there's forward pass on kickoff but that's not a pass play)
-        pass = dplyr::if_else(
-          .data$kickoff_attempt == 1, 0, .data$pass
+        pass = dplyr::case_when(
+          .data$kickoff_attempt == 1 ~ 0,
+          TRUE ~ .data$pass
         ),
         #if there's a rusher and it wasn't a QB kneel or pass play, it's a run play
         rush = dplyr::if_else(!is.na(.data$rusher) & .data$qb_kneel == 0 & .data$pass == 0, 1, 0),
@@ -265,7 +270,8 @@ drop.cols <- c(
   "success", "passer", "rusher", "receiver", "pass", "rush", "special",
   "first_down", "play", "passer_id", "rusher_id", "receiver_id", "name", "id",
   "passer_jersey_number", "rusher_jersey_number", "receiver_jersey_number",
-  "jersey_number"
+  "jersey_number", "aborted_play", "fantasy", "fantasy_id", "fantasy_player_name",
+  "fantasy_player_id", "out_of_bounds"
 )
 
 # fixes team names on columns with yard line

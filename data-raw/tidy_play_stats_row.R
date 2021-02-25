@@ -29,8 +29,9 @@ tidy_play_stats_row <-
     "lateral_receiving_yards"
   ), as.integer)
 
+scramble_fix <- readRDS("data-raw/scramble_fix.rds")
 usethis::use_data(
-  tidy_play_stats_row,
+  tidy_play_stats_row, scramble_fix,
   internal = TRUE,
   overwrite = TRUE
 )
