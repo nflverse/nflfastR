@@ -47,7 +47,7 @@ add_drive_results <- function(d) {
         .data$new_drive),
       # PAT after defensive TD is not a new drive even if a Timeout follows the TD
       new_drive = dplyr::if_else(
-        dplyr::lag(stringr::str_detect(.data$desc, "Timeout")) &
+        dplyr::lag(stringr::str_detect(.data$desc, "(Timeout)|(Two-Minute Warning)")) &
           dplyr::lag(.data$touchdown == 1, 2L) &
           (dplyr::lag(.data$posteam, 2L) != dplyr::lag(.data$td_team, 2L)),
         0,
