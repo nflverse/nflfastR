@@ -24,14 +24,6 @@ add_xyac <- function(pbp, ...) {
     # testing only
     # pbp <- g
 
-    # Need this ifelse because the else won't render correct on the pkgdown website
-    # but we don't want crayon to be a hard dependency
-    if (is_installed("crayon")) {
-      rlang::inform(paste0(crayon::red(cli::symbol$bullet), " Computing xyac... (", crayon::yellow(cli::symbol$info), " This is a heavy task, please be patient)"))
-    } else {
-      rlang::inform(paste0("\033[31m*\033[39m", " Computing xyac... (", "\033[33mi\033[39m", " This is a heavy task, please be patient)"))
-    }
-
     pbp <- pbp %>% dplyr::select(-tidyselect::any_of(drop.cols.xyac))
 
     # for joining at the end
@@ -43,6 +35,7 @@ add_xyac <- function(pbp, ...) {
       dplyr::filter(.data$valid_pass == 1, .data$distance_to_goal != 0)
 
     if (!nrow(passes) == 0) {
+      usethis::ui_todo("Computing xyac...")
       join_data <- passes %>%
         dplyr::select(
           "index", "distance_to_goal", "season", "week", "home_team", "posteam", "roof",
