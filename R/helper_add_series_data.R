@@ -16,7 +16,14 @@ add_series_data <- function(pbp) {
     dplyr::mutate(
       old_posteam = .data$posteam,
       posteam = dplyr::case_when(
+        # on kickoffs the kicking team is the defteam but this should be swapped
+        # in terms of this function if the kickoff is recovered
         .data$own_kickoff_recovery == 1 ~ .data$defteam,
+        # if a kickoff has to be replayed due to a penalty and is then recovered,
+        # the prior (reversed) kickoff shouldn't be a new drive/series
+        stringr::str_detect(.data$desc, kickoff_finder) &
+          .data$own_kickoff_recovery == 0 &
+          dplyr::lead(.data$own_kickoff_recovery == 1) ~ .data$defteam,
         TRUE ~ .data$posteam
       )
     ) %>%
