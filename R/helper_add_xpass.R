@@ -19,10 +19,11 @@
 #' }
 #' @export
 add_xpass <- function(pbp, ...) {
+  pbp <- pbp %>% dplyr::select(-tidyselect::any_of(c("xpass", "pass_oe")))
   plays <- prepare_xpass_data(pbp)
 
   if (!nrow(plays %>% dplyr::filter(.data$valid_play == 1)) == 0) {
-    usethis::ui_todo("Computing xpass...")
+    user_message("Computing xpass...", "todo")
 
     pred <- stats::predict(
       fastrmodels::xpass_model,
