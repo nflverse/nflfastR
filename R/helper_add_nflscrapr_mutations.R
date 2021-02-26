@@ -51,6 +51,13 @@ add_nflscrapr_mutations <- function(pbp) {
         dplyr::lead(.data$posteam_id),
         .data$posteam_id),
 
+      # remove posteam from END Q2 plays or END Q4 plays (when game goes in OT)
+      # because it doesn't make sense and breaks fixed_drive and fixed_drive_result
+      posteam = dplyr::if_else(
+        stringr::str_detect(.data$play_description, "(END QUARTER 2)|(END QUARTER 4)"),
+        NA_character_, .data$posteam
+      ),
+
       # Denote whether the home or away team has possession:
       posteam_type = dplyr::if_else(.data$posteam == .data$home_team, "home", "away"),
 

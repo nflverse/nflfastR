@@ -10,6 +10,20 @@
 ##  result of  given drive
 add_drive_results <- function(d) {
   drive_df <- d %>%
+    dplyr::mutate(
+      old_posteam = .data$posteam,
+      posteam = dplyr::case_when(
+        # on kickoffs the kicking team is the defteam but this should be swapped
+        # in terms of this function if the kickoff is recovered
+        .data$own_kickoff_recovery == 1 ~ .data$defteam,
+        # if a kickoff has to be replayed due to a penalty and is then recovered,
+        # the prior (reversed) kickoff shouldn't be a new drive/series
+        stringr::str_detect(.data$desc, kickoff_finder) &
+          .data$own_kickoff_recovery == 0 &
+          dplyr::lead(.data$own_kickoff_recovery == 1) ~ .data$defteam,
+        TRUE ~ .data$posteam
+      )
+    ) %>%
     dplyr::group_by(.data$game_id, .data$game_half) %>%
     dplyr::mutate(
       row = 1:dplyr::n(),
@@ -31,13 +45,33 @@ add_drive_results <- function(d) {
           & !is.na(dplyr::lag(.data$posteam)),
         0,
         .data$new_drive),
+      # PAT after defensive TD is not a new drive even if a Timeout follows the TD
+      new_drive = dplyr::if_else(
+        dplyr::lag(stringr::str_detect(.data$desc, "(Timeout)|(Two-Minute Warning)")) &
+          dplyr::lag(.data$touchdown == 1, 2L) &
+          (dplyr::lag(.data$posteam, 2L) != dplyr::lag(.data$td_team, 2L)),
+        0,
+        .data$new_drive,
+        missing = .data$new_drive),
+      # PAT after defensive TD is not a new drive even if 2 Timeouts follow the TD
+      new_drive = dplyr::if_else(
+        dplyr::lag(stringr::str_detect(.data$desc, "(Timeout)|(Two-Minute Warning)")) &
+          dplyr::lag(stringr::str_detect(.data$desc, "(Timeout)|(Two-Minute Warning)"), 2L) &
+          dplyr::lag(.data$touchdown == 1, 3L) &
+          (dplyr::lag(.data$posteam, 3L) != dplyr::lag(.data$td_team, 3L)),
+        0,
+        .data$new_drive,
+        missing = .data$new_drive),
       # if same team has the ball as prior play, but prior play was a punt with lost fumble, it's a new drive
       new_drive = dplyr::if_else(
         # this line is to prevent it from overwriting already-defined new drives with NA
         # when there's a timeout on prior line
         .data$new_drive != 1 &
           # same team has ball after lost fumble on punt
-          .data$posteam == dplyr::lag(.data$posteam) & dplyr::lag(.data$fumble_lost == 1) & dplyr::lag(.data$play_type) == "punt",
+          .data$posteam == dplyr::lag(.data$posteam) & dplyr::lag(.data$fumble_lost == 1) & dplyr::lag(.data$play_type) == "punt" &
+          # but not if the play resulted in a touchdown because otherwise the
+          # following extra point or 2pt conversion will be new drives
+          dplyr::lag(.data$touchdown == 0),
         1, .data$new_drive
       ),
       # first observation of a half is also a new drive
@@ -57,7 +91,7 @@ add_drive_results <- function(d) {
         .data$play_type == "punt" | .data$punt_attempt == 1 ~ "Punt",
         .data$interception == 1 | .data$fumble_lost == 1 ~ "Turnover",
         .data$down == 4 & .data$yards_gained < .data$ydstogo & .data$play_type != "no_play" ~ "Turnover on downs",
-        .data$desc %in% c("END GAME", "END QUARTER 2", "END QUARTER 4") ~ "End of half"
+        stringr::str_detect(.data$desc, "(END QUARTER 2)|(END QUARTER 4)|(END GAME)") ~ "End of half"
       )
     ) %>%
     dplyr::group_by(.data$game_id, .data$fixed_drive) %>%
@@ -72,7 +106,8 @@ add_drive_results <- function(d) {
         )
     ) %>%
     dplyr::ungroup() %>%
-    dplyr::select(-"row", -"new_drive", -"tmp_result")
+    dplyr::mutate(posteam = .data$old_posteam) %>%
+    dplyr::select(-"row", -"new_drive", -"tmp_result", -"old_posteam")
 
   usethis::ui_done("added fixed drive variables")
   return(drive_df)

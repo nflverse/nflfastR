@@ -6,6 +6,9 @@
 * The variable `qb_scramble` was incomplete for the 2005 season because of missing scramble indicators in the play description. This has been mostly fixed courtesy of charting data from Football Outsiders (with thanks to Aaron Schatz!). Some notes on this fix: Weeks 1-16 are based on charting. Weeks 17-21 are guesses (basically every QB run except those that were a) a loss, b) no gain, or c) on 3/4 down with 1-2 to go). Plays nullified by penalty are not included.
 * Fix bug in `drive` that was causing incorrect overtime win probabilities (#194)
 * The performance of `add_xyac()` has been significantly improved
+* Fixed a bug where `posteam` was not `NA` on end of quarter 2 (or end of quarter 4 in overtime games) causing wrong values for `fixed_drive`, `fixed_drive_result`, `series` and `series_result`
+* Fixed a bug where `fixed_drive` and `series` were falsely incrementing on kickoffs recovered by the kicking team or on defensive touchdowns followed by timeouts
+* Fixed a bug where `fixed_drive` and `series` were falsely incrementing on muffed punts recovered by the punting team for a touchdown
 
 # nflfastR 4.0.0
 

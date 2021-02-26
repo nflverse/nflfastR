@@ -13,6 +13,20 @@
 add_series_data <- function(pbp) {
   out <-
     pbp %>%
+    dplyr::mutate(
+      old_posteam = .data$posteam,
+      posteam = dplyr::case_when(
+        # on kickoffs the kicking team is the defteam but this should be swapped
+        # in terms of this function if the kickoff is recovered
+        .data$own_kickoff_recovery == 1 ~ .data$defteam,
+        # if a kickoff has to be replayed due to a penalty and is then recovered,
+        # the prior (reversed) kickoff shouldn't be a new drive/series
+        stringr::str_detect(.data$desc, kickoff_finder) &
+          .data$own_kickoff_recovery == 0 &
+          dplyr::lead(.data$own_kickoff_recovery == 1) ~ .data$defteam,
+        TRUE ~ .data$posteam
+      )
+    ) %>%
     dplyr::group_by(.data$game_id, .data$game_half) %>%
     dplyr::mutate(
       row = 1:dplyr::n(),
@@ -45,7 +59,7 @@ add_series_data <- function(pbp) {
         .data$interception == 1 | .data$fumble_lost == 1 ~ "Turnover",
         .data$down == 4 & .data$yards_gained < .data$ydstogo & .data$play_type != "no_play" ~ "Turnover on downs",
         .data$qb_kneel == 1 ~ "QB kneel",
-        .data$desc %in% c("END GAME", "END QUARTER 2", "END QUARTER 4") ~ "End of half"
+        stringr::str_detect(.data$desc, "(END QUARTER 2)|(END QUARTER 4)|(END GAME)") ~ "End of half"
       )
     ) %>%
     dplyr::group_by(.data$game_id, .data$series) %>%
@@ -63,7 +77,8 @@ add_series_data <- function(pbp) {
       )
     ) %>%
     dplyr::ungroup() %>%
-    dplyr::select(-"row", -"tmp_result", -"new_series")
+    dplyr::mutate(posteam = .data$old_posteam) %>%
+    dplyr::select(-"row", -"tmp_result", -"new_series", -"old_posteam")
 
   usethis::ui_done("added series variables")
   return(out)
