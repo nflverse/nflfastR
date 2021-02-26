@@ -53,6 +53,15 @@ add_drive_results <- function(d) {
         0,
         .data$new_drive,
         missing = .data$new_drive),
+      # PAT after defensive TD is not a new drive even if 2 Timeouts follow the TD
+      new_drive = dplyr::if_else(
+        dplyr::lag(stringr::str_detect(.data$desc, "(Timeout)|(Two-Minute Warning)")) &
+          dplyr::lag(stringr::str_detect(.data$desc, "(Timeout)|(Two-Minute Warning)"), 2L) &
+          dplyr::lag(.data$touchdown == 1, 3L) &
+          (dplyr::lag(.data$posteam, 3L) != dplyr::lag(.data$td_team, 3L)),
+        0,
+        .data$new_drive,
+        missing = .data$new_drive),
       # if same team has the ball as prior play, but prior play was a punt with lost fumble, it's a new drive
       new_drive = dplyr::if_else(
         # this line is to prevent it from overwriting already-defined new drives with NA
