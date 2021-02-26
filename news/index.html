@@ -98,7 +98,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.0.0.9003</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.0.0.9004</span>
       </span>
     </div>
 
@@ -212,6 +212,10 @@
 <li>The variable <code>qb_scramble</code> was incomplete for the 2005 season because of missing scramble indicators in the play description. This has been mostly fixed courtesy of charting data from Football Outsiders (with thanks to Aaron Schatz!). Some notes on this fix: Weeks 1-16 are based on charting. Weeks 17-21 are guesses (basically every QB run except those that were a) a loss, b) no gain, or c) on 3/4 down with 1-2 to go). Plays nullified by penalty are not included.</li>
 <li>Fix bug in <code>drive</code> that was causing incorrect overtime win probabilities (<a href='https://github.com/mrcaseb/nflfastR/issues/194'>#194</a>)</li>
 <li>The performance of <code><a href="../reference/add_xyac.html">add_xyac()</a></code> has been significantly improved</li>
+<li>Fixed a bug where <code>posteam</code> was not <code>NA</code> on end of quarter 2 (or end of quarter 4 in overtime games) causing wrong values for <code>fixed_drive</code>, <code>fixed_drive_result</code>, <code>series</code> and <code>series_result</code>
+</li>
+<li>Fixed a bug where <code>fixed_drive</code> and <code>series</code> were falsely incrementing on kickoffs recovered by the kicking team or on defensive touchdowns followed by timeouts</li>
+<li>Fixed a bug where <code>fixed_drive</code> and <code>series</code> were falsely incrementing on muffed punts recovered by the punting team for a touchdown</li>
 </ul>
 </div>
     <div id="nflfastr-400" class="section level1">
