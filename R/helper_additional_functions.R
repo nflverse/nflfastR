@@ -50,7 +50,7 @@ clean_pbp <- function(pbp, ...) {
     usethis::ui_info("Nothing to clean. Return passed data frame.")
     r <- pbp
   } else{
-    usethis::ui_todo("Cleaning up play-by-play...")
+    user_message("Cleaning up play-by-play...", "todo")
 
     # drop existing values of clean_pbp
     pbp <- pbp %>% dplyr::select(-tidyselect::any_of(drop.cols))

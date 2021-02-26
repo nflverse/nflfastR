@@ -35,7 +35,7 @@ add_xyac <- function(pbp, ...) {
       dplyr::filter(.data$valid_pass == 1, .data$distance_to_goal != 0)
 
     if (!nrow(passes) == 0) {
-      usethis::ui_todo("Computing xyac...")
+      user_message("Computing xyac...", "todo")
       join_data <- passes %>%
         dplyr::select(
           "index", "distance_to_goal", "season", "week", "home_team", "posteam", "roof",

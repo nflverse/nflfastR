@@ -29,7 +29,7 @@ add_cp <- function(pbp) {
       ) %>%
       dplyr::select(-"valid_pass")
 
-    usethis::ui_done("added cp and cpoe")
+    user_message("added cp and cpoe", "done")
   } else {
     pbp <- pbp %>%
       dplyr::mutate(

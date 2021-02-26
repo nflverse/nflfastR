@@ -444,7 +444,7 @@ fast_scraper <- function(game_ids,
     }, p, ...)
 
     if (length(pbp) != 0) {
-      usethis::ui_done("Download finished. Adding variables...")
+      user_message("Download finished. Adding variables...", "done")
       pbp <- pbp %>%
         add_game_data() %>%
         add_nflscrapr_mutations() %>%

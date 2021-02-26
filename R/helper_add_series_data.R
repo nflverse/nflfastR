@@ -80,6 +80,6 @@ add_series_data <- function(pbp) {
     dplyr::mutate(posteam = .data$old_posteam) %>%
     dplyr::select(-"row", -"tmp_result", -"new_series", -"old_posteam")
 
-  usethis::ui_done("added series variables")
+  user_message("added series variables", "done")
   return(out)
 }

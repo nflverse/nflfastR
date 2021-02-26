@@ -32,7 +32,7 @@ add_game_data <- function(pbp) {
           game_date = .data$gameday
         )
 
-      usethis::ui_done("added game variables")
+      user_message("added game variables", "done")
     },
     error = function(e) {
       message("The following error has occured:")
