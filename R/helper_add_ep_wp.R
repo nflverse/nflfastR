@@ -478,21 +478,12 @@ add_ep_variables <- function(pbp_data) {
       epa = dplyr::if_else(
         .data$defensive_two_point_conv == 1, -2 - .data$ep, .data$epa, missing = .data$epa
       ),
-      # Opponent safety:
-      epa = dplyr::if_else(is.na(.data$td_team) & .data$field_goal_made == 0 &
-                             .data$extra_point_good == 0 &
-                             .data$extra_point_failed == 0 &
-                             .data$extra_point_blocked == 0 &
-                             .data$extra_point_aborted == 0 &
-                             .data$two_point_rush_failed == 0 &
-                             .data$two_point_pass_failed == 0 &
-                             .data$two_point_pass_reception_failed == 0 &
-                             .data$two_point_rush_good == 0 &
-                             .data$two_point_pass_good == 0 &
-                             .data$two_point_pass_reception_good == 0 &
-                             .data$safety == 1,
-                           -2 - .data$ep, .data$epa, missing = .data$epa)
-
+      # Safety:
+      epa = dplyr::case_when(
+        !is.na(.data$safety_team) & .data$safety_team == .data$posteam ~  2 - .data$ep,
+        !is.na(.data$safety_team) & .data$safety_team == .data$defteam ~ -2 - .data$ep,
+        TRUE ~ .data$epa
+      )
       ) %>%
     # Now rename each of the expected points columns to match the style of
     # the updated code:
