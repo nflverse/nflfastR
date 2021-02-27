@@ -19,7 +19,7 @@
 #' @export
 add_xyac <- function(pbp, ...) {
   if (nrow(pbp) == 0) {
-    usethis::ui_info("Nothing to do. Return passed data frame.")
+    user_message("Nothing to do. Return passed data frame.", "info")
   } else {
     # testing only
     # pbp <- g
@@ -153,7 +153,7 @@ add_xyac <- function(pbp, ...) {
           xyac_fd = NA_real_
         ) %>%
         dplyr::select(-.data$index)
-      usethis::ui_info("No non-NA values for xyac calculation detected. xyac variables set to NA")
+      user_message("No non-NA values for xyac calculation detected. xyac variables set to NA", "info")
     }
   }
 

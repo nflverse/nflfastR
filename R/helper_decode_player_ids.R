@@ -48,7 +48,7 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
         "Will go on sequentially..."
       ))
     }
-    usethis::ui_todo("Start decoding player ids, please wait...")
+    user_message("Start decoding player ids, please wait...", "todo")
 
     ret <- pbp %>%
       dplyr::mutate_at(

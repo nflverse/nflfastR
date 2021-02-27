@@ -52,7 +52,7 @@ add_xpass <- function(pbp, ...) {
         xpass = NA_real_,
         pass_oe = NA_real_
       )
-    usethis::ui_info("No non-NA values for xpass calculation detected. xpass and pass_oe set to NA")
+    user_message("No non-NA values for xpass calculation detected. xpass and pass_oe set to NA", "info")
   }
   return(pbp)
 }

@@ -47,7 +47,7 @@
 #' @export
 clean_pbp <- function(pbp, ...) {
   if (nrow(pbp) == 0) {
-    usethis::ui_info("Nothing to clean. Return passed data frame.")
+    user_message("Nothing to clean. Return passed data frame.", "info")
     r <- pbp
   } else{
     user_message("Cleaning up play-by-play...", "todo")
@@ -305,7 +305,7 @@ team_name_fn <- function(var) {
 add_qb_epa <- function(pbp, ...) {
 
   if (nrow(pbp) == 0) {
-    usethis::ui_info("Nothing to do. Return passed data frame.")
+    user_message("Nothing to do. Return passed data frame.", "info")
   } else {
     # drop existing values of clean_pbp
     pbp <- pbp %>% dplyr::select(-tidyselect::any_of("qb_epa"))

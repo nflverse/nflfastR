@@ -460,7 +460,8 @@ fast_scraper <- function(game_ids,
   })
 
   if (!in_builder) {
-    usethis::ui_done("{usethis::ui_field('Procedure completed.')}")
+    str <- paste0(my_time(), " | Procedure completed.")
+    usethis::ui_done("{usethis::ui_field(str)}")
   }
   return(pbp)
 }
