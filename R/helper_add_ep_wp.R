@@ -38,7 +38,7 @@ add_air_yac_ep <- function(pbp) {
         total_home_raw_yac_epa = NA_real_,
         total_away_raw_yac_epa = NA_real_
       )
-    usethis::ui_info("No non-NA air_yards detected. air_yac_ep variables set to NA")
+    user_message("No non-NA air_yards detected. air_yac_ep variables set to NA", "info")
   } else {
     out <- pbp %>% add_air_yac_ep_variables()
     user_message("added air_yac_ep variables", "done")
@@ -77,7 +77,7 @@ add_air_yac_wp <- function(pbp) {
         total_home_raw_yac_wpa = NA_real_,
         total_away_raw_yac_wpa = NA_real_
       )
-    usethis::ui_info("No non-NA air_yards detected. air_yac_wp variables set to NA")
+    user_message("No non-NA air_yards detected. air_yac_wp variables set to NA", "info")
   } else {
     out <- pbp %>% add_air_yac_wp_variables()
     user_message("added air_yac_wp variables", "done")

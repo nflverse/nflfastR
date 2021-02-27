@@ -36,7 +36,7 @@ add_cp <- function(pbp) {
         cp = NA_real_,
         cpoe = NA_real_
       )
-    usethis::ui_info("No non-NA values for cp calculation detected. cp and cpoe set to NA")
+    user_message("No non-NA values for cp calculation detected. cp and cpoe set to NA", "info")
   }
 
   return(pbp)
