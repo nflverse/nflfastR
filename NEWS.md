@@ -10,6 +10,7 @@
 * Fixed a bug where `fixed_drive` and `series` were falsely incrementing on kickoffs recovered by the kicking team or on defensive touchdowns followed by timeouts
 * Fixed a bug where `fixed_drive` and `series` were falsely incrementing on muffed punts recovered by the punting team for a touchdown
 * Fixed a bug in `epa` when a safety is scored by the team beginning the play in possession of the ball (#186)
+* Change `name`, `id`, `rusher`, and `rusher_id` to be the player charged with the fumble on aborted snaps
 
 # nflfastR 4.0.0
 

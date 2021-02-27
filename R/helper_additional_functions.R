@@ -57,6 +57,7 @@ clean_pbp <- function(pbp, ...) {
 
     r <- pbp %>%
       dplyr::mutate(
+        aborted_play = dplyr::if_else(stringr::str_detect(.data$desc, 'Aborted'), 1, 0),
         #get rid of extraneous spaces that mess with player name finding
         #if there is a space or dash, and then a capital letter, and then a period, and then a space, take out the space
         desc = stringr::str_replace_all(.data$desc, "(((\\s)|(\\-))[A-Z]\\.)\\s+", "\\1"),
@@ -89,6 +90,10 @@ clean_pbp <- function(pbp, ...) {
         passer = dplyr::case_when(
           is.na(.data$passer) & .data$qb_scramble == 1 & !is.na(.data$rusher) & .data$season == 2005 ~ .data$rusher,
           TRUE ~ .data$passer
+        ),
+        # if there's an aborted snap, then charge it to whoever charged with the fumble
+        rusher = dplyr::if_else(
+          aborted_play == 1 & !is.na(.data$fumbled_1_player_name), .data$fumbled_1_player_name, .data$rusher
         ),
         # finally, for rusher, if there was already a passer (eg from scramble), set rusher to NA
         rusher = dplyr::if_else(
@@ -152,7 +157,6 @@ clean_pbp <- function(pbp, ...) {
           TRUE ~ receiver
         ),
         first_down = dplyr::if_else(.data$first_down_rush == 1 | .data$first_down_pass == 1 | .data$first_down_penalty == 1, 1, 0),
-        aborted_play = dplyr::if_else(stringr::str_detect(.data$desc, 'Aborted'), 1, 0),
         # easy filter: play is 1 if a "special teams" play, or 0 otherwise
         # with thanks to Lee Sharpe for the code
         special = dplyr::if_else(.data$play_type %in%
