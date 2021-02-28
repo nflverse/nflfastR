@@ -49,7 +49,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.0.0.9004</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.0.0.9006</span>
       </span>
     </div>
 
@@ -620,7 +620,7 @@
 <span class="co">#&gt; # A tibble: 6 x 5</span>
 <span class="co">#&gt;   posteam defteam desc                                                rush  pass</span>
 <span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;                                              &lt;dbl&gt; &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 &lt;NA&gt;    &lt;NA&gt;    GAME                                                   0    NA</span>
+<span class="co">#&gt; 1 &lt;NA&gt;    &lt;NA&gt;    GAME                                                   0     0</span>
 <span class="co">#&gt; 2 ATL     MIN     5-D.Bailey kicks 65 yards from MIN 35 to end zone…     0     0</span>
 <span class="co">#&gt; 3 ATL     MIN     (15:00) 2-M.Ryan sacked at ATL 17 for -8 yards (5…     0     1</span>
 <span class="co">#&gt; 4 ATL     MIN     (14:20) 24-D.Freeman right tackle to ATL 21 for 4…     1     0</span>
@@ -775,8 +775,8 @@
 <span class="co">#&gt; # A tibble: 2 x 2</span>
 <span class="co">#&gt;    home     epa</span>
 <span class="co">#&gt; * &lt;dbl&gt;   &lt;dbl&gt;</span>
-<span class="co">#&gt; 1     0  0.0215</span>
-<span class="co">#&gt; 2     1 -0.0165</span></code></pre></div>
+<span class="co">#&gt; 1     0  0.0214</span>
+<span class="co">#&gt; 2     1 -0.0166</span></code></pre></div>
 <p>Note that EPA/play is similar for home teams and away teams because <code>home</code> is already built into the <code>nflfastR</code> EPA model, so this result is expected. Actually, away EPA/play is actually somewhat higher, presumably because away teams out-performed their usual in 2019 as homefield advantage continues to decline generally.</p>
 <p><code>if_else</code> is nice if you’re creating a new column based on a simple condition. But what if you need to do something more complicated? <code>case_when</code> is a good option. Here’s how it works:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
@@ -815,13 +815,13 @@
 <span class="co">#&gt; # A tibble: 32 x 3</span>
 <span class="co">#&gt;    posteam mean_pass plays</span>
 <span class="co">#&gt;    &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;</span>
-<span class="co">#&gt;  1 KC          0.690   387</span>
+<span class="co">#&gt;  1 KC          0.691   388</span>
 <span class="co">#&gt;  2 MIA         0.594   288</span>
 <span class="co">#&gt;  3 NO          0.585   325</span>
 <span class="co">#&gt;  4 LA          0.584   329</span>
 <span class="co">#&gt;  5 CHI         0.563   309</span>
 <span class="co">#&gt;  6 CLE         0.555   272</span>
-<span class="co">#&gt;  7 CAR         0.552   270</span>
+<span class="co">#&gt;  7 CAR         0.554   271</span>
 <span class="co">#&gt;  8 TB          0.551   321</span>
 <span class="co">#&gt;  9 GB          0.550   291</span>
 <span class="co">#&gt; 10 ARI         0.548   325</span>
@@ -1175,7 +1175,7 @@
 <span class="co">#&gt; 1 ARI       1999 -0.201 -0.162 </span>
 <span class="co">#&gt; 2 ARI       2000 -0.240 -0.0718</span>
 <span class="co">#&gt; 3 ARI       2001 -0.177  0.0740</span>
-<span class="co">#&gt; 4 ARI       2002 -0.134 -0.0662</span></code></pre></div>
+<span class="co">#&gt; 4 ARI       2002 -0.134 -0.0661</span></code></pre></div>
 <p>This one is hard to wrap my head around so I usually open up the <a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">reference page</a>, read the example, and pray that what I try works. In this case it did. Hooray! This turned our two-lines-per-team dataframe into one, with the 0 column being pass == 0 (run plays) and the 1 column pass == 1.</p>
 <p>Now let’s rename to something more sensible and save:</p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
@@ -1206,9 +1206,9 @@
 <span class="co">#&gt;   &lt;chr&gt;    &lt;int&gt;        &lt;dbl&gt;        &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 NE        2007      0.00380        0.422</span>
 <span class="co">#&gt; 2 IND       2004     -0.00125        0.413</span>
-<span class="co">#&gt; 3 GB        2011     -0.114          0.413</span>
-<span class="co">#&gt; 4 KC        2018      0.0209         0.349</span>
-<span class="co">#&gt; 5 DEN       2013     -0.0296         0.344</span>
+<span class="co">#&gt; 3 GB        2011     -0.114          0.412</span>
+<span class="co">#&gt; 4 KC        2018      0.0209         0.348</span>
+<span class="co">#&gt; 5 DEN       2013     -0.0296         0.343</span>
 
 <span class="co">#top 5 defenses</span>
 <span class="va">defense</span> <span class="op">%&gt;%</span>
@@ -1219,7 +1219,7 @@
 <span class="co">#&gt;   defteam season def_rush_epa def_pass_epa</span>
 <span class="co">#&gt;   &lt;chr&gt;    &lt;int&gt;        &lt;dbl&gt;        &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 TB        2002      -0.0756       -0.292</span>
-<span class="co">#&gt; 2 NE        2019      -0.168        -0.243</span>
+<span class="co">#&gt; 2 NE        2019      -0.168        -0.241</span>
 <span class="co">#&gt; 3 JAX       2017      -0.141        -0.224</span>
 <span class="co">#&gt; 4 NYJ       2009      -0.104        -0.220</span>
 <span class="co">#&gt; 5 LA        2003      -0.0548       -0.214</span></code></pre></div>
@@ -1292,12 +1292,12 @@
 <span class="co">#&gt;   &lt;chr&gt;  &lt;int&gt; &lt;dbl&gt;      &lt;int&gt;        &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 SEA     2012  11          167     -0.00476       0.213       -0.0738</span>
 <span class="co">#&gt; 2 SEA     2013  13          186     -0.101         0.188       -0.126 </span>
-<span class="co">#&gt; 3 SEA     2014  12          140      0.0216        0.140       -0.231 </span>
+<span class="co">#&gt; 3 SEA     2014  12          140      0.0216        0.139       -0.231 </span>
 <span class="co">#&gt; 4 SEA     2015  10          146     -0.102         0.249       -0.148 </span>
 <span class="co">#&gt; 5 SEA     2016  10.5         62     -0.126         0.102       -0.207 </span>
-<span class="co">#&gt; 6 SEA     2017   9           34     -0.192         0.0590      -0.122 </span>
-<span class="co">#&gt; 7 SEA     2018  10           81     -0.0273        0.210       -0.131 </span>
-<span class="co">#&gt; 8 SEA     2019  11            7     -0.136         0.120       -0.0930</span>
+<span class="co">#&gt; 6 SEA     2017   9           34     -0.192         0.0584      -0.122 </span>
+<span class="co">#&gt; 7 SEA     2018  10           81     -0.0273        0.209       -0.131 </span>
+<span class="co">#&gt; 8 SEA     2019  11            7     -0.136         0.119       -0.0930</span>
 <span class="co">#&gt; 9 SEA     2020  12           88     NA            NA           NA     </span>
 <span class="co">#&gt; # … with 1 more variable: def_pass_epa &lt;dbl&gt;</span></code></pre></div>
 <p>Now we’re getting really close to doing what we want! Next we need to create new columns for prior year EPA, and let’s do point differential too.</p>
@@ -1320,7 +1320,7 @@
 <span class="co">#&gt; 1 ARI     1999     6       -137       -0.201      -0.162       -0.0105</span>
 <span class="co">#&gt; 2 ARI     2000     3       -233       -0.240      -0.0718       0.0333</span>
 <span class="co">#&gt; 3 ARI     2001     7        -48       -0.177       0.0740      -0.0689</span>
-<span class="co">#&gt; 4 ARI     2002     5       -155       -0.134      -0.0662      -0.0192</span>
+<span class="co">#&gt; 4 ARI     2002     5       -155       -0.134      -0.0661      -0.0192</span>
 <span class="co">#&gt; 5 ARI     2003     4       -227       -0.219      -0.120       -0.0627</span>
 <span class="co">#&gt; # … with 6 more variables: def_pass_epa &lt;dbl&gt;, prior_off_rush_epa &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   prior_off_pass_epa &lt;dbl&gt;, prior_def_rush_epa &lt;dbl&gt;,</span>
@@ -1337,12 +1337,12 @@
   <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span>
 <span class="co">#&gt;                     wins point_diff off_rush_epa off_pass_epa def_rush_epa</span>
 <span class="co">#&gt; wins                1.00       0.92         0.43         0.70        -0.29</span>
-<span class="co">#&gt; point_diff          0.92       1.00         0.49         0.76        -0.33</span>
-<span class="co">#&gt; off_rush_epa        0.43       0.49         1.00         0.40         0.06</span>
+<span class="co">#&gt; point_diff          0.92       1.00         0.49         0.76        -0.34</span>
+<span class="co">#&gt; off_rush_epa        0.43       0.49         1.00         0.40         0.05</span>
 <span class="co">#&gt; off_pass_epa        0.70       0.76         0.40         1.00        -0.01</span>
-<span class="co">#&gt; def_rush_epa       -0.29      -0.33         0.06        -0.01         1.00</span>
-<span class="co">#&gt; def_pass_epa       -0.57      -0.62        -0.04        -0.10         0.30</span>
-<span class="co">#&gt; prior_off_rush_epa  0.24       0.26         0.33         0.22         0.02</span>
+<span class="co">#&gt; def_rush_epa       -0.29      -0.34         0.05        -0.01         1.00</span>
+<span class="co">#&gt; def_pass_epa       -0.57      -0.62        -0.04        -0.10         0.31</span>
+<span class="co">#&gt; prior_off_rush_epa  0.24       0.26         0.32         0.23         0.02</span>
 <span class="co">#&gt; prior_off_pass_epa  0.29       0.32         0.18         0.46        -0.01</span>
 <span class="co">#&gt; prior_def_rush_epa -0.12      -0.15         0.03        -0.04         0.27</span>
 <span class="co">#&gt; prior_def_pass_epa -0.18      -0.20        -0.07        -0.05         0.06</span>
@@ -1350,28 +1350,28 @@
 <span class="co">#&gt;                    def_pass_epa prior_off_rush_epa prior_off_pass_epa</span>
 <span class="co">#&gt; wins                      -0.57               0.24               0.29</span>
 <span class="co">#&gt; point_diff                -0.62               0.26               0.32</span>
-<span class="co">#&gt; off_rush_epa              -0.04               0.33               0.18</span>
-<span class="co">#&gt; off_pass_epa              -0.10               0.22               0.46</span>
-<span class="co">#&gt; def_rush_epa               0.30               0.02              -0.01</span>
+<span class="co">#&gt; off_rush_epa              -0.04               0.32               0.18</span>
+<span class="co">#&gt; off_pass_epa              -0.10               0.23               0.46</span>
+<span class="co">#&gt; def_rush_epa               0.31               0.02              -0.01</span>
 <span class="co">#&gt; def_pass_epa               1.00              -0.10               0.00</span>
 <span class="co">#&gt; prior_off_rush_epa        -0.10               1.00               0.41</span>
 <span class="co">#&gt; prior_off_pass_epa         0.00               0.41               1.00</span>
-<span class="co">#&gt; prior_def_rush_epa         0.15               0.06              -0.01</span>
+<span class="co">#&gt; prior_def_rush_epa         0.16               0.05              -0.01</span>
 <span class="co">#&gt; prior_def_pass_epa         0.28              -0.01              -0.09</span>
-<span class="co">#&gt; prior_point_diff          -0.19               0.47               0.76</span>
+<span class="co">#&gt; prior_point_diff          -0.19               0.48               0.76</span>
 <span class="co">#&gt;                    prior_def_rush_epa prior_def_pass_epa prior_point_diff</span>
 <span class="co">#&gt; wins                            -0.12              -0.18             0.36</span>
 <span class="co">#&gt; point_diff                      -0.15              -0.20             0.41</span>
 <span class="co">#&gt; off_rush_epa                     0.03              -0.07             0.22</span>
 <span class="co">#&gt; off_pass_epa                    -0.04              -0.05             0.36</span>
 <span class="co">#&gt; def_rush_epa                     0.27               0.06            -0.09</span>
-<span class="co">#&gt; def_pass_epa                     0.15               0.28            -0.19</span>
-<span class="co">#&gt; prior_off_rush_epa               0.06              -0.01             0.47</span>
+<span class="co">#&gt; def_pass_epa                     0.16               0.28            -0.19</span>
+<span class="co">#&gt; prior_off_rush_epa               0.05              -0.01             0.48</span>
 <span class="co">#&gt; prior_off_pass_epa              -0.01              -0.09             0.76</span>
 <span class="co">#&gt; prior_def_rush_epa               1.00               0.32            -0.34</span>
 <span class="co">#&gt; prior_def_pass_epa               0.32               1.00            -0.60</span>
 <span class="co">#&gt; prior_point_diff                -0.34              -0.60             1.00</span></code></pre></div>
-<p>We’ve covered <code>select</code>, but here we see a new use where a minus sign de-selects variables (we need to de-select team name for correlation to work because it doesn’t work for character strings, and correlation with the season number itself is meaningless). We’ve run the correlation on this dataframe, removing missing values, and then rounding to 2 digits. Not surprisingly, we see that wins in the current season are more strongly related to passing offense EPA than rushing EPA or defense EPA, and prior offense carries more predictive power than prior defense. Pass offense is more stable year to year (<code>0.46</code>) than rush offense (<code>0.33</code>), pass defense (<code>0.28</code>), or rush defense (<code>0.27</code>).</p>
+<p>We’ve covered <code>select</code>, but here we see a new use where a minus sign de-selects variables (we need to de-select team name for correlation to work because it doesn’t work for character strings, and correlation with the season number itself is meaningless). We’ve run the correlation on this dataframe, removing missing values, and then rounding to 2 digits. Not surprisingly, we see that wins in the current season are more strongly related to passing offense EPA than rushing EPA or defense EPA, and prior offense carries more predictive power than prior defense. Pass offense is more stable year to year (<code>0.46</code>) than rush offense (<code>0.32</code>), pass defense (<code>0.28</code>), or rush defense (<code>0.27</code>).</p>
 <p>I’m actually surprised that the values for passing offense aren’t higher relative to the others. Maybe it was because most of our prior results come from the <code>nflscrapR</code> era (2009 - 2019)? Let’s check what this looks like since 2009 relative to earlier seasons:</p>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/message.html">message</a></span><span class="op">(</span><span class="st">"2009 through 2019"</span><span class="op">)</span>
@@ -1406,18 +1406,18 @@
   <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span>use<span class="op">=</span><span class="st">"complete.obs"</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span>
 <span class="co">#&gt;                    wins point_diff off_pass_epa off_rush_epa prior_point_diff</span>
-<span class="co">#&gt; wins               1.00       0.92         0.68         0.47             0.28</span>
+<span class="co">#&gt; wins               1.00       0.92         0.68         0.48             0.28</span>
 <span class="co">#&gt; point_diff         0.92       1.00         0.73         0.51             0.36</span>
-<span class="co">#&gt; off_pass_epa       0.68       0.73         1.00         0.48             0.34</span>
-<span class="co">#&gt; off_rush_epa       0.47       0.51         0.48         1.00             0.26</span>
-<span class="co">#&gt; prior_point_diff   0.28       0.36         0.34         0.26             1.00</span>
-<span class="co">#&gt; prior_off_pass_epa 0.23       0.28         0.45         0.31             0.74</span>
-<span class="co">#&gt; prior_off_rush_epa 0.23       0.28         0.30         0.42             0.50</span>
+<span class="co">#&gt; off_pass_epa       0.68       0.73         1.00         0.47             0.34</span>
+<span class="co">#&gt; off_rush_epa       0.48       0.51         0.47         1.00             0.25</span>
+<span class="co">#&gt; prior_point_diff   0.28       0.36         0.34         0.25             1.00</span>
+<span class="co">#&gt; prior_off_pass_epa 0.23       0.28         0.45         0.30             0.74</span>
+<span class="co">#&gt; prior_off_rush_epa 0.23       0.28         0.30         0.40             0.50</span>
 <span class="co">#&gt;                    prior_off_pass_epa prior_off_rush_epa</span>
 <span class="co">#&gt; wins                             0.23               0.23</span>
 <span class="co">#&gt; point_diff                       0.28               0.28</span>
 <span class="co">#&gt; off_pass_epa                     0.45               0.30</span>
-<span class="co">#&gt; off_rush_epa                     0.31               0.42</span>
+<span class="co">#&gt; off_rush_epa                     0.30               0.40</span>
 <span class="co">#&gt; prior_point_diff                 0.74               0.50</span>
 <span class="co">#&gt; prior_off_pass_epa               1.00               0.48</span>
 <span class="co">#&gt; prior_off_rush_epa               0.48               1.00</span></code></pre></div>
@@ -1436,21 +1436,21 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Residuals:</span>
 <span class="co">#&gt;     Min      1Q  Median      3Q     Max </span>
-<span class="co">#&gt; -7.7016 -1.8901  0.0649  2.2360  7.0861 </span>
+<span class="co">#&gt; -7.7034 -1.8898  0.0642  2.2377  7.0865 </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Coefficients:</span>
 <span class="co">#&gt;                    Estimate Std. Error t value             Pr(&gt;|t|)    </span>
-<span class="co">#&gt; (Intercept)          7.9642     0.3881  20.520 &lt; 0.0000000000000002 ***</span>
-<span class="co">#&gt; prior_off_pass_epa   6.5677     1.2782   5.138          0.000000445 ***</span>
-<span class="co">#&gt; prior_off_rush_epa   5.9906     2.2714   2.637               0.0087 ** </span>
-<span class="co">#&gt; prior_def_pass_epa  -4.0554     1.6411  -2.471               0.0139 *  </span>
-<span class="co">#&gt; prior_def_rush_epa  -5.1573     2.3320  -2.212               0.0276 *  </span>
+<span class="co">#&gt; (Intercept)          7.9648     0.3882  20.519 &lt; 0.0000000000000002 ***</span>
+<span class="co">#&gt; prior_off_pass_epa   6.5700     1.2804   5.131          0.000000461 ***</span>
+<span class="co">#&gt; prior_off_rush_epa   5.9987     2.2722   2.640              0.00863 ** </span>
+<span class="co">#&gt; prior_def_pass_epa  -4.0643     1.6445  -2.471              0.01390 *  </span>
+<span class="co">#&gt; prior_def_rush_epa  -5.1633     2.3329  -2.213              0.02748 *  </span>
 <span class="co">#&gt; ---</span>
 <span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Residual standard error: 2.859 on 379 degrees of freedom</span>
-<span class="co">#&gt; Multiple R-squared:  0.1639, Adjusted R-squared:  0.1551 </span>
-<span class="co">#&gt; F-statistic: 18.58 on 4 and 379 DF,  p-value: 0.00000000000005915</span></code></pre></div>
+<span class="co">#&gt; Residual standard error: 2.86 on 379 degrees of freedom</span>
+<span class="co">#&gt; Multiple R-squared:  0.1638, Adjusted R-squared:  0.155 </span>
+<span class="co">#&gt; F-statistic: 18.56 on 4 and 379 DF,  p-value: 0.00000000000006078</span></code></pre></div>
 <p>I’m actually pretty surprised passing offense isn’t higher here. How does this compare to simply using point differential?</p>
 <div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fit2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">wins</span> <span class="op">~</span> <span class="va">prior_point_diff</span>, data <span class="op">=</span> <span class="va">data</span><span class="op">)</span>

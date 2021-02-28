@@ -98,7 +98,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.0.0.9004</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.0.0.9006</span>
       </span>
     </div>
 
@@ -216,6 +216,8 @@
 </li>
 <li>Fixed a bug where <code>fixed_drive</code> and <code>series</code> were falsely incrementing on kickoffs recovered by the kicking team or on defensive touchdowns followed by timeouts</li>
 <li>Fixed a bug where <code>fixed_drive</code> and <code>series</code> were falsely incrementing on muffed punts recovered by the punting team for a touchdown</li>
+<li>Fixed a bug where <code><a href="../reference/add_xpass.html">add_xpass()</a></code> crashed when ran with data already including xpass variables.</li>
+<li>Fixed a bug in <code>epa</code> when a safety is scored by the team beginning the play in possession of the ball (<a href='https://github.com/mrcaseb/nflfastR/issues/186'>#186</a>)</li>
 </ul>
 </div>
     <div id="nflfastr-400" class="section level1">
