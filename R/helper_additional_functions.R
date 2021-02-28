@@ -132,6 +132,8 @@ clean_pbp <- function(pbp, ...) {
           TRUE ~ .data$passer
         ),
         rusher = dplyr::case_when(
+          rusher == "D.Johnson" & posteam == "HOU" & season == 2020 & rusher_jersey_number == 31 ~ "Da.Johnson",
+          rusher == "D.Johnson" & posteam == "HOU" & season == 2020 & rusher_jersey_number == 25 ~ "Du.Johnson",
           rusher == "Jos.Allen" ~ "J.Allen",
           rusher == "Alex Smith" | rusher == "Ale.Smith" ~ "A.Smith",
           rusher == "Ryan" & .data$posteam == "ATL" ~ "M.Ryan",
@@ -179,8 +181,8 @@ clean_pbp <- function(pbp, ...) {
 
       dplyr::group_by(.data$passer, .data$posteam, .data$season) %>%
       dplyr::mutate(
-        passer_id = dplyr::if_else(is.na(.data$passer), NA_character_, custom_mode(.data$passer_player_id)),
-        passer_jersey_number = dplyr::if_else(is.na(.data$passer), NA_integer_, custom_mode(.data$passer_jersey_number))
+        passer_id = dplyr::if_else(is.na(.data$passer), NA_character_, custom_mode(.data$passer_player_id))
+        # passer_jersey_number = dplyr::if_else(is.na(.data$passer), NA_integer_, custom_mode(.data$passer_jersey_number))
       ) %>%
 
       dplyr::group_by(.data$passer_id) %>%
@@ -188,8 +190,8 @@ clean_pbp <- function(pbp, ...) {
 
       dplyr::group_by(.data$rusher, .data$posteam, .data$season) %>%
       dplyr::mutate(
-        rusher_id = dplyr::if_else(is.na(.data$rusher), NA_character_, custom_mode(.data$rusher_player_id)),
-        rusher_jersey_number = dplyr::if_else(is.na(.data$rusher), NA_integer_, custom_mode(.data$rusher_jersey_number))
+        rusher_id = dplyr::if_else(is.na(.data$rusher), NA_character_, custom_mode(.data$rusher_player_id))
+        # rusher_jersey_number = dplyr::if_else(is.na(.data$rusher), NA_integer_, custom_mode(.data$rusher_jersey_number))
       ) %>%
 
       dplyr::group_by(.data$rusher_id) %>%
@@ -197,8 +199,8 @@ clean_pbp <- function(pbp, ...) {
 
       dplyr::group_by(.data$receiver, .data$posteam, .data$season) %>%
       dplyr::mutate(
-        receiver_id = dplyr::if_else(is.na(.data$receiver), NA_character_, custom_mode(.data$receiver_player_id)),
-        receiver_jersey_number = dplyr::if_else(is.na(.data$receiver), NA_integer_, custom_mode(.data$receiver_jersey_number))
+        receiver_id = dplyr::if_else(is.na(.data$receiver), NA_character_, custom_mode(.data$receiver_player_id))
+        # receiver_jersey_number = dplyr::if_else(is.na(.data$receiver), NA_integer_, custom_mode(.data$receiver_jersey_number))
       ) %>%
 
       dplyr::group_by(.data$receiver_id) %>%
