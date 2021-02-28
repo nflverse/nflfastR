@@ -472,7 +472,7 @@ add_dakota <- function(add_to_this, pbp, weekly) {
 
   df <- pbp %>%
     dplyr::filter(.data$pass == 1 | .data$rush == 1) %>%
-    dplyr::filter(!is.na(.data$posteam) & !is.na(.data$qb_epa) & !is.na(.data$id)) %>%
+    dplyr::filter(!is.na(.data$posteam) & !is.na(.data$qb_epa) & !is.na(.data$id) & !is.na(.data$down)) %>%
     dplyr::mutate(epa = dplyr::if_else(.data$qb_epa < -4.5, -4.5, .data$qb_epa))
 
   if (isTRUE(weekly)) {
