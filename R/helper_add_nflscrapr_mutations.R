@@ -32,84 +32,6 @@ add_nflscrapr_mutations <- function(pbp) {
     dplyr::arrange(.data$order_sequence, .data$quarter, !is.na(.data$quarter_seconds_remaining), -.data$quarter_seconds_remaining, !is.na(.data$drive), .data$drive, .data$index, .by_group = TRUE) %>%
     dplyr::mutate(
 
-      # Make the possession team for kickoffs be the return team, since that is
-      # more intuitive from the EPA / WPA point of view:
-      posteam = dplyr::case_when(
-        # kickoff_finder is defined below
-        (.data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, kickoff_finder)) & .data$posteam == .data$home_team ~ .data$away_team,
-        (.data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, kickoff_finder)) & .data$posteam == .data$away_team ~ .data$home_team,
-        TRUE ~ .data$posteam
-      ),
-
-      # Fill in the rows with missing posteam with the lead:
-      posteam = dplyr::if_else(
-        (.data$quarter_end == 1 | .data$posteam == ""),
-        dplyr::lead(.data$posteam),
-        .data$posteam),
-      posteam_id = dplyr::if_else(
-        (.data$quarter_end == 1 | .data$posteam_id == ""),
-        dplyr::lead(.data$posteam_id),
-        .data$posteam_id),
-
-      # remove posteam from END Q2 plays or END Q4 plays (when game goes in OT)
-      # because it doesn't make sense and breaks fixed_drive and fixed_drive_result
-      posteam = dplyr::if_else(
-        stringr::str_detect(.data$play_description, "(END QUARTER 2)|(END QUARTER 4)"),
-        NA_character_, .data$posteam
-      ),
-
-      # Denote whether the home or away team has possession:
-      posteam_type = dplyr::if_else(.data$posteam == .data$home_team, "home", "away"),
-
-      # Column denoting which team is on defense:
-      defteam = dplyr::if_else(
-        .data$posteam == .data$home_team,
-        .data$away_team, .data$home_team
-      ),
-
-      yardline = dplyr::if_else(.data$yardline == "50", "MID 50", .data$yardline),
-      yardline = dplyr::if_else(
-        nchar(.data$yardline) == 0 | is.null(.data$yardline) | .data$yardline == "NULL" | is.na(.data$yardline),
-        dplyr::lead(.data$yardline), .data$yardline
-      ),
-      yardline_number = dplyr::if_else(
-        .data$yardline == "MID 50", 50, .data$yardline_number
-      ),
-      yardline_100 = dplyr::if_else(
-        .data$yardline_side == .data$posteam | .data$yardline == "MID 50",
-        100 - .data$yardline_number, .data$yardline_number
-      ),
-      # Create a column with the time in seconds remaining for each half:
-      half_seconds_remaining = dplyr::if_else(
-        .data$quarter %in% c(1, 3),
-        .data$quarter_seconds_remaining + 900,
-        .data$quarter_seconds_remaining),
-      # Create a column with the time in seconds remaining for the game:
-      game_seconds_remaining = dplyr::if_else(
-        .data$quarter %in% c(1, 2, 3, 4),
-        .data$quarter_seconds_remaining + (900 * (4 - as.numeric(.data$quarter))),
-        .data$quarter_seconds_remaining
-      ),
-      # Add column for replay or challenge:
-      replay_or_challenge = stringr::str_detect(
-        .data$play_description, "(Replay Official reviewed)|( challenge(d)? )|(Challenged)") %>%
-        as.numeric(),
-      # Result of replay or challenge:
-      replay_or_challenge_result = dplyr::if_else(
-        .data$replay_or_challenge == 1,
-        dplyr::if_else(
-          stringr::str_detect(
-            tolower(.data$play_description),
-            "( upheld)|( reversed)|( confirmed)"
-          ),
-          stringr::str_extract(
-            tolower(.data$play_description),
-            "( upheld)|( reversed)|( confirmed)"
-          ) %>%
-            stringr::str_trim(), "denied"
-        ),
-        NA_character_
-      ),
       # Using the various two point indicators, create a column denoting the result
       # outcome for two point conversions:
       two_point_conv_result = dplyr::if_else(
@@ -173,12 +95,7 @@ add_nflscrapr_mutations <- function(pbp) {
           .data$field_goal_blocked == 1,
         "blocked", .data$field_goal_result
       ),
-      # Set the kick_distance for extra points by adding 18 to the yardline_100:
-      kick_distance = dplyr::if_else(
-        .data$extra_point_attempt == 1,
-        .data$yardline_100 + 18,
-        .data$kick_distance
-      ),
+
       # Using the indicators make a column with the extra point result:
       extra_point_result = dplyr::if_else(
         .data$extra_point_attempt == 1 &
@@ -205,6 +122,112 @@ add_nflscrapr_mutations <- function(pbp) {
           .data$extra_point_aborted == 1,
         "aborted", .data$extra_point_result
       ),
+
+      # find kickoffs with penalty: a play where the next play is a kickoff
+      # and the prior play wasn't a safety or PAT
+      lead_ko = case_when(
+        dplyr::lead(.data$kickoff_attempt) == 1 &
+          .data$game_id == dplyr::lead(.data$game_id) &
+          !stringr::str_detect(tolower(.data$play_description), "(injured sf )|(tonight's attendance )|(injury update )|(end quarter)|(timeout)|( captains:)|( captains )|( captians:)|( humidity:)|(note - )|( deferred)|(game start )") &
+          !stringr::str_detect(.data$play_description, "GAME ") &
+          !.data$play_description %in% c("GAME", "Two-Minute Warning", "The game has resumed.") &
+          is.na(.data$two_point_conv_result) &
+          is.na(.data$extra_point_result) &
+          is.na(.data$field_goal_result) &
+          (.data$safety == 0 | is.na(.data$safety)) &
+          # because things too messed up before
+             .data$season > 2000 ~ 1,
+        TRUE ~ 0),
+
+      kickoff_attempt = dplyr::if_else(
+        .data$lead_ko == 1, 1, .data$kickoff_attempt
+      ),
+
+      # Make the possession team for kickoffs be the return team, since that is
+      # more intuitive from the EPA / WPA point of view:
+      posteam = dplyr::case_when(
+        # kickoff_finder is defined below
+        (.data$lead_ko == 1 | .data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, kickoff_finder)) & .data$posteam == .data$home_team ~ .data$away_team,
+        (.data$lead_ko == 1 | .data$kickoff_attempt == 1 | stringr::str_detect(.data$play_description, kickoff_finder)) & .data$posteam == .data$away_team ~ .data$home_team,
+        TRUE ~ .data$posteam
+      ),
+
+      # Fill in the rows with missing posteam with the lead:
+      posteam = dplyr::if_else(
+        (.data$quarter_end == 1 | .data$posteam == ""),
+        dplyr::lead(.data$posteam),
+        .data$posteam),
+      posteam_id = dplyr::if_else(
+        (.data$quarter_end == 1 | .data$posteam_id == ""),
+        dplyr::lead(.data$posteam_id),
+        .data$posteam_id),
+
+      # remove posteam from END Q2 plays or END Q4 plays (when game goes in OT)
+      # because it doesn't make sense and breaks fixed_drive and fixed_drive_result
+      posteam = dplyr::if_else(
+        stringr::str_detect(.data$play_description, "(END QUARTER 2)|(END QUARTER 4)"),
+        NA_character_, .data$posteam
+      ),
+
+      # Denote whether the home or away team has possession:
+      posteam_type = dplyr::if_else(.data$posteam == .data$home_team, "home", "away"),
+
+      # Column denoting which team is on defense:
+      defteam = dplyr::if_else(
+        .data$posteam == .data$home_team,
+        .data$away_team, .data$home_team
+      ),
+
+      yardline = dplyr::if_else(.data$yardline == "50", "MID 50", .data$yardline),
+      yardline = dplyr::if_else(
+        nchar(.data$yardline) == 0 | is.null(.data$yardline) | .data$yardline == "NULL" | is.na(.data$yardline),
+        dplyr::lead(.data$yardline), .data$yardline
+      ),
+      yardline_number = dplyr::if_else(
+        .data$yardline == "MID 50", 50, .data$yardline_number
+      ),
+      yardline_100 = dplyr::if_else(
+        .data$yardline_side == .data$posteam | .data$yardline == "MID 50",
+        100 - .data$yardline_number, .data$yardline_number
+      ),
+      # Set the kick_distance for extra points by adding 18 to the yardline_100:
+      kick_distance = dplyr::if_else(
+        .data$extra_point_attempt == 1,
+        .data$yardline_100 + 18,
+        .data$kick_distance
+      ),
+      # Create a column with the time in seconds remaining for each half:
+      half_seconds_remaining = dplyr::if_else(
+        .data$quarter %in% c(1, 3),
+        .data$quarter_seconds_remaining + 900,
+        .data$quarter_seconds_remaining),
+      # Create a column with the time in seconds remaining for the game:
+      game_seconds_remaining = dplyr::if_else(
+        .data$quarter %in% c(1, 2, 3, 4),
+        .data$quarter_seconds_remaining + (900 * (4 - as.numeric(.data$quarter))),
+        .data$quarter_seconds_remaining
+      ),
+      # Add column for replay or challenge:
+      replay_or_challenge = stringr::str_detect(
+        .data$play_description, "(Replay Official reviewed)|( challenge(d)? )|(Challenged)") %>%
+        as.numeric(),
+      # Result of replay or challenge:
+      replay_or_challenge_result = dplyr::if_else(
+        .data$replay_or_challenge == 1,
+        dplyr::if_else(
+          stringr::str_detect(
+            tolower(.data$play_description),
+            "( upheld)|( reversed)|( confirmed)"
+          ),
+          stringr::str_extract(
+            tolower(.data$play_description),
+            "( upheld)|( reversed)|( confirmed)"
+          ) %>%
+            stringr::str_trim(), "denied"
+        ),
+        NA_character_
+      ),
+
       # Create the column denoting the categorical description of the pass length:
       pass_length = dplyr::if_else(
         .data$two_point_attempt == 0 &

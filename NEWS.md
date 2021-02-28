@@ -12,6 +12,7 @@
 * Fixed a bug in `epa` when a safety is scored by the team beginning the play in possession of the ball (#186)
 * Change `name`, `id`, `rusher`, and `rusher_id` to be the player charged with the fumble on aborted snaps when the QB is unable to make a play (i.e. pass, sack, or scramble) (#162)
 * Fix some bugs related to David and Duke Johnson on the Texans in 2020 (#163)
+* Fix yet another bug related to correctly identifying possession team on kickoffs nullified by penalty (#199)
 
 # nflfastR 4.0.0
 
