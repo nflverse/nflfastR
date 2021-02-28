@@ -38,6 +38,7 @@
 #' to the point where a receiver lost a fumble after a completed catch and makes
 #' EPA work more like passing yards on plays with fumbles.}
 #' \item{passing_2pt_conversions}{Two-point conversion passes.}
+#' \item{dakota}{Adjusted EPA + CPOE composite based on coefficients which best predict adjusted EPA/play in the following year.}
 #' \item{carries}{The number of official rush attempts (incl. scrambles and kneel downs).
 #' Rushes after a lateral reception don't count as carry.}
 #' \item{rushing_yards}{Yards gained when rushing with the ball (incl. scrambles and kneel downs).
@@ -151,7 +152,8 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       passing_epa = sum(.data$qb_epa)
     ) %>%
     dplyr::rename(player_id = .data$passer_player_id) %>%
-    dplyr::ungroup()
+    dplyr::ungroup() %>%
+    add_dakota(data)
 
   pass_two_points <- two_points %>%
     dplyr::filter(.data$pass_attempt == 1) %>%
@@ -368,7 +370,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       # passing stats
       "completions", "attempts", "passing_yards", "passing_tds", "interceptions",
       "sacks", "sack_fumbles_lost", "passing_air_yards", "passing_yards_after_catch",
-      "passing_first_downs", "passing_epa", "passing_2pt_conversions",
+      "passing_first_downs", "passing_epa", "passing_2pt_conversions", "dakota",
 
       # rushing stats
       "carries", "rushing_yards", "rushing_tds", "rushing_fumbles_lost",
@@ -403,8 +405,9 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
   # if user doesn't want week-by-week input, aggregate the whole df
   if (isFALSE(weekly)) {
     player_df <- player_df %>%
-      dplyr::group_by(.data$player_id, .data$player_name) %>%
+      dplyr::group_by(.data$player_id) %>%
       dplyr::summarise(
+        player_name = custom_mode(.data$player_name),
         games = dplyr::n(),
         recent_team = dplyr::last(.data$recent_team),
         # passing
@@ -420,6 +423,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         passing_first_downs = sum(.data$passing_first_downs),
         passing_epa = sum(.data$passing_epa),
         passing_2pt_conversions = sum(.data$passing_2pt_conversions),
+        dakota = mean(.data$dakota),
 
         # rushing
         carries = sum(.data$carries),
@@ -450,4 +454,45 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
   }
 
   return(player_df)
+}
+
+add_dakota <- function(pass_df, pbp){
+  dakota_model <- NULL
+  con <- url("https://github.com/guga31bb/nflfastR-data/blob/dakota_model/models/dakota_model.Rdata?raw=true")
+  try(load(con), silent = TRUE)
+  close(con)
+
+  if (is.null(dakota_model)) {
+    user_message("This function needs to download the model data from GitHub. Please check your Internet connection and try again!", "oops")
+    return(pass_df)
+  }
+
+  model_data <- pbp %>%
+    dplyr::filter(!is.na(.data$passer_id)) %>%
+    dplyr::mutate(
+      epa = dplyr::if_else(.data$qb_epa < -4.5, -4.5, .data$qb_epa, missing = .data$qb_epa),
+    ) %>%
+    dplyr::group_by(.data$passer_id, .data$week, .data$season) %>%
+    dplyr::mutate(
+      # set air yards = NA if we don't calculate CP
+      air_yards = dplyr::if_else(is.na(.data$cp), NA_real_, .data$air_yards),
+      n_attempt = sum(.data$complete_pass + .data$incomplete_pass)
+    ) %>%
+    dplyr::summarize(
+      n_plays = n(),
+      epa_per_play = sum(.data$epa) / .data$n_plays,
+      cpoe = mean(.data$cpoe, na.rm = TRUE)
+    ) %>%
+    dplyr::ungroup() %>%
+    dplyr::mutate(cpoe = dplyr::if_else(is.na(.data$cpoe), 0, .data$cpoe)) %>%
+    dplyr::rename(player_id = .data$passer_id) %>%
+    dplyr::filter(n_plays >= 5)
+
+  model_data$dakota <- mgcv::predict.gam(dakota_model, model_data)
+
+  pass_df %>%
+    dplyr::left_join(
+      model_data %>% dplyr::select(.data$player_id, .data$dakota),
+      by = "player_id"
+    )
 }
