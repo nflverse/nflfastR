@@ -152,8 +152,9 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       passing_epa = sum(.data$qb_epa)
     ) %>%
     dplyr::rename(player_id = .data$passer_player_id) %>%
-    dplyr::ungroup() %>%
-    add_dakota(data)
+    dplyr::ungroup()
+
+  if (isTRUE(weekly)) pass_df <- add_dakota(pass_df, pbp = pbp, weekly = weekly)
 
   pass_two_points <- two_points %>%
     dplyr::filter(.data$pass_attempt == 1) %>%
@@ -423,7 +424,6 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         passing_first_downs = sum(.data$passing_first_downs),
         passing_epa = sum(.data$passing_epa),
         passing_2pt_conversions = sum(.data$passing_2pt_conversions),
-        dakota = mean(.data$dakota),
 
         # rushing
         carries = sum(.data$carries),
@@ -450,13 +450,14 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         fantasy_points = sum(.data$fantasy_points),
         fantasy_points_ppr = sum(.data$fantasy_points_ppr)
       ) %>%
-      dplyr::ungroup()
+      dplyr::ungroup() %>%
+      add_dakota(pbp = pbp, weekly = weekly)
   }
 
   return(player_df)
 }
 
-add_dakota <- function(pass_df, pbp){
+add_dakota <- function(add_to_this, pbp, weekly) {
   dakota_model <- NULL
   con <- url("https://github.com/guga31bb/nflfastR-data/blob/dakota_model/models/dakota_model.Rdata?raw=true")
   try(load(con), silent = TRUE)
@@ -467,32 +468,64 @@ add_dakota <- function(pass_df, pbp){
     return(pass_df)
   }
 
-  model_data <- pbp %>%
-    dplyr::filter(!is.na(.data$passer_id)) %>%
-    dplyr::mutate(
-      epa = dplyr::if_else(.data$qb_epa < -4.5, -4.5, .data$qb_epa, missing = .data$qb_epa),
-    ) %>%
-    dplyr::group_by(.data$passer_id, .data$week, .data$season) %>%
-    dplyr::mutate(
-      # set air yards = NA if we don't calculate CP
-      air_yards = dplyr::if_else(is.na(.data$cp), NA_real_, .data$air_yards),
-      n_attempt = sum(.data$complete_pass + .data$incomplete_pass)
-    ) %>%
-    dplyr::summarize(
-      n_plays = n(),
-      epa_per_play = sum(.data$epa) / .data$n_plays,
-      cpoe = mean(.data$cpoe, na.rm = TRUE)
-    ) %>%
-    dplyr::ungroup() %>%
-    dplyr::mutate(cpoe = dplyr::if_else(is.na(.data$cpoe), 0, .data$cpoe)) %>%
-    dplyr::rename(player_id = .data$passer_id) %>%
-    dplyr::filter(n_plays >= 5)
+  if (!"id" %in% names(pbp)) pbp <- clean_pbp(pbp)
 
-  model_data$dakota <- mgcv::predict.gam(dakota_model, model_data)
+  df <- pbp %>%
+    dplyr::filter(.data$pass == 1 | .data$rush == 1) %>%
+    dplyr::filter(!is.na(.data$posteam) & !is.na(.data$qb_epa) & !is.na(.data$id)) %>%
+    dplyr::mutate(epa = dplyr::if_else(.data$qb_epa < -4.5, -4.5, .data$qb_epa))
 
-  pass_df %>%
-    dplyr::left_join(
-      model_data %>% dplyr::select(.data$player_id, .data$dakota),
-      by = "player_id"
-    )
+  if (isTRUE(weekly)) {
+    model_data <- df %>%
+      dplyr::group_by(.data$id, .data$week, .data$season) %>%
+      dplyr::mutate(
+        # set air yards = NA if we don't calculate CP
+        air_yards = dplyr::if_else(is.na(.data$cp), NA_real_, .data$air_yards),
+        n_attempt = sum(.data$complete_pass + .data$incomplete_pass)
+      ) %>%
+      dplyr::summarize(
+        n_plays = n(),
+        epa_per_play = sum(.data$epa) / .data$n_plays,
+        cpoe = mean(.data$cpoe, na.rm = TRUE)
+      ) %>%
+      dplyr::ungroup() %>%
+      dplyr::mutate(cpoe = dplyr::if_else(is.na(.data$cpoe), 0, .data$cpoe)) %>%
+      dplyr::rename(player_id = .data$id) %>%
+      dplyr::filter(n_plays >= 5)
+
+    model_data$dakota <- mgcv::predict.gam(dakota_model, model_data)
+
+    out <- add_to_this %>%
+      dplyr::left_join(
+        model_data %>%
+          dplyr::select(.data$player_id, .data$week, .data$season, .data$dakota),
+        by = c("player_id", "week", "season")
+      )
+  } else if (isFALSE(weekly)) {
+    model_data <- df %>%
+      dplyr::group_by(.data$id) %>%
+      dplyr::mutate(
+        # set air yards = NA if we don't calculate CP
+        air_yards = dplyr::if_else(is.na(.data$cp), NA_real_, .data$air_yards),
+        n_attempt = sum(.data$complete_pass + .data$incomplete_pass)
+      ) %>%
+      dplyr::summarize(
+        n_plays = n(),
+        epa_per_play = sum(.data$epa) / .data$n_plays,
+        cpoe = mean(.data$cpoe, na.rm = TRUE)
+      ) %>%
+      dplyr::ungroup() %>%
+      dplyr::mutate(cpoe = dplyr::if_else(is.na(.data$cpoe), 0, .data$cpoe)) %>%
+      dplyr::rename(player_id = .data$id)
+
+    model_data$dakota <- mgcv::predict.gam(dakota_model, model_data)
+
+    out <- add_to_this %>%
+      dplyr::left_join(
+        model_data %>%
+          dplyr::select(.data$player_id, .data$dakota),
+        by = "player_id"
+      )
+  }
+  return(out)
 }
