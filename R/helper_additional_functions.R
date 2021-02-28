@@ -91,10 +91,6 @@ clean_pbp <- function(pbp, ...) {
           is.na(.data$passer) & .data$qb_scramble == 1 & !is.na(.data$rusher) & .data$season == 2005 ~ .data$rusher,
           TRUE ~ .data$passer
         ),
-        # if there's an aborted snap, then charge it to whoever charged with the fumble
-        rusher = dplyr::if_else(
-          aborted_play == 1 & !is.na(.data$fumbled_1_player_name), .data$fumbled_1_player_name, .data$rusher
-        ),
         # finally, for rusher, if there was already a passer (eg from scramble), set rusher to NA
         rusher = dplyr::if_else(
           !is.na(.data$passer), NA_character_, .data$rusher
@@ -210,6 +206,18 @@ clean_pbp <- function(pbp, ...) {
 
       dplyr::ungroup() %>%
       dplyr::mutate(
+        # if there's an aborted snap and qb didn't get a pass off,
+        # then charge it to whoever charged with the fumble
+        # this has to go after all the custom_mode stuff or it gets messed up
+        rusher = dplyr::if_else(
+          aborted_play == 1 & is.na(passer) & !is.na(.data$fumbled_1_player_name),
+          .data$fumbled_1_player_name, .data$rusher
+        ),
+        rusher_id = dplyr::if_else(
+          aborted_play == 1 & is.na(passer) & !is.na(.data$fumbled_1_player_id),
+          .data$fumbled_1_player_id, .data$rusher_id
+        ),
+
         name = dplyr::if_else(!is.na(.data$passer), .data$passer, .data$rusher),
         jersey_number = dplyr::if_else(!is.na(.data$passer_jersey_number), .data$passer_jersey_number, .data$rusher_jersey_number),
         id = dplyr::if_else(!is.na(.data$passer_id), .data$passer_id, .data$rusher_id)
