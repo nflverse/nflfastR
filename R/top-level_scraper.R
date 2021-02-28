@@ -444,7 +444,7 @@ fast_scraper <- function(game_ids,
     }, p, ...)
 
     if (length(pbp) != 0) {
-      usethis::ui_done("Download finished. Adding variables...")
+      user_message("Download finished. Adding variables...", "done")
       pbp <- pbp %>%
         add_game_data() %>%
         add_nflscrapr_mutations() %>%
@@ -460,7 +460,8 @@ fast_scraper <- function(game_ids,
   })
 
   if (!in_builder) {
-    usethis::ui_done("{usethis::ui_field('Procedure completed.')}")
+    str <- paste0(my_time(), " | Procedure completed.")
+    usethis::ui_done("{usethis::ui_field(str)}")
   }
   return(pbp)
 }

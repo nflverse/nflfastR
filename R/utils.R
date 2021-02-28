@@ -1,12 +1,27 @@
 # The function `message_completed` to create the green "...completed" message
 # only exists to hide the option `in_builder` in dots
 message_completed <- function(x, in_builder = FALSE) {
-  if (!in_builder) {
-    usethis::ui_done("{usethis::ui_field(x)}")
+  if (isFALSE(in_builder)) {
+    str <- paste0(my_time(), " | ", x)
+    usethis::ui_done("{usethis::ui_field(str)}")
   } else if (in_builder) {
-    usethis::ui_done(x)
+    usethis::ui_done("{my_time()} | {x}")
   }
 }
+
+user_message <- function(x, type) {
+  if (type == "done") {
+    usethis::ui_done("{my_time()} | {x}")
+  } else if (type == "todo") {
+    usethis::ui_todo("{my_time()} | {x}")
+  } else if (type == "info") {
+    usethis::ui_info("{my_time()} | {x}")
+  } else if (type == "oops") {
+    usethis::ui_oops("{my_time()} | {x}")
+  }
+}
+
+my_time <- function() strftime(Sys.time(), format = "%H:%M:%S")
 
 # custom mode function from https://stackoverflow.com/questions/2547402/is-there-a-built-in-function-for-finding-the-mode/8189441
 custom_mode <- function(x, na.rm = TRUE) {

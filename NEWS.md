@@ -9,6 +9,7 @@
 * Fixed a bug where `posteam` was not `NA` on end of quarter 2 (or end of quarter 4 in overtime games) causing wrong values for `fixed_drive`, `fixed_drive_result`, `series` and `series_result`
 * Fixed a bug where `fixed_drive` and `series` were falsely incrementing on kickoffs recovered by the kicking team or on defensive touchdowns followed by timeouts
 * Fixed a bug where `fixed_drive` and `series` were falsely incrementing on muffed punts recovered by the punting team for a touchdown
+* Fixed a bug where `add_xpass()` crashed when ran with data already including xpass variables. 
 * Fixed a bug in `epa` when a safety is scored by the team beginning the play in possession of the ball (#186)
 
 # nflfastR 4.0.0
