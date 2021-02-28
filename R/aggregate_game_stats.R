@@ -345,6 +345,15 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
 
   rec_df[is.na(rec_df)] <- 0
 
+
+# Special Teams -----------------------------------------------------------
+
+  st_tds <- pbp %>%
+    dplyr::filter(.data$special == 1) %>%
+    dplyr::group_by(.data$td_player_id, .data$week, .data$season) %>%
+    dplyr::summarise(special_teams_tds = sum(.data$touchdown, na.rm = TRUE)) %>%
+    dplyr::rename(player_id = .data$td_player_id)
+
 # Combine all stats -------------------------------------------------------
 
   # combine all the stats together
@@ -490,8 +499,7 @@ add_dakota <- function(add_to_this, pbp, weekly) {
       ) %>%
       dplyr::ungroup() %>%
       dplyr::mutate(cpoe = dplyr::if_else(is.na(.data$cpoe), 0, .data$cpoe)) %>%
-      dplyr::rename(player_id = .data$id) %>%
-      dplyr::filter(n_plays >= 5)
+      dplyr::rename(player_id = .data$id)
 
     model_data$dakota <- mgcv::predict.gam(dakota_model, model_data)
 
