@@ -363,7 +363,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         TRUE ~ .data$team_receiver
       )
     ) %>%
-    dplyr::select(
+    dplyr::select(tidyselect::any_of(c(
 
       # id information
       "player_id", "player_name", "recent_team", "season", "week",
@@ -382,7 +382,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       "receiving_air_yards", "receiving_yards_after_catch",
       "receiving_first_downs", "receiving_epa", "receiving_2pt_conversions"
 
-    ) %>%
+    ))) %>%
     dplyr::filter(!is.na(.data$player_id))
 
   player_df[is.na(player_df)] <- 0
