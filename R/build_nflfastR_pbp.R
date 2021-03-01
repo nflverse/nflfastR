@@ -92,9 +92,9 @@ build_nflfastR_pbp <- function(game_ids,
   builder <- TRUE
 
   if (game_count > 1) {
-    usethis::ui_todo("Start download of {game_count} games...")
+    usethis::ui_todo("{my_time()} | Start download of {game_count} games...")
   } else {
-    usethis::ui_todo("Start download of {game_count} game...")
+    usethis::ui_todo("{my_time()} | Start download of {game_count} game...")
   }
 
   ret <- fast_scraper(game_ids = game_ids, source = source, pp = pp, ..., in_builder = builder) %>%
