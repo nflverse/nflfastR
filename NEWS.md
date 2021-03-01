@@ -11,6 +11,9 @@
 * Fixed a bug where `fixed_drive` and `series` were falsely incrementing on muffed punts recovered by the punting team for a touchdown
 * Fixed a bug where `add_xpass()` crashed when ran with data already including xpass variables. 
 * Fixed a bug in `epa` when a safety is scored by the team beginning the play in possession of the ball (#186)
+* The function `calculate_player_stats()` now adds the variable `dakota`, the `epa` + `cpoe` composite, for players with minimum 5 pass attempts.
+* Fixed a bug where `calculate_player_stats()` forgot to clean player names by using their IDs
+* Fixed a bug where special teams touchdowns were missing in the output of `calculate_player_stats()` (#203)
 
 # nflfastR 4.0.0
 

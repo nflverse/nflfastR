@@ -41,6 +41,7 @@ NOTE: this uses the variable \code{qb_epa}, which gives QB credit for EPA for up
 to the point where a receiver lost a fumble after a completed catch and makes
 EPA work more like passing yards on plays with fumbles.}
 \item{passing_2pt_conversions}{Two-point conversion passes.}
+\item{dakota}{Adjusted EPA + CPOE composite based on coefficients which best predict adjusted EPA/play in the following year.}
 \item{carries}{The number of official rush attempts (incl. scrambles and kneel downs).
 Rushes after a lateral reception don't count as carry.}
 \item{rushing_yards}{Yards gained when rushing with the ball (incl. scrambles and kneel downs).
