@@ -474,24 +474,27 @@ add_dakota <- function(add_to_this, pbp, weekly) {
 
   if (is.null(dakota_model)) {
     user_message("This function needs to download the model data from GitHub. Please check your Internet connection and try again!", "oops")
-    return(pass_df)
+    return(add_to_this)
   }
 
   if (!"id" %in% names(pbp)) pbp <- clean_pbp(pbp)
+  if (!"qb_epa" %in% names(pbp)) pbp <- add_qb_epa(pbp)
 
-  df <- pbp %>%
-    dplyr::filter(.data$pass == 1 | .data$rush == 1) %>%
-    dplyr::filter(!is.na(.data$posteam) & !is.na(.data$qb_epa) & !is.na(.data$id) & !is.na(.data$down)) %>%
-    dplyr::mutate(epa = dplyr::if_else(.data$qb_epa < -4.5, -4.5, .data$qb_epa))
+  suppressMessages({
+    df <- pbp %>%
+      dplyr::filter(.data$pass == 1 | .data$rush == 1) %>%
+      dplyr::filter(!is.na(.data$posteam) & !is.na(.data$qb_epa) & !is.na(.data$id) & !is.na(.data$down)) %>%
+      dplyr::mutate(epa = dplyr::if_else(.data$qb_epa < -4.5, -4.5, .data$qb_epa)) %>%
+      decode_player_ids()
+  })
+
+  relevant_players <- add_to_this %>%
+    dplyr::filter(.data$attempts >= 5) %>%
+    dplyr::pull(.data$player_id)
 
   if (isTRUE(weekly)) {
     model_data <- df %>%
       dplyr::group_by(.data$id, .data$week, .data$season) %>%
-      dplyr::mutate(
-        # set air yards = NA if we don't calculate CP
-        air_yards = dplyr::if_else(is.na(.data$cp), NA_real_, .data$air_yards),
-        n_attempt = sum(.data$complete_pass + .data$incomplete_pass)
-      ) %>%
       dplyr::summarize(
         n_plays = n(),
         epa_per_play = sum(.data$epa) / .data$n_plays,
@@ -499,7 +502,8 @@ add_dakota <- function(add_to_this, pbp, weekly) {
       ) %>%
       dplyr::ungroup() %>%
       dplyr::mutate(cpoe = dplyr::if_else(is.na(.data$cpoe), 0, .data$cpoe)) %>%
-      dplyr::rename(player_id = .data$id)
+      dplyr::rename(player_id = .data$id) %>%
+      dplyr::filter(.data$player_id %in% relevant_players)
 
     model_data$dakota <- mgcv::predict.gam(dakota_model, model_data)
 
@@ -512,11 +516,6 @@ add_dakota <- function(add_to_this, pbp, weekly) {
   } else if (isFALSE(weekly)) {
     model_data <- df %>%
       dplyr::group_by(.data$id) %>%
-      dplyr::mutate(
-        # set air yards = NA if we don't calculate CP
-        air_yards = dplyr::if_else(is.na(.data$cp), NA_real_, .data$air_yards),
-        n_attempt = sum(.data$complete_pass + .data$incomplete_pass)
-      ) %>%
       dplyr::summarize(
         n_plays = n(),
         epa_per_play = sum(.data$epa) / .data$n_plays,
@@ -524,7 +523,8 @@ add_dakota <- function(add_to_this, pbp, weekly) {
       ) %>%
       dplyr::ungroup() %>%
       dplyr::mutate(cpoe = dplyr::if_else(is.na(.data$cpoe), 0, .data$cpoe)) %>%
-      dplyr::rename(player_id = .data$id)
+      dplyr::rename(player_id = .data$id) %>%
+      dplyr::filter(.data$player_id %in% relevant_players)
 
     model_data$dakota <- mgcv::predict.gam(dakota_model, model_data)
 
