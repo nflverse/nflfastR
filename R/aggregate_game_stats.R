@@ -1,6 +1,6 @@
 ################################################################################
 # Author: Ben Baldwin, Sebastian Carl
-# Stlyeguide: styler::tidyverse_style()
+# Styleguide: styler::tidyverse_style()
 ################################################################################
 
 #' Get Official Game Stats
@@ -361,9 +361,13 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
 # Special Teams -----------------------------------------------------------
 
   st_tds <- pbp %>%
-    dplyr::filter(.data$special == 1) %>%
+    dplyr::filter(.data$special == 1 & !is.na(.data$td_player_id)) %>%
     dplyr::group_by(.data$td_player_id, .data$week, .data$season) %>%
-    dplyr::summarise(special_teams_tds = sum(.data$touchdown, na.rm = TRUE)) %>%
+    dplyr::summarise(
+      name_st = custom_mode(.data$td_player_name),
+      team_st = custom_mode(.data$td_team),
+      special_teams_tds = sum(.data$touchdown, na.rm = TRUE)
+    ) %>%
     dplyr::rename(player_id = .data$td_player_id)
 
 # Combine all stats -------------------------------------------------------
@@ -372,16 +376,19 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
   player_df <- pass_df %>%
     dplyr::full_join(rush_df, by = c("player_id", "week", "season")) %>%
     dplyr::full_join(rec_df, by = c("player_id", "week", "season")) %>%
+    dplyr::full_join(st_tds, by = c("player_id", "week", "season")) %>%
     dplyr::mutate(
       player_name = dplyr::case_when(
         !is.na(.data$name_pass) ~ .data$name_pass,
         !is.na(.data$name_rush) ~ .data$name_rush,
-        TRUE ~ .data$name_receiver
+        !is.na(.data$name_receiver) ~ .data$name_receiver,
+        TRUE ~ .data$name_st
       ),
       recent_team = dplyr::case_when(
         !is.na(.data$team_pass) ~ .data$team_pass,
         !is.na(.data$team_rush) ~ .data$team_rush,
-        TRUE ~ .data$team_receiver
+        !is.na(.data$team_receiver) ~ .data$team_receiver,
+        TRUE ~ .data$team_st
       )
     ) %>%
     dplyr::select(tidyselect::any_of(c(
@@ -401,7 +408,10 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       # receiving stats
       "receptions", "targets", "receiving_yards", "receiving_tds", "receiving_fumbles_lost",
       "receiving_air_yards", "receiving_yards_after_catch",
-      "receiving_first_downs", "receiving_epa", "receiving_2pt_conversions"
+      "receiving_first_downs", "receiving_epa", "receiving_2pt_conversions",
+
+      # special teams
+      "special_teams_tds"
 
     ))) %>%
     dplyr::filter(!is.na(.data$player_id))
@@ -419,7 +429,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         4 * .data$passing_tds +
         -2 * .data$interceptions +
         1 / 10 * (.data$rushing_yards + .data$receiving_yards) +
-        6 * (.data$rushing_tds + .data$receiving_tds) +
+        6 * (.data$rushing_tds + .data$receiving_tds + .data$special_teams_tds) +
         2 * (.data$passing_2pt_conversions + .data$rushing_2pt_conversions + .data$receiving_2pt_conversions) +
         -2 * (.data$sack_fumbles_lost + .data$rushing_fumbles_lost + .data$receiving_fumbles_lost),
 
@@ -470,6 +480,9 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         receiving_first_downs = sum(.data$receiving_first_downs),
         receiving_epa = dplyr::if_else(all(is.na(.data$receiving_epa)), NA_real_, sum(.data$receiving_epa, na.rm = TRUE)),
         receiving_2pt_conversions = sum(.data$receiving_2pt_conversions),
+
+        # special teams
+        special_teams_tds = sum(.data$special_teams_tds),
 
         # fantasy
         fantasy_points = sum(.data$fantasy_points),
