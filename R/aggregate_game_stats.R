@@ -447,7 +447,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         passing_air_yards = sum(.data$passing_air_yards),
         passing_yards_after_catch = sum(.data$passing_yards_after_catch),
         passing_first_downs = sum(.data$passing_first_downs),
-        passing_epa = sum(.data$passing_epa),
+        passing_epa = sum(.data$passing_epa, na.rm = TRUE),
         passing_2pt_conversions = sum(.data$passing_2pt_conversions),
 
         # rushing
@@ -456,7 +456,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         rushing_tds = sum(.data$rushing_tds),
         rushing_fumbles_lost = sum(.data$rushing_fumbles_lost),
         rushing_first_downs = sum(.data$rushing_first_downs),
-        rushing_epa = sum(.data$rushing_epa),
+        rushing_epa = sum(.data$rushing_epa, na.rm = TRUE),
         rushing_2pt_conversions = sum(.data$rushing_2pt_conversions),
 
         # receiving
@@ -468,7 +468,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         receiving_air_yards = sum(.data$receiving_air_yards),
         receiving_yards_after_catch = sum(.data$receiving_yards_after_catch),
         receiving_first_downs = sum(.data$receiving_first_downs),
-        receiving_epa = sum(.data$receiving_epa),
+        receiving_epa = sum(.data$receiving_epa, na.rm = TRUE),
         receiving_2pt_conversions = sum(.data$receiving_2pt_conversions),
 
         # fantasy
