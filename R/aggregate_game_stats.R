@@ -129,6 +129,15 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       decode_player_ids()
   })
 
+  if (!"special" %in% names(pbp)) {# we need this column for the special teams tds
+    pbp <- pbp %>%
+      dplyr::mutate(
+        special = dplyr::if_else(
+          .data$play_type %in% c("extra_point","field_goal","kickoff","punt"),
+          1, 0
+        )
+      )
+  }
 
 # Passing stats -----------------------------------------------------------
 
