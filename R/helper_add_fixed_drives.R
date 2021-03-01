@@ -109,6 +109,6 @@ add_drive_results <- function(d) {
     dplyr::mutate(posteam = .data$old_posteam) %>%
     dplyr::select(-"row", -"new_drive", -"tmp_result", -"old_posteam")
 
-  usethis::ui_done("added fixed drive variables")
+  user_message("added fixed drive variables", "done")
   return(drive_df)
 }

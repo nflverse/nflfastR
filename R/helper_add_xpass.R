@@ -19,10 +19,11 @@
 #' }
 #' @export
 add_xpass <- function(pbp, ...) {
+  pbp <- pbp %>% dplyr::select(-tidyselect::any_of(c("xpass", "pass_oe")))
   plays <- prepare_xpass_data(pbp)
 
   if (!nrow(plays %>% dplyr::filter(.data$valid_play == 1)) == 0) {
-    usethis::ui_todo("Computing xpass...")
+    user_message("Computing xpass...", "todo")
 
     pred <- stats::predict(
       fastrmodels::xpass_model,
@@ -51,7 +52,7 @@ add_xpass <- function(pbp, ...) {
         xpass = NA_real_,
         pass_oe = NA_real_
       )
-    usethis::ui_info("No non-NA values for xpass calculation detected. xpass and pass_oe set to NA")
+    user_message("No non-NA values for xpass calculation detected. xpass and pass_oe set to NA", "info")
   }
   return(pbp)
 }

@@ -55,19 +55,19 @@ update_db <- function(dbdir = ".",
 
   if (!is_installed("DBI") | !is_installed("purrr") |
       (!is_installed("RSQLite") & is.null(db_connection))) {
-    usethis::ui_stop("Packages {usethis::ui_value('DBI')}, {usethis::ui_value('RSQLite')} and {usethis::ui_value('purrr')} required for database communication. Please install them.")
+    usethis::ui_stop("{my_time()} | Packages {usethis::ui_value('DBI')}, {usethis::ui_value('RSQLite')} and {usethis::ui_value('purrr')} required for database communication. Please install them.")
   }
 
   if (any(force_rebuild == "NEW")) {
-    usethis::ui_stop("The argument {usethis::ui_value('force_rebuild = NEW')} is only for internal usage!")
+    usethis::ui_stop("{my_time()} | The argument {usethis::ui_value('force_rebuild = NEW')} is only for internal usage!")
   }
 
   if (!(is.logical(force_rebuild) | is.numeric(force_rebuild))) {
-    usethis::ui_stop("The argument {usethis::ui_value('force_rebuild')} has to be either logical or numeric!")
+    usethis::ui_stop("{my_time()} | The argument {usethis::ui_value('force_rebuild')} has to be either logical or numeric!")
   }
 
   if (!dir.exists(dbdir) & is.null(db_connection)) {
-    usethis::ui_oops("Directory {usethis::ui_path(dbdir)} doesn't exist yet. Try creating...")
+    usethis::ui_oops("{my_time()} | Directory {usethis::ui_path(dbdir)} doesn't exist yet. Try creating...")
     dir.create(dbdir)
   }
 
@@ -85,7 +85,7 @@ update_db <- function(dbdir = ".",
   }
 
   # get completed games using Lee's file (thanks Lee!)
-  usethis::ui_todo("Checking for missing completed games...")
+  user_message("Checking for missing completed games...", "todo")
   completed_games <- load_lees_games() %>%
     # completed games since 1999, excluding the broken games
     dplyr::filter(.data$season >= 1999, !is.na(.data$result), !.data$game_id %in% c("1999_01_BAL_STL", "2000_06_BUF_MIA", "2000_03_SD_KC")) %>%
@@ -107,15 +107,15 @@ update_db <- function(dbdir = ".",
     new_pbp <- build_nflfastR_pbp(missing, rules = FALSE)
 
     if (nrow(new_pbp) == 0) {
-      usethis::ui_oops("Raw data of new games are not yet ready. Please try again in about 10 minutes.")
+      user_message("Raw data of new games are not yet ready. Please try again in about 10 minutes.", "oops")
     } else {
-      usethis::ui_todo("Appending new data to database...")
+      user_message("Appending new data to database...", "todo")
       DBI::dbWriteTable(connection, tblname, new_pbp, append = TRUE)
     }
   }
 
   message_completed("Database update completed", in_builder = TRUE)
-  usethis::ui_info("Path to your db: {usethis::ui_path(DBI::dbGetInfo(connection)$dbname)}")
+  usethis::ui_info("{my_time()} | Path to your db: {usethis::ui_path(DBI::dbGetInfo(connection)$dbname)}")
   DBI::dbDisconnect(connection)
   rule_footer("DONE")
 }
@@ -130,23 +130,23 @@ build_db <- function(tblname = "nflfastR_pbp", db_conn, rebuild = FALSE, show_me
     dplyr::ungroup()
 
   if (all(rebuild == TRUE)) {
-    usethis::ui_todo("Purging the complete data table {usethis::ui_value(tblname)} in your connected database...")
+    usethis::ui_todo("{my_time()} | Purging the complete data table {usethis::ui_value(tblname)} in your connected database...")
     DBI::dbRemoveTable(db_conn, tblname)
     seasons <- valid_seasons %>% dplyr::pull("season")
-    usethis::ui_todo("Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}...")
+    usethis::ui_todo("{my_time()} | Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}...")
   } else if (is.numeric(rebuild) & all(rebuild %in% valid_seasons$season)) {
     string <- paste0(rebuild, collapse = ", ")
-    if (show_message){usethis::ui_todo("Purging {string} season(s) from the data table {usethis::ui_value(tblname)} in your connected database...")}
+    if (show_message){usethis::ui_todo("{my_time()} | Purging {string} season(s) from the data table {usethis::ui_value(tblname)} in your connected database...")}
     DBI::dbExecute(db_conn, glue::glue_sql("DELETE FROM {`tblname`} WHERE season IN ({vals*})", vals = rebuild, .con = db_conn))
     seasons <- valid_seasons %>% dplyr::filter(.data$season %in% rebuild) %>% dplyr::pull("season")
-    usethis::ui_todo("Starting download of the {string} season(s)...")
+    usethis::ui_todo("{my_time()} | Starting download of the {string} season(s)...")
   } else if (all(rebuild == "NEW")) {
-    usethis::ui_info("Can't find the data table {usethis::ui_value(tblname)} in your database. Will load the play by play data from scratch.")
+    usethis::ui_info("{my_time()} | Can't find the data table {usethis::ui_value(tblname)} in your database. Will load the play by play data from scratch.")
     seasons <- valid_seasons %>% dplyr::pull("season")
-    usethis::ui_todo("Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}...")
+    usethis::ui_todo("{my_time()} | Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}...")
   } else {
     seasons <- NULL
-    usethis::ui_oops("At least one invalid value passed to argument {usethis::ui_code('force_rebuild')}. Please try again with valid input.")
+    usethis::ui_oops("{my_time()} | At least one invalid value passed to argument {usethis::ui_code('force_rebuild')}. Please try again with valid input.")
   }
 
   if (!is.null(seasons)) {
@@ -166,6 +166,6 @@ get_missing_games <- function(completed_games, dbConnection, tablename) {
 
   need_scrape <- completed_games[!completed_games %in% db_ids]
 
-  usethis::ui_info("You have {length(db_ids)} games and are missing {length(need_scrape)}.")
+  usethis::ui_info("{my_time()} | You have {length(db_ids)} games and are missing {length(need_scrape)}.")
   return(need_scrape)
 }
