@@ -209,11 +209,11 @@ clean_pbp <- function(pbp, ...) {
         # then charge it to whoever charged with the fumble
         # this has to go after all the custom_mode stuff or it gets messed up
         rusher = dplyr::if_else(
-          aborted_play == 1 & is.na(.data$passer) & !is.na(.data$fumbled_1_player_name),
+          .data$aborted_play == 1 & is.na(.data$passer) & !is.na(.data$fumbled_1_player_name),
           .data$fumbled_1_player_name, .data$rusher
         ),
         rusher_id = dplyr::if_else(
-          aborted_play == 1 & is.na(.data$passer) & !is.na(.data$fumbled_1_player_id),
+          .data$aborted_play == 1 & is.na(.data$passer) & !is.na(.data$fumbled_1_player_id),
           .data$fumbled_1_player_id, .data$rusher_id
         ),
 
