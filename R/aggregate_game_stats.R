@@ -149,7 +149,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       passing_air_yards = sum(.data$air_yards, na.rm = TRUE),
       sacks = sum(.data$sack),
       passing_first_downs = sum(.data$first_down_pass),
-      passing_epa = sum(.data$qb_epa)
+      passing_epa = sum(.data$qb_epa, na.rm = TRUE)
     ) %>%
     dplyr::rename(player_id = .data$passer_player_id) %>%
     dplyr::ungroup()
@@ -191,7 +191,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       carries = dplyr::n(),
       rushing_fumbles_lost = sum(.data$fumble_lost == 1 & is.na(.data$lateral_rusher_player_id)),
       rushing_first_downs = sum(.data$first_down_rush & is.na(.data$lateral_rusher_player_id)),
-      rushing_epa = sum(.data$epa)
+      rushing_epa = sum(.data$epa, na.rm = TRUE)
     ) %>%
     dplyr::ungroup()
 
@@ -276,7 +276,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       receiving_air_yards = sum(.data$air_yards, na.rm = TRUE),
       receiving_yards_after_catch = sum(.data$yards_after_catch, na.rm = TRUE),
       receiving_first_downs = sum(.data$first_down_pass & is.na(.data$lateral_receiver_player_id)),
-      receiving_epa = sum(.data$epa)
+      receiving_epa = sum(.data$epa, na.rm = TRUE)
     ) %>%
     dplyr::ungroup()
 
