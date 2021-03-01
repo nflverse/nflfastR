@@ -1,17 +1,18 @@
 library(tidyverse)
+future::plan("multisession")
 
 # function for comparing revisions against data in repo
 # make sure to build package first
 compare_pbp <- function(id, cols) {
 
-  s <- substr(id, 1, 4) %>% as.integer()
+  s <- substr(id[1], 1, 4) %>% as.integer()
   # no idea why this is necessary
-  game <- id
+  games <- id
 
   new_pbp <- build_nflfastR_pbp(
     id
     # comment this out to use the "normal" way
-    , dir = "../nflfastR-raw/raw_old"
+    # , dir = "../nflfastR-raw/raw"
     ) %>%
     filter(!stringr::str_detect(desc, "GAME")) %>%
     select(all_of(cols)) %>%
@@ -23,7 +24,7 @@ compare_pbp <- function(id, cols) {
     )
 
   repo_pbp <- readRDS(url(glue::glue("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_{s}.rds"))) %>%
-    filter(game_id == game) %>%
+    filter(game_id %in% games) %>%
     filter(!stringr::str_detect(desc, "GAME")) %>%
     select(all_of(cols)) %>%
     mutate(
@@ -51,21 +52,27 @@ compare_pbp <- function(id, cols) {
 
 cols <- c(
   # DO NOT REMOVE THESE ONES OR THE COMPARISON WILL BREAK
-  "play_id", "desc", "ep", "epa", "vegas_home_wp",
+  "game_id", "play_id", "desc", "ep", "epa", "vegas_home_wp",
 
   # here is stuff you can choose whether to include
-  "posteam", "home_team", "away_team"
+  "posteam", "home_team", "away_team", "name", "rusher"
   # , "posteam_timeouts_remaining", "defteam_timeouts_remaining"
-  )
+)
 
 id <- "2002_05_PHI_JAX"
 id <- "2006_01_MIA_PIT"
 id <- "2006_02_PIT_JAX"
-id <- "2006_03_JAX_IND"
+id <- "2017_08_LAC_NE"
 id <- "2006_04_JAX_WAS"
+id <- "2019_01_SF_TB"
+id <- "2017_12_JAX_ARI"
+
+ids <- nflfastR::fast_scraper_schedules(2020) %>%
+  dplyr::slice(11:20) %>%
+  pull(game_id)
 
 compared <- compare_pbp(
-  id = id,
+  id = ids,
   cols = cols
 )
 
