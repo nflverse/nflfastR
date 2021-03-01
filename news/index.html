@@ -98,7 +98,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.0.0.9006</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.0.0.9007</span>
       </span>
     </div>
 
@@ -218,6 +218,9 @@
 <li>Fixed a bug where <code>fixed_drive</code> and <code>series</code> were falsely incrementing on muffed punts recovered by the punting team for a touchdown</li>
 <li>Fixed a bug where <code><a href="../reference/add_xpass.html">add_xpass()</a></code> crashed when ran with data already including xpass variables.</li>
 <li>Fixed a bug in <code>epa</code> when a safety is scored by the team beginning the play in possession of the ball (<a href='https://github.com/mrcaseb/nflfastR/issues/186'>#186</a>)</li>
+<li>The function <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> now adds the variable <code>dakota</code>, the <code>epa</code> + <code>cpoe</code> composite, for players with minimum 5 pass attempts.</li>
+<li>Fixed a bug where <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> forgot to clean player names by using their IDs</li>
+<li>Fixed a bug where special teams touchdowns were missing in the output of <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> (<a href='https://github.com/mrcaseb/nflfastR/issues/203'>#203</a>)</li>
 </ul>
 </div>
     <div id="nflfastr-400" class="section level1">
