@@ -11,6 +11,9 @@
 * Fixed a bug where `fixed_drive` and `series` were falsely incrementing on muffed punts recovered by the punting team for a touchdown
 * Fixed a bug where `add_xpass()` crashed when ran with data already including xpass variables. 
 * Fixed a bug in `epa` when a safety is scored by the team beginning the play in possession of the ball (#186)
+* Change `name`, `id`, `rusher`, and `rusher_id` to be the player charged with the fumble on aborted snaps when the QB is unable to make a play (i.e. pass, sack, or scramble) (#162)
+* Fix some bugs related to David and Duke Johnson on the Texans in 2020 (#163)
+* Fix yet another bug related to correctly identifying possession team on kickoffs nullified by penalty (#199)
 * The function `calculate_player_stats()` now adds the variable `dakota`, the `epa` + `cpoe` composite, for players with minimum 5 pass attempts.
 * Fixed a bug where `calculate_player_stats()` forgot to clean player names by using their IDs
 * Fixed a bug where special teams touchdowns were missing in the output of `calculate_player_stats()` (#203)

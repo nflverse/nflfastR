@@ -57,6 +57,7 @@ clean_pbp <- function(pbp, ...) {
 
     r <- pbp %>%
       dplyr::mutate(
+        aborted_play = dplyr::if_else(stringr::str_detect(.data$desc, 'Aborted'), 1, 0),
         #get rid of extraneous spaces that mess with player name finding
         #if there is a space or dash, and then a capital letter, and then a period, and then a space, take out the space
         desc = stringr::str_replace_all(.data$desc, "(((\\s)|(\\-))[A-Z]\\.)\\s+", "\\1"),
@@ -131,6 +132,8 @@ clean_pbp <- function(pbp, ...) {
           TRUE ~ .data$passer
         ),
         rusher = dplyr::case_when(
+          rusher == "D.Johnson" & posteam == "HOU" & season == 2020 & rusher_jersey_number == 31 ~ "Da.Johnson",
+          rusher == "D.Johnson" & posteam == "HOU" & season == 2020 & rusher_jersey_number == 25 ~ "Du.Johnson",
           rusher == "Jos.Allen" ~ "J.Allen",
           rusher == "Alex Smith" | rusher == "Ale.Smith" ~ "A.Smith",
           rusher == "Ryan" & .data$posteam == "ATL" ~ "M.Ryan",
@@ -152,7 +155,6 @@ clean_pbp <- function(pbp, ...) {
           TRUE ~ receiver
         ),
         first_down = dplyr::if_else(.data$first_down_rush == 1 | .data$first_down_pass == 1 | .data$first_down_penalty == 1, 1, 0),
-        aborted_play = dplyr::if_else(stringr::str_detect(.data$desc, 'Aborted'), 1, 0),
         # easy filter: play is 1 if a "special teams" play, or 0 otherwise
         # with thanks to Lee Sharpe for the code
         special = dplyr::if_else(.data$play_type %in%
@@ -179,8 +181,7 @@ clean_pbp <- function(pbp, ...) {
 
       dplyr::group_by(.data$passer, .data$posteam, .data$season) %>%
       dplyr::mutate(
-        passer_id = dplyr::if_else(is.na(.data$passer), NA_character_, custom_mode(.data$passer_player_id)),
-        passer_jersey_number = dplyr::if_else(is.na(.data$passer), NA_integer_, custom_mode(.data$passer_jersey_number))
+        passer_id = dplyr::if_else(is.na(.data$passer), NA_character_, custom_mode(.data$passer_player_id))
       ) %>%
 
       dplyr::group_by(.data$passer_id) %>%
@@ -188,8 +189,7 @@ clean_pbp <- function(pbp, ...) {
 
       dplyr::group_by(.data$rusher, .data$posteam, .data$season) %>%
       dplyr::mutate(
-        rusher_id = dplyr::if_else(is.na(.data$rusher), NA_character_, custom_mode(.data$rusher_player_id)),
-        rusher_jersey_number = dplyr::if_else(is.na(.data$rusher), NA_integer_, custom_mode(.data$rusher_jersey_number))
+        rusher_id = dplyr::if_else(is.na(.data$rusher), NA_character_, custom_mode(.data$rusher_player_id))
       ) %>%
 
       dplyr::group_by(.data$rusher_id) %>%
@@ -197,8 +197,7 @@ clean_pbp <- function(pbp, ...) {
 
       dplyr::group_by(.data$receiver, .data$posteam, .data$season) %>%
       dplyr::mutate(
-        receiver_id = dplyr::if_else(is.na(.data$receiver), NA_character_, custom_mode(.data$receiver_player_id)),
-        receiver_jersey_number = dplyr::if_else(is.na(.data$receiver), NA_integer_, custom_mode(.data$receiver_jersey_number))
+        receiver_id = dplyr::if_else(is.na(.data$receiver), NA_character_, custom_mode(.data$receiver_player_id))
       ) %>%
 
       dplyr::group_by(.data$receiver_id) %>%
@@ -206,6 +205,18 @@ clean_pbp <- function(pbp, ...) {
 
       dplyr::ungroup() %>%
       dplyr::mutate(
+        # if there's an aborted snap and qb didn't get a pass off,
+        # then charge it to whoever charged with the fumble
+        # this has to go after all the custom_mode stuff or it gets messed up
+        rusher = dplyr::if_else(
+          .data$aborted_play == 1 & is.na(.data$passer) & !is.na(.data$fumbled_1_player_name),
+          .data$fumbled_1_player_name, .data$rusher
+        ),
+        rusher_id = dplyr::if_else(
+          .data$aborted_play == 1 & is.na(.data$passer) & !is.na(.data$fumbled_1_player_id),
+          .data$fumbled_1_player_id, .data$rusher_id
+        ),
+
         name = dplyr::if_else(!is.na(.data$passer), .data$passer, .data$rusher),
         jersey_number = dplyr::if_else(!is.na(.data$passer_jersey_number), .data$passer_jersey_number, .data$rusher_jersey_number),
         id = dplyr::if_else(!is.na(.data$passer_id), .data$passer_id, .data$rusher_id)
