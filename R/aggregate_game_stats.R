@@ -460,7 +460,12 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         fantasy_points_ppr = sum(.data$fantasy_points_ppr)
       ) %>%
       dplyr::ungroup() %>%
-      add_dakota(pbp = pbp, weekly = weekly)
+      add_dakota(pbp = pbp, weekly = weekly) %>%
+      dplyr::select(
+        .data$player_id:.data$passing_2pt_conversions,
+        .data$dakota,
+        dplyr::everything()
+      )
   }
 
   return(player_df)
