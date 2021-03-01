@@ -176,7 +176,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     dplyr::filter(!is.na(.data$player_id))
 
   pass_df_nas <- is.na(pass_df)
-  epa_index <- which(dimnames(pass_df_nas)[[2]] == "passing_epa")
+  epa_index <- which(dimnames(pass_df_nas)[[2]] %in% c("passing_epa", "dakota"))
   pass_df_nas[,epa_index] <- c(FALSE)
 
   pass_df[pass_df_nas] <- 0
