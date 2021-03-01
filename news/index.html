@@ -218,6 +218,9 @@
 <li>Fixed a bug where <code>fixed_drive</code> and <code>series</code> were falsely incrementing on muffed punts recovered by the punting team for a touchdown</li>
 <li>Fixed a bug where <code><a href="../reference/add_xpass.html">add_xpass()</a></code> crashed when ran with data already including xpass variables.</li>
 <li>Fixed a bug in <code>epa</code> when a safety is scored by the team beginning the play in possession of the ball (<a href='https://github.com/mrcaseb/nflfastR/issues/186'>#186</a>)</li>
+<li>Change <code>name</code>, <code>id</code>, <code>rusher</code>, and <code>rusher_id</code> to be the player charged with the fumble on aborted snaps when the QB is unable to make a play (i.e. pass, sack, or scramble) (<a href='https://github.com/mrcaseb/nflfastR/issues/162'>#162</a>)</li>
+<li>Fix some bugs related to David and Duke Johnson on the Texans in 2020 (<a href='https://github.com/mrcaseb/nflfastR/issues/163'>#163</a>)</li>
+<li>Fix yet another bug related to correctly identifying possession team on kickoffs nullified by penalty (<a href='https://github.com/mrcaseb/nflfastR/issues/199'>#199</a>)</li>
 <li>The function <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> now adds the variable <code>dakota</code>, the <code>epa</code> + <code>cpoe</code> composite, for players with minimum 5 pass attempts.</li>
 <li>Fixed a bug where <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> forgot to clean player names by using their IDs</li>
 <li>Fixed a bug where special teams touchdowns were missing in the output of <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> (<a href='https://github.com/mrcaseb/nflfastR/issues/203'>#203</a>)</li>
