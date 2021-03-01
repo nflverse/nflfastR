@@ -175,7 +175,11 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     dplyr::mutate(passing_2pt_conversions = dplyr::if_else(is.na(.data$passing_2pt_conversions), 0L, .data$passing_2pt_conversions)) %>%
     dplyr::filter(!is.na(.data$player_id))
 
-  pass_df[is.na(pass_df)] <- 0
+  pass_df_nas <- is.na(pass_df)
+  epa_index <- which(dimnames(pass_df_nas)[[2]] == "passing_epa")
+  pass_df_nas[,epa_index] <- c(FALSE)
+
+  pass_df[pass_df_nas] <- 0
 
 # Rushing stats -----------------------------------------------------------
 
@@ -257,7 +261,11 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     dplyr::mutate(rushing_2pt_conversions = dplyr::if_else(is.na(.data$rushing_2pt_conversions), 0L, .data$rushing_2pt_conversions)) %>%
     dplyr::filter(!is.na(.data$player_id))
 
-  rush_df[is.na(rush_df)] <- 0
+  rush_df_nas <- is.na(rush_df)
+  epa_index <- which(dimnames(rush_df_nas)[[2]] == "rushing_epa")
+  rush_df_nas[,epa_index] <- c(FALSE)
+
+  rush_df[rush_df_nas] <- 0
 
 # Receiving stats ---------------------------------------------------------
 
@@ -343,7 +351,11 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     dplyr::mutate(receiving_2pt_conversions = dplyr::if_else(is.na(.data$receiving_2pt_conversions), 0L, .data$receiving_2pt_conversions)) %>%
     dplyr::filter(!is.na(.data$player_id))
 
-  rec_df[is.na(rec_df)] <- 0
+  rec_df_nas <- is.na(rec_df)
+  epa_index <- which(dimnames(rec_df_nas)[[2]] == "receiving_epa")
+  rec_df_nas[,epa_index] <- c(FALSE)
+
+  rec_df[rec_df_nas] <- 0
 
 
 # Special Teams -----------------------------------------------------------
@@ -394,7 +406,11 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     ))) %>%
     dplyr::filter(!is.na(.data$player_id))
 
-  player_df[is.na(player_df)] <- 0
+  player_df_nas <- is.na(player_df)
+  epa_index <- which(dimnames(player_df_nas)[[2]] %in% c("passing_epa", "rushing_epa", "receiving_epa", "dakota"))
+  player_df_nas[,epa_index] <- c(FALSE)
+
+  player_df[player_df_nas] <- 0
 
   player_df <- player_df %>%
     dplyr::mutate(
