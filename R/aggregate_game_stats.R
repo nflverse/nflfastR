@@ -526,7 +526,7 @@ add_dakota <- function(add_to_this, pbp, weekly) {
       dplyr::rename(player_id = .data$id) %>%
       dplyr::filter(.data$player_id %in% relevant_players)
 
-    model_data$dakota <- mgcv::predict.gam(dakota_model, model_data)
+    model_data$dakota <- mgcv::predict.gam(dakota_model, model_data) %>% as.vector()
 
     out <- add_to_this %>%
       dplyr::left_join(
@@ -547,7 +547,7 @@ add_dakota <- function(add_to_this, pbp, weekly) {
       dplyr::rename(player_id = .data$id) %>%
       dplyr::filter(.data$player_id %in% relevant_players)
 
-    model_data$dakota <- mgcv::predict.gam(dakota_model, model_data)
+    model_data$dakota <- mgcv::predict.gam(dakota_model, model_data) %>% as.vector()
 
     out <- add_to_this %>%
       dplyr::left_join(
