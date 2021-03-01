@@ -531,11 +531,12 @@ add_dakota <- function(add_to_this, pbp, weekly) {
       decode_player_ids()
   })
 
-  relevant_players <- add_to_this %>%
-    dplyr::filter(.data$attempts >= 5) %>%
-    dplyr::pull(.data$player_id)
-
   if (isTRUE(weekly)) {
+    relevant_players <- add_to_this %>%
+      dplyr::filter(.data$attempts >= 5) %>%
+      dplyr::mutate(filter_id = paste(.data$player_id, .data$season, .data$week, sep = "_")) %>%
+      dplyr::pull(.data$filter_id)
+
     model_data <- df %>%
       dplyr::group_by(.data$id, .data$week, .data$season) %>%
       dplyr::summarize(
@@ -546,7 +547,8 @@ add_dakota <- function(add_to_this, pbp, weekly) {
       dplyr::ungroup() %>%
       dplyr::mutate(cpoe = dplyr::if_else(is.na(.data$cpoe), 0, .data$cpoe)) %>%
       dplyr::rename(player_id = .data$id) %>%
-      dplyr::filter(.data$player_id %in% relevant_players)
+      dplyr::mutate(filter_id = paste(.data$player_id, .data$season, .data$week, sep = "_")) %>%
+      dplyr::filter(.data$filter_id %in% relevant_players)
 
     model_data$dakota <- mgcv::predict.gam(dakota_model, model_data) %>% as.vector()
 
@@ -557,6 +559,10 @@ add_dakota <- function(add_to_this, pbp, weekly) {
         by = c("player_id", "week", "season")
       )
   } else if (isFALSE(weekly)) {
+    relevant_players <- add_to_this %>%
+      dplyr::filter(.data$attempts >= 5) %>%
+      dplyr::pull(.data$player_id)
+
     model_data <- df %>%
       dplyr::group_by(.data$id) %>%
       dplyr::summarize(
