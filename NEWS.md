@@ -17,6 +17,7 @@
 * The function `calculate_player_stats()` now adds the variable `dakota`, the `epa` + `cpoe` composite, for players with minimum 5 pass attempts.
 * Fixed a bug where `calculate_player_stats()` forgot to clean player names by using their IDs
 * Fixed a bug where special teams touchdowns were missing in the output of `calculate_player_stats()` (#203)
+* The function `clean_pbp()` now standardizes the team name columns `tackle_with_assist_*_team`
 
 # nflfastR 4.0.0
 

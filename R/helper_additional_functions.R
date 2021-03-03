@@ -172,6 +172,7 @@ clean_pbp <- function(pbp, ...) {
         "side_of_field", "forced_fumble_player_1_team", "forced_fumble_player_2_team",
         "solo_tackle_1_team", "solo_tackle_2_team",
         "assist_tackle_1_team", "assist_tackle_2_team", "assist_tackle_3_team", "assist_tackle_4_team",
+        "tackle_with_assist_1_team", "tackle_with_assist_2_team",
         "fumbled_1_team", "fumbled_2_team", "fumble_recovery_1_team", "fumble_recovery_2_team",
         "yrdln", "end_yard_line", "drive_start_yard_line", "drive_end_yard_line"
       ), team_name_fn) %>%
