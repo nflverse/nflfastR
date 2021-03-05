@@ -245,16 +245,16 @@ data for the 2018 through 2020 seasons or build them freshly for the 2018 and
 as an environment variable in the R user profile to make sure all futures
 will be resolved with the chosen method by default.
 This can be done by following the below given steps.</p>
-<p>First, run the following line and the user profile should be opened automatically.
+<p>First, run the following line and the file <code>.Renviron</code> should be opened automatically.
 If you haven't saved any environment variables yet, this will be an empty file.</p><pre><span class='fu'>usethis</span><span class='fu'>::</span><span class='fu'><a href='https://usethis.r-lib.org/reference/edit.html'>edit_r_environ</a></span><span class='op'>(</span><span class='op'>)</span>
 </pre>
 
-<p>In the opened file add the next line, then save the file and restart your R session.
+<p>In the opened file <code>.Renviron</code> add the next line, then save the file and restart your R session.
 Please note that this example sets "multisession" as default. For most users
 this should be the appropriate plan but please make sure it truly is.</p><pre><span class='va'>R_FUTURE_PLAN</span><span class='op'>=</span><span class='st'>"multisession"</span>
 </pre>
 
-<p>After the session is freshly retarted please check if the above method worked
+<p>After the session is freshly restarted please check if the above method worked
 by running the next line. If the output is <code>FALSE</code> you successfully set up a
 default non-sequential <code><a href='https://rdrr.io/pkg/future/man/plan.html'>future::plan()</a></code>. If the output is <code>TRUE</code> all functions
 will behave like they were called with <code><a href='https://purrr.tidyverse.org/reference/map.html'>purrr::map()</a></code> and NOT in multisession.</p><pre><span class='fu'><a href='https://rdrr.io/r/base/class.html'>inherits</a></span><span class='op'>(</span><span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/future/man/plan.html'>plan</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='st'>"sequential"</span><span class='op'>)</span>
@@ -262,6 +262,8 @@ will behave like they were called with <code><a href='https://purrr.tidyverse.or
 
 <p>For more information on possible plans please see
 <a href='https://github.com/HenrikBengtsson/future/blob/develop/README.md'>the future package Readme</a>.</p>
+<p>For more information on <code>.Renviron</code> please see
+<a href='https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf'>this RStudio article</a>.</p>
 
 <h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Get Progress Updates while Functions are Running</h3>
 
@@ -276,7 +278,26 @@ progress updates globally (for the current session) with</p><pre><span class='fu
   <span class='fu'>progressr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/progressr/man/with_progress.html'>with_progress</a></span><span class='op'>(</span><span class='op'>)</span>
 </pre>
 
+<p>Just like in the previous section, it is possible to activate global
+progression handlers by default. This can be done by following the below given steps.</p>
+<p>First, run the following line and the file <code>.Rprofile</code> should be opened automatically.
+If you haven't saved any code yet, this will be an empty file.</p><pre><span class='fu'>usethis</span><span class='fu'>::</span><span class='fu'><a href='https://usethis.r-lib.org/reference/edit.html'>edit_r_profile</a></span><span class='op'>(</span><span class='op'>)</span>
+</pre>
+
+<p>In the opened file <code>.Rprofile</code> add the next line, then save the file and restart your R
+session. All code in this file will be executed when a new R session starts.
+The part <code>if (require("progressr"))</code> makes sure this will only run if the
+package progressr is installed to avoid crashing R sessions.</p><pre><span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/ns-load.html'>requireNamespace</a></span><span class='op'>(</span><span class='st'>"progressr"</span>, quietly <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span> <span class='fu'>progressr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/progressr/man/handlers.html'>handlers</a></span><span class='op'>(</span>global <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+</pre>
+
+<p>After the session is freshly restarted please check if the above method worked
+by running the next line. If the output is <code>TRUE</code> you successfully activated
+global progression handlers for all sessions.</p><pre><span class='fu'>progressr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/progressr/man/handlers.html'>handlers</a></span><span class='op'>(</span>global <span class='op'>=</span> <span class='cn'>NA</span><span class='op'>)</span>
+</pre>
+
 <p>For more information how to work with progress handlers please see <a href='https://rdrr.io/pkg/progressr/man/progressr.html'>progressr::progressr</a>.</p>
+<p>For more information on <code>.Rprofile</code> please see
+<a href='https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf'>this RStudio article</a>.</p>
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
