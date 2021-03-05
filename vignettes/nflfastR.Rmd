@@ -599,3 +599,22 @@ Use `fixed_drive` and `fixed_drive_result` instead. See [Example 4: Using Drive 
 ## I'm trying to do X. Help!
 
 Please ask [in the Discord channel](https://discord.com/invite/5Er2FBnnQa).
+
+# Links
+
+This section is a helper that holds the hyperlinks to the above chapters. It's a workaround for the missing sections anchor bug in pkgdown which will hopefully be fixed with [this pull request](https://github.com/r-lib/pkgdown/pull/1536) at some point in the future. 
+
+- [The Main Functions]
+- [Example 1: replicate nflscrapR with fast_scraper]
+- [Example 2: scrape a batch of games very quickly with fast_scraper]
+- [Example 3: Completion Percentage Over Expected (CPOE)]
+- [Example 4: Using Drive Information]
+- [Example 5: Plot offensive and defensive EPA per play for a given season]
+- [Example 6: Expected Points calculator]
+- [Example 7: Win probability calculator]
+- [Example 8: Using the built-in database function]
+- [Example 9: working with the expected yards after catch model]
+- [Example 10: Working with roster and position data]
+- [Example 11: Replicating official stats]
+- [Frequent issues]
+- [Links]
