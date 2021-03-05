@@ -31,18 +31,18 @@
 #' will be resolved with the chosen method by default.
 #' This can be done by following the below given steps.
 #'
-#' First, run the following line and the user profile should be opened automatically.
+#' First, run the following line and the file `.Renviron` should be opened automatically.
 #' If you haven't saved any environment variables yet, this will be an empty file.
 #' ```
 #' usethis::edit_r_environ()
 #'```
-#' In the opened file add the next line, then save the file and restart your R session.
+#' In the opened file `.Renviron` add the next line, then save the file and restart your R session.
 #' Please note that this example sets "multisession" as default. For most users
 #' this should be the appropriate plan but please make sure it truly is.
 #' ```
 #' R_FUTURE_PLAN="multisession"
 #' ```
-#' After the session is freshly retarted please check if the above method worked
+#' After the session is freshly restarted please check if the above method worked
 #' by running the next line. If the output is `FALSE` you successfully set up a
 #' default non-sequential [future::plan()]. If the output is `TRUE` all functions
 #' will behave like they were called with [purrr::map()] and NOT in multisession.
@@ -51,6 +51,9 @@
 #' ```
 #' For more information on possible plans please see
 #' [the future package Readme](https://github.com/HenrikBengtsson/future/blob/develop/README.md).
+#'
+#' For more information on `.Renviron` please see
+#' [this RStudio article](https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf).
 #'
 #' ## Get Progress Updates while Functions are Running
 #'
@@ -67,7 +70,33 @@
 #'   progressr::with_progress()
 #' ```
 #'
+#' Just like in the previous section, it is possible to activate global
+#' progression handlers by default. This can be done by following the below given steps.
+#'
+#' First, run the following line and the file `.Rprofile` should be opened automatically.
+#' If you haven't saved any code yet, this will be an empty file.
+#' ```
+#' usethis::edit_r_profile()
+#'```
+#' In the opened file `.Rprofile` add the next line, then save the file and restart your R
+#' session. All code in this file will be executed when a new R session starts.
+#' The part `if (require("progressr"))` makes sure this will only run if the
+#' package progressr is installed to avoid crashing R sessions.
+#' ```
+#' if (requireNamespace("progressr", quietly = TRUE)) progressr::handlers(global = TRUE)
+#' ```
+#'
+#' After the session is freshly restarted please check if the above method worked
+#' by running the next line. If the output is `TRUE` you successfully activated
+#' global progression handlers for all sessions.
+#' ```
+#' progressr::handlers(global = NA)
+#' ```
+#'
 #' For more information how to work with progress handlers please see [progressr::progressr].
+#'
+#' For more information on `.Rprofile` please see
+#' [this RStudio article](https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf).
 #'
 "_PACKAGE"
 

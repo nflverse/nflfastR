@@ -43,16 +43,16 @@ as an environment variable in the R user profile to make sure all futures
 will be resolved with the chosen method by default.
 This can be done by following the below given steps.
 
-First, run the following line and the user profile should be opened automatically.
+First, run the following line and the file \code{.Renviron} should be opened automatically.
 If you haven't saved any environment variables yet, this will be an empty file.\preformatted{usethis::edit_r_environ()
 }
 
-In the opened file add the next line, then save the file and restart your R session.
+In the opened file \code{.Renviron} add the next line, then save the file and restart your R session.
 Please note that this example sets "multisession" as default. For most users
 this should be the appropriate plan but please make sure it truly is.\preformatted{R_FUTURE_PLAN="multisession"
 }
 
-After the session is freshly retarted please check if the above method worked
+After the session is freshly restarted please check if the above method worked
 by running the next line. If the output is \code{FALSE} you successfully set up a
 default non-sequential \code{\link[future:plan]{future::plan()}}. If the output is \code{TRUE} all functions
 will behave like they were called with \code{\link[purrr:map]{purrr::map()}} and NOT in multisession.\preformatted{inherits(future::plan(), "sequential")
@@ -60,6 +60,9 @@ will behave like they were called with \code{\link[purrr:map]{purrr::map()}} and
 
 For more information on possible plans please see
 \href{https://github.com/HenrikBengtsson/future/blob/develop/README.md}{the future package Readme}.
+
+For more information on \code{.Renviron} please see
+\href{https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf}{this RStudio article}.
 }
 
 \subsection{Get Progress Updates while Functions are Running}{
@@ -74,7 +77,28 @@ or by piping the function call into \code{\link[progressr:with_progress]{progres
   progressr::with_progress()
 }
 
+Just like in the previous section, it is possible to activate global
+progression handlers by default. This can be done by following the below given steps.
+
+First, run the following line and the file \code{.Rprofile} should be opened automatically.
+If you haven't saved any code yet, this will be an empty file.\preformatted{usethis::edit_r_profile()
+}
+
+In the opened file \code{.Rprofile} add the next line, then save the file and restart your R
+session. All code in this file will be executed when a new R session starts.
+The part \verb{if (require("progressr"))} makes sure this will only run if the
+package progressr is installed to avoid crashing R sessions.\preformatted{if (requireNamespace("progressr", quietly = TRUE)) progressr::handlers(global = TRUE)
+}
+
+After the session is freshly restarted please check if the above method worked
+by running the next line. If the output is \code{TRUE} you successfully activated
+global progression handlers for all sessions.\preformatted{progressr::handlers(global = NA)
+}
+
 For more information how to work with progress handlers please see \link[progressr:progressr]{progressr::progressr}.
+
+For more information on \code{.Rprofile} please see
+\href{https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf}{this RStudio article}.
 }
 }
 
