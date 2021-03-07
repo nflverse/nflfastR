@@ -226,6 +226,14 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
           ),
           # fix muffed punt td in JAC game
           td_team = dplyr::if_else(id == "2011_14_TB_JAX" & .data$play_id == 1343, 'JAC', .data$td_team),
+
+          # kickoff return TDs in old JAC games
+          td_team = dplyr::if_else(id == "2006_14_IND_JAX" & .data$play_id == 2078, 'JAC', .data$td_team),
+          td_team = dplyr::if_else(id == "2007_17_JAX_HOU" & .data$play_id %in% c(1907, 2042), 'HOU', .data$td_team),
+          td_team = dplyr::if_else(id == "2008_09_JAX_CIN" & .data$play_id == 3145, 'JAC', .data$td_team),
+          td_team = dplyr::if_else(id == "2009_15_IND_JAX" & .data$play_id == 1088, 'IND', .data$td_team),
+          td_team = dplyr::if_else(id == "2010_15_JAX_IND" & .data$play_id == 3848, 'IND', .data$td_team),
+
           # fill in return team for the JAX games
           return_team = dplyr::if_else(
             !is.na(.data$return_team) & .data$season <= 2015 & (.data$home_team %in% c("JAC", "JAX") | .data$away_team %in% c("JAC", "JAX")),
@@ -281,7 +289,14 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
           drive_real_start_time = as.character(.data$drive_real_start_time),
           # get the safety team to ensure the correct team gets the points
           # usage of base ifelse is important here for non-scoring games (i.e. early live games)
-          safety_team = ifelse(.data$safety == 1, .data$scoring_team_abbreviation, NA_character_)
+          safety_team = ifelse(.data$safety == 1, .data$scoring_team_abbreviation, NA_character_),
+
+          # scoring_team_abbreviation messed up on old Jags games so just assume it's defense team
+          safety_team = ifelse(
+            .data$safety == 1 & .data$season <= 2015 & (.data$home_team %in% c("JAC", "JAX") | .data$away_team %in% c("JAC", "JAX")),
+            ifelse(.data$posteam == .data$home_team, .data$away_team, .data$home_team), .data$safety_team
+          )
+
         ) %>%
         dplyr::mutate_all(dplyr::na_if, "")
 
