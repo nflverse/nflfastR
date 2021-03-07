@@ -143,6 +143,11 @@ add_nflscrapr_mutations <- function(pbp) {
         .data$lead_ko == 1, 1, .data$kickoff_attempt
       ),
 
+      # https://github.com/mrcaseb/nflfastR/issues/199#issuecomment-792321171
+      kickoff_attempt = dplyr::if_else(
+        .data$game_id == "2014_02_ATL_CIN" & .data$play_id == 3498, 1, .data$kickoff_attempt
+      ),
+
       # Make the possession team for kickoffs be the return team, since that is
       # more intuitive from the EPA / WPA point of view:
       posteam = dplyr::case_when(
