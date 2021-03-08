@@ -50,7 +50,7 @@ add_xyac <- function(pbp, ...) {
         ) %>%
         dplyr::select("index":"ydstogo", "original_ydstogo", dplyr::everything())
 
-      xyac_vars <-
+      preds <-
         stats::predict(
           fastrmodels::xyac_model,
           as.matrix(passes %>% xyac_model_select())
@@ -70,11 +70,16 @@ add_xyac <- function(pbp, ...) {
                 .data$half_seconds_remaining - 6
               )
             )
-        ) %>%
+        )
+
+      # This block uses dtplyr which made problems with dplyr::if_else
+      # Use base ifelse instead
+      xyac_vars <- preds %>%
+        dtplyr::lazy_dt() %>%
         dplyr::group_by(.data$index) %>%
         dplyr::mutate(
-          max_loss = dplyr::if_else(.data$distance_to_goal < 95, -5, .data$distance_to_goal - 99),
-          max_gain = dplyr::if_else(.data$distance_to_goal > 70, 70, .data$distance_to_goal),
+          max_loss = ifelse(.data$distance_to_goal < 95, -5, .data$distance_to_goal - 99),
+          max_gain = ifelse(.data$distance_to_goal > 70, 70, .data$distance_to_goal),
           cum_prob = cumsum(.data$prob),
           prob = dplyr::case_when(
             # truncate probs at loss greater than max loss
@@ -92,20 +97,20 @@ add_xyac <- function(pbp, ...) {
           posteam_timeouts_pre = .data$posteam_timeouts_remaining,
           defeam_timeouts_pre = .data$defteam_timeouts_remaining,
           gain = .data$original_spot - .data$yardline_100,
-          turnover = dplyr::if_else(.data$down == 4 & .data$gain < .data$ydstogo, as.integer(1), as.integer(0)),
-          down = dplyr::if_else(.data$gain >= .data$ydstogo, 1, .data$down + 1),
-          ydstogo = dplyr::if_else(.data$gain >= .data$ydstogo, 10, .data$ydstogo - .data$gain),
+          turnover = ifelse(.data$down == 4 & .data$gain < .data$ydstogo, 1L, 0L),
+          down = ifelse(.data$gain >= .data$ydstogo, 1, .data$down + 1),
+          ydstogo = ifelse(.data$gain >= .data$ydstogo, 10, .data$ydstogo - .data$gain),
           # possession change if 4th down failed
-          down = dplyr::if_else(.data$turnover == 1, as.integer(1), as.integer(.data$down)),
-          ydstogo = dplyr::if_else(.data$turnover == 1, as.integer(10), as.integer(.data$ydstogo)),
+          down = ifelse(.data$turnover == 1, 1L, as.integer(.data$down)),
+          ydstogo = ifelse(.data$turnover == 1, 10L, as.integer(.data$ydstogo)),
           # flip yardline_100 and timeouts for turnovers
-          yardline_100 = dplyr::if_else(.data$turnover == 1, as.integer(100 - .data$yardline_100), as.integer(.data$yardline_100)),
-          posteam_timeouts_remaining = dplyr::if_else(
+          yardline_100 = ifelse(.data$turnover == 1, as.integer(100 - .data$yardline_100), as.integer(.data$yardline_100)),
+          posteam_timeouts_remaining = ifelse(
             .data$turnover == 1,
             .data$defeam_timeouts_pre,
             .data$posteam_timeouts_pre
           ),
-          defteam_timeouts_remaining = dplyr::if_else(
+          defteam_timeouts_remaining = ifelse(
             .data$turnover == 1,
             .data$posteam_timeouts_pre,
             .data$defeam_timeouts_pre
@@ -114,7 +119,9 @@ add_xyac <- function(pbp, ...) {
           ydstogo = dplyr::if_else(.data$ydstogo >= .data$yardline_100, as.integer(.data$yardline_100), as.integer(.data$ydstogo))
         ) %>%
         dplyr::ungroup() %>%
+        tibble::as_tibble() %>%
         nflfastR::calculate_expected_points() %>%
+        dtplyr::lazy_dt() %>%
         dplyr::group_by(.data$index) %>%
         dplyr::mutate(
           ep = dplyr::case_when(
@@ -125,8 +132,8 @@ add_xyac <- function(pbp, ...) {
           epa = .data$ep - .data$original_ep,
           wt_epa = .data$epa * .data$prob,
           wt_yardln = .data$yardline_100 * .data$prob,
-          med = dplyr::if_else(
-            cumsum(.data$prob) > .5 & dplyr::lag(cumsum(.data$prob) < .5), .data$yac, as.integer(0)
+          med = ifelse(
+            cumsum(.data$prob) > .5 & dplyr::lag(cumsum(.data$prob) < .5), .data$yac, 0L
           )
         ) %>%
         dplyr::summarise(
@@ -136,7 +143,8 @@ add_xyac <- function(pbp, ...) {
           xyac_success = sum((.data$ep > .data$original_ep) * .data$prob),
           xyac_fd = sum((.data$gain >= .data$original_ydstogo) * .data$prob)
         ) %>%
-        dplyr::ungroup()
+        dplyr::ungroup() %>%
+        tibble::as_tibble()
 
       pbp <- pbp %>%
         dplyr::left_join(xyac_vars, by = "index") %>%
@@ -201,4 +209,6 @@ drop.cols.xyac <- c(
   "xyac_epa", "xyac_mean_yardage", "xyac_median_yardage", "xyac_success", "xyac_fd"
 )
 
-
+# this tells data.table we know that we are calling data.table code without
+# importing data.table (because we call it through the backdoor with dtplyr)
+.datatable.aware <- TRUE
