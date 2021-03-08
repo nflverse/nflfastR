@@ -353,6 +353,7 @@
 #' \item{fantasy}{Name of the rusher on rush plays or receiver on pass plays.}
 #' \item{fantasy_id}{ID of the rusher on rush plays or receiver on pass plays.}
 #' \item{out_of_bounds}{1 if play description contains ran ob, pushed ob, or sacked ob; 0 otherwise.}
+#' \item{home_opening_kickoff}{= 1 if the home team received the opening kickoff, 0 otherwise.}
 #' \item{qb_epa}{Gives QB credit for EPA for up to the point where a receiver lost a fumble after a completed catch and makes EPA work more like passing yards on plays with fumbles.}
 #' \item{xyac_epa}{Expected value of EPA gained after the catch, starting from where the catch was made. Zero yards after the catch would be listed as zero EPA.}
 #' \item{xyac_mean_yardage}{Average expected yards after the catch based on where the ball was caught.}

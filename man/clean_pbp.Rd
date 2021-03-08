@@ -39,6 +39,7 @@ added:
 \item{jersey_number}{Jersey number of the player listed in the 'name' column.}
 \item{id}{ID of the player in the 'name' column.}
 \item{out_of_bounds}{= 1 if play description contains "ran ob", "pushed ob", or "sacked ob"; = 0 otherwise.}
+\item{home_opening_kickoff}{= 1 if the home team received the opening kickoff, 0 otherwise.}
 }
 }
 \description{
