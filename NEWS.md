@@ -19,6 +19,7 @@
 * Fixed a bug where special teams touchdowns were missing in the output of `calculate_player_stats()` (#203)
 * The function `clean_pbp()` now standardizes the team name columns `tackle_with_assist_*_team`
 * Fixed for some old Jaguars games where the wrong team was awarded points for safeties and kickoff return TDs (#209)
+* The function `update_db()` no more falsely closes a database connection provided by the argument `db_connection` (#210)
 
 # nflfastR 4.0.0
 
