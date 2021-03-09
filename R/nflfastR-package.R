@@ -124,7 +124,7 @@
 # @importFrom RSQLite SQLite
 #' @importFrom stats predict na.omit
 #' @importFrom stringr str_sub str_replace_all str_length str_extract str_detect str_trim str_remove_all str_split str_extract_all
-#' @importFrom tibble as_tibble tibble
+# @importFrom tibble as_tibble tibble
 #' @importFrom tidyr unnest_wider unnest
 #' @importFrom tidyselect any_of ends_with
 #' @importFrom usethis ui_done ui_todo ui_oops ui_info ui_stop ui_value
