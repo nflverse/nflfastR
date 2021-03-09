@@ -72,14 +72,12 @@ add_xyac <- function(pbp, ...) {
             )
         )
 
-      # This block uses dtplyr which made problems with dplyr::if_else
-      # Use base ifelse instead
       xyac_vars <- preds %>%
         dtplyr::lazy_dt() %>%
         dplyr::group_by(.data$index) %>%
         dplyr::mutate(
-          max_loss = ifelse(.data$distance_to_goal < 95, -5, .data$distance_to_goal - 99),
-          max_gain = ifelse(.data$distance_to_goal > 70, 70, .data$distance_to_goal),
+          max_loss = dplyr::if_else(.data$distance_to_goal < 95, -5, .data$distance_to_goal - 99),
+          max_gain = dplyr::if_else(.data$distance_to_goal > 70, 70, .data$distance_to_goal),
           cum_prob = cumsum(.data$prob),
           prob = dplyr::case_when(
             # truncate probs at loss greater than max loss
@@ -97,20 +95,20 @@ add_xyac <- function(pbp, ...) {
           posteam_timeouts_pre = .data$posteam_timeouts_remaining,
           defeam_timeouts_pre = .data$defteam_timeouts_remaining,
           gain = .data$original_spot - .data$yardline_100,
-          turnover = ifelse(.data$down == 4 & .data$gain < .data$ydstogo, 1L, 0L),
-          down = ifelse(.data$gain >= .data$ydstogo, 1, .data$down + 1),
-          ydstogo = ifelse(.data$gain >= .data$ydstogo, 10, .data$ydstogo - .data$gain),
+          turnover = dplyr::if_else(.data$down == 4 & .data$gain < .data$ydstogo, 1L, 0L),
+          down = dplyr::if_else(.data$gain >= .data$ydstogo, 1, .data$down + 1),
+          ydstogo = dplyr::if_else(.data$gain >= .data$ydstogo, 10, .data$ydstogo - .data$gain),
           # possession change if 4th down failed
-          down = ifelse(.data$turnover == 1, 1L, as.integer(.data$down)),
-          ydstogo = ifelse(.data$turnover == 1, 10L, as.integer(.data$ydstogo)),
+          down = dplyr::if_else(.data$turnover == 1, 1L, as.integer(.data$down)),
+          ydstogo = dplyr::if_else(.data$turnover == 1, 10L, as.integer(.data$ydstogo)),
           # flip yardline_100 and timeouts for turnovers
-          yardline_100 = ifelse(.data$turnover == 1, as.integer(100 - .data$yardline_100), as.integer(.data$yardline_100)),
-          posteam_timeouts_remaining = ifelse(
+          yardline_100 = dplyr::if_else(.data$turnover == 1, as.integer(100 - .data$yardline_100), as.integer(.data$yardline_100)),
+          posteam_timeouts_remaining = dplyr::if_else(
             .data$turnover == 1,
             .data$defeam_timeouts_pre,
             .data$posteam_timeouts_pre
           ),
-          defteam_timeouts_remaining = ifelse(
+          defteam_timeouts_remaining = dplyr::if_else(
             .data$turnover == 1,
             .data$posteam_timeouts_pre,
             .data$defeam_timeouts_pre
@@ -132,7 +130,7 @@ add_xyac <- function(pbp, ...) {
           epa = .data$ep - .data$original_ep,
           wt_epa = .data$epa * .data$prob,
           wt_yardln = .data$yardline_100 * .data$prob,
-          med = ifelse(
+          med = dplyr::if_else(
             cumsum(.data$prob) > .5 & dplyr::lag(cumsum(.data$prob) < .5), .data$yac, 0L
           )
         ) %>%
