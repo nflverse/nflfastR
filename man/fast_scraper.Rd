@@ -255,10 +255,10 @@ Please see the description of \code{lateral_rusher_player_name} for further info
 \item{tackle_for_loss_1_player_name}{String name for one of the potential players with the tackle for loss.}
 \item{tackle_for_loss_2_player_id}{Unique identifier for one of the potential players with the tackle for loss.}
 \item{tackle_for_loss_2_player_name}{String name for one of the potential players with the tackle for loss.}
-\item{qb_hit_1_player_id}{Unique identifier for one of the potential players that hit the QB.}
-\item{qb_hit_1_player_name}{String name for one of the potential players that hit the QB.}
-\item{qb_hit_2_player_id}{Unique identifier for one of the potential players that hit the QB.}
-\item{qb_hit_2_player_name}{String name for one of the potential players that hit the QB.}
+\item{qb_hit_1_player_id}{Unique identifier for one of the potential players that hit the QB. No sack as the QB was not the ball carrier. For sacks please see \code{sack_player} or \verb{half_sack_*_player}.}
+\item{qb_hit_1_player_name}{String name for one of the potential players that hit the QB. No sack as the QB was not the ball carrier. For sacks please see \code{sack_player} or \verb{half_sack_*_player}.}
+\item{qb_hit_2_player_id}{Unique identifier for one of the potential players that hit the QB. No sack as the QB was not the ball carrier. For sacks please see \code{sack_player} or \verb{half_sack_*_player}.}
+\item{qb_hit_2_player_name}{String name for one of the potential players that hit the QB. No sack as the QB was not the ball carrier. For sacks please see \code{sack_player} or \verb{half_sack_*_player}.}
 \item{forced_fumble_player_1_team}{Team of one of the players with a forced fumble.}
 \item{forced_fumble_player_1_player_id}{Unique identifier of one of the players with a forced fumble.}
 \item{forced_fumble_player_1_player_name}{String name of one of the players with a forced fumble.}
@@ -308,6 +308,12 @@ Please see the description of \code{lateral_rusher_player_name} for further info
 \item{fumble_recovery_2_yards}{Yards gained by one of the players with a fumble recovery.}
 \item{fumble_recovery_2_player_id}{Unique identifier of one of the players with a fumble recovery.}
 \item{fumble_recovery_2_player_name}{String name of one of the players with a fumble recovery.}
+\item{sack_player_id}{Unique identifier of the player who recorded a solo sack.}
+\item{sack_player_name}{String name of the player who recorded a solo sack.}
+\item{half_sack_1_player_id}{Unique identifier of the first player who recorded half a sack.}
+\item{half_sack_1_player_name}{String name of the first player who recorded half a sack.}
+\item{half_sack_2_player_id}{Unique identifier of the second player who recorded half a sack.}
+\item{half_sack_2_player_name}{String name of the second player who recorded half a sack.}
 \item{return_team}{String abbreviation of the return team.}
 \item{return_yards}{Yards gained by the return team.}
 \item{penalty_team}{String abbreviation of the team with the penalty.}
