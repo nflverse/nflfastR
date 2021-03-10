@@ -305,6 +305,12 @@
 #' \item{fumble_recovery_2_yards}{Yards gained by one of the players with a fumble recovery.}
 #' \item{fumble_recovery_2_player_id}{Unique identifier of one of the players with a fumble recovery.}
 #' \item{fumble_recovery_2_player_name}{String name of one of the players with a fumble recovery.}
+#' \item{sack_player_id}{Unique identifier of the player who recorded a solo sack.}
+#' \item{sack_player_name}{String name of the player who recorded a solo sack.}
+#' \item{half_sack_1_player_id}{Unique identifier of the first player who recorded half a sack.}
+#' \item{half_sack_1_player_name}{String name of the first player who recorded half a sack.}
+#' \item{half_sack_2_player_id}{Unique identifier of the second player who recorded half a sack.}
+#' \item{half_sack_2_player_name}{String name of the second player who recorded half a sack.}
 #' \item{return_team}{String abbreviation of the return team.}
 #' \item{return_yards}{Yards gained by the return team.}
 #' \item{penalty_team}{String abbreviation of the team with the penalty.}
