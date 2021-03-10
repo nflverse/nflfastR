@@ -205,10 +205,10 @@
 <div id="dimensions" class="section level3">
 <h3 class="hasAnchor">
 <a href="#dimensions" class="anchor"></a>Dimensions</h3>
-<p>Before moving forward, here are a few ways to get a sense of what’s in a dataframe. We can check the <strong>dim</strong>ensions of the data, and this tells us that there are <code>48034</code> rows (i.e., plays) in the data and <code>363</code> columns (variables):</p>
+<p>Before moving forward, here are a few ways to get a sense of what’s in a dataframe. We can check the <strong>dim</strong>ensions of the data, and this tells us that there are <code>48034</code> rows (i.e., plays) in the data and <code>364</code> columns (variables):</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>
-<span class="co">#&gt; [1] 48034   363</span></code></pre></div>
+<span class="co">#&gt; [1] 48034   364</span></code></pre></div>
 <p><code>str</code> displays the <strong>str</strong>ucture of the dataframe:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">data</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span>
@@ -223,7 +223,7 @@
 <span class="co">#&gt;  $ posteam     : chr [1:48034] NA "ATL" "ATL" "ATL" ...</span>
 <span class="co">#&gt;  $ posteam_type: chr [1:48034] NA "away" "away" "away" ...</span>
 <span class="co">#&gt;  $ defteam     : chr [1:48034] NA "MIN" "MIN" "MIN" ...</span></code></pre></div>
-<p>In the above, I’ve added in the <code>[1:10]</code>, which selects only the first 10 columns, otherwise the list is extremely long (remember from above that there are <code>363</code> columns!).</p>
+<p>In the above, I’ve added in the <code>[1:10]</code>, which selects only the first 10 columns, otherwise the list is extremely long (remember from above that there are <code>364</code> columns!).</p>
 </div>
 <div id="variable-names" class="section level3">
 <h3 class="hasAnchor">
@@ -586,14 +586,15 @@
 <span class="co">#&gt; [353] "fantasy"                             </span>
 <span class="co">#&gt; [354] "fantasy_id"                          </span>
 <span class="co">#&gt; [355] "out_of_bounds"                       </span>
-<span class="co">#&gt; [356] "qb_epa"                              </span>
-<span class="co">#&gt; [357] "xyac_epa"                            </span>
-<span class="co">#&gt; [358] "xyac_mean_yardage"                   </span>
-<span class="co">#&gt; [359] "xyac_median_yardage"                 </span>
-<span class="co">#&gt; [360] "xyac_success"                        </span>
-<span class="co">#&gt; [361] "xyac_fd"                             </span>
-<span class="co">#&gt; [362] "xpass"                               </span>
-<span class="co">#&gt; [363] "pass_oe"</span></code></pre></div>
+<span class="co">#&gt; [356] "home_opening_kickoff"                </span>
+<span class="co">#&gt; [357] "qb_epa"                              </span>
+<span class="co">#&gt; [358] "xyac_epa"                            </span>
+<span class="co">#&gt; [359] "xyac_mean_yardage"                   </span>
+<span class="co">#&gt; [360] "xyac_median_yardage"                 </span>
+<span class="co">#&gt; [361] "xyac_success"                        </span>
+<span class="co">#&gt; [362] "xyac_fd"                             </span>
+<span class="co">#&gt; [363] "xpass"                               </span>
+<span class="co">#&gt; [364] "pass_oe"</span></code></pre></div>
 <p>That is a lot to work with!</p>
 </div>
 <div id="viewer" class="section level3">
