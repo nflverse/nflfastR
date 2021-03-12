@@ -226,7 +226,13 @@ pbp_stat_columns <-
     "lateral_receiving_yards",
     # new in nflfastR v4.1
     "td_player_id",
-    "td_player_name"
+    "td_player_name",
+    "sack_player_id",
+    "sack_player_name",
+    "half_sack_1_player_id",
+    "half_sack_1_player_name",
+    "half_sack_2_player_id",
+    "half_sack_2_player_name"
   )
 
 indicator_stats <- c(

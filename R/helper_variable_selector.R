@@ -104,8 +104,11 @@ nflscrapr_cols <-
     "fumbled_2_player_name", "fumbled_2_team", "fumble_recovery_1_team",
     "fumble_recovery_1_yards", "fumble_recovery_1_player_id", "fumble_recovery_1_player_name",
     "fumble_recovery_2_team", "fumble_recovery_2_yards", "fumble_recovery_2_player_id",
-    "fumble_recovery_2_player_name", "return_team",
-    "return_yards", "penalty_team", "penalty_player_id",
+    "fumble_recovery_2_player_name",
+    #new in nflfastR v4.1
+    "sack_player_id", "sack_player_name", "half_sack_1_player_id", "half_sack_1_player_name",
+    "half_sack_2_player_id", "half_sack_2_player_name",
+    "return_team", "return_yards", "penalty_team", "penalty_player_id",
     "penalty_player_name", "penalty_yards", "replay_or_challenge",
     "replay_or_challenge_result", "penalty_type",
     "defensive_two_point_attempt",
