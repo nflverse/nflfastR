@@ -22,6 +22,7 @@
 * The function `update_db()` no more falsely closes a database connection provided by the argument `db_connection` (#210)
 * Added column `home_opening_kickoff` to `clean_pbp()`
 * Added the variables `sack_player_id`, `sack_player_name`, `half_sack_1_player_id`, `half_sack_1_player_name`, `half_sack_2_player_id` and `half_sack_2_player_name` who identify players that recorded sacks (or half sacks). Also updated the description of the variables `qb_hit_1_player_id`, `qb_hit_1_player_name`, `qb_hit_2_player_id` and `qb_hit_2_player_name` to make more clear that they did not record a sack. (#180)
+* Fixed a bug where `yards_gained` was missing yardage on plays with laterals. (#216)
 
 # nflfastR 4.0.0
 
