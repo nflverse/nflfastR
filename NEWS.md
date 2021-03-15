@@ -24,6 +24,9 @@
 * Added the variables `sack_player_id`, `sack_player_name`, `half_sack_1_player_id`, `half_sack_1_player_name`, `half_sack_2_player_id` and `half_sack_2_player_name` who identify players that recorded sacks (or half sacks). Also updated the description of the variables `qb_hit_1_player_id`, `qb_hit_1_player_name`, `qb_hit_2_player_id` and `qb_hit_2_player_name` to make more clear that they did not record a sack. (#180)
 * Fixed a bug where `yards_gained` was missing yardage on plays with laterals. (#216)
 * Fixed a bug where there were stats wrongly given on a play with penalty (#218)
+* `fixed_drive` now increments properly on onside kick recoveries (#215)
+* `fixed_drive` no longer counts a muffed kickoff as a one-play drive on its own (#217)
+* `fixed_drive` now properly increments after a safety (#219)
 
 # nflfastR 4.0.0
 
