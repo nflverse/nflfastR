@@ -65,6 +65,17 @@ add_nflscrapr_mutations <- function(pbp) {
           .data$two_point_conv_result == "success",
         2, .data$yards_gained
       ),
+      # Fix yards_gained for plays with laterals
+      yards_gained = dplyr::case_when(
+        !is.na(.data$passing_yards) &
+          .data$yards_gained != .data$passing_yards &
+          .data$penalty == 0 ~ .data$passing_yards,
+        !is.na(.data$rushing_yards) &
+          !is.na(.data$lateral_rushing_yards) &
+          .data$yards_gained != .data$rushing_yards &
+          .data$penalty == 0 ~ .data$rushing_yards + .data$lateral_rushing_yards,
+        TRUE ~ yards_gained
+      ),
       # Extract the penalty type:
       penalty_type = dplyr::if_else(
         .data$penalty == 1,
