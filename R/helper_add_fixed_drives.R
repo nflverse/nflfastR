@@ -85,7 +85,10 @@ add_drive_results <- function(d) {
 
       # if it's a kickoff and the prior play was a safety, it's a new drive
       new_drive = dplyr::case_when(
+        # safety prior play
         .data$kickoff_attempt == 1 & dplyr::lag(.data$safety) == 1 ~ 1,
+        # safety 2 plays ago and timeout on previous play
+        .data$kickoff_attempt == 1 & dplyr::lag(.data$safety, 2) == 1 & (is.na(dplyr::lag(.data$play_type)) | dplyr::lag(.data$play_type) == "no_play") ~ 1,
         TRUE ~ .data$new_drive
       ),
 
