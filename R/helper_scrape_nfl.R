@@ -155,6 +155,12 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
           "player.esbId"
         )
 
+      # there was a penalty on this play so these stat IDs shouldn't exist
+      if (id == "2020_10_DEN_LV") {
+        stats <- stats %>%
+          dplyr::filter(!(.data$playId == 979 & .data$statId %in% c(8, 10, 79)))
+      }
+
       # if I don't put this here it breaks
       suppressWarnings(
         pbp_stats <-
