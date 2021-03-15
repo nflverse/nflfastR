@@ -98,7 +98,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.0.0.9013</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.0.0.9014</span>
       </span>
     </div>
 
@@ -232,6 +232,13 @@
 </li>
 <li>Added the variables <code>sack_player_id</code>, <code>sack_player_name</code>, <code>half_sack_1_player_id</code>, <code>half_sack_1_player_name</code>, <code>half_sack_2_player_id</code> and <code>half_sack_2_player_name</code> who identify players that recorded sacks (or half sacks). Also updated the description of the variables <code>qb_hit_1_player_id</code>, <code>qb_hit_1_player_name</code>, <code>qb_hit_2_player_id</code> and <code>qb_hit_2_player_name</code> to make more clear that they did not record a sack. (<a href='https://github.com/mrcaseb/nflfastR/issues/180'>#180</a>)</li>
 <li>Fixed a bug where <code>yards_gained</code> was missing yardage on plays with laterals. (<a href='https://github.com/mrcaseb/nflfastR/issues/216'>#216</a>)</li>
+<li>Fixed a bug where there were stats wrongly given on a play with penalty (<a href='https://github.com/mrcaseb/nflfastR/issues/218'>#218</a>)</li>
+<li>
+<code>fixed_drive</code> now increments properly on onside kick recoveries (<a href='https://github.com/mrcaseb/nflfastR/issues/215'>#215</a>)</li>
+<li>
+<code>fixed_drive</code> no longer counts a muffed kickoff as a one-play drive on its own (<a href='https://github.com/mrcaseb/nflfastR/issues/217'>#217</a>)</li>
+<li>
+<code>fixed_drive</code> now properly increments after a safety (<a href='https://github.com/mrcaseb/nflfastR/issues/219'>#219</a>)</li>
 </ul>
 </div>
     <div id="nflfastr-400" class="section level1">
