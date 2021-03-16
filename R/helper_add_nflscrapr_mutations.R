@@ -80,10 +80,11 @@ add_nflscrapr_mutations <- function(pbp) {
       penalty_type = dplyr::if_else(
         .data$penalty == 1,
         .data$play_description %>%
-          stringr::str_extract("PENALTY on (.){2,35},.+, [0-9]{1,2} yard(s),") %>%
-          stringr::str_extract(", (([:alpha:])+([:space:])?)+,") %>%
-          stringr::str_remove_all(",") %>%
-          stringr::str_trim(), NA_character_
+          stringr::str_extract("(?<=PENALTY on .{1,50}, ).{1,50}(?=, [0-9]{1,2} yard)") %>%
+          # For some reason Face Mask penalties include the string (15 Yards)
+          # Seb thought it's ok to drop that with the next two lines
+          stringr::str_remove("\\(.+\\)") %>%
+          stringr::str_squish(), NA_character_
       ),
       # Make plays marked with down == 0 as NA:
       down = dplyr::if_else(
