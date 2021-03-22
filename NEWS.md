@@ -27,6 +27,7 @@
 * `fixed_drive` now increments properly on onside kick recoveries (#215)
 * `fixed_drive` no longer counts a muffed kickoff as a one-play drive on its own (#217)
 * `fixed_drive` now properly increments after a safety (#219)
+* Improved parser for `penalty_type` and updated the description of the variable to make more clear it's the first penalty that happened on a play. (#223)
 * Heavy performance boost for the function `clean_pbp()`
 
 # nflfastR 4.0.0

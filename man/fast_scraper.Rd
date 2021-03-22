@@ -322,7 +322,7 @@ Please see the description of \code{lateral_rusher_player_name} for further info
 \item{penalty_yards}{Yards gained (or lost) by the posteam from the penalty.}
 \item{replay_or_challenge}{Binary indicator for whether or not a replay or challenge.}
 \item{replay_or_challenge_result}{String indicating the result of the replay or challenge.}
-\item{penalty_type}{String indicating the penalty type.}
+\item{penalty_type}{String indicating the penalty type of the first penalty in the given play. Will be \code{NA} if \code{desc} is missing the type.}
 \item{defensive_two_point_attempt}{Binary indicator whether or not the defense was able to have an attempt on a two point conversion, this results following a turnover.}
 \item{defensive_two_point_conv}{Binary indicator whether or not the defense successfully scored on the two point conversion.}
 \item{defensive_extra_point_attempt}{Binary indicator whether or not the defense was able to have an attempt on an extra point attempt, this results following a blocked attempt that the defense recovers the ball.}
