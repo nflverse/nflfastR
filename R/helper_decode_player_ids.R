@@ -68,7 +68,7 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
     ret <- pbp %>%
       dplyr::mutate_at(
         dplyr::vars(
-          tidyselect::any_of(c("passer_id", "rusher_id", "receiver_id", "id")),
+          tidyselect::any_of(c("passer_id", "rusher_id", "receiver_id", "id", "fantasy_id")),
           tidyselect::ends_with("player_id")
         ),
         gsisdecoder::decode_ids

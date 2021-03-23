@@ -3,6 +3,7 @@
 * All `wpa` variables are `NA` on end game line
 * All `wp` variables are 0, 0.5, 1, or `NA` on end game line
 * Fix bug where win prob on PATs assumed a PAT placed at 15 yard line, even in older seasons
+* The function `decode_player_ids()` now really decodes the new variable `fantasy_id`
 
 # nflfastR 4.1.0
 
