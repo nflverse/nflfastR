@@ -21,7 +21,8 @@ compare_pbp <- function(id, cols) {
       ep = round(ep, 2),
       epa = round(epa, 2),
       vegas_home_wp = round(vegas_home_wp, 2),
-      vegas_home_wpa = round(vegas_home_wpa, 2)
+      vegas_home_wpa = round(vegas_home_wpa, 2),
+      home_wp = round(home_wp, 2)
     )
 
   repo_pbp <- readRDS(url(glue::glue("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_{s}.rds"))) %>%
@@ -32,18 +33,22 @@ compare_pbp <- function(id, cols) {
       ep = round(ep, 2),
       epa = round(epa, 2),
       vegas_home_wp = round(vegas_home_wp, 2),
-      vegas_home_wpa = round(vegas_home_wpa, 2)
+      vegas_home_wpa = round(vegas_home_wpa, 2),
+      home_wp = round(home_wp, 2)
     )
 
   sum <- arsenal::diffs(arsenal::comparedf(
-    new_pbp %>% select(-desc),
-    repo_pbp %>% select(-desc)
+    new_pbp %>% select(-desc, -game_id, -play_id),
+    repo_pbp %>% select(-desc, -game_id, -play_id)
     ))
   dfs <- bind_cols(
-    new_pbp %>% select(-desc),
-    repo_pbp %>% select(-desc))
+    new_pbp %>% select(-desc, -game_id, -play_id),
+    repo_pbp %>% select(-desc, -game_id, -play_id))
 
   dfs$desc <- new_pbp$desc
+  dfs$play_id <- new_pbp$play_id
+  dfs$game_id <- new_pbp$game_id
+
 
   return(
     list(sum, dfs)
@@ -55,7 +60,7 @@ compare_pbp <- function(id, cols) {
 cols <- c(
   # DO NOT REMOVE THESE ONES OR THE COMPARISON WILL BREAK
   "game_id", "play_id", "desc", "ep", "epa",
-  "vegas_home_wp", "vegas_home_wpa"
+  "vegas_home_wp", "vegas_home_wpa", "home_wp"
 
   # here is stuff you can choose whether to include
   # , "posteam_timeouts_remaining", "defteam_timeouts_remaining"
@@ -70,7 +75,7 @@ id <- "2019_01_SF_TB"
 id <- "2017_12_JAX_ARI"
 
 ids <- nflfastR::fast_scraper_schedules(2020) %>%
-  dplyr::slice(11:20) %>%
+  dplyr::slice(1:20) %>%
   pull(game_id)
 
 compared <- compare_pbp(
@@ -85,13 +90,13 @@ compared[[1]]
 obs <- compared[[1]]$..row.names.. %>% unique()
 
 # dfs
-compared[[2]] %>% arrange(play_id...2)
+compared[[2]] %>% arrange(play_id)
 
 # dfs with differences
-compared[[2]][obs, ] %>% arrange(play_id...2)
+compared[[2]][obs, ] %>% arrange(play_id)
 
 # play description of plays with differences
-compared[[2]][obs, ] %>% arrange(play_id...2) %>% select(desc)
+compared[[2]][obs, ] %>% arrange(play_id) %>% select(desc)
 
 
 
