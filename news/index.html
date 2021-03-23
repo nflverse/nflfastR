@@ -98,7 +98,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.0.0.9016</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0</span>
       </span>
     </div>
 
@@ -201,36 +201,55 @@
       <small>Source: <a href='https://github.com/mrcaseb/nflfastR/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="nflfastr-development-version" class="section level1">
-<h1 class="page-header" data-toc-text="development version">
-<a href="#nflfastr-development-version" class="anchor"></a>nflfastR (development version)<small> Unreleased </small>
+    <div id="nflfastr-410" class="section level1">
+<h1 class="page-header" data-toc-text="4.1.0">
+<a href="#nflfastr-410" class="anchor"></a>nflfastR 4.1.0<small> Unreleased </small>
 </h1>
+<div id="breaking-changes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#breaking-changes" class="anchor"></a>Breaking changes</h2>
+<div id="functions" class="section level3">
+<h3 class="hasAnchor">
+<a href="#functions" class="anchor"></a>Functions</h3>
 <ul>
 <li>Added the function <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> that aggregates official passing, rushing, and receiving stats either at game level or overall</li>
-<li>Added the new columns <code>td_player_name</code> and <code>td_player_id</code> to clearly identify the player who scored a touchdown (this is especially helpful for plays with multiple fumbles or laterals resulting in a touchdown)</li>
 <li>Added the function <code><a href="../reference/load_player_stats.html">load_player_stats()</a></code> that loads weekly player stats from 1999 to the most recent season</li>
+<li>The performance of the functions <code><a href="../reference/add_xyac.html">add_xyac()</a></code> and <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> has been significantly improved</li>
+</ul>
+</div>
+<div id="new-variables" class="section level3">
+<h3 class="hasAnchor">
+<a href="#new-variables" class="anchor"></a>New Variables</h3>
+<ul>
+<li>Added the new columns <code>td_player_name</code> and <code>td_player_id</code> to clearly identify the player who scored a touchdown (this is especially helpful for plays with multiple fumbles or laterals resulting in a touchdown)</li>
+<li>The function <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> now adds the variable <code>dakota</code>, the <code>epa</code> + <code>cpoe</code> composite, for players with minimum 5 pass attempts.</li>
+<li>Added column <code>home_opening_kickoff</code> to <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code>
+</li>
+<li>Added the variables <code>sack_player_id</code>, <code>sack_player_name</code>, <code>half_sack_1_player_id</code>, <code>half_sack_1_player_name</code>, <code>half_sack_2_player_id</code> and <code>half_sack_2_player_name</code> who identify players that recorded sacks (or half sacks). Also updated the description of the variables <code>qb_hit_1_player_id</code>, <code>qb_hit_1_player_name</code>, <code>qb_hit_2_player_id</code> and <code>qb_hit_2_player_name</code> to make more clear that they did not record a sack. (<a href='https://github.com/mrcaseb/nflfastR/issues/180'>#180</a>)</li>
+</ul>
+</div>
+</div>
+<div id="minor-improvements-and-fixes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#minor-improvements-and-fixes" class="anchor"></a>Minor improvements and fixes</h2>
+<ul>
 <li>The variable <code>qb_scramble</code> was incomplete for the 2005 season because of missing scramble indicators in the play description. This has been mostly fixed courtesy of charting data from Football Outsiders (with thanks to Aaron Schatz!). Some notes on this fix: Weeks 1-16 are based on charting. Weeks 17-21 are guesses (basically every QB run except those that were a) a loss, b) no gain, or c) on 3/4 down with 1-2 to go). Plays nullified by penalty are not included.</li>
+<li>Change <code>name</code>, <code>id</code>, <code>rusher</code>, and <code>rusher_id</code> to be the player charged with the fumble on aborted snaps when the QB is unable to make a play (i.e. pass, sack, or scramble) (<a href='https://github.com/mrcaseb/nflfastR/issues/162'>#162</a>)</li>
+<li>The function <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> now standardizes the team name columns <code>tackle_with_assist_*_team</code>
+</li>
 <li>Fix bug in <code>drive</code> that was causing incorrect overtime win probabilities (<a href='https://github.com/mrcaseb/nflfastR/issues/194'>#194</a>)</li>
-<li>The performance of <code><a href="../reference/add_xyac.html">add_xyac()</a></code> has been significantly improved</li>
 <li>Fixed a bug where <code>posteam</code> was not <code>NA</code> on end of quarter 2 (or end of quarter 4 in overtime games) causing wrong values for <code>fixed_drive</code>, <code>fixed_drive_result</code>, <code>series</code> and <code>series_result</code>
 </li>
 <li>Fixed a bug where <code>fixed_drive</code> and <code>series</code> were falsely incrementing on kickoffs recovered by the kicking team or on defensive touchdowns followed by timeouts</li>
 <li>Fixed a bug where <code>fixed_drive</code> and <code>series</code> were falsely incrementing on muffed punts recovered by the punting team for a touchdown</li>
 <li>Fixed a bug where <code><a href="../reference/add_xpass.html">add_xpass()</a></code> crashed when ran with data already including xpass variables.</li>
 <li>Fixed a bug in <code>epa</code> when a safety is scored by the team beginning the play in possession of the ball (<a href='https://github.com/mrcaseb/nflfastR/issues/186'>#186</a>)</li>
-<li>Change <code>name</code>, <code>id</code>, <code>rusher</code>, and <code>rusher_id</code> to be the player charged with the fumble on aborted snaps when the QB is unable to make a play (i.e. pass, sack, or scramble) (<a href='https://github.com/mrcaseb/nflfastR/issues/162'>#162</a>)</li>
 <li>Fix some bugs related to David and Duke Johnson on the Texans in 2020 (<a href='https://github.com/mrcaseb/nflfastR/issues/163'>#163</a>)</li>
 <li>Fix yet another bug related to correctly identifying possession team on kickoffs nullified by penalty (<a href='https://github.com/mrcaseb/nflfastR/issues/199'>#199</a>)</li>
-<li>The function <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> now adds the variable <code>dakota</code>, the <code>epa</code> + <code>cpoe</code> composite, for players with minimum 5 pass attempts.</li>
 <li>Fixed a bug where <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> forgot to clean player names by using their IDs</li>
 <li>Fixed a bug where special teams touchdowns were missing in the output of <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> (<a href='https://github.com/mrcaseb/nflfastR/issues/203'>#203</a>)</li>
-<li>The function <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> now standardizes the team name columns <code>tackle_with_assist_*_team</code>
-</li>
 <li>Fixed for some old Jaguars games where the wrong team was awarded points for safeties and kickoff return TDs (<a href='https://github.com/mrcaseb/nflfastR/issues/209'>#209</a>)</li>
 <li>The function <code><a href="../reference/update_db.html">update_db()</a></code> no more falsely closes a database connection provided by the argument <code>db_connection</code> (<a href='https://github.com/mrcaseb/nflfastR/issues/210'>#210</a>)</li>
-<li>Added column <code>home_opening_kickoff</code> to <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code>
-</li>
-<li>Added the variables <code>sack_player_id</code>, <code>sack_player_name</code>, <code>half_sack_1_player_id</code>, <code>half_sack_1_player_name</code>, <code>half_sack_2_player_id</code> and <code>half_sack_2_player_name</code> who identify players that recorded sacks (or half sacks). Also updated the description of the variables <code>qb_hit_1_player_id</code>, <code>qb_hit_1_player_name</code>, <code>qb_hit_2_player_id</code> and <code>qb_hit_2_player_name</code> to make more clear that they did not record a sack. (<a href='https://github.com/mrcaseb/nflfastR/issues/180'>#180</a>)</li>
 <li>Fixed a bug where <code>yards_gained</code> was missing yardage on plays with laterals. (<a href='https://github.com/mrcaseb/nflfastR/issues/216'>#216</a>)</li>
 <li>Fixed a bug where there were stats wrongly given on a play with penalty (<a href='https://github.com/mrcaseb/nflfastR/issues/218'>#218</a>)</li>
 <li>
@@ -240,17 +259,16 @@
 <li>
 <code>fixed_drive</code> now properly increments after a safety (<a href='https://github.com/mrcaseb/nflfastR/issues/219'>#219</a>)</li>
 <li>Improved parser for <code>penalty_type</code> and updated the description of the variable to make more clear it’s the first penalty that happened on a play. (<a href='https://github.com/mrcaseb/nflfastR/issues/223'>#223</a>)</li>
-<li>Heavy performance boost for the function <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code>
-</li>
 </ul>
+</div>
 </div>
     <div id="nflfastr-400" class="section level1">
 <h1 class="page-header" data-toc-text="4.0.0">
 <a href="#nflfastr-400" class="anchor"></a>nflfastR 4.0.0<small> 2021-02-15 </small>
 </h1>
-<div id="breaking-changes" class="section level2">
+<div id="breaking-changes-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#breaking-changes" class="anchor"></a>Breaking changes</h2>
+<a href="#breaking-changes-1" class="anchor"></a>Breaking changes</h2>
 <div id="changed-functions" class="section level3">
 <h3 class="hasAnchor">
 <a href="#changed-functions" class="anchor"></a>Changed Functions</h3>
@@ -288,9 +306,9 @@
 </ul>
 </div>
 </div>
-<div id="minor-improvements-and-fixes" class="section level2">
+<div id="minor-improvements-and-fixes-1" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-improvements-and-fixes" class="anchor"></a>Minor improvements and fixes</h2>
+<a href="#minor-improvements-and-fixes-1" class="anchor"></a>Minor improvements and fixes</h2>
 <ul>
 <li>Fix bug where <code>fixed_drive</code> and <code>series</code> weren’t updating after muffed punt (<a href='https://github.com/mrcaseb/nflfastR/issues/144'>#144</a>)</li>
 <li>Fix bug induced by fixing the above (<a href='https://github.com/mrcaseb/nflfastR/issues/149'>#149</a>)</li>
@@ -323,9 +341,9 @@
 <li>Added <code>yardline_100</code> as an input to both win probability models (not having it included was an oversight)</li>
 </ul>
 </div>
-<div id="minor-improvements-and-fixes-1" class="section level2">
+<div id="minor-improvements-and-fixes-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-improvements-and-fixes-1" class="anchor"></a>Minor improvements and fixes</h2>
+<a href="#minor-improvements-and-fixes-2" class="anchor"></a>Minor improvements and fixes</h2>
 <ul>
 <li>Fixed a bug where <code>series</code> was increased on PATs</li>
 <li>Fixed a bug affecting the week 10 Raiders-Broncos game</li>
@@ -364,9 +382,9 @@
 </ul>
 </div>
 </div>
-<div id="minor-improvements-and-fixes-2" class="section level2">
+<div id="minor-improvements-and-fixes-3" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-improvements-and-fixes-2" class="anchor"></a>Minor improvements and fixes</h2>
+<a href="#minor-improvements-and-fixes-3" class="anchor"></a>Minor improvements and fixes</h2>
 <ul>
 <li>More fixes for <code>fixed_drive</code> which was not incrementing properly on drives that began following a timeout</li>
 <li>Fixed more bugs in EPA and win probability on PATs and kickoffs with penalties</li>
@@ -384,9 +402,9 @@
 <h1 class="page-header" data-toc-text="3.0.0">
 <a href="#nflfastr-300" class="anchor"></a>nflfastR 3.0.0<small> 2020-09-24 </small>
 </h1>
-<div id="breaking-changes-1" class="section level2">
+<div id="breaking-changes-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#breaking-changes-1" class="anchor"></a>Breaking changes</h2>
+<a href="#breaking-changes-2" class="anchor"></a>Breaking changes</h2>
 <ul>
 <li>
 <code><a href="../reference/fast_scraper_roster.html">fast_scraper_roster()</a></code> is finally back! It loads NFL roster of a given season.</li>
@@ -401,9 +419,9 @@
 <li>Added new option <code>db_connection</code> to <code><a href="../reference/update_db.html">update_db()</a></code> to allow advanced users to use other DBI drivers, such as <code>RMariaDB::MariaDB()</code>, <code>RPostgres::Postgres()</code> or <code>odbc::odbc()</code> (please see <a href="https://dbplyr.tidyverse.org/articles/dbplyr.html">dbplyr</a> for more information)</li>
 </ul>
 </div>
-<div id="minor-improvements-and-fixes-3" class="section level2">
+<div id="minor-improvements-and-fixes-4" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-improvements-and-fixes-3" class="anchor"></a>Minor improvements and fixes</h2>
+<a href="#minor-improvements-and-fixes-4" class="anchor"></a>Minor improvements and fixes</h2>
 <ul>
 <li>
 <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> now fixes some bugs in jersey numbers</li>
@@ -475,9 +493,9 @@
 <h1 class="page-header" data-toc-text="2.1.1">
 <a href="#nflfastr-211" class="anchor"></a>nflfastR 2.1.1<small> Unreleased </small>
 </h1>
-<div id="functions" class="section level3">
+<div id="functions-1" class="section level3">
 <h3 class="hasAnchor">
-<a href="#functions" class="anchor"></a>Functions</h3>
+<a href="#functions-1" class="anchor"></a>Functions</h3>
 <ul>
 <li>
 <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> now standardizes player IDs across the old (1999-2010) and new (2011+) data sources. Player IDs once again uniquely identify players, and each unique player has one unique ID (as they did before the NFL data source change):
@@ -515,9 +533,9 @@
 </li>
 </ul>
 </div>
-<div id="functions-1" class="section level3">
+<div id="functions-2" class="section level3">
 <h3 class="hasAnchor">
-<a href="#functions-1" class="anchor"></a>Functions</h3>
+<a href="#functions-2" class="anchor"></a>Functions</h3>
 <ul>
 <li>Added function <code><a href="../reference/update_db.html">update_db()</a></code> which adds all completed games to a SQLite database</li>
 <li>Added function <code><a href="../reference/calculate_win_probability.html">calculate_win_probability()</a></code>
@@ -627,9 +645,9 @@
 <li><p>Added new function <code><a href="../reference/calculate_expected_points.html">calculate_expected_points()</a></code> usable for the enduser.</p></li>
 </ul>
 </div>
-<div id="functions-2" class="section level3">
+<div id="functions-3" class="section level3">
 <h3 class="hasAnchor">
-<a href="#functions-2" class="anchor"></a>Functions</h3>
+<a href="#functions-3" class="anchor"></a>Functions</h3>
 <ul>
 <li><p>Completely overhauled <code><a href="../reference/fast_scraper.html">fast_scraper()</a></code> to make it work with the NFL’s new server backend. The option <code>source</code> is still available but will be deprecated since there is only one source now. There are some changes in the output as well (please see below).</p></li>
 <li><p><code><a href="../reference/fast_scraper.html">fast_scraper()</a></code> now adds game data to the play by play data set courtesy of Lee Sharpe. Game data include: away_score, home_score, location, result, total, spread_line, total_line, div_game, roof, surface, temp, wind, home_coach, away_coach, stadium, stadium_id, gameday</p></li>
