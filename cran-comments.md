@@ -13,7 +13,7 @@ the package is depending on. We made sure this won't happen in the future.
 
 ## Test environments
 
-* local R installation, R 4.0.3
+* local R installation, R 4.0.4
 * Debian Linux, R-devel, clang, ISO-8859-15 locale                       
 * Debian Linux, R-devel, GCC                                             
 * Debian Linux, R-devel, GCC, no long double                             
@@ -39,8 +39,7 @@ the package is depending on. We made sure this won't happen in the future.
 
 ## revdepcheck results
 
-We checked 0 reverse dependencies, comparing R CMD check results across 
-CRAN and dev versions of this package.
+We checked 1 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
 
  * We saw 0 new problems
  * We failed to check 0 packages

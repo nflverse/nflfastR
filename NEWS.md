@@ -1,34 +1,43 @@
-# nflfastR (development version)
+# nflfastR 4.1.0
+
+## Breaking changes
+
+### Functions
 
 * Added the function `calculate_player_stats()` that aggregates official passing, rushing, and receiving stats either at game level or overall
-* Added the new columns `td_player_name` and `td_player_id` to clearly identify the player who scored a touchdown (this is especially helpful for plays with multiple fumbles or laterals resulting in a touchdown)
 * Added the function `load_player_stats()` that loads weekly player stats from 1999 to the most recent season
+* The performance of the functions `add_xyac()` and `clean_pbp()` has been significantly improved
+
+### New Variables
+
+* Added the new columns `td_player_name` and `td_player_id` to clearly identify the player who scored a touchdown (this is especially helpful for plays with multiple fumbles or laterals resulting in a touchdown)
+* The function `calculate_player_stats()` now adds the variable `dakota`, the `epa` + `cpoe` composite, for players with minimum 5 pass attempts.
+* Added column `home_opening_kickoff` to `clean_pbp()`
+* Added the variables `sack_player_id`, `sack_player_name`, `half_sack_1_player_id`, `half_sack_1_player_name`, `half_sack_2_player_id` and `half_sack_2_player_name` who identify players that recorded sacks (or half sacks). Also updated the description of the variables `qb_hit_1_player_id`, `qb_hit_1_player_name`, `qb_hit_2_player_id` and `qb_hit_2_player_name` to make more clear that they did not record a sack. (#180)
+
+## Minor improvements and fixes
+
 * The variable `qb_scramble` was incomplete for the 2005 season because of missing scramble indicators in the play description. This has been mostly fixed courtesy of charting data from Football Outsiders (with thanks to Aaron Schatz!). Some notes on this fix: Weeks 1-16 are based on charting. Weeks 17-21 are guesses (basically every QB run except those that were a) a loss, b) no gain, or c) on 3/4 down with 1-2 to go). Plays nullified by penalty are not included.
+* Change `name`, `id`, `rusher`, and `rusher_id` to be the player charged with the fumble on aborted snaps when the QB is unable to make a play (i.e. pass, sack, or scramble) (#162)
+* The function `clean_pbp()` now standardizes the team name columns `tackle_with_assist_*_team`
 * Fix bug in `drive` that was causing incorrect overtime win probabilities (#194)
-* The performance of `add_xyac()` has been significantly improved
 * Fixed a bug where `posteam` was not `NA` on end of quarter 2 (or end of quarter 4 in overtime games) causing wrong values for `fixed_drive`, `fixed_drive_result`, `series` and `series_result`
 * Fixed a bug where `fixed_drive` and `series` were falsely incrementing on kickoffs recovered by the kicking team or on defensive touchdowns followed by timeouts
 * Fixed a bug where `fixed_drive` and `series` were falsely incrementing on muffed punts recovered by the punting team for a touchdown
 * Fixed a bug where `add_xpass()` crashed when ran with data already including xpass variables. 
 * Fixed a bug in `epa` when a safety is scored by the team beginning the play in possession of the ball (#186)
-* Change `name`, `id`, `rusher`, and `rusher_id` to be the player charged with the fumble on aborted snaps when the QB is unable to make a play (i.e. pass, sack, or scramble) (#162)
 * Fix some bugs related to David and Duke Johnson on the Texans in 2020 (#163)
 * Fix yet another bug related to correctly identifying possession team on kickoffs nullified by penalty (#199)
-* The function `calculate_player_stats()` now adds the variable `dakota`, the `epa` + `cpoe` composite, for players with minimum 5 pass attempts.
 * Fixed a bug where `calculate_player_stats()` forgot to clean player names by using their IDs
 * Fixed a bug where special teams touchdowns were missing in the output of `calculate_player_stats()` (#203)
-* The function `clean_pbp()` now standardizes the team name columns `tackle_with_assist_*_team`
 * Fixed for some old Jaguars games where the wrong team was awarded points for safeties and kickoff return TDs (#209)
 * The function `update_db()` no more falsely closes a database connection provided by the argument `db_connection` (#210)
-* Added column `home_opening_kickoff` to `clean_pbp()`
-* Added the variables `sack_player_id`, `sack_player_name`, `half_sack_1_player_id`, `half_sack_1_player_name`, `half_sack_2_player_id` and `half_sack_2_player_name` who identify players that recorded sacks (or half sacks). Also updated the description of the variables `qb_hit_1_player_id`, `qb_hit_1_player_name`, `qb_hit_2_player_id` and `qb_hit_2_player_name` to make more clear that they did not record a sack. (#180)
 * Fixed a bug where `yards_gained` was missing yardage on plays with laterals. (#216)
 * Fixed a bug where there were stats wrongly given on a play with penalty (#218)
 * `fixed_drive` now increments properly on onside kick recoveries (#215)
 * `fixed_drive` no longer counts a muffed kickoff as a one-play drive on its own (#217)
 * `fixed_drive` now properly increments after a safety (#219)
 * Improved parser for `penalty_type` and updated the description of the variable to make more clear it's the first penalty that happened on a play. (#223)
-* Heavy performance boost for the function `clean_pbp()`
 
 # nflfastR 4.0.0
 
