@@ -787,6 +787,7 @@ add_wp_variables <- function(pbp_data) {
     tidyr::fill(
       .data$tmp_posteam, .direction = "up"
     ) %>%
+    dplyr::group_by(.data$game_id) %>%
     dplyr::mutate(
       def_wp = 1 - .data$wp,
 
@@ -849,8 +850,8 @@ add_wp_variables <- function(pbp_data) {
       wpa = dplyr::if_else(
         stringr::str_detect(tolower(.data$desc), "( kneels )|(end of game)|(end game)"), NA_real_, .data$wpa
       )
-
-      )
+      ) %>%
+    dplyr::ungroup()
 
   # Home and Away post:
 
