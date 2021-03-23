@@ -20,7 +20,8 @@ compare_pbp <- function(id, cols) {
     mutate(
       ep = round(ep, 2),
       epa = round(epa, 2),
-      vegas_home_wp = round(vegas_home_wp, 2)
+      vegas_home_wp = round(vegas_home_wp, 2),
+      vegas_home_wpa = round(vegas_home_wpa, 2)
     )
 
   repo_pbp <- readRDS(url(glue::glue("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_{s}.rds"))) %>%
@@ -30,7 +31,8 @@ compare_pbp <- function(id, cols) {
     mutate(
       ep = round(ep, 2),
       epa = round(epa, 2),
-      vegas_home_wp = round(vegas_home_wp, 2)
+      vegas_home_wp = round(vegas_home_wp, 2),
+      vegas_home_wpa = round(vegas_home_wpa, 2)
     )
 
   sum <- arsenal::diffs(arsenal::comparedf(
@@ -52,10 +54,10 @@ compare_pbp <- function(id, cols) {
 
 cols <- c(
   # DO NOT REMOVE THESE ONES OR THE COMPARISON WILL BREAK
-  "game_id", "play_id", "desc", "ep", "epa", "vegas_home_wp",
+  "game_id", "play_id", "desc", "ep", "epa",
+  "vegas_home_wp", "vegas_home_wpa"
 
   # here is stuff you can choose whether to include
-  "posteam", "home_team", "away_team", "name", "rusher"
   # , "posteam_timeouts_remaining", "defteam_timeouts_remaining"
 )
 
@@ -83,13 +85,13 @@ compared[[1]]
 obs <- compared[[1]]$..row.names.. %>% unique()
 
 # dfs
-compared[[2]] %>% arrange(play_id)
+compared[[2]] %>% arrange(play_id...2)
 
 # dfs with differences
-compared[[2]][obs, ] %>% arrange(play_id)
+compared[[2]][obs, ] %>% arrange(play_id...2)
 
 # play description of plays with differences
-compared[[2]][obs, ] %>% arrange(play_id) %>% select(desc)
+compared[[2]][obs, ] %>% arrange(play_id...2) %>% select(desc)
 
 
 
