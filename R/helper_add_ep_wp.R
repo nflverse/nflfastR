@@ -655,7 +655,7 @@ add_wp_variables <- function(pbp_data) {
     )
   make_pat_prob <- make_pat_prob[1]
 
-  pat_data <- pbp_data
+  # pat_data <- pbp_data
 
   # plays with 1 point PAT attempts
   pat_i <- which(
