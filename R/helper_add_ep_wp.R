@@ -789,8 +789,6 @@ add_wp_variables <- function(pbp_data) {
     ) %>%
     dplyr::group_by(.data$game_id) %>%
     dplyr::mutate(
-      def_wp = 1 - .data$wp,
-
       #add columns for home WP
       home_wp = dplyr::if_else(.data$tmp_posteam == .data$home_team, .data$wp, 1 - .data$wp),
       vegas_home_wp = dplyr::if_else(.data$tmp_posteam == .data$home_team, .data$vegas_wp, 1 - .data$vegas_wp),
@@ -836,6 +834,8 @@ add_wp_variables <- function(pbp_data) {
         NA_real_,
         .data$wp
       ),
+
+      def_wp = 1 - .data$wp,
 
       # make wpa
       vegas_home_wpa = dplyr::lead(.data$vegas_home_wp) - .data$vegas_home_wp,
