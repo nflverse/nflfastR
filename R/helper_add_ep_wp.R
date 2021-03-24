@@ -676,6 +676,10 @@ add_wp_variables <- function(pbp_data) {
       !is.na(pbp_data$two_point_conv_result)
   )
 
+  # some rare 2 point PAT attempts have duplicated matches in 1 point PAT attempts
+  # so we remove them in the next line
+  pat_i <- pat_i[!pat_i %in% two_pt_i]
+
   # make df of post-PAT plays
   pat_data <- pbp_data %>%
     dplyr::mutate(
