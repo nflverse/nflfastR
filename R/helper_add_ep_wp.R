@@ -653,7 +653,7 @@ add_wp_variables <- function(pbp_data) {
           yardline_100 = ifelse(.data$season >= 2015, 15, 3)
           ), type="response")
     )
-  make_pat_prob <- make_pat_prob[1]
+  # make_pat_prob <- make_pat_prob[1]
 
   # pat_data <- pbp_data
 
