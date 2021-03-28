@@ -209,10 +209,10 @@
 #' \item{tackle_for_loss_1_player_name}{String name for one of the potential players with the tackle for loss.}
 #' \item{tackle_for_loss_2_player_id}{Unique identifier for one of the potential players with the tackle for loss.}
 #' \item{tackle_for_loss_2_player_name}{String name for one of the potential players with the tackle for loss.}
-#' \item{qb_hit_1_player_id}{Unique identifier for one of the potential players that hit the QB.}
-#' \item{qb_hit_1_player_name}{String name for one of the potential players that hit the QB.}
-#' \item{qb_hit_2_player_id}{Unique identifier for one of the potential players that hit the QB.}
-#' \item{qb_hit_2_player_name}{String name for one of the potential players that hit the QB.}
+#' \item{qb_hit_1_player_id}{Unique identifier for one of the potential players that hit the QB. No sack as the QB was not the ball carrier. For sacks please see `sack_player` or `half_sack_*_player`.}
+#' \item{qb_hit_1_player_name}{String name for one of the potential players that hit the QB. No sack as the QB was not the ball carrier. For sacks please see `sack_player` or `half_sack_*_player`.}
+#' \item{qb_hit_2_player_id}{Unique identifier for one of the potential players that hit the QB. No sack as the QB was not the ball carrier. For sacks please see `sack_player` or `half_sack_*_player`.}
+#' \item{qb_hit_2_player_name}{String name for one of the potential players that hit the QB. No sack as the QB was not the ball carrier. For sacks please see `sack_player` or `half_sack_*_player`.}
 #' \item{forced_fumble_player_1_team}{Team of one of the players with a forced fumble.}
 #' \item{forced_fumble_player_1_player_id}{Unique identifier of one of the players with a forced fumble.}
 #' \item{forced_fumble_player_1_player_name}{String name of one of the players with a forced fumble.}
@@ -262,6 +262,12 @@
 #' \item{fumble_recovery_2_yards}{Yards gained by one of the players with a fumble recovery.}
 #' \item{fumble_recovery_2_player_id}{Unique identifier of one of the players with a fumble recovery.}
 #' \item{fumble_recovery_2_player_name}{String name of one of the players with a fumble recovery.}
+#' \item{sack_player_id}{Unique identifier of the player who recorded a solo sack.}
+#' \item{sack_player_name}{String name of the player who recorded a solo sack.}
+#' \item{half_sack_1_player_id}{Unique identifier of the first player who recorded half a sack.}
+#' \item{half_sack_1_player_name}{String name of the first player who recorded half a sack.}
+#' \item{half_sack_2_player_id}{Unique identifier of the second player who recorded half a sack.}
+#' \item{half_sack_2_player_name}{String name of the second player who recorded half a sack.}
 #' \item{return_team}{String abbreviation of the return team.}
 #' \item{return_yards}{Yards gained by the return team.}
 #' \item{penalty_team}{String abbreviation of the team with the penalty.}
@@ -270,7 +276,7 @@
 #' \item{penalty_yards}{Yards gained (or lost) by the posteam from the penalty.}
 #' \item{replay_or_challenge}{Binary indicator for whether or not a replay or challenge.}
 #' \item{replay_or_challenge_result}{String indicating the result of the replay or challenge.}
-#' \item{penalty_type}{String indicating the penalty type.}
+#' \item{penalty_type}{String indicating the penalty type of the first penalty in the given play. Will be `NA` if `desc` is missing the type.}
 #' \item{defensive_two_point_attempt}{Binary indicator whether or not the defense was able to have an attempt on a two point conversion, this results following a turnover.}
 #' \item{defensive_two_point_conv}{Binary indicator whether or not the defense successfully scored on the two point conversion.}
 #' \item{defensive_extra_point_attempt}{Binary indicator whether or not the defense was able to have an attempt on an extra point attempt, this results following a blocked attempt that the defense recovers the ball.}
@@ -353,6 +359,7 @@
 #' \item{fantasy}{Name of the rusher on rush plays or receiver on pass plays.}
 #' \item{fantasy_id}{ID of the rusher on rush plays or receiver on pass plays.}
 #' \item{out_of_bounds}{1 if play description contains ran ob, pushed ob, or sacked ob; 0 otherwise.}
+#' \item{home_opening_kickoff}{= 1 if the home team received the opening kickoff, 0 otherwise.}
 #' \item{qb_epa}{Gives QB credit for EPA for up to the point where a receiver lost a fumble after a completed catch and makes EPA work more like passing yards on plays with fumbles.}
 #' \item{xyac_epa}{Expected value of EPA gained after the catch, starting from where the catch was made. Zero yards after the catch would be listed as zero EPA.}
 #' \item{xyac_mean_yardage}{Average expected yards after the catch based on where the ball was caught.}

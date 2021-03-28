@@ -65,14 +65,27 @@ add_nflscrapr_mutations <- function(pbp) {
           .data$two_point_conv_result == "success",
         2, .data$yards_gained
       ),
+      # Fix yards_gained for plays with laterals
+      yards_gained = dplyr::case_when(
+        !is.na(.data$passing_yards) &
+          .data$yards_gained != .data$passing_yards &
+          .data$penalty == 0 ~ .data$passing_yards,
+        !is.na(.data$rushing_yards) &
+          !is.na(.data$lateral_rushing_yards) &
+          .data$yards_gained != .data$rushing_yards &
+          .data$penalty == 0 ~ .data$rushing_yards + .data$lateral_rushing_yards,
+        TRUE ~ yards_gained
+      ),
       # Extract the penalty type:
       penalty_type = dplyr::if_else(
         .data$penalty == 1,
         .data$play_description %>%
-          stringr::str_extract("PENALTY on (.){2,35},.+, [0-9]{1,2} yard(s),") %>%
-          stringr::str_extract(", (([:alpha:])+([:space:])?)+,") %>%
-          stringr::str_remove_all(",") %>%
-          stringr::str_trim(), NA_character_
+          stringr::str_extract("(?<=PENALTY on .{1,50}, ).{1,50}(?=, [0-9]{1,2} yard)") %>%
+          # Face Mask penalties include the yardage as string (either 5 Yards or 15 Yards)
+          # We remove the 15 Yards part and just keep the additional info if it's a
+          # 5 yard Face Mask penalty
+          stringr::str_remove("\\([0-9]{2}+ Yards\\)") %>%
+          stringr::str_squish(), NA_character_
       ),
       # Make plays marked with down == 0 as NA:
       down = dplyr::if_else(

@@ -15,7 +15,7 @@ add_drive_results <- function(d) {
       posteam = dplyr::case_when(
         # on kickoffs the kicking team is the defteam but this should be swapped
         # in terms of this function if the kickoff is recovered
-        .data$own_kickoff_recovery == 1 ~ .data$defteam,
+        .data$kickoff_attempt == 1 & (.data$own_kickoff_recovery == 1 | .data$fumble_lost == 1) ~ .data$defteam,
         # if a kickoff has to be replayed due to a penalty and is then recovered,
         # the prior (reversed) kickoff shouldn't be a new drive/series
         stringr::str_detect(.data$desc, kickoff_finder) &
@@ -76,6 +76,22 @@ add_drive_results <- function(d) {
       ),
       # first observation of a half is also a new drive
       new_drive = dplyr::if_else(.data$row == 1, 1, .data$new_drive),
+
+      # if you recovered an onside kick or muffed return, it's a new drive
+      new_drive = dplyr::case_when(
+        .data$play_type == "kickoff" & (.data$own_kickoff_recovery == 1 | .data$fumble_lost == 1) ~ 1,
+        TRUE ~ .data$new_drive
+        ),
+
+      # if it's a kickoff and the prior play was a safety, it's a new drive
+      new_drive = dplyr::case_when(
+        # safety prior play
+        .data$kickoff_attempt == 1 & dplyr::lag(.data$safety) == 1 ~ 1,
+        # safety 2 plays ago and timeout on previous play
+        .data$kickoff_attempt == 1 & dplyr::lag(.data$safety, 2) == 1 & (is.na(dplyr::lag(.data$play_type)) | dplyr::lag(.data$play_type) == "no_play") ~ 1,
+        TRUE ~ .data$new_drive
+      ),
+
       # if there's a missing, make it not a new drive (0)
       new_drive = dplyr::if_else(is.na(.data$new_drive), 0, .data$new_drive)
     ) %>%

@@ -982,9 +982,37 @@ sum_play_stats <- function(play_Id, stats) {
         )
     } else if (stat_id == 83) {
       row$sack <- 1
+      row$sack_player_id <- play_stats$player.esbId[index]
+      row$sack_player_name <- play_stats$player.displayName[index]
     } else if (stat_id == 84) {
       row$sack <- 1
       row$assist_tackle <- 1
+      row$half_sack_1_player_id <-
+        if_else(
+          is.na(row$half_sack_1_player_id),
+          play_stats$player.esbId[index],
+          row$half_sack_1_player_id
+        )
+      row$half_sack_1_player_name <-
+        if_else(
+          is.na(row$half_sack_1_player_name),
+          play_stats$player.displayName[index],
+          row$half_sack_1_player_name
+        )
+      row$half_sack_2_player_id <-
+        if_else(
+          is.na(row$half_sack_2_player_id) &
+            row$half_sack_1_player_id != play_stats$player.esbId[index],
+          play_stats$player.esbId[index],
+          row$half_sack_2_player_id
+        )
+      row$half_sack_2_player_name <-
+        if_else(
+          is.na(row$half_sack_2_player_name) &
+            row$half_sack_1_player_name != play_stats$player.displayName[index],
+          play_stats$player.displayName[index],
+          row$half_sack_2_player_name
+        )
     } else if (stat_id == 85) {
       row$pass_defense_1_player_id <-
         if_else(

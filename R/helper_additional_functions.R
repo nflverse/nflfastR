@@ -43,6 +43,7 @@
 #' \item{jersey_number}{Jersey number of the player listed in the 'name' column.}
 #' \item{id}{ID of the player in the 'name' column.}
 #' \item{out_of_bounds}{= 1 if play description contains "ran ob", "pushed ob", or "sacked ob"; = 0 otherwise.}
+#' \item{home_opening_kickoff}{= 1 if the home team received the opening kickoff, 0 otherwise.}
 #' }
 #' @export
 clean_pbp <- function(pbp, ...) {
@@ -251,7 +252,13 @@ clean_pbp <- function(pbp, ...) {
         out_of_bounds = dplyr::if_else(
           stringr::str_detect(.data$desc, "(ran ob)|(pushed ob)|(sacked ob)"), 1, 0
         )
-      )
+      ) %>%
+      dplyr::group_by(.data$game_id) %>%
+      dplyr::mutate(
+        home_opening_kickoff = dplyr::if_else(.data$home_team == dplyr::first(stats::na.omit(.data$posteam)), 1, 0)
+      ) %>%
+      dplyr::ungroup()
+
   }
 
   message_completed("Cleaning completed", ...)
@@ -262,11 +269,11 @@ clean_pbp <- function(pbp, ...) {
 #these things are used in clean_pbp() above
 
 # look for First[period or space]Last[maybe - or ' in last][maybe more letters in last][maybe Jr. or II or IV]
-big_parser <- "(?<=)[A-Z][A-z]*(\\.|\\s)+[A-Z][A-z]*\\'*\\-*[A-Z]*[a-z]*(\\s((Jr.)|(Sr.)|I{2,3})|(IV))?"
+big_parser <- "(?<=)[A-Z][A-z]*+(\\.|\\s)+[A-Z][A-z]*+\\'*\\-*[A-Z]*+[a-z]*+(\\s((Jr.)|(Sr.)|I{2,3})|(IV))?"
 # maybe some spaces and letters, and then a rush direction unless they fumbled
-rush_finder <- "(?=\\s*[a-z]*\\s*((FUMBLES) | (left end)|(left tackle)|(left guard)|(up the middle)|(right guard)|(right tackle)|(right end)))"
+rush_finder <- "(?=\\s*[a-z]*+\\s*((FUMBLES) | (left end)|(left tackle)|(left guard)|(up the middle)|(right guard)|(right tackle)|(right end)))"
 # maybe some spaces and leters, and then pass / sack / scramble
-pass_finder <- "(?=\\s*[a-z]*\\s*(( pass)|(sack)|(scramble)))"
+pass_finder <- "(?=\\s*[a-z]*+\\s*(( pass)|(sack)|(scramble)))"
 # to or for, maybe a jersey number and a dash
 receiver_finder <- "(?<=((to)|(for))\\s[:digit:]{0,2}\\-{0,1})"
 # weird play finder

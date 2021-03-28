@@ -35,6 +35,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          options(install.packages.check.source = "no")
           remotes::install_deps(dependencies = TRUE, type = "binary")
           install.packages(c("pkgdown", "tidyverse", "ggrepel", "ggimage", "knitr", "tictoc", "ragg"), type = "binary")
         shell: Rscript {0}
