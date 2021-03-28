@@ -558,7 +558,7 @@ add_ep_variables <- function(pbp_data) {
 add_wp_variables <- function(pbp_data) {
 
   #testing only
-  #pbp_data <- g
+  # pbp_data <- g
 
   # Initialize the df to store predicted win probability
   OffWinProb <- rep(NA_real_, nrow(pbp_data))
@@ -645,10 +645,14 @@ add_wp_variables <- function(pbp_data) {
 
   ## start PAT fix
 
-  make_pat_prob <- as.numeric(mgcv::predict.bam(fastrmodels::fg_model, newdata = pbp_data %>% mutate(yardline_100 = 15), type="response"))
-  make_pat_prob <- make_pat_prob[1]
-
-  pat_data <- pbp_data
+  make_pat_prob <- as.numeric(
+    mgcv::predict.bam(
+      fastrmodels::fg_model,
+      newdata = pbp_data %>%
+        mutate(
+          yardline_100 = ifelse(.data$season >= 2015, 15, 3)
+          ), type="response")
+    )
 
   # plays with 1 point PAT attempts
   pat_i <- which(
@@ -671,6 +675,10 @@ add_wp_variables <- function(pbp_data) {
       stringr::str_detect(pbp_data$desc, 'TWO-POINT CONVERSION ATTEMPT')  |
       !is.na(pbp_data$two_point_conv_result)
   )
+
+  # some rare 2 point PAT attempts have duplicated matches in 1 point PAT attempts
+  # so we remove them in the next line
+  pat_i <- pat_i[!pat_i %in% two_pt_i]
 
   # make df of post-PAT plays
   pat_data <- pbp_data %>%
@@ -780,112 +788,71 @@ add_wp_variables <- function(pbp_data) {
     tidyr::fill(
       .data$tmp_posteam, .direction = "up"
     ) %>%
+    dplyr::group_by(.data$game_id) %>%
     dplyr::mutate(
-      wp = dplyr::if_else(is.na(.data$posteam), NA_real_, .data$wp),
-      def_wp = 1 - .data$wp,
-      home_wp = dplyr::if_else(.data$posteam == .data$home_team,
-                               .data$wp, .data$def_wp),
-      away_wp = dplyr::if_else(.data$posteam == .data$away_team,
-                               .data$wp, .data$def_wp),
-
-      #add columns for WP taking into account spread
-      # vegas_wp = dplyr::if_else(is.na(.data$posteam), NA_real_, .data$vegas_wp),
+      #add columns for home WP
+      home_wp = dplyr::if_else(.data$tmp_posteam == .data$home_team, .data$wp, 1 - .data$wp),
       vegas_home_wp = dplyr::if_else(.data$tmp_posteam == .data$home_team, .data$vegas_wp, 1 - .data$vegas_wp),
+
+      # convenience to mark end of game
+      end_game = ifelse(
+        stringr::str_detect(tolower(.data$desc), "(end of game)|(end game)"),
+        1, 0
+        ),
+
+      # convenience for marking home win prob on last line
+      final_value = dplyr::case_when(
+        .data$home_score > .data$away_score ~ 1,
+        .data$away_score > .data$home_score ~ 0,
+        .data$home_score == .data$away_score ~ .5
+      ),
+
       #make 1 or 0 the final win prob
       vegas_home_wp = dplyr::if_else(
-        stringr::str_detect(
-          tolower(.data$desc), "(end of game)|(end game)"
-        ),
-        dplyr::case_when(
-          .data$home_score > .data$away_score ~ 1,
-          .data$away_score > .data$home_score ~ 0,
-          .data$home_score == .data$away_score ~ .5
-        ),
+        .data$end_game == 1,
+        .data$final_value,
         .data$vegas_home_wp
       ),
+
+      # can we make this and the above into a function? feels like a lot of repitition
+      home_wp = dplyr::if_else(
+        .data$end_game == 1,
+        .data$final_value,
+        .data$home_wp
+      ),
+
+      away_wp = 1 - .data$home_wp,
+
       # make wp of posteam on last line NA because there's no posteam
       vegas_wp = dplyr::if_else(
-        stringr::str_detect(
-          tolower(.data$desc), "(end of game)|(end game)"
-        ),
+        .data$end_game == 1,
         NA_real_,
         .data$vegas_wp
       ),
+
+      wp = dplyr::if_else(
+        .data$end_game == 1,
+        NA_real_,
+        .data$wp
+      ),
+
+      def_wp = 1 - .data$wp,
+
+      # make wpa
       vegas_home_wpa = dplyr::lead(.data$vegas_home_wp) - .data$vegas_home_wp,
       vegas_wpa = dplyr::if_else(.data$tmp_posteam == .data$home_team, .data$vegas_home_wpa, -.data$vegas_home_wpa),
       vegas_wpa = dplyr::if_else(
-        stringr::str_detect(tolower(.data$desc), " kneels "), NA_real_, .data$vegas_wpa
-        )
+        stringr::str_detect(tolower(.data$desc), "( kneels )|(end of game)|(end game)"), NA_real_, .data$vegas_wpa
+        ),
+
+      # home wpa isn't saved but needed for next line
+      home_wpa = dplyr::lead(.data$home_wp) - .data$home_wp,
+      wpa = dplyr::if_else(.data$tmp_posteam == .data$home_team, .data$home_wpa, -.data$home_wpa),
+      wpa = dplyr::if_else(
+        stringr::str_detect(tolower(.data$desc), "( kneels )|(end of game)|(end game)"), NA_real_, .data$wpa
       )
-
-  # For now follow the code from before, will need to update later:
-  # Create the possible WPA values
-  pbp_data <- dplyr::mutate(pbp_data,
-                            # Team keeps possession (most general case):
-                            WPA_base = dplyr::lead(.data$wp) - .data$wp,
-                            # Team keeps possession but either Timeout, Two Minute Warning,
-                            # Quarter End is the following row
-                            WPA_base_nxt = dplyr::lead(.data$wp,2) - .data$wp,
-                            # Change of possession and no timeout,
-                            # two minute warning, or quarter end follows:
-                            WPA_change = (1 - dplyr::lead(.data$wp)) - .data$wp,
-                            # Change of possession but either Timeout,
-                            # Two Minute Warning, or
-                            # Quarter End is the following row:
-                            WPA_change_nxt = (1 - dplyr::lead(.data$wp, 2)) - .data$wp,
-                            # End of quarter, half or end rows:
-                            WPA_halfend_to = 0)
-  # Create a WPA column for the last play of the game:
-  pbp_data$WPA_final <- ifelse(pbp_data$score_differential_post > 0 & pbp_data$posteam == pbp_data$home_team,
-                               1 - pbp_data$home_wp,
-                               ifelse(pbp_data$score_differential_post > 0 & pbp_data$posteam == pbp_data$away_team,
-                                      1 - pbp_data$away_wp,
-                                      ifelse(pbp_data$score_differential_post <= 0 & pbp_data$posteam == pbp_data$home_team,
-                                             0 - pbp_data$home_wp,
-                                             ifelse(pbp_data$score_differential_post <= 0 & pbp_data$posteam == pbp_data$away_team,
-                                                    0 - pbp_data$away_wp, 0))))
-
-  pbp_data$WPA_base_nxt_ind <- with(pbp_data,
-                                    ifelse(posteam == dplyr::lead(posteam, 2) &
-                                             (is.na(dplyr::lead(play_type)) |
-                                                (dplyr::lead(timeout) == 1 &
-                                                   dplyr::lead(play_type) == "no_play")), 1, 0))
-
-  pbp_data$WPA_change_nxt_ind <- with(pbp_data,
-                                      ifelse(posteam != dplyr::lead(posteam, 2) &
-                                               (is.na(dplyr::lead(play_type)) |
-                                                  (dplyr::lead(timeout) == 1 &
-                                                     dplyr::lead(play_type) == "no_play")), 1, 0))
-
-  pbp_data$WPA_change_ind <- with(pbp_data,
-                                  ifelse(posteam != dplyr::lead(posteam) &
-                                           !is.na(dplyr::lead(play_type)) &
-                                           (dplyr::lead(timeout) == 0 |
-                                              (dplyr::lead(timeout) == 1 &
-                                                 dplyr::lead(play_type) != "no_play")), 1, 0))
-  pbp_data$WPA_halfend_to_ind <- with(pbp_data,
-                                      ifelse(is.na(play_type) |
-                                               (timeout == 1 & play_type == "no_play"), 1, 0))
-  pbp_data$WPA_final_ind <- with(pbp_data, ifelse(stringr::str_detect(dplyr::lead(tolower(desc)),
-                                                                      "(end of game)|(end game)"), 1, 0))
-
-  # Replace the missings with 0 due to how ifelse treats missings
-  pbp_data$WPA_base_nxt_ind[is.na(pbp_data$WPA_base_nxt_ind)] <- 0
-  pbp_data$WPA_change_nxt_ind[is.na(pbp_data$WPA_change_nxt_ind)] <- 0
-  pbp_data$WPA_change_ind[is.na(pbp_data$WPA_change_ind)] <- 0
-  pbp_data$WPA_halfend_to_ind[is.na(pbp_data$WPA_halfend_to_ind)] <- 0
-  pbp_data$WPA_final_ind[is.na(pbp_data$WPA_final_ind)] <- 0
-
-
-  # Assign WPA using these indicator columns:
-  pbp_data$wpa <- with(pbp_data,
-                       ifelse(WPA_final_ind == 1, WPA_final,
-                              ifelse(WPA_halfend_to_ind == 1, WPA_halfend_to,
-                                     ifelse(WPA_change_nxt_ind == 1, WPA_change_nxt,
-                                            ifelse(WPA_base_nxt_ind == 1, WPA_base_nxt,
-                                                   ifelse(WPA_change_ind == 1, WPA_change,
-                                                          WPA_base))))))
-
+      ) %>%
+    dplyr::ungroup()
 
   # Home and Away post:
 
@@ -913,21 +880,11 @@ add_wp_variables <- function(pbp_data) {
 
   # For plays with playtype of End of Game, use the previous play's WP_post columns
   # as the pre and post, since those are already set to be 1 and 0:
-  pbp_data$home_wp <- with(pbp_data,
-                           ifelse(stringr::str_detect(tolower(desc),
-                                                      "(end of game)|(end game)"),
-                                  dplyr::lag(home_wp_post),
-                                  home_wp))
 
   pbp_data$home_wp_post <- with(pbp_data,
                                 ifelse(stringr::str_detect(tolower(desc),
                                                            "(end of game)|(end game)"), dplyr::lag(home_wp_post),
                                        ifelse(dplyr::lag(play_type) == "no_play" & play_type == "no_play", dplyr::lag(home_wp_post),home_wp_post)))
-  pbp_data$away_wp <- with(pbp_data,
-                           ifelse(stringr::str_detect(tolower(desc),
-                                                      "(end of game)|(end game)"),
-                                  dplyr::lag(away_wp_post),
-                                  away_wp))
 
   pbp_data$away_wp_post <- with(pbp_data,
                                 ifelse(stringr::str_detect(tolower(desc),
@@ -937,11 +894,7 @@ add_wp_variables <- function(pbp_data) {
 
 
   # Now drop the unnecessary columns, rename variables back, and return:
-  pbp_data %>% dplyr::select(-c("WPA_base","WPA_base_nxt","WPA_change_nxt","WPA_change",
-                                "WPA_halfend_to", "WPA_final",
-                                "WPA_base_nxt_ind", "WPA_change_nxt_ind",
-                                "WPA_change_ind", "WPA_halfend_to_ind", "WPA_final_ind"
-                                )) %>%
+  pbp_data %>%
     dplyr::group_by(.data$game_id) %>%
     dplyr::mutate(
                   # Generate columns to keep track of cumulative rushing and
