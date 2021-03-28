@@ -98,7 +98,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0.9001</span>
       </span>
     </div>
 
@@ -201,6 +201,18 @@
       <small>Source: <a href='https://github.com/mrcaseb/nflfastR/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="nflfastr-development-version" class="section level1">
+<h1 class="page-header" data-toc-text="development version">
+<a href="#nflfastr-development-version" class="anchor"></a>nflfastR (development version)<small> Unreleased </small>
+</h1>
+<ul>
+<li>All <code>wpa</code> variables are <code>NA</code> on end game line</li>
+<li>All <code>wp</code> variables are 0, 0.5, 1, or <code>NA</code> on end game line</li>
+<li>Fix bug where win prob on PATs assumed a PAT placed at 15 yard line, even in older seasons</li>
+<li>The function <code><a href="../reference/decode_player_ids.html">decode_player_ids()</a></code> now really decodes the new variable <code>fantasy_id</code> (<a href='https://github.com/mrcaseb/nflfastR/issues/229'>#229</a>)</li>
+<li>Fixed a bug that caused slightly differing <code>wp</code> values depending on the first game in the data set (<a href='https://github.com/mrcaseb/nflfastR/issues/183'>#183</a>)</li>
+</ul>
+</div>
     <div id="nflfastr-410" class="section level1">
 <h1 class="page-header" data-toc-text="4.1.0">
 <a href="#nflfastr-410" class="anchor"></a>nflfastR 4.1.0<small> 2021-03-23 </small>
