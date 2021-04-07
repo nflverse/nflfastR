@@ -40,6 +40,7 @@
 #' ))
 #' }
 decode_player_ids <- function(pbp, ..., fast = TRUE) {
+  verbose <- is_verbose(rlang::caller_env())
   if (isFALSE(fast)) {
     if (nrow(pbp) > 1000 && is_sequential()) {
       usethis::ui_info(c(
@@ -48,7 +49,7 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
         "Will go on sequentially..."
       ))
     }
-    user_message("Start decoding player ids, please wait...", "todo")
+    if (verbose) user_message("Start decoding player ids, please wait...", "todo")
 
     ret <- pbp %>%
       dplyr::mutate_at(
@@ -62,8 +63,6 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
     if (!is_installed("gsisdecoder")) {
       usethis::ui_stop("Package {usethis::ui_value('gsisdecoder')} required for fast decoding. Please install it with {usethis::ui_code('install.packages(\"gsisdecoder\")')}.")
     }
-    # No need to inform that decoding starts since it's very fast
-    # usethis::ui_todo("Start decoding player ids...")
 
     ret <- pbp %>%
       dplyr::mutate_at(
@@ -75,7 +74,7 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
       )
   }
 
-  message_completed("Decoding of player ids completed", ...)
+  if (verbose) message_completed("Decoding of player ids completed", ...)
 
   return(ret)
 }

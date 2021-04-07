@@ -427,7 +427,9 @@ fast_scraper <- function(game_ids,
 
   if (!is.vector(game_ids)) usethis::ui_stop("Param {usethis::ui_code('game_ids')} is not a valid vector!")
 
-  if (length(game_ids) > 1 && is_sequential()) {
+  verbose <- is_verbose(rlang::caller_env())
+
+  if (length(game_ids) > 1 && is_sequential() && verbose) {
     usethis::ui_info(
       c(
         "It is recommended to use parallel processing when trying to load multiple games.",
@@ -437,35 +439,39 @@ fast_scraper <- function(game_ids,
     )
   }
 
-  suppressWarnings({
-    p <- progressr::progressor(along = game_ids)
-    pbp <- furrr::future_map_dfr(game_ids, function(x, p, ...) {
-      if (substr(x, 1, 4) < 2001) {
-        plays <- get_pbp_gc(x, ...)
-      } else {
-        plays <- get_pbp_nfl(x, ...)
-      }
-      p(sprintf("ID=%s", as.character(x)))
-      return(plays)
-    }, p, ...)
+  run <- quote({
+    suppressWarnings({
+      p <- progressr::progressor(along = game_ids)
+      pbp <- furrr::future_map_dfr(game_ids, function(x, p, ...) {
+        if (substr(x, 1, 4) < 2001) {
+          plays <- get_pbp_gc(x, ...)
+        } else {
+          plays <- get_pbp_nfl(x, ...)
+        }
+        p(sprintf("ID=%s", as.character(x)))
+        return(plays)
+      }, p, ...)
 
-    if (length(pbp) != 0) {
-      user_message("Download finished. Adding variables...", "done")
-      pbp <- pbp %>%
-        add_game_data() %>%
-        add_nflscrapr_mutations() %>%
-        add_ep() %>%
-        add_air_yac_ep() %>%
-        add_wp() %>%
-        add_air_yac_wp() %>%
-        add_cp() %>%
-        add_drive_results() %>%
-        add_series_data() %>%
-        select_variables()
-    }
+      if (length(pbp) != 0) {
+        user_message("Download finished. Adding variables...", "done")
+        pbp <- pbp %>%
+          add_game_data() %>%
+          add_nflscrapr_mutations() %>%
+          add_ep() %>%
+          add_air_yac_ep() %>%
+          add_wp() %>%
+          add_air_yac_wp() %>%
+          add_cp() %>%
+          add_drive_results() %>%
+          add_series_data() %>%
+          select_variables()
+      }
+    })
   })
 
-  if (!in_builder) {
+  if (verbose) eval(run) else suppressMessages(eval(run))
+
+  if (!in_builder && verbose) {
     str <- paste0(my_time(), " | Procedure completed.")
     usethis::ui_done("{usethis::ui_field(str)}")
   }

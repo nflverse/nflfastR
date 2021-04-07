@@ -19,11 +19,12 @@
 #' }
 #' @export
 add_xpass <- function(pbp, ...) {
+  verbose <- is_verbose(rlang::caller_env())
   pbp <- pbp %>% dplyr::select(-tidyselect::any_of(c("xpass", "pass_oe")))
   plays <- prepare_xpass_data(pbp)
 
   if (!nrow(plays %>% dplyr::filter(.data$valid_play == 1)) == 0) {
-    user_message("Computing xpass...", "todo")
+    if (verbose) user_message("Computing xpass...", "todo")
 
     pred <- stats::predict(
       fastrmodels::xpass_model,
@@ -45,14 +46,14 @@ add_xpass <- function(pbp, ...) {
       ) %>%
       dplyr::select(-"valid_play")
 
-    message_completed("added xpass and pass_oe", ...)
+    if (verbose) message_completed("added xpass and pass_oe", ...)
   } else {
     pbp <- pbp %>%
       dplyr::mutate(
         xpass = NA_real_,
         pass_oe = NA_real_
       )
-    user_message("No non-NA values for xpass calculation detected. xpass and pass_oe set to NA", "info")
+    if (verbose) user_message("No non-NA values for xpass calculation detected. xpass and pass_oe set to NA", "info")
   }
   return(pbp)
 }

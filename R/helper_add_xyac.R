@@ -18,8 +18,9 @@
 #' }
 #' @export
 add_xyac <- function(pbp, ...) {
+  verbose <- is_verbose(rlang::caller_env())
   if (nrow(pbp) == 0) {
-    user_message("Nothing to do. Return passed data frame.", "info")
+    if (verbose) user_message("Nothing to do. Return passed data frame.", "info")
   } else {
     # testing only
     # pbp <- g
@@ -35,7 +36,7 @@ add_xyac <- function(pbp, ...) {
       dplyr::filter(.data$valid_pass == 1, .data$distance_to_goal != 0)
 
     if (!nrow(passes) == 0) {
-      user_message("Computing xyac...", "todo")
+      if (verbose) user_message("Computing xyac...", "todo")
       join_data <- passes %>%
         dplyr::select(
           "index", "distance_to_goal", "season", "week", "home_team", "posteam", "roof",
@@ -142,7 +143,7 @@ add_xyac <- function(pbp, ...) {
         dplyr::left_join(xyac_vars, by = "index") %>%
         dplyr::select(-.data$index)
 
-      message_completed("added xyac variables", ...)
+      if (verbose) message_completed("added xyac variables", ...)
     } else { # means no valid pass plays in the pbp
       pbp <- pbp %>%
         dplyr::mutate(
@@ -153,7 +154,7 @@ add_xyac <- function(pbp, ...) {
           xyac_fd = NA_real_
         ) %>%
         dplyr::select(-.data$index)
-      user_message("No non-NA values for xyac calculation detected. xyac variables set to NA", "info")
+      if (verbose) user_message("No non-NA values for xyac calculation detected. xyac variables set to NA", "info")
     }
   }
 

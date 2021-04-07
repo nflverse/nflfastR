@@ -21,6 +21,8 @@ user_message <- function(x, type) {
   }
 }
 
+is_verbose <- function(.env) rlang::is_reference(topenv(.env), rlang::global_env())
+
 my_time <- function() strftime(Sys.time(), format = "%H:%M:%S")
 
 # custom mode function from https://stackoverflow.com/questions/2547402/is-there-a-built-in-function-for-finding-the-mode/8189441

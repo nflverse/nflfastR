@@ -47,11 +47,12 @@
 #' }
 #' @export
 clean_pbp <- function(pbp, ...) {
+  verbose <- is_verbose(rlang::caller_env())
   if (nrow(pbp) == 0) {
-    user_message("Nothing to clean. Return passed data frame.", "info")
+    if (verbose) user_message("Nothing to clean. Return passed data frame.", "info")
     r <- pbp
   } else{
-    user_message("Cleaning up play-by-play...", "todo")
+    if (verbose) user_message("Cleaning up play-by-play...", "todo")
 
     # drop existing values of clean_pbp
     pbp <- pbp %>% dplyr::select(-tidyselect::any_of(drop.cols))
@@ -261,7 +262,7 @@ clean_pbp <- function(pbp, ...) {
 
   }
 
-  message_completed("Cleaning completed", ...)
+  if (verbose) message_completed("Cleaning completed", ...)
 
   return(r)
 }
@@ -322,9 +323,9 @@ team_name_fn <- function(var) {
 #' like passing yards on plays with fumbles
 #' @export
 add_qb_epa <- function(pbp, ...) {
-
+  verbose <- is_verbose(rlang::caller_env())
   if (nrow(pbp) == 0) {
-    user_message("Nothing to do. Return passed data frame.", "info")
+    if (verbose) user_message("Nothing to do. Return passed data frame.", "info")
   } else {
     # drop existing values of clean_pbp
     pbp <- pbp %>% dplyr::select(-tidyselect::any_of("qb_epa"))
@@ -387,7 +388,7 @@ add_qb_epa <- function(pbp, ...) {
     }
   }
 
-  message_completed("added qb_epa", ...)
+  if (verbose) message_completed("added qb_epa", ...)
 
   return(pbp)
 }

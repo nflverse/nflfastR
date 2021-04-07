@@ -86,28 +86,35 @@ build_nflfastR_pbp <- function(game_ids,
     usethis::ui_stop("Package {usethis::ui_value('gsisdecoder')} required for decoding. Please install it with {usethis::ui_code('install.packages(\"gsisdecoder\")')}.")
   }
 
-  if (isTRUE(rules)) rule_header("Build nflfastR Play-by-Play Data")
-
   game_count <- ifelse(is.vector(game_ids), length(game_ids), nrow(game_ids))
   builder <- TRUE
+  verbose <- is_verbose(rlang::caller_env())
 
-  if (game_count > 1) {
-    usethis::ui_todo("{my_time()} | Start download of {game_count} games...")
-  } else {
-    usethis::ui_todo("{my_time()} | Start download of {game_count} game...")
+  if (verbose){
+    if (isTRUE(rules)) rule_header("Build nflfastR Play-by-Play Data")
+
+    if (game_count > 1) {
+      usethis::ui_todo("{my_time()} | Start download of {game_count} games...")
+    } else {
+      usethis::ui_todo("{my_time()} | Start download of {game_count} game...")
+    }
   }
 
-  ret <- fast_scraper(game_ids = game_ids, source = source, pp = pp, ..., in_builder = builder) %>%
-    clean_pbp(in_builder = builder) %>%
-    add_qb_epa(in_builder = builder) %>%
-    add_xyac(in_builder = builder) %>%
-    add_xpass(in_builder = builder)
+  run <- quote({
+    ret <- fast_scraper(game_ids = game_ids, source = source, pp = pp, ..., in_builder = builder) %>%
+      clean_pbp(in_builder = builder) %>%
+      add_qb_epa(in_builder = builder) %>%
+      add_xyac(in_builder = builder) %>%
+      add_xpass(in_builder = builder)
 
-  if (isTRUE(decode)) {
-    ret <- decode_player_ids(ret, in_builder = builder)
-  }
+    if (isTRUE(decode)) {
+      ret <- decode_player_ids(ret, in_builder = builder)
+    }
+  })
 
-  if (isTRUE(rules)) rule_footer("DONE")
+  if (verbose) eval(run) else suppressMessages(eval(run))
+
+  if (isTRUE(rules) && verbose) rule_footer("DONE")
 
   return(ret)
 }
