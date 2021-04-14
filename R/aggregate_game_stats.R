@@ -26,7 +26,9 @@
 #' \item{passing_yards}{Yards gained on pass plays.}
 #' \item{passing_tds}{The number of passing touchdowns.}
 #' \item{interceptions}{The number of interceptions thrown.}
-#' \item{sacks}{Number of times sacked.}
+#' \item{sacks}{The Number of times sacked.}
+#' \item{sack_yards}{Yards lost on sack plays.}
+#' \item{sack_fumbles}{The number of sacks with a fumble.}
 #' \item{sack_fumbles_lost}{The number of sacks with a lost fumble.}
 #' \item{passing_air_yards}{Passing air yards (includes incomplete passes).}
 #' \item{passing_yards_after_catch}{Yards after the catch gained on plays in
@@ -47,6 +49,7 @@
 #' \item{rushing_tds}{The number of rushing touchdowns (incl. scrambles).
 #' Also includes touchdowns after obtaining a lateral on a play that started
 #' with a rushing attempt.}
+#' \item{rushing_fumbles}{The number of rushes with a fumble.}
 #' \item{rushing_fumbles_lost}{The number of rushes with a lost fumble.}
 #' \item{rushing_first_downs}{First downs on rush attempts (incl. scrambles).}
 #' \item{rushing_epa}{Expected points added on rush attempts (incl. scrambles and kneel downs).}
@@ -63,7 +66,8 @@
 #' \item{receiving_yards_after_catch}{Yards after the catch gained on plays in
 #' which player was receiver (this is an unofficial stat and may differ slightly
 #' between different sources).}
-#' \item{receiving_fumbles_lost}{The number of fumbles after a pass reception.}
+#' \item{receiving_fumbles}{The number of fumbles after a pass reception.}
+#' \item{receiving_fumbles_lost}{The number of fumbles lost after a pass reception.}
 #' \item{receiving_2pt_conversions}{Two-point conversion receptions}
 #' \item{fantasy_points}{Standard fantasy points.}
 #' \item{fantasy_points_ppr}{PPR fantasy points.}
@@ -154,9 +158,11 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       interceptions = sum(.data$interception),
       attempts = sum(.data$complete_pass == 1 | .data$incomplete_pass == 1 | .data$interception == 1),
       completions = sum(.data$complete_pass == 1),
-      sack_fumbles_lost = sum(.data$fumble_lost == 1 & .data$complete_pass == 0),
+      sack_fumbles = sum(.data$fumble == 1 & .data$fumbled_1_player_id == .data$passer_player_id),
+      sack_fumbles_lost = sum(.data$fumble_lost == 1 & .data$fumbled_1_player_id == .data$passer_player_id),
       passing_air_yards = sum(.data$air_yards, na.rm = TRUE),
       sacks = sum(.data$sack),
+      sack_yards = -1*sum(.data$yards_gained * .data$sack),
       passing_first_downs = sum(.data$first_down_pass),
       passing_epa = sum(.data$qb_epa, na.rm = TRUE)
     ) %>%
@@ -202,7 +208,8 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       yards = sum(.data$rushing_yards, na.rm = TRUE),
       tds = sum(.data$td_player_id == .data$rusher_player_id, na.rm = TRUE),
       carries = dplyr::n(),
-      rushing_fumbles_lost = sum(.data$fumble_lost == 1 & is.na(.data$lateral_rusher_player_id)),
+      rushing_fumbles = sum(.data$fumble == 1 & .data$fumbled_1_player_id == .data$rusher_player_id & is.na(.data$lateral_rusher_player_id)),
+      rushing_fumbles_lost = sum(.data$fumble_lost == 1 & .data$fumbled_1_player_id == .data$rusher_player_id & is.na(.data$lateral_rusher_player_id)),
       rushing_first_downs = sum(.data$first_down_rush & is.na(.data$lateral_rusher_player_id)),
       rushing_epa = sum(.data$epa, na.rm = TRUE)
     ) %>%
@@ -217,6 +224,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       lateral_fds = sum(.data$first_down_rush, na.rm = TRUE),
       lateral_tds = sum(.data$td_player_id == .data$lateral_rusher_player_id, na.rm = TRUE),
       lateral_att = dplyr::n(),
+      lateral_fumbles =  sum(.data$fumble, na.rm = TRUE),
       lateral_fumbles_lost = sum(.data$fumble_lost, na.rm = TRUE)
     ) %>%
     dplyr::ungroup() %>%
@@ -236,6 +244,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     dplyr::mutate(
       lateral_yards = dplyr::if_else(is.na(.data$lateral_yards), 0, .data$lateral_yards),
       lateral_tds = dplyr::if_else(is.na(.data$lateral_tds), 0L, .data$lateral_tds),
+      lateral_fumbles = dplyr::if_else(is.na(.data$lateral_fumbles), 0, .data$lateral_fumbles),
       lateral_fumbles_lost = dplyr::if_else(is.na(.data$lateral_fumbles_lost), 0, .data$lateral_fumbles_lost),
       lateral_fds = dplyr::if_else(is.na(.data$lateral_fds), 0, .data$lateral_fds)
     ) %>%
@@ -243,12 +252,13 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       rushing_yards = .data$yards + .data$lateral_yards,
       rushing_tds = .data$tds + .data$lateral_tds,
       rushing_first_downs = .data$rushing_first_downs + .data$lateral_fds,
+      rushing_fumbles = .data$rushing_fumbles + .data$lateral_fumbles,
       rushing_fumbles_lost = .data$rushing_fumbles_lost + .data$lateral_fumbles_lost
       ) %>%
     dplyr::rename(player_id = .data$rusher_player_id) %>%
     dplyr::select("player_id", "week", "season", "name_rush", "team_rush",
-                  "rushing_yards", "carries", "rushing_tds", "rushing_fumbles_lost",
-                  "rushing_first_downs", "rushing_epa") %>%
+                  "rushing_yards", "carries", "rushing_tds", "rushing_fumbles",
+                  "rushing_fumbles_lost", "rushing_first_downs", "rushing_epa") %>%
     dplyr::ungroup()
 
   rush_two_points <- two_points %>%
@@ -289,7 +299,8 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       receptions = sum(.data$complete_pass == 1),
       targets = dplyr::n(),
       tds = sum(.data$td_player_id == .data$receiver_player_id, na.rm = TRUE),
-      receiving_fumbles_lost = sum(.data$fumble_lost == 1 & is.na(.data$lateral_receiver_player_id)),
+      receiving_fumbles = sum(.data$fumble == 1 & .data$fumbled_1_player_id == .data$receiver_player_id & is.na(.data$lateral_receiver_player_id)),
+      receiving_fumbles_lost = sum(.data$fumble_lost == 1 & .data$fumbled_1_player_id == .data$receiver_player_id & is.na(.data$lateral_receiver_player_id)),
       receiving_air_yards = sum(.data$air_yards, na.rm = TRUE),
       receiving_yards_after_catch = sum(.data$yards_after_catch, na.rm = TRUE),
       receiving_first_downs = sum(.data$first_down_pass & is.na(.data$lateral_receiver_player_id)),
@@ -306,6 +317,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       lateral_tds = sum(.data$td_player_id == .data$lateral_receiver_player_id, na.rm = TRUE),
       lateral_att = dplyr::n(),
       lateral_fds = sum(.data$first_down_pass, na.rm = T),
+      lateral_fumbles = sum(.data$fumble, na.rm = T),
       lateral_fumbles_lost = sum(.data$fumble_lost, na.rm = T)
     ) %>%
     dplyr::ungroup() %>%
@@ -325,6 +337,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     dplyr::mutate(
       lateral_yards = dplyr::if_else(is.na(.data$lateral_yards), 0, .data$lateral_yards),
       lateral_tds = dplyr::if_else(is.na(.data$lateral_tds), 0L, .data$lateral_tds),
+      lateral_fumbles = dplyr::if_else(is.na(.data$lateral_fumbles), 0, .data$lateral_fumbles),
       lateral_fumbles_lost = dplyr::if_else(is.na(.data$lateral_fumbles_lost), 0, .data$lateral_fumbles_lost),
       lateral_fds = dplyr::if_else(is.na(.data$lateral_fds), 0, .data$lateral_fds)
     ) %>%
@@ -333,13 +346,14 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       receiving_tds = .data$tds + .data$lateral_tds,
       receiving_yards_after_catch = .data$receiving_yards_after_catch + .data$lateral_yards,
       receiving_first_downs = .data$receiving_first_downs + .data$lateral_fds,
+      receiving_fumbles = .data$receiving_fumbles + .data$lateral_fumbles,
       receiving_fumbles_lost = .data$receiving_fumbles_lost + .data$lateral_fumbles_lost
       ) %>%
     dplyr::rename(player_id = .data$receiver_player_id) %>%
     dplyr::select("player_id", "week", "season", "name_receiver", "team_receiver",
                   "receiving_yards", "receiving_air_yards", "receiving_yards_after_catch",
-                  "receptions", "targets", "receiving_tds", "receiving_fumbles_lost",
-                  "receiving_first_downs", "receiving_epa")
+                  "receptions", "targets", "receiving_tds", "receiving_fumbles",
+                  "receiving_fumbles_lost", "receiving_first_downs", "receiving_epa")
 
   rec_two_points <- two_points %>%
     dplyr::filter(.data$pass_attempt == 1) %>%
@@ -407,16 +421,16 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
 
       # passing stats
       "completions", "attempts", "passing_yards", "passing_tds", "interceptions",
-      "sacks", "sack_fumbles_lost", "passing_air_yards", "passing_yards_after_catch",
+      "sacks", "sack_yards", "sack_fumbles", "sack_fumbles_lost", "passing_air_yards", "passing_yards_after_catch",
       "passing_first_downs", "passing_epa", "passing_2pt_conversions", "dakota",
 
       # rushing stats
-      "carries", "rushing_yards", "rushing_tds", "rushing_fumbles_lost",
+      "carries", "rushing_yards", "rushing_tds", "rushing_fumbles", "rushing_fumbles_lost",
       "rushing_first_downs", "rushing_epa", "rushing_2pt_conversions",
 
       # receiving stats
-      "receptions", "targets", "receiving_yards", "receiving_tds", "receiving_fumbles_lost",
-      "receiving_air_yards", "receiving_yards_after_catch",
+      "receptions", "targets", "receiving_yards", "receiving_tds", "receiving_fumbles",
+      "receiving_fumbles_lost", "receiving_air_yards", "receiving_yards_after_catch",
       "receiving_first_downs", "receiving_epa", "receiving_2pt_conversions",
 
       # special teams
@@ -462,6 +476,8 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         passing_tds = sum(.data$passing_tds),
         interceptions = sum(.data$interceptions),
         sacks = sum(.data$sacks),
+        sack_yards = sum(.data$sack_yards),
+        sack_fumbles = sum(.data$sack_fumbles),
         sack_fumbles_lost = sum(.data$sack_fumbles_lost),
         passing_air_yards = sum(.data$passing_air_yards),
         passing_yards_after_catch = sum(.data$passing_yards_after_catch),
@@ -473,6 +489,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         carries = sum(.data$carries),
         rushing_yards = sum(.data$rushing_yards),
         rushing_tds = sum(.data$rushing_tds),
+        rushing_fumbles = sum(.data$rushing_fumbles),
         rushing_fumbles_lost = sum(.data$rushing_fumbles_lost),
         rushing_first_downs = sum(.data$rushing_first_downs),
         rushing_epa = dplyr::if_else(all(is.na(.data$rushing_epa)), NA_real_, sum(.data$rushing_epa, na.rm = TRUE)),
@@ -483,6 +500,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         targets = sum(.data$targets),
         receiving_yards = sum(.data$receiving_yards),
         receiving_tds = sum(.data$receiving_tds),
+        receiving_fumbles = sum(.data$receiving_fumbles),
         receiving_fumbles_lost = sum(.data$receiving_fumbles_lost),
         receiving_air_yards = sum(.data$receiving_air_yards),
         receiving_yards_after_catch = sum(.data$receiving_yards_after_catch),
