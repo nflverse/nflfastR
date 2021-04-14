@@ -29,7 +29,7 @@ ids <- nflfastR::fast_scraper_schedules(2017:2019) %>%
 pbp <- nflfastR::build_nflfastR_pbp(ids)
 ```
 
-In most cases, however, it is not necessary to use this function for individual games, because nflfastR provides both a [data repository](https://github.com/guga31bb/nflfastR-data) and two main play-by-play functions: `load_pbp()` and `update_db()`. We cover `load_pbp()` below, and please see [Example 8: Using the built-in database function] for how to work with the database function `update_db()`.
+In most cases, however, it is not necessary to use this function for individual games, because nflfastR provides both a [data repository](https://github.com/nflverse/nflfastR-data) and two main play-by-play functions: `load_pbp()` and `update_db()`. We cover `load_pbp()` below, and please see [Example 8: Using the built-in database function] for how to work with the database function `update_db()`.
 
 The easiest way to access the data in the data repository is the new function `load_pbp()`. It can load multiple seasons directly into memory and supports the efficient data format [`qs`](https://github.com/traversc/qs). Loading all play-by-play data of the 2018-2020 seasons is as easy as 
 
@@ -72,7 +72,7 @@ nflfastR::fast_scraper("2019_10_SEA_SF") %>%
 
 # Example 2: scrape a batch of games very quickly with fast_scraper
 
-This is a demonstration of `nflfastR`'s capabilities. While `nflfastR` can scrape a batch of games very quickly, **please be respectful of Github's servers and use the [data repository](https://github.com/guga31bb/nflfastR-data) which hosts all the scraped and cleaned data** whenever possible. The only reason to ever actually use the scraper is if it's in the middle of the season and we haven't updated the repository with recent games (but it is automatically updated overnight every day).
+This is a demonstration of `nflfastR`'s capabilities. While `nflfastR` can scrape a batch of games very quickly, **please be respectful of Github's servers and use the [data repository](https://github.com/nflverse/nflfastR-data) which hosts all the scraped and cleaned data** whenever possible. The only reason to ever actually use the scraper is if it's in the middle of the season and we haven't updated the repository with recent games (but it is automatically updated overnight every day).
 
 ``` {r ex2-bigscrape, warning = FALSE, message = FALSE}
 # get list of some games from 2019
@@ -88,7 +88,7 @@ tictoc::toc()
 
 Let's look at CPOE leaders from the 2009 regular season.
 
-As discussed above, `nflfastR` has a data repository for old seasons, so there's no need to actually scrape them. Let's use that here with the convenience function `load_pbp()` which fetches data from the repository (for non-R users, .csv and .parquet are also available in the [data repository](https://github.com/guga31bb/nflfastR-data)).
+As discussed above, `nflfastR` has a data repository for old seasons, so there's no need to actually scrape them. Let's use that here with the convenience function `load_pbp()` which fetches data from the repository (for non-R users, .csv and .parquet are also available in the [data repository](https://github.com/nflverse/nflfastR-data)).
 
 ``` {r ex3-cpoe, warning = FALSE, message = FALSE}
 tictoc::tic("loading all games from 2009")

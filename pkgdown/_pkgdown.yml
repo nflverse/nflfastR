@@ -9,7 +9,7 @@ template:
       index_name: nflfastr
   opengraph:
     image:
-      src: https://raw.githubusercontent.com/mrcaseb/nflfastR/master/man/figures/card.png
+      src: https://raw.githubusercontent.com/nflverse/nflfastR/master/man/figures/card.png
     twitter:
       site: "@nflfastR"
       card: summary_large_image
@@ -53,7 +53,7 @@ navbar:
       href: http://twitter.com/nflfastR
     data:
       icon: "fas fa-database fa-lg"
-      href: https://github.com/guga31bb/nflfastR-data
+      href: https://github.com/nflverse/nflfastR-data
     games:
       icon: "fas fa-football-ball fa-lg"
       href: http://nflgamedata.com/

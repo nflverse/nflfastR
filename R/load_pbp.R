@@ -58,11 +58,11 @@ load_pbp <- function(seasons, ..., qs = FALSE) {
 # Helper function that is called by load_pbp above
 single_season <- function(season, p, dbConnection = NULL, tablename = NULL, qs = FALSE) {
   if (isTRUE(qs)) {
-    .url <- glue::glue("https://github.com/guga31bb/nflfastR-data/blob/master/data/play_by_play_{season}.qs?raw=true")
+    .url <- glue::glue("https://github.com/nflverse/nflfastR-data/blob/master/data/play_by_play_{season}.qs?raw=true")
     pbp <- qs_from_url(.url)
   }
   if (isFALSE(qs)) {
-    .url <- glue::glue("https://github.com/guga31bb/nflfastR-data/blob/master/data/play_by_play_{season}.rds?raw=true")
+    .url <- glue::glue("https://github.com/nflverse/nflfastR-data/blob/master/data/play_by_play_{season}.rds?raw=true")
     con <- url(.url)
     pbp <- readRDS(con)
     close(con)

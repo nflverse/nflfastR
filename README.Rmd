@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version-last-release/nflfastR)](https://CRAN.R-project.org/package=nflfastR)
 [![CRAN downloads](http://cranlogs.r-pkg.org/badges/grand-total/nflfastR)](https://CRAN.R-project.org/package=nflfastR)
-[![R build status](https://github.com/mrcaseb/nflfastR/workflows/R-CMD-check/badge.svg)](https://github.com/mrcaseb/nflfastR/actions)
+[![R build status](https://github.com/nflverse/nflfastR/workflows/R-CMD-check/badge.svg)](https://github.com/nflverse/nflfastR/actions)
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![Support Server](https://img.shields.io/discord/591914197219016707.svg?color=7289da&label=Support&logo=discord&style=flat-square)](https://discord.com/invite/5Er2FBnnQa)
 [![Twitter Follow](https://img.shields.io/twitter/follow/nflfastR.svg?style=social)](https://twitter.com/nflfastR)
@@ -33,7 +33,7 @@ knitr::opts_chunk$set(
 * Includes completion probability (`cp`), completion percentage over expected (`cpoe`), and expected yards after the catch (`xyac_epa` and `xyac_mean_yardage`) in play-by-play going back to 2006
 * Includes drive information, including drive starting position and drive result
 * Includes series information, including series number and series success
-* Hosts [a repository of play-by-play data going back to 1999](https://github.com/guga31bb/nflfastR-data) for very quick access
+* Hosts [a repository of play-by-play data going back to 1999](https://github.com/nflverse/nflfastR-data) for very quick access
 * Features models for Expected Points, Win Probability, Completion Probability, and Yards After the Catch (see section below)
 * Includes a function `update_db()` that creates and updates a database
 
@@ -48,11 +48,11 @@ The easiest way to get nflfastR is to install it from [CRAN](https://cran.r-proj
 install.packages("nflfastR")
 ```
 
-To get a bug fix or to use a feature from the development version, you can install the development version of nflfastR from [GitHub](https://github.com/mrcaseb/nflfastR/) with:
+To get a bug fix or to use a feature from the development version, you can install the development version of nflfastR from [GitHub](https://github.com/nflverse/nflfastR/) with:
 
 ``` {r eval = FALSE}
 if (!require("remotes")) install.packages("remotes")
-remotes::install_github("mrcaseb/nflfastR")
+remotes::install_github("nflverse/nflfastR")
 ```
 
 ## Usage
@@ -63,7 +63,7 @@ You can find column names and descriptions in the **[Field Descriptions](https:/
 
 ## Data repository
 
-Even though `nflfastR` is very fast, **for historical games we recommend downloading the data from [here](https://github.com/guga31bb/nflfastR-data)**. These data sets include play-by-play data of complete seasons going back to 1999 and we will update them in 2020 once the season starts. The files contain both regular season and postseason data, and one can use game_type or week to figure out which games occurred in the postseason. Data are available as .csv.gz, .parquet, or .rds.
+Even though `nflfastR` is very fast, **for historical games we recommend downloading the data from [here](https://github.com/nflverse/nflfastR-data)**. These data sets include play-by-play data of complete seasons going back to 1999 and we will update them in 2020 once the season starts. The files contain both regular season and postseason data, and one can use game_type or week to figure out which games occurred in the postseason. Data are available as .csv.gz, .parquet, or .rds.
 
 ## nflfastR models
 
@@ -80,7 +80,7 @@ Here is a visualization of the Expected Points model by down and yardline.
 library(tidyverse)
 
 df <- map_df(2014:2019, ~{
-  readRDS(url(glue::glue('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_{.x}.rds'))) %>%
+  readRDS(url(glue::glue('https://raw.githubusercontent.com/nflverse/nflfastR-data/master/data/play_by_play_{.x}.rds'))) %>%
       filter(!is.na(posteam) & !is.na(ep), !is.na(down)) %>%
       select(ep, down, yardline_100, air_yards, pass_location, cp)
 })
@@ -107,7 +107,7 @@ df %>%
 ```
 
 ```{r echo=FALSE, fig.align='center', fig.cap='', out.width='100%'}
-knitr::include_graphics('https://github.com/mrcaseb/nflfastR/raw/master/man/figures/readme-epa-model-1.png')
+knitr::include_graphics('https://github.com/nflverse/nflfastR/raw/master/man/figures/readme-epa-model-1.png')
 ```
 
 Here is a visualization of the Completion Probability model by air yards and pass direction.
@@ -142,7 +142,7 @@ df %>%
 ```
 
 ```{r echo=FALSE, fig.align='center', fig.cap='', out.width='100%'}
-knitr::include_graphics('https://github.com/mrcaseb/nflfastR/raw/master/man/figures/readme-cp-model-1.png')
+knitr::include_graphics('https://github.com/nflverse/nflfastR/raw/master/man/figures/readme-cp-model-1.png')
 ```
 
 `nflfastR` includes two win probability models: one with and one without incorporating the pre-game spread.

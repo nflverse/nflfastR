@@ -273,7 +273,7 @@ Looking at the figure, the Chiefs will never have playoff success until they est
 
 ## Loading multiple seasons
 
-Because all the data is stored in the data repository, it is very easy to use data from multiple seasons. [The repository page](https://github.com/guga31bb/nflfastR-data) has instructions for loading multiple seasons:
+Because all the data is stored in the data repository, it is very easy to use data from multiple seasons. [The repository page](https://github.com/nflverse/nflfastR-data) has instructions for loading multiple seasons:
 
 ``` {r}
 seasons <- 2015:2019
