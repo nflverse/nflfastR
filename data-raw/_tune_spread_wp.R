@@ -7,7 +7,7 @@ set.seed(2013)
 
 model_data <-
   # readRDS('data-raw/cal_data.rds') %>%
-  readRDS(url('https://github.com/guga31bb/nflfastR-data/blob/master/models/cal_data.rds?raw=true')) %>%
+  readRDS(url('https://github.com/nflverse/nflfastR-data/blob/master/models/cal_data.rds?raw=true')) %>%
   filter(Winner != "TIE") %>%
   make_model_mutations() %>%
   prepare_wp_data() %>%
