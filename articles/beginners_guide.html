@@ -21,7 +21,7 @@
 <link href="../docsearch.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="A beginner's guide to nflfastR">
 <meta property="og:description" content="nflfastR">
-<meta property="og:image" content="https://raw.githubusercontent.com/mrcaseb/nflfastR/master/man/figures/card.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/nflverse/nflfastR/master/man/figures/card.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@nflfastR">
 <meta name="twitter:site" content="@nflfastR">
@@ -49,7 +49,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0.9002</span>
       </span>
     </div>
 
@@ -94,7 +94,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/guga31bb/nflfastR-data">
+  <a href="https://github.com/nflverse/nflfastR-data">
     <span class="fas fa-database fa-lg"></span>
      
   </a>
@@ -124,7 +124,7 @@
   </a>
 </li>
 <li>
-  <a href="https://github.com/mrcaseb/nflfastR/">
+  <a href="https://github.com/nflverse/nflfastR/">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -152,7 +152,7 @@
                         <h4 class="author">Ben Baldwin</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/mrcaseb/nflfastR/blob/master/vignettes/beginners_guide.Rmd"><code>vignettes/beginners_guide.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/nflverse/nflfastR/blob/master/vignettes/beginners_guide.Rmd"><code>vignettes/beginners_guide.Rmd</code></a></small>
       <div class="hidden name"><code>beginners_guide.Rmd</code></div>
 
     </div>
@@ -212,7 +212,7 @@
 <p><code>str</code> displays the <strong>str</strong>ucture of the dataframe:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">data</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span>
-<span class="co">#&gt; tibble [48,034 × 10] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt; tibble[,10] [48,034 × 10] (S3: tbl_df/tbl/data.frame)</span>
 <span class="co">#&gt;  $ play_id     : num [1:48034] 1 36 51 79 100 121 148 185 214 239 ...</span>
 <span class="co">#&gt;  $ game_id     : chr [1:48034] "2019_01_ATL_MIN" "2019_01_ATL_MIN" "2019_01_ATL_MIN" "2019_01_ATL_MIN" ...</span>
 <span class="co">#&gt;  $ old_game_id : chr [1:48034] "2019090804" "2019090804" "2019090804" "2019090804" ...</span>
@@ -846,7 +846,7 @@
 <div id="loading-multiple-seasons" class="section level2">
 <h2 class="hasAnchor">
 <a href="#loading-multiple-seasons" class="anchor"></a>Loading multiple seasons</h2>
-<p>Because all the data is stored in the data repository, it is very easy to use data from multiple seasons. <a href="https://github.com/guga31bb/nflfastR-data">The repository page</a> has instructions for loading multiple seasons:</p>
+<p>Because all the data is stored in the data repository, it is very easy to use data from multiple seasons. <a href="https://github.com/nflverse/nflfastR-data">The repository page</a> has instructions for loading multiple seasons:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">seasons</span> <span class="op">&lt;-</span> <span class="fl">2015</span><span class="op">:</span><span class="fl">2019</span>
 <span class="va">pbp</span> <span class="op">&lt;-</span> <span class="fu">map_df</span><span class="op">(</span><span class="va">seasons</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
@@ -1011,7 +1011,7 @@
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">games</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span><span class="op">(</span><span class="st">"http://www.habitatring.com/games.rds"</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">games</span><span class="op">)</span>
-<span class="co">#&gt; tibble [5,852 × 41] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt; tibble[,41] [5,852 × 41] (S3: tbl_df/tbl/data.frame)</span>
 <span class="co">#&gt;  $ game_id         : chr [1:5852] "1999_01_MIN_ATL" "1999_01_KC_CHI" "1999_01_PIT_CLE" "1999_01_OAK_GB" ...</span>
 <span class="co">#&gt;  $ season          : int [1:5852] 1999 1999 1999 1999 1999 1999 1999 1999 1999 1999 ...</span>
 <span class="co">#&gt;  $ game_type       : chr [1:5852] "REG" "REG" "REG" "REG" ...</span>

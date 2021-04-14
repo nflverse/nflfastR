@@ -53,7 +53,7 @@
 
 
 <meta property="og:title" content="Changelog" />
-<meta property="og:image" content="https://raw.githubusercontent.com/mrcaseb/nflfastR/master/man/figures/card.png" />
+<meta property="og:image" content="https://raw.githubusercontent.com/nflverse/nflfastR/master/man/figures/card.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:creator" content="@nflfastR" />
 <meta name="twitter:site" content="@nflfastR" />
@@ -98,7 +98,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0.9002</span>
       </span>
     </div>
 
@@ -143,7 +143,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/guga31bb/nflfastR-data">
+  <a href="https://github.com/nflverse/nflfastR-data">
     <span class="fas fa-database fa-lg"></span>
      
   </a>
@@ -173,7 +173,7 @@
   </a>
 </li>
 <li>
-  <a href="https://github.com/mrcaseb/nflfastR/">
+  <a href="https://github.com/nflverse/nflfastR/">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -198,7 +198,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
       <h1 data-toc-skip>Changelog <small></small></h1>
-      <small>Source: <a href='https://github.com/mrcaseb/nflfastR/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
+      <small>Source: <a href='https://github.com/nflverse/nflfastR/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
     <div id="nflfastr-development-version" class="section level1">
@@ -209,8 +209,9 @@
 <li>All <code>wpa</code> variables are <code>NA</code> on end game line</li>
 <li>All <code>wp</code> variables are 0, 0.5, 1, or <code>NA</code> on end game line</li>
 <li>Fix bug where win prob on PATs assumed a PAT placed at 15 yard line, even in older seasons</li>
-<li>The function <code><a href="../reference/decode_player_ids.html">decode_player_ids()</a></code> now really decodes the new variable <code>fantasy_id</code> (<a href='https://github.com/mrcaseb/nflfastR/issues/229'>#229</a>)</li>
-<li>Fixed a bug that caused slightly differing <code>wp</code> values depending on the first game in the data set (<a href='https://github.com/mrcaseb/nflfastR/issues/183'>#183</a>)</li>
+<li>The function <code><a href="../reference/decode_player_ids.html">decode_player_ids()</a></code> now really decodes the new variable <code>fantasy_id</code> (<a href='https://github.com/nflverse/nflfastR/issues/229'>#229</a>)</li>
+<li>Fixed a bug that caused slightly differing <code>wp</code> values depending on the first game in the data set (<a href='https://github.com/nflverse/nflfastR/issues/183'>#183</a>)</li>
+<li>Edited GitHub references to point to nflverse</li>
 </ul>
 </div>
     <div id="nflfastr-410" class="section level1">
@@ -237,7 +238,7 @@
 <li>The function <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> now adds the variable <code>dakota</code>, the <code>epa</code> + <code>cpoe</code> composite, for players with minimum 5 pass attempts.</li>
 <li>Added column <code>home_opening_kickoff</code> to <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code>
 </li>
-<li>Added the variables <code>sack_player_id</code>, <code>sack_player_name</code>, <code>half_sack_1_player_id</code>, <code>half_sack_1_player_name</code>, <code>half_sack_2_player_id</code> and <code>half_sack_2_player_name</code> who identify players that recorded sacks (or half sacks). Also updated the description of the variables <code>qb_hit_1_player_id</code>, <code>qb_hit_1_player_name</code>, <code>qb_hit_2_player_id</code> and <code>qb_hit_2_player_name</code> to make more clear that they did not record a sack. (<a href='https://github.com/mrcaseb/nflfastR/issues/180'>#180</a>)</li>
+<li>Added the variables <code>sack_player_id</code>, <code>sack_player_name</code>, <code>half_sack_1_player_id</code>, <code>half_sack_1_player_name</code>, <code>half_sack_2_player_id</code> and <code>half_sack_2_player_name</code> who identify players that recorded sacks (or half sacks). Also updated the description of the variables <code>qb_hit_1_player_id</code>, <code>qb_hit_1_player_name</code>, <code>qb_hit_2_player_id</code> and <code>qb_hit_2_player_name</code> to make more clear that they did not record a sack. (<a href='https://github.com/nflverse/nflfastR/issues/180'>#180</a>)</li>
 </ul>
 </div>
 </div>
@@ -246,31 +247,31 @@
 <a href="#minor-improvements-and-fixes" class="anchor"></a>Minor improvements and fixes</h2>
 <ul>
 <li>The variable <code>qb_scramble</code> was incomplete for the 2005 season because of missing scramble indicators in the play description. This has been mostly fixed courtesy of charting data from Football Outsiders (with thanks to Aaron Schatz!). Some notes on this fix: Weeks 1-16 are based on charting. Weeks 17-21 are guesses (basically every QB run except those that were a) a loss, b) no gain, or c) on 3/4 down with 1-2 to go). Plays nullified by penalty are not included.</li>
-<li>Change <code>name</code>, <code>id</code>, <code>rusher</code>, and <code>rusher_id</code> to be the player charged with the fumble on aborted snaps when the QB is unable to make a play (i.e. pass, sack, or scramble) (<a href='https://github.com/mrcaseb/nflfastR/issues/162'>#162</a>)</li>
+<li>Change <code>name</code>, <code>id</code>, <code>rusher</code>, and <code>rusher_id</code> to be the player charged with the fumble on aborted snaps when the QB is unable to make a play (i.e. pass, sack, or scramble) (<a href='https://github.com/nflverse/nflfastR/issues/162'>#162</a>)</li>
 <li>The function <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> now standardizes the team name columns <code>tackle_with_assist_*_team</code>
 </li>
-<li>Fix bug in <code>drive</code> that was causing incorrect overtime win probabilities (<a href='https://github.com/mrcaseb/nflfastR/issues/194'>#194</a>)</li>
+<li>Fix bug in <code>drive</code> that was causing incorrect overtime win probabilities (<a href='https://github.com/nflverse/nflfastR/issues/194'>#194</a>)</li>
 <li>Fixed a bug where <code>posteam</code> was not <code>NA</code> on end of quarter 2 (or end of quarter 4 in overtime games) causing wrong values for <code>fixed_drive</code>, <code>fixed_drive_result</code>, <code>series</code> and <code>series_result</code>
 </li>
 <li>Fixed a bug where <code>fixed_drive</code> and <code>series</code> were falsely incrementing on kickoffs recovered by the kicking team or on defensive touchdowns followed by timeouts</li>
 <li>Fixed a bug where <code>fixed_drive</code> and <code>series</code> were falsely incrementing on muffed punts recovered by the punting team for a touchdown</li>
 <li>Fixed a bug where <code><a href="../reference/add_xpass.html">add_xpass()</a></code> crashed when ran with data already including xpass variables.</li>
-<li>Fixed a bug in <code>epa</code> when a safety is scored by the team beginning the play in possession of the ball (<a href='https://github.com/mrcaseb/nflfastR/issues/186'>#186</a>)</li>
-<li>Fix some bugs related to David and Duke Johnson on the Texans in 2020 (<a href='https://github.com/mrcaseb/nflfastR/issues/163'>#163</a>)</li>
-<li>Fix yet another bug related to correctly identifying possession team on kickoffs nullified by penalty (<a href='https://github.com/mrcaseb/nflfastR/issues/199'>#199</a>)</li>
+<li>Fixed a bug in <code>epa</code> when a safety is scored by the team beginning the play in possession of the ball (<a href='https://github.com/nflverse/nflfastR/issues/186'>#186</a>)</li>
+<li>Fix some bugs related to David and Duke Johnson on the Texans in 2020 (<a href='https://github.com/nflverse/nflfastR/issues/163'>#163</a>)</li>
+<li>Fix yet another bug related to correctly identifying possession team on kickoffs nullified by penalty (<a href='https://github.com/nflverse/nflfastR/issues/199'>#199</a>)</li>
 <li>Fixed a bug where <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> forgot to clean player names by using their IDs</li>
-<li>Fixed a bug where special teams touchdowns were missing in the output of <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> (<a href='https://github.com/mrcaseb/nflfastR/issues/203'>#203</a>)</li>
-<li>Fixed for some old Jaguars games where the wrong team was awarded points for safeties and kickoff return TDs (<a href='https://github.com/mrcaseb/nflfastR/issues/209'>#209</a>)</li>
-<li>The function <code><a href="../reference/update_db.html">update_db()</a></code> no more falsely closes a database connection provided by the argument <code>db_connection</code> (<a href='https://github.com/mrcaseb/nflfastR/issues/210'>#210</a>)</li>
-<li>Fixed a bug where <code>yards_gained</code> was missing yardage on plays with laterals. (<a href='https://github.com/mrcaseb/nflfastR/issues/216'>#216</a>)</li>
-<li>Fixed a bug where there were stats wrongly given on a play with penalty (<a href='https://github.com/mrcaseb/nflfastR/issues/218'>#218</a>)</li>
+<li>Fixed a bug where special teams touchdowns were missing in the output of <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> (<a href='https://github.com/nflverse/nflfastR/issues/203'>#203</a>)</li>
+<li>Fixed for some old Jaguars games where the wrong team was awarded points for safeties and kickoff return TDs (<a href='https://github.com/nflverse/nflfastR/issues/209'>#209</a>)</li>
+<li>The function <code><a href="../reference/update_db.html">update_db()</a></code> no more falsely closes a database connection provided by the argument <code>db_connection</code> (<a href='https://github.com/nflverse/nflfastR/issues/210'>#210</a>)</li>
+<li>Fixed a bug where <code>yards_gained</code> was missing yardage on plays with laterals. (<a href='https://github.com/nflverse/nflfastR/issues/216'>#216</a>)</li>
+<li>Fixed a bug where there were stats wrongly given on a play with penalty (<a href='https://github.com/nflverse/nflfastR/issues/218'>#218</a>)</li>
 <li>
-<code>fixed_drive</code> now increments properly on onside kick recoveries (<a href='https://github.com/mrcaseb/nflfastR/issues/215'>#215</a>)</li>
+<code>fixed_drive</code> now increments properly on onside kick recoveries (<a href='https://github.com/nflverse/nflfastR/issues/215'>#215</a>)</li>
 <li>
-<code>fixed_drive</code> no longer counts a muffed kickoff as a one-play drive on its own (<a href='https://github.com/mrcaseb/nflfastR/issues/217'>#217</a>)</li>
+<code>fixed_drive</code> no longer counts a muffed kickoff as a one-play drive on its own (<a href='https://github.com/nflverse/nflfastR/issues/217'>#217</a>)</li>
 <li>
-<code>fixed_drive</code> now properly increments after a safety (<a href='https://github.com/mrcaseb/nflfastR/issues/219'>#219</a>)</li>
-<li>Improved parser for <code>penalty_type</code> and updated the description of the variable to make more clear it’s the first penalty that happened on a play. (<a href='https://github.com/mrcaseb/nflfastR/issues/223'>#223</a>)</li>
+<code>fixed_drive</code> now properly increments after a safety (<a href='https://github.com/nflverse/nflfastR/issues/219'>#219</a>)</li>
+<li>Improved parser for <code>penalty_type</code> and updated the description of the variable to make more clear it’s the first penalty that happened on a play. (<a href='https://github.com/nflverse/nflfastR/issues/223'>#223</a>)</li>
 </ul>
 </div>
 </div>
@@ -296,7 +297,7 @@
 <a href="#new-functions-and-variables" class="anchor"></a>New Functions and Variables</h3>
 <ul>
 <li>Added the new function <code><a href="../reference/load_pbp.html">load_pbp()</a></code> that loads complete seasons into memory for fast access of the play-by-play data.</li>
-<li>Added the new variables <code>rushing_yards</code>, <code>lateral_rushing_yards</code>, <code>passing_yards</code>, <code>receiving_yards</code>, <code>lateral_receiving_yards</code> to fix an old bug where <code>yards_gained</code> gets overwritten on plays with laterals (<a href='https://github.com/mrcaseb/nflfastR/issues/115'>#115</a>).</li>
+<li>Added the new variables <code>rushing_yards</code>, <code>lateral_rushing_yards</code>, <code>passing_yards</code>, <code>receiving_yards</code>, <code>lateral_receiving_yards</code> to fix an old bug where <code>yards_gained</code> gets overwritten on plays with laterals (<a href='https://github.com/nflverse/nflfastR/issues/115'>#115</a>).</li>
 <li>Added columns <code>vegas_wpa</code> and <code>vegas_home_wpa</code> which contain Win Probability Added from the spread-adjusted WP model</li>
 <li>Added column <code>out_of_bounds</code>
 </li>
@@ -322,19 +323,19 @@
 <h2 class="hasAnchor">
 <a href="#minor-improvements-and-fixes-1" class="anchor"></a>Minor improvements and fixes</h2>
 <ul>
-<li>Fix bug where <code>fixed_drive</code> and <code>series</code> weren’t updating after muffed punt (<a href='https://github.com/mrcaseb/nflfastR/issues/144'>#144</a>)</li>
-<li>Fix bug induced by fixing the above (<a href='https://github.com/mrcaseb/nflfastR/issues/149'>#149</a>)</li>
-<li>Fix bug where some special teams plays were incorrectly being labeled as pass plays (<a href='https://github.com/mrcaseb/nflfastR/issues/125'>#125</a>)</li>
-<li>Fix bug where points for safeties were given to the <code>defteam</code> instead of the <code>posteam</code> (<a href='https://github.com/mrcaseb/nflfastR/issues/152'>#152</a>)</li>
-<li>Fix bug where a muffed punt TD was given to the wrong team in a 2011 Jaguars game (<a href='https://github.com/mrcaseb/nflfastR/issues/154'>#154</a>)</li>
+<li>Fix bug where <code>fixed_drive</code> and <code>series</code> weren’t updating after muffed punt (<a href='https://github.com/nflverse/nflfastR/issues/144'>#144</a>)</li>
+<li>Fix bug induced by fixing the above (<a href='https://github.com/nflverse/nflfastR/issues/149'>#149</a>)</li>
+<li>Fix bug where some special teams plays were incorrectly being labeled as pass plays (<a href='https://github.com/nflverse/nflfastR/issues/125'>#125</a>)</li>
+<li>Fix bug where points for safeties were given to the <code>defteam</code> instead of the <code>posteam</code> (<a href='https://github.com/nflverse/nflfastR/issues/152'>#152</a>)</li>
+<li>Fix bug where a muffed punt TD was given to the wrong team in a 2011 Jaguars game (<a href='https://github.com/nflverse/nflfastR/issues/154'>#154</a>)</li>
 <li>Win probability is now calculated prior to PAT attempts rather than using WP on the ensuing kickoff</li>
 <li>Improved performance of internal functions that speed up the rebuilding process in <code><a href="../reference/update_db.html">update_db()</a></code> (added <code>qs</code> and <code>curl</code> to dependencies)</li>
-<li>Fixed a bug where <code><a href="../reference/calculate_expected_points.html">calculate_expected_points()</a></code> and <code><a href="../reference/calculate_win_probability.html">calculate_win_probability()</a></code> duplicated some existing variables instead of replacing them (<a href='https://github.com/mrcaseb/nflfastR/issues/170'>#170</a>)</li>
-<li>Fixed a bug where <code>penalty_type</code> wasn’t <code>"no_play"</code> although it should have been (<a href='https://github.com/mrcaseb/nflfastR/issues/172'>#172</a>)</li>
-<li>Fixed a bug where <code>penalty_team</code> could be incorrect in games of the Jaguars in the seasons 2011 - 2015 (<a href='https://github.com/mrcaseb/nflfastR/issues/174'>#174</a>)</li>
-<li>Fixed a bug related to the calculation of <code>epa</code> on plays before a failed pass interference challenge in a few 2019 games (<a href='https://github.com/mrcaseb/nflfastR/issues/175'>#175</a>)</li>
-<li>Fixed a bug related to lots of fields with <code>NA</code> on offsetting penalties (<a href='https://github.com/mrcaseb/nflfastR/issues/44'>#44</a>)</li>
-<li>Fixed a bug in <code>epa</code> when possession team changes at end of 1st or 3rd quarter (<a href='https://github.com/mrcaseb/nflfastR/issues/182'>#182</a>)</li>
+<li>Fixed a bug where <code><a href="../reference/calculate_expected_points.html">calculate_expected_points()</a></code> and <code><a href="../reference/calculate_win_probability.html">calculate_win_probability()</a></code> duplicated some existing variables instead of replacing them (<a href='https://github.com/nflverse/nflfastR/issues/170'>#170</a>)</li>
+<li>Fixed a bug where <code>penalty_type</code> wasn’t <code>"no_play"</code> although it should have been (<a href='https://github.com/nflverse/nflfastR/issues/172'>#172</a>)</li>
+<li>Fixed a bug where <code>penalty_team</code> could be incorrect in games of the Jaguars in the seasons 2011 - 2015 (<a href='https://github.com/nflverse/nflfastR/issues/174'>#174</a>)</li>
+<li>Fixed a bug related to the calculation of <code>epa</code> on plays before a failed pass interference challenge in a few 2019 games (<a href='https://github.com/nflverse/nflfastR/issues/175'>#175</a>)</li>
+<li>Fixed a bug related to lots of fields with <code>NA</code> on offsetting penalties (<a href='https://github.com/nflverse/nflfastR/issues/44'>#44</a>)</li>
+<li>Fixed a bug in <code>epa</code> when possession team changes at end of 1st or 3rd quarter (<a href='https://github.com/nflverse/nflfastR/issues/182'>#182</a>)</li>
 <li>Fixed a bug where various functions have left open connections</li>
 <li>
 <code>vegas_wp</code> is now <code>NA</code> on final line since there is no possession team</li>
@@ -377,11 +378,11 @@
 </h3>
 <ul>
 <li>The argument <code>force_rebuild</code> of the function <code><a href="../reference/update_db.html">update_db()</a></code> is now of hybrid type. It can rebuild the play by play data table either for the whole nflfastR era (with <code>force_rebuild = TRUE</code>) or just for specified seasons (e.g. <code>force_rebuild = 2019:2020</code>). The latter is intended to be used for running seasons because the NFL fixes bugs in the play by play data during the week and we recommend to rebuild the current season every Thursday.</li>
-<li>Fixed a bug where <code><a href="../reference/update_db.html">update_db()</a></code> disconnected the connection to a database provided by the argument <code>db_connection</code> (<a href='https://github.com/mrcaseb/nflfastR/issues/102'>#102</a>)</li>
+<li>Fixed a bug where <code><a href="../reference/update_db.html">update_db()</a></code> disconnected the connection to a database provided by the argument <code>db_connection</code> (<a href='https://github.com/nflverse/nflfastR/issues/102'>#102</a>)</li>
 <li>Fixed a bug where <code><a href="../reference/update_db.html">update_db()</a></code> didn’t build a fresh database without providing the argument <code>force_rebuild</code>
 </li>
 <li>
-<code><a href="../reference/update_db.html">update_db()</a></code> no longer removes the complete data table when a numeric argument <code>force_rebuild</code> is passed but only removes the rows within the table (<a href='https://github.com/mrcaseb/nflfastR/issues/109'>#109</a>)</li>
+<code><a href="../reference/update_db.html">update_db()</a></code> no longer removes the complete data table when a numeric argument <code>force_rebuild</code> is passed but only removes the rows within the table (<a href='https://github.com/nflverse/nflfastR/issues/109'>#109</a>)</li>
 </ul>
 </div>
 <div id="new-functions" class="section level3">
@@ -404,7 +405,7 @@
 <li>Messages to the user are now created with the new dependency <code>usethis</code>
 </li>
 <li>Fixed bug where plays with “backward pass” in play description were counted as pass plays (<code>pass</code> = 1)</li>
-<li>Fixed missing kick distance on touchbacks and blocked punts (<a href='https://github.com/mrcaseb/nflfastR/issues/53'>#53</a>)</li>
+<li>Fixed missing kick distance on touchbacks and blocked punts (<a href='https://github.com/nflverse/nflfastR/issues/53'>#53</a>)</li>
 <li>Added the option <code>fast</code> (either <code>TRUE</code> or <code>FALSE</code>) to the function <code><a href="../reference/decode_player_ids.html">decode_player_ids()</a></code> to activate the high efficient C++ decoder of the package <a href="https://cran.r-project.org/package=gsisdecoder"><code>gsisdecoder</code></a>
 </li>
 </ul>
@@ -515,7 +516,7 @@
 <li>For players whose careers finished before 2011, their IDs remain the same</li>
 <li>For players who played in both eras or only in the new era, their ID is the new ID</li>
 <li>For example, Akili Smith (ID: 00-0015082) and Alex Smith (ID: 32013030-2d30-3032-3334-3336b638d37d) are both abbreviated as “A.Smith” but can be distinguished by their IDs, with Akili showing what the old format ID looks like, and Smith the new one</li>
-<li>Standardization is realized by using an <a href="https://github.com/guga31bb/nflfastR-data/blob/master/roster-data/legacy_id_map.csv">ID map</a> available in the data repo created with <a href="https://github.com/guga31bb/nflfastR-data/blob/master/roster-data/legacy_id_map.R">this script</a>
+<li>Standardization is realized by using an <a href="https://github.com/nflverse/nflfastR-data/blob/master/roster-data/legacy_id_map.csv">ID map</a> available in the data repo created with <a href="https://github.com/nflverse/nflfastR-data/blob/master/roster-data/legacy_id_map.R">this script</a>
 </li>
 </ul>
 </li>
