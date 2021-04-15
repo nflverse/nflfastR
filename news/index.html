@@ -98,7 +98,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0.9002</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0.9003</span>
       </span>
     </div>
 
@@ -212,6 +212,8 @@
 <li>The function <code><a href="../reference/decode_player_ids.html">decode_player_ids()</a></code> now really decodes the new variable <code>fantasy_id</code> (<a href='https://github.com/nflverse/nflfastR/issues/229'>#229</a>)</li>
 <li>Fixed a bug that caused slightly differing <code>wp</code> values depending on the first game in the data set (<a href='https://github.com/nflverse/nflfastR/issues/183'>#183</a>)</li>
 <li>Edited GitHub references to point to nflverse</li>
+<li>Added the variables <code>sack_yards</code>, <code>sack_fumbles</code>, <code>rushing_fumbles</code> and <code>receiving_fumbles</code> to the output of the function <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code>, thanks to Mike Filicicchia (<a href='https://github.com/TheMathNinja'>@TheMathNinja</a>). (<a href='https://github.com/nflverse/nflfastR/issues/239'>#239</a>)</li>
+<li>Fixed a bug where <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> falsely counted lost fumbles on aborted snaps (<a href='https://github.com/nflverse/nflfastR/issues/238'>#238</a>)</li>
 </ul>
 </div>
     <div id="nflfastr-410" class="section level1">
