@@ -5,6 +5,7 @@
 * Fix bug where win prob on PATs assumed a PAT placed at 15 yard line, even in older seasons
 * The function `decode_player_ids()` now really decodes the new variable `fantasy_id` (#229)
 * Fixed a bug that caused slightly differing `wp` values depending on the first game in the data set (#183)
+* Edited GitHub references to point to nflverse
 
 # nflfastR 4.1.0
 
@@ -232,8 +233,8 @@ unique player has one unique ID (as they did before the NFL data source change):
     (ID: 32013030-2d30-3032-3334-3336b638d37d) are both abbreviated as "A.Smith" 
     but can be distinguished by their IDs, with Akili showing what the old 
     format ID looks like, and Smith the new one
-    * Standardization is realized by using an [ID map](https://github.com/guga31bb/nflfastR-data/blob/master/roster-data/legacy_id_map.csv)
-    available in the data repo created with [this script](https://github.com/guga31bb/nflfastR-data/blob/master/roster-data/legacy_id_map.R)
+    * Standardization is realized by using an [ID map](https://github.com/nflverse/nflfastR-data/blob/master/roster-data/legacy_id_map.csv)
+    available in the data repo created with [this script](https://github.com/nflverse/nflfastR-data/blob/master/roster-data/legacy_id_map.R)
     
 * `clean_pbp()` now removes all variables it is about to create to make sure 
 nothing unexpected can happen

@@ -296,7 +296,7 @@ drop.cols <- c(
 # fixes team names on columns with yard line
 # example: 'SD 49' --> 'LAC 49'
 # thanks to awgymer for the contribution:
-# https://github.com/mrcaseb/nflfastR/issues/29#issuecomment-654592195
+# https://github.com/nflverse/nflfastR/issues/29#issuecomment-654592195
 team_name_fn <- function(var) {
   stringr::str_replace_all(
     var,

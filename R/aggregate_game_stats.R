@@ -529,7 +529,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
 
 add_dakota <- function(add_to_this, pbp, weekly) {
   dakota_model <- NULL
-  con <- url("https://github.com/guga31bb/nflfastR-data/blob/master/models/dakota_model.Rdata?raw=true")
+  con <- url("https://github.com/nflverse/nflfastR-data/blob/master/models/dakota_model.Rdata?raw=true")
   try(load(con), silent = TRUE)
   close(con)
 

@@ -15,7 +15,7 @@ source('R/helper_add_nflscrapr_mutations.R')
 ################################################################################
 
 # from remote
-# pbp_data <- readRDS(url('https://github.com/guga31bb/nflfastR-data/blob/master/models/cal_data.rds?raw=true'))
+# pbp_data <- readRDS(url('https://github.com/nflverse/nflfastR-data/blob/master/models/cal_data.rds?raw=true'))
 
 # from local
 pbp_data <- readRDS('../nflfastR-data/models/cal_data.rds')
