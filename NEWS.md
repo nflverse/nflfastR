@@ -6,6 +6,8 @@
 * The function `decode_player_ids()` now really decodes the new variable `fantasy_id` (#229)
 * Fixed a bug that caused slightly differing `wp` values depending on the first game in the data set (#183)
 * Edited GitHub references to point to nflverse
+* Added the variables `sack_yards`, `sack_fumbles`, `rushing_fumbles` and `receiving_fumbles` to the output of the function `calculate_player_stats()`, thanks to Mike Filicicchia (@TheMathNinja). (#239)
+* Fixed a bug where `calculate_player_stats()` falsely counted lost fumbles on aborted snaps (#238)
 
 # nflfastR 4.1.0
 

@@ -29,7 +29,9 @@ decoded to the gsis ID format):
 \item{passing_yards}{Yards gained on pass plays.}
 \item{passing_tds}{The number of passing touchdowns.}
 \item{interceptions}{The number of interceptions thrown.}
-\item{sacks}{Number of times sacked.}
+\item{sacks}{The Number of times sacked.}
+\item{sack_yards}{Yards lost on sack plays.}
+\item{sack_fumbles}{The number of sacks with a fumble.}
 \item{sack_fumbles_lost}{The number of sacks with a lost fumble.}
 \item{passing_air_yards}{Passing air yards (includes incomplete passes).}
 \item{passing_yards_after_catch}{Yards after the catch gained on plays in
@@ -50,6 +52,7 @@ with a rushing attempt.}
 \item{rushing_tds}{The number of rushing touchdowns (incl. scrambles).
 Also includes touchdowns after obtaining a lateral on a play that started
 with a rushing attempt.}
+\item{rushing_fumbles}{The number of rushes with a fumble.}
 \item{rushing_fumbles_lost}{The number of rushes with a lost fumble.}
 \item{rushing_first_downs}{First downs on rush attempts (incl. scrambles).}
 \item{rushing_epa}{Expected points added on rush attempts (incl. scrambles and kneel downs).}
@@ -66,7 +69,8 @@ as a pass play.}
 \item{receiving_yards_after_catch}{Yards after the catch gained on plays in
 which player was receiver (this is an unofficial stat and may differ slightly
 between different sources).}
-\item{receiving_fumbles_lost}{The number of fumbles after a pass reception.}
+\item{receiving_fumbles}{The number of fumbles after a pass reception.}
+\item{receiving_fumbles_lost}{The number of fumbles lost after a pass reception.}
 \item{receiving_2pt_conversions}{Two-point conversion receptions}
 \item{fantasy_points}{Standard fantasy points.}
 \item{fantasy_points_ppr}{PPR fantasy points.}
