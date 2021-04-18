@@ -192,7 +192,7 @@ If you check the [PFR team stats page](https://www.pro-football-reference.com/te
 
 ``` {r}
 pbp_rp %>%
-	filter(posteam == "DAL", down <=4, play_type == 'run') %>%
+	filter(posteam == "DAL", down <= 4, play_type == 'run') %>%
 	group_by(rusher) %>%
 	summarize(
 	  mean_epa = mean(epa), success_rate = mean(success), ypc=mean(yards_gained), plays=n()
@@ -490,13 +490,7 @@ Now that the team-season win and point differential data is ready, we need to go
 
 Let's start by getting data from every season from the `nflfastR` data repository:
 ``` {r}
-seasons <- 1999:2019
-pbp <- map_df(seasons, function(x) {
-  readRDS(
-    url(
-      paste0("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_",x,".rds")
-    )
-  ) %>%
+pbp <- load_pbp(1999:2019) %>%
     filter(rush == 1 | pass == 1, season_type == "REG", !is.na(epa), !is.na(posteam), posteam != "") %>%
     select(season, posteam, pass, defteam, epa)
 })
@@ -611,13 +605,15 @@ Now we're getting really close to doing what we want! Next we need to create new
 ``` {r}
 data <- data %>% 
   arrange(team, season) %>%
+  group_by(team) %>% 
   mutate(
     prior_off_rush_epa = lag(off_rush_epa),
     prior_off_pass_epa = lag(off_pass_epa),
     prior_def_rush_epa = lag(def_rush_epa),
     prior_def_pass_epa = lag(def_pass_epa),
     prior_point_diff = lag(point_diff)
-  )
+  ) %>% 
+  ungroup()
 
 data %>%
   head(5)
