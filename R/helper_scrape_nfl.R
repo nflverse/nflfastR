@@ -58,7 +58,11 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
         if(isTRUE(qs)) raw_data <- qs::qread(p)
       }
 
-      season_type <- dplyr::if_else(week <= 17, "REG", "POST")
+      season_type <- dplyr::case_when(
+        season <= 2020 & week <= 17 ~ "REG",
+        season >= 2021 & week <= 18 ~ "REG",
+        TRUE ~ "POST"
+      )
 
       # game_info <- raw_data$data$viewer$gameDetail
 

@@ -21,6 +21,7 @@
 #' \item{recent_team}{Most recent team player appears in `pbp` with.}
 #' \item{season}{Season if `weekly` is `TRUE`}
 #' \item{week}{Week if `weekly` is `TRUE`}
+#' \item{season_type}{`REG` or `POST` if `weekly` is `TRUE`}
 #' \item{completions}{The number of completed passes.}
 #' \item{attempts}{The number of pass attempts as defined by the NFL.}
 #' \item{passing_yards}{Yards gained on pass plays.}
@@ -142,6 +143,10 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         )
       )
   }
+
+  s_type <- pbp %>%
+    dplyr::select(.data$season, .data$season_type, .data$week) %>%
+    dplyr::distinct()
 
 # Passing stats -----------------------------------------------------------
 
@@ -400,6 +405,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     dplyr::full_join(rush_df, by = c("player_id", "week", "season")) %>%
     dplyr::full_join(rec_df, by = c("player_id", "week", "season")) %>%
     dplyr::full_join(st_tds, by = c("player_id", "week", "season")) %>%
+    dplyr::left_join(s_type, by = c("season", "week")) %>%
     dplyr::mutate(
       player_name = dplyr::case_when(
         !is.na(.data$name_pass) ~ .data$name_pass,
@@ -417,7 +423,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     dplyr::select(tidyselect::any_of(c(
 
       # id information
-      "player_id", "player_name", "recent_team", "season", "week",
+      "player_id", "player_name", "recent_team", "season", "week", "season_type",
 
       # passing stats
       "completions", "attempts", "passing_yards", "passing_tds", "interceptions",

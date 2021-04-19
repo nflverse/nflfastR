@@ -180,7 +180,7 @@ pbp_rp %>%
 	filter(posteam == "DAL", rush == 1) %>%
 	group_by(rusher) %>%
 	summarize(
-	  mean_epa = mean(epa), success_rate = mean(success), ypc=mean(yards_gained), plays=n()
+	  mean_epa = mean(epa), success_rate = mean(success), ypc = mean(yards_gained), plays = n()
 	  ) %>%
 	arrange(-mean_epa) %>%
 	filter(plays > 20)
@@ -192,7 +192,7 @@ If you check the [PFR team stats page](https://www.pro-football-reference.com/te
 
 ``` {r}
 pbp_rp %>%
-	filter(posteam == "DAL", down <=4, play_type == 'run') %>%
+	filter(posteam == "DAL", down <= 4, play_type == 'run') %>%
 	group_by(rusher) %>%
 	summarize(
 	  mean_epa = mean(epa), success_rate = mean(success), ypc=mean(yards_gained), plays=n()
@@ -309,7 +309,7 @@ Let's do some stuff with quarterbacks:
 
 ``` {r}
 qbs <- pbp %>%
-  filter(week <= 17, !is.na(epa)) %>%
+  filter(season_type == "REG", !is.na(epa)) %>%
   group_by(id, name) %>%
   summarize(
     epa = mean(qb_epa),
@@ -322,7 +322,7 @@ qbs <- pbp %>%
   filter(n_dropbacks > 100 & n_plays > 1000)
 ```
 
-Lots of new stuff here. First, we're grouping by `id` and `name` to make sure we're getting unique players; i.e., if two players have the same name (like Javorius Allen and Josh Allen both being J.Allen), we are also using their id to differntiate them. `qb_epa` is an `nflfastR` creation that is equal to EPA in all instances except for when a pass is completed and a fumble is lost, in which case a QB gets "credit" for the play up to the spot the fumble was lost (making EPA function like passing yards). The `last` part in the `summarize` comment gets the last team that a player was observed playing with.
+Lots of new stuff here. First, we're grouping by `id` and `name` to make sure we're getting unique players; i.e., if two players have the same name (like Javorius Allen and Josh Allen both being J.Allen), we are also using their id to differentiate them. `qb_epa` is an `nflfastR` creation that is equal to EPA in all instances except for when a pass is completed and a fumble is lost, in which case a QB gets "credit" for the play up to the spot the fumble was lost (making EPA function like passing yards). The `last` part in the `summarize` comment gets the last team that a player was observed playing with.
 
 My way of getting a dataset with only quarterbacks without joining to external roster data is to make sure they hit some number of dropbacks. In this case, filtering with `n_dropbacks > 100` makes sure we're only including quarterbacks. The `ungroup()` near the end is good practice after grouping to make sure you don't get weird behavior with the data you created down the line.
 
@@ -490,19 +490,13 @@ Now that the team-season win and point differential data is ready, we need to go
 
 Let's start by getting data from every season from the `nflfastR` data repository:
 ``` {r}
-seasons <- 1999:2019
-pbp <- map_df(seasons, function(x) {
-  readRDS(
-    url(
-      paste0("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_",x,".rds")
-    )
-  ) %>%
-    filter(rush == 1 | pass == 1, week <= 17, !is.na(epa), !is.na(posteam), posteam != "") %>%
+pbp <- load_pbp(1999:2019) %>%
+    filter(rush == 1 | pass == 1, season_type == "REG", !is.na(epa), !is.na(posteam), posteam != "") %>%
     select(season, posteam, pass, defteam, epa)
 })
 ```
 
-I'm being pretty aggressive with dropping rows and columns (`filter` and `select`) because otherwise loading this all into memory can be painful on the computer. But this is all we need for what we're doing. Note that I'm only keeping regular season games here (`week <= 17`) since this is how this analysis is usually done.
+I'm being pretty aggressive with dropping rows and columns (`filter` and `select`) because otherwise loading this all into memory can be painful on the computer. But this is all we need for what we're doing. Note that I'm only keeping regular season games here (`season_type == "REG"`) since this is how this analysis is usually done.
 
 Now we can get EPA/play on offense and defense. Let's break it out by pass and rush too. I don't remember how to do some of this so let's do it in steps. We know we need to group by team, season, and pass, so there's the beginning:
 
@@ -611,13 +605,15 @@ Now we're getting really close to doing what we want! Next we need to create new
 ``` {r}
 data <- data %>% 
   arrange(team, season) %>%
+  group_by(team) %>% 
   mutate(
     prior_off_rush_epa = lag(off_rush_epa),
     prior_off_pass_epa = lag(off_pass_epa),
     prior_def_rush_epa = lag(def_rush_epa),
     prior_def_pass_epa = lag(def_pass_epa),
     prior_point_diff = lag(point_diff)
-  )
+  ) %>% 
+  ungroup()
 
 data %>%
   head(5)

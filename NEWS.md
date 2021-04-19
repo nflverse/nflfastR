@@ -8,6 +8,8 @@
 * Edited GitHub references to point to nflverse
 * Added the variables `sack_yards`, `sack_fumbles`, `rushing_fumbles` and `receiving_fumbles` to the output of the function `calculate_player_stats()`, thanks to Mike Filicicchia (@TheMathNinja). (#239)
 * Fixed a bug where `calculate_player_stats()` falsely counted lost fumbles on aborted snaps (#238)
+* Added the variable `season_type` to the output of `calculate_player_stats()` and `load_player_stats()` in preparation of the extended Regular Season starting in 2021 (#240)
+* Updated `season_type` definitions in preparation of the extended Regular Season starting in 2021 (#242)
 
 # nflfastR 4.1.0
 

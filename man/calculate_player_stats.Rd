@@ -24,6 +24,7 @@ decoded to the gsis ID format):
 \item{recent_team}{Most recent team player appears in \code{pbp} with.}
 \item{season}{Season if \code{weekly} is \code{TRUE}}
 \item{week}{Week if \code{weekly} is \code{TRUE}}
+\item{season_type}{\code{REG} or \code{POST} if \code{weekly} is \code{TRUE}}
 \item{completions}{The number of completed passes.}
 \item{attempts}{The number of pass attempts as defined by the NFL.}
 \item{passing_yards}{Yards gained on pass plays.}
