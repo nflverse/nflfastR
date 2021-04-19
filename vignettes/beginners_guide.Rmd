@@ -493,7 +493,6 @@ Let's start by getting data from every season from the `nflfastR` data repositor
 pbp <- load_pbp(1999:2019) %>%
     filter(rush == 1 | pass == 1, season_type == "REG", !is.na(epa), !is.na(posteam), posteam != "") %>%
     select(season, posteam, pass, defteam, epa)
-})
 ```
 
 I'm being pretty aggressive with dropping rows and columns (`filter` and `select`) because otherwise loading this all into memory can be painful on the computer. But this is all we need for what we're doing. Note that I'm only keeping regular season games here (`season_type == "REG"`) since this is how this analysis is usually done.
