@@ -10,6 +10,7 @@
 * Fixed a bug where `calculate_player_stats()` falsely counted lost fumbles on aborted snaps (#238)
 * Added the variable `season_type` to the output of `calculate_player_stats()` and `load_player_stats()` in preparation of the extended Regular Season starting in 2021 (#240)
 * Updated `season_type` definitions in preparation of the extended Regular Season starting in 2021 (#242)
+* Fix for `fixed_drive` where it wasn't incrementing when there was a muffed punt followed by timeout (#244)
 
 # nflfastR 4.1.0
 
