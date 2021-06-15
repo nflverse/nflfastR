@@ -11,6 +11,7 @@
 * Added the variable `season_type` to the output of `calculate_player_stats()` and `load_player_stats()` in preparation of the extended Regular Season starting in 2021 (#240)
 * Updated `season_type` definitions in preparation of the extended Regular Season starting in 2021 (#242)
 * Fix for `fixed_drive` where it wasn't incrementing when there was a muffed punt followed by timeout (#244)
+* Fix for `fixed_drive` where it wasn't incrementing following an interception with the intercepting player then losing a fumble (#247)
 
 # nflfastR 4.1.0
 
