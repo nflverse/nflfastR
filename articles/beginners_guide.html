@@ -49,7 +49,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0.9004</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0.9005</span>
       </span>
     </div>
 
@@ -212,7 +212,7 @@
 <p><code>str</code> displays the <strong>str</strong>ucture of the dataframe:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">data</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span>
-<span class="co">#&gt; tibble[,10] [48,034 × 10] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt; tibble [48,034 × 10] (S3: tbl_df/tbl/data.frame)</span>
 <span class="co">#&gt;  $ play_id     : num [1:48034] 1 36 51 79 100 121 148 185 214 239 ...</span>
 <span class="co">#&gt;  $ game_id     : chr [1:48034] "2019_01_ATL_MIN" "2019_01_ATL_MIN" "2019_01_ATL_MIN" "2019_01_ATL_MIN" ...</span>
 <span class="co">#&gt;  $ old_game_id : chr [1:48034] "2019090804" "2019090804" "2019090804" "2019090804" ...</span>
@@ -1011,48 +1011,48 @@
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">games</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span><span class="op">(</span><span class="st">"http://www.habitatring.com/games.rds"</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">games</span><span class="op">)</span>
-<span class="co">#&gt; tibble[,41] [5,852 × 41] (S3: tbl_df/tbl/data.frame)</span>
-<span class="co">#&gt;  $ game_id         : chr [1:5852] "1999_01_MIN_ATL" "1999_01_KC_CHI" "1999_01_PIT_CLE" "1999_01_OAK_GB" ...</span>
-<span class="co">#&gt;  $ season          : int [1:5852] 1999 1999 1999 1999 1999 1999 1999 1999 1999 1999 ...</span>
-<span class="co">#&gt;  $ game_type       : chr [1:5852] "REG" "REG" "REG" "REG" ...</span>
-<span class="co">#&gt;  $ week            : int [1:5852] 1 1 1 1 1 1 1 1 1 1 ...</span>
-<span class="co">#&gt;  $ gameday         : chr [1:5852] "1999-09-12" "1999-09-12" "1999-09-12" "1999-09-12" ...</span>
-<span class="co">#&gt;  $ weekday         : chr [1:5852] "Sunday" "Sunday" "Sunday" "Sunday" ...</span>
-<span class="co">#&gt;  $ gametime        : chr [1:5852] NA NA NA NA ...</span>
-<span class="co">#&gt;  $ away_team       : chr [1:5852] "MIN" "KC" "PIT" "OAK" ...</span>
-<span class="co">#&gt;  $ away_score      : int [1:5852] 17 17 43 24 14 3 10 30 25 28 ...</span>
-<span class="co">#&gt;  $ home_team       : chr [1:5852] "ATL" "CHI" "CLE" "GB" ...</span>
-<span class="co">#&gt;  $ home_score      : int [1:5852] 14 20 0 28 31 41 19 28 24 20 ...</span>
-<span class="co">#&gt;  $ location        : chr [1:5852] "Home" "Home" "Home" "Home" ...</span>
-<span class="co">#&gt;  $ result          : int [1:5852] -3 3 -43 4 17 38 9 -2 -1 -8 ...</span>
-<span class="co">#&gt;  $ total           : int [1:5852] 31 37 43 52 45 44 29 58 49 48 ...</span>
-<span class="co">#&gt;  $ overtime        : int [1:5852] 0 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="co">#&gt;  $ old_game_id     : chr [1:5852] "1999091210" "1999091206" "1999091213" "1999091208" ...</span>
-<span class="co">#&gt;  $ espn            : chr [1:5852] "190912001" "190912003" "190912005" "190912009" ...</span>
-<span class="co">#&gt;  $ away_rest       : int [1:5852] 7 7 7 7 7 7 7 7 7 7 ...</span>
-<span class="co">#&gt;  $ home_rest       : int [1:5852] 7 7 7 7 7 7 7 7 7 7 ...</span>
-<span class="co">#&gt;  $ away_moneyline  : int [1:5852] NA NA NA NA NA NA NA NA NA NA ...</span>
-<span class="co">#&gt;  $ home_moneyline  : int [1:5852] NA NA NA NA NA NA NA NA NA NA ...</span>
-<span class="co">#&gt;  $ spread_line     : num [1:5852] -4 -3 -6 9 -3 5.5 3.5 7 -3 9.5 ...</span>
-<span class="co">#&gt;  $ away_spread_odds: int [1:5852] NA NA NA NA NA NA NA NA NA NA ...</span>
-<span class="co">#&gt;  $ home_spread_odds: int [1:5852] NA NA NA NA NA NA NA NA NA NA ...</span>
-<span class="co">#&gt;  $ total_line      : num [1:5852] 49 38 37 43 45.5 49 38 44.5 37 42 ...</span>
-<span class="co">#&gt;  $ under_odds      : int [1:5852] NA NA NA NA NA NA NA NA NA NA ...</span>
-<span class="co">#&gt;  $ over_odds       : int [1:5852] NA NA NA NA NA NA NA NA NA NA ...</span>
-<span class="co">#&gt;  $ div_game        : int [1:5852] 0 0 1 0 1 0 1 1 1 0 ...</span>
-<span class="co">#&gt;  $ roof            : chr [1:5852] "dome" "outdoors" "outdoors" "outdoors" ...</span>
-<span class="co">#&gt;  $ surface         : chr [1:5852] "astroturf" "grass" "grass" "grass" ...</span>
-<span class="co">#&gt;  $ temp            : int [1:5852] NA 80 78 67 NA 76 NA 73 75 NA ...</span>
-<span class="co">#&gt;  $ wind            : int [1:5852] NA 12 12 10 NA 8 NA 5 3 NA ...</span>
-<span class="co">#&gt;  $ away_qb_id      : chr [1:5852] "00-0003761" "00-0006300" "00-0015700" "00-0005741" ...</span>
-<span class="co">#&gt;  $ home_qb_id      : chr [1:5852] "00-0002876" "00-0010560" "00-0004230" "00-0005106" ...</span>
-<span class="co">#&gt;  $ away_qb_name    : chr [1:5852] "Randall Cunningham" "Elvis Grbac" "Kordell Stewart" "Rich Gannon" ...</span>
-<span class="co">#&gt;  $ home_qb_name    : chr [1:5852] "Chris Chandler" "Shane Matthews" "Ty Detmer" "Brett Favre" ...</span>
-<span class="co">#&gt;  $ away_coach      : chr [1:5852] "Dennis Green" "Gunther Cunningham" "Bill Cowher" "Jon Gruden" ...</span>
-<span class="co">#&gt;  $ home_coach      : chr [1:5852] "Dan Reeves" "Dick Jauron" "Chris Palmer" "Ray Rhodes" ...</span>
-<span class="co">#&gt;  $ referee         : chr [1:5852] "Gerry Austin" "Phil Luckett" "Bob McElwee" "Tony Corrente" ...</span>
-<span class="co">#&gt;  $ stadium_id      : chr [1:5852] "ATL00" "CHI98" "CLE00" "GNB00" ...</span>
-<span class="co">#&gt;  $ stadium         : chr [1:5852] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...</span></code></pre></div>
+<span class="co">#&gt; tibble [6,124 × 41] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt;  $ game_id         : chr [1:6124] "1999_01_MIN_ATL" "1999_01_KC_CHI" "1999_01_PIT_CLE" "1999_01_OAK_GB" ...</span>
+<span class="co">#&gt;  $ season          : int [1:6124] 1999 1999 1999 1999 1999 1999 1999 1999 1999 1999 ...</span>
+<span class="co">#&gt;  $ game_type       : chr [1:6124] "REG" "REG" "REG" "REG" ...</span>
+<span class="co">#&gt;  $ week            : int [1:6124] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="co">#&gt;  $ gameday         : chr [1:6124] "1999-09-12" "1999-09-12" "1999-09-12" "1999-09-12" ...</span>
+<span class="co">#&gt;  $ weekday         : chr [1:6124] "Sunday" "Sunday" "Sunday" "Sunday" ...</span>
+<span class="co">#&gt;  $ gametime        : chr [1:6124] NA NA NA NA ...</span>
+<span class="co">#&gt;  $ away_team       : chr [1:6124] "MIN" "KC" "PIT" "OAK" ...</span>
+<span class="co">#&gt;  $ away_score      : int [1:6124] 17 17 43 24 14 3 10 30 25 28 ...</span>
+<span class="co">#&gt;  $ home_team       : chr [1:6124] "ATL" "CHI" "CLE" "GB" ...</span>
+<span class="co">#&gt;  $ home_score      : int [1:6124] 14 20 0 28 31 41 19 28 24 20 ...</span>
+<span class="co">#&gt;  $ location        : chr [1:6124] "Home" "Home" "Home" "Home" ...</span>
+<span class="co">#&gt;  $ result          : int [1:6124] -3 3 -43 4 17 38 9 -2 -1 -8 ...</span>
+<span class="co">#&gt;  $ total           : int [1:6124] 31 37 43 52 45 44 29 58 49 48 ...</span>
+<span class="co">#&gt;  $ overtime        : int [1:6124] 0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="co">#&gt;  $ old_game_id     : chr [1:6124] "1999091210" "1999091206" "1999091213" "1999091208" ...</span>
+<span class="co">#&gt;  $ espn            : chr [1:6124] "190912001" "190912003" "190912005" "190912009" ...</span>
+<span class="co">#&gt;  $ away_rest       : int [1:6124] 7 7 7 7 7 7 7 7 7 7 ...</span>
+<span class="co">#&gt;  $ home_rest       : int [1:6124] 7 7 7 7 7 7 7 7 7 7 ...</span>
+<span class="co">#&gt;  $ away_moneyline  : int [1:6124] NA NA NA NA NA NA NA NA NA NA ...</span>
+<span class="co">#&gt;  $ home_moneyline  : int [1:6124] NA NA NA NA NA NA NA NA NA NA ...</span>
+<span class="co">#&gt;  $ spread_line     : num [1:6124] -4 -3 -6 9 -3 5.5 3.5 7 -3 9.5 ...</span>
+<span class="co">#&gt;  $ away_spread_odds: int [1:6124] NA NA NA NA NA NA NA NA NA NA ...</span>
+<span class="co">#&gt;  $ home_spread_odds: int [1:6124] NA NA NA NA NA NA NA NA NA NA ...</span>
+<span class="co">#&gt;  $ total_line      : num [1:6124] 49 38 37 43 45.5 49 38 44.5 37 42 ...</span>
+<span class="co">#&gt;  $ under_odds      : int [1:6124] NA NA NA NA NA NA NA NA NA NA ...</span>
+<span class="co">#&gt;  $ over_odds       : int [1:6124] NA NA NA NA NA NA NA NA NA NA ...</span>
+<span class="co">#&gt;  $ div_game        : int [1:6124] 0 0 1 0 1 0 1 1 1 0 ...</span>
+<span class="co">#&gt;  $ roof            : chr [1:6124] "dome" "outdoors" "outdoors" "outdoors" ...</span>
+<span class="co">#&gt;  $ surface         : chr [1:6124] "astroturf" "grass" "grass" "grass" ...</span>
+<span class="co">#&gt;  $ temp            : int [1:6124] NA 80 78 67 NA 76 NA 73 75 NA ...</span>
+<span class="co">#&gt;  $ wind            : int [1:6124] NA 12 12 10 NA 8 NA 5 3 NA ...</span>
+<span class="co">#&gt;  $ away_qb_id      : chr [1:6124] "00-0003761" "00-0006300" "00-0015700" "00-0005741" ...</span>
+<span class="co">#&gt;  $ home_qb_id      : chr [1:6124] "00-0002876" "00-0010560" "00-0004230" "00-0005106" ...</span>
+<span class="co">#&gt;  $ away_qb_name    : chr [1:6124] "Randall Cunningham" "Elvis Grbac" "Kordell Stewart" "Rich Gannon" ...</span>
+<span class="co">#&gt;  $ home_qb_name    : chr [1:6124] "Chris Chandler" "Shane Matthews" "Ty Detmer" "Brett Favre" ...</span>
+<span class="co">#&gt;  $ away_coach      : chr [1:6124] "Dennis Green" "Gunther Cunningham" "Bill Cowher" "Jon Gruden" ...</span>
+<span class="co">#&gt;  $ home_coach      : chr [1:6124] "Dan Reeves" "Dick Jauron" "Chris Palmer" "Ray Rhodes" ...</span>
+<span class="co">#&gt;  $ referee         : chr [1:6124] "Gerry Austin" "Phil Luckett" "Bob McElwee" "Tony Corrente" ...</span>
+<span class="co">#&gt;  $ stadium_id      : chr [1:6124] "ATL00" "CHI98" "CLE00" "GNB00" ...</span>
+<span class="co">#&gt;  $ stadium         : chr [1:6124] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...</span></code></pre></div>
 <p>To start, we want to create a dataframe where each row is a team-season observation, listing how many games they won. There are multiple ways to do this, but I’m going to just take the home and away results and bind together. As an example, here’s what the <code>home</code> results look like:</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">home</span> <span class="op">&lt;-</span> <span class="va">games</span> <span class="op">%&gt;%</span>
@@ -1245,16 +1245,16 @@
 <span class="co">#&gt; # A tibble: 35 x 2</span>
 <span class="co">#&gt;    team      n</span>
 <span class="co">#&gt;    &lt;chr&gt; &lt;int&gt;</span>
-<span class="co">#&gt;  1 LV        1</span>
-<span class="co">#&gt;  2 LAC       4</span>
-<span class="co">#&gt;  3 LA        5</span>
+<span class="co">#&gt;  1 LV        2</span>
+<span class="co">#&gt;  2 LAC       5</span>
+<span class="co">#&gt;  3 LA        6</span>
 <span class="co">#&gt;  4 STL      17</span>
 <span class="co">#&gt;  5 SD       18</span>
-<span class="co">#&gt;  6 HOU      19</span>
+<span class="co">#&gt;  6 HOU      20</span>
 <span class="co">#&gt;  7 OAK      21</span>
-<span class="co">#&gt;  8 ARI      22</span>
-<span class="co">#&gt;  9 ATL      22</span>
-<span class="co">#&gt; 10 BAL      22</span>
+<span class="co">#&gt;  8 ARI      23</span>
+<span class="co">#&gt;  9 ATL      23</span>
+<span class="co">#&gt; 10 BAL      23</span>
 <span class="co">#&gt; # … with 25 more rows</span></code></pre></div>
 <p>Nope, not yet, we need to fix the Raiders, Rams, and Chargers, which are LV, LA, and LAC in <code>nflfastR</code>.</p>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
@@ -1276,16 +1276,16 @@
 <span class="co">#&gt; # A tibble: 32 x 2</span>
 <span class="co">#&gt;    team      n</span>
 <span class="co">#&gt;    &lt;chr&gt; &lt;int&gt;</span>
-<span class="co">#&gt;  1 HOU      19</span>
-<span class="co">#&gt;  2 ARI      22</span>
-<span class="co">#&gt;  3 ATL      22</span>
-<span class="co">#&gt;  4 BAL      22</span>
-<span class="co">#&gt;  5 BUF      22</span>
-<span class="co">#&gt;  6 CAR      22</span>
-<span class="co">#&gt;  7 CHI      22</span>
-<span class="co">#&gt;  8 CIN      22</span>
-<span class="co">#&gt;  9 CLE      22</span>
-<span class="co">#&gt; 10 DAL      22</span>
+<span class="co">#&gt;  1 HOU      20</span>
+<span class="co">#&gt;  2 ARI      23</span>
+<span class="co">#&gt;  3 ATL      23</span>
+<span class="co">#&gt;  4 BAL      23</span>
+<span class="co">#&gt;  5 BUF      23</span>
+<span class="co">#&gt;  6 CAR      23</span>
+<span class="co">#&gt;  7 CHI      23</span>
+<span class="co">#&gt;  8 CIN      23</span>
+<span class="co">#&gt;  9 CLE      23</span>
+<span class="co">#&gt; 10 DAL      23</span>
 <span class="co">#&gt; # … with 22 more rows</span></code></pre></div>
 <p>HOU has 3 fewer seasons because it didn’t exist from 1999 through 2001, which is fine, and all the other team names have 22 seasons like they should. Okay NOW we can join:</p>
 <div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
@@ -1295,18 +1295,19 @@
 
 <span class="va">data</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">'SEA'</span> <span class="op">&amp;</span> <span class="va">season</span> <span class="op">&gt;=</span> <span class="fl">2012</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 9 x 8</span>
-<span class="co">#&gt;   team  season  wins point_diff off_rush_epa off_pass_epa def_rush_epa</span>
-<span class="co">#&gt;   &lt;chr&gt;  &lt;int&gt; &lt;dbl&gt;      &lt;int&gt;        &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 SEA     2012  11          167     -0.00476       0.213       -0.0738</span>
-<span class="co">#&gt; 2 SEA     2013  13          186     -0.101         0.188       -0.126 </span>
-<span class="co">#&gt; 3 SEA     2014  12          140      0.0216        0.139       -0.231 </span>
-<span class="co">#&gt; 4 SEA     2015  10          146     -0.102         0.249       -0.148 </span>
-<span class="co">#&gt; 5 SEA     2016  10.5         62     -0.126         0.102       -0.207 </span>
-<span class="co">#&gt; 6 SEA     2017   9           34     -0.192         0.0584      -0.122 </span>
-<span class="co">#&gt; 7 SEA     2018  10           81     -0.0273        0.209       -0.131 </span>
-<span class="co">#&gt; 8 SEA     2019  11            7     -0.136         0.119       -0.0930</span>
-<span class="co">#&gt; 9 SEA     2020  12           88     NA            NA           NA     </span>
+<span class="co">#&gt; # A tibble: 10 x 8</span>
+<span class="co">#&gt;    team  season  wins point_diff off_rush_epa off_pass_epa def_rush_epa</span>
+<span class="co">#&gt;    &lt;chr&gt;  &lt;int&gt; &lt;dbl&gt;      &lt;int&gt;        &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;</span>
+<span class="co">#&gt;  1 SEA     2012  11          167     -0.00476       0.213       -0.0738</span>
+<span class="co">#&gt;  2 SEA     2013  13          186     -0.101         0.188       -0.126 </span>
+<span class="co">#&gt;  3 SEA     2014  12          140      0.0216        0.139       -0.231 </span>
+<span class="co">#&gt;  4 SEA     2015  10          146     -0.102         0.249       -0.148 </span>
+<span class="co">#&gt;  5 SEA     2016  10.5         62     -0.126         0.102       -0.207 </span>
+<span class="co">#&gt;  6 SEA     2017   9           34     -0.192         0.0584      -0.122 </span>
+<span class="co">#&gt;  7 SEA     2018  10           81     -0.0273        0.209       -0.131 </span>
+<span class="co">#&gt;  8 SEA     2019  11            7     -0.136         0.119       -0.0930</span>
+<span class="co">#&gt;  9 SEA     2020  12           88     NA            NA           NA     </span>
+<span class="co">#&gt; 10 SEA     2021  NA           NA     NA            NA           NA     </span>
 <span class="co">#&gt; # … with 1 more variable: def_pass_epa &lt;dbl&gt;</span></code></pre></div>
 <p>Now we’re getting really close to doing what we want! Next we need to create new columns for prior year EPA, and let’s do point differential too.</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
@@ -1459,6 +1460,7 @@
 <span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Residual standard error: 2.86 on 379 degrees of freedom</span>
+<span class="co">#&gt;   (32 observations deleted due to missingness)</span>
 <span class="co">#&gt; Multiple R-squared:  0.1638, Adjusted R-squared:  0.1549 </span>
 <span class="co">#&gt; F-statistic: 18.56 on 4 and 379 DF,  p-value: 0.00000000000006112</span></code></pre></div>
 <p>I’m actually pretty surprised passing offense isn’t higher here. How does this compare to simply using point differential?</p>
@@ -1482,6 +1484,7 @@
 <span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Residual standard error: 2.823 on 382 degrees of freedom</span>
+<span class="co">#&gt;   (32 observations deleted due to missingness)</span>
 <span class="co">#&gt; Multiple R-squared:  0.1784, Adjusted R-squared:  0.1763 </span>
 <span class="co">#&gt; F-statistic: 82.96 on 1 and 382 DF,  p-value: &lt; 0.00000000000000022</span></code></pre></div>
 <p>So R2 is somewhat higher for just point differential. This isn’t surprising as we’ve thrown away special teams plays and haven’t attempted to make any adjustments for things like fumble luck that we know can improve EPA’s predictive power.</p>
