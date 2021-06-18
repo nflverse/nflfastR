@@ -321,7 +321,15 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
         combined <- combined %>%
           dplyr::mutate(
             first_down_pass = dplyr::if_else(.data$pass_attempt == 1 & .data$first_down == 1, 1, .data$first_down_pass),
-            first_down_rush = dplyr::if_else(.data$rush_attempt == 1 & .data$first_down == 1, 1, .data$first_down_rush)
+            first_down_rush = dplyr::if_else(.data$rush_attempt == 1 & .data$first_down == 1, 1, .data$first_down_rush),
+
+            third_down_converted = dplyr::if_else(.data$first_down == 1 & .data$down == 3, 1, .data$third_down_converted),
+            fourth_down_converted = dplyr::if_else(.data$first_down == 1 & .data$down == 4, 1, .data$fourth_down_converted),
+
+            third_down_failed = dplyr::if_else(.data$first_down == 0 & .data$down == 3, 1, .data$third_down_failed),
+            fourth_down_failed = dplyr::if_else(.data$first_down == 0 & .data$down == 4 &
+                                                  .data$play_type_nfl != "FIELD_GOAL" & .data$play_type_nfl != "PUNT" & .data$play_type_nfl != "PENALTY",
+                                                1, .data$fourth_down_failed)
           )
       }
 
