@@ -173,10 +173,10 @@
 <h3 class="hasAnchor">
 <a href="#install-packages" class="anchor"></a>Install packages</h3>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"tidyverse"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"ggrepel"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"ggimage"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"nflfastR"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"tidyverse"</span>, type <span class="op">=</span> <span class="st">"binary"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"ggrepel"</span>, type <span class="op">=</span> <span class="st">"binary"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"ggimage"</span>, type <span class="op">=</span> <span class="st">"binary"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"nflfastR"</span>, type <span class="op">=</span> <span class="st">"binary"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="load-packages" class="section level3">
 <h3 class="hasAnchor">
@@ -194,9 +194,9 @@
 <div id="load-data" class="section level3">
 <h3 class="hasAnchor">
 <a href="#load-data" class="anchor"></a>Load data</h3>
-<p>This will load the full play by play for the 2019 season (including playoffs). We’ll get to how to get more seasons later. Note that this is not actually using the <code>nflfastR</code> package, but downloading pre-cleaned data from its data repository, which is much faster.</p>
+<p>This will load the full play by play for the 2019 season (including playoffs). We’ll get to how to get more seasons later. Note that this is downloading pre-cleaned data from the nflfastR data repository using the <code><a href="../reference/load_pbp.html">load_pbp()</a></code> function included in <code>nflfastR</code>, which is much faster than building pbp from scratch.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span><span class="op">(</span><span class="st">'https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2019.rds'</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_pbp.html">load_pbp</a></span><span class="op">(</span><span class="fl">2019</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
 <div id="basics-how-to-look-at-your-data" class="section level2">
@@ -846,17 +846,13 @@
 <div id="loading-multiple-seasons" class="section level2">
 <h2 class="hasAnchor">
 <a href="#loading-multiple-seasons" class="anchor"></a>Loading multiple seasons</h2>
-<p>Because all the data is stored in the data repository, it is very easy to use data from multiple seasons. <a href="https://github.com/nflverse/nflfastR-data">The repository page</a> has instructions for loading multiple seasons:</p>
+<p>Because all the data is stored in the data repository, it is very fast to load data from multiple seasons.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">seasons</span> <span class="op">&lt;-</span> <span class="fl">2015</span><span class="op">:</span><span class="fl">2019</span>
-<span class="va">pbp</span> <span class="op">&lt;-</span> <span class="fu">map_df</span><span class="op">(</span><span class="va">seasons</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span><span class="op">(</span>
-      <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_"</span>,<span class="va">x</span>,<span class="st">".rds"</span><span class="op">)</span>
-    <span class="op">)</span>
-  <span class="op">)</span>
-<span class="op">}</span><span class="op">)</span></code></pre></div>
-<p>You don’t need to understand this one yet, but if you’re curious, <code>map_df</code> stitches together the output from running a function repeatedly with different inputs. In this case, the function is simply reading one season’s data, and the inputs are the list of seasons we want: in the above, 2015 through 2019. But all you need to know how to do is change the range of seasons to get whichever seasons you want.</p>
+<code class="sourceCode R"><span class="va">pbp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_pbp.html">load_pbp</a></span><span class="op">(</span><span class="fl">2015</span><span class="op">:</span><span class="fl">2019</span><span class="op">)</span>
+<span class="co">#&gt; ℹ It is recommended to use parallel processing when trying to load multiple seasons.</span>
+<span class="co">#&gt;   Please consider running `future::plan("multisession")`!</span>
+<span class="co">#&gt;   Will go on sequentially...</span></code></pre></div>
+<p>This loads play-by-play data from the 2015 through 2019 seasons.</p>
 <p>Let’s make sure we got it all. By now, you should understand what this is doing:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">pbp</span> <span class="op">%&gt;%</span>
@@ -1007,9 +1003,9 @@
 <div id="get-team-wins-each-season" class="section level3">
 <h3 class="hasAnchor">
 <a href="#get-team-wins-each-season" class="anchor"></a>Get team wins each season</h3>
-<p>We’re going to cheat a little and take advantage of Lee Sharpe’s famous <code>games</code> file. Most of this stuff has been added into <code>nflfastR</code>, but it’s easier working with this file where each game is one row.</p>
+<p>We’re going to cheat a little and take advantage of Lee Sharpe’s famous <code>games</code> file. Most of this stuff has been added into <code>nflfastR</code>, but it’s easier working with this file where each game is one row. If you’re curious, the triple colon is a way to access what is referred to as non-exported functions in a package. Think of this as like a secret menu (why is this secret? Sometimes package developers want to limit the number of exported functions as to be not overwhelming).</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">games</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span><span class="op">(</span><span class="st">"http://www.habitatring.com/games.rds"</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">games</span> <span class="op">&lt;-</span> <span class="fu">nflfastR</span><span class="fu">:::</span><span class="fu">load_lees_games</span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">games</span><span class="op">)</span>
 <span class="co">#&gt; tibble [6,124 × 41] (S3: tbl_df/tbl/data.frame)</span>
 <span class="co">#&gt;  $ game_id         : chr [1:6124] "1999_01_MIN_ATL" "1999_01_KC_CHI" "1999_01_PIT_CLE" "1999_01_OAK_GB" ...</span>
