@@ -24,10 +24,10 @@ First, you need to install the magic packages. You only need to run this step on
 ### Install packages
 
 ``` {r eval = FALSE}
-install.packages("tidyverse")
-install.packages("ggrepel")
-install.packages("ggimage")
-install.packages("nflfastR")
+install.packages("tidyverse", type = "binary")
+install.packages("ggrepel", type = "binary")
+install.packages("ggimage", type = "binary")
+install.packages("nflfastR", type = "binary")
 ```
 
 ### Load packages
@@ -47,9 +47,10 @@ options(scipen = 9999)
 
 ### Load data
 
-This will load the full play by play for the 2019 season (including playoffs). We'll get to how to get more seasons later. Note that this is not actually using the `nflfastR` package, but downloading pre-cleaned data from its data repository, which is much faster.
+This will load the full play by play for the 2019 season (including playoffs). We'll get to how to get more seasons later. Note that this is downloading pre-cleaned data from the nflfastR data repository, which is much faster than building pbp from scratch.
+
 ``` {r}
-data <- readRDS(url('https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_2019.rds'))
+data <- load_pbp(2019)
 ```
 
 ## Basics: how to look at your data
