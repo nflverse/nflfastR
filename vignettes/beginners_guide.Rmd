@@ -47,7 +47,7 @@ options(scipen = 9999)
 
 ### Load data
 
-This will load the full play by play for the 2019 season (including playoffs). We'll get to how to get more seasons later. Note that this is downloading pre-cleaned data from the nflfastR data repository, which is much faster than building pbp from scratch.
+This will load the full play by play for the 2019 season (including playoffs). We'll get to how to get more seasons later. Note that this is downloading pre-cleaned data from the nflfastR data repository using the `load_pbp()` function included in `nflfastR`, which is much faster than building pbp from scratch.
 
 ``` {r}
 data <- load_pbp(2019)
@@ -274,22 +274,16 @@ Looking at the figure, the Chiefs will never have playoff success until they est
 
 ## Loading multiple seasons
 
-Because all the data is stored in the data repository, it is very easy to use data from multiple seasons. [The repository page](https://github.com/nflverse/nflfastR-data) has instructions for loading multiple seasons:
+Because all the data is stored in the data repository, it is very fast to load data from multiple seasons.
 
 ``` {r}
-seasons <- 2015:2019
-pbp <- map_df(seasons, function(x) {
-  readRDS(
-    url(
-      paste0("https://raw.githubusercontent.com/guga31bb/nflfastR-data/master/data/play_by_play_",x,".rds")
-    )
-  )
-})
+pbp <- load_pbp(2015:2019)
 ```
 
-You don't need to understand this one yet, but if you're curious, `map_df` stitches together the output from running a function repeatedly with different inputs. In this case, the function is simply reading one season's data, and the inputs are the list of seasons we want: in the above, 2015 through 2019. But all you need to know how to do is change the range of seasons to get whichever seasons you want.
+This loads play-by-play data from the 2015 through 2019 seasons. 
 
 Let's make sure we got it all. By now, you should understand what this is doing:
+
 ``` {r}
 pbp %>%
   group_by(season) %>%
@@ -424,10 +418,10 @@ I'm going to try to go through the process of cleaning and joining multiple data
 
 ### Get team wins each season
 
-We're going to cheat a little and take advantage of Lee Sharpe's famous `games` file. Most of this stuff has been added into `nflfastR`, but it's easier working with this file where each game is one row.
+We're going to cheat a little and take advantage of Lee Sharpe's famous `games` file. Most of this stuff has been added into `nflfastR`, but it's easier working with this file where each game is one row. If you're curious, the triple colon is a way to access what is referred to as non-exported functions in a package. Think of this as like a secret menu (why is this secret? Sometimes package developers want to limit the number of exported functions as to be not overwhelming).
 
 ``` {r}
-games <- readRDS(url("http://www.habitatring.com/games.rds"))
+games <- nflfastR:::load_lees_games()
 str(games)
 ```
 
@@ -490,6 +484,7 @@ Now that the team-season win and point differential data is ready, we need to go
 ### Get team EPA by season
 
 Let's start by getting data from every season from the `nflfastR` data repository:
+
 ``` {r}
 pbp <- load_pbp(1999:2019) %>%
     filter(rush == 1 | pass == 1, season_type == "REG", !is.na(epa), !is.na(posteam), posteam != "") %>%
