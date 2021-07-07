@@ -324,7 +324,6 @@
 #' \item{defensive_two_point_conv}{Binary indicator whether or not the defense successfully scored on the two point conversion.}
 #' \item{defensive_extra_point_attempt}{Binary indicator whether or not the defense was able to have an attempt on an extra point attempt, this results following a blocked attempt that the defense recovers the ball.}
 #' \item{defensive_extra_point_conv}{Binary indicator whether or not the defense successfully scored on an extra point attempt.}
-#' \item{safety_team}{String abbreviation of the team that scored a safety.}
 #' \item{safety_player_name}{String name for the player who scored a safety.}
 #' \item{safety_player_id}{Unique identifier for the player who scored a safety.}
 #' \item{season}{4 digit number indicating to which season the game belongs to.}

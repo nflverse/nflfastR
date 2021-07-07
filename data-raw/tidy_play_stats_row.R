@@ -234,7 +234,6 @@ pbp_stat_columns <-
     "half_sack_2_player_id",
     "half_sack_2_player_name",
     # new in nflfastR > v4.1
-    "safety_team",
     "safety_player_name",
     "safety_player_id"
   )

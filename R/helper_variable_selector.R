@@ -116,7 +116,7 @@ nflscrapr_cols <-
     "defensive_extra_point_attempt",
     "defensive_extra_point_conv",
     #new in nflfastR > v4.1
-    "safety_team", "safety_player_name", "safety_player_id"
+    "safety_player_name", "safety_player_id"
   )
 
 
