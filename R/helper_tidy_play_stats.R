@@ -1053,6 +1053,9 @@ sum_play_stats <- function(play_Id, stats) {
       row$blocked_player_name <- play_stats$player.displayName[index]
     } else if (stat_id == 89) {
       row$safety <- 1
+      row$safety_team <- play_stats$teamAbbr[index]
+      row$safety_player_id <- play_stats$player.esbId[index]
+      row$safety_player_name <- play_stats$player.displayName[index]
     } else if (stat_id == 91) {
       row$fumble <- 1
       row$forced_fumble_player_1_player_id <-
