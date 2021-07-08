@@ -327,6 +327,8 @@ Please see the description of \code{lateral_rusher_player_name} for further info
 \item{defensive_two_point_conv}{Binary indicator whether or not the defense successfully scored on the two point conversion.}
 \item{defensive_extra_point_attempt}{Binary indicator whether or not the defense was able to have an attempt on an extra point attempt, this results following a blocked attempt that the defense recovers the ball.}
 \item{defensive_extra_point_conv}{Binary indicator whether or not the defense successfully scored on an extra point attempt.}
+\item{safety_player_name}{String name for the player who scored a safety.}
+\item{safety_player_id}{Unique identifier for the player who scored a safety.}
 \item{season}{4 digit number indicating to which season the game belongs to.}
 \item{cp}{Numeric value indicating the probability for a complete pass based on comparable game situations.}
 \item{cpoe}{For a single pass play this is 1 - cp when the pass was completed or 0 - cp when the pass was incomplete. Analyzed for a whole game or season an indicator for the passer how much over or under expectation his completion percentage was.}

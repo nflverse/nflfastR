@@ -1,5 +1,5 @@
 ################################################################################
-# Author: Ben Baldwin
+# Author: Ben Baldwin, Sebastian Carl
 # Purpose: Build the final output of the pbp functions
 # Code Style Guide: styler::tidyverse_style()
 ################################################################################
@@ -114,7 +114,9 @@ nflscrapr_cols <-
     "defensive_two_point_attempt",
     "defensive_two_point_conv",
     "defensive_extra_point_attempt",
-    "defensive_extra_point_conv"
+    "defensive_extra_point_conv",
+    #new in nflfastR > v4.1
+    "safety_player_name", "safety_player_id"
   )
 
 
