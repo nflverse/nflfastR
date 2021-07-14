@@ -18,7 +18,7 @@
 load_player_stats <- function(qs = FALSE) {
 
   if (isTRUE(qs) && !is_installed("qs")) {
-    usethis::ui_stop("Package {usethis::ui_value('qs')} required for argument {usethis::ui_value('qs = TRUE')}. Please install it.")
+    cli::cli_abort("Package {.val qs} required for argument {.val qs = TRUE}. Please install it.")
   }
 
   if (isTRUE(qs)) {

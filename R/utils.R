@@ -3,21 +3,21 @@
 message_completed <- function(x, in_builder = FALSE) {
   if (isFALSE(in_builder)) {
     str <- paste0(my_time(), " | ", x)
-    usethis::ui_done("{usethis::ui_field(str)}")
+    cli::cli_alert_success("{{.field {str}}}")
   } else if (in_builder) {
-    usethis::ui_done("{my_time()} | {x}")
+    cli::cli_alert_success("{my_time()} | {x}")
   }
 }
 
 user_message <- function(x, type) {
   if (type == "done") {
-    usethis::ui_done("{my_time()} | {x}")
+    cli::cli_alert_success("{my_time()} | {x}")
   } else if (type == "todo") {
-    usethis::ui_todo("{my_time()} | {x}")
+    cli::cli_ul("{my_time()} | {x}")
   } else if (type == "info") {
-    usethis::ui_info("{my_time()} | {x}")
+    cli::cli_alert_info("{my_time()} | {x}")
   } else if (type == "oops") {
-    usethis::ui_oops("{my_time()} | {x}")
+    cli::cli_alert_danger("{my_time()} | {x}")
   }
 }
 
@@ -87,7 +87,7 @@ load_lees_games <- function(){
 load_raw_game <- function(game_id, qs = FALSE){
 
   if (isTRUE(qs) && !is_installed("qs")) {
-    usethis::ui_stop("Package {usethis::ui_value('qs')} required for argument {usethis::ui_value('qs = TRUE')}. Please install it.")
+    cli::cli_abort("Package {.val qs} required for argument {.val qs = TRUE}. Please install it.")
   }
 
   season <- substr(game_id, 1, 4)
@@ -98,11 +98,11 @@ load_raw_game <- function(game_id, qs = FALSE){
   if(isTRUE(qs)) fetched <- curl::curl_fetch_memory(glue::glue("{path}/{season}/{game_id}.qs"))
 
   if (fetched$status_code == 404 & maybe_valid(game_id)) {
-    usethis::ui_stop("The requested GameID {game_id} is not loaded yet, please try again later!")
+    cli::cli_abort("The requested GameID {game_id} is not loaded yet, please try again later!")
   } else if (fetched$status_code == 500) {
-    usethis::ui_stop("The data hosting servers are down, please try again later!")
+    cli::cli_abort("The data hosting servers are down, please try again later!")
   } else if (fetched$status_code == 404) {
-    usethis::ui_stop("The requested GameID {game_id} is invalid!")
+    cli::cli_abort("The requested GameID {game_id} is invalid!")
   }
 
   if(isFALSE(qs)) raw_data <- read_raw_rds(fetched$content)
@@ -119,9 +119,9 @@ is_sequential <- function() inherits(future::plan(), "sequential")
 check_stat_ids <- function(seasons, stat_ids){
 
   if (is_sequential()) {
-    usethis::ui_info(c(
+    cli::cli_alert_info(c(
         "It is recommended to use parallel processing when using this function.",
-        "Please consider running {usethis::ui_code('future::plan(\"multisession\")')}!",
+        "Please consider running {.code future::plan(\"multisession\")}!",
         "Will go on sequentially..."
     ))
   }
@@ -167,18 +167,18 @@ most_recent_season <- function() {
 # Load Next Gen Stats from Github -----------------------------------------
 
 load_ngs <- function(seasons, type) {
-  if (!type %in% c("passing", "rushing", "receiving")) usethis::ui_stop('Please pass valid type ("passing", "rushing" or "receiving")!')
+  if (!type %in% c("passing", "rushing", "receiving")) cli::cli_abort('Please pass valid type ("passing", "rushing" or "receiving")!')
 
   most_recent <- most_recent_season()
 
   if (!all(seasons %in% 2016:most_recent)) {
-    usethis::ui_stop("Please pass valid seasons between 2016 and {most_recent}")
+    cli::cli_abort("Please pass valid seasons between 2016 and {most_recent}")
   }
 
   if (length(seasons) > 1 && is_sequential()) {
-    usethis::ui_info(c(
+    cli::cli_alert_info(c(
       "It is recommended to use parallel processing when trying to load multiple seasons.",
-      "Please consider running {usethis::ui_code('future::plan(\"multisession\")')}!",
+      "Please consider running {.code future::plan(\"multisession\")}!",
       "Will go on sequentially..."
     ))  }
 

@@ -1,7 +1,7 @@
 Type: Package
 Package: nflfastR
 Title: Functions to Efficiently Access NFL Play by Play Data
-Version: 4.1.0.9006
+Version: 4.1.0.9007
 Authors@R: 
     c(person(given = "Sebastian",
              family = "Carl",
@@ -38,7 +38,7 @@ BugReports: https://github.com/nflverse/nflfastR/issues
 Depends: 
     R (>= 3.5.0)
 Imports: 
-    cli (>= 1.1.0),
+    cli (>= 3.0.0),
     curl,
     dplyr,
     fastrmodels (>= 1.0.1),
@@ -56,7 +56,6 @@ Imports:
     tibble (>= 3.0),
     tidyr (>= 1.0.0),
     tidyselect (>= 1.1.0),
-    usethis (>= 1.6.0),
     xgboost (>= 1.1)
 Suggests: 
     crayon (>= 1.3.4),

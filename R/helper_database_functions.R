@@ -55,19 +55,19 @@ update_db <- function(dbdir = ".",
 
   if (!is_installed("DBI") | !is_installed("purrr") |
       (!is_installed("RSQLite") & is.null(db_connection))) {
-    usethis::ui_stop("{my_time()} | Packages {usethis::ui_value('DBI')}, {usethis::ui_value('RSQLite')} and {usethis::ui_value('purrr')} required for database communication. Please install them.")
+    cli::cli_abort("{my_time()} | Packages {.val DBI}, {.val RSQLite} and {.val purrr} required for database communication. Please install them.")
   }
 
   if (any(force_rebuild == "NEW")) {
-    usethis::ui_stop("{my_time()} | The argument {usethis::ui_value('force_rebuild = NEW')} is only for internal usage!")
+    cli::cli_abort("{my_time()} | The argument {.val force_rebuild = NEW} is only for internal usage!")
   }
 
   if (!(is.logical(force_rebuild) | is.numeric(force_rebuild))) {
-    usethis::ui_stop("{my_time()} | The argument {usethis::ui_value('force_rebuild')} has to be either logical or numeric!")
+    cli::cli_abort("{my_time()} | The argument {.val force_rebuild} has to be either logical or numeric!")
   }
 
   if (!dir.exists(dbdir) & is.null(db_connection)) {
-    usethis::ui_oops("{my_time()} | Directory {usethis::ui_path(dbdir)} doesn't exist yet. Try creating...")
+    cli::cli_alert_danger("{my_time()} | Directory {.file {dbdir}} doesn't exist yet. Try creating...")
     dir.create(dbdir)
   }
 
@@ -115,7 +115,7 @@ update_db <- function(dbdir = ".",
   }
 
   message_completed("Database update completed", in_builder = TRUE)
-  usethis::ui_info("{my_time()} | Path to your db: {usethis::ui_path(DBI::dbGetInfo(connection)$dbname)}")
+  cli::cli_alert_info("{my_time()} | Path to your db: {.file {DBI::dbGetInfo(connection)$dbname}}")
   if (is.null(db_connection)) DBI::dbDisconnect(connection)
   rule_footer("DONE")
 }
@@ -130,23 +130,23 @@ build_db <- function(tblname = "nflfastR_pbp", db_conn, rebuild = FALSE, show_me
     dplyr::ungroup()
 
   if (all(rebuild == TRUE)) {
-    usethis::ui_todo("{my_time()} | Purging the complete data table {usethis::ui_value(tblname)} in your connected database...")
+    cli::cli_ul("{my_time()} | Purging the complete data table {.val tblname} in your connected database...")
     DBI::dbRemoveTable(db_conn, tblname)
     seasons <- valid_seasons %>% dplyr::pull("season")
-    usethis::ui_todo("{my_time()} | Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}...")
+    cli::cli_ul("{my_time()} | Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}...")
   } else if (is.numeric(rebuild) & all(rebuild %in% valid_seasons$season)) {
     string <- paste0(rebuild, collapse = ", ")
-    if (show_message){usethis::ui_todo("{my_time()} | Purging {string} season(s) from the data table {usethis::ui_value(tblname)} in your connected database...")}
+    if (show_message){cli::cli_ul("{my_time()} | Purging {string} season(s) from the data table {.val tblname} in your connected database...")}
     DBI::dbExecute(db_conn, glue::glue_sql("DELETE FROM {`tblname`} WHERE season IN ({vals*})", vals = rebuild, .con = db_conn))
     seasons <- valid_seasons %>% dplyr::filter(.data$season %in% rebuild) %>% dplyr::pull("season")
-    usethis::ui_todo("{my_time()} | Starting download of the {string} season(s)...")
+    cli::cli_ul("{my_time()} | Starting download of the {string} season(s)...")
   } else if (all(rebuild == "NEW")) {
-    usethis::ui_info("{my_time()} | Can't find the data table {usethis::ui_value(tblname)} in your database. Will load the play by play data from scratch.")
+    cli::cli_alert_info("{my_time()} | Can't find the data table {.val tblname} in your database. Will load the play by play data from scratch.")
     seasons <- valid_seasons %>% dplyr::pull("season")
-    usethis::ui_todo("{my_time()} | Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}...")
+    cli::cli_ul("{my_time()} | Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}...")
   } else {
     seasons <- NULL
-    usethis::ui_oops("{my_time()} | At least one invalid value passed to argument {usethis::ui_code('force_rebuild')}. Please try again with valid input.")
+    cli::cli_alert_danger("{my_time()} | At least one invalid value passed to argument {.val force_rebuild}. Please try again with valid input.")
   }
 
   if (!is.null(seasons)) {
@@ -166,6 +166,6 @@ get_missing_games <- function(completed_games, dbConnection, tablename) {
 
   need_scrape <- completed_games[!completed_games %in% db_ids]
 
-  usethis::ui_info("{my_time()} | You have {length(db_ids)} games and are missing {length(need_scrape)}.")
+  cli::cli_alert_info("{my_time()} | You have {length(db_ids)} games and are missing {length(need_scrape)}.")
   return(need_scrape)
 }

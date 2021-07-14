@@ -14,6 +14,7 @@
 * Fix for `fixed_drive` where it wasn't incrementing following an interception with the intercepting player then losing a fumble (#247)
 * Fix for more issues with missing play info in 2018_01_ATL_PHI (#246)
 * Added the variables `safety_player_name` and `safety_player_id` to the play-by-play data (#252)
+* Dropped the dependency `usethis`
 
 # nflfastR 4.1.0
 
