@@ -49,7 +49,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0.9006</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0.9007</span>
       </span>
     </div>
 
@@ -172,26 +172,26 @@
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">game_type</span> <span class="op">==</span> <span class="st">"SB"</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">game_id</span><span class="op">)</span>
 <span class="va">pbp</span> <span class="op">&lt;-</span> <span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/build_nflfastR_pbp.html">build_nflfastR_pbp</a></span><span class="op">(</span><span class="va">ids</span><span class="op">)</span>
-<span class="co">#&gt; ── Build nflfastR Play-by-Play Data ───────────── nflfastR version 4.1.0.9006 ──</span>
-<span class="co">#&gt; • 14:32:24 | Start download of 3 games...</span>
-<span class="co">#&gt; ✔ 14:32:28 | Download finished. Adding variables...</span>
-<span class="co">#&gt; ✔ 14:32:29 | added game variables</span>
-<span class="co">#&gt; ✔ 14:32:29 | added nflscrapR variables</span>
-<span class="co">#&gt; ✔ 14:32:30 | added ep variables</span>
-<span class="co">#&gt; ✔ 14:32:30 | added air_yac_ep variables</span>
-<span class="co">#&gt; ✔ 14:32:30 | added wp variables</span>
-<span class="co">#&gt; ✔ 14:32:31 | added air_yac_wp variables</span>
-<span class="co">#&gt; ✔ 14:32:31 | added cp and cpoe</span>
-<span class="co">#&gt; ✔ 14:32:31 | added fixed drive variables</span>
-<span class="co">#&gt; ✔ 14:32:31 | added series variables</span>
-<span class="co">#&gt; • 14:32:31 | Cleaning up play-by-play...</span>
-<span class="co">#&gt; ✔ 14:32:31 | Cleaning completed</span>
-<span class="co">#&gt; ✔ 14:32:31 | added qb_epa</span>
-<span class="co">#&gt; • 14:32:31 | Computing xyac...</span>
-<span class="co">#&gt; ✔ 14:32:35 | added xyac variables</span>
-<span class="co">#&gt; • 14:32:35 | Computing xpass...</span>
-<span class="co">#&gt; ✔ 14:32:35 | added xpass and pass_oe</span>
-<span class="co">#&gt; ✔ 14:32:35 | Decoding of player ids completed</span>
+<span class="co">#&gt; ── Build nflfastR Play-by-Play Data ───────────── nflfastR version 4.1.0.9007 ──</span>
+<span class="co">#&gt; • 21:37:52 | Start download of 3 games...</span>
+<span class="co">#&gt; ✔ 21:37:54 | Download finished. Adding variables...</span>
+<span class="co">#&gt; ✔ 21:37:55 | added game variables</span>
+<span class="co">#&gt; ✔ 21:37:55 | added nflscrapR variables</span>
+<span class="co">#&gt; ✔ 21:37:56 | added ep variables</span>
+<span class="co">#&gt; ✔ 21:37:56 | added air_yac_ep variables</span>
+<span class="co">#&gt; ✔ 21:37:57 | added wp variables</span>
+<span class="co">#&gt; ✔ 21:37:57 | added air_yac_wp variables</span>
+<span class="co">#&gt; ✔ 21:37:57 | added cp and cpoe</span>
+<span class="co">#&gt; ✔ 21:37:57 | added fixed drive variables</span>
+<span class="co">#&gt; ✔ 21:37:57 | added series variables</span>
+<span class="co">#&gt; • 21:37:57 | Cleaning up play-by-play...</span>
+<span class="co">#&gt; ✔ 21:37:57 | Cleaning completed</span>
+<span class="co">#&gt; ✔ 21:37:57 | added qb_epa</span>
+<span class="co">#&gt; • 21:37:57 | Computing xyac...</span>
+<span class="co">#&gt; ✔ 21:38:00 | added xyac variables</span>
+<span class="co">#&gt; • 21:38:00 | Computing xpass...</span>
+<span class="co">#&gt; ✔ 21:38:01 | added xpass and pass_oe</span>
+<span class="co">#&gt; ✔ 21:38:01 | Decoding of player ids completed</span>
 <span class="co">#&gt; ── DONE ────────────────────────────────────────────────────────────────────────</span></code></pre></div>
 <p>In most cases, however, it is not necessary to use this function for individual games, because nflfastR provides both a <a href="https://github.com/nflverse/nflfastR-data">data repository</a> and two main play-by-play functions: <code><a href="../reference/load_pbp.html">load_pbp()</a></code> and <code><a href="../reference/update_db.html">update_db()</a></code>. We cover <code><a href="../reference/load_pbp.html">load_pbp()</a></code> below, and please see <a href="#example-8-using-the-built-in-database-function">Example 8: Using the built-in database function</a> for how to work with the database function <code><a href="../reference/update_db.html">update_db()</a></code>.</p>
 <p>The easiest way to access the data in the data repository is the new function <code><a href="../reference/load_pbp.html">load_pbp()</a></code>. It can load multiple seasons directly into memory and supports the efficient data format <a href="https://github.com/traversc/qs"><code>qs</code></a>. Loading all play-by-play data of the 2018-2020 seasons is as easy as</p>
@@ -358,7 +358,7 @@
 <span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span><span class="op">(</span><span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span><span class="op">(</span><span class="st">"{length(games_2019)} games with nflfastR:"</span><span class="op">)</span><span class="op">)</span>
 <span class="va">f</span> <span class="op">&lt;-</span> <span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/fast_scraper.html">fast_scraper</a></span><span class="op">(</span><span class="va">games_2019</span><span class="op">)</span>
 <span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; 10 games with nflfastR:: 23.27 sec elapsed</span></code></pre></div>
+<span class="co">#&gt; 10 games with nflfastR:: 13.012 sec elapsed</span></code></pre></div>
 </div>
 <div id="example-3-completion-percentage-over-expected-cpoe" class="section level1">
 <h1 class="hasAnchor">
@@ -369,7 +369,7 @@
 <code class="sourceCode R"><span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span><span class="op">(</span><span class="st">"loading all games from 2009"</span><span class="op">)</span>
 <span class="va">games_2009</span> <span class="op">&lt;-</span> <span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/load_pbp.html">load_pbp</a></span><span class="op">(</span><span class="fl">2009</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">season_type</span> <span class="op">==</span> <span class="st">"REG"</span><span class="op">)</span>
 <span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; loading all games from 2009: 4.801 sec elapsed</span>
+<span class="co">#&gt; loading all games from 2009: 4.533 sec elapsed</span>
 <span class="va">games_2009</span> <span class="op">%&gt;%</span>
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">cpoe</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">passer_player_name</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -793,34 +793,35 @@
 <p>Let’s say I just want to dump a database into the current working directory. Here we go!</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/update_db.html">update_db</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; ── Update nflfastR Play-by-Play Database ──────── nflfastR version 4.1.0.9006 ──</span>
-<span class="co">#&gt; ℹ 14:33:46 | Can't find the data table 'nflfastR_pbp' in your database. Will load the play by play data from scratch.</span>
-<span class="co">#&gt; • 14:33:46 | Starting download of 22 seasons between 1999 and 2020...</span>
-<span class="co">#&gt; • 14:35:40 | Checking for missing completed games...</span>
-<span class="co">#&gt; ℹ 14:35:42 | You have 5849 games and are missing 0.</span>
-<span class="co">#&gt; ✔ 14:35:42 | Database update completed</span>
-<span class="co">#&gt; ℹ 14:35:42 | Path to your db: './pbp_db'</span>
+<span class="co">#&gt; ── Update nflfastR Play-by-Play Database ──────── nflfastR version 4.1.0.9007 ──</span>
+<span class="co">#&gt; ℹ 21:39:09 | Can't find the data table "tblname" in your database. Will load the play by play data from scratch.</span>
+<span class="co">#&gt; • 21:39:09 | Starting download of 22 seasons between 1999 and 2020...</span>
+<span class="co">#&gt; • 21:40:44 | Checking for missing completed games...</span>
+<span class="co">#&gt; ℹ 21:40:46 | You have 5849 games and are missing 0.</span>
+<span class="co">#&gt; ✔ 21:40:46 | Database update completed</span>
+<span class="co">#&gt; ℹ 21:40:46 | Path to your db: './pbp_db'</span>
 <span class="co">#&gt; ── DONE ────────────────────────────────────────────────────────────────────────</span></code></pre></div>
 <p>This created a database in the current directory called <code>pbp_db</code>.</p>
 <p>Wait, that’s it? That’s it! What if it’s partway through the season and you want to make sure all the new games are added to the database? What do you run? <code><a href="../reference/update_db.html">update_db()</a></code>! (just make sure you’re in the directory the database is saved in or you supply the right file path)</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/update_db.html">update_db</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; ── Update nflfastR Play-by-Play Database ──────── nflfastR version 4.1.0.9006 ──</span>
-<span class="co">#&gt; • 14:35:43 | Checking for missing completed games...</span>
-<span class="co">#&gt; ℹ 14:35:45 | You have 5849 games and are missing 0.</span>
-<span class="co">#&gt; ✔ 14:35:45 | Database update completed</span>
-<span class="co">#&gt; ℹ 14:35:45 | Path to your db: '/Users/runner/work/nflfastR/nflfastR/vignettes/pbp_db'</span>
+<span class="co">#&gt; ── Update nflfastR Play-by-Play Database ──────── nflfastR version 4.1.0.9007 ──</span>
+<span class="co">#&gt; • 21:40:47 | Checking for missing completed games...</span>
+<span class="co">#&gt; ℹ 21:40:48 | You have 5849 games and are missing 0.</span>
+<span class="co">#&gt; ✔ 21:40:48 | Database update completed</span>
+<span class="co">#&gt; ℹ 21:40:48 | Path to your db: '/Users/runner/work/nflfastR/nflfastR/vignettes/pbp_db'</span>
 <span class="co">#&gt; ── DONE ────────────────────────────────────────────────────────────────────────</span></code></pre></div>
 <p>If it’s partway through a season and you want to re-build a season to allow for data corrections from the NFL to propagate into your database, you can specify one season to be rebuilt:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/update_db.html">update_db</a></span><span class="op">(</span>force_rebuild <span class="op">=</span> <span class="fl">2020</span><span class="op">)</span>
-<span class="co">#&gt; ── Update nflfastR Play-by-Play Database ──────── nflfastR version 4.1.0.9006 ──</span>
-<span class="co">#&gt; • 14:35:46 | Purging 2020 season(s) from the data table 'nflfastR_pbp' in your connected database...</span>
-<span class="co">#&gt; • 14:35:47 | Starting download of the 2020 season(s)...</span>
-<span class="co">#&gt; • 14:35:52 | Checking for missing completed games...</span>
-<span class="co">#&gt; ℹ 14:35:54 | You have 5849 games and are missing 0.</span>
-<span class="co">#&gt; ✔ 14:35:54 | Database update completed</span>
-<span class="co">#&gt; ℹ 14:35:54 | Path to your db: '/Users/runner/work/nflfastR/nflfastR/vignettes/pbp_db'</span>
+<span class="co">#&gt; ── Update nflfastR Play-by-Play Database ──────── nflfastR version 4.1.0.9007 ──</span>
+<span class="co">#&gt; • 21:40:49 | Purging 2020 season(s) from the data table "tblname" in your</span>
+<span class="co">#&gt; connected database...</span>
+<span class="co">#&gt; • 21:40:50 | Starting download of the 2020 season(s)...</span>
+<span class="co">#&gt; • 21:40:54 | Checking for missing completed games...</span>
+<span class="co">#&gt; ℹ 21:40:56 | You have 5849 games and are missing 0.</span>
+<span class="co">#&gt; ✔ 21:40:56 | Database update completed</span>
+<span class="co">#&gt; ℹ 21:40:56 | Path to your db: '/Users/runner/work/nflfastR/nflfastR/vignettes/pbp_db'</span>
 <span class="co">#&gt; ── DONE ────────────────────────────────────────────────────────────────────────</span></code></pre></div>
 </div>
 <div id="connect-to-database" class="section level2">

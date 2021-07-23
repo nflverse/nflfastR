@@ -98,7 +98,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0.9006</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0.9007</span>
       </span>
     </div>
 
@@ -220,6 +220,8 @@
 <li>Fix for <code>fixed_drive</code> where it wasn’t incrementing following an interception with the intercepting player then losing a fumble (<a href='https://github.com/nflverse/nflfastR/issues/247'>#247</a>)</li>
 <li>Fix for more issues with missing play info in 2018_01_ATL_PHI (<a href='https://github.com/nflverse/nflfastR/issues/246'>#246</a>)</li>
 <li>Added the variables <code>safety_player_name</code> and <code>safety_player_id</code> to the play-by-play data (<a href='https://github.com/nflverse/nflfastR/issues/252'>#252</a>)</li>
+<li>Dropped the dependency <code>usethis</code>
+</li>
 </ul>
 </div>
     <div id="nflfastr-410" class="section level1">
@@ -524,8 +526,7 @@
 <li>For players whose careers finished before 2011, their IDs remain the same</li>
 <li>For players who played in both eras or only in the new era, their ID is the new ID</li>
 <li>For example, Akili Smith (ID: 00-0015082) and Alex Smith (ID: 32013030-2d30-3032-3334-3336b638d37d) are both abbreviated as “A.Smith” but can be distinguished by their IDs, with Akili showing what the old format ID looks like, and Smith the new one</li>
-<li>Standardization is realized by using an <a href="https://github.com/nflverse/nflfastR-data/blob/master/roster-data/legacy_id_map.csv">ID map</a> available in the data repo created with <a href="https://github.com/nflverse/nflfastR-data/blob/master/roster-data/legacy_id_map.R">this script</a>
-</li>
+<li>Standardization is realized by using an ID map available in the data repo</li>
 </ul>
 </li>
 <li>

@@ -49,7 +49,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0.9006</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0.9007</span>
       </span>
     </div>
 
@@ -205,10 +205,10 @@
 <div id="dimensions" class="section level3">
 <h3 class="hasAnchor">
 <a href="#dimensions" class="anchor"></a>Dimensions</h3>
-<p>Before moving forward, here are a few ways to get a sense of what’s in a dataframe. We can check the <strong>dim</strong>ensions of the data, and this tells us that there are <code>48034</code> rows (i.e., plays) in the data and <code>370</code> columns (variables):</p>
+<p>Before moving forward, here are a few ways to get a sense of what’s in a dataframe. We can check the <strong>dim</strong>ensions of the data, and this tells us that there are <code>48034</code> rows (i.e., plays) in the data and <code>372</code> columns (variables):</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>
-<span class="co">#&gt; [1] 48034   370</span></code></pre></div>
+<span class="co">#&gt; [1] 48034   372</span></code></pre></div>
 <p><code>str</code> displays the <strong>str</strong>ucture of the dataframe:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">data</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span>
@@ -223,7 +223,7 @@
 <span class="co">#&gt;  $ posteam     : chr [1:48034] NA "ATL" "ATL" "ATL" ...</span>
 <span class="co">#&gt;  $ posteam_type: chr [1:48034] NA "away" "away" "away" ...</span>
 <span class="co">#&gt;  $ defteam     : chr [1:48034] NA "MIN" "MIN" "MIN" ...</span></code></pre></div>
-<p>In the above, I’ve added in the <code>[1:10]</code>, which selects only the first 10 columns, otherwise the list is extremely long (remember from above that there are <code>370</code> columns!).</p>
+<p>In the above, I’ve added in the <code>[1:10]</code>, which selects only the first 10 columns, otherwise the list is extremely long (remember from above that there are <code>372</code> columns!).</p>
 </div>
 <div id="variable-names" class="section level3">
 <h3 class="hasAnchor">
@@ -514,93 +514,95 @@
 <span class="co">#&gt; [281] "defensive_two_point_conv"            </span>
 <span class="co">#&gt; [282] "defensive_extra_point_attempt"       </span>
 <span class="co">#&gt; [283] "defensive_extra_point_conv"          </span>
-<span class="co">#&gt; [284] "season"                              </span>
-<span class="co">#&gt; [285] "cp"                                  </span>
-<span class="co">#&gt; [286] "cpoe"                                </span>
-<span class="co">#&gt; [287] "series"                              </span>
-<span class="co">#&gt; [288] "series_success"                      </span>
-<span class="co">#&gt; [289] "series_result"                       </span>
-<span class="co">#&gt; [290] "order_sequence"                      </span>
-<span class="co">#&gt; [291] "start_time"                          </span>
-<span class="co">#&gt; [292] "time_of_day"                         </span>
-<span class="co">#&gt; [293] "stadium"                             </span>
-<span class="co">#&gt; [294] "weather"                             </span>
-<span class="co">#&gt; [295] "nfl_api_id"                          </span>
-<span class="co">#&gt; [296] "play_clock"                          </span>
-<span class="co">#&gt; [297] "play_deleted"                        </span>
-<span class="co">#&gt; [298] "play_type_nfl"                       </span>
-<span class="co">#&gt; [299] "special_teams_play"                  </span>
-<span class="co">#&gt; [300] "st_play_type"                        </span>
-<span class="co">#&gt; [301] "end_clock_time"                      </span>
-<span class="co">#&gt; [302] "end_yard_line"                       </span>
-<span class="co">#&gt; [303] "fixed_drive"                         </span>
-<span class="co">#&gt; [304] "fixed_drive_result"                  </span>
-<span class="co">#&gt; [305] "drive_real_start_time"               </span>
-<span class="co">#&gt; [306] "drive_play_count"                    </span>
-<span class="co">#&gt; [307] "drive_time_of_possession"            </span>
-<span class="co">#&gt; [308] "drive_first_downs"                   </span>
-<span class="co">#&gt; [309] "drive_inside20"                      </span>
-<span class="co">#&gt; [310] "drive_ended_with_score"              </span>
-<span class="co">#&gt; [311] "drive_quarter_start"                 </span>
-<span class="co">#&gt; [312] "drive_quarter_end"                   </span>
-<span class="co">#&gt; [313] "drive_yards_penalized"               </span>
-<span class="co">#&gt; [314] "drive_start_transition"              </span>
-<span class="co">#&gt; [315] "drive_end_transition"                </span>
-<span class="co">#&gt; [316] "drive_game_clock_start"              </span>
-<span class="co">#&gt; [317] "drive_game_clock_end"                </span>
-<span class="co">#&gt; [318] "drive_start_yard_line"               </span>
-<span class="co">#&gt; [319] "drive_end_yard_line"                 </span>
-<span class="co">#&gt; [320] "drive_play_id_started"               </span>
-<span class="co">#&gt; [321] "drive_play_id_ended"                 </span>
-<span class="co">#&gt; [322] "away_score"                          </span>
-<span class="co">#&gt; [323] "home_score"                          </span>
-<span class="co">#&gt; [324] "location"                            </span>
-<span class="co">#&gt; [325] "result"                              </span>
-<span class="co">#&gt; [326] "total"                               </span>
-<span class="co">#&gt; [327] "spread_line"                         </span>
-<span class="co">#&gt; [328] "total_line"                          </span>
-<span class="co">#&gt; [329] "div_game"                            </span>
-<span class="co">#&gt; [330] "roof"                                </span>
-<span class="co">#&gt; [331] "surface"                             </span>
-<span class="co">#&gt; [332] "temp"                                </span>
-<span class="co">#&gt; [333] "wind"                                </span>
-<span class="co">#&gt; [334] "home_coach"                          </span>
-<span class="co">#&gt; [335] "away_coach"                          </span>
-<span class="co">#&gt; [336] "stadium_id"                          </span>
-<span class="co">#&gt; [337] "game_stadium"                        </span>
-<span class="co">#&gt; [338] "aborted_play"                        </span>
-<span class="co">#&gt; [339] "success"                             </span>
-<span class="co">#&gt; [340] "passer"                              </span>
-<span class="co">#&gt; [341] "passer_jersey_number"                </span>
-<span class="co">#&gt; [342] "rusher"                              </span>
-<span class="co">#&gt; [343] "rusher_jersey_number"                </span>
-<span class="co">#&gt; [344] "receiver"                            </span>
-<span class="co">#&gt; [345] "receiver_jersey_number"              </span>
-<span class="co">#&gt; [346] "pass"                                </span>
-<span class="co">#&gt; [347] "rush"                                </span>
-<span class="co">#&gt; [348] "first_down"                          </span>
-<span class="co">#&gt; [349] "special"                             </span>
-<span class="co">#&gt; [350] "play"                                </span>
-<span class="co">#&gt; [351] "passer_id"                           </span>
-<span class="co">#&gt; [352] "rusher_id"                           </span>
-<span class="co">#&gt; [353] "receiver_id"                         </span>
-<span class="co">#&gt; [354] "name"                                </span>
-<span class="co">#&gt; [355] "jersey_number"                       </span>
-<span class="co">#&gt; [356] "id"                                  </span>
-<span class="co">#&gt; [357] "fantasy_player_name"                 </span>
-<span class="co">#&gt; [358] "fantasy_player_id"                   </span>
-<span class="co">#&gt; [359] "fantasy"                             </span>
-<span class="co">#&gt; [360] "fantasy_id"                          </span>
-<span class="co">#&gt; [361] "out_of_bounds"                       </span>
-<span class="co">#&gt; [362] "home_opening_kickoff"                </span>
-<span class="co">#&gt; [363] "qb_epa"                              </span>
-<span class="co">#&gt; [364] "xyac_epa"                            </span>
-<span class="co">#&gt; [365] "xyac_mean_yardage"                   </span>
-<span class="co">#&gt; [366] "xyac_median_yardage"                 </span>
-<span class="co">#&gt; [367] "xyac_success"                        </span>
-<span class="co">#&gt; [368] "xyac_fd"                             </span>
-<span class="co">#&gt; [369] "xpass"                               </span>
-<span class="co">#&gt; [370] "pass_oe"</span></code></pre></div>
+<span class="co">#&gt; [284] "safety_player_name"                  </span>
+<span class="co">#&gt; [285] "safety_player_id"                    </span>
+<span class="co">#&gt; [286] "season"                              </span>
+<span class="co">#&gt; [287] "cp"                                  </span>
+<span class="co">#&gt; [288] "cpoe"                                </span>
+<span class="co">#&gt; [289] "series"                              </span>
+<span class="co">#&gt; [290] "series_success"                      </span>
+<span class="co">#&gt; [291] "series_result"                       </span>
+<span class="co">#&gt; [292] "order_sequence"                      </span>
+<span class="co">#&gt; [293] "start_time"                          </span>
+<span class="co">#&gt; [294] "time_of_day"                         </span>
+<span class="co">#&gt; [295] "stadium"                             </span>
+<span class="co">#&gt; [296] "weather"                             </span>
+<span class="co">#&gt; [297] "nfl_api_id"                          </span>
+<span class="co">#&gt; [298] "play_clock"                          </span>
+<span class="co">#&gt; [299] "play_deleted"                        </span>
+<span class="co">#&gt; [300] "play_type_nfl"                       </span>
+<span class="co">#&gt; [301] "special_teams_play"                  </span>
+<span class="co">#&gt; [302] "st_play_type"                        </span>
+<span class="co">#&gt; [303] "end_clock_time"                      </span>
+<span class="co">#&gt; [304] "end_yard_line"                       </span>
+<span class="co">#&gt; [305] "fixed_drive"                         </span>
+<span class="co">#&gt; [306] "fixed_drive_result"                  </span>
+<span class="co">#&gt; [307] "drive_real_start_time"               </span>
+<span class="co">#&gt; [308] "drive_play_count"                    </span>
+<span class="co">#&gt; [309] "drive_time_of_possession"            </span>
+<span class="co">#&gt; [310] "drive_first_downs"                   </span>
+<span class="co">#&gt; [311] "drive_inside20"                      </span>
+<span class="co">#&gt; [312] "drive_ended_with_score"              </span>
+<span class="co">#&gt; [313] "drive_quarter_start"                 </span>
+<span class="co">#&gt; [314] "drive_quarter_end"                   </span>
+<span class="co">#&gt; [315] "drive_yards_penalized"               </span>
+<span class="co">#&gt; [316] "drive_start_transition"              </span>
+<span class="co">#&gt; [317] "drive_end_transition"                </span>
+<span class="co">#&gt; [318] "drive_game_clock_start"              </span>
+<span class="co">#&gt; [319] "drive_game_clock_end"                </span>
+<span class="co">#&gt; [320] "drive_start_yard_line"               </span>
+<span class="co">#&gt; [321] "drive_end_yard_line"                 </span>
+<span class="co">#&gt; [322] "drive_play_id_started"               </span>
+<span class="co">#&gt; [323] "drive_play_id_ended"                 </span>
+<span class="co">#&gt; [324] "away_score"                          </span>
+<span class="co">#&gt; [325] "home_score"                          </span>
+<span class="co">#&gt; [326] "location"                            </span>
+<span class="co">#&gt; [327] "result"                              </span>
+<span class="co">#&gt; [328] "total"                               </span>
+<span class="co">#&gt; [329] "spread_line"                         </span>
+<span class="co">#&gt; [330] "total_line"                          </span>
+<span class="co">#&gt; [331] "div_game"                            </span>
+<span class="co">#&gt; [332] "roof"                                </span>
+<span class="co">#&gt; [333] "surface"                             </span>
+<span class="co">#&gt; [334] "temp"                                </span>
+<span class="co">#&gt; [335] "wind"                                </span>
+<span class="co">#&gt; [336] "home_coach"                          </span>
+<span class="co">#&gt; [337] "away_coach"                          </span>
+<span class="co">#&gt; [338] "stadium_id"                          </span>
+<span class="co">#&gt; [339] "game_stadium"                        </span>
+<span class="co">#&gt; [340] "aborted_play"                        </span>
+<span class="co">#&gt; [341] "success"                             </span>
+<span class="co">#&gt; [342] "passer"                              </span>
+<span class="co">#&gt; [343] "passer_jersey_number"                </span>
+<span class="co">#&gt; [344] "rusher"                              </span>
+<span class="co">#&gt; [345] "rusher_jersey_number"                </span>
+<span class="co">#&gt; [346] "receiver"                            </span>
+<span class="co">#&gt; [347] "receiver_jersey_number"              </span>
+<span class="co">#&gt; [348] "pass"                                </span>
+<span class="co">#&gt; [349] "rush"                                </span>
+<span class="co">#&gt; [350] "first_down"                          </span>
+<span class="co">#&gt; [351] "special"                             </span>
+<span class="co">#&gt; [352] "play"                                </span>
+<span class="co">#&gt; [353] "passer_id"                           </span>
+<span class="co">#&gt; [354] "rusher_id"                           </span>
+<span class="co">#&gt; [355] "receiver_id"                         </span>
+<span class="co">#&gt; [356] "name"                                </span>
+<span class="co">#&gt; [357] "jersey_number"                       </span>
+<span class="co">#&gt; [358] "id"                                  </span>
+<span class="co">#&gt; [359] "fantasy_player_name"                 </span>
+<span class="co">#&gt; [360] "fantasy_player_id"                   </span>
+<span class="co">#&gt; [361] "fantasy"                             </span>
+<span class="co">#&gt; [362] "fantasy_id"                          </span>
+<span class="co">#&gt; [363] "out_of_bounds"                       </span>
+<span class="co">#&gt; [364] "home_opening_kickoff"                </span>
+<span class="co">#&gt; [365] "qb_epa"                              </span>
+<span class="co">#&gt; [366] "xyac_epa"                            </span>
+<span class="co">#&gt; [367] "xyac_mean_yardage"                   </span>
+<span class="co">#&gt; [368] "xyac_median_yardage"                 </span>
+<span class="co">#&gt; [369] "xyac_success"                        </span>
+<span class="co">#&gt; [370] "xyac_fd"                             </span>
+<span class="co">#&gt; [371] "xpass"                               </span>
+<span class="co">#&gt; [372] "pass_oe"</span></code></pre></div>
 <p>That is a lot to work with!</p>
 </div>
 <div id="viewer" class="section level3">
@@ -850,8 +852,7 @@
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">pbp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_pbp.html">load_pbp</a></span><span class="op">(</span><span class="fl">2015</span><span class="op">:</span><span class="fl">2019</span><span class="op">)</span>
 <span class="co">#&gt; ℹ It is recommended to use parallel processing when trying to load multiple seasons.</span>
-<span class="co">#&gt;   Please consider running `future::plan("multisession")`!</span>
-<span class="co">#&gt;   Will go on sequentially...</span></code></pre></div>
+<span class="co">#&gt; Please consider running `future::plan("multisession")`! Will go on sequentially...</span></code></pre></div>
 <p>This loads play-by-play data from the 2015 through 2019 seasons.</p>
 <p>Let’s make sure we got it all. By now, you should understand what this is doing:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
@@ -1146,8 +1147,7 @@
     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">rush</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">|</span> <span class="va">pass</span> <span class="op">==</span> <span class="fl">1</span>, <span class="va">season_type</span> <span class="op">==</span> <span class="st">"REG"</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">epa</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">posteam</span><span class="op">)</span>, <span class="va">posteam</span> <span class="op">!=</span> <span class="st">""</span><span class="op">)</span> <span class="op">%&gt;%</span>
     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">season</span>, <span class="va">posteam</span>, <span class="va">pass</span>, <span class="va">defteam</span>, <span class="va">epa</span><span class="op">)</span>
 <span class="co">#&gt; ℹ It is recommended to use parallel processing when trying to load multiple seasons.</span>
-<span class="co">#&gt;   Please consider running `future::plan("multisession")`!</span>
-<span class="co">#&gt;   Will go on sequentially...</span></code></pre></div>
+<span class="co">#&gt; Please consider running `future::plan("multisession")`! Will go on sequentially...</span></code></pre></div>
 <p>I’m being pretty aggressive with dropping rows and columns (<code>filter</code> and <code>select</code>) because otherwise loading this all into memory can be painful on the computer. But this is all we need for what we’re doing. Note that I’m only keeping regular season games here (<code>season_type == "REG"</code>) since this is how this analysis is usually done.</p>
 <p>Now we can get EPA/play on offense and defense. Let’s break it out by pass and rush too. I don’t remember how to do some of this so let’s do it in steps. We know we need to group by team, season, and pass, so there’s the beginning:</p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
