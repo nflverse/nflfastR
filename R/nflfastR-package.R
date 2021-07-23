@@ -127,7 +127,6 @@
 #' @importFrom tibble as_tibble tibble
 #' @importFrom tidyr unnest_wider unnest
 #' @importFrom tidyselect any_of ends_with
-#' @importFrom usethis ui_done ui_todo ui_oops ui_info ui_stop ui_value
 #' @importFrom utils packageVersion
 #' @importFrom xgboost getinfo
 ## usethis namespace: end

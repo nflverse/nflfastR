@@ -24,19 +24,19 @@ load_pbp <- function(seasons, ..., qs = FALSE) {
   if (all(c("dbConnection", "tablename") %in% names(dots))) in_db <- TRUE else in_db <- FALSE
 
   if (isTRUE(qs) && !is_installed("qs")) {
-    usethis::ui_stop("Package {usethis::ui_value('qs')} required for argument {usethis::ui_value('qs = TRUE')}. Please install it.")
+    cli::cli_abort("Package {.val qs} required for argument {.val qs = TRUE}. Please install it.")
   }
 
   most_recent <- most_recent_season()
 
   if (!all(seasons %in% 1999:most_recent)) {
-    usethis::ui_stop("Please pass valid seasons between 1999 and {most_recent}")
+    cli::cli_abort("Please pass valid seasons between 1999 and {most_recent}")
   }
 
   if (length(seasons) > 1 && is_sequential() && isFALSE(in_db)) {
-    usethis::ui_info(c(
-      "It is recommended to use parallel processing when trying to load multiple seasons.",
-      "Please consider running {usethis::ui_code('future::plan(\"multisession\")')}!",
+    cli::cli_alert_info(c(
+      "It is recommended to use parallel processing when trying to load multiple seasons.\n",
+      "Please consider running {.code future::plan(\"multisession\")}! ",
       "Will go on sequentially..."
     ))
   }

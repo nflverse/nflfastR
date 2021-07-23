@@ -14,6 +14,7 @@
 * Fix for `fixed_drive` where it wasn't incrementing following an interception with the intercepting player then losing a fumble (#247)
 * Fix for more issues with missing play info in 2018_01_ATL_PHI (#246)
 * Added the variables `safety_player_name` and `safety_player_id` to the play-by-play data (#252)
+* Dropped the dependency `usethis`
 
 # nflfastR 4.1.0
 
@@ -241,8 +242,8 @@ unique player has one unique ID (as they did before the NFL data source change):
     (ID: 32013030-2d30-3032-3334-3336b638d37d) are both abbreviated as "A.Smith" 
     but can be distinguished by their IDs, with Akili showing what the old 
     format ID looks like, and Smith the new one
-    * Standardization is realized by using an [ID map](https://github.com/nflverse/nflfastR-data/blob/master/roster-data/legacy_id_map.csv)
-    available in the data repo created with [this script](https://github.com/nflverse/nflfastR-data/blob/master/roster-data/legacy_id_map.R)
+    * Standardization is realized by using an ID map
+    available in the data repo
     
 * `clean_pbp()` now removes all variables it is about to create to make sure 
 nothing unexpected can happen
