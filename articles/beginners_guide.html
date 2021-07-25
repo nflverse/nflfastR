@@ -49,7 +49,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0.9007</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.1.0.9008</span>
       </span>
     </div>
 
@@ -626,7 +626,7 @@
 <code class="sourceCode R"><span class="va">data</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">posteam</span>, <span class="va">defteam</span>, <span class="va">desc</span>, <span class="va">rush</span>, <span class="va">pass</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 6 x 5</span>
+<span class="co">#&gt; # A tibble: 6 × 5</span>
 <span class="co">#&gt;   posteam defteam desc                                                rush  pass</span>
 <span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;                                              &lt;dbl&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 &lt;NA&gt;    &lt;NA&gt;    GAME                                                   0     0</span>
@@ -645,7 +645,7 @@
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">rush</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">|</span> <span class="va">pass</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">posteam</span>, <span class="va">desc</span>, <span class="va">rush</span>, <span class="va">pass</span>, <span class="va">name</span>, <span class="va">passer</span>, <span class="va">rusher</span>, <span class="va">receiver</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 6 x 8</span>
+<span class="co">#&gt; # A tibble: 6 × 8</span>
 <span class="co">#&gt;   posteam desc                        rush  pass name    passer  rusher receiver</span>
 <span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;                      &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;   </span>
 <span class="co">#&gt; 1 ATL     (15:00) 2-M.Ryan sacked a…     0     1 M.Ryan  M.Ryan  &lt;NA&gt;   &lt;NA&gt;    </span>
@@ -662,7 +662,7 @@
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">special</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">down</span>, <span class="va">ydstogo</span>, <span class="va">desc</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 6 x 3</span>
+<span class="co">#&gt; # A tibble: 6 × 3</span>
 <span class="co">#&gt;    down ydstogo desc                                                            </span>
 <span class="co">#&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;                                                           </span>
 <span class="co">#&gt; 1    NA       0 5-D.Bailey kicks 65 yards from MIN 35 to end zone, Touchback.   </span>
@@ -677,7 +677,7 @@
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">down</span> <span class="op">==</span> <span class="fl">4</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">down</span>, <span class="va">ydstogo</span>, <span class="va">desc</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 6 x 3</span>
+<span class="co">#&gt; # A tibble: 6 × 3</span>
 <span class="co">#&gt;    down ydstogo desc                                                            </span>
 <span class="co">#&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;                                                           </span>
 <span class="co">#&gt; 1     4       2 (12:59) 5-M.Bosher punt is BLOCKED by 50-E.Wilson, Center-47-J.…</span>
@@ -692,7 +692,7 @@
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">down</span> <span class="op">==</span> <span class="fl">4</span> <span class="op">&amp;</span> <span class="va">special</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">down</span>, <span class="va">ydstogo</span>, <span class="va">desc</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 6 x 3</span>
+<span class="co">#&gt; # A tibble: 6 × 3</span>
 <span class="co">#&gt;    down ydstogo desc                                                            </span>
 <span class="co">#&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;                                                           </span>
 <span class="co">#&gt; 1     4       5 (9:25) (Shotgun) 2-M.Ryan pass deep left to 18-C.Ridley for 20 …</span>
@@ -725,7 +725,7 @@
       <span class="op">)</span> <span class="op">%&gt;%</span>
     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="op">-</span><span class="va">mean_epa</span><span class="op">)</span> <span class="op">%&gt;%</span>
     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">plays</span> <span class="op">&gt;</span> <span class="fl">20</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 3 x 5</span>
+<span class="co">#&gt; # A tibble: 3 × 5</span>
 <span class="co">#&gt;   rusher     mean_epa success_rate   ypc plays</span>
 <span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;</span>
 <span class="co">#&gt; 1 D.Prescott   0.288         0.591  6.41    22</span>
@@ -741,7 +741,7 @@
       mean_epa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">epa</span><span class="op">)</span>, success_rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">success</span><span class="op">)</span>, ypc<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">yards_gained</span><span class="op">)</span>, plays<span class="op">=</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span>
       <span class="op">)</span> <span class="op">%&gt;%</span>
     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">plays</span> <span class="op">&gt;</span> <span class="fl">20</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 3 x 5</span>
+<span class="co">#&gt; # A tibble: 3 × 5</span>
 <span class="co">#&gt;   rusher     mean_epa success_rate   ypc plays</span>
 <span class="co">#&gt;   &lt;chr&gt;         &lt;dbl&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;</span>
 <span class="co">#&gt; 1 D.Prescott   0.288         0.591  6.41    22</span>
@@ -760,7 +760,7 @@
   <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">posteam</span>, <span class="va">home_team</span>, <span class="va">home</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 10 x 3</span>
+<span class="co">#&gt; # A tibble: 10 × 3</span>
 <span class="co">#&gt;    posteam home_team  home</span>
 <span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt;     &lt;dbl&gt;</span>
 <span class="co">#&gt;  1 ATL     MIN           0</span>
@@ -781,7 +781,7 @@
   <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">home</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>epa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">epa</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 2 x 2</span>
+<span class="co">#&gt; # A tibble: 2 × 2</span>
 <span class="co">#&gt;    home     epa</span>
 <span class="co">#&gt;   &lt;dbl&gt;   &lt;dbl&gt;</span>
 <span class="co">#&gt; 1     0  0.0214</span>
@@ -801,7 +801,7 @@
   <span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">depth</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>cp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">cp</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 4 x 2</span>
+<span class="co">#&gt; # A tibble: 4 × 2</span>
 <span class="co">#&gt;   depth       cp</span>
 <span class="co">#&gt;   &lt;chr&gt;    &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 Deep     0.367</span>
@@ -821,7 +821,7 @@
     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>mean_pass <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">pass</span><span class="op">)</span>, plays <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="op">-</span><span class="va">mean_pass</span><span class="op">)</span>
 <span class="va">schotty</span>
-<span class="co">#&gt; # A tibble: 32 x 3</span>
+<span class="co">#&gt; # A tibble: 32 × 3</span>
 <span class="co">#&gt;    posteam mean_pass plays</span>
 <span class="co">#&gt;    &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;</span>
 <span class="co">#&gt;  1 KC          0.691   388</span>
@@ -859,7 +859,7 @@
 <code class="sourceCode R"><span class="va">pbp</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">season</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 5 x 2</span>
+<span class="co">#&gt; # A tibble: 5 × 2</span>
 <span class="co">#&gt;   season     n</span>
 <span class="co">#&gt;    &lt;int&gt; &lt;int&gt;</span>
 <span class="co">#&gt; 1   2015 48869</span>
@@ -872,7 +872,7 @@
 <code class="sourceCode R"><span class="va">pbp</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">play_type</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 10 x 2</span>
+<span class="co">#&gt; # A tibble: 10 × 2</span>
 <span class="co">#&gt;    play_type       n</span>
 <span class="co">#&gt;    &lt;chr&gt;       &lt;int&gt;</span>
 <span class="co">#&gt;  1 extra_point  6115</span>
@@ -909,7 +909,7 @@
 <p>Let’s make some more figures. The <code>team_colors_logos</code> dataframe is provided in the <code>nflfastR</code> package, so since we have already loaded the package, it’s ready to use.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">teams_colors_logos</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 6 x 11</span>
+<span class="co">#&gt; # A tibble: 6 × 11</span>
 <span class="co">#&gt;   team_abbr team_name       team_id team_nick team_color team_color2 team_color3</span>
 <span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;           &lt;chr&gt;   &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;      </span>
 <span class="co">#&gt; 1 ARI       Arizona Cardin… 3800    Cardinals #97233f    #000000     #ffb612    </span>
@@ -1057,7 +1057,7 @@
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">season</span>, <span class="va">week</span>, <span class="va">home_team</span>, <span class="va">result</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span>team <span class="op">=</span> <span class="va">home_team</span><span class="op">)</span>
 <span class="va">home</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 5 x 4</span>
+<span class="co">#&gt; # A tibble: 5 × 4</span>
 <span class="co">#&gt;   season  week team  result</span>
 <span class="co">#&gt;    &lt;int&gt; &lt;int&gt; &lt;chr&gt;  &lt;int&gt;</span>
 <span class="co">#&gt; 1   1999     1 ATL       -3</span>
@@ -1073,7 +1073,7 @@
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span>team <span class="op">=</span> <span class="va">away_team</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>result <span class="op">=</span> <span class="op">-</span><span class="va">result</span><span class="op">)</span>
 <span class="va">away</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 5 x 4</span>
+<span class="co">#&gt; # A tibble: 5 × 4</span>
 <span class="co">#&gt;   season  week team  result</span>
 <span class="co">#&gt;    &lt;int&gt; &lt;int&gt; &lt;chr&gt;  &lt;int&gt;</span>
 <span class="co">#&gt; 1   1999     1 MIN        3</span>
@@ -1094,7 +1094,7 @@
   <span class="op">)</span>
 
 <span class="va">results</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op">==</span> <span class="fl">2019</span> <span class="op">&amp;</span> <span class="va">team</span> <span class="op">==</span> <span class="st">'SEA'</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 16 x 5</span>
+<span class="co">#&gt; # A tibble: 16 × 5</span>
 <span class="co">#&gt;    season  week team  result   win</span>
 <span class="co">#&gt;     &lt;int&gt; &lt;int&gt; &lt;chr&gt;  &lt;int&gt; &lt;dbl&gt;</span>
 <span class="co">#&gt;  1   2019     1 SEA        1     1</span>
@@ -1127,7 +1127,7 @@
 <span class="va">team_wins</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="op">-</span><span class="va">wins</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 5 x 4</span>
+<span class="co">#&gt; # A tibble: 5 × 4</span>
 <span class="co">#&gt;   team  season  wins point_diff</span>
 <span class="co">#&gt;   &lt;chr&gt;  &lt;int&gt; &lt;dbl&gt;      &lt;int&gt;</span>
 <span class="co">#&gt; 1 NE      2007    16        315</span>
@@ -1156,7 +1156,7 @@
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>epa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">epa</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>
 <span class="co">#&gt; `summarise()` has grouped output by 'posteam', 'season'. You can override using the `.groups` argument.</span>
-<span class="co">#&gt; # A tibble: 4 x 4</span>
+<span class="co">#&gt; # A tibble: 4 × 4</span>
 <span class="co">#&gt; # Groups:   posteam, season [2]</span>
 <span class="co">#&gt;   posteam season  pass     epa</span>
 <span class="co">#&gt;   &lt;chr&gt;    &lt;int&gt; &lt;dbl&gt;   &lt;dbl&gt;</span>
@@ -1172,7 +1172,7 @@
   <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">pass</span>, values_from <span class="op">=</span> <span class="va">epa</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>
 <span class="co">#&gt; `summarise()` has grouped output by 'posteam', 'season'. You can override using the `.groups` argument.</span>
-<span class="co">#&gt; # A tibble: 4 x 4</span>
+<span class="co">#&gt; # A tibble: 4 × 4</span>
 <span class="co">#&gt; # Groups:   posteam, season [4]</span>
 <span class="co">#&gt;   posteam season    `0`     `1`</span>
 <span class="co">#&gt;   &lt;chr&gt;    &lt;int&gt;  &lt;dbl&gt;   &lt;dbl&gt;</span>
@@ -1204,7 +1204,7 @@
 <span class="va">offense</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="op">-</span><span class="va">off_pass_epa</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 5 x 4</span>
+<span class="co">#&gt; # A tibble: 5 × 4</span>
 <span class="co">#&gt; # Groups:   posteam, season [5]</span>
 <span class="co">#&gt;   posteam season off_rush_epa off_pass_epa</span>
 <span class="co">#&gt;   &lt;chr&gt;    &lt;int&gt;        &lt;dbl&gt;        &lt;dbl&gt;</span>
@@ -1218,7 +1218,7 @@
 <span class="va">defense</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">def_pass_epa</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 5 x 4</span>
+<span class="co">#&gt; # A tibble: 5 × 4</span>
 <span class="co">#&gt; # Groups:   defteam, season [5]</span>
 <span class="co">#&gt;   defteam season def_rush_epa def_pass_epa</span>
 <span class="co">#&gt;   &lt;chr&gt;    &lt;int&gt;        &lt;dbl&gt;        &lt;dbl&gt;</span>
@@ -1238,7 +1238,7 @@
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>n<span class="op">=</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 35 x 2</span>
+<span class="co">#&gt; # A tibble: 35 × 2</span>
 <span class="co">#&gt;    team      n</span>
 <span class="co">#&gt;    &lt;chr&gt; &lt;int&gt;</span>
 <span class="co">#&gt;  1 LV        2</span>
@@ -1269,7 +1269,7 @@
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>n<span class="op">=</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 32 x 2</span>
+<span class="co">#&gt; # A tibble: 32 × 2</span>
 <span class="co">#&gt;    team      n</span>
 <span class="co">#&gt;    &lt;chr&gt; &lt;int&gt;</span>
 <span class="co">#&gt;  1 HOU      20</span>
@@ -1291,7 +1291,7 @@
 
 <span class="va">data</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">'SEA'</span> <span class="op">&amp;</span> <span class="va">season</span> <span class="op">&gt;=</span> <span class="fl">2012</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 10 x 8</span>
+<span class="co">#&gt; # A tibble: 10 × 8</span>
 <span class="co">#&gt;    team  season  wins point_diff off_rush_epa off_pass_epa def_rush_epa</span>
 <span class="co">#&gt;    &lt;chr&gt;  &lt;int&gt; &lt;dbl&gt;      &lt;int&gt;        &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;</span>
 <span class="co">#&gt;  1 SEA     2012  11          167     -0.00476       0.213       -0.0738</span>
@@ -1321,7 +1321,7 @@
 
 <span class="va">data</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 5 x 13</span>
+<span class="co">#&gt; # A tibble: 5 × 13</span>
 <span class="co">#&gt;   team  season  wins point_diff off_rush_epa off_pass_epa def_rush_epa</span>
 <span class="co">#&gt;   &lt;chr&gt;  &lt;int&gt; &lt;dbl&gt;      &lt;int&gt;        &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 ARI     1999     6       -137       -0.201      -0.162       -0.0105</span>
@@ -1504,7 +1504,7 @@
 <span class="va">preds</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="op">-</span><span class="va">prediction</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 5 x 2</span>
+<span class="co">#&gt; # A tibble: 5 × 2</span>
 <span class="co">#&gt;   prediction team </span>
 <span class="co">#&gt;        &lt;dbl&gt; &lt;chr&gt;</span>
 <span class="co">#&gt; 1       11.4 BAL  </span>
@@ -1529,7 +1529,7 @@
 <span class="va">preds2</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="op">-</span><span class="va">prediction</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 5 x 2</span>
+<span class="co">#&gt; # A tibble: 5 × 2</span>
 <span class="co">#&gt;   prediction team </span>
 <span class="co">#&gt;        &lt;dbl&gt; &lt;chr&gt;</span>
 <span class="co">#&gt; 1       11.2 BAL  </span>
