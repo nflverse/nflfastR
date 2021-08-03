@@ -1,19 +1,12 @@
 ## Release summary
 
-This is a major release that 
-* deprecates function arguments
-* adds a new exported function
-* cleans the source
-* removes models from sysdata
-* add new exported data
+This is a minor release that 
 * fixes bugs
-
-The latest internal test on CRAN were failing due to changes in the infrastructure
-the package is depending on. We made sure this won't happen in the future.
+* fixes a broken example
 
 ## Test environments
 
-* local R installation, R 4.0.4
+* local R installation, R 4.1.0
 * Debian Linux, R-devel, clang, ISO-8859-15 locale                       
 * Debian Linux, R-devel, GCC                                             
 * Debian Linux, R-devel, GCC, no long double                             
