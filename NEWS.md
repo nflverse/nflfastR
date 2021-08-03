@@ -1,4 +1,4 @@
-# nflfastR (development version)
+# nflfastR 4.2.0
 
 * All `wpa` variables are `NA` on end game line
 * All `wp` variables are 0, 0.5, 1, or `NA` on end game line
