@@ -30,13 +30,16 @@ authors:
     href: https://twitter.com/Stat_Ron
   Samuel Ventura:
     href: https://twitter.com/stat_sam
-
+  Tan Ho:
+    href: https://twitter.com/_TanHo
+  John Edwards:
+    href: https://twitter.com/John_B_Edwards
 home:
   title: An R package to quickly obtain clean and tidy NFL play by play data
   links:
-  - text: nflfastR Discord chat
+  - text: nflverse Discord Chat
     href: https://discord.gg/5Er2FBnnQa
-  - text: nflfastR beginner's guide
+  - text: nflfastR Beginner's Guide
     href: articles/beginners_guide.html
   - text: nflfastR stats landing page
     href: https://rbsdm.com/stats/
@@ -46,7 +49,7 @@ home:
 navbar:
   structure:
     left:  [home, intro, reference, news, articles, tutorials]
-    right: [data, stats, games, twitter, discord,  github]
+    right: [data, stats, games, twitter, discord, github]
   components:
     twitter:
       icon: "fab fa-twitter fa-lg"
