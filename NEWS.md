@@ -1,3 +1,7 @@
+# nflfastR (development version)
+
+* Fixed a minor bug in the console output of `update_db()`
+
 # nflfastR 4.2.0
 
 * All `wpa` variables are `NA` on end game line

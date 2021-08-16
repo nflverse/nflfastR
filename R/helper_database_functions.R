@@ -130,18 +130,18 @@ build_db <- function(tblname = "nflfastR_pbp", db_conn, rebuild = FALSE, show_me
     dplyr::ungroup()
 
   if (all(rebuild == TRUE)) {
-    cli::cli_ul("{my_time()} | Purging the complete data table {.val tblname} in your connected database...")
+    cli::cli_ul("{my_time()} | Purging the complete data table {.val {tblname}} in your connected database...")
     DBI::dbRemoveTable(db_conn, tblname)
     seasons <- valid_seasons %>% dplyr::pull("season")
     cli::cli_ul("{my_time()} | Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}...")
   } else if (is.numeric(rebuild) & all(rebuild %in% valid_seasons$season)) {
     string <- paste0(rebuild, collapse = ", ")
-    if (show_message){cli::cli_ul("{my_time()} | Purging {string} season(s) from the data table {.val tblname} in your connected database...")}
+    if (show_message){cli::cli_ul("{my_time()} | Purging {string} season(s) from the data table {.val {tblname}} in your connected database...")}
     DBI::dbExecute(db_conn, glue::glue_sql("DELETE FROM {`tblname`} WHERE season IN ({vals*})", vals = rebuild, .con = db_conn))
     seasons <- valid_seasons %>% dplyr::filter(.data$season %in% rebuild) %>% dplyr::pull("season")
     cli::cli_ul("{my_time()} | Starting download of the {string} season(s)...")
   } else if (all(rebuild == "NEW")) {
-    cli::cli_alert_info("{my_time()} | Can't find the data table {.val tblname} in your database. Will load the play by play data from scratch.")
+    cli::cli_alert_info("{my_time()} | Can't find the data table {.val {tblname}} in your database. Will load the play by play data from scratch.")
     seasons <- valid_seasons %>% dplyr::pull("season")
     cli::cli_ul("{my_time()} | Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}...")
   } else {
