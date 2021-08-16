@@ -75,14 +75,6 @@ maybe_valid <- function(id) {
 # check if a package is installed
 is_installed <- function(pkg) requireNamespace(pkg, quietly = TRUE)
 
-# load Lee Sharpe's games file
-load_lees_games <- function(){
-  con <- url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true")
-  dat <- readRDS(con)
-  close(con)
-  dat
-}
-
 # load raw game files esp. for debugging
 load_raw_game <- function(game_id, qs = FALSE){
 
@@ -126,7 +118,7 @@ check_stat_ids <- function(seasons, stat_ids){
     ))
   }
 
-  games <- load_lees_games() %>%
+  games <- nflreadr::load_schedules() %>%
     dplyr::filter(!is.na(.data$result), .data$season %in% seasons) %>%
     dplyr::pull(.data$game_id)
 
