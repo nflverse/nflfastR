@@ -148,10 +148,15 @@ check_stat_ids <- function(seasons, stat_ids){
 }
 
 # compute most recent season
-most_recent_season <- function() {
-  dplyr::if_else(
-    lubridate::month(lubridate::today("America/New_York")) >= 9,
-    lubridate::year(lubridate::today("America/New_York")),
-    lubridate::year(lubridate::today("America/New_York")) - 1
-  )
+most_recent_season <- function(roster = FALSE) {
+  today <- Sys.Date()
+  current_year <- as.integer(format(today, format = "%Y"))
+  current_month <- as.integer(format(today, format = "%m"))
+
+  if ((isFALSE(roster) && current_month >= 9) ||
+      (isTRUE(roster) && current_month >= 3)) {
+    return(current_year)
+  }
+
+  return(current_year - 1)
 }
