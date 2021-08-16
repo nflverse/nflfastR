@@ -126,6 +126,7 @@ Other contributors:
   \item Ron Yurko \email{ryurko@stat.cmu.edu} [contributor]
   \item Samuel Ventura \email{samventura22@gmail.com} [contributor]
   \item Tan Ho [contributor]
+  \item John Edwards \email{edwards1860@gmail.com} [contributor]
 }
 
 }

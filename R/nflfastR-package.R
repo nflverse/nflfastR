@@ -106,22 +106,16 @@
 #' @import dplyr
 #' @importFrom cli rule
 #' @importFrom curl curl_fetch_memory
-# @importFrom DBI dbConnect dbExistsTable dbWriteTable dbDisconnect dbRemoveTable dbExecute dbGetInfo
 #' @import fastrmodels
 #' @importFrom furrr future_map_chr future_map_dfr future_map
 #' @importFrom future plan
 #' @importFrom glue glue glue_sql
-# @importFrom gsisdecoder decode_ids
 #' @importFrom janitor clean_names
 #' @importFrom lifecycle deprecated is_present deprecate_warn
-#' @importFrom lubridate period_to_seconds ms month today
-#' @importFrom magrittr %>%
 #' @importFrom mgcv predict.bam
-# @importFrom purrr walk
+#' @import nflreadr
 #' @importFrom progressr progressor
-# @importFrom qs qdeserialize qread
 #' @importFrom rlang .data inform dots_list
-# @importFrom RSQLite SQLite
 #' @importFrom stats predict na.omit
 #' @importFrom stringr str_sub str_replace_all str_length str_extract str_detect str_trim str_remove_all str_split str_extract_all
 #' @importFrom tibble as_tibble tibble

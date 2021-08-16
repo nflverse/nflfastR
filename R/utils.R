@@ -161,6 +161,7 @@ most_recent_season <- function(roster = FALSE) {
   return(current_year - 1)
 }
 
+# take a time string of the format "MM:SS" and convert it to seconds
 time_to_seconds <- function(time){
   as.numeric(strptime(time, format = "%M:%S")) -
     as.numeric(strptime("0", format = "%S"))
