@@ -23,7 +23,7 @@ add_nflscrapr_mutations <- function(pbp) {
                               (.data$play_description == "END GAME" & is.na(.data$time)), "00:00", .data$time),
       time = dplyr::if_else(.data$play_description == 'GAME', "15:00", .data$time),
       # Create a column with the time in seconds remaining for the quarter:
-      quarter_seconds_remaining = lubridate::period_to_seconds(lubridate::ms(.data$time))
+      quarter_seconds_remaining = time_to_seconds(.data$time)
     ) %>%
     #put plays in the right order
     dplyr::group_by(.data$game_id) %>%

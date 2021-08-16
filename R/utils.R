@@ -160,3 +160,8 @@ most_recent_season <- function(roster = FALSE) {
 
   return(current_year - 1)
 }
+
+time_to_seconds <- function(time){
+  as.numeric(strptime(time, format = "%M:%S")) -
+    as.numeric(strptime("0", format = "%S"))
+}
