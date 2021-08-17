@@ -86,7 +86,7 @@ update_db <- function(dbdir = ".",
 
   # get completed games using Lee's file (thanks Lee!)
   user_message("Checking for missing completed games...", "todo")
-  completed_games <- load_lees_games() %>%
+  completed_games <- nflreadr::load_schedules() %>%
     # completed games since 1999, excluding the broken games
     dplyr::filter(.data$season >= 1999, !is.na(.data$result), !.data$game_id %in% c("1999_01_BAL_STL", "2000_06_BUF_MIA", "2000_03_SD_KC")) %>%
     dplyr::arrange(.data$gameday) %>%
@@ -123,7 +123,7 @@ update_db <- function(dbdir = ".",
 # this is a helper function to build nflfastR database from Scratch
 build_db <- function(tblname = "nflfastR_pbp", db_conn, rebuild = FALSE, show_message = TRUE) {
 
-  valid_seasons <- load_lees_games() %>%
+  valid_seasons <- nflreadr::load_schedules() %>%
     dplyr::filter(.data$season >= 1999 & !is.na(.data$result)) %>%
     dplyr::group_by(.data$season) %>%
     dplyr::summarise() %>%

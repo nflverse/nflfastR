@@ -1,6 +1,7 @@
 # nflfastR (development version)
 
 * Fixed a minor bug in the console output of `update_db()`
+* Add nflreadr to dependecies and drop lubridate and magrittr dependency
 
 # nflfastR 4.2.0
 

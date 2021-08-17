@@ -421,7 +421,7 @@ I'm going to try to go through the process of cleaning and joining multiple data
 We're going to cheat a little and take advantage of Lee Sharpe's famous `games` file. Most of this stuff has been added into `nflfastR`, but it's easier working with this file where each game is one row. If you're curious, the triple colon is a way to access what is referred to as non-exported functions in a package. Think of this as like a secret menu (why is this secret? Sometimes package developers want to limit the number of exported functions as to be not overwhelming).
 
 ``` {r}
-games <- nflfastR:::load_lees_games()
+games <- nflreadr::load_schedules()
 str(games)
 ```
 

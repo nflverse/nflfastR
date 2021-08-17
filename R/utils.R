@@ -75,14 +75,6 @@ maybe_valid <- function(id) {
 # check if a package is installed
 is_installed <- function(pkg) requireNamespace(pkg, quietly = TRUE)
 
-# load Lee Sharpe's games file
-load_lees_games <- function(){
-  con <- url("https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true")
-  dat <- readRDS(con)
-  close(con)
-  dat
-}
-
 # load raw game files esp. for debugging
 load_raw_game <- function(game_id, qs = FALSE){
 
@@ -126,7 +118,7 @@ check_stat_ids <- function(seasons, stat_ids){
     ))
   }
 
-  games <- load_lees_games() %>%
+  games <- nflreadr::load_schedules() %>%
     dplyr::filter(!is.na(.data$result), .data$season %in% seasons) %>%
     dplyr::pull(.data$game_id)
 
@@ -156,52 +148,21 @@ check_stat_ids <- function(seasons, stat_ids){
 }
 
 # compute most recent season
-most_recent_season <- function() {
-  dplyr::if_else(
-    lubridate::month(lubridate::today("America/New_York")) >= 9,
-    lubridate::year(lubridate::today("America/New_York")),
-    lubridate::year(lubridate::today("America/New_York")) - 1
-  )
+most_recent_season <- function(roster = FALSE) {
+  today <- Sys.Date()
+  current_year <- as.integer(format(today, format = "%Y"))
+  current_month <- as.integer(format(today, format = "%m"))
+
+  if ((isFALSE(roster) && current_month >= 9) ||
+      (isTRUE(roster) && current_month >= 3)) {
+    return(current_year)
+  }
+
+  return(current_year - 1)
 }
 
-# Load Next Gen Stats from Github -----------------------------------------
-
-load_ngs <- function(seasons, type) {
-  if (!type %in% c("passing", "rushing", "receiving")) cli::cli_abort('Please pass valid type ("passing", "rushing" or "receiving")!')
-
-  most_recent <- most_recent_season()
-
-  if (!all(seasons %in% 2016:most_recent)) {
-    cli::cli_abort("Please pass valid seasons between 2016 and {most_recent}")
-  }
-
-  if (length(seasons) > 1 && is_sequential()) {
-    cli::cli_alert_info(c(
-      "It is recommended to use parallel processing when trying to load multiple seasons.",
-      "Please consider running {.code future::plan(\"multisession\")}!",
-      "Will go on sequentially..."
-    ))  }
-
-  p <- progressr::progressor(along = seasons)
-
-  out <- furrr::future_map_dfr(seasons, single_season_ngs, type, p)
-
-  return(out)
-}
-
-single_season_ngs <- function(season, type, p, qs = FALSE) {
-
-  if (isTRUE(qs)){
-    .url <- glue::glue("https://github.com/mrcaseb/nfl-data/blob/master/data/ngs/ngs_{season}_{type}.qs?raw=true")
-    ret <- qs_from_url(.url)
-  }
-  if (isFALSE(qs)) {
-    .url <- glue::glue("https://github.com/mrcaseb/nfl-data/blob/master/data/ngs/ngs_{season}_{type}.rds?raw=true")
-    con <- url(.url)
-    ret <- readRDS(con)
-    close(con)
-  }
-
-  p(sprintf("season=%g", season))
-  return(ret)
+# take a time string of the format "MM:SS" and convert it to seconds
+time_to_seconds <- function(time){
+  as.numeric(strptime(time, format = "%M:%S")) -
+    as.numeric(strptime("0", format = "%S"))
 }
