@@ -2,25 +2,25 @@
 % Please edit documentation in R/load_pbp.R
 \name{load_pbp}
 \alias{load_pbp}
-\title{Load complete nflfastR Play by Play Datasets}
+\title{Load Play By Play}
 \usage{
-load_pbp(seasons, ..., qs = FALSE)
+load_pbp(
+  seasons = most_recent_season(),
+  file_type = getOption("nflreadr.prefer", default = "qs")
+)
 }
 \arguments{
-\item{seasons}{A vector of 4-digit years associated with given NFL seasons.}
+\item{seasons}{A numeric vector of 4-digit years associated with given NFL seasons - defaults to latest season. If set to \code{TRUE}, returns all available data since 1999.}
 
-\item{...}{Additional arguments passed to an underlying function that writes
-the season data into a database (used by \code{\link[=update_db]{update_db()}}).}
-
-\item{qs}{Wheter to use the function \code{\link[qs:qdeserialize]{qs::qdeserialize()}} for more efficient loading.}
+\item{file_type}{One of \code{"rds"} or \code{"qs"}. Can also be set globally with
+\code{options(nflreadr.prefer)}}
 }
 \value{
-The complete nflfastR dataset as returned by \code{\link[=build_nflfastR_pbp]{build_nflfastR_pbp()}} for
-all given \code{seasons}
+The complete nflfastR dataset as returned by \code{nflfastR::build_nflfastR_pbp()}
+(see below) for all given \code{seasons}
 }
 \description{
-Loads multiple seasons from the nflfastR datarepo either into memory
-or writes them into a database using some forwarded arguments in the dots.
+Loads multiple seasons from the \href{https://github.com/nflverse/nflfastR-data}{nflfastR data repository}
 }
 \examples{
 \donttest{
@@ -29,6 +29,9 @@ dplyr::glimpse(pbp)
 }
 }
 \seealso{
-For information on parallel processing and progress updates please
-see \link{nflfastR}.
+\code{\link[nflreadr]{dictionary_pbp}} for the data dictionary as a dataframe
+
+\url{https://nflreadr.nflverse.com/articles/dictionary_pbp.html} for a web version of the data dictionary
+
+\url{https://www.nflfastr.com/reference/build_nflfastR_pbp.html} for the nflfastR function \code{nflfastR::build_nflfastR_pbp()}
 }
