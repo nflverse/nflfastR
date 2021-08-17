@@ -4,16 +4,19 @@
 \alias{load_pbp}
 \title{Load Play By Play}
 \usage{
-load_pbp(
-  seasons = most_recent_season(),
-  file_type = getOption("nflreadr.prefer", default = "qs")
-)
+load_pbp(..., qs = lifecycle::deprecated())
 }
 \arguments{
-\item{seasons}{A numeric vector of 4-digit years associated with given NFL seasons - defaults to latest season. If set to \code{TRUE}, returns all available data since 1999.}
-
-\item{file_type}{One of \code{"rds"} or \code{"qs"}. Can also be set globally with
+\item{...}{
+  Arguments passed on to \code{\link[nflreadr:load_pbp]{nflreadr::load_pbp}}
+  \describe{
+    \item{\code{seasons}}{A numeric vector of 4-digit years associated with given NFL seasons - defaults to latest season. If set to \code{TRUE}, returns all available data since 1999.}
+    \item{\code{file_type}}{One of \code{"rds"} or \code{"qs"}. Can also be set globally with
 \code{options(nflreadr.prefer)}}
+  }}
+
+\item{qs}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} has no effect and will be
+removed in a future release.}
 }
 \value{
 The complete nflfastR dataset as returned by \code{nflfastR::build_nflfastR_pbp()}
