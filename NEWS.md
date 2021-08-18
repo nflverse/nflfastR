@@ -3,6 +3,7 @@
 * Fixed a minor bug in the console output of `update_db()`
 * Add nflreadr to dependecies and drop lubridate and magrittr dependency
 * The function `load_pbp()` now calls `nflreadr::load_pbp()` internally. Therefore the argument `qs` has been deprecated. It will be removed in a future release.
+* The deprecated arguments `source` and `pp` in the functions `fast_scraper_*()` and `build_nflfastR_pbp()` have been removed
 
 # nflfastR 4.2.0
 

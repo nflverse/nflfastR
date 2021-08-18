@@ -4,23 +4,11 @@
 \alias{fast_scraper}
 \title{Get NFL Play by Play Data}
 \usage{
-fast_scraper(
-  game_ids,
-  source = lifecycle::deprecated(),
-  pp = lifecycle::deprecated(),
-  ...,
-  in_builder = FALSE
-)
+fast_scraper(game_ids, ..., in_builder = FALSE)
 }
 \arguments{
 \item{game_ids}{Vector of character ids or a data frame including the variable
 \code{game_id} (see details for further information).}
-
-\item{source}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} has no effect and will be
-removed in a future release.}
-
-\item{pp}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} has no effect and will be
-removed in a future release.}
 
 \item{...}{Additional arguments passed to the scraping functions (for internal use)}
 

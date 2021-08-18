@@ -4,13 +4,10 @@
 \alias{fast_scraper_roster}
 \title{Get team rosters for multiple seasons}
 \usage{
-fast_scraper_roster(seasons, pp = lifecycle::deprecated())
+fast_scraper_roster(seasons)
 }
 \arguments{
 \item{seasons}{A vector of 4-digit years associated with given NFL seasons}
-
-\item{pp}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} has no effect and will be
-removed in a future release.}
 }
 \value{
 Data frame where each individual row represents a player in
