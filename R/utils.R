@@ -166,3 +166,13 @@ time_to_seconds <- function(time){
   as.numeric(strptime(time, format = "%M:%S")) -
     as.numeric(strptime("0", format = "%S"))
 }
+
+# write season pbp to a connected db
+write_pbp <- function(seasons, dbConnection, tablename){
+  p <- progressr::progressor(along = seasons)
+  purrr::walk(seasons, function(x, p){
+    pbp <- nflreadr::load_pbp(x)
+    DBI::dbWriteTable(dbConnection, tablename, pbp, append = TRUE)
+    p("loading...")
+  }, p)
+}

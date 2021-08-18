@@ -113,7 +113,6 @@
 #' @importFrom janitor clean_names
 #' @importFrom lifecycle deprecated is_present deprecate_warn
 #' @importFrom mgcv predict.bam
-#' @import nflreadr
 #' @importFrom progressr progressor
 #' @importFrom rlang .data inform dots_list
 #' @importFrom stats predict na.omit
