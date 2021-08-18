@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Load complete nflfastR Play by Play Datasets — load_pbp • nflfastR</title>
+<title>Load Play By Play — load_pbp • nflfastR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -52,9 +52,8 @@
 
 
 
-<meta property="og:title" content="Load complete nflfastR Play by Play Datasets — load_pbp" />
-<meta property="og:description" content="Loads multiple seasons from the nflfastR datarepo either into memory
-or writes them into a database using some forwarded arguments in the dots." />
+<meta property="og:title" content="Load Play By Play — load_pbp" />
+<meta property="og:description" content="Loads multiple seasons from the nflfastR data repository" />
 <meta property="og:image" content="https://raw.githubusercontent.com/nflverse/nflfastR/master/man/figures/card.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:creator" content="@nflfastR" />
@@ -100,7 +99,7 @@ or writes them into a database using some forwarded arguments in the dots." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0.9002</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0.9003</span>
       </span>
     </div>
 
@@ -199,50 +198,50 @@ or writes them into a database using some forwarded arguments in the dots." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Load complete nflfastR Play by Play Datasets</h1>
+    <h1>Load Play By Play</h1>
     <small class="dont-index">Source: <a href='https://github.com/nflverse/nflfastR/blob/master/R/load_pbp.R'><code>R/load_pbp.R</code></a></small>
     <div class="hidden name"><code>load_pbp.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Loads multiple seasons from the nflfastR datarepo either into memory
-or writes them into a database using some forwarded arguments in the dots.</p>
+    <p>Loads multiple seasons from the <a href='https://github.com/nflverse/nflfastR-data'>nflfastR data repository</a></p>
     </div>
 
-    <pre class="usage"><span class='fu'>load_pbp</span><span class='op'>(</span><span class='va'>seasons</span>, <span class='va'>...</span>, qs <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>load_pbp</span><span class='op'>(</span><span class='va'>...</span>, qs <span class='op'>=</span> <span class='fu'>lifecycle</span><span class='fu'>::</span><span class='fu'><a href='https://lifecycle.r-lib.org/reference/deprecated.html'>deprecated</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>seasons</th>
-      <td><p>A vector of 4-digit years associated with given NFL seasons.</p></td>
-    </tr>
-    <tr>
       <th>...</th>
-      <td><p>Additional arguments passed to an underlying function that writes
-the season data into a database (used by <code><a href='update_db.html'>update_db()</a></code>).</p></td>
+      <td><p>Arguments passed on to <code><a href='nflreadr.nflverse.com/reference/load_pbp.html'>nflreadr::load_pbp</a></code></p><dl>
+    <dt><code>seasons</code></dt><dd><p>A numeric vector of 4-digit years associated with given NFL seasons - defaults to latest season. If set to <code>TRUE</code>, returns all available data since 1999.</p></dd>
+    <dt><code>file_type</code></dt><dd><p>One of <code>"rds"</code> or <code>"qs"</code>. Can also be set globally with
+<code><a href='https://rdrr.io/r/base/options.html'>options(nflreadr.prefer)</a></code></p></dd>
+  
+</dl></td>
     </tr>
     <tr>
       <th>qs</th>
-      <td><p>Wheter to use the function <code><a href='https://rdrr.io/pkg/qs/man/qdeserialize.html'>qs::qdeserialize()</a></code> for more efficient loading.</p></td>
+      <td><p><a href='https://lifecycle.r-lib.org/articles/stages.html#deprecated'><img src='figures/lifecycle-deprecated.svg' alt='[Deprecated]' /></a> has no effect and will be
+removed in a future release.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>The complete nflfastR dataset as returned by <code><a href='build_nflfastR_pbp.html'>build_nflfastR_pbp()</a></code> for
-all given <code>seasons</code></p>
+    <p>The complete nflfastR dataset as returned by <code><a href='build_nflfastR_pbp.html'>nflfastR::build_nflfastR_pbp()</a></code>
+(see below) for all given <code>seasons</code></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>For information on parallel processing and progress updates please
-see <a href='nflfastR-package.html'>nflfastR</a>.</p></div>
+    <div class='dont-index'><p><code><a href='nflreadr.nflverse.com/reference/dictionary_pbp.html'>dictionary_pbp</a></code> for the data dictionary as a dataframe</p>
+<p><a href='https://nflreadr.nflverse.com/articles/dictionary_pbp.html'>https://nflreadr.nflverse.com/articles/dictionary_pbp.html</a> for a web version of the data dictionary</p>
+<p><a href='https://www.nflfastr.com/reference/build_nflfastR_pbp.html'>https://www.nflfastr.com/reference/build_nflfastR_pbp.html</a> for the nflfastR function <code><a href='build_nflfastR_pbp.html'>nflfastR::build_nflfastR_pbp()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 <span class='va'>pbp</span> <span class='op'>&lt;-</span> <span class='fu'>load_pbp</span><span class='op'>(</span><span class='fl'>2019</span><span class='op'>:</span><span class='fl'>2020</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span> It is recommended to use parallel processing when trying to load multiple seasons.</span>
-#&gt; <span class='message'>Please consider running <span style='color: #262626; background-color: #DADADA;'>`future::plan("multisession")`</span>! Will go on sequentially...</span></div><div class='input'><span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://pillar.r-lib.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='va'>pbp</span><span class='op'>)</span>
+<span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://pillar.r-lib.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='va'>pbp</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Rows: 96,548
 #&gt; Columns: 372
 #&gt; $ play_id                              <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> 1, 36, 51, 79, 100, 121, 148, 185…

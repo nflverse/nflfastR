@@ -98,7 +98,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0.9002</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0.9003</span>
       </span>
     </div>
 
@@ -209,6 +209,7 @@
 <li>Fixed a minor bug in the console output of <code><a href="../reference/update_db.html">update_db()</a></code>
 </li>
 <li>Add nflreadr to dependecies and drop lubridate and magrittr dependency</li>
+<li>The function <code><a href="../reference/load_pbp.html">load_pbp()</a></code> now calls <code><a href="nflreadr.nflverse.com/reference/load_pbp.html">nflreadr::load_pbp()</a></code> internally. Therefore the argument <code>qs</code> has been deprecated. It will be removed in a future release.</li>
 </ul>
 </div>
     <div id="nflfastr-420" class="section level1">

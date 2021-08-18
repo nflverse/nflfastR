@@ -49,7 +49,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0.9002</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0.9003</span>
       </span>
     </div>
 
@@ -850,9 +850,7 @@
 <a href="#loading-multiple-seasons" class="anchor"></a>Loading multiple seasons</h2>
 <p>Because all the data is stored in the data repository, it is very fast to load data from multiple seasons.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">pbp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_pbp.html">load_pbp</a></span><span class="op">(</span><span class="fl">2015</span><span class="op">:</span><span class="fl">2019</span><span class="op">)</span>
-<span class="co">#&gt; ℹ It is recommended to use parallel processing when trying to load multiple seasons.</span>
-<span class="co">#&gt; Please consider running `future::plan("multisession")`! Will go on sequentially...</span></code></pre></div>
+<code class="sourceCode R"><span class="va">pbp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_pbp.html">load_pbp</a></span><span class="op">(</span><span class="fl">2015</span><span class="op">:</span><span class="fl">2019</span><span class="op">)</span></code></pre></div>
 <p>This loads play-by-play data from the 2015 through 2019 seasons.</p>
 <p>Let’s make sure we got it all. By now, you should understand what this is doing:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
@@ -1145,9 +1143,7 @@
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">pbp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_pbp.html">load_pbp</a></span><span class="op">(</span><span class="fl">1999</span><span class="op">:</span><span class="fl">2019</span><span class="op">)</span> <span class="op">%&gt;%</span>
     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">rush</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">|</span> <span class="va">pass</span> <span class="op">==</span> <span class="fl">1</span>, <span class="va">season_type</span> <span class="op">==</span> <span class="st">"REG"</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">epa</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">posteam</span><span class="op">)</span>, <span class="va">posteam</span> <span class="op">!=</span> <span class="st">""</span><span class="op">)</span> <span class="op">%&gt;%</span>
-    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">season</span>, <span class="va">posteam</span>, <span class="va">pass</span>, <span class="va">defteam</span>, <span class="va">epa</span><span class="op">)</span>
-<span class="co">#&gt; ℹ It is recommended to use parallel processing when trying to load multiple seasons.</span>
-<span class="co">#&gt; Please consider running `future::plan("multisession")`! Will go on sequentially...</span></code></pre></div>
+    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">season</span>, <span class="va">posteam</span>, <span class="va">pass</span>, <span class="va">defteam</span>, <span class="va">epa</span><span class="op">)</span></code></pre></div>
 <p>I’m being pretty aggressive with dropping rows and columns (<code>filter</code> and <code>select</code>) because otherwise loading this all into memory can be painful on the computer. But this is all we need for what we’re doing. Note that I’m only keeping regular season games here (<code>season_type == "REG"</code>) since this is how this analysis is usually done.</p>
 <p>Now we can get EPA/play on offense and defense. Let’s break it out by pass and rush too. I don’t remember how to do some of this so let’s do it in steps. We know we need to group by team, season, and pass, so there’s the beginning:</p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
