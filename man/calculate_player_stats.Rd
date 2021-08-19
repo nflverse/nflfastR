@@ -73,6 +73,10 @@ between different sources).}
 \item{receiving_fumbles}{The number of fumbles after a pass reception.}
 \item{receiving_fumbles_lost}{The number of fumbles lost after a pass reception.}
 \item{receiving_2pt_conversions}{Two-point conversion receptions}
+\item{racr}{Receiver Air Conversion Ratio. RACR = \code{receiving_yards} / \code{receiving_air_yards}}
+\item{target_share}{The share of targets of the player in all targets of his team}
+\item{air_yards_share}{The share of receiving_air_yards of the player in all air_yards of his team}
+\item{wopr}{Weighted Opportunity Rating. WOPR = 1.5 × \code{target_share} + 0.7 × \code{air_yards_share}}
 \item{fantasy_points}{Standard fantasy points.}
 \item{fantasy_points_ppr}{PPR fantasy points.}
 }
