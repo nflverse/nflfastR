@@ -51,32 +51,9 @@
 #' }
 #' }
 build_nflfastR_pbp <- function(game_ids,
-                               source = lifecycle::deprecated(),
-                               pp = lifecycle::deprecated(),
                                ...,
                                decode = TRUE,
                                rules = TRUE) {
-
-  if (lifecycle::is_present(source)) {
-    lifecycle::deprecate_warn(
-      when = "4.0.0",
-      what = "build_nflfastR_pbp(source = )",
-      details = "The source argument isn't used anymore and will be dropped in a future release."
-    )
-  }
-
-  if (lifecycle::is_present(pp)) {
-    lifecycle::deprecate_warn(
-      when = "4.0.0",
-      what = "build_nflfastR_pbp(pp = )",
-      details = cli::cli_text(c(
-        "We have dropped the in-package activation of parallel processing as ",
-        "this is considered bad practice.\n",
-        "Please choose an appropriate plan before calling the function, e.g. ",
-        "{.code future::plan(\"multisession\")}"
-      ))
-    )
-  }
 
   if (!is.vector(game_ids) && is.data.frame(game_ids)) game_ids <- game_ids$game_id
 
@@ -97,7 +74,7 @@ build_nflfastR_pbp <- function(game_ids,
     cli::cli_ul("{my_time()} | Start download of {game_count} game...")
   }
 
-  ret <- fast_scraper(game_ids = game_ids, source = source, pp = pp, ..., in_builder = builder) %>%
+  ret <- fast_scraper(game_ids = game_ids, ..., in_builder = builder) %>%
     clean_pbp(in_builder = builder) %>%
     add_qb_epa(in_builder = builder) %>%
     add_xyac(in_builder = builder) %>%

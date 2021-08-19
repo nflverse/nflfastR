@@ -13,10 +13,6 @@
 #'
 #' @param game_ids Vector of character ids or a data frame including the variable
 #' `game_id` (see details for further information).
-#' @param source `r lifecycle::badge("deprecated")` has no effect and will be
-#'   removed in a future release.
-#' @param pp `r lifecycle::badge("deprecated")` has no effect and will be
-#'   removed in a future release.
 #' @param ... Additional arguments passed to the scraping functions (for internal use)
 #' @param in_builder If \code{TRUE}, the final message will be suppressed (for usage inside of \code{\link{build_nflfastR_pbp}}).
 #' @details To load valid game_ids please use the package function
@@ -400,30 +396,8 @@
 #' }
 #' }
 fast_scraper <- function(game_ids,
-                         source = lifecycle::deprecated(),
-                         pp = lifecycle::deprecated(),
                          ...,
                          in_builder = FALSE) {
-  if (lifecycle::is_present(source)) {
-    lifecycle::deprecate_warn(
-      when = "4.0.0",
-      what = "fast_scraper(source = )",
-      details = "The source argument isn't used anymore and will be dropped in a future release."
-    )
-  }
-
-  if (lifecycle::is_present(pp)) {
-    lifecycle::deprecate_warn(
-      when = "4.0.0",
-      what = "fast_scraper(pp = )",
-      details = cli::cli_text(c(
-        "We have dropped the in-package activation of parallel processing as ",
-        "this is considered bad practice.\n",
-        "Please choose an appropriate plan before calling the function, e.g. ",
-        "{.code future::plan(\"multisession\")}"
-      ))
-    )
-  }
 
   if (!is.vector(game_ids) && is.data.frame(game_ids)) game_ids <- game_ids$game_id
 
@@ -479,8 +453,6 @@ fast_scraper <- function(game_ids,
 #' @description Given years return a dataset with each player listed as part of the roster.
 #'
 #' @param seasons A vector of 4-digit years associated with given NFL seasons
-#' @param pp `r lifecycle::badge("deprecated")` has no effect and will be
-#'   removed in a future release.
 #' @details The roster data is accessed via the free to use Sleeper API.
 #' @seealso For information on parallel processing and progress updates please
 #' see [nflfastR].
@@ -519,19 +491,7 @@ fast_scraper <- function(game_ids,
 #' }
 #' }
 #' @export
-fast_scraper_roster <- function(seasons, pp = lifecycle::deprecated()) {
-  if (lifecycle::is_present(pp)) {
-    lifecycle::deprecate_warn(
-      when = "4.0.0",
-      what = "fast_scraper_roster(pp = )",
-      details = cli::cli_text(c(
-        "We have dropped the in-package activation of parallel processing as ",
-        "this is considered bad practice.\n",
-        "Please choose an appropriate plan before calling the function, e.g.",
-        "{.code future::plan(\"multisession\")}"
-      ))
-    )
-  }
+fast_scraper_roster <- function(seasons) {
 
   if (length(seasons) > 1 && is_sequential()) {
     cli::cli_alert_info(
@@ -557,8 +517,6 @@ fast_scraper_roster <- function(seasons, pp = lifecycle::deprecated()) {
 #' Get NFL Season Schedules
 #'
 #' @param seasons Vector of numeric or character 4 digit seasons
-#' @param pp `r lifecycle::badge("deprecated")` has no effect and will be
-#'   removed in a future release.
 #' @details This functions now incorporates the games file provided and maintained
 #' by Lee Sharpe.
 #' @seealso For information on parallel processing and progress updates please
@@ -593,20 +551,9 @@ fast_scraper_roster <- function(seasons, pp = lifecycle::deprecated()) {
 #' future::plan("sequential")
 #' }
 #' }
-fast_scraper_schedules <- function(seasons, pp = lifecycle::deprecated()) {
-  if (lifecycle::is_present(pp)) {
-    lifecycle::deprecate_warn(
-      when = "4.0.0",
-      what = "fast_scraper_schedules(pp = )",
-      details = cli::cli_text(c(
-        "We have dropped the in-package activation of parallel processing as ",
-        "this is considered bad practice.\n",
-        "Please choose an appropriate plan before calling the function, e.g.",
-        "{.code future::plan(\"multisession\")}"
-      ))
-    )
-  }
-  if (length(seasons) > 1 && is_sequential()) {
+fast_scraper_schedules <- function(seasons) {
+
+    if (length(seasons) > 1 && is_sequential()) {
     cli::cli_alert_info(
       c(
         "It is recommended to use parallel processing when trying to load multiple seasons. ",
