@@ -175,7 +175,12 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       sack_yards = -1*sum(.data$yards_gained * .data$sack),
       passing_first_downs = sum(.data$first_down_pass),
       passing_epa = sum(.data$qb_epa, na.rm = TRUE),
-      pacr = .data$passing_yards / .data$passing_air_yards
+      pacr = .data$passing_yards / .data$passing_air_yards,
+      pacr = dplyr::case_when(
+        is.nan(.data$pacr) ~ NA_real_,
+        is.infinite(.data$pacr) ~ .data$passing_yards,
+        TRUE ~ .data$pacr
+      ),
     ) %>%
     dplyr::rename(player_id = .data$passer_player_id) %>%
     dplyr::ungroup()
@@ -371,6 +376,11 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       receiving_fumbles = .data$receiving_fumbles + .data$lateral_fumbles,
       receiving_fumbles_lost = .data$receiving_fumbles_lost + .data$lateral_fumbles_lost,
       racr = .data$receiving_yards / .data$receiving_air_yards,
+      racr = dplyr::case_when(
+        is.nan(.data$racr) ~ NA_real_,
+        is.infinite(.data$racr) ~ .data$receiving_yards,
+        TRUE ~ .data$racr
+      ),
       target_share = .data$targets / .data$team_targets,
       air_yards_share = .data$receiving_air_yards / .data$team_air_yards,
       wopr = 1.5 * .data$target_share + 0.7 * .data$air_yards_share
