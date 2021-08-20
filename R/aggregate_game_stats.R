@@ -178,7 +178,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       pacr = .data$passing_yards / .data$passing_air_yards,
       pacr = dplyr::case_when(
         is.nan(.data$pacr) ~ NA_real_,
-        is.infinite(.data$pacr) ~ 0,
+        .data$passing_air_yards <= 0,
         TRUE ~ .data$pacr
       ),
     ) %>%
@@ -378,7 +378,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       racr = .data$receiving_yards / .data$receiving_air_yards,
       racr = dplyr::case_when(
         is.nan(.data$racr) ~ NA_real_,
-        is.infinite(.data$racr) ~ 0,
+        .data$receiving_air_yards <= 0 ~ 0,
         TRUE ~ .data$racr
       ),
       target_share = .data$targets / .data$team_targets,
@@ -526,7 +526,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         pacr = .data$passing_yards / .data$passing_air_yards,
         pacr = dplyr::case_when(
           is.nan(.data$pacr) ~ NA_real_,
-          is.infinite(.data$pacr) ~ 0,
+          .data$passing_air_yards <= 0,
           TRUE ~ .data$pacr
         ),
 
@@ -555,7 +555,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         racr = .data$receiving_yards / .data$receiving_air_yards,
         racr = dplyr::case_when(
           is.nan(.data$racr) ~ NA_real_,
-          is.infinite(.data$racr) ~ 0,
+          .data$receiving_air_yards <= 0 ~ 0,
           TRUE ~ .data$racr
         ),
         target_share = dplyr::if_else(all(is.na(.data$target_share)), NA_real_, mean(.data$target_share, na.rm = TRUE)),
