@@ -41,6 +41,7 @@
 #' to the point where a receiver lost a fumble after a completed catch and makes
 #' EPA work more like passing yards on plays with fumbles.}
 #' \item{passing_2pt_conversions}{Two-point conversion passes.}
+#' \item{pacr}{Passing Air Conversion Ratio. PACR = `passing_yards` / `passing_air_yards`}
 #' \item{dakota}{Adjusted EPA + CPOE composite based on coefficients which best predict adjusted EPA/play in the following year.}
 #' \item{carries}{The number of official rush attempts (incl. scrambles and kneel downs).
 #' Rushes after a lateral reception don't count as carry.}
@@ -173,7 +174,8 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       sacks = sum(.data$sack),
       sack_yards = -1*sum(.data$yards_gained * .data$sack),
       passing_first_downs = sum(.data$first_down_pass),
-      passing_epa = sum(.data$qb_epa, na.rm = TRUE)
+      passing_epa = sum(.data$qb_epa, na.rm = TRUE),
+      pacr = .data$passing_yards / .data$passing_air_yards
     ) %>%
     dplyr::rename(player_id = .data$passer_player_id) %>%
     dplyr::ungroup()
@@ -200,7 +202,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     dplyr::filter(!is.na(.data$player_id))
 
   pass_df_nas <- is.na(pass_df)
-  epa_index <- which(dimnames(pass_df_nas)[[2]] %in% c("passing_epa", "dakota"))
+  epa_index <- which(dimnames(pass_df_nas)[[2]] %in% c("passing_epa", "dakota", "pacr"))
   pass_df_nas[,epa_index] <- c(FALSE)
 
   pass_df[pass_df_nas] <- 0
@@ -448,7 +450,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       # passing stats
       "completions", "attempts", "passing_yards", "passing_tds", "interceptions",
       "sacks", "sack_yards", "sack_fumbles", "sack_fumbles_lost", "passing_air_yards", "passing_yards_after_catch",
-      "passing_first_downs", "passing_epa", "passing_2pt_conversions", "dakota",
+      "passing_first_downs", "passing_epa", "passing_2pt_conversions", "pacr", "dakota",
 
       # rushing stats
       "carries", "rushing_yards", "rushing_tds", "rushing_fumbles", "rushing_fumbles_lost",
@@ -467,7 +469,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     dplyr::filter(!is.na(.data$player_id))
 
   player_df_nas <- is.na(player_df)
-  epa_index <- which(dimnames(player_df_nas)[[2]] %in% c("passing_epa", "rushing_epa", "receiving_epa", "dakota", "racr", "target_share", "air_yards_share", "wopr"))
+  epa_index <- which(dimnames(player_df_nas)[[2]] %in% c("passing_epa", "rushing_epa", "receiving_epa", "dakota", "racr", "target_share", "air_yards_share", "wopr", "pacr"))
   player_df_nas[,epa_index] <- c(FALSE)
 
   player_df[player_df_nas] <- 0
@@ -511,6 +513,12 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         passing_first_downs = sum(.data$passing_first_downs),
         passing_epa = dplyr::if_else(all(is.na(.data$passing_epa)), NA_real_, sum(.data$passing_epa, na.rm = TRUE)),
         passing_2pt_conversions = sum(.data$passing_2pt_conversions),
+        pacr = .data$passing_yards / .data$passing_air_yards,
+        pacr = dplyr::case_when(
+          is.nan(.data$pacr) ~ NA_real_,
+          is.infinite(.data$pacr) ~ .data$passing_yards,
+          TRUE ~ .data$pacr
+        ),
 
         # rushing
         carries = sum(.data$carries),
@@ -535,7 +543,11 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         receiving_epa = dplyr::if_else(all(is.na(.data$receiving_epa)), NA_real_, sum(.data$receiving_epa, na.rm = TRUE)),
         receiving_2pt_conversions = sum(.data$receiving_2pt_conversions),
         racr = .data$receiving_yards / .data$receiving_air_yards,
-        racr = dplyr::if_else(is.nan(.data$racr), NA_real_, .data$racr),
+        racr = dplyr::case_when(
+          is.nan(.data$racr) ~ NA_real_,
+          is.infinite(.data$racr) ~ .data$receiving_yards,
+          TRUE ~ .data$racr
+        ),
         target_share = dplyr::if_else(all(is.na(.data$target_share)), NA_real_, mean(.data$target_share, na.rm = TRUE)),
         air_yards_share = dplyr::if_else(all(is.na(.data$air_yards_share)), NA_real_, mean(.data$air_yards_share, na.rm = TRUE)),
         wopr = 1.5 * .data$target_share + 0.7 * .data$air_yards_share,
@@ -550,7 +562,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       dplyr::ungroup() %>%
       add_dakota(pbp = pbp, weekly = weekly) %>%
       dplyr::select(
-        .data$player_id:.data$passing_2pt_conversions,
+        .data$player_id:.data$pacr,
         .data$dakota,
         dplyr::everything()
       )
