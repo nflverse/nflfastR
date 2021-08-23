@@ -178,7 +178,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       pacr = .data$passing_yards / .data$passing_air_yards,
       pacr = dplyr::case_when(
         is.nan(.data$pacr) ~ NA_real_,
-        .data$passing_air_yards <= 0,
+        .data$passing_air_yards <= 0 ~ 0,
         TRUE ~ .data$pacr
       ),
     ) %>%
@@ -526,7 +526,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         pacr = .data$passing_yards / .data$passing_air_yards,
         pacr = dplyr::case_when(
           is.nan(.data$pacr) ~ NA_real_,
-          .data$passing_air_yards <= 0,
+          .data$passing_air_yards <= 0 ~ 0,
           TRUE ~ .data$pacr
         ),
 
