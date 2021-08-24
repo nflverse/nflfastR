@@ -153,6 +153,9 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     dplyr::select(.data$season, .data$season_type, .data$week) %>%
     dplyr::distinct()
 
+  # load gsis_ids of FBs and RBs for RACR
+  racr_ids <- nflreadr::qs_from_url("https://github.com/nflverse/nflfastR-roster/raw/master/data/nflfastR-RB_ids.qs")
+
 # Passing stats -----------------------------------------------------------
 
   # get passing stats
@@ -378,7 +381,10 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       racr = .data$receiving_yards / .data$receiving_air_yards,
       racr = dplyr::case_when(
         is.nan(.data$racr) ~ NA_real_,
-        .data$receiving_air_yards <= 0 ~ 0,
+        .data$receiving_air_yards == 0 ~ 0,
+        # following Josh Hermsmeyer's definition, RACR stays < 0 for RBs (and FBs) and is set to
+        # 0 for Receivers. The list "racr_ids" includes all known RB and FB gsis_ids
+        .data$receiving_air_yards < 0 & !.data$receiver_player_id %in% racr_ids$gsis_id ~ 0,
         TRUE ~ .data$racr
       ),
       target_share = .data$targets / .data$team_targets,
@@ -555,7 +561,10 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         racr = .data$receiving_yards / .data$receiving_air_yards,
         racr = dplyr::case_when(
           is.nan(.data$racr) ~ NA_real_,
-          .data$receiving_air_yards <= 0 ~ 0,
+          .data$receiving_air_yards == 0 ~ 0,
+          # following Josh Hermsmeyer's definition, RACR stays < 0 for RBs (and FBs) and is set to
+          # 0 for Receivers. The list "racr_ids" includes all known RB and FB gsis_ids
+          .data$receiving_air_yards < 0 & !.data$player_id %in% racr_ids$gsis_id ~ 0,
           TRUE ~ .data$racr
         ),
         target_share = dplyr::if_else(all(is.na(.data$target_share)), NA_real_, mean(.data$target_share, na.rm = TRUE)),
