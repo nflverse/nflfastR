@@ -564,7 +564,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
           .data$receiving_air_yards == 0 ~ 0,
           # following Josh Hermsmeyer's definition, RACR stays < 0 for RBs (and FBs) and is set to
           # 0 for Receivers. The list "racr_ids" includes all known RB and FB gsis_ids
-          .data$receiving_air_yards < 0 & !.data$player_id %in% racr_ids$gsis_id ~ 0,
+          .data$receiving_air_yards < 0 && !.data$player_id %in% racr_ids$gsis_id ~ 0,
           TRUE ~ .data$racr
         ),
         target_share = dplyr::if_else(all(is.na(.data$target_share)), NA_real_, mean(.data$target_share, na.rm = TRUE)),
