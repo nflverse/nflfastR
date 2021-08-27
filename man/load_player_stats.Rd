@@ -10,8 +10,8 @@ load_player_stats(..., qs = lifecycle::deprecated())
 \item{...}{
   Arguments passed on to \code{\link[nflreadr:load_player_stats]{nflreadr::load_player_stats}}
   \describe{
-    \item{\code{seasons}}{a numeric vector of seasons to return, defaults to most recent season. If set to \code{NULL}, returns all available data.}
-    \item{\code{stat_type}}{one of \code{offense}, \code{defense}, or \code{special_teams}}
+    \item{\code{seasons}}{a numeric vector of seasons to return, defaults to most recent season. If set to \code{TRUE}, returns all available data.}
+    \item{\code{stat_type}}{one of \code{offense} or \code{kicking}}
     \item{\code{file_type}}{One of \code{"rds"} or \code{"qs"}. Can also be set globally with
 \code{options(nflreadr.prefer)}}
   }}
