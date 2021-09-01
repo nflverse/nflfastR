@@ -5,6 +5,11 @@ geom_nfl_logos <- function(mapping = NULL, data = NULL,
                            na.rm = FALSE,
                            show.legend = FALSE,
                            inherit.aes = TRUE) {
+
+  if (!is_installed("ggplot2") | !is_installed("magick")) {
+    cli::cli_abort("{my_time()} | Packages {.val ggplot2} and {.val magick} required for {.var geom_nfl_logos}. Please install them.")
+  }
+
   ggplot2::layer(
     data = data,
     mapping = mapping,
