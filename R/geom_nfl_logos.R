@@ -4,64 +4,77 @@ geom_nfl_logos <- function(mapping = NULL, data = NULL,
                            ...,
                            na.rm = FALSE,
                            show.legend = FALSE,
-                           inherit.aes = TRUE,
-                           alpha = NULL) {
-  required <- c("x", "y", "team_abbr")
-  missing_aes <- required[!required %in% names(mapping)]
-  if (!rlang::is_empty(missing_aes)){
-    string <- glue::glue_collapse(missing_aes, sep = ", ", last = " and ")
-    cli::cli_abort("{.var geom_nfl_logo} requires the following missing aesthetics: {string}")
-  }
-
-  x_var <- as.character(rlang::quo_get_expr(mapping$x))
-  y_var <- as.character(rlang::quo_get_expr(mapping$y))
-  team_abbr_var <- as.character(rlang::quo_get_expr(mapping$team_abbr))
-
-  teams <- data[,team_abbr_var]
-  dots <- list(...)
-
-  if ("alpha" %in% names(dots)) alpha <- dots$alpha
-
-  if ("alpha" %in% names(mapping)) alpha <- data[,as.character(rlang::quo_get_expr(mapping$alpha))]
-
-  urls <- teams_colors_logos |>
-    dplyr::filter(team_abbr %in% teams) |>
-    dplyr::pull(team_logo_espn)
-
-  print(alpha)
-
-  grobs <- purrr::map(seq_along(urls), function(x, urls, alpha) {
-    if(is.null(alpha)){
-      grid::rasterGrob(magick::image_read(urls[x]))
-    } else if (length(alpha) == 1L) {
-      if (as.numeric(alpha) <= 0 || as.numeric(alpha) >= 1) {
-        cli::cli_abort("aesthetic {.var alpha} requires a value between {.val 0} and {.val 1}")
-      }
-      img <- magick::image_read(urls[x])
-      new <- magick::image_fx(img, expression = paste0(alpha, "*a"), channel = "alpha")
-      grid::rasterGrob(new)
-    } else{
-      if (any(as.numeric(alpha) < 0) || any(as.numeric(alpha) > 1)) {
-        cli::cli_abort("aesthetics {.var alpha} require values between {.val 0} and {.val 1}")
-      }
-      img <- magick::image_read(urls[x])
-      new <- magick::image_fx(img, expression = paste0(alpha[x], "*a"), channel = "alpha")
-      grid::rasterGrob(new)
-    }
-  }, urls = urls, alpha = alpha)
-
-  data$label_var <- grobs
-
-  mapping$label <- ggplot2::aes(label = label_var)$label
-
-  ggpp::geom_grob(
-    mapping = mapping,
+                           inherit.aes = TRUE) {
+  ggplot2::layer(
     data = data,
+    mapping = mapping,
     stat = stat,
+    geom = GeomNFL,
     position = position,
-    ...,
-    na.rm = na.rm,
     show.legend = show.legend,
-    inherit.aes = inherit.aes
+    inherit.aes = inherit.aes,
+    params = list(
+      na.rm = na.rm,
+      ...
+    )
   )
 }
+
+GeomNFL <- ggplot2::ggproto("GeomNFL", ggplot2::Geom,
+                            required_aes = c("x", "y", "team_abbr"),
+                            # non_missing_aes = c(""),
+                            default_aes = ggplot2::aes(
+                              alpha = NULL, angle = 0, hjust = 0.5,
+                              vjust = 0.5, width = 0.1, height = 0.1
+                            ),
+
+                            draw_panel = function(data, panel_params, coord, na.rm = FALSE) {
+                              urls <- nflfastR::teams_colors_logos |>
+                                dplyr::filter(team_abbr %in% data$team_abbr) |>
+                                dplyr::pull(team_logo_espn)
+
+                              data <- coord$transform(data, panel_params)
+
+                              grobs <- purrr::map(seq_along(urls), function(i, urls, alpha, data) {
+                                if(is.null(alpha)){
+                                  grid <- grid::rasterGrob(magick::image_read(urls[i]))
+                                } else if (length(alpha) == 1L) {
+                                  if (as.numeric(alpha) <= 0 || as.numeric(alpha) >= 1) {
+                                    cli::cli_abort("aesthetic {.var alpha} requires a value between {.val 0} and {.val 1}")
+                                  }
+                                  img <- magick::image_read(urls[i])
+                                  new <- magick::image_fx(img, expression = paste0(alpha, "*a"), channel = "alpha")
+                                  grid <- grid::rasterGrob(new)
+                                } else{
+                                  if (any(as.numeric(alpha) < 0) || any(as.numeric(alpha) > 1)) {
+                                    cli::cli_abort("aesthetics {.var alpha} require values between {.val 0} and {.val 1}")
+                                  }
+                                  img <- magick::image_read(urls[i])
+                                  new <- magick::image_fx(img, expression = paste0(alpha[i], "*a"), channel = "alpha")
+                                  grid <- grid::rasterGrob(new)
+                                }
+
+                                grid$vp <- grid::viewport(
+                                  x = grid::unit(data$x[i], "native"),
+                                  y = grid::unit(data$y[i], "native"),
+                                  width = grid::unit(data$width[i], "npc"),
+                                  height = grid::unit(data$height[i], "npc"),
+                                  just = c(data$hjust[i], data$vjust[i]),
+                                  angle = data$angle[i],
+                                  name = paste("geom_nfl.panel", data$PANEL[i],
+                                               "row", i, sep = ".")
+                                )
+
+                                grid$name <- paste("nfl.grob", i, sep = ".")
+
+                                grid
+
+                              }, urls = urls, alpha = data$alpha, data = data)
+
+                              class(grobs) <- "gList"
+
+                              grid::gTree(children = grobs)
+                            },
+
+                            draw_key = function(...) grid::nullGrob()
+)
