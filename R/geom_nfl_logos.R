@@ -1,4 +1,29 @@
+#' ggplot2 Layer for Visualizing NFL Team Logos
+#' @inheritParams ggplot2::geom_point
 #' @export
+#' @examples
+#' \donttest{
+#' library(ggplot2)
+#' library(nflfastR)
+#'
+#' teams <- nflfastR::teams_colors_logos %>%
+#'   dplyr::filter(!team_abbr %in% c("OAK", "SD", "STL", "LAR"))
+#'
+#' df <- data.frame(
+#'   a = runif(nrow(teams)),
+#'   b = runif(nrow(teams)),
+#'   teams = teams$team_abbr
+#' ) %>%
+#'   dplyr::mutate(
+#'     alpha = ifelse(teams %in% c("CLE", "PIT", "NE"), 1, 0.2)
+#'   )
+#'
+#' df %>%
+#'   ggplot(aes(x = a, y = b)) +
+#'   geom_nfl_logos(aes(team_abbr = teams, alpha = alpha)) +
+#'   theme(minimal)
+#'
+#' }
 geom_nfl_logos <- function(mapping = NULL, data = NULL,
                            stat = "identity", position = "identity",
                            ...,
@@ -34,8 +59,8 @@ GeomNFL <- ggplot2::ggproto("GeomNFL", ggplot2::Geom,
                             ),
 
                             draw_panel = function(data, panel_params, coord, na.rm = FALSE) {
-                              urls <- nflfastR::teams_colors_logos |>
-                                dplyr::filter(team_abbr %in% data$team_abbr) |>
+                              urls <- nflfastR::teams_colors_logos %>%
+                                dplyr::filter(team_abbr %in% data$team_abbr) %>%
                                 dplyr::pull(team_logo_espn)
 
                               data <- coord$transform(data, panel_params)
