@@ -101,7 +101,7 @@ A set of functions to access National Football
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0.9004</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0.9005</span>
       </span>
     </div>
 
@@ -230,13 +230,13 @@ and show progress updates if the user wants to.</p>
 
 
 <p>Nearly all nflfastR functions support parallel processing
-using <code><a href='https://rdrr.io/pkg/furrr/man/future_map.html'>furrr::future_map()</a></code> if it is enabled by a call to <code><a href='https://rdrr.io/pkg/future/man/plan.html'>future::plan()</a></code>
+using <code><a href='https://rdrr.io/pkg/furrr/man/future_map.html'>furrr::future_map()</a></code> if it is enabled by a call to <code><a href='https://future.futureverse.org/reference/plan.html'>future::plan()</a></code>
 prior to the function call.
 Please see the documentation of the functions for detailed information.</p>
 <p>As an example, the following code block will resolve all function calls in the
 current session using multiple sessions in the background and load play-by-play
 data for the 2018 through 2020 seasons or build them freshly for the 2018 and
-2019 Super Bowls:</p><pre><span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/future/man/plan.html'>plan</a></span><span class='op'>(</span><span class='st'>"multisession"</span><span class='op'>)</span>
+2019 Super Bowls:</p><pre><span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://future.futureverse.org/reference/plan.html'>plan</a></span><span class='op'>(</span><span class='st'>"multisession"</span><span class='op'>)</span>
 <span class='fu'><a href='load_pbp.html'>load_pbp</a></span><span class='op'>(</span><span class='fl'>2018</span><span class='op'>:</span><span class='fl'>2020</span><span class='op'>)</span>
 <span class='fu'><a href='build_nflfastR_pbp.html'>build_nflfastR_pbp</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"2018_21_NE_LA"</span>, <span class='st'>"2019_21_SF_KC"</span><span class='op'>)</span><span class='op'>)</span>
 </pre>
@@ -256,8 +256,8 @@ this should be the appropriate plan but please make sure it truly is.</p><pre><s
 
 <p>After the session is freshly restarted please check if the above method worked
 by running the next line. If the output is <code>FALSE</code> you successfully set up a
-default non-sequential <code><a href='https://rdrr.io/pkg/future/man/plan.html'>future::plan()</a></code>. If the output is <code>TRUE</code> all functions
-will behave like they were called with <code><a href='https://purrr.tidyverse.org/reference/map.html'>purrr::map()</a></code> and NOT in multisession.</p><pre><span class='fu'><a href='https://rdrr.io/r/base/class.html'>inherits</a></span><span class='op'>(</span><span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/future/man/plan.html'>plan</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='st'>"sequential"</span><span class='op'>)</span>
+default non-sequential <code><a href='https://future.futureverse.org/reference/plan.html'>future::plan()</a></code>. If the output is <code>TRUE</code> all functions
+will behave like they were called with <code><a href='https://purrr.tidyverse.org/reference/map.html'>purrr::map()</a></code> and NOT in multisession.</p><pre><span class='fu'><a href='https://rdrr.io/r/base/class.html'>inherits</a></span><span class='op'>(</span><span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://future.futureverse.org/reference/plan.html'>plan</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='st'>"sequential"</span><span class='op'>)</span>
 </pre>
 
 <p>For more information on possible plans please see

@@ -98,7 +98,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0.9004</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0.9005</span>
       </span>
     </div>
 
@@ -213,6 +213,7 @@
 <li>The deprecated arguments <code>source</code> and <code>pp</code> in the functions <code>fast_scraper_*()</code> and <code><a href="../reference/build_nflfastR_pbp.html">build_nflfastR_pbp()</a></code> have been removed</li>
 <li>Added the variables <code>racr</code> (“Receiver Air Conversion Ratio”), <code>target_share</code>, <code>air_yards_share</code>, <code>wopr</code> (“Weighted Opportunity Rating”) and <code>pacr</code> (“Passing Air Conversion Ratio”) to the output of <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code>
 </li>
+<li>Fix for a handful of missing <code>receiver</code> names (<a href='https://github.com/nflverse/nflfastR/issues/270'>#270</a>)</li>
 </ul>
 </div>
     <div id="nflfastr-420" class="section level1">
@@ -310,7 +311,7 @@
 <h3 class="hasAnchor">
 <a href="#changed-functions" class="anchor"></a>Changed Functions</h3>
 <ul>
-<li>Deprecated the arguments <code>source</code> and <code>pp</code> all across the package. Using them will cause a warning. Parallel processing has to be activated by choosing an appropriate <code><a href="https://rdrr.io/pkg/future/man/plan.html">future::plan()</a></code> before calling the relevant functions. For more information please see <a href="https://www.nflfastr.com/reference/nflfastR-package.html">the package documentation</a>.</li>
+<li>Deprecated the arguments <code>source</code> and <code>pp</code> all across the package. Using them will cause a warning. Parallel processing has to be activated by choosing an appropriate <code><a href="https://future.futureverse.org/reference/plan.html">future::plan()</a></code> before calling the relevant functions. For more information please see <a href="https://www.nflfastr.com/reference/nflfastR-package.html">the package documentation</a>.</li>
 <li>The function <code><a href="../reference/build_nflfastR_pbp.html">build_nflfastR_pbp()</a></code> will now run <code><a href="../reference/decode_player_ids.html">decode_player_ids()</a></code> by default (can be deactivated with the argument <code>decode = FALSE</code>).</li>
 <li>The function <code><a href="../reference/build_nflfastR_pbp.html">build_nflfastR_pbp()</a></code> will now run <code><a href="../reference/add_xpass.html">add_xpass()</a></code> by default and add the new variables <code>xpass</code> and <code>pass_oe</code>.</li>
 <li>The functions <code><a href="../reference/fast_scraper.html">fast_scraper()</a></code> and <code><a href="../reference/build_nflfastR_pbp.html">build_nflfastR_pbp()</a></code> now allow the output of <code><a href="../reference/fast_scraper_schedules.html">fast_scraper_schedules()</a></code> directly as input so it’s not necessary anymore to pull the <code>game_id</code> first.</li>
