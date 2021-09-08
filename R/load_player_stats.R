@@ -21,9 +21,17 @@ load_player_stats <- function(..., qs = lifecycle::deprecated()){
     )
   }
 
-  # if the dots are empty we want the exact same behavior like in the previous
-  # versions which means "load all seasons"
-  if (rlang::is_empty(list(...))) return(nflreadr::load_player_stats(seasons = TRUE))
+  # if the dots are empty, we now have the same behavior like nflreadr which
+  # differs from the previous versions where it was "load all seasons"
+  if (rlang::is_empty(list(...))){
+    cli::cli_warn(
+      c("We have changed the behavior of {.var load_player_stats()} as of nflfastR 4.3.0.",
+        "Calling it without an argument will return the current season only instead of all available seasons.",
+        "Please try {.var load_player_stats(seasons = TRUE)} to get all seasons."
+      ),
+      .frequency = "regularly", .frequency_id = "player_stats_warning"
+    )
+  }
 
   # if dots are not empty, use them in nflreadr
   nflreadr::load_player_stats(...)
