@@ -176,3 +176,7 @@ write_pbp <- function(seasons, dbConnection, tablename){
     p("loading...")
   }, p)
 }
+
+#' data.table
+#' @importFrom data.table .N .I ':='
+.datatable.aware <- TRUE

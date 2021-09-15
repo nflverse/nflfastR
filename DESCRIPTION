@@ -1,7 +1,7 @@
 Type: Package
 Package: nflfastR
 Title: Functions to Efficiently Access NFL Play by Play Data
-Version: 4.2.0.9005
+Version: 4.2.0.9006
 Authors@R: 
     c(person(given = "Sebastian",
              family = "Carl",
@@ -44,6 +44,7 @@ Depends:
 Imports: 
     cli (>= 3.0.0),
     curl,
+    data.table,
     dplyr,
     fastrmodels (>= 1.0.1),
     furrr,
@@ -52,7 +53,7 @@ Imports:
     janitor,
     lifecycle (>= 0.2.0),
     mgcv,
-    nflreadr (>= 1.0.0),
+    nflreadr (>= 1.1.0),
     progressr (>= 0.6.0),
     rlang,
     stringr (>= 1.3.0),
