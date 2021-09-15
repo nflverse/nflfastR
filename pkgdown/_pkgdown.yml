@@ -94,6 +94,7 @@ reference:
       - calculate_expected_points
       - calculate_win_probability
       - calculate_player_stats
+      - calculate_kicking_stats
   - title: Documentation
     contents:
       - nflfastR-package
