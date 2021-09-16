@@ -38,7 +38,7 @@ report <- function(pkg = NULL, recursive = FALSE){
     header <- ""
   }
 
-  installed <- lapply(packages, is_installed) |> unlist()
+  installed <- lapply(packages, is_installed) %>% unlist()
 
   if (!is.null(pkg)){
     not_installed <- packages[!installed]
@@ -56,8 +56,8 @@ report <- function(pkg = NULL, recursive = FALSE){
   cli::cat_bullet("OS: ", s$platform)
 
   cli::cat_rule(paste0(header, "Packages"))
-  packages <- s$otherPkgs |> lapply(function(pkg) pkg$Package) |> unlist() |> format()
-  versions <- s$otherPkgs |> lapply(function(pkg) pkg$Version) |> unlist()
+  packages <- s$otherPkgs %>% lapply(function(pkg) pkg$Package) %>% unlist() %>% format()
+  versions <- s$otherPkgs %>% lapply(function(pkg) pkg$Version) %>% unlist()
   cli::cat_bullet(paste0(packages, " (", versions, ")"))
 
   # Exit here if we don't want recursive deps
@@ -70,9 +70,9 @@ report <- function(pkg = NULL, recursive = FALSE){
   # after the call to package_dependencies()
   old <- options(repos = "https://cran.rstudio.com/")
   deps <-
-    tools::package_dependencies(packages, recursive = TRUE) |>
-    unlist(use.names = FALSE) |>
-    sort() |>
+    tools::package_dependencies(packages, recursive = TRUE) %>%
+    unlist(use.names = FALSE) %>%
+    sort() %>%
     unique()
 
   # restore old options
@@ -82,24 +82,24 @@ report <- function(pkg = NULL, recursive = FALSE){
 
   s <- utils::sessionInfo(deps)
 
-  packages <- s$otherPkgs |> lapply(function(pkg) pkg$Package) |> unlist()
-  versions <- s$otherPkgs |> lapply(function(pkg) pkg$Version) |> unlist()
+  packages <- s$otherPkgs %>% lapply(function(pkg) pkg$Package) %>% unlist()
+  versions <- s$otherPkgs %>% lapply(function(pkg) pkg$Version) %>% unlist()
 
   p <- split(packages, rep_len(1:3, length(packages)))
   v <- split(versions, rep_len(1:3, length(versions)))
 
   cli::cat_bullet(paste0(
-    p[[1]] |> format(),
-    paste0(" (", v[[1]], ")") |> format(),
+    p[[1]] %>% format(),
+    paste0(" (", v[[1]], ")") %>% format(),
     "   ",
     cli::symbol$bullet,
     " ",
-    p[[2]] |> format(),
-    paste0(" (", v[[2]], ")") |> format(),
+    p[[2]] %>% format(),
+    paste0(" (", v[[2]], ")") %>% format(),
     "   ",
     cli::symbol$bullet,
     " ",
-    p[[3]] |> format(),
-    paste0(" (", v[[3]], ")") |> format()
+    p[[3]] %>% format(),
+    paste0(" (", v[[3]], ")") %>% format()
   ))
 }
