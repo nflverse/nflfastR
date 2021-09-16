@@ -85,21 +85,43 @@ report <- function(pkg = NULL, recursive = FALSE){
   packages <- s$otherPkgs %>% lapply(function(pkg) pkg$Package) %>% unlist()
   versions <- s$otherPkgs %>% lapply(function(pkg) pkg$Version) %>% unlist()
 
+  if (is.null(packages)){
+    cli::cat_bullet("No non-base dependencies")
+    return(invisible())
+  }
+
   p <- split(packages, rep_len(1:3, length(packages)))
   v <- split(versions, rep_len(1:3, length(versions)))
 
-  cli::cat_bullet(paste0(
-    p[[1]] %>% format(),
-    paste0(" (", v[[1]], ")") %>% format(),
-    "   ",
-    cli::symbol$bullet,
-    " ",
-    p[[2]] %>% format(),
-    paste0(" (", v[[2]], ")") %>% format(),
-    "   ",
-    cli::symbol$bullet,
-    " ",
-    p[[3]] %>% format(),
-    paste0(" (", v[[3]], ")") %>% format()
-  ))
+  if (length(p) == 1){
+    cli::cat_bullet(paste0(
+      p[[1]] %>% format(),
+      paste0(" (", v[[1]], ")") %>% format()
+    ))
+  } else if (length(p) == 2){
+    cli::cat_bullet(paste0(
+      p[[1]] %>% format(),
+      paste0(" (", v[[1]], ")") %>% format(),
+      "   ",
+      cli::symbol$bullet,
+      " ",
+      p[[2]] %>% format(),
+      paste0(" (", v[[2]], ")") %>% format()
+    ))
+  } else {
+    cli::cat_bullet(paste0(
+      p[[1]] %>% format(),
+      paste0(" (", v[[1]], ")") %>% format(),
+      "   ",
+      cli::symbol$bullet,
+      " ",
+      p[[2]] %>% format(),
+      paste0(" (", v[[2]], ")") %>% format(),
+      "   ",
+      cli::symbol$bullet,
+      " ",
+      p[[3]] %>% format(),
+      paste0(" (", v[[3]], ")") %>% format()
+    ))
+  }
 }
