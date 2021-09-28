@@ -8,6 +8,7 @@
 * Fix for a handful of missing `receiver` names (#270)
 * Added the function `report()` which will be used by the maintainers to help users debug their problems (#274).
 * Fixed bug with missing `return_team` on interception return touchdowns (#275)
+* Fixed a rare bug where an internal object wasn't predefined (#272)
 
 # nflfastR 4.2.0
 

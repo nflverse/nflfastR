@@ -10,6 +10,8 @@
 
 get_pbp_gc <- function(gameId, dir = NULL, qs = FALSE) {
 
+  warn <- 0
+
   if (isTRUE(qs) && !is_installed("qs")) {
     cli::cli_abort("Package {.val qs} required for argument {.val qs = TRUE}. Please install it.")
   }
