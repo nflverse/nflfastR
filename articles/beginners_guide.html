@@ -49,7 +49,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0.9005</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0.9006</span>
       </span>
     </div>
 
@@ -212,7 +212,7 @@
 <p><code>str</code> displays the <strong>str</strong>ucture of the dataframe:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">data</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span>
-<span class="co">#&gt; tibble [48,034 × 10] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt; tibble [48,034 × 10] (S3: tbl_df/tbl/data.table/data.frame)</span>
 <span class="co">#&gt;  $ play_id     : num [1:48034] 1 36 51 79 100 121 148 185 214 239 ...</span>
 <span class="co">#&gt;  $ game_id     : chr [1:48034] "2019_01_ATL_MIN" "2019_01_ATL_MIN" "2019_01_ATL_MIN" "2019_01_ATL_MIN" ...</span>
 <span class="co">#&gt;  $ old_game_id : chr [1:48034] "2019090804" "2019090804" "2019090804" "2019090804" ...</span>
@@ -1004,9 +1004,9 @@
 <a href="#get-team-wins-each-season" class="anchor"></a>Get team wins each season</h3>
 <p>We’re going to cheat a little and take advantage of Lee Sharpe’s famous <code>games</code> file. Most of this stuff has been added into <code>nflfastR</code>, but it’s easier working with this file where each game is one row. If you’re curious, the triple colon is a way to access what is referred to as non-exported functions in a package. Think of this as like a secret menu (why is this secret? Sometimes package developers want to limit the number of exported functions as to be not overwhelming).</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">games</span> <span class="op">&lt;-</span> <span class="fu">nflreadr</span><span class="fu">::</span><span class="fu"><a href="nflreadr.nflverse.com/reference/load_schedules.html">load_schedules</a></span><span class="op">(</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">games</span> <span class="op">&lt;-</span> <span class="fu">nflreadr</span><span class="fu">::</span><span class="fu"><a href="https://nflreadr.nflverse.com/reference/load_schedules.html">load_schedules</a></span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">games</span><span class="op">)</span>
-<span class="co">#&gt; tibble [6,124 × 41] (S3: tbl_df/tbl/data.frame)</span>
+<span class="co">#&gt; tibble [6,124 × 43] (S3: tbl_df/tbl/data.table/data.frame)</span>
 <span class="co">#&gt;  $ game_id         : chr [1:6124] "1999_01_MIN_ATL" "1999_01_KC_CHI" "1999_01_PIT_CLE" "1999_01_OAK_GB" ...</span>
 <span class="co">#&gt;  $ season          : int [1:6124] 1999 1999 1999 1999 1999 1999 1999 1999 1999 1999 ...</span>
 <span class="co">#&gt;  $ game_type       : chr [1:6124] "REG" "REG" "REG" "REG" ...</span>
@@ -1023,6 +1023,8 @@
 <span class="co">#&gt;  $ total           : int [1:6124] 31 37 43 52 45 44 29 58 49 48 ...</span>
 <span class="co">#&gt;  $ overtime        : int [1:6124] 0 0 0 0 0 0 0 0 0 0 ...</span>
 <span class="co">#&gt;  $ old_game_id     : chr [1:6124] "1999091210" "1999091206" "1999091213" "1999091208" ...</span>
+<span class="co">#&gt;  $ gsis            : int [1:6124] 598 597 604 602 591 603 592 600 588 596 ...</span>
+<span class="co">#&gt;  $ nfl_detail_id   : chr [1:6124] NA NA NA NA ...</span>
 <span class="co">#&gt;  $ espn            : chr [1:6124] "190912001" "190912003" "190912005" "190912009" ...</span>
 <span class="co">#&gt;  $ away_rest       : int [1:6124] 7 7 7 7 7 7 7 7 7 7 ...</span>
 <span class="co">#&gt;  $ home_rest       : int [1:6124] 7 7 7 7 7 7 7 7 7 7 ...</span>
@@ -1121,7 +1123,6 @@
     point_diff <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">ungroup</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; `summarise()` has grouped output by 'team'. You can override using the `.groups` argument.</span>
-
 <span class="va">team_wins</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="op">-</span><span class="va">wins</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>
@@ -1209,7 +1210,6 @@
 <span class="co">#&gt; 3 GB        2011     -0.114          0.412</span>
 <span class="co">#&gt; 4 KC        2018      0.0209         0.348</span>
 <span class="co">#&gt; 5 DEN       2013     -0.0296         0.343</span>
-
 <span class="co">#top 5 defenses</span>
 <span class="va">defense</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">def_pass_epa</span><span class="op">)</span> <span class="op">%&gt;%</span>

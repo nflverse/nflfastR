@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Get NFL Season Schedules — fast_scraper_schedules • nflfastR</title>
+<title>Get a Situation Report on System, nflverse Package Versions and Dependencies — report • nflfastR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -52,8 +52,11 @@
 
 
 
-<meta property="og:title" content="Get NFL Season Schedules — fast_scraper_schedules" />
-<meta property="og:description" content="Get NFL Season Schedules" />
+<meta property="og:title" content="Get a Situation Report on System, nflverse Package Versions and Dependencies — report" />
+<meta property="og:description" content="This function gives a quick overview of the versions of R and the operating
+system as well as the versions of nflverse packages and their dependencies.
+It's primarily designed to help you get a quick idea of what's going on when
+you're helping someone else debug a problem." />
 <meta property="og:image" content="https://raw.githubusercontent.com/nflverse/nflfastR/master/man/figures/card.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:creator" content="@nflfastR" />
@@ -198,82 +201,61 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Get NFL Season Schedules</h1>
-    <small class="dont-index">Source: <a href='https://github.com/nflverse/nflfastR/blob/master/R/top-level_scraper.R'><code>R/top-level_scraper.R</code></a></small>
-    <div class="hidden name"><code>fast_scraper_schedules.Rd</code></div>
+    <h1>Get a Situation Report on System, nflverse Package Versions and Dependencies</h1>
+    <small class="dont-index">Source: <a href='https://github.com/nflverse/nflfastR/blob/master/R/report.R'><code>R/report.R</code></a></small>
+    <div class="hidden name"><code>report.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Get NFL Season Schedules</p>
+    <p>This function gives a quick overview of the versions of R and the operating
+system as well as the versions of nflverse packages and their dependencies.
+It's primarily designed to help you get a quick idea of what's going on when
+you're helping someone else debug a problem.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>fast_scraper_schedules</span><span class='op'>(</span><span class='va'>seasons</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>report</span><span class='op'>(</span>pkg <span class='op'>=</span> <span class='cn'>NULL</span>, recursive <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>seasons</th>
-      <td><p>Vector of numeric or character 4 digit seasons</p></td>
+      <th>pkg</th>
+      <td><p>a character vector naming installed packages, or <code>NULL</code>
+(the default) meaning all nflverse packages. The function checks internally
+if all packages are installed and informs if that is not the case.</p></td>
+    </tr>
+    <tr>
+      <th>recursive</th>
+      <td><p>a logical indicating whether dependencies of <code>pkg</code> and their
+dependencies (and so on) should be included.
+Can also be a character vector listing the types of dependencies, a subset
+of <code><a href='https://rdrr.io/r/base/c.html'>c("Depends", "Imports", "LinkingTo", "Suggests", "Enhances")</a></code>.
+Character string <code>"all"</code> is shorthand for that vector, character string
+<code>"most"</code> for the same vector without <code>"Enhances"</code>, character string <code>"strong"</code>
+(default) for the first three elements of that vector.</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>Data frame containing the following detailed game information:</p><dl>
-<dt>game_id</dt><dd><p>Character identifier including season, week, away team and home team</p></dd>
-<dt>season</dt><dd><p>4 digit season year.</p></dd>
-<dt>game_type</dt><dd><p>One of 'REG', 'WC', 'DIV', 'CON', 'SB' indicating if a game was a regular season game or one of the playoff rounds.</p></dd>
-<dt>week</dt><dd><p>Numeric week number.</p></dd>
-<dt>gameday</dt><dd><p>Game date in format yyyy/mm/dd.</p></dd>
-<dt>weekday</dt><dd><p>The day of the week on which the game occcured.</p></dd>
-<dt>gametime</dt><dd><p>The kickoff time of the game. This is represented in 24-hour time and the Eastern time zone, regardless of what time zone the game was being played in.</p></dd>
-<dt>away_team</dt><dd><p>Away team abbreviation.</p></dd>
-<dt>home_team</dt><dd><p>Home team abbreviation.</p></dd>
-<dt>away_score</dt><dd><p>The number of points the away team scored. Is 'NA' for games which haven't yet been played.</p></dd>
-<dt>home_score</dt><dd><p>The number of points the home team scored. Is 'NA' for games which haven't yet been played.</p></dd>
-<dt>home_result</dt><dd><p>Equals home_score - away_score and means the game outcome from the perspective of the home team.</p></dd>
-<dt>stadium</dt><dd><p>Name of the stadium the game was or will be played in. (Source: Pro-Football-Reference)</p></dd>
-<dt>location</dt><dd><p>Either 'Home' o 'Neutral' indicating if the home team played at home or at a neutral site.</p></dd>
-<dt>roof</dt><dd><p>One of 'dome', 'outdoors', 'closed', 'open' indicating indicating the roof status of the stadium the game was played in. (Source: Pro-Football-Reference)</p></dd>
-<dt>surface</dt><dd><p>What type of ground the game was played on. (Source: Pro-Football-Reference)</p></dd>
-<dt>old_game_id</dt><dd><p>Unique game identifier of the old NFL API.</p></dd>
-
-</dl>
-
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>This functions now incorporates the games file provided and maintained
-by Lee Sharpe.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p>For information on parallel processing and progress updates please
-see <a href='nflfastR-package.html'>nflfastR</a>.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='co'># Get schedules for the whole 2015 - 2018 seasons</span>
-<span class='fu'>fast_scraper_schedules</span><span class='op'>(</span><span class='fl'>2015</span><span class='op'>:</span><span class='fl'>2018</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span> It is recommended to use parallel processing when trying to load multiple seasons. Please consider running <span style='color: #262626; background-color: #DADADA;'>`future::plan("multisession")`</span>! Will go on sequentially...</span></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 1,068 × 17</span>
-#&gt;    game_id   season game_type  week gameday weekday gametime away_team home_team
-#&gt;    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>      <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    
-#&gt; <span style='color: #BCBCBC;'> 1</span> 2015_01_…   <span style='text-decoration: underline;'>2</span>015 REG           1 2015-0… Thursd… 20:30    PIT       NE       
-#&gt; <span style='color: #BCBCBC;'> 2</span> 2015_01_…   <span style='text-decoration: underline;'>2</span>015 REG           1 2015-0… Sunday  13:00    IND       BUF      
-#&gt; <span style='color: #BCBCBC;'> 3</span> 2015_01_…   <span style='text-decoration: underline;'>2</span>015 REG           1 2015-0… Sunday  13:00    GB        CHI      
-#&gt; <span style='color: #BCBCBC;'> 4</span> 2015_01_…   <span style='text-decoration: underline;'>2</span>015 REG           1 2015-0… Sunday  13:00    KC        HOU      
-#&gt; <span style='color: #BCBCBC;'> 5</span> 2015_01_…   <span style='text-decoration: underline;'>2</span>015 REG           1 2015-0… Sunday  13:00    CAR       JAX      
-#&gt; <span style='color: #BCBCBC;'> 6</span> 2015_01_…   <span style='text-decoration: underline;'>2</span>015 REG           1 2015-0… Sunday  13:00    CLE       NYJ      
-#&gt; <span style='color: #BCBCBC;'> 7</span> 2015_01_…   <span style='text-decoration: underline;'>2</span>015 REG           1 2015-0… Sunday  13:00    SEA       STL      
-#&gt; <span style='color: #BCBCBC;'> 8</span> 2015_01_…   <span style='text-decoration: underline;'>2</span>015 REG           1 2015-0… Sunday  13:00    MIA       WAS      
-#&gt; <span style='color: #BCBCBC;'> 9</span> 2015_01_…   <span style='text-decoration: underline;'>2</span>015 REG           1 2015-0… Sunday  16:05    NO        ARI      
-#&gt; <span style='color: #BCBCBC;'>10</span> 2015_01_…   <span style='text-decoration: underline;'>2</span>015 REG           1 2015-0… Sunday  16:05    DET       SD       
-#&gt; <span style='color: #949494;'># … with 1,058 more rows, and 8 more variables: away_score &lt;int&gt;,</span>
-#&gt; <span style='color: #949494;'>#   home_score &lt;int&gt;, home_result &lt;int&gt;, stadium &lt;chr&gt;, location &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   roof &lt;chr&gt;, surface &lt;chr&gt;, old_game_id &lt;chr&gt;</span></div><div class='input'><span class='co'># \dontshow{</span>
-<span class='co'># Close open connections for R CMD Check</span>
-<span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://future.futureverse.org/reference/plan.html'>plan</a></span><span class='op'>(</span><span class='st'>"sequential"</span><span class='op'>)</span>
-<span class='co'># }</span>
-<span class='co'># }</span>
+<span class='fu'>report</span><span class='op'>(</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; ── System Info ─────────────────────────────────────────────────────────────────
+#&gt; • R version 4.1.1 (2021-08-10)
+#&gt; • OS: x86_64-apple-darwin17.0 (64-bit)
+#&gt; ── nflverse Packages ───────────────────────────────────────────────────────────
+#&gt; • nflreadr (1.1.0)
+#&gt; • nflfastR (4.2.0.9006)</div><div class='input'><span class='fu'>report</span><span class='op'>(</span><span class='st'>"nflreadr"</span>, <span class='cn'>TRUE</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; ── System Info ─────────────────────────────────────────────────────────────────
+#&gt; • R version 4.1.1 (2021-08-10)
+#&gt; • OS: x86_64-apple-darwin17.0 (64-bit)
+#&gt; ── Packages ────────────────────────────────────────────────────────────────────
+#&gt; • nflreadr (1.1.0)
+#&gt; ── Dependencies ────────────────────────────────────────────────────────────────
+#&gt; • cachem        (1.0.6)   • curl     (4.3.2)    • data.table (1.14.0)
+#&gt; • fastmap       (1.1.0)   • memoise  (2.0.0)    • qs         (0.25.1)
+#&gt; • RApiSerialize (0.1.0)   • rappdirs (0.3.3)    • Rcpp       (1.0.7) 
+#&gt; • RcppParallel  (5.1.4)   • rlang    (0.4.11)   • stringfish (0.15.2)</div><div class='input'><span class='co'># }</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
