@@ -153,6 +153,12 @@ clean_pbp <- function(pbp, ...) {
         ),
         receiver = dplyr::case_when(
           receiver == "F.R" ~ "F.Jones",
+          receiver_player_name == "D.Wells" & receiver_player_id == "00-0017421" ~ "D.Wells",
+          receiver_player_name == "D.Hayes" & receiver_player_id == "00-0007144" ~ "D.Hayes",
+          receiver_player_name == "DanielThomas" ~ "D.Thomas",
+          receiver_player_name == "JulioJones" ~ "J.Jones",
+          receiver_player_name == "Andre' Davis" ~ "A.Davis",
+          receiver_player_name == "A.al-Jabbar" ~ "A.al-Jabbar",
           TRUE ~ receiver
         ),
         first_down = dplyr::if_else(.data$first_down_rush == 1 | .data$first_down_pass == 1 | .data$first_down_penalty == 1, 1, 0),
