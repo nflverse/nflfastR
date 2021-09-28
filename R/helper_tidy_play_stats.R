@@ -178,6 +178,7 @@ sum_play_stats <- function(play_Id, stats) {
       row$td_team <- play_stats$teamAbbr[index]
       row$td_player_id <- play_stats$player.esbId[index]
       row$td_player_name <- play_stats$player.displayName[index]
+      row$return_team <- play_stats$teamAbbr[index]
       row$return_yards <- play_stats$yards[index]
       row$return_penalty_fix <- 1
     } else if (stat_id == 27) {

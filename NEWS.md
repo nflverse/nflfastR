@@ -6,6 +6,8 @@
 * The deprecated arguments `source` and `pp` in the functions `fast_scraper_*()` and `build_nflfastR_pbp()` have been removed
 * Added the variables `racr` ("Receiver Air Conversion Ratio"), `target_share`, `air_yards_share`, `wopr` ("Weighted Opportunity Rating") and `pacr` ("Passing Air Conversion Ratio") to the output of `calculate_player_stats()`
 * Fix for a handful of missing `receiver` names (#270)
+* Added the function `report()` which will be used by the maintainers to help users debug their problems (#274).
+* Fixed bug with missing `return_team` on interception return touchdowns (#275)
 
 # nflfastR 4.2.0
 
