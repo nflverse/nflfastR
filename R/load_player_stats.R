@@ -1,11 +1,8 @@
-#' Load Official Game Stats
-#'
-#' @description Loads weekly stats for all passers, rushers and receivers in the
-#' nflfastR play-by-play data from the 1999 season to the most recent season
-#'
-#' @param qs Whether to use the function [qs::qdeserialize()] for more efficient loading.
-#' @return Weekly stats for all passers, rushers and receivers in the nflfastR
-#' play-by-play data from the 1999 season to the most recent season
+#' @inherit nflreadr::load_player_stats
+#' @inheritDotParams nflreadr::load_player_stats
+#' @param qs `r lifecycle::badge("deprecated")` has no effect and will be
+#' removed in a future release.
+#' @param ... Arguments passed on to nflreadr::load_player_stats
 #'
 #' @seealso The function [calculate_player_stats()] and the corresponding examples
 #' on [the nflfastR website](https://www.nflfastr.com/articles/nflfastR.html#example-11-replicating-official-stats)
@@ -15,21 +12,27 @@
 #' dplyr::glimpse(stats)
 #' }
 #' @export
-load_player_stats <- function(qs = FALSE) {
-
-  if (isTRUE(qs) && !is_installed("qs")) {
-    cli::cli_abort("Package {.val qs} required for argument {.val qs = TRUE}. Please install it.")
+load_player_stats <- function(..., qs = lifecycle::deprecated()){
+  if (lifecycle::is_present(qs)) {
+    lifecycle::deprecate_warn(
+      when = "4.3.0",
+      what = "load_pbp(qs = )",
+      details = cli::cli_text("The {.val qs} argument is deprecated and replaced by {.val file_type} - see {.code ?nflreadr::load_player_stats} for details.")
+    )
   }
 
-  if (isTRUE(qs)) {
-    .url <- "https://github.com/nflverse/nflfastR-data/blob/master/data/player_stats.qs?raw=true"
-    out <- qs_from_url(.url)
-  } else {
-    .url <- "https://github.com/nflverse/nflfastR-data/blob/master/data/player_stats.rds?raw=true"
-    con <- url(.url)
-    out <- readRDS(con)
-    close(con)
+  # if the dots are empty, we now have the same behavior like nflreadr which
+  # differs from the previous versions where it was "load all seasons"
+  if (rlang::is_empty(list(...))){
+    cli::cli_warn(
+      c("We have changed the behavior of {.var load_player_stats()} as of nflfastR 4.3.0.",
+        "Calling it without an argument will return the current season only instead of all available seasons.",
+        "Please try {.var load_player_stats(seasons = TRUE)} to get all seasons."
+      ),
+      .frequency = "regularly", .frequency_id = "player_stats_warning"
+    )
   }
 
-  return(out)
+  # if dots are not empty, use them in nflreadr
+  nflreadr::load_player_stats(...)
 }

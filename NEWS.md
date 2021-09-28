@@ -2,7 +2,7 @@
 
 * Fixed a minor bug in the console output of `update_db()`
 * Add nflreadr to dependecies and drop lubridate and magrittr dependency
-* The function `load_pbp()` now calls `nflreadr::load_pbp()` internally. Therefore the argument `qs` has been deprecated. It will be removed in a future release.
+* The functions `load_pbp()` and `load_player_stats()` now call `nflreadr::load_pbp()` and `nflreadr::load_player_stats()` respectively. Therefore the argument `qs` has been deprecated in both functions. It will be removed in a future release. Running `load_player_stats()` without any argument will now return player stats of the current season only (the default in `nflreadr`).
 * The deprecated arguments `source` and `pp` in the functions `fast_scraper_*()` and `build_nflfastR_pbp()` have been removed
 * Added the variables `racr` ("Receiver Air Conversion Ratio"), `target_share`, `air_yards_share`, `wopr` ("Weighted Opportunity Rating") and `pacr` ("Passing Air Conversion Ratio") to the output of `calculate_player_stats()`
 * Fix for a handful of missing `receiver` names (#270)

@@ -2,20 +2,28 @@
 % Please edit documentation in R/load_player_stats.R
 \name{load_player_stats}
 \alias{load_player_stats}
-\title{Load Official Game Stats}
+\title{Load Player Level Weekly Stats}
 \usage{
-load_player_stats(qs = FALSE)
+load_player_stats(..., qs = lifecycle::deprecated())
 }
 \arguments{
-\item{qs}{Whether to use the function \code{\link[qs:qdeserialize]{qs::qdeserialize()}} for more efficient loading.}
+\item{...}{
+  Arguments passed on to \code{\link[nflreadr:load_player_stats]{nflreadr::load_player_stats}}
+  \describe{
+    \item{\code{seasons}}{a numeric vector of seasons to return, defaults to most recent season. If set to \code{TRUE}, returns all available data.}
+    \item{\code{stat_type}}{one of \code{offense} or \code{kicking}}
+    \item{\code{file_type}}{One of \code{"rds"} or \code{"qs"}. Can also be set globally with
+\code{options(nflreadr.prefer)}}
+  }}
+
+\item{qs}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} has no effect and will be
+removed in a future release.}
 }
 \value{
-Weekly stats for all passers, rushers and receivers in the nflfastR
-play-by-play data from the 1999 season to the most recent season
+A tibble of week-level player statistics that aims to match NFL official box scores.
 }
 \description{
-Loads weekly stats for all passers, rushers and receivers in the
-nflfastR play-by-play data from the 1999 season to the most recent season
+Load Player Level Weekly Stats
 }
 \examples{
 \donttest{
