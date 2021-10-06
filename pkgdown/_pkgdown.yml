@@ -49,7 +49,7 @@ home:
 navbar:
   structure:
     left:  [home, intro, reference, news, articles, tutorials]
-    right: [data, stats, games, twitter, discord, github]
+    right: [data, stats, games, twitter, discord, github, more]
   components:
     twitter:
       icon: "fab fa-twitter fa-lg"
@@ -80,6 +80,30 @@ navbar:
         href: https://www.opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/
       - text: Open Source Football
         href: https://www.opensourcefootball.com/
+    more:
+      text: "Packages & More"
+      menu:
+        - text: "nflverse Packages"
+        - text: nflfastR
+          href: https://www.nflfastr.com
+        - text: nflseedR
+          href: https://nflseedr.com
+        - text: nfl4th
+          href: https://www.nfl4th.com
+        - text: nflreadr
+          href: https://nflreadr.nflverse.com/
+        - text: nflplotR
+          href: https://nflplotr.nflverse.com/
+        - text: "Open Source Football"
+          href: https://www.opensourcefootball.com
+        - text: "nflverse Data"
+        - text: nflverse GitHub
+          href: https://github.com/nflverse
+        - text: espnscrapeR Package
+          href: https://jthomasmock.github.io/espnscrapeR/
+        - text: ffverse
+        - text: "ffverse.com"
+          href: https://www.ffverse.com
 reference:
   - title: Main Functions
     contents:
@@ -94,6 +118,7 @@ reference:
       - calculate_expected_points
       - calculate_win_probability
       - calculate_player_stats
+      - report
   - title: Documentation
     contents:
       - nflfastR-package
