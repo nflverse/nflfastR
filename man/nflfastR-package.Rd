@@ -8,8 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: align='right' alt='logo' width='120'}}
 
-A set of functions to access National Football
-    League play-by-play data from <https://www.nfl.com/>.
+A set of functions to access National Football League play-by-play data from <https://www.nfl.com/>.
 }
 \section{Parallel Processing and Progress Updates in nflfastR}{
 \subsection{Preface}{
