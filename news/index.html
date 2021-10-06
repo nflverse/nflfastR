@@ -98,7 +98,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0.9008</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0</span>
       </span>
     </div>
 
@@ -178,6 +178,45 @@
      
   </a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Packages &amp; More
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">nflverse Packages</li>
+    <li>
+      <a href="https://www.nflfastr.com">nflfastR</a>
+    </li>
+    <li>
+      <a href="https://nflseedr.com">nflseedR</a>
+    </li>
+    <li>
+      <a href="https://www.nfl4th.com">nfl4th</a>
+    </li>
+    <li>
+      <a href="https://nflreadr.nflverse.com/">nflreadr</a>
+    </li>
+    <li>
+      <a href="https://nflplotr.nflverse.com/">nflplotR</a>
+    </li>
+    <li>
+      <a href="https://www.opensourcefootball.com">Open Source Football</a>
+    </li>
+    <li class="dropdown-header">nflverse Data</li>
+    <li>
+      <a href="https://github.com/nflverse">nflverse GitHub</a>
+    </li>
+    <li>
+      <a href="https://jthomasmock.github.io/espnscrapeR/">espnscrapeR Package</a>
+    </li>
+    <li class="dropdown-header">ffverse</li>
+    <li>
+      <a href="https://www.ffverse.com">ffverse.com</a>
+    </li>
+  </ul>
+</li>
       </ul>
       
       <form class="navbar-form navbar-right hidden-xs hidden-sm" role="search">
@@ -201,23 +240,33 @@
       <small>Source: <a href='https://github.com/nflverse/nflfastR/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="nflfastr-development-version" class="section level1">
-<h1 class="page-header" data-toc-text="development version">
-<a href="#nflfastr-development-version" class="anchor"></a>nflfastR (development version)<small> Unreleased </small>
+    <div id="nflfastr-430" class="section level1">
+<h1 class="page-header" data-toc-text="4.3.0">
+<a href="#nflfastr-430" class="anchor"></a>nflfastR 4.3.0<small> Unreleased </small>
 </h1>
+<div id="minor-changes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#minor-changes" class="anchor"></a>Minor Changes</h2>
 <ul>
-<li>Fixed a minor bug in the console output of <code><a href="../reference/update_db.html">update_db()</a></code>
-</li>
-<li>Add nflreadr to dependecies and drop lubridate and magrittr dependency</li>
+<li>Add <a href="https://nflreadr.nflverse.com/">nflreadr</a> to dependecies and drop lubridate and magrittr dependency</li>
 <li>The functions <code><a href="../reference/load_pbp.html">load_pbp()</a></code> and <code><a href="../reference/load_player_stats.html">load_player_stats()</a></code> now call <code><a href="https://nflreadr.nflverse.com/reference/load_pbp.html">nflreadr::load_pbp()</a></code> and <code><a href="https://nflreadr.nflverse.com/reference/load_player_stats.html">nflreadr::load_player_stats()</a></code> respectively. Therefore the argument <code>qs</code> has been deprecated in both functions. It will be removed in a future release. Running <code><a href="../reference/load_player_stats.html">load_player_stats()</a></code> without any argument will now return player stats of the current season only (the default in <code>nflreadr</code>).</li>
 <li>The deprecated arguments <code>source</code> and <code>pp</code> in the functions <code>fast_scraper_*()</code> and <code><a href="../reference/build_nflfastR_pbp.html">build_nflfastR_pbp()</a></code> have been removed</li>
 <li>Added the variables <code>racr</code> (“Receiver Air Conversion Ratio”), <code>target_share</code>, <code>air_yards_share</code>, <code>wopr</code> (“Weighted Opportunity Rating”) and <code>pacr</code> (“Passing Air Conversion Ratio”) to the output of <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code>
 </li>
-<li>Fix for a handful of missing <code>receiver</code> names (<a href='https://github.com/nflverse/nflfastR/issues/270'>#270</a>)</li>
 <li>Added the function <code><a href="../reference/report.html">report()</a></code> which will be used by the maintainers to help users debug their problems (<a href='https://github.com/nflverse/nflfastR/issues/274'>#274</a>).</li>
+</ul>
+</div>
+<div id="bug-fixes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bug-fixes" class="anchor"></a>Bug Fixes</h2>
+<ul>
+<li>Fixed a minor bug in the console output of <code><a href="../reference/update_db.html">update_db()</a></code>
+</li>
+<li>Fix for a handful of missing <code>receiver</code> names (<a href='https://github.com/nflverse/nflfastR/issues/270'>#270</a>)</li>
 <li>Fixed bug with missing <code>return_team</code> on interception return touchdowns (<a href='https://github.com/nflverse/nflfastR/issues/275'>#275</a>)</li>
 <li>Fixed a rare bug where an internal object wasn’t predefined (<a href='https://github.com/nflverse/nflfastR/issues/272'>#272</a>)</li>
 </ul>
+</div>
 </div>
     <div id="nflfastr-420" class="section level1">
 <h1 class="page-header" data-toc-text="4.2.0">

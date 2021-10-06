@@ -102,7 +102,7 @@ build_nflfastR_pbp instead." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0.9008</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0</span>
       </span>
     </div>
 
@@ -181,6 +181,45 @@ build_nflfastR_pbp instead." />
     <span class="fab fa-github fa-lg"></span>
      
   </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Packages &amp; More
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">nflverse Packages</li>
+    <li>
+      <a href="https://www.nflfastr.com">nflfastR</a>
+    </li>
+    <li>
+      <a href="https://nflseedr.com">nflseedR</a>
+    </li>
+    <li>
+      <a href="https://www.nfl4th.com">nfl4th</a>
+    </li>
+    <li>
+      <a href="https://nflreadr.nflverse.com/">nflreadr</a>
+    </li>
+    <li>
+      <a href="https://nflplotr.nflverse.com/">nflplotR</a>
+    </li>
+    <li>
+      <a href="https://www.opensourcefootball.com">Open Source Football</a>
+    </li>
+    <li class="dropdown-header">nflverse Data</li>
+    <li>
+      <a href="https://github.com/nflverse">nflverse GitHub</a>
+    </li>
+    <li>
+      <a href="https://jthomasmock.github.io/espnscrapeR/">espnscrapeR Package</a>
+    </li>
+    <li class="dropdown-header">ffverse</li>
+    <li>
+      <a href="https://www.ffverse.com">ffverse.com</a>
+    </li>
+  </ul>
 </li>
       </ul>
       
@@ -607,7 +646,7 @@ see <a href='nflfastR-package.html'>nflfastR</a>.</p></div>
     <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
 <span class='co'># Get pbp data for two games</span>
 <span class='fu'>fast_scraper</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"2019_01_GB_CHI"</span>, <span class='st'>"2013_21_SEA_DEN"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span> It is recommended to use parallel processing when trying to load multiple games.Please consider running <span style='color: #262626; background-color: #DADADA;'>`future::plan("multisession")`</span>! Will go on sequentially...</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 11:25:23 | Download finished. Adding variables...</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 11:25:23 | added game variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 11:25:23 | added nflscrapR variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 11:25:24 | added ep variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 11:25:24 | added air_yac_ep variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 11:25:24 | added wp variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 11:25:24 | added air_yac_wp variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 11:25:25 | added cp and cpoe</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 11:25:25 | added fixed drive variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 11:25:25 | added series variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> <span style='color: #00BB00;'>11:25:25 | Procedure completed.</span></span></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 356 × 339</span>
+</div><div class='output co'>#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span> It is recommended to use parallel processing when trying to load multiple games.Please consider running <span style='color: #262626; background-color: #DADADA;'>`future::plan("multisession")`</span>! Will go on sequentially...</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 12:28:18 | Download finished. Adding variables...</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 12:28:18 | added game variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 12:28:18 | added nflscrapR variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 12:28:19 | added ep variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 12:28:19 | added air_yac_ep variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 12:28:19 | added wp variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 12:28:19 | added air_yac_wp variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 12:28:19 | added cp and cpoe</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 12:28:19 | added fixed drive variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 12:28:19 | added series variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> <span style='color: #00BB00;'>12:28:19 | Procedure completed.</span></span></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 356 × 339</span>
 #&gt;    play_id game_id     old_game_id home_team away_team season_type  week posteam
 #&gt;      <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  
 #&gt; <span style='color: #BCBCBC;'> 1</span>       1 2013_21_SE… 2014020200  DEN       SEA       POST           21 <span style='color: #BB0000;'>NA</span>     
@@ -633,7 +672,7 @@ see <a href='nflfastR-package.html'>nflfastR</a>.</p></div>
 <span class='fu'><a href='fast_scraper_schedules.html'>fast_scraper_schedules</a></span><span class='op'>(</span><span class='fl'>2020</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
   <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>tail</a></span><span class='op'>(</span><span class='fl'>3</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
   <span class='fu'>fast_scraper</span><span class='op'>(</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span> It is recommended to use parallel processing when trying to load multiple games.Please consider running <span style='color: #262626; background-color: #DADADA;'>`future::plan("multisession")`</span>! Will go on sequentially...</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 11:25:30 | Download finished. Adding variables...</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 11:25:30 | added game variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 11:25:31 | added nflscrapR variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 11:25:31 | added ep variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 11:25:31 | added air_yac_ep variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 11:25:32 | added wp variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 11:25:32 | added air_yac_wp variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 11:25:32 | added cp and cpoe</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 11:25:32 | added fixed drive variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 11:25:32 | added series variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> <span style='color: #00BB00;'>11:25:32 | Procedure completed.</span></span></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 545 × 339</span>
+</div><div class='output co'>#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span> It is recommended to use parallel processing when trying to load multiple games.Please consider running <span style='color: #262626; background-color: #DADADA;'>`future::plan("multisession")`</span>! Will go on sequentially...</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 12:28:24 | Download finished. Adding variables...</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 12:28:24 | added game variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 12:28:25 | added nflscrapR variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 12:28:25 | added ep variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 12:28:25 | added air_yac_ep variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 12:28:25 | added wp variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 12:28:25 | added air_yac_wp variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 12:28:26 | added cp and cpoe</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 12:28:26 | added fixed drive variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 12:28:26 | added series variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> <span style='color: #00BB00;'>12:28:26 | Procedure completed.</span></span></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 545 × 339</span>
 #&gt;    play_id game_id     old_game_id home_team away_team season_type  week posteam
 #&gt;      <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  
 #&gt; <span style='color: #BCBCBC;'> 1</span>       1 2020_20_BU… 2021012401  KC        BUF       POST           20 <span style='color: #BB0000;'>NA</span>     

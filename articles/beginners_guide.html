@@ -49,7 +49,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.2.0.9008</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0</span>
       </span>
     </div>
 
@@ -128,6 +128,45 @@
     <span class="fab fa-github fa-lg"></span>
      
   </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Packages &amp; More
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li class="dropdown-header">nflverse Packages</li>
+    <li>
+      <a href="https://www.nflfastr.com">nflfastR</a>
+    </li>
+    <li>
+      <a href="https://nflseedr.com">nflseedR</a>
+    </li>
+    <li>
+      <a href="https://www.nfl4th.com">nfl4th</a>
+    </li>
+    <li>
+      <a href="https://nflreadr.nflverse.com/">nflreadr</a>
+    </li>
+    <li>
+      <a href="https://nflplotr.nflverse.com/">nflplotR</a>
+    </li>
+    <li>
+      <a href="https://www.opensourcefootball.com">Open Source Football</a>
+    </li>
+    <li class="dropdown-header">nflverse Data</li>
+    <li>
+      <a href="https://github.com/nflverse">nflverse GitHub</a>
+    </li>
+    <li>
+      <a href="https://jthomasmock.github.io/espnscrapeR/">espnscrapeR Package</a>
+    </li>
+    <li class="dropdown-header">ffverse</li>
+    <li>
+      <a href="https://www.ffverse.com">ffverse.com</a>
+    </li>
+  </ul>
 </li>
       </ul>
 <form class="navbar-form navbar-right hidden-xs hidden-sm" role="search">
@@ -1006,7 +1045,7 @@
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">games</span> <span class="op">&lt;-</span> <span class="fu">nflreadr</span><span class="fu">::</span><span class="fu"><a href="https://nflreadr.nflverse.com/reference/load_schedules.html">load_schedules</a></span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">games</span><span class="op">)</span>
-<span class="co">#&gt; tibble [6,124 × 43] (S3: tbl_df/tbl/data.table/data.frame)</span>
+<span class="co">#&gt; tibble [6,124 × 45] (S3: tbl_df/tbl/data.table/data.frame)</span>
 <span class="co">#&gt;  $ game_id         : chr [1:6124] "1999_01_MIN_ATL" "1999_01_KC_CHI" "1999_01_PIT_CLE" "1999_01_OAK_GB" ...</span>
 <span class="co">#&gt;  $ season          : int [1:6124] 1999 1999 1999 1999 1999 1999 1999 1999 1999 1999 ...</span>
 <span class="co">#&gt;  $ game_type       : chr [1:6124] "REG" "REG" "REG" "REG" ...</span>
@@ -1025,6 +1064,8 @@
 <span class="co">#&gt;  $ old_game_id     : chr [1:6124] "1999091210" "1999091206" "1999091213" "1999091208" ...</span>
 <span class="co">#&gt;  $ gsis            : int [1:6124] 598 597 604 602 591 603 592 600 588 596 ...</span>
 <span class="co">#&gt;  $ nfl_detail_id   : chr [1:6124] NA NA NA NA ...</span>
+<span class="co">#&gt;  $ pfr             : chr [1:6124] "199909120atl" "199909120chi" "199909120cle" "199909120gnb" ...</span>
+<span class="co">#&gt;  $ pff             : int [1:6124] NA NA NA NA NA NA NA NA NA NA ...</span>
 <span class="co">#&gt;  $ espn            : chr [1:6124] "190912001" "190912003" "190912005" "190912009" ...</span>
 <span class="co">#&gt;  $ away_rest       : int [1:6124] 7 7 7 7 7 7 7 7 7 7 ...</span>
 <span class="co">#&gt;  $ home_rest       : int [1:6124] 7 7 7 7 7 7 7 7 7 7 ...</span>
@@ -1123,6 +1164,7 @@
     point_diff <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">ungroup</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; `summarise()` has grouped output by 'team'. You can override using the `.groups` argument.</span>
+
 <span class="va">team_wins</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="op">-</span><span class="va">wins</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>
@@ -1210,6 +1252,7 @@
 <span class="co">#&gt; 3 GB        2011     -0.114          0.412</span>
 <span class="co">#&gt; 4 KC        2018      0.0209         0.348</span>
 <span class="co">#&gt; 5 DEN       2013     -0.0296         0.343</span>
+
 <span class="co">#top 5 defenses</span>
 <span class="va">defense</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">def_pass_epa</span><span class="op">)</span> <span class="op">%&gt;%</span>
