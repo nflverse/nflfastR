@@ -5,7 +5,7 @@
 \title{Update or Create a nflfastR Play-by-Play Database}
 \usage{
 update_db(
-  dbdir = ".",
+  dbdir = getOption("nflfastR.dbdirectory", default = "."),
   dbname = "pbp_db",
   tblname = "nflfastR_pbp",
   force_rebuild = FALSE,
@@ -13,7 +13,8 @@ update_db(
 )
 }
 \arguments{
-\item{dbdir}{Directory in which the database is or shall be located}
+\item{dbdir}{Directory in which the database is or shall be located. Can also
+be set globally with \code{options(nflfastR.dbdirectory)}}
 
 \item{dbname}{File name of an existing or desired SQLite database within \code{dbdir}}
 
