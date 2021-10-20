@@ -98,7 +98,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0.9001</span>
       </span>
     </div>
 
@@ -246,6 +246,7 @@
 </h1>
 <ul>
 <li>The database function <code><a href="../reference/update_db.html">update_db()</a></code> now supports the option “nflfastR.dbdirectory” which can be used to set the directory of the nflfastR pbp database globally and independent of any project structure or working directories.</li>
+<li>Fixed bug where a player could be duplicated in <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> in very rare cases caused by plays with laterals. (<a href='https://github.com/nflverse/nflfastR/issues/289'>#289</a>)</li>
 </ul>
 </div>
     <div id="nflfastr-430" class="section level1">
