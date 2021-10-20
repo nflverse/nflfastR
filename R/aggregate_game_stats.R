@@ -97,8 +97,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
 # Prepare data ------------------------------------------------------------
 
   # load plays with multiple laterals
-  con <- url("https://github.com/mrcaseb/nfl-data/blob/master/data/lateral_yards/multiple_lateral_yards.rds?raw=true")
-  mult_lats <- readRDS(con) %>%
+  mult_lats <- nflreadr::rds_from_url("https://github.com/mrcaseb/nfl-data/raw/master/data/lateral_yards/multiple_lateral_yards.rds") %>%
     dplyr::mutate(
       season = substr(.data$game_id, 1, 4) %>% as.integer(),
       week = substr(.data$game_id, 6, 7) %>% as.integer()
@@ -109,8 +108,13 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     # pbp data, we have to drop him here so the entry isn't duplicated
     dplyr::group_by(.data$game_id, .data$play_id) %>%
     dplyr::slice(seq_len(dplyr::n() - 1)) %>%
+    dplyr::ungroup() %>%
+    # there are some very rare cases where a player collects lateral yards
+    # multiple times in the same play. We need to aggregate here to make sure
+    # this don't messes up joins (#289)
+    dplyr::group_by(.data$season, .data$week, .data$type, .data$gsis_player_id) %>%
+    dplyr::summarise(yards = sum(.data$yards)) %>%
     dplyr::ungroup()
-  close(con)
 
   # filter down to the 2 dfs we need
   suppressMessages({
@@ -255,7 +259,16 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         ) %>%
         dplyr::select("season", "week", "rusher_player_id" = .data$gsis_player_id, "lateral_yards" = .data$yards) %>%
         dplyr::mutate(lateral_tds = 0L, lateral_att = 1L)
-    )
+    ) %>%
+    # at this stage it is possible that a player is duplicated because he
+    # has lateral yards both in the regular pbp and in the multiple laterals file.
+    # This can happen when a player was the last lateral player in one play and
+    # not the last lateral player in another play in the same game (wow absurd)
+    # We summarise all columns to get make sure there is only one row per player
+    # per game. See (#289)
+    dplyr::group_by(.data$rusher_player_id, .data$week, .data$season) %>%
+    dplyr::summarise_all(.funs = sum, na.rm = TRUE) %>%
+    dplyr::ungroup()
 
   # rush df: join
   rush_df <- rushes %>%
@@ -348,7 +361,16 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         ) %>%
         dplyr::select("season", "week", "receiver_player_id" = .data$gsis_player_id, "lateral_yards" = .data$yards) %>%
         dplyr::mutate(lateral_tds = 0L, lateral_att = 1L)
-    )
+    ) %>%
+    # at this stage it is possible that a player is duplicated because he
+    # has lateral yards both in the regular pbp and in the multiple laterals file.
+    # This can happen when a player was the last lateral player in one play and
+    # not the last lateral player in another play in the same game (wow absurd)
+    # We summarise all columns to get make sure there is only one row per player
+    # per game. See (#289)
+    dplyr::group_by(.data$receiver_player_id, .data$week, .data$season) %>%
+    dplyr::summarise_all(.funs = sum, na.rm = TRUE) %>%
+    dplyr::ungroup()
 
   # receiver df 3: team receiving for WOPR
   rec_team <- data %>%
