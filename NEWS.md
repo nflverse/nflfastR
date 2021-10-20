@@ -1,6 +1,7 @@
 # nflfastR (development version)
 
 * The database function `update_db()` now supports the option "nflfastR.dbdirectory" which can be used to set the directory of the nflfastR pbp database globally and independent of any project structure or working directories.
+* Fixed bug where a player could be duplicated in `calculate_player_stats()` in very rare cases caused by plays with laterals. (#289)
 
 # nflfastR 4.3.0
 
