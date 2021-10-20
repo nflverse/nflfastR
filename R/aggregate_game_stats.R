@@ -97,8 +97,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
 # Prepare data ------------------------------------------------------------
 
   # load plays with multiple laterals
-  con <- url("https://github.com/mrcaseb/nfl-data/blob/master/data/lateral_yards/multiple_lateral_yards.rds?raw=true")
-  mult_lats <- readRDS(con) %>%
+  mult_lats <- nflreadr::rds_from_url("https://github.com/mrcaseb/nfl-data/raw/master/data/lateral_yards/multiple_lateral_yards.rds") %>%
     dplyr::mutate(
       season = substr(.data$game_id, 1, 4) %>% as.integer(),
       week = substr(.data$game_id, 6, 7) %>% as.integer()
@@ -109,8 +108,13 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     # pbp data, we have to drop him here so the entry isn't duplicated
     dplyr::group_by(.data$game_id, .data$play_id) %>%
     dplyr::slice(seq_len(dplyr::n() - 1)) %>%
+    dplyr::ungroup() %>%
+    # there are some very rare cases where a player collects lateral yards
+    # multiple times in the same play. We need to aggregate here to make sure
+    # this don't messes up joins (#289)
+    dplyr::group_by(.data$season, .data$week, .data$type, .data$gsis_player_id) %>%
+    dplyr::summarise(yards = sum(.data$yards)) %>%
     dplyr::ungroup()
-  close(con)
 
   # filter down to the 2 dfs we need
   suppressMessages({
