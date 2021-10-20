@@ -100,7 +100,7 @@ play by play data of all completed games since 1999." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0.9000</span>
       </span>
     </div>
 
@@ -249,7 +249,7 @@ play by play data of all completed games since 1999.</p>
     </div>
 
     <pre class="usage"><span class='fu'>update_db</span><span class='op'>(</span>
-  dbdir <span class='op'>=</span> <span class='st'>"."</span>,
+  dbdir <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"nflfastR.dbdirectory"</span>, default <span class='op'>=</span> <span class='st'>"."</span><span class='op'>)</span>,
   dbname <span class='op'>=</span> <span class='st'>"pbp_db"</span>,
   tblname <span class='op'>=</span> <span class='st'>"nflfastR_pbp"</span>,
   force_rebuild <span class='op'>=</span> <span class='cn'>FALSE</span>,
@@ -261,7 +261,8 @@ play by play data of all completed games since 1999.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>dbdir</th>
-      <td><p>Directory in which the database is or shall be located</p></td>
+      <td><p>Directory in which the database is or shall be located. Can also
+be set globally with <code><a href='https://rdrr.io/r/base/options.html'>options(nflfastR.dbdirectory)</a></code></p></td>
     </tr>
     <tr>
       <th>dbname</th>
