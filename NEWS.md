@@ -1,3 +1,7 @@
+# nflfastR (development version)
+
+* The database function `update_db()` now supports the option "nflfastR.dbdirectory" which can be used to set the directory of the nflfastR pbp database globally and independent of any project structure or working directories.
+
 # nflfastR 4.3.0
 
 ## Minor Changes
