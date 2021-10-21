@@ -346,6 +346,14 @@ add_nflscrapr_mutations <- function(pbp) {
       play_type = dplyr::if_else(
         is.na(.data$penalty) & is.na(.data$play_type) & stringr::str_detect(.data$play_description, " offsetting"), "no_play", .data$play_type
       ),
+      # play_type can be no_play on special teams plays with penalties that don't
+      # result in a replayed down. We fix this here using play_type_nfl (#281)
+      play_type = dplyr::case_when(
+        .data$play_type == "no_play" &
+          !.data$play_type_nfl %in% c("PENALTY", "TIMEOUT") &
+          !stringr::str_detect(.data$play_description, "No Play") ~ translate_play_type_nfl(.data$play_type_nfl),
+        TRUE ~ .data$play_type
+      ),
       # Indicator for QB dropbacks (exclude spikes and kneels):
       qb_dropback = dplyr::if_else(
         .data$play_type == "pass" |
@@ -639,4 +647,24 @@ fix_scrambles <- function(pbp) {
   # 2005 season, Weeks 1-16 are based on charting
   # 2005 season, Weeks 17-21 are guesses (basically every QB run except those that were a) a loss, b) no gain, or c) on 3/4 down with 1-2 to go).
   # Plays nullified by penalty are not included.
+}
+
+translate_play_type_nfl <- function(play_type_nfl){
+  dplyr::case_when(
+    play_type_nfl == "COMMENT" ~ "no_play",
+    play_type_nfl == "END_GAME" ~ "no_play",
+    play_type_nfl == "END_QUARTER" ~ "no_play",
+    play_type_nfl == "FIELD_GOAL" ~ "field_goal",
+    play_type_nfl == "FREE_KICK" ~ "kickoff",
+    play_type_nfl == "GAME_START" ~ "no_play",
+    play_type_nfl == "KICK_OFF" ~ "kickoff",
+    play_type_nfl == "PASS" ~ "pass",
+    play_type_nfl == "PAT2" ~ "extra_point",
+    play_type_nfl == "PENALTY" ~ "no_play",
+    play_type_nfl == "PUNT" ~ "punt",
+    play_type_nfl == "RUSH" ~ "run",
+    play_type_nfl == "SACK" ~ "pass",
+    play_type_nfl == "TIMEOUT" ~ "no_play",
+    play_type_nfl == "XP_KICK" ~ "extra_point",
+  )
 }
