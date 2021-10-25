@@ -666,5 +666,6 @@ translate_play_type_nfl <- function(play_type_nfl){
     play_type_nfl == "SACK" ~ "pass",
     play_type_nfl == "TIMEOUT" ~ "no_play",
     play_type_nfl == "XP_KICK" ~ "extra_point",
+    TRUE ~ NA_character_
   )
 }
