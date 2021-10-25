@@ -1,11 +1,9 @@
 ################################################################################
-# Author: Christian Lohr
+# Author: Christian Lohr, Sebastian Carl
 # Styleguide: styler::tidyverse_style()
 ################################################################################
 
-# dunno what that outcoded stuff below is about, just copied it from the off player stat code.. I'm a fucking noob in coding.
-
-#' Get Official Game Stats
+#' Get Official Game Stats on Defense
 #'
 #' @param pbp A Data frame of NFL play-by-play data typically loaded with
 #' [load_pbp()] or [build_nflfastR_pbp()]. If the data doesn't include the variable
@@ -119,23 +117,6 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
 
 # Prepare data ------------------------------------------------------------
 
-# load plays with multiple laterals
-con <- url("https://github.com/mrcaseb/nfl-data/blob/master/data/lateral_yards/multiple_lateral_yards.rds?raw=true")
-mult_lats <- readRDS(con) %>%
-  dplyr::mutate(
-    season = substr(.data$game_id, 1, 4) %>% as.integer(),
-    week = substr(.data$game_id, 6, 7) %>% as.integer()
-  ) %>%
-  dplyr::filter(.data$yards != 0) %>%
-  # the list includes all plays with multiple laterals
-  # and all receivers. Since the last one already is in the
-  # pbp data, we have to drop him here so the entry isn't duplicated
-  dplyr::group_by(.data$game_id, .data$play_id) %>%
-  dplyr::slice(seq_len(dplyr::n() - 1)) %>%
-  dplyr::ungroup()
-close(con)
-
-# filter down to the 2 dfs we need
 suppressMessages({
   # 1. for "normal" plays: get plays that count in official stats
   data <- pbp %>%
@@ -144,8 +125,6 @@ suppressMessages({
       .data$play_type %in% c("pass", "qb_kneel", "qb_spike", "run")
     ) %>%
     nflfastR::decode_player_ids()
-
-  # if (!"qb_epa" %in% names(data)) data <- add_qb_epa(data)
 
   # 2. for 2pt conversions only, get those plays
   two_points <- pbp %>%
