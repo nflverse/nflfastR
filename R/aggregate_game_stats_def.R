@@ -652,3 +652,7 @@ player_df <- player_df %>%
 
 return(player_df)
 }
+
+
+sum_cols <- function(data, ...){
+  purrr::reduce(dplyr::select(data, tidyselect::any_of(c(...))), `+`)
