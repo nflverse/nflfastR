@@ -139,76 +139,53 @@ suppressMessages({
       "lateral_receiver_player_name", "lateral_receiver_player_id"
     ) %>%
     nflfastR::decode_player_ids()
+
+  if (!"special" %in% names(pbp)) {# we need this column for the special teams tds
+    pbp <- pbp %>%
+      dplyr::mutate(
+        special = dplyr::if_else(
+          .data$play_type %in% c("extra_point","field_goal","kickoff","punt"),
+          1, 0
+        )
+      ) %>%
+      nflfastR::decode_player_ids()
+  }
 })
-
-if (!"special" %in% names(pbp)) {# we need this column for the special teams tds
-  pbp <- pbp %>%
-    dplyr::mutate(
-      special = dplyr::if_else(
-        .data$play_type %in% c("extra_point","field_goal","kickoff","punt"),
-        1, 0
-      )
-    )
-}
-
 
 # Tackling stats -----------------------------------------------------------
 
+tackle_vars <- c(
+  "solo_tackle_1_player_id",
+  "tackle_for_loss_1_player_id",
+  "assist_tackle_1_player_id",
+  "tackle_with_assist_1_player_id",
+  "solo_tackle_2_player_id",
+  "forced_fumble_player_1_player_id",
+  "assist_tackle_2_player_id",
+  "forced_fumble_player_2_player_id"
+)
+
 # get tackling stats
 tackle_df <- data %>%
-  dplyr::select(
-    tidyselect::contains("_tackle_"),
-    tidyselect::starts_with("tackle_for_loss"),
-    tidyselect::starts_with("tackle_with_assist_"),
-    tidyselect::starts_with("forced_fumble_player_")
+  dplyr::select(season, week, tidyselect::any_of(tackle_vars)) %>%
+  tidyr::pivot_longer(
+    cols = tidyselect::any_of(tackle_vars),
+    names_to = "desc",
+    values_to = "tackle_player_id",
+    values_drop_na = TRUE
   ) %>%
-  tidyr::pivot_longer(cols = c(
-    tidyselect::contains("_tackle_"),
-    tidyselect::starts_with("tackle_for_loss"),
-    tidyselect::starts_with("tackle_with_assist_"),
-    tidyselect::starts_with("forced_fumble_player_")
-  ),
-  names_to = "desc",
-  names_prefix = "tkl_",
-  values_to = "tackle_player_id",
-  values_drop_na = TRUE
-  ) %>%
-  dplyr::filter(grepl("_id",desc)) %>%
-  dplyr::mutate(n = 1) %>%
+  dplyr::count(.data$tackle_player_id, .data$season, .data$week, .data$desc) %>%
   tidyr::pivot_wider(
-    names_from = desc,
-    values_from = n,
-    values_fn = sum
+    names_from = .data$desc,
+    values_from = .data$n,
+    values_fill = 0L
   ) %>%
-  dplyr::group_by(.data$tackle_player_id) %>%
   dplyr::mutate(
-    tkl = sum(
-      data.frame(
-        .data$solo_tackle_1_player_id,
-        .data$solo_tackle_2_player_id,
-        .data$tackle_with_assist_1_player_id
-        #what happens here, if e.g. tackle_with_assist_1_player_id is filled. If it's not it gives me an error, so I deleted it in the first place.
-        #is there something equal to tidyselect::starts_with() within the data.frame? this could help I guess
-      ), na.rm = TRUE
-    ),
-    tkl_solo = sum(
-      data.frame(
-        .data$solo_tackle_1_player_id,
-        .data$solo_tackle_2_player_id
-      ), na.rm = TRUE
-    ),
-    assist = sum(
-      data.frame(
-        .data$assist_tackle_1_player_id,
-        .data$assist_tackle_2_player_id
-      ), na.rm = TRUE
-    ),
-    forced_fml = sum(
-      data.frame(
-        .data$forced_fumble_player_1_player_id,
-        .data$forced_fumble_player_2_player_id
-      ), na.rm = TRUE
-    )) %>%
+    tkl = sum_cols(., "solo_tackle_1_player_id", "solo_tackle_2_player_id", "tackle_with_assist_1_player_id"),
+    tkl_solo = sum_cols(., "solo_tackle_1_player_id", "solo_tackle_2_player_id"),
+    assist = sum_cols(., "assist_tackle_1_player_id", "assist_tackle_2_player_id"),
+    forced_fml = sum_cols(., "forced_fumble_player_1_player_id", "forced_fumble_player_2_player_id")
+  ) %>%
   dplyr::select(
     player_id = tackle_player_id,
     tkl,
@@ -217,30 +194,24 @@ tackle_df <- data %>%
     assist,
     forced_fml,
     tfl = tackle_for_loss_1_player_id
-  ) %>%
-  dplyr::ungroup()
-
-tackle_df_nas <- is.na(tackle_df)
-tackle_df[tackle_df_nas] <- 0
+  )
 
 # get tackle for loss yards
 tackle_yds_df <- data %>%
-  dplyr::filter(tackled_for_loss == 1, fumble==0, sack==0) %>% ### fumbles will be in df 'fumble_yds_df' later on.
-  dplyr::group_by(player_id=tackle_for_loss_1_player_id) %>%
-  dplyr::summarise(tfl_yards = sum(yards_gained))%>%
-  dplyr::filter(!is.na(player_id)) %>% ### there are many plays where the tfl_id is empty, but also the solo_tackle and other ids. what's going on here???
+  dplyr::filter(.data$tackled_for_loss == 1, .data$fumble == 0, .data$sack == 0) %>% ### fumbles will be in df 'fumble_yds_df' later on.
+  dplyr::group_by(player_id = .data$tackle_for_loss_1_player_id) %>%
+  dplyr::filter(!is.na(.data$player_id)) %>% ### there are many plays where the tfl_id is empty, but also the solo_tackle and other ids. what's going on here???
+  dplyr::summarise(tfl_yards = sum(.data$yards_gained)) %>%
   dplyr::bind_rows(
     data %>%
-      dplyr::filter(tackled_for_loss == 1, fumble==0) %>% ### fumbles will be in df 'fumble_yds_df' later on.
-      dplyr::group_by(player_id=tackle_for_loss_2_player_id) %>%
-      dplyr::summarise(tfl_yards = sum(yards_gained))%>%
-    dplyr::filter(!is.na(player_id))
+      dplyr::filter(.data$tackled_for_loss == 1, .data$fumble == 0) %>% ### fumbles will be in df 'fumble_yds_df' later on.
+      dplyr::group_by(player_id = .data$tackle_for_loss_2_player_id) %>%
+      dplyr::filter(!is.na(.data$player_id)) %>%
+      dplyr::summarise(tfl_yards = sum(.data$yards_gained))
   ) %>%
-  dplyr::group_by(player_id) %>%
-  dplyr::summarise(tfl_yards = sum(tfl_yards)*-1)
-
-tackle_yds_df_nas <- is.na(tackle_yds_df)
-tackle_yds_df[tackle_yds_df_nas] <- 0
+  dplyr::group_by(.data$player_id) %>%
+  dplyr::summarise(tfl_yards = -sum(.data$tfl_yards)) %>%
+  dplyr::mutate(tfl_yards = dplyr::if_else(is.na(tfl_yards), 0, tfl_yards))
 
 # Sack and Pressure stats -----------------------------------------------------------
 
@@ -656,3 +627,4 @@ return(player_df)
 
 sum_cols <- function(data, ...){
   purrr::reduce(dplyr::select(data, tidyselect::any_of(c(...))), `+`)
+}
