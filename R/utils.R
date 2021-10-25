@@ -3,7 +3,7 @@
 message_completed <- function(x, in_builder = FALSE) {
   if (isFALSE(in_builder)) {
     str <- paste0(my_time(), " | ", x)
-    cli::cli_alert_success("{{.field {str}}}")
+    cli::cli_alert_success("{.field {str}}")
   } else if (in_builder) {
     cli::cli_alert_success("{my_time()} | {x}")
   }
