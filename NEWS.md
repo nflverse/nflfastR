@@ -2,6 +2,7 @@
 
 * The database function `update_db()` now supports the option "nflfastR.dbdirectory" which can be used to set the directory of the nflfastR pbp database globally and independent of any project structure or working directories.
 * Fixed bug where a player could be duplicated in `calculate_player_stats()` in very rare cases caused by plays with laterals. (#289)
+* Fixed a bug where the function `add_xpass()` failed when called with an empty data frame. (#296)
 * Fixed a bug where `play_type` showed `no_play` on plays with penalties that don't result in a replay of the down. (#277, #281)
 
 # nflfastR 4.3.0
