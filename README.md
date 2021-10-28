@@ -13,8 +13,8 @@ downloads](http://cranlogs.r-pkg.org/badges/grand-total/nflfastR)](https://CRAN.
 status](https://github.com/nflverse/nflfastR/workflows/R-CMD-check/badge.svg)](https://github.com/nflverse/nflfastR/actions)
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
-[![Support
-Server](https://img.shields.io/discord/591914197219016707.svg?color=7289da&label=Support&logo=discord&style=flat-square)](https://discord.com/invite/5Er2FBnnQa)
+[![nflverse
+support](https://img.shields.io/discord/789805604076126219?color=7289da&label=nflverse%20support&logo=discord&logoColor=fff&style=flat-square)](https://discord.com/invite/5Er2FBnnQa)
 [![Twitter
 Follow](https://img.shields.io/twitter/follow/nflfastR.svg?style=social)](https://twitter.com/nflfastR)
 <!-- [![Travis build status](https://travis-ci.com/mrcaseb/nflfastR.svg?branch=master)](https://travis-ci.com/mrcaseb/nflfastR) -->
@@ -86,9 +86,9 @@ downloading the data from
 [here](https://github.com/nflverse/nflfastR-data)**. These data sets
 include play-by-play data of complete seasons going back to 1999 and we
 will update them in 2020 once the season starts. The files contain both
-regular season and postseason data, and one can use game\_type or week
-to figure out which games occurred in the postseason. Data are available
-as .csv.gz, .parquet, or .rds.
+regular season and postseason data, and one can use game_type or week to
+figure out which games occurred in the postseason. Data are available as
+.csv.gz, .parquet, or .rds.
 
 ## nflfastR models
 
