@@ -100,7 +100,7 @@ A set of functions to access National Football League play-by-play data from &am
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0.9002</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0.9003</span>
       </span>
     </div>
 
@@ -311,7 +311,7 @@ called. There are at least two basic ways to do this by either activating
 progress updates globally (for the current session) with</p><pre><span class='fu'>progressr</span><span class='fu'>::</span><span class='fu'><a href='https://progressr.futureverse.org/reference/handlers.html'>handlers</a></span><span class='op'>(</span>global <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 </pre>
 
-<p>or by piping the function call into <code><a href='https://progressr.futureverse.org/reference/with_progress.html'>progressr::with_progress()</a></code>:</p><pre><span class='fu'><a href='load_pbp.html'>load_pbp</a></span><span class='op'>(</span><span class='fl'>2018</span><span class='op'>:</span><span class='fl'>2020</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+<p>or by piping the function call into <code><a href='https://progressr.futureverse.org/reference/with_progress.html'>progressr::with_progress()</a></code>:</p><pre><span class='fu'><a href='load_pbp.html'>load_pbp</a></span><span class='op'>(</span><span class='fl'>2018</span><span class='op'>:</span><span class='fl'>2020</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
   <span class='fu'>progressr</span><span class='fu'>::</span><span class='fu'><a href='https://progressr.futureverse.org/reference/with_progress.html'>with_progress</a></span><span class='op'>(</span><span class='op'>)</span>
 </pre>
 

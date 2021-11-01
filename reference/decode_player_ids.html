@@ -106,7 +106,7 @@ internal decoder can be used with the option fast = FALSE." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0.9002</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0.9003</span>
       </span>
     </div>
 
@@ -288,25 +288,27 @@ which can take several days to fix on CRAN.)</p></td>
     <p>The input data frame of the parameter <code>pbp</code> with decoded player IDs.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='co'># Decode data frame consisting of some names and ids</span>
-<span class='fu'>decode_player_ids</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>
-  name <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"P.Mahomes"</span>, <span class='st'>"B.Baldwin"</span>, <span class='st'>"P.Mahomes"</span>, <span class='st'>"S.Carl"</span>, <span class='st'>"J.Jones"</span><span class='op'>)</span>,
-  id <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>
-    <span class='st'>"32013030-2d30-3033-3338-3733fa30c4fa"</span>,
-    <span class='cn'>NA_character_</span>,
-    <span class='st'>"00-0033873"</span>,
-    <span class='cn'>NA_character_</span>,
-    <span class='st'>"32013030-2d30-3032-3739-3434d4d3846d"</span>
-  <span class='op'>)</span>
-<span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> <span style='color: #00BB00;'>19:16:05 | Decoding of player ids completed</span></span></div><div class='output co'>#&gt;        name         id
-#&gt; 1 P.Mahomes 00-0033873
-#&gt; 2 B.Baldwin       &lt;NA&gt;
-#&gt; 3 P.Mahomes 00-0033873
-#&gt; 4    S.Carl       &lt;NA&gt;
-#&gt; 5   J.Jones 00-0027944</div><div class='input'><span class='co'># }</span>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># \donttest{</span></span>
+<span class='r-in'><span class='co'># Decode data frame consisting of some names and ids</span></span>
+<span class='r-in'><span class='fu'>decode_player_ids</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span></span>
+<span class='r-in'>  name <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"P.Mahomes"</span>, <span class='st'>"B.Baldwin"</span>, <span class='st'>"P.Mahomes"</span>, <span class='st'>"S.Carl"</span>, <span class='st'>"J.Jones"</span><span class='op'>)</span>,</span>
+<span class='r-in'>  id <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span></span>
+<span class='r-in'>    <span class='st'>"32013030-2d30-3033-3338-3733fa30c4fa"</span>,</span>
+<span class='r-in'>    <span class='cn'>NA_character_</span>,</span>
+<span class='r-in'>    <span class='st'>"00-0033873"</span>,</span>
+<span class='r-in'>    <span class='cn'>NA_character_</span>,</span>
+<span class='r-in'>    <span class='st'>"32013030-2d30-3032-3739-3434d4d3846d"</span></span>
+<span class='r-in'>  <span class='op'>)</span></span>
+<span class='r-in'><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> <span style='color: #00BB00;'>16:01:45 | Decoding of player ids completed</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>        name         id</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1 P.Mahomes 00-0033873</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2 B.Baldwin       &lt;NA&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3 P.Mahomes 00-0033873</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 4    S.Carl       &lt;NA&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 5   J.Jones 00-0027944</span>
+<span class='r-in'><span class='co'># }</span></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

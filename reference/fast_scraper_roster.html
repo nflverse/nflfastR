@@ -99,7 +99,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0.9002</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0.9003</span>
       </span>
     </div>
 
@@ -294,33 +294,35 @@ the roster of the given team and season containing the following information:</p
 see <a href='nflfastR-package.html'>nflfastR</a>.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='co'># Roster of the 2019 and 2020 seasons</span>
-<span class='fu'>fast_scraper_roster</span><span class='op'>(</span><span class='fl'>2019</span><span class='op'>:</span><span class='fl'>2020</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span> It is recommended to use parallel processing when trying to load multiple seasons. Please consider running <span style='color: #262626; background-color: #DADADA;'>`future::plan("multisession")`</span>! Will go on sequentially...</span></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 7,735 × 25</span>
-#&gt;    season team  position depth_chart_position jersey_number status full_name    
-#&gt;     <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                        <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        
-#&gt; <span style='color: #BCBCBC;'> 1</span>   <span style='text-decoration: underline;'>2</span>019 ARI   C        <span style='color: #BB0000;'>NA</span>                              60 CUT    Jacob Ohneso…
-#&gt; <span style='color: #BCBCBC;'> 2</span>   <span style='text-decoration: underline;'>2</span>019 ARI   C        <span style='color: #BB0000;'>NA</span>                              53 ACT    A.Q. Shipley 
-#&gt; <span style='color: #BCBCBC;'> 3</span>   <span style='text-decoration: underline;'>2</span>019 ARI   C        <span style='color: #BB0000;'>NA</span>                              65 ACT    Lamont Gaill…
-#&gt; <span style='color: #BCBCBC;'> 4</span>   <span style='text-decoration: underline;'>2</span>019 ARI   CB       <span style='color: #BB0000;'>NA</span>                              27 SUS    Josh Shaw    
-#&gt; <span style='color: #BCBCBC;'> 5</span>   <span style='text-decoration: underline;'>2</span>019 ARI   CB       <span style='color: #BB0000;'>NA</span>                              30 ACT    Jalen Davis  
-#&gt; <span style='color: #BCBCBC;'> 6</span>   <span style='text-decoration: underline;'>2</span>019 ARI   CB       <span style='color: #BB0000;'>NA</span>                              33 ACT    Byron Murphy 
-#&gt; <span style='color: #BCBCBC;'> 7</span>   <span style='text-decoration: underline;'>2</span>019 ARI   CB       <span style='color: #BB0000;'>NA</span>                              22 CUT    Trevor Willi…
-#&gt; <span style='color: #BCBCBC;'> 8</span>   <span style='text-decoration: underline;'>2</span>019 ARI   CB       <span style='color: #BB0000;'>NA</span>                              26 RES    Brandon Will…
-#&gt; <span style='color: #BCBCBC;'> 9</span>   <span style='text-decoration: underline;'>2</span>019 ARI   CB       <span style='color: #BB0000;'>NA</span>                              <span style='color: #BB0000;'>NA</span> DEV    Sojourn Shel…
-#&gt; <span style='color: #BCBCBC;'>10</span>   <span style='text-decoration: underline;'>2</span>019 ARI   CB       <span style='color: #BB0000;'>NA</span>                              28 CUT    Deatrick Nic…
-#&gt; <span style='color: #949494;'># … with 7,725 more rows, and 18 more variables: first_name &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   last_name &lt;chr&gt;, birth_date &lt;date&gt;, height &lt;chr&gt;, weight &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   college &lt;chr&gt;, high_school &lt;chr&gt;, gsis_id &lt;chr&gt;, espn_id &lt;int&gt;,</span>
-#&gt; <span style='color: #949494;'>#   yahoo_id &lt;int&gt;, rotowire_id &lt;int&gt;, pff_id &lt;int&gt;, pfr_id &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   headshot_url &lt;chr&gt;, fantasy_data_id &lt;int&gt;, sleeper_id &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   years_exp &lt;int&gt;, sportradar_id &lt;chr&gt;</span></div><div class='input'><span class='co'># \dontshow{</span>
-<span class='co'># Close open connections for R CMD Check</span>
-<span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://future.futureverse.org/reference/plan.html'>plan</a></span><span class='op'>(</span><span class='st'>"sequential"</span><span class='op'>)</span>
-<span class='co'># }</span>
-<span class='co'># }</span>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># \donttest{</span></span>
+<span class='r-in'><span class='co'># Roster of the 2019 and 2020 seasons</span></span>
+<span class='r-in'><span class='fu'>fast_scraper_roster</span><span class='op'>(</span><span class='fl'>2019</span><span class='op'>:</span><span class='fl'>2020</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> It is recommended to use parallel processing when trying to load multiple seasons. Please consider running <span style='color: #262626; background-color: #DADADA;'>`future::plan("multisession")`</span>! Will go on sequentially...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 7,735 × 25</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    season team  position depth_chart_position jersey_number status full_name    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                        <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span>   <span style='text-decoration: underline;'>2</span>019 ARI   C        <span style='color: #BB0000;'>NA</span>                              60 CUT    Jacob Ohneso…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span>   <span style='text-decoration: underline;'>2</span>019 ARI   C        <span style='color: #BB0000;'>NA</span>                              53 ACT    A.Q. Shipley </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span>   <span style='text-decoration: underline;'>2</span>019 ARI   C        <span style='color: #BB0000;'>NA</span>                              65 ACT    Lamont Gaill…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span>   <span style='text-decoration: underline;'>2</span>019 ARI   CB       <span style='color: #BB0000;'>NA</span>                              27 SUS    Josh Shaw    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span>   <span style='text-decoration: underline;'>2</span>019 ARI   CB       <span style='color: #BB0000;'>NA</span>                              30 ACT    Jalen Davis  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span>   <span style='text-decoration: underline;'>2</span>019 ARI   CB       <span style='color: #BB0000;'>NA</span>                              33 ACT    Byron Murphy </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span>   <span style='text-decoration: underline;'>2</span>019 ARI   CB       <span style='color: #BB0000;'>NA</span>                              22 CUT    Trevor Willi…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span>   <span style='text-decoration: underline;'>2</span>019 ARI   CB       <span style='color: #BB0000;'>NA</span>                              26 RES    Brandon Will…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span>   <span style='text-decoration: underline;'>2</span>019 ARI   CB       <span style='color: #BB0000;'>NA</span>                              <span style='color: #BB0000;'>NA</span> DEV    Sojourn Shel…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span>   <span style='text-decoration: underline;'>2</span>019 ARI   CB       <span style='color: #BB0000;'>NA</span>                              28 CUT    Deatrick Nic…</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 7,725 more rows, and 18 more variables: first_name &lt;chr&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   last_name &lt;chr&gt;, birth_date &lt;date&gt;, height &lt;chr&gt;, weight &lt;chr&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   college &lt;chr&gt;, high_school &lt;chr&gt;, gsis_id &lt;chr&gt;, espn_id &lt;int&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   yahoo_id &lt;int&gt;, rotowire_id &lt;int&gt;, pff_id &lt;int&gt;, pfr_id &lt;chr&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   headshot_url &lt;chr&gt;, fantasy_data_id &lt;int&gt;, sleeper_id &lt;chr&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   years_exp &lt;int&gt;, sportradar_id &lt;chr&gt;</span></span>
+<span class='r-in'><span class='co'># \dontshow{</span></span>
+<span class='r-in'><span class='co'># Close open connections for R CMD Check</span></span>
+<span class='r-in'><span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://future.futureverse.org/reference/plan.html'>plan</a></span><span class='op'>(</span><span class='st'>"sequential"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'># }</span></span>
+<span class='r-in'><span class='co'># }</span></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

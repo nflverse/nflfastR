@@ -99,7 +99,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0.9002</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0.9003</span>
       </span>
     </div>
 
@@ -257,6 +257,8 @@ information, including franchises in multiple cities:</p><dl>
 <dt>team_name</dt><dd><p>Complete Team name</p></dd>
 <dt>team_id</dt><dd><p>Team id used in the roster function</p></dd>
 <dt>team_nick</dt><dd><p>Nickname</p></dd>
+<dt>team_conf</dt><dd><p>Conference</p></dd>
+<dt>team_division</dt><dd><p>Division</p></dd>
 <dt>team_color</dt><dd><p>Primary color</p></dd>
 <dt>team_color2</dt><dd><p>Secondary color</p></dd>
 <dt>team_color3</dt><dd><p>Tertiary color</p></dd>
@@ -264,31 +266,38 @@ information, including franchises in multiple cities:</p><dl>
 <dt>team_logo_wikipedia</dt><dd><p>Url to Team logo on wikipedia</p></dd>
 <dt>team_logo_espn</dt><dd><p>Url to higher quality logo on espn</p></dd>
 <dt>team_wordmark</dt><dd><p>Url to team wordmarks</p></dd>
+<dt>team_conference_logo</dt><dd><p>Url to AFC and NFC logos</p></dd>
+<dt>team_league_logo</dt><dd><p>Url to NFL logo</p></dd>
 
-</dl><p>The colors are taken from Lee Sharpe's teamcolors.csv who has taken them from the
-<code>teamcolors</code> package created by Ben Baumer and Gregory Matthews.
-The Wikipeadia logo urls are taken from Lee Sharpe's logos.csv
+</dl><p>The primary and secondary colors have been taken from nfl.com with some modifications
+for better team distinction and most recent team color themes.
+The tertiary and quaternary colors are taken from Lee Sharpe's teamcolors.csv
+who has taken them from the <code>teamcolors</code> package created by Ben Baumer and
+Gregory Matthews. The Wikipeadia logo urls are taken from Lee Sharpe's logos.csv
 Team wordmarks from nfl.com</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='va'>teams_colors_logos</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 36 × 11</span>
-#&gt;    team_abbr team_name      team_id team_nick team_color team_color2 team_color3
-#&gt;    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>          <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>      <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>      
-#&gt; <span style='color: #BCBCBC;'> 1</span> ARI       Arizona Cardi… 3800    Cardinals #97233f    #000000     #ffb612    
-#&gt; <span style='color: #BCBCBC;'> 2</span> ATL       Atlanta Falco… 0200    Falcons   #a71930    #000000     #a5acaf    
-#&gt; <span style='color: #BCBCBC;'> 3</span> BAL       Baltimore Rav… 0325    Ravens    #241773    #000000     #9e7c0c    
-#&gt; <span style='color: #BCBCBC;'> 4</span> BUF       Buffalo Bills  0610    Bills     #00338d    #c60c30     #0c2e82    
-#&gt; <span style='color: #BCBCBC;'> 5</span> CAR       Carolina Pant… 0750    Panthers  #0085ca    #000000     #bfc0bf    
-#&gt; <span style='color: #BCBCBC;'> 6</span> CHI       Chicago Bears  0810    Bears     #0b162a    #c83803     #0b162a    
-#&gt; <span style='color: #BCBCBC;'> 7</span> CIN       Cincinnati Be… 0920    Bengals   #000000    #fb4f14     #000000    
-#&gt; <span style='color: #BCBCBC;'> 8</span> CLE       Cleveland Bro… 1050    Browns    #fb4f14    #22150c     #a5acaf    
-#&gt; <span style='color: #BCBCBC;'> 9</span> DAL       Dallas Cowboys 1200    Cowboys   #002244    #b0b7bc     #acc0c6    
-#&gt; <span style='color: #BCBCBC;'>10</span> DEN       Denver Broncos 1400    Broncos   #002244    #fb4f14     #00234c    
-#&gt; <span style='color: #949494;'># … with 26 more rows, and 4 more variables: team_color4 &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   team_logo_wikipedia &lt;chr&gt;, team_logo_espn &lt;chr&gt;, team_wordmark &lt;glue&gt;</span></div><div class='input'><span class='co'># }</span>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># \donttest{</span></span>
+<span class='r-in'><span class='va'>teams_colors_logos</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 36 × 15</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    team_abbr team_name      team_id team_nick team_conf team_division team_color</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>          <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>         <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> ARI       Arizona Cardi… 3800    Cardinals NFC       NFC West      #97233F   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> ATL       Atlanta Falco… 0200    Falcons   NFC       NFC South     #A71930   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> BAL       Baltimore Rav… 0325    Ravens    AFC       AFC North     #241773   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> BUF       Buffalo Bills  0610    Bills     AFC       AFC East      #00338D   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> CAR       Carolina Pant… 0750    Panthers  NFC       NFC South     #0085CA   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> CHI       Chicago Bears  0810    Bears     NFC       NFC North     #0B162A   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> CIN       Cincinnati Be… 0920    Bengals   AFC       AFC North     #FB4F14   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> CLE       Cleveland Bro… 1050    Browns    AFC       AFC North     #FF3C00   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> DAL       Dallas Cowboys 1200    Cowboys   NFC       NFC East      #002244   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> DEN       Denver Broncos 1400    Broncos   AFC       AFC West      #002244   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 26 more rows, and 8 more variables: team_color2 &lt;chr&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   team_color3 &lt;chr&gt;, team_color4 &lt;chr&gt;, team_logo_wikipedia &lt;chr&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   team_logo_espn &lt;chr&gt;, team_wordmark &lt;chr&gt;, team_conference_logo &lt;chr&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   team_league_logo &lt;chr&gt;</span></span>
+<span class='r-in'><span class='co'># }</span></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

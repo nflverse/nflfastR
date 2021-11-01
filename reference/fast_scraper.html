@@ -102,7 +102,7 @@ build_nflfastR_pbp instead." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0.9002</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0.9003</span>
       </span>
     </div>
 
@@ -643,61 +643,87 @@ output of that function)</p>
 see <a href='nflfastR-package.html'>nflfastR</a>.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='co'># Get pbp data for two games</span>
-<span class='fu'>fast_scraper</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"2019_01_GB_CHI"</span>, <span class='st'>"2013_21_SEA_DEN"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span> It is recommended to use parallel processing when trying to load multiple games.Please consider running <span style='color: #262626; background-color: #DADADA;'>`future::plan("multisession")`</span>! Will go on sequentially...</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 19:16:08 | Download finished. Adding variables...</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 19:16:09 | added game variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 19:16:09 | added nflscrapR variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 19:16:09 | added ep variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 19:16:09 | added air_yac_ep variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 19:16:10 | added wp variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 19:16:10 | added air_yac_wp variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 19:16:10 | added cp and cpoe</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 19:16:10 | added fixed drive variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 19:16:10 | added series variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> <span style='color: #00BB00;'>19:16:10 | Procedure completed.</span></span></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 356 × 339</span>
-#&gt;    play_id game_id     old_game_id home_team away_team season_type  week posteam
-#&gt;      <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  
-#&gt; <span style='color: #BCBCBC;'> 1</span>       1 2013_21_SE… 2014020200  DEN       SEA       POST           21 <span style='color: #BB0000;'>NA</span>     
-#&gt; <span style='color: #BCBCBC;'> 2</span>      37 2013_21_SE… 2014020200  DEN       SEA       POST           21 <span style='color: #BB0000;'>NA</span>     
-#&gt; <span style='color: #BCBCBC;'> 3</span>      61 2013_21_SE… 2014020200  DEN       SEA       POST           21 DEN    
-#&gt; <span style='color: #BCBCBC;'> 4</span>      83 2013_21_SE… 2014020200  DEN       SEA       POST           21 DEN    
-#&gt; <span style='color: #BCBCBC;'> 5</span>     119 2013_21_SE… 2014020200  DEN       SEA       POST           21 SEA    
-#&gt; <span style='color: #BCBCBC;'> 6</span>     141 2013_21_SE… 2014020200  DEN       SEA       POST           21 SEA    
-#&gt; <span style='color: #BCBCBC;'> 7</span>     162 2013_21_SE… 2014020200  DEN       SEA       POST           21 SEA    
-#&gt; <span style='color: #BCBCBC;'> 8</span>     183 2013_21_SE… 2014020200  DEN       SEA       POST           21 SEA    
-#&gt; <span style='color: #BCBCBC;'> 9</span>     210 2013_21_SE… 2014020200  DEN       SEA       POST           21 SEA    
-#&gt; <span style='color: #BCBCBC;'>10</span>     232 2013_21_SE… 2014020200  DEN       SEA       POST           21 SEA    
-#&gt; <span style='color: #949494;'># … with 346 more rows, and 331 more variables: posteam_type &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   defteam &lt;chr&gt;, side_of_field &lt;chr&gt;, yardline_100 &lt;dbl&gt;, game_date &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   quarter_seconds_remaining &lt;dbl&gt;, half_seconds_remaining &lt;dbl&gt;,</span>
-#&gt; <span style='color: #949494;'>#   game_seconds_remaining &lt;dbl&gt;, game_half &lt;chr&gt;, quarter_end &lt;dbl&gt;,</span>
-#&gt; <span style='color: #949494;'>#   drive &lt;dbl&gt;, sp &lt;dbl&gt;, qtr &lt;dbl&gt;, down &lt;dbl&gt;, goal_to_go &lt;dbl&gt;, time &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   yrdln &lt;chr&gt;, ydstogo &lt;dbl&gt;, ydsnet &lt;dbl&gt;, desc &lt;chr&gt;, play_type &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   yards_gained &lt;dbl&gt;, shotgun &lt;dbl&gt;, no_huddle &lt;dbl&gt;, qb_dropback &lt;dbl&gt;, …</span></div><div class='input'>
-<span class='co'># It is also possible to directly use the</span>
-<span class='co'># output of `fast_scraper_schedules` as input</span>
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span>, warn.conflicts <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
-<span class='fu'><a href='fast_scraper_schedules.html'>fast_scraper_schedules</a></span><span class='op'>(</span><span class='fl'>2020</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>tail</a></span><span class='op'>(</span><span class='fl'>3</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='fu'>fast_scraper</span><span class='op'>(</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span> It is recommended to use parallel processing when trying to load multiple games.Please consider running <span style='color: #262626; background-color: #DADADA;'>`future::plan("multisession")`</span>! Will go on sequentially...</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 19:16:15 | Download finished. Adding variables...</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 19:16:15 | added game variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 19:16:16 | added nflscrapR variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 19:16:16 | added ep variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 19:16:16 | added air_yac_ep variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 19:16:17 | added wp variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 19:16:17 | added air_yac_wp variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 19:16:17 | added cp and cpoe</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 19:16:17 | added fixed drive variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> 19:16:17 | added series variables</span></div><div class='output co'>#&gt; <span class='message'><span style='color: #00BB00;'>✔</span> <span style='color: #00BB00;'>19:16:17 | Procedure completed.</span></span></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 545 × 339</span>
-#&gt;    play_id game_id     old_game_id home_team away_team season_type  week posteam
-#&gt;      <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  
-#&gt; <span style='color: #BCBCBC;'> 1</span>       1 2020_20_BU… 2021012401  KC        BUF       POST           20 <span style='color: #BB0000;'>NA</span>     
-#&gt; <span style='color: #BCBCBC;'> 2</span>      42 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    
-#&gt; <span style='color: #BCBCBC;'> 3</span>      57 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    
-#&gt; <span style='color: #BCBCBC;'> 4</span>      78 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    
-#&gt; <span style='color: #BCBCBC;'> 5</span>     102 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    
-#&gt; <span style='color: #BCBCBC;'> 6</span>     123 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    
-#&gt; <span style='color: #BCBCBC;'> 7</span>     145 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    
-#&gt; <span style='color: #BCBCBC;'> 8</span>     174 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    
-#&gt; <span style='color: #BCBCBC;'> 9</span>     207 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    
-#&gt; <span style='color: #BCBCBC;'>10</span>     236 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    
-#&gt; <span style='color: #949494;'># … with 535 more rows, and 331 more variables: posteam_type &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   defteam &lt;chr&gt;, side_of_field &lt;chr&gt;, yardline_100 &lt;dbl&gt;, game_date &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   quarter_seconds_remaining &lt;dbl&gt;, half_seconds_remaining &lt;dbl&gt;,</span>
-#&gt; <span style='color: #949494;'>#   game_seconds_remaining &lt;dbl&gt;, game_half &lt;chr&gt;, quarter_end &lt;dbl&gt;,</span>
-#&gt; <span style='color: #949494;'>#   drive &lt;dbl&gt;, sp &lt;dbl&gt;, qtr &lt;dbl&gt;, down &lt;dbl&gt;, goal_to_go &lt;dbl&gt;, time &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   yrdln &lt;chr&gt;, ydstogo &lt;dbl&gt;, ydsnet &lt;dbl&gt;, desc &lt;chr&gt;, play_type &lt;chr&gt;,</span>
-#&gt; <span style='color: #949494;'>#   yards_gained &lt;dbl&gt;, shotgun &lt;dbl&gt;, no_huddle &lt;dbl&gt;, qb_dropback &lt;dbl&gt;, …</span></div><div class='input'>
-<span class='co'># \dontshow{</span>
-<span class='co'># Close open connections for R CMD Check</span>
-<span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://future.futureverse.org/reference/plan.html'>plan</a></span><span class='op'>(</span><span class='st'>"sequential"</span><span class='op'>)</span>
-<span class='co'># }</span>
-<span class='co'># }</span>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># \donttest{</span></span>
+<span class='r-in'><span class='co'># Get pbp data for two games</span></span>
+<span class='r-in'><span class='fu'>fast_scraper</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"2019_01_GB_CHI"</span>, <span class='st'>"2013_21_SEA_DEN"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> It is recommended to use parallel processing when trying to load multiple games.Please consider running <span style='color: #262626; background-color: #DADADA;'>`future::plan("multisession")`</span>! Will go on sequentially...</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> 16:01:49 | Download finished. Adding variables...</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> 16:01:49 | added game variables</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> 16:01:49 | added nflscrapR variables</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> 16:01:49 | added ep variables</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> 16:01:50 | added air_yac_ep variables</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> 16:01:50 | added wp variables</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> 16:01:50 | added air_yac_wp variables</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> 16:01:50 | added cp and cpoe</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> 16:01:50 | added fixed drive variables</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> 16:01:50 | added series variables</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> <span style='color: #00BB00;'>16:01:50 | Procedure completed.</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 356 × 339</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    play_id game_id     old_game_id home_team away_team season_type  week posteam</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>      <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span>       1 2013_21_SE… 2014020200  DEN       SEA       POST           21 <span style='color: #BB0000;'>NA</span>     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span>      37 2013_21_SE… 2014020200  DEN       SEA       POST           21 <span style='color: #BB0000;'>NA</span>     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span>      61 2013_21_SE… 2014020200  DEN       SEA       POST           21 DEN    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span>      83 2013_21_SE… 2014020200  DEN       SEA       POST           21 DEN    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span>     119 2013_21_SE… 2014020200  DEN       SEA       POST           21 SEA    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span>     141 2013_21_SE… 2014020200  DEN       SEA       POST           21 SEA    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span>     162 2013_21_SE… 2014020200  DEN       SEA       POST           21 SEA    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span>     183 2013_21_SE… 2014020200  DEN       SEA       POST           21 SEA    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span>     210 2013_21_SE… 2014020200  DEN       SEA       POST           21 SEA    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span>     232 2013_21_SE… 2014020200  DEN       SEA       POST           21 SEA    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 346 more rows, and 331 more variables: posteam_type &lt;chr&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   defteam &lt;chr&gt;, side_of_field &lt;chr&gt;, yardline_100 &lt;dbl&gt;, game_date &lt;chr&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   quarter_seconds_remaining &lt;dbl&gt;, half_seconds_remaining &lt;dbl&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   game_seconds_remaining &lt;dbl&gt;, game_half &lt;chr&gt;, quarter_end &lt;dbl&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   drive &lt;dbl&gt;, sp &lt;dbl&gt;, qtr &lt;dbl&gt;, down &lt;dbl&gt;, goal_to_go &lt;dbl&gt;, time &lt;chr&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   yrdln &lt;chr&gt;, ydstogo &lt;dbl&gt;, ydsnet &lt;dbl&gt;, desc &lt;chr&gt;, play_type &lt;chr&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   yards_gained &lt;dbl&gt;, shotgun &lt;dbl&gt;, no_huddle &lt;dbl&gt;, qb_dropback &lt;dbl&gt;, …</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># It is also possible to directly use the</span></span>
+<span class='r-in'><span class='co'># output of `fast_scraper_schedules` as input</span></span>
+<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span>, warn.conflicts <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='fast_scraper_schedules.html'>fast_scraper_schedules</a></span><span class='op'>(</span><span class='fl'>2020</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
+<span class='r-in'>  <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>tail</a></span><span class='op'>(</span><span class='fl'>3</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
+<span class='r-in'>  <span class='fu'>fast_scraper</span><span class='op'>(</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BBBB;'>ℹ</span> It is recommended to use parallel processing when trying to load multiple games.Please consider running <span style='color: #262626; background-color: #DADADA;'>`future::plan("multisession")`</span>! Will go on sequentially...</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> 16:01:56 | Download finished. Adding variables...</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> 16:01:56 | added game variables</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> 16:01:56 | added nflscrapR variables</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> 16:01:56 | added ep variables</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> 16:01:57 | added air_yac_ep variables</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> 16:01:57 | added wp variables</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> 16:01:57 | added air_yac_wp variables</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> 16:01:57 | added cp and cpoe</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> 16:01:57 | added fixed drive variables</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> 16:01:57 | added series variables</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> <span style='color: #00BB00;'>✔</span> <span style='color: #00BB00;'>16:01:57 | Procedure completed.</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 545 × 339</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    play_id game_id     old_game_id home_team away_team season_type  week posteam</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>      <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span>       1 2020_20_BU… 2021012401  KC        BUF       POST           20 <span style='color: #BB0000;'>NA</span>     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span>      42 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span>      57 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span>      78 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span>     102 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span>     123 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span>     145 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span>     174 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span>     207 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span>     236 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 535 more rows, and 331 more variables: posteam_type &lt;chr&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   defteam &lt;chr&gt;, side_of_field &lt;chr&gt;, yardline_100 &lt;dbl&gt;, game_date &lt;chr&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   quarter_seconds_remaining &lt;dbl&gt;, half_seconds_remaining &lt;dbl&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   game_seconds_remaining &lt;dbl&gt;, game_half &lt;chr&gt;, quarter_end &lt;dbl&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   drive &lt;dbl&gt;, sp &lt;dbl&gt;, qtr &lt;dbl&gt;, down &lt;dbl&gt;, goal_to_go &lt;dbl&gt;, time &lt;chr&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   yrdln &lt;chr&gt;, ydstogo &lt;dbl&gt;, ydsnet &lt;dbl&gt;, desc &lt;chr&gt;, play_type &lt;chr&gt;,</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'>#   yards_gained &lt;dbl&gt;, shotgun &lt;dbl&gt;, no_huddle &lt;dbl&gt;, qb_dropback &lt;dbl&gt;, …</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># \dontshow{</span></span>
+<span class='r-in'><span class='co'># Close open connections for R CMD Check</span></span>
+<span class='r-in'><span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://future.futureverse.org/reference/plan.html'>plan</a></span><span class='op'>(</span><span class='st'>"sequential"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'># }</span></span>
+<span class='r-in'><span class='co'># }</span></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

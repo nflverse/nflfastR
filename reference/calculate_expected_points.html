@@ -103,7 +103,7 @@ ydstogo, posteam_timeouts_remaining, defteam_timeouts_remaining" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0.9002</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">4.3.0.9003</span>
       </span>
     </div>
 
@@ -298,46 +298,47 @@ must be present:</p><ul>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
-<span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'>tibble</span><span class='fu'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span><span class='op'>(</span>
-<span class='st'>"season"</span> <span class='op'>=</span> <span class='fl'>1999</span><span class='op'>:</span><span class='fl'>2019</span>,
-<span class='st'>"home_team"</span> <span class='op'>=</span> <span class='st'>"SEA"</span>,
-<span class='st'>"posteam"</span> <span class='op'>=</span> <span class='st'>"SEA"</span>,
-<span class='st'>"roof"</span> <span class='op'>=</span> <span class='st'>"outdoors"</span>,
-<span class='st'>"half_seconds_remaining"</span> <span class='op'>=</span> <span class='fl'>1800</span>,
-<span class='st'>"yardline_100"</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>80</span>, <span class='fl'>17</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>75</span>, <span class='fl'>4</span><span class='op'>)</span><span class='op'>)</span>,
-<span class='st'>"down"</span> <span class='op'>=</span> <span class='fl'>1</span>,
-<span class='st'>"ydstogo"</span> <span class='op'>=</span> <span class='fl'>10</span>,
-<span class='st'>"posteam_timeouts_remaining"</span> <span class='op'>=</span> <span class='fl'>3</span>,
-<span class='st'>"defteam_timeouts_remaining"</span> <span class='op'>=</span> <span class='fl'>3</span>
-<span class='op'>)</span>
-
-<span class='fu'>nflfastR</span><span class='fu'>::</span><span class='fu'>calculate_expected_points</span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
-  <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>season</span>, <span class='va'>yardline_100</span>, <span class='va'>td_prob</span>, <span class='va'>ep</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;    season yardline_100   td_prob        ep
-#&gt; 1    1999           80 0.3342112 0.6378878
-#&gt; 2    2000           80 0.3342112 0.6378878
-#&gt; 3    2001           80 0.3342112 0.6378878
-#&gt; 4    2002           80 0.3431796 0.8167660
-#&gt; 5    2003           80 0.3431796 0.8167660
-#&gt; 6    2004           80 0.3431796 0.8167660
-#&gt; 7    2005           80 0.3431796 0.8167660
-#&gt; 8    2006           80 0.3445111 0.8136176
-#&gt; 9    2007           80 0.3445111 0.8136176
-#&gt; 10   2008           80 0.3445111 0.8136176
-#&gt; 11   2009           80 0.3445111 0.8136176
-#&gt; 12   2010           80 0.3445111 0.8136176
-#&gt; 13   2011           80 0.3445111 0.8136176
-#&gt; 14   2012           80 0.3445111 0.8136176
-#&gt; 15   2013           80 0.3445111 0.8136176
-#&gt; 16   2014           80 0.3522740 0.9822985
-#&gt; 17   2015           80 0.3522740 0.9822985
-#&gt; 18   2016           75 0.3771672 1.4573911
-#&gt; 19   2017           75 0.3771672 1.4573911
-#&gt; 20   2018           75 0.4067504 1.4740978
-#&gt; 21   2019           75 0.4067504 1.4740978</div><div class='input'><span class='co'># }</span>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># \donttest{</span></span>
+<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'>tibble</span><span class='fu'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span><span class='op'>(</span></span>
+<span class='r-in'><span class='st'>"season"</span> <span class='op'>=</span> <span class='fl'>1999</span><span class='op'>:</span><span class='fl'>2019</span>,</span>
+<span class='r-in'><span class='st'>"home_team"</span> <span class='op'>=</span> <span class='st'>"SEA"</span>,</span>
+<span class='r-in'><span class='st'>"posteam"</span> <span class='op'>=</span> <span class='st'>"SEA"</span>,</span>
+<span class='r-in'><span class='st'>"roof"</span> <span class='op'>=</span> <span class='st'>"outdoors"</span>,</span>
+<span class='r-in'><span class='st'>"half_seconds_remaining"</span> <span class='op'>=</span> <span class='fl'>1800</span>,</span>
+<span class='r-in'><span class='st'>"yardline_100"</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>80</span>, <span class='fl'>17</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>75</span>, <span class='fl'>4</span><span class='op'>)</span><span class='op'>)</span>,</span>
+<span class='r-in'><span class='st'>"down"</span> <span class='op'>=</span> <span class='fl'>1</span>,</span>
+<span class='r-in'><span class='st'>"ydstogo"</span> <span class='op'>=</span> <span class='fl'>10</span>,</span>
+<span class='r-in'><span class='st'>"posteam_timeouts_remaining"</span> <span class='op'>=</span> <span class='fl'>3</span>,</span>
+<span class='r-in'><span class='st'>"defteam_timeouts_remaining"</span> <span class='op'>=</span> <span class='fl'>3</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'>nflfastR</span><span class='fu'>::</span><span class='fu'>calculate_expected_points</span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
+<span class='r-in'>  <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>season</span>, <span class='va'>yardline_100</span>, <span class='va'>td_prob</span>, <span class='va'>ep</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    season yardline_100   td_prob        ep</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1    1999           80 0.3342112 0.6378878</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2    2000           80 0.3342112 0.6378878</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3    2001           80 0.3342112 0.6378878</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 4    2002           80 0.3431796 0.8167660</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 5    2003           80 0.3431796 0.8167660</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 6    2004           80 0.3431796 0.8167660</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 7    2005           80 0.3431796 0.8167660</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 8    2006           80 0.3445111 0.8136176</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 9    2007           80 0.3445111 0.8136176</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 10   2008           80 0.3445111 0.8136176</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 11   2009           80 0.3445111 0.8136176</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 12   2010           80 0.3445111 0.8136176</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 13   2011           80 0.3445111 0.8136176</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 14   2012           80 0.3445111 0.8136176</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 15   2013           80 0.3445111 0.8136176</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 16   2014           80 0.3522740 0.9822985</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 17   2015           80 0.3522740 0.9822985</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 18   2016           75 0.3771672 1.4573911</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 19   2017           75 0.3771672 1.4573911</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 20   2018           75 0.4067504 1.4740978</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 21   2019           75 0.4067504 1.4740978</span>
+<span class='r-in'><span class='co'># }</span></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
