@@ -12,6 +12,8 @@ information, including franchises in multiple cities:
 \item{team_name}{Complete Team name}
 \item{team_id}{Team id used in the roster function}
 \item{team_nick}{Nickname}
+\item{team_conf}{Conference}
+\item{team_division}{Division}
 \item{team_color}{Primary color}
 \item{team_color2}{Secondary color}
 \item{team_color3}{Tertiary color}
@@ -19,10 +21,14 @@ information, including franchises in multiple cities:
 \item{team_logo_wikipedia}{Url to Team logo on wikipedia}
 \item{team_logo_espn}{Url to higher quality logo on espn}
 \item{team_wordmark}{Url to team wordmarks}
+\item{team_conference_logo}{Url to AFC and NFC logos}
+\item{team_league_logo}{Url to NFL logo}
 }
-The colors are taken from Lee Sharpe's teamcolors.csv who has taken them from the
-\code{teamcolors} package created by Ben Baumer and Gregory Matthews.
-The Wikipeadia logo urls are taken from Lee Sharpe's logos.csv
+The primary and secondary colors have been taken from nfl.com with some modifications
+for better team distinction and most recent team color themes.
+The tertiary and quaternary colors are taken from Lee Sharpe's teamcolors.csv
+who has taken them from the \code{teamcolors} package created by Ben Baumer and
+Gregory Matthews. The Wikipeadia logo urls are taken from Lee Sharpe's logos.csv
 Team wordmarks from nfl.com
 }
 \usage{
