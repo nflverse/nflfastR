@@ -21,69 +21,22 @@
 #' \item{recent_team}{Most recent team player appears in `pbp` with.}
 #' \item{season}{Season if `weekly` is `TRUE`}
 #' \item{week}{Week if `weekly` is `TRUE`}
-#' \item{completions}{The number of completed passes.}
-#' \item{attempts}{The number of pass attempts as defined by the NFL.}
-#' \item{passing_yards}{Yards gained on pass plays.}
-#' \item{passing_tds}{The number of passing touchdowns.}
-#' \item{interceptions}{The number of interceptions thrown.}
-#' \item{sacks}{Number of times sacked.}
-#' \item{sack_fumbles_lost}{The number of sacks with a lost fumble.}
-#' \item{passing_air_yards}{Passing air yards (includes incomplete passes).}
-#' \item{passing_yards_after_catch}{Yards after the catch gained on plays in
-#' which player was the passer (this is an unofficial stat and may differ slightly
-#' between different sources).}
-#' \item{passing_first_downs}{First downs on pass attempts.}
-#' \item{passing_epa}{Total expected points added on pass attempts and sacks.
-#' NOTE: this uses the variable `qb_epa`, which gives QB credit for EPA for up
-#' to the point where a receiver lost a fumble after a completed catch and makes
-#' EPA work more like passing yards on plays with fumbles.}
-#' \item{passing_2pt_conversions}{Two-point conversion passes.}
-#' \item{dakota}{Adjusted EPA + CPOE composite based on coefficients which best predict adjusted EPA/play in the following year.}
-#' \item{carries}{The number of official rush attempts (incl. scrambles and kneel downs).
-#' Rushes after a lateral reception don't count as carry.}
-#' \item{rushing_yards}{Yards gained when rushing with the ball (incl. scrambles and kneel downs).
-#' Also includes yards gained after obtaining a lateral on a play that started
-#' with a rushing attempt.}
-#' \item{rushing_tds}{The number of rushing touchdowns (incl. scrambles).
-#' Also includes touchdowns after obtaining a lateral on a play that started
-#' with a rushing attempt.}
-#' \item{rushing_fumbles_lost}{The number of rushes with a lost fumble.}
-#' \item{rushing_first_downs}{First downs on rush attempts (incl. scrambles).}
-#' \item{rushing_epa}{Expected points added on rush attempts (incl. scrambles and kneel downs).}
-#' \item{rushing_2pt_conversions}{Two-point conversion rushes}
-#' \item{receptions}{The number of pass receptions. Lateral receptions officially
-#' don't count as reception.}
-#' \item{targets}{The number of pass plays where the player was the targeted receiver.}
-#' \item{receiving_yards}{Yards gained after a pass reception. Includes yards
-#' gained after receiving a lateral on a play that started as a pass play.}
-#' \item{receiving_tds}{The number of touchdowns following a pass reception.
-#' Also includes touchdowns after receiving a lateral on a play that started
-#' as a pass play.}
-#' \item{receiving_air_yards}{Receiving air yards (incl. incomplete passes).}
-#' \item{receiving_yards_after_catch}{Yards after the catch gained on plays in
-#' which player was receiver (this is an unofficial stat and may differ slightly
-#' between different sources).}
-#' \item{receiving_fumbles_lost}{The number of fumbles after a pass reception.}
-#' \item{receiving_2pt_conversions}{Two-point conversion receptions}
-#' \item{fantasy_points}{Standard fantasy points.}
-#' \item{fantasy_points_ppr}{PPR fantasy points.}
 #' }
 #' @export
 #' @seealso The function [load_player_stats()] and the corresponding examples
 #' on [the nflfastR website](https://www.nflfastr.com/articles/nflfastR.html#example-11-replicating-official-stats)
 #' @examples
 #' \donttest{
-# pbp <- nflfastR::load_pbp(2020)
+#'   pbp <- nflfastR::load_pbp(2020)
 #'
-# weekly <- calculate_player_stats(pbp, weekly = TRUE)
-#' dplyr::glimpse(weekly)
+#'   weekly <- calculate_player_stats_def(pbp, weekly = TRUE)
+#'   dplyr::glimpse(weekly)
 #'
-#' overall <- calculate_player_stats(pbp, weekly = FALSE)
-#' dplyr::glimpse(overall)
+#'   overall <- calculate_player_stats_def(pbp, weekly = FALSE)
+#'   dplyr::glimpse(overall)
 #' }
 #'
-#'
-#'
+
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # what do we need:
 #
@@ -97,7 +50,7 @@
 # QB Hits --> done
 # Passes Defensed --> done
 # Interceptions --> done
-# Interception Yards /////
+# Interception Yards --> done
 # Interception Return TDs ///// --> only "TD" for defense
 # Forced Fumbles --> done
 # Opp Fumble Recoveries --> done
@@ -140,7 +93,8 @@ suppressMessages({
     ) %>%
     nflfastR::decode_player_ids()
 
-  if (!"special" %in% names(pbp)) {# we need this column for the special teams tds
+  if (!"special" %in% names(pbp)) {
+    # we need this column for the special teams tds
     pbp <- pbp %>%
       dplyr::mutate(
         special = dplyr::if_else(
@@ -187,38 +141,45 @@ tackle_df <- data %>%
     forced_fml = sum_cols(., "forced_fumble_player_1_player_id", "forced_fumble_player_2_player_id")
   ) %>%
   dplyr::select(
-    player_id = tackle_player_id,
-    tkl,
-    tkl_solo,
-    tkl_with_assist = tackle_with_assist_1_player_id,
-    assist,
-    forced_fml,
-    tfl = tackle_for_loss_1_player_id
+    "season",
+    "week",
+    "player_id" = "tackle_player_id",
+    "tkl",
+    "tkl_solo",
+    "tkl_with_assist" = "tackle_with_assist_1_player_id",
+    "assist",
+    "forced_fml",
+    "tfl" = "tackle_for_loss_1_player_id"
   )
 
 # get tackle for loss yards
-tackle_yds_df <- data %>%
-  dplyr::filter(.data$tackled_for_loss == 1, .data$fumble == 0, .data$sack == 0) %>% ### fumbles will be in df 'fumble_yds_df' later on.
-  dplyr::group_by(player_id = .data$tackle_for_loss_1_player_id) %>%
-  dplyr::filter(!is.na(.data$player_id)) %>% ### there are many plays where the tfl_id is empty, but also the solo_tackle and other ids. what's going on here???
-  dplyr::summarise(tfl_yards = sum(.data$yards_gained)) %>%
-  dplyr::bind_rows(
-    data %>%
-      dplyr::filter(.data$tackled_for_loss == 1, .data$fumble == 0) %>% ### fumbles will be in df 'fumble_yds_df' later on.
-      dplyr::group_by(player_id = .data$tackle_for_loss_2_player_id) %>%
-      dplyr::filter(!is.na(.data$player_id)) %>%
-      dplyr::summarise(tfl_yards = sum(.data$yards_gained))
-  ) %>%
-  dplyr::group_by(.data$player_id) %>%
-  dplyr::summarise(tfl_yards = -sum(.data$tfl_yards)) %>%
-  dplyr::mutate(tfl_yards = dplyr::if_else(is.na(tfl_yards), 0, tfl_yards))
 
-# Sack and Pressure stats -----------------------------------------------------------
+tackle_yards_df <- data %>%
+  dplyr::filter(.data$tackled_for_loss == 1, .data$fumble == 0, .data$sack == 0) %>%
+  dplyr::select(season,week, tackle_for_loss_1_player_id,tackle_for_loss_2_player_id, yards_gained) %>%
+  tidyr::pivot_longer(
+    cols = c("tackle_for_loss_1_player_id","tackle_for_loss_2_player_id"),
+    names_to = "desc",
+    values_to = "player_id",
+    values_drop_na = TRUE
+  ) %>%
+  dplyr::group_by(.data$season, .data$week, .data$player_id) %>%
+  dplyr::summarise(
+    tfl_yards = sum(-.data$yards_gained, na.rm = TRUE)
+  ) %>%
+  dplyr::ungroup()
+
+# Sack and QB Hits stats -----------------------------------------------------------
 
 # get sack and pressure stats
 pressure_df <- data %>%
-  dplyr::select(tidyselect::contains("sack_"),
-                tidyselect::starts_with("qb_hit_")) %>%
+  dplyr::select(
+    "season",
+    "week",
+    tidyselect::contains("sack_"),
+    "yards_gained",
+    tidyselect::starts_with("qb_hit_"),
+    -tidyselect::contains("_name")) %>%
   tidyr::pivot_longer(
     cols = c(
       tidyselect::contains("sack_"),
@@ -226,77 +187,42 @@ pressure_df <- data %>%
     ),
     names_to = "desc",
     names_prefix = "sk_",
-    values_to = "pressure_player_id",
+    values_to = "player_id",
     values_drop_na = TRUE
   ) %>%
-  dplyr::filter(grepl("_id", desc)) %>%
-  dplyr::mutate(n =
-                  dplyr::case_when(
-                    desc %in% c("half_sack_1_player_id", "half_sack_2_player_id") ~ 0.5,
-                    TRUE ~ 1
-                  )) %>%
-  tidyr::pivot_wider(
-    names_from = desc,
-    values_from = n,
-    values_fn = sum
-  ) %>%
-  dplyr::group_by(.data$pressure_player_id) %>%
   dplyr::mutate(
-    sk = sum(
-      data.frame(
-        .data$sack_player_id,
-        .data$half_sack_1_player_id,
-        .data$half_sack_2_player_id
-      ), na.rm = TRUE
+    n = dplyr::case_when(
+      desc %in% c("half_sack_1_player_id", "half_sack_2_player_id") ~ 0.5,
+      TRUE ~ 1
     ),
-    qb_hit = sum(
-      data.frame(
-        .data$qb_hit_1_player_id,
-        .data$qb_hit_2_player_id
-      ), na.rm = TRUE
-    )
+    desc = stringr::str_remove_all(.data$desc,"_player_id") %>%
+      stringr::str_remove_all("_[0-9]") %>%
+      stringr::str_remove("half_")
+  ) %>%
+  tidyr::pivot_wider(
+    names_from = .data$desc,
+    values_from = c(.data$n,.data$yards_gained),
+    values_fn = sum,
+    values_fill = 0
   ) %>%
   dplyr::select(
-    -tidyselect::contains("player_id"),
-    player_id = pressure_player_id
-  ) %>%
-  dplyr::ungroup()
-
-pressure_df_nas <- is.na(pressure_df)
-pressure_df[pressure_df_nas] <- 0
-
-# get sack yards
-sack_yds_df <- data %>%
-  dplyr::filter(tackled_for_loss == 0, fumble==0, sack==1) %>% ### fumbles will be in df 'fumble_yds_df' later on.
-  dplyr::group_by(player_id=sack_player_id) %>%
-  dplyr::summarise(sk_yards = sum(yards_gained)) %>%
-  dplyr::filter(!is.na(player_id)) %>% ### team sacks are NA in each players stat because they gangbang each other to death
-  dplyr::bind_rows(
-    data %>%
-      dplyr::filter(tackled_for_loss == 0, fumble==0, sack==1) %>% ### fumbles will be in df 'fumble_yds_df' later on.
-      dplyr::group_by(player_id=half_sack_1_player_id) %>%
-      dplyr::summarise(sk_yards = sum(yards_gained)) %>%
-      dplyr::filter(!is.na(player_id))
-    ) %>%
-      dplyr::bind_rows(
-        data %>%
-          dplyr::filter(tackled_for_loss == 0, fumble==0, sack==1) %>% ### fumbles will be in df 'fumble_yds_df' later on.
-          dplyr::group_by(player_id=half_sack_2_player_id) %>%
-          dplyr::summarise(sk_yards = sum(yards_gained)) %>%
-          dplyr::filter(!is.na(player_id))
-  ) %>%
-  dplyr::group_by(player_id) %>%
-  dplyr::summarise(sack_yards = sum(sk_yards)*-1)
-
-sack_yds_df_nas <- is.na(sack_yds_df)
-sack_yds_df[sack_yds_df_nas] <- 0
+    "season",
+    "week",
+    "player_id",
+    "sacks" = "n_sack",
+    "qb_hit" = "n_qb_hit",
+    "sack_yards" = "yards_gained_sack"
+  )
 
 # Interception and Deflection stats ---------------------------------------------------------
 
 # get int and def stats
 int_df <- data %>%
-  dplyr::select(tidyselect::starts_with("interception_"),
-                tidyselect::starts_with("pass_defense_")) %>%
+  dplyr::select(
+    "season", "week","return_yards",
+    tidyselect::starts_with("interception_"),
+    tidyselect::starts_with("pass_defense_"),
+    -tidyselect::contains("_name")) %>%
   tidyr::pivot_longer(
     cols = c(
       tidyselect::starts_with("interception_"),
@@ -307,29 +233,23 @@ int_df <- data %>%
     values_to = "db_player_id",
     values_drop_na = TRUE
   ) %>%
-  dplyr::filter(grepl("_id", desc)) %>%
-  dplyr::mutate(n = 1) %>%
-  tidyr::pivot_wider(names_from = desc,
-                     values_from = n,
-                     values_fn = sum) %>%
-  dplyr::group_by(.data$db_player_id) %>%
   dplyr::mutate(
-    PD = sum(
-      data.frame(
-        .data$pass_defense_1_player_id,
-        .data$pass_defense_2_player_id
-      ), na.rm = TRUE
-    )
-  ) %>%
+    n = 1,
+    desc = stringr::str_remove_all(.data$desc,"_player_id") %>%
+      stringr::str_remove_all("_[0-9]")
+                ) %>%
+  tidyr::pivot_wider(names_from = "desc",
+                     values_from = c("n","return_yards"),
+                     values_fn = sum,
+                     values_fill = 0) %>%
   dplyr::select(
-    player_id = db_player_id,
-    INT = interception_player_id,
-    PD
-  ) %>%
-  dplyr::ungroup()
-
-int_df_nas <- is.na(int_df)
-int_df[int_df_nas] <- 0
+    "season",
+    "week",
+    "player_id" = "db_player_id",
+    "int" = "n_interception",
+    "pd" = "n_pass_defense",
+    "int_yards" = "return_yards_interception"
+  )
 
 # Fumble stats -----------------------------------------------------------
 
@@ -565,8 +485,13 @@ player_df <- tackle_df %>%
   dplyr::full_join(safety_df, by = c("player_id")) %>%
   dplyr::full_join(penalty_df, by = c("player_id")) %>%
   dplyr::full_join(touchdown_df, by = c("player_id")) %>%
-  dplyr::left_join(nflfastR::fast_scraper_roster(2020) %>% dplyr::select(player_id=gsis_id,player_name=full_name,recent_team=team,position)
-                   ) %>%
+  dplyr::left_join(nflfastR::fast_scraper_roster(2020) %>%
+                     dplyr::select(player_id=gsis_id,
+                                   player_name=full_name,
+                                   recent_team=team,
+                                   position),
+                   by = "player_id"
+  ) %>%
   dplyr::select(tidyselect::any_of(c(
 
     # id information
@@ -582,10 +507,11 @@ player_df <- tackle_df %>%
     "INT", "PD",
 
     # misc stats
-    "td", "fm", "fm_recovery_own", "fm_recovery_yards_own", "fm_recovery_opp", "fm_recovery_yards_opp", "safety", "penalty"
+    "td", "fm", "fm_recovery_own", "fm_recovery_yards_own",
+    "fm_recovery_opp", "fm_recovery_yards_opp", "safety", "penalty"
 
 ))) %>%
-  dplyr::filter(!is.na(.data$player_id),!is.na(.data$player_name)) ### player_name only because of Terell Bonds
+  dplyr::filter(!is.na(.data$player_id), !is.na(.data$player_name)) ### player_name only because of Terell Bonds
 
 player_df_nas <- is.na(player_df)
 player_df[player_df_nas] <- 0
@@ -596,28 +522,27 @@ player_df <- player_df %>%
       1 * (assist + tkl_with_assist + qb_hit) +
       2 * (tkl_solo + tfl) +
       3 * (PD + forced_fml + fm_recovery_own + fm_recovery_opp + safety) +
-      6 * (sk + INT + td),
-
-    fantasy_points_mppr =
-      -4 * (fm) +
-      -0.5 * (sk) +
-      -0.2 * (penalty) + #usually penalty yards, need to add that
-      0.15 * (fm_recovery_yards_opp + fm_recovery_yards_own) +
-      0.2 * (sack_yards) +
-      1 * (qb_hit) +
-      2 * (tfl + safety) +
-      4 * (fm_recovery_own) +
-      5 * (fm_recovery_opp + td) +
-      6 * (forced_fml + INT) +
-      dplyr::case_when(position %in% c("DT","DE","LB","ILB","OLB") ~ 3 * PD,
-                                       position %in% c("CB","S","FS","SS") ~ 4 * PD,
-                                                       TRUE ~ 0) +
-      dplyr::case_when(position=="DT" ~ 2.5 * tkl_solo + 1.5 * tkl_with_assist + 1.5 * assist,
-                       position %in% c("DE","OLB") ~ 2 * tkl_solo + 1 * tkl_with_assist + 1 * assist,
-                       position %in% c("LB","ILB") ~ 1 * tkl_solo + 0.5 * tkl_with_assist + 0.5 * assist,
-                       position=="CB" ~ 1 * tkl_solo + 1 * tkl_with_assist + 1 * assist,
-                       position %in% c("S","FS","SS") ~ 1 * tkl_solo + 0.5 * tkl_with_assist + 0.5 * assist,
-                       TRUE ~ 0)
+      6 * (sk + INT + td)
+    # fantasy_points_mppr =
+    #   -4 * (fm) +
+    #   -0.5 * (sk) +
+    #   -0.2 * (penalty) + #usually penalty yards, need to add that
+    #   0.15 * (fm_recovery_yards_opp + fm_recovery_yards_own) +
+    #   0.2 * (sack_yards) +
+    #   1 * (qb_hit) +
+    #   2 * (tfl + safety) +
+    #   4 * (fm_recovery_own) +
+    #   5 * (fm_recovery_opp + td) +
+    #   6 * (forced_fml + INT) +
+    #   dplyr::case_when(position %in% c("DT","DE","LB","ILB","OLB") ~ 3 * PD,
+    #                                    position %in% c("CB","S","FS","SS") ~ 4 * PD,
+    #                                                    TRUE ~ 0) +
+    #   dplyr::case_when(position=="DT" ~ 2.5 * tkl_solo + 1.5 * tkl_with_assist + 1.5 * assist,
+    #                    position %in% c("DE","OLB") ~ 2 * tkl_solo + 1 * tkl_with_assist + 1 * assist,
+    #                    position %in% c("LB","ILB") ~ 1 * tkl_solo + 0.5 * tkl_with_assist + 0.5 * assist,
+    #                    position=="CB" ~ 1 * tkl_solo + 1 * tkl_with_assist + 1 * assist,
+    #                    position %in% c("S","FS","SS") ~ 1 * tkl_solo + 0.5 * tkl_with_assist + 0.5 * assist,
+    #                    TRUE ~ 0)
   ) %>%
   dplyr::arrange(.data$player_id)
 
