@@ -19,6 +19,10 @@
 #' }
 #' @export
 add_xpass <- function(pbp, ...) {
+  if (nrow(pbp) == 0) {
+    user_message("Nothing to do. Return passed data frame.", "info")
+    return(pbp)
+  }
   pbp <- pbp %>% dplyr::select(-tidyselect::any_of(c("xpass", "pass_oe")))
   plays <- prepare_xpass_data(pbp)
 

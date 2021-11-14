@@ -1,12 +1,26 @@
 # nflfastR (development version)
 
-* Fixed a minor bug in the console output of `update_db()`
-* Add nflreadr to dependecies and drop lubridate and magrittr dependency
+* The database function `update_db()` now supports the option "nflfastR.dbdirectory" which can be used to set the directory of the nflfastR pbp database globally and independent of any project structure or working directories.
+* Fixed bug where a player could be duplicated in `calculate_player_stats()` in very rare cases caused by plays with laterals. (#289)
+* Fixed a bug where the function `add_xpass()` failed when called with an empty data frame. (#296)
+* Fixed a bug where `play_type` showed `no_play` on plays with penalties that don't result in a replay of the down. (#277, #281)
+* The embedded data frame `?teams_colors_logos` has been updated to reflect the most recent team color themes and gained additional variables for conference and division as well as logo urls to the conference and league logos. (#290)
+* Fixed a bug in the variable descriptions of `total_home_score` and `total_away_score`. (#300)
+
+# nflfastR 4.3.0
+
+## Minor Changes
+
+* Add [nflreadr](https://nflreadr.nflverse.com/) to dependecies and drop lubridate and magrittr dependency
 * The functions `load_pbp()` and `load_player_stats()` now call `nflreadr::load_pbp()` and `nflreadr::load_player_stats()` respectively. Therefore the argument `qs` has been deprecated in both functions. It will be removed in a future release. Running `load_player_stats()` without any argument will now return player stats of the current season only (the default in `nflreadr`).
 * The deprecated arguments `source` and `pp` in the functions `fast_scraper_*()` and `build_nflfastR_pbp()` have been removed
 * Added the variables `racr` ("Receiver Air Conversion Ratio"), `target_share`, `air_yards_share`, `wopr` ("Weighted Opportunity Rating") and `pacr` ("Passing Air Conversion Ratio") to the output of `calculate_player_stats()`
-* Fix for a handful of missing `receiver` names (#270)
 * Added the function `report()` which will be used by the maintainers to help users debug their problems (#274).
+
+## Bug Fixes
+
+* Fixed a minor bug in the console output of `update_db()`
+* Fix for a handful of missing `receiver` names (#270)
 * Fixed bug with missing `return_team` on interception return touchdowns (#275)
 * Fixed a rare bug where an internal object wasn't predefined (#272)
 

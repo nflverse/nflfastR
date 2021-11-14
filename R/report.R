@@ -79,6 +79,12 @@ report <- function(pkg = NULL, recursive = FALSE){
   options(old)
 
   deps <- deps[!deps %in% packages]
+  sys_pkgs <- installed.packages()[,"Package"]
+
+  if(any(!deps %in% sys_pkgs)){
+    missing_pkgs <- deps[!deps %in% sys_pkgs]
+    rlang::check_installed(missing_pkgs, reason = "in your dependencies.")
+  }
 
   s <- utils::sessionInfo(deps)
 
