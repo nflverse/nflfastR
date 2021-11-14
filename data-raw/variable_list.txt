@@ -53,8 +53,8 @@
 #' \item{td_player_id}{Unique identifier of the player who scored a touchdown.}
 #' \item{posteam_timeouts_remaining}{Number of timeouts remaining for the possession team.}
 #' \item{defteam_timeouts_remaining}{Number of timeouts remaining for the team on defense.}
-#' \item{total_home_score}{Score for the home team at the start of the play.}
-#' \item{total_away_score}{Score for the away team at the start of the play.}
+#' \item{total_home_score}{Score for the home team at the end of the play.}
+#' \item{total_away_score}{Score for the away team at the end of the play.}
 #' \item{posteam_score}{Score the posteam at the start of the play.}
 #' \item{defteam_score}{Score the defteam at the start of the play.}
 #' \item{score_differential}{Score differential between the posteam and defteam at the start of the play.}
