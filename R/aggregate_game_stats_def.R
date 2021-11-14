@@ -79,31 +79,31 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       ) %>%
       nflfastR::decode_player_ids()
 
-    # 2. for 2pt conversions only, get those plays
-    two_points <- pbp %>%
-      dplyr::filter(.data$two_point_conv_result == "success") %>%
-      dplyr::select(
-        "week", "season", "posteam",
-        "pass_attempt", "rush_attempt",
-        "passer_player_name", "passer_player_id",
-        "rusher_player_name", "rusher_player_id",
-        "lateral_rusher_player_name", "lateral_rusher_player_id",
-        "receiver_player_name", "receiver_player_id",
-        "lateral_receiver_player_name", "lateral_receiver_player_id"
-      ) %>%
-      nflfastR::decode_player_ids()
-
-    if (!"special" %in% names(pbp)) {
-      # we need this column for the special teams tds
-      pbp <- pbp %>%
-        dplyr::mutate(
-          special = dplyr::if_else(
-            .data$play_type %in% c("extra_point","field_goal","kickoff","punt"),
-            1, 0
-          )
-        ) %>%
-        nflfastR::decode_player_ids()
-    }
+    # # 2. for 2pt conversions only, get those plays
+    # two_points <- pbp %>%
+    #   dplyr::filter(.data$two_point_conv_result == "success") %>%
+    #   dplyr::select(
+    #     "week", "season", "posteam",
+    #     "pass_attempt", "rush_attempt",
+    #     "passer_player_name", "passer_player_id",
+    #     "rusher_player_name", "rusher_player_id",
+    #     "lateral_rusher_player_name", "lateral_rusher_player_id",
+    #     "receiver_player_name", "receiver_player_id",
+    #     "lateral_receiver_player_name", "lateral_receiver_player_id"
+    #   ) %>%
+    #   nflfastR::decode_player_ids()
+    #
+    # if (!"special" %in% names(pbp)) {
+    #   # we need this column for the special teams tds
+    #   pbp <- pbp %>%
+    #     dplyr::mutate(
+    #       special = dplyr::if_else(
+    #         .data$play_type %in% c("extra_point","field_goal","kickoff","punt"),
+    #         1, 0
+    #       )
+    #     ) %>%
+    #     nflfastR::decode_player_ids()
+    # }
   })
 
   # Tackling stats -----------------------------------------------------------
@@ -121,14 +121,14 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
 
   # get tackling stats
   tackle_df <- data %>%
-    dplyr::select(season, week, tidyselect::any_of(tackle_vars)) %>%
+    dplyr::select("season", "week", "defteam", tidyselect::any_of(tackle_vars)) %>%
     tidyr::pivot_longer(
       cols = tidyselect::any_of(tackle_vars),
       names_to = "desc",
       values_to = "tackle_player_id",
       values_drop_na = TRUE
     ) %>%
-    dplyr::count(.data$tackle_player_id, .data$season, .data$week, .data$desc) %>%
+    dplyr::count(.data$tackle_player_id, .data$defteam, .data$season, .data$week, .data$desc) %>%
     dplyr::mutate(
       desc = stringr::str_remove_all(.data$desc,"_player_id") %>%
         stringr::str_remove_all("_[0-9]")
@@ -149,6 +149,7 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     dplyr::select(
       "season",
       "week",
+      "team"="defteam",
       "player_id" = "tackle_player_id",
       "tackles",
       "tackles_solo" = "solo_tackle",
@@ -161,14 +162,16 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
   # get tackle for loss yards
   tackle_yards_df <- data %>%
     dplyr::filter(.data$tackled_for_loss == 1, .data$fumble == 0, .data$sack == 0) %>%
-    dplyr::select(season,week, tackle_for_loss_1_player_id,tackle_for_loss_2_player_id, yards_gained) %>%
+    dplyr::select("season","week","team" = "defteam",
+                  "tackle_for_loss_1_player_id", "tackle_for_loss_2_player_id",
+                  "yards_gained") %>%
     tidyr::pivot_longer(
       cols = c("tackle_for_loss_1_player_id","tackle_for_loss_2_player_id"),
       names_to = "desc",
       values_to = "player_id",
       values_drop_na = TRUE
     ) %>%
-    dplyr::group_by(.data$season, .data$week, .data$player_id) %>%
+    dplyr::group_by(.data$season, .data$week, .data$team, .data$player_id) %>%
     dplyr::summarise(
       tfl_yards = sum(-.data$yards_gained, na.rm = TRUE)
     ) %>%
@@ -181,6 +184,7 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     dplyr::select(
       "season",
       "week",
+      "team"="defteam",
       tidyselect::contains("sack_"),
       "yards_gained",
       tidyselect::starts_with("qb_hit_"),
@@ -213,6 +217,7 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     dplyr::select(
       "season",
       "week",
+      "team",
       "player_id",
       "sacks" = "n_sack",
       "qb_hit" = "n_qb_hit",
@@ -224,7 +229,7 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
   # get int and def stats
   int_df <- data %>%
     dplyr::select(
-      "season", "week","return_yards",
+      "season", "week","return_yards","team"="defteam",
       tidyselect::starts_with("interception_"),
       tidyselect::starts_with("pass_defense_"),
       -tidyselect::contains("_name")) %>%
@@ -250,11 +255,19 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     dplyr::select(
       "season",
       "week",
+      "team",
       "player_id" = "db_player_id",
       "int" = "n_interception",
       "pass_defensed" = "n_pass_defense",
       "int_yards" = "return_yards_interception"
     )
+
+  # Safety stats -----------------------------------------------------------
+
+  safety_df <- data %>%
+    dplyr::filter(.data$safety==1,!is.na(.data$safety_player_id)) %>%
+    dplyr::select("season","week","team"="defteam","player_id" = "safety_player_id") %>%
+    dplyr::count(.data$season,.data$week,.data$team,.data$player_id, name = "safety")
 
   # Fumble stats -----------------------------------------------------------
 
@@ -393,23 +406,14 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
   fumble_yds_opp_df_nas <- is.na(fumble_yds_opp_df)
   fumble_yds_opp_df[fumble_yds_opp_df_nas] <- 0
 
-  # Safety stats -----------------------------------------------------------
-
-  # get safety stats
-  safety_df <- data %>%
-    dplyr::filter(.data$safety==1,!is.na(.data$safety_player_id)) %>%
-    dplyr::select("season","week","player_id" = "safety_player_id") %>%
-    dplyr::count(.data$season,.data$week,.data$player_id, name = "safety")
 
   # Penalty stats -----------------------------------------------------------
 
   # get penalty stats
   penalty_df <- data %>%
-    ### the following lines are just to separate defense from offense --> is there a more effitient way???
-    dplyr::filter(!(is.na(penalty_player_id))) %>%
-    dplyr::filter(defteam==penalty_team) %>%
-    ###
+    dplyr::filter(!is.na(penalty_player_id), defteam == penalty_team) %>%
     dplyr::select(
+      "season","week","yards_gained","team"="defteam",
       tidyselect::contains("penalty_player_")
     ) %>%
     tidyr::pivot_longer(cols = c(
@@ -455,17 +459,17 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
   # combine all the stats together
 
   player_df <- tackle_df %>%
-    dplyr::full_join(tackle_yds_df, by = c("player_id")) %>%
-    dplyr::full_join(pressure_df, by = c("player_id")) %>%
-    dplyr::full_join(int_df, by = c("player_id")) %>%
-    dplyr::full_join(sack_yds_df, by = c("player_id")) %>%
-    dplyr::full_join(fumble_df_own, by = c("player_id")) %>%
-    dplyr::full_join(fumble_df_opp, by = c("player_id")) %>%
-    dplyr::full_join(fumble_yds_own_df, by = c("player_id")) %>%
-    dplyr::full_join(fumble_yds_opp_df, by = c("player_id")) %>%
-    dplyr::full_join(safety_df, by = c("player_id")) %>%
-    dplyr::full_join(penalty_df, by = c("player_id")) %>%
-    dplyr::full_join(touchdown_df, by = c("player_id")) %>%
+    dplyr::full_join(tackle_yards_df, by = c("season","week","player_id","team")) %>%
+    dplyr::full_join(pressure_df, by = c("season","week","player_id","team")) %>%
+    dplyr::full_join(int_df, by = c("season","week","player_id","team")) %>%
+    dplyr::full_join(safety_df, by = c("season","week","player_id","team")) %>%
+    dplyr::mutate_if(is.numeric,tidyr::replace_na,0)
+    # dplyr::full_join(fumble_df_own, by = c("player_id")) %>%
+    # dplyr::full_join(fumble_df_opp, by = c("player_id")) %>%
+    # dplyr::full_join(fumble_yds_own_df, by = c("player_id")) %>%
+    # dplyr::full_join(fumble_yds_opp_df, by = c("player_id")) %>%
+    # dplyr::full_join(penalty_df, by = c("player_id")) %>%
+    # dplyr::full_join(touchdown_df, by = c("player_id")) %>%
     dplyr::left_join(nflfastR::fast_scraper_roster(2020) %>%
                        dplyr::select(player_id=gsis_id,
                                      player_name=full_name,
