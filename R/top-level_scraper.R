@@ -492,26 +492,7 @@ fast_scraper <- function(game_ids,
 #' }
 #' @export
 fast_scraper_roster <- function(seasons) {
-
-  if (length(seasons) > 1 && is_sequential()) {
-    cli::cli_alert_info(
-      c(
-        "It is recommended to use parallel processing when trying to load multiple seasons. ",
-        "Please consider running {.code future::plan(\"multisession\")}! ",
-        "Will go on sequentially..."
-      )
-    )
-  }
-
-  suppressWarnings({
-    p <- progressr::progressor(along = seasons)
-    ret <- furrr::future_map_dfr(seasons, function(x, p) {
-      out <- get_scheds_and_rosters(x, "roster")
-      p(sprintf("season=%s", as.integer(x)))
-      return(out)
-    }, p)
-  })
-  return(ret)
+  nflreadr::load_rosters(seasons = seasons)
 }
 
 #' Get NFL Season Schedules
@@ -552,24 +533,5 @@ fast_scraper_roster <- function(seasons) {
 #' }
 #' }
 fast_scraper_schedules <- function(seasons) {
-
-    if (length(seasons) > 1 && is_sequential()) {
-    cli::cli_alert_info(
-      c(
-        "It is recommended to use parallel processing when trying to load multiple seasons. ",
-        "Please consider running {.code future::plan(\"multisession\")}! ",
-        "Will go on sequentially..."
-      )
-    )
-  }
-
-  suppressWarnings({
-    p <- progressr::progressor(along = seasons)
-    ret <- furrr::future_map_dfr(seasons, function(x, p) {
-      out <- get_scheds_and_rosters(x, "schedule")
-      p(sprintf("season=%s", as.integer(x)))
-      return(out)
-    }, p)
-  })
-  return(ret)
+  nflreadr::load_schedules(seasons)
 }
