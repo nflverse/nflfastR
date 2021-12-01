@@ -3,8 +3,8 @@ url: https://www.nflfastr.com/
 template:
   bootstrap: 5
   bootswatch: yeti
-    bslib:
-      font_scale: 1.1
+  bslib:
+    font_scale: 1.1
   params:
     ganalytics: G-8FNRBBEHML
     docsearch:
