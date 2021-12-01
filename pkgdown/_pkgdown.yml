@@ -5,6 +5,8 @@ template:
   bootswatch: yeti
   bslib:
     font_scale: 1.1
+    base_font: {google: "Roboto"}
+    heading_font: {google: "Kanit"}
   params:
     ganalytics: G-8FNRBBEHML
     docsearch:
