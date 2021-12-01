@@ -4,7 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="nflfastR">
 <title>Get started with nflfastR • nflfastR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
@@ -12,16 +13,16 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/yeti/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
-<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><link href="../deps/_Roboto-0.4.0/font.css" rel="stylesheet">
+<link href="../deps/_Kanit-0.4.0/font.css" rel="stylesheet">
+<!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><!-- docsearch --><script src="../docsearch.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.3/docsearch.min.css" integrity="sha256-QOSRU/ra9ActyXkIBbiIB144aDBdtvXBcNc3OTNuX/Q=" crossorigin="anonymous">
-<link href="../docsearch.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Get started with nflfastR">
+<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Get started with nflfastR">
 <meta property="og:description" content="nflfastR">
-<meta property="og:image" content="https://raw.githubusercontent.com/nflverse/nflfastR/master/man/figures/card.png">
+<meta property="og:image" content="https://www.nflfastr.com/reference/figures/card.png">
+<meta property="og:image:alt" content="nflfastR social preview card">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@nflfastR">
 <meta name="twitter:site" content="@nflfastR">
@@ -36,168 +37,122 @@
   gtag('config', 'G-8FNRBBEHML');
 </script>
 </head>
-<body data-spy="scroll" data-target="#toc">
+<body>
+    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <div class="container template-article">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">nflfastR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">4.3.0.9004</span>
-      </span>
-    </div>
+    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-dark"><div class="container">
+    
+    <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="../articles/nflfastR.html">Get started</a>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0.9004</small>
+
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-2">
+      <ul class="navbar-nav me-auto">
+<li class="active nav-item">
+  <a class="nav-link" href="../articles/nflfastR.html">Get started</a>
 </li>
-<li>
-  <a href="../reference/index.html">Functions</a>
+<li class="nav-item">
+  <a class="nav-link" href="../reference/index.html">Functions</a>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="../articles/beginners_guide.html">A beginner’s guide to nflfastR</a>
-    </li>
-    <li>
-      <a href="../articles/field_descriptions.html">Field Descriptions</a>
-    </li>
-    <li>
-      <a href="https://www.opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/" class="external-link">nflfastR models</a>
-    </li>
-    <li>
-      <a href="https://www.opensourcefootball.com/" class="external-link">Open Source Football</a>
-    </li>
-  </ul>
-</li>
-      </ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-  <a href="https://github.com/nflverse/nflfastR-data" class="external-link">
-    <span class="fas fa-database fa-lg"></span>
-     
-  </a>
-</li>
-<li>
-  <a href="https://rbsdm.com/stats/" class="external-link">
-    <span class="fas fa-chart-line fa-lg"></span>
-     
-  </a>
-</li>
-<li>
-  <a href="http://nflgamedata.com/" class="external-link">
-    <span class="fas fa-football-ball fa-lg"></span>
-     
-  </a>
-</li>
-<li>
-  <a href="http://twitter.com/nflfastR" class="external-link">
-    <span class="fab fa-twitter fa-lg"></span>
-     
-  </a>
-</li>
-<li>
-  <a href="https://discord.com/invite/5Er2FBnnQa" class="external-link">
-    <span class="fab fa-discord fa-lg"></span>
-     
-  </a>
-</li>
-<li>
-  <a href="https://github.com/nflverse/nflfastR/" class="external-link">
-    <span class="fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Packages &amp; More
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li class="dropdown-header">nflverse Packages</li>
-    <li>
-      <a href="https://www.nflfastr.com">nflfastR</a>
-    </li>
-    <li>
-      <a href="https://nflseedr.com" class="external-link">nflseedR</a>
-    </li>
-    <li>
-      <a href="https://www.nfl4th.com" class="external-link">nfl4th</a>
-    </li>
-    <li>
-      <a href="https://nflreadr.nflverse.com/" class="external-link">nflreadr</a>
-    </li>
-    <li>
-      <a href="https://nflplotr.nflverse.com/" class="external-link">nflplotR</a>
-    </li>
-    <li>
-      <a href="https://www.opensourcefootball.com" class="external-link">Open Source Football</a>
-    </li>
-    <li class="dropdown-header">nflverse Data</li>
-    <li>
-      <a href="https://github.com/nflverse" class="external-link">nflverse GitHub</a>
-    </li>
-    <li>
-      <a href="https://jthomasmock.github.io/espnscrapeR/" class="external-link">espnscrapeR Package</a>
-    </li>
-    <li class="dropdown-header">ffverse</li>
-    <li>
-      <a href="https://www.ffverse.com" class="external-link">ffverse.com</a>
-    </li>
-  </ul>
-</li>
-      </ul>
-<form class="navbar-form navbar-right hidden-xs hidden-sm" role="search">
-        <div class="form-group">
-          <input type="search" class="form-control" name="search-input" id="search-input" placeholder="Search..." aria-label="Search for..." autocomplete="off">
-</div>
-      </form>
-      
-    </div>
-<!--/.nav-collapse -->
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/beginners_guide.html">A beginner’s guide to nflfastR</a>
+    <a class="dropdown-item" href="../articles/field_descriptions.html">Field Descriptions</a>
+    <a class="external-link dropdown-item" href="https://www.opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/">nflfastR models</a>
+    <a class="external-link dropdown-item" href="https://www.opensourcefootball.com/">Open Source Football</a>
   </div>
-<!--/.container -->
+</li>
+      </ul>
+<form class="form-inline my-2 my-lg-0" role="search">
+        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
+</form>
+
+      <ul class="navbar-nav">
+<li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/nflverse/nflfastR-data">
+    <span class="fas fa fas fa-database fa-lg"></span>
+     
+  </a>
+</li>
+<li class="nav-item">
+  <a class="external-link nav-link" href="https://rbsdm.com/stats/">
+    <span class="fas fa fas fa-chart-line fa-lg"></span>
+     
+  </a>
+</li>
+<li class="nav-item">
+  <a class="external-link nav-link" href="http://nflgamedata.com/">
+    <span class="fas fa fas fa-football-ball fa-lg"></span>
+     
+  </a>
+</li>
+<li class="nav-item">
+  <a class="external-link nav-link" href="http://twitter.com/nflfastR">
+    <span class="fab fa fab fa-twitter fa-lg"></span>
+     
+  </a>
+</li>
+<li class="nav-item">
+  <a class="external-link nav-link" href="https://discord.com/invite/5Er2FBnnQa">
+    <span class="fab fa fab fa-discord fa-lg"></span>
+     
+  </a>
+</li>
+<li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/nflverse/nflfastR/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-packages-amp-more">Packages &amp; More</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-packages-amp-more">
+    <h6 class="dropdown-header" data-toc-skip>nflverse Packages</h6>
+    <a class="dropdown-item" href="https://www.nflfastr.com">nflfastR</a>
+    <a class="external-link dropdown-item" href="https://nflseedr.com">nflseedR</a>
+    <a class="external-link dropdown-item" href="https://www.nfl4th.com">nfl4th</a>
+    <a class="external-link dropdown-item" href="https://nflreadr.nflverse.com/">nflreadr</a>
+    <a class="external-link dropdown-item" href="https://nflplotr.nflverse.com/">nflplotR</a>
+    <a class="external-link dropdown-item" href="https://www.opensourcefootball.com">Open Source Football</a>
+    <h6 class="dropdown-header" data-toc-skip>nflverse Data</h6>
+    <a class="external-link dropdown-item" href="https://github.com/nflverse">nflverse GitHub</a>
+    <a class="external-link dropdown-item" href="https://jthomasmock.github.io/espnscrapeR/">espnscrapeR Package</a>
+    <h6 class="dropdown-header" data-toc-skip>ffverse</h6>
+    <a class="external-link dropdown-item" href="https://www.ffverse.com">ffverse.com</a>
+  </div>
+</li>
+      </ul>
 </div>
-<!--/.navbar -->
 
-      
-
-      </header><script src="nflfastR_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
-  <div class="col-md-9 contents">
-    <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Get started with nflfastR</h1>
+    
+  </div>
+</nav><div class="container template-article">
+<script src="nflfastR_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+  <main id="main"><div class="page-header">
+      <img src="../logo.png" class="logo" alt=""><h1>Get started with nflfastR</h1>
                         <h4 data-toc-skip class="author">Ben Baldwin &amp; Sebastian Carl</h4>
             
       
       <small class="dont-index">Source: <a href="https://github.com/nflverse/nflfastR/blob/HEAD/vignettes/nflfastR.Rmd" class="external-link"><code>vignettes/nflfastR.Rmd</code></a></small>
-      <div class="hidden name"><code>nflfastR.Rmd</code></div>
-
+      <div class="d-none name"><code>nflfastR.Rmd</code></div>
     </div>
 
     
     
 <p>If you are new to R or are having trouble understanding the code in the below sections we highly recommend the <strong>nflfastR beginner’s guide</strong> in <code><a href="../articles/beginners_guide.html">vignette("beginners_guide")</a></code>.</p>
-<div class="section level1">
-<h1 id="the-main-functions">The Main Functions<a class="anchor" aria-label="anchor" href="#the-main-functions"></a>
-</h1>
+<div class="section level2">
+<h2 id="the-main-functions">The Main Functions<a class="anchor" aria-label="anchor" href="#the-main-functions"></a>
+</h2>
 <p>nflfastR comes with a set of functions to access NFL play-by-play data and team rosters. This section provides a brief introduction to the essential functions.</p>
 <p>nflfastR processes and cleans up play-by-play data and adds variables through <a href="https://www.opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/" class="external-link">it’s models</a>. Since some of these tasks are performed by separate functions, the easiest way to compute the complete nflfastR dataset is <code><a href="../reference/build_nflfastR_pbp.html">build_nflfastR_pbp()</a></code>. The main input for that function is a set of game ids which can be accessed with <code><a href="../reference/fast_scraper_schedules.html">fast_scraper_schedules()</a></code>. The following code demonstrates how to build the nflfastR dataset for the Super Bowls of the 2017 - 2019 seasons.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -208,25 +163,25 @@
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">game_id</span><span class="op">)</span>
 <span class="va">pbp</span> <span class="op">&lt;-</span> <span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/build_nflfastR_pbp.html">build_nflfastR_pbp</a></span><span class="op">(</span><span class="va">ids</span><span class="op">)</span>
 <span class="co">#&gt; ── <span style="font-weight: bold;">Build nflfastR Play-by-Play Data</span> ───────────── nflfastR version 4.3.0.9004 ──</span>
-<span class="co">#&gt; • 15:11:31 | Start download of 3 games...</span>
-<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:11:34 | Download finished. Adding variables...</span>
-<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:11:35 | added game variables</span>
-<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:11:36 | added nflscrapR variables</span>
-<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:11:36 | added ep variables</span>
-<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:11:36 | added air_yac_ep variables</span>
-<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:11:37 | added wp variables</span>
-<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:11:37 | added air_yac_wp variables</span>
-<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:11:37 | added cp and cpoe</span>
-<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:11:37 | added fixed drive variables</span>
-<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:11:37 | added series variables</span>
-<span class="co">#&gt; • 15:11:37 | Cleaning up play-by-play...</span>
-<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:11:37 | Cleaning completed</span>
-<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:11:37 | added qb_epa</span>
-<span class="co">#&gt; • 15:11:37 | Computing xyac...</span>
-<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:11:40 | added xyac variables</span>
-<span class="co">#&gt; • 15:11:40 | Computing xpass...</span>
-<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:11:40 | added xpass and pass_oe</span>
-<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:11:40 | Decoding of player ids completed</span>
+<span class="co">#&gt; • 19:25:31 | Start download of 3 games...</span>
+<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 19:25:34 | Download finished. Adding variables...</span>
+<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 19:25:35 | added game variables</span>
+<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 19:25:35 | added nflscrapR variables</span>
+<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 19:25:36 | added ep variables</span>
+<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 19:25:36 | added air_yac_ep variables</span>
+<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 19:25:36 | added wp variables</span>
+<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 19:25:36 | added air_yac_wp variables</span>
+<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 19:25:36 | added cp and cpoe</span>
+<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 19:25:36 | added fixed drive variables</span>
+<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 19:25:36 | added series variables</span>
+<span class="co">#&gt; • 19:25:36 | Cleaning up play-by-play...</span>
+<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 19:25:37 | Cleaning completed</span>
+<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 19:25:37 | added qb_epa</span>
+<span class="co">#&gt; • 19:25:37 | Computing xyac...</span>
+<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 19:25:39 | added xyac variables</span>
+<span class="co">#&gt; • 19:25:39 | Computing xpass...</span>
+<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 19:25:39 | added xpass and pass_oe</span>
+<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 19:25:39 | Decoding of player ids completed</span>
 <span class="co">#&gt; ── <span style="font-weight: bold;">DONE</span> ────────────────────────────────────────────────────────────────────────</span></code></pre></div>
 <p>In most cases, however, it is not necessary to use this function for individual games, because nflfastR provides both a <a href="https://github.com/nflverse/nflfastR-data" class="external-link">data repository</a> and two main play-by-play functions: <code><a href="../reference/load_pbp.html">load_pbp()</a></code> and <code><a href="../reference/update_db.html">update_db()</a></code>. We cover <code><a href="../reference/load_pbp.html">load_pbp()</a></code> below, and please see <a href="#example-8-using-the-built-in-database-function">Example 8: Using the built-in database function</a> for how to work with the database function <code><a href="../reference/update_db.html">update_db()</a></code>.</p>
 <p>The easiest way to access the data in the data repository is the new function <code><a href="../reference/load_pbp.html">load_pbp()</a></code>. It can load multiple seasons directly into memory and supports the efficient data format <a href="https://github.com/traversc/qs" class="external-link"><code>qs</code></a>. Loading all play-by-play data of the 2018-2020 seasons is as easy as</p>
@@ -239,17 +194,17 @@
 <span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.</span></span></code></pre></div>
 <p>If you don’t care to install <code>qs</code> for whatever reason, omit <code>qs = TRUE</code> from the above and it will work without it. Joining roster data to the play-by-play dataset is possible as well. The data can be accessed with the function <code><a href="../reference/fast_scraper_roster.html">fast_scraper_roster()</a></code> and its application is demonstrated in <a href="#example-10-working-with-roster-and-position-data">Example 10: Working with roster and position data</a>.</p>
 </div>
-<div class="section level1">
-<h1 id="application-examples">Application Examples<a class="anchor" aria-label="anchor" href="#application-examples"></a>
-</h1>
+<div class="section level2">
+<h2 id="application-examples">Application Examples<a class="anchor" aria-label="anchor" href="#application-examples"></a>
+</h2>
 <p>All examples listed below assume that the following two libraries are installed and loaded.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.nflfastr.com/">nflfastR</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></code></pre></div>
 </div>
-<div class="section level1">
-<h1 id="example-1-replicate-nflscrapr-with-fast_scraper">Example 1: replicate nflscrapR with fast_scraper<a class="anchor" aria-label="anchor" href="#example-1-replicate-nflscrapr-with-fast_scraper"></a>
-</h1>
+<div class="section level2">
+<h2 id="example-1-replicate-nflscrapr-with-fast_scraper">Example 1: replicate nflscrapR with fast_scraper<a class="anchor" aria-label="anchor" href="#example-1-replicate-nflscrapr-with-fast_scraper"></a>
+</h2>
 <p>The functionality of <code>nflscrapR</code> can be duplicated by using <code><a href="../reference/fast_scraper.html">fast_scraper()</a></code>. This obtains the same information contained in <code>nflscrapR</code> (plus some extra) but much more quickly. To compare to <code>nflscrapR</code>, we use their data repository as the program no longer functions now that the NFL has taken down the old Gamecenter feed. Note that EP differs from nflscrapR as we use a newer era-adjusted model (more on this in <a href="https://www.opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/" class="external-link">this post on Open Source Football</a>).</p>
 <p>This example also uses the built-in function <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> to create a ‘name’ column for the primary player involved (the QB on pass play or ball-carrier on run play).</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -386,9 +341,9 @@
 </tbody>
 </table>
 </div>
-<div class="section level1">
-<h1 id="example-2-scrape-a-batch-of-games-very-quickly-with-fast_scraper">Example 2: scrape a batch of games very quickly with fast_scraper<a class="anchor" aria-label="anchor" href="#example-2-scrape-a-batch-of-games-very-quickly-with-fast_scraper"></a>
-</h1>
+<div class="section level2">
+<h2 id="example-2-scrape-a-batch-of-games-very-quickly-with-fast_scraper">Example 2: scrape a batch of games very quickly with fast_scraper<a class="anchor" aria-label="anchor" href="#example-2-scrape-a-batch-of-games-very-quickly-with-fast_scraper"></a>
+</h2>
 <p>This is a demonstration of <code>nflfastR</code>’s capabilities. While <code>nflfastR</code> can scrape a batch of games very quickly, <strong>please be respectful of Github’s servers and use the <a href="https://github.com/nflverse/nflfastR-data" class="external-link">data repository</a> which hosts all the scraped and cleaned data</strong> whenever possible. The only reason to ever actually use the scraper is if it’s in the middle of the season and we haven’t updated the repository with recent games (but it is automatically updated overnight every day).</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># get list of some games from 2019</span>
@@ -398,18 +353,18 @@
 <span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"{length(games_2019)} games with nflfastR:"</span><span class="op">)</span><span class="op">)</span>
 <span class="va">f</span> <span class="op">&lt;-</span> <span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/fast_scraper.html">fast_scraper</a></span><span class="op">(</span><span class="va">games_2019</span><span class="op">)</span>
 <span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; 10 games with nflfastR:: 11.471 sec elapsed</span></code></pre></div>
+<span class="co">#&gt; 10 games with nflfastR:: 9.826 sec elapsed</span></code></pre></div>
 </div>
-<div class="section level1">
-<h1 id="example-3-completion-percentage-over-expected-cpoe">Example 3: Completion Percentage Over Expected (CPOE)<a class="anchor" aria-label="anchor" href="#example-3-completion-percentage-over-expected-cpoe"></a>
-</h1>
+<div class="section level2">
+<h2 id="example-3-completion-percentage-over-expected-cpoe">Example 3: Completion Percentage Over Expected (CPOE)<a class="anchor" aria-label="anchor" href="#example-3-completion-percentage-over-expected-cpoe"></a>
+</h2>
 <p>Let’s look at CPOE leaders from the 2009 regular season.</p>
 <p>As discussed above, <code>nflfastR</code> has a data repository for old seasons, so there’s no need to actually scrape them. Let’s use that here with the convenience function <code><a href="../reference/load_pbp.html">load_pbp()</a></code> which fetches data from the repository (for non-R users, .csv and .parquet are also available in the <a href="https://github.com/nflverse/nflfastR-data" class="external-link">data repository</a>).</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="st">"loading all games from 2009"</span><span class="op">)</span>
 <span class="va">games_2009</span> <span class="op">&lt;-</span> <span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/load_pbp.html">load_pbp</a></span><span class="op">(</span><span class="fl">2009</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">season_type</span> <span class="op">==</span> <span class="st">"REG"</span><span class="op">)</span>
 <span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; loading all games from 2009: 1.324 sec elapsed</span>
+<span class="co">#&gt; loading all games from 2009: 1.158 sec elapsed</span>
 <span class="va">games_2009</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">cpoe</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">passer_player_name</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
@@ -453,9 +408,9 @@
 </tbody>
 </table>
 </div>
-<div class="section level1">
-<h1 id="example-4-using-drive-information">Example 4: Using Drive Information<a class="anchor" aria-label="anchor" href="#example-4-using-drive-information"></a>
-</h1>
+<div class="section level2">
+<h2 id="example-4-using-drive-information">Example 4: Using Drive Information<a class="anchor" aria-label="anchor" href="#example-4-using-drive-information"></a>
+</h2>
 <p>When working with <code>nflfastR</code>, drive results are automatically included. We use <code>fixed_drive</code> and <code>fixed_drive_result</code> since the NFL-provided information is a bit wonky. Let’s look at how much more likely teams were to score starting from 1st &amp; 10 at their own 20 yard line in 2015 (the last year before touchbacks on kickoffs changed to the 25) than in 2000.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">pbp</span> <span class="op">&lt;-</span> <span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/load_pbp.html">load_pbp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2003</span>, <span class="fl">2015</span><span class="op">)</span>, qs <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
@@ -486,9 +441,9 @@
 </table>
 <p>So 20.6% of 1st &amp; 10 plays from teams’ own 20 would see the drive end up in a score in 2003, compared to 30.5% in 2015. This has implications for Expected Points models (see <a href="https://www.opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/" class="external-link">this article</a>).</p>
 </div>
-<div class="section level1">
-<h1 id="example-5-plot-offensive-and-defensive-epa-per-play-for-a-given-season">Example 5: Plot offensive and defensive EPA per play for a given season<a class="anchor" aria-label="anchor" href="#example-5-plot-offensive-and-defensive-epa-per-play-for-a-given-season"></a>
-</h1>
+<div class="section level2">
+<h2 id="example-5-plot-offensive-and-defensive-epa-per-play-for-a-given-season">Example 5: Plot offensive and defensive EPA per play for a given season<a class="anchor" aria-label="anchor" href="#example-5-plot-offensive-and-defensive-epa-per-play-for-a-given-season"></a>
+</h2>
 <p>Let’s build the <strong><a href="https://rbsdm.com/stats/stats/" class="external-link">NFL team tiers</a></strong> using offensive and defensive expected points added per play for the 2005 regular season. The logo urls of the espn logos are integrated into the <code><a href="../reference/teams_colors_logos.html">?teams_colors_logos</a></code> data frame which is delivered with the package.</p>
 <p>When using <code><a href="../reference/load_pbp.html">load_pbp()</a></code>, the helper function <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> has already been run, which creates “rush” and “pass” columns that (a) properly count sacks and scrambles as pass plays and (b) properly include plays with penalties. Using this, we can keep only rush or pass plays.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -525,9 +480,9 @@
   <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_reverse</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="nflfastR_files/figure-html/ex5-1.png" width="4375"></p>
 </div>
-<div class="section level1">
-<h1 id="example-6-expected-points-calculator">Example 6: Expected Points calculator<a class="anchor" aria-label="anchor" href="#example-6-expected-points-calculator"></a>
-</h1>
+<div class="section level2">
+<h2 id="example-6-expected-points-calculator">Example 6: Expected Points calculator<a class="anchor" aria-label="anchor" href="#example-6-expected-points-calculator"></a>
+</h2>
 <p>We have provided a calculator for working with the Expected Points model. Here is an example of how to use it, looking for how the Expected Points on a drive beginning following a touchback has changed over time.</p>
 <p>While I have put in <code>'SEA'</code> for <code>home_team</code> and <code>posteam</code>, this only matters for figuring out whether the team with the ball is the home team (there’s no actual effect for given team; it would be the same no matter what team is supplied).</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
@@ -737,9 +692,9 @@
 </table>
 <p>So for 2018 and 2019, 1st &amp; 10 from a home team’s own 25 yard line had higher EP in domes than at home, which is to be expected.</p>
 </div>
-<div class="section level1">
-<h1 id="example-7-win-probability-calculator">Example 7: Win probability calculator<a class="anchor" aria-label="anchor" href="#example-7-win-probability-calculator"></a>
-</h1>
+<div class="section level2">
+<h2 id="example-7-win-probability-calculator">Example 7: Win probability calculator<a class="anchor" aria-label="anchor" href="#example-7-win-probability-calculator"></a>
+</h2>
 <p>We have also provided a calculator for working with the win probability models. Here is an example of how to use it, looking for how the win probability to begin the game depends on the pre-game spread.</p>
 <p>While I have put in <code>'SEA'</code> for <code>home_team</code> and <code>posteam</code>, this only matters for figuring out whether the team with the ball is the home team (there’s no actual effect for given team; it would be the same no matter what team is supplied).</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
@@ -796,18 +751,18 @@
 </table>
 <p>Not surprisingly, <code>vegas_wp</code> increases with the amount a team was coming into the game favored by.</p>
 </div>
-<div class="section level1">
-<h1 id="example-8-using-the-built-in-database-function">Example 8: Using the built-in database function<a class="anchor" aria-label="anchor" href="#example-8-using-the-built-in-database-function"></a>
-</h1>
+<div class="section level2">
+<h2 id="example-8-using-the-built-in-database-function">Example 8: Using the built-in database function<a class="anchor" aria-label="anchor" href="#example-8-using-the-built-in-database-function"></a>
+</h2>
 <p>If you’re comfortable using <code>dplyr</code> functions to manipulate and tidy data, you’re ready to use a database. Why should you use a database?</p>
 <ul>
 <li>The provided function in <code>nflfastR</code> makes it extremely easy to build a database and keep it updated</li>
 <li>Play-by-play data over 20+ seasons takes up a lot of memory: working with a database allows you to only bring into memory what you actually need</li>
 <li>R makes it <em>extremely</em> easy to work with databases.</li>
 </ul>
-<div class="section level2">
-<h2 id="start-install-and-load-packages">Start: install and load packages<a class="anchor" aria-label="anchor" href="#start-install-and-load-packages"></a>
-</h2>
+<div class="section level3">
+<h3 id="start-install-and-load-packages">Start: install and load packages<a class="anchor" aria-label="anchor" href="#start-install-and-load-packages"></a>
+</h3>
 <p>To start, we need to install the two packages required for this that aren’t installed automatically when <code>nflfastR</code> installs: <code>DBI</code> and <code>RSQLite</code> (advanced users can use other types of databases, but this example will use SQLite. The <code>if</code> statements make sure the packages won’t be updated if they are already installed):</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://dbi.r-dbi.org" class="external-link">"DBI"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"DBI"</span><span class="op">)</span>
@@ -817,9 +772,9 @@
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dbi.r-dbi.org" class="external-link">DBI</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rsqlite.r-dbi.org" class="external-link">RSQLite</a></span><span class="op">)</span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="build-database">Build database<a class="anchor" aria-label="anchor" href="#build-database"></a>
-</h2>
+<div class="section level3">
+<h3 id="build-database">Build database<a class="anchor" aria-label="anchor" href="#build-database"></a>
+</h3>
 <p>There’s exactly one function in <code>nflfastR</code> that works with databases: <code><a href="../reference/update_db.html">update_db()</a></code>. Some notes:</p>
 <ul>
 <li>If you use <code><a href="../reference/update_db.html">update_db()</a></code> with no arguments, it will build a SQLite database called <code>pbp_db</code> in your current working directory, with play-by-play data in a table called <code>nflfastR_pbp</code>.</li>
@@ -834,39 +789,39 @@
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/update_db.html">update_db</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; ── <span style="font-weight: bold;">Update nflfastR Play-by-Play Database</span> ──────── nflfastR version 4.3.0.9004 ──</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 15:12:25 | Can't find the data table <span style="color: #0000BB;">"nflfastR_pbp"</span> in your database. Will load the play by play data from scratch.</span>
-<span class="co">#&gt; • 15:12:25 | Starting download of 23 seasons between 1999 and 2021...</span>
-<span class="co">#&gt; • 15:13:42 | Checking for missing completed games...</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 15:13:44 | You have 6029 games and are missing 0.</span>
-<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:13:44 | Database update completed</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 15:13:44 | Path to your db: <span style="color: #0000BB;">./pbp_db</span></span>
+<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:26:19 | Can't find the data table <span style="color: #0000BB;">"nflfastR_pbp"</span> in your database. Will load the play by play data from scratch.</span>
+<span class="co">#&gt; • 19:26:20 | Starting download of 23 seasons between 1999 and 2021...</span>
+<span class="co">#&gt; • 19:27:26 | Checking for missing completed games...</span>
+<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:27:28 | You have 6029 games and are missing 0.</span>
+<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 19:27:28 | Database update completed</span>
+<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:27:28 | Path to your db: <span style="color: #0000BB;">./pbp_db</span></span>
 <span class="co">#&gt; ── <span style="font-weight: bold;">DONE</span> ────────────────────────────────────────────────────────────────────────</span></code></pre></div>
 <p>This created a database in the current directory called <code>pbp_db</code>.</p>
 <p>Wait, that’s it? That’s it! What if it’s partway through the season and you want to make sure all the new games are added to the database? What do you run? <code><a href="../reference/update_db.html">update_db()</a></code>! (just make sure you’re in the directory the database is saved in or you supply the right file path)</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/update_db.html">update_db</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; ── <span style="font-weight: bold;">Update nflfastR Play-by-Play Database</span> ──────── nflfastR version 4.3.0.9004 ──</span>
-<span class="co">#&gt; • 15:13:44 | Checking for missing completed games...</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 15:13:46 | You have 6029 games and are missing 0.</span>
-<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:13:46 | Database update completed</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 15:13:46 | Path to your db: <span style="color: #0000BB;">/home/runner/work/nflfastR/nflfastR/vignettes/pbp_db</span></span>
+<span class="co">#&gt; • 19:27:28 | Checking for missing completed games...</span>
+<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:27:30 | You have 6029 games and are missing 0.</span>
+<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 19:27:30 | Database update completed</span>
+<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:27:30 | Path to your db: <span style="color: #0000BB;">/home/runner/work/nflfastR/nflfastR/vignettes/pbp_db</span></span>
 <span class="co">#&gt; ── <span style="font-weight: bold;">DONE</span> ────────────────────────────────────────────────────────────────────────</span></code></pre></div>
 <p>If it’s partway through a season and you want to re-build a season to allow for data corrections from the NFL to propagate into your database, you can specify one season to be rebuilt:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/update_db.html">update_db</a></span><span class="op">(</span>force_rebuild <span class="op">=</span> <span class="fl">2020</span><span class="op">)</span>
 <span class="co">#&gt; ── <span style="font-weight: bold;">Update nflfastR Play-by-Play Database</span> ──────── nflfastR version 4.3.0.9004 ──</span>
-<span class="co">#&gt; • 15:13:46 | Purging 2020 season(s) from the data table <span style="color: #0000BB;">"nflfastR_pbp"</span> in your</span>
+<span class="co">#&gt; • 19:27:30 | Purging 2020 season(s) from the data table <span style="color: #0000BB;">"nflfastR_pbp"</span> in your</span>
 <span class="co">#&gt; connected database...</span>
-<span class="co">#&gt; • 15:13:47 | Starting download of the 2020 season(s)...</span>
-<span class="co">#&gt; • 15:13:50 | Checking for missing completed games...</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 15:13:51 | You have 6029 games and are missing 0.</span>
-<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:13:51 | Database update completed</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 15:13:51 | Path to your db: <span style="color: #0000BB;">/home/runner/work/nflfastR/nflfastR/vignettes/pbp_db</span></span>
+<span class="co">#&gt; • 19:27:31 | Starting download of the 2020 season(s)...</span>
+<span class="co">#&gt; • 19:27:33 | Checking for missing completed games...</span>
+<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:27:35 | You have 6029 games and are missing 0.</span>
+<span class="co">#&gt; <span style="color: #00BB00;">✔</span> 19:27:35 | Database update completed</span>
+<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 19:27:35 | Path to your db: <span style="color: #0000BB;">/home/runner/work/nflfastR/nflfastR/vignettes/pbp_db</span></span>
 <span class="co">#&gt; ── <span style="font-weight: bold;">DONE</span> ────────────────────────────────────────────────────────────────────────</span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="connect-to-database">Connect to database<a class="anchor" aria-label="anchor" href="#connect-to-database"></a>
-</h2>
+<div class="section level3">
+<h3 id="connect-to-database">Connect to database<a class="anchor" aria-label="anchor" href="#connect-to-database"></a>
+</h3>
 <p>Now we can make a connection to the database. This is the only part that will look a little bit foreign, but all you need to know is where your database is located. If it’s in your current working directory, this will work:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">connection</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu">RSQLite</span><span class="fu">::</span><span class="fu"><a href="https://rsqlite.r-dbi.org/reference/SQLite.html" class="external-link">SQLite</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"./pbp_db"</span><span class="op">)</span>
@@ -947,9 +902,9 @@
 <p>For more details on using a database with <code>nflfastR</code>, see <a href="https://themockup.blog/posts/2019-04-28-nflfastr-dbplyr-rsqlite/" class="external-link">Thomas Mock’s life-changing post here</a>.</p>
 </div>
 </div>
-<div class="section level1">
-<h1 id="example-9-working-with-the-expected-yards-after-catch-model">Example 9: working with the expected yards after catch model<a class="anchor" aria-label="anchor" href="#example-9-working-with-the-expected-yards-after-catch-model"></a>
-</h1>
+<div class="section level2">
+<h2 id="example-9-working-with-the-expected-yards-after-catch-model">Example 9: working with the expected yards after catch model<a class="anchor" aria-label="anchor" href="#example-9-working-with-the-expected-yards-after-catch-model"></a>
+</h2>
 <p>The variables in <code>xyac</code> are as follows:</p>
 <ul>
 <li>
@@ -1098,9 +1053,9 @@
 </table>
 <p>The presence of so many running backs on this list suggests that even though it takes into account target depth and pass direction, the model doesn’t do a great job capturing space. Alternatively, running backs might be better at generating yards after the catch since running with the football is their primary role.</p>
 </div>
-<div class="section level1">
-<h1 id="example-10-working-with-roster-and-position-data">Example 10: Working with roster and position data<a class="anchor" aria-label="anchor" href="#example-10-working-with-roster-and-position-data"></a>
-</h1>
+<div class="section level2">
+<h2 id="example-10-working-with-roster-and-position-data">Example 10: Working with roster and position data<a class="anchor" aria-label="anchor" href="#example-10-working-with-roster-and-position-data"></a>
+</h2>
 <p>At long last, there’s a way to merge the new play-by-play data with roster information. Use the function to get the rosters:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">roster</span> <span class="op">&lt;-</span> <span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/fast_scraper_roster.html">fast_scraper_roster</a></span><span class="op">(</span><span class="fl">2019</span><span class="op">)</span></code></pre></div>
@@ -1264,13 +1219,13 @@
 </table>
 <p>Not surprisingly, all 5 of the top 5 WRs in terms of EPA added come in ahead of the top RB. Note that the number of targets won’t match official stats because we’re including plays with penalties.</p>
 </div>
-<div class="section level1">
-<h1 id="example-11-replicating-official-stats">Example 11: Replicating official stats<a class="anchor" aria-label="anchor" href="#example-11-replicating-official-stats"></a>
-</h1>
-<p>The columns like <code>name</code>, <code>passer</code>, <code>fantasy</code> etc are <code>nflfastR</code>-created columns that mimic “real” football: i.e., excluding plays with spikes, counting scrambles and sacks as pass plays, etc. But if you’re trying to replicate official statistics – perhaps for fantasy purposes – use the <code>*_player_name</code> and <code>*_player_id</code> columns.</p>
 <div class="section level2">
-<h2 id="leaderboards">Leaderboards<a class="anchor" aria-label="anchor" href="#leaderboards"></a>
+<h2 id="example-11-replicating-official-stats">Example 11: Replicating official stats<a class="anchor" aria-label="anchor" href="#example-11-replicating-official-stats"></a>
 </h2>
+<p>The columns like <code>name</code>, <code>passer</code>, <code>fantasy</code> etc are <code>nflfastR</code>-created columns that mimic “real” football: i.e., excluding plays with spikes, counting scrambles and sacks as pass plays, etc. But if you’re trying to replicate official statistics – perhaps for fantasy purposes – use the <code>*_player_name</code> and <code>*_player_id</code> columns.</p>
+<div class="section level3">
+<h3 id="leaderboards">Leaderboards<a class="anchor" aria-label="anchor" href="#leaderboards"></a>
+</h3>
 <p><a href="https://www.nfl.com/stats/player-stats/" class="external-link">Let’s try to replicate this page of passing leaders</a>.</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/load_pbp.html">load_pbp</a></span><span class="op">(</span><span class="fl">2020</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
@@ -1610,9 +1565,9 @@
 </table>
 <p>Again, this matches up exactly.</p>
 </div>
-<div class="section level2">
-<h2 id="yards-from-scrimmage">Yards from scrimmage<a class="anchor" aria-label="anchor" href="#yards-from-scrimmage"></a>
-</h2>
+<div class="section level3">
+<h3 id="yards-from-scrimmage">Yards from scrimmage<a class="anchor" aria-label="anchor" href="#yards-from-scrimmage"></a>
+</h3>
 <p>What if we want total yards from scrimmage? We’ll demonstrate three methods here. The hardest way is to use the <code>fantasy_player_name</code> column, which is the rusher on rush plays and receiver on receiving plays:</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/load_pbp.html">load_pbp</a></span><span class="op">(</span><span class="fl">2020</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
@@ -1888,9 +1843,9 @@
 </table>
 <p>And again the output is identical.</p>
 </div>
-<div class="section level2">
-<h2 id="fantasy-points">Fantasy points<a class="anchor" aria-label="anchor" href="#fantasy-points"></a>
-</h2>
+<div class="section level3">
+<h3 id="fantasy-points">Fantasy points<a class="anchor" aria-label="anchor" href="#fantasy-points"></a>
+</h3>
 <p>Let’s calculate PPR fantasy points per game in the first 16 weeks of the season among wide receivers who appeared in more than 5 games.</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/load_pbp.html">load_pbp</a></span><span class="op">(</span><span class="fl">2020</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
@@ -1993,28 +1948,28 @@
 <p>Comparing to <a href="https://www.fantasypros.com/nfl/reports/leaders/ppr-wr.php?year=2020&amp;start=1&amp;end=16" class="external-link">the FantasyPros website</a>, this is an exact match.</p>
 </div>
 </div>
-<div class="section level1">
-<h1 id="frequent-issues">Frequent issues<a class="anchor" aria-label="anchor" href="#frequent-issues"></a>
-</h1>
 <div class="section level2">
-<h2 id="the-drive-column-looks-wacky">The <code>drive</code> column looks wacky<a class="anchor" aria-label="anchor" href="#the-drive-column-looks-wacky"></a>
+<h2 id="frequent-issues">Frequent issues<a class="anchor" aria-label="anchor" href="#frequent-issues"></a>
 </h2>
+<div class="section level3">
+<h3 id="the-drive-column-looks-wacky">The <code>drive</code> column looks wacky<a class="anchor" aria-label="anchor" href="#the-drive-column-looks-wacky"></a>
+</h3>
 <p>Use <code>fixed_drive</code> and <code>fixed_drive_result</code> instead. See <a href="#example-4-using-drive-information">Example 4: Using Drive Information</a>.</p>
 </div>
-<div class="section level2">
-<h2 id="why-are-there-so-many-win-probability-columns">Why are there so many win probability columns?<a class="anchor" aria-label="anchor" href="#why-are-there-so-many-win-probability-columns"></a>
-</h2>
+<div class="section level3">
+<h3 id="why-are-there-so-many-win-probability-columns">Why are there so many win probability columns?<a class="anchor" aria-label="anchor" href="#why-are-there-so-many-win-probability-columns"></a>
+</h3>
 <p><code>vegas_wp</code> and <code>vegas_home_wp</code> incorporate the pregame spread and are much better models.</p>
 </div>
-<div class="section level2">
-<h2 id="im-trying-to-do-x--help">I’m trying to do X. Help!<a class="anchor" aria-label="anchor" href="#im-trying-to-do-x--help"></a>
-</h2>
+<div class="section level3">
+<h3 id="im-trying-to-do-x--help">I’m trying to do X. Help!<a class="anchor" aria-label="anchor" href="#im-trying-to-do-x--help"></a>
+</h3>
 <p>Please ask <a href="https://discord.com/invite/5Er2FBnnQa" class="external-link">in the Discord channel</a>.</p>
 </div>
 </div>
-<div class="section level1">
-<h1 id="links">Links<a class="anchor" aria-label="anchor" href="#links"></a>
-</h1>
+<div class="section level2">
+<h2 id="links">Links<a class="anchor" aria-label="anchor" href="#links"></a>
+</h2>
 <p>This section is a helper that holds the hyperlinks to the above chapters. It’s a workaround for the missing sections anchor bug in pkgdown which will hopefully be fixed with <a href="https://github.com/r-lib/pkgdown/pull/1536" class="external-link">this pull request</a> at some point in the future.</p>
 <ul>
 <li><a href="#the-main-functions">The Main Functions</a></li>
@@ -2033,46 +1988,28 @@
 <li><a href="#links">Links</a></li>
 </ul>
 </div>
-  </div>
-
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-
-        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
-    </nav>
-</div>
-
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
 
-      <footer><div class="copyright">
+    <footer><div class="pkgdown-footer-left">
   <p></p>
 <p>Developed by <a href="https://twitter.com/mrcaseb" class="external-link">Sebastian Carl</a>, <a href="https://twitter.com/benbbaldwin" class="external-link">Ben Baldwin</a>.</p>
 </div>
 
-<div class="pkgdown">
+<div class="pkgdown-footer-right">
   <p></p>
 <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.0.</p>
 </div>
 
-      </footer>
+    </footer>
 </div>
 
   
-<script src="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.1/docsearch.min.js" integrity="sha256-GKvGqXDznoRYHCwKXGnuchvKSwmx9SRMrZOTh2g4Sb0=" crossorigin="anonymous"></script><script>
-  docsearch({
-    
-    
-    apiKey: 'e3fe78f73c8f37b971f8119095349ecb',
-    indexName: 'nflfastr',
-    inputSelector: 'input#search-input.form-control',
-    transformData: function(hits) {
-      return hits.map(function (hit) {
-        hit.url = updateHitURL(hit);
-        return hit;
-      });
-    }
-  });
-</script>
-</body>
+
+  
+
+  </body>
 </html>
