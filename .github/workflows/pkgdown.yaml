@@ -1,50 +1,78 @@
 on:
   push:
-    branches:
-      - main
-      - master
+    branches: [main, master]
+    tags: ['*']
+  pull_request:
+    branches: [master, main]
   workflow_dispatch:
 
 name: pkgdown
 
 jobs:
   pkgdown:
-    runs-on: macOS-latest
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.fork == false || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+      isPush: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+
     steps:
       - uses: actions/checkout@v2
 
       - uses: r-lib/actions/setup-r@v1
+        with:
+          use-public-rspm: true
 
       - uses: r-lib/actions/setup-pandoc@v1
 
-      - name: Query dependencies
-        run: |
-          install.packages('remotes')
-          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
-          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
-        shell: Rscript {0}
-
-      - name: Cache R packages
-        uses: actions/cache@v2
+      - uses: r-lib/actions/setup-r-dependencies@v1
         with:
-          path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
-
-      - name: Install dependencies
-        run: |
-          options(install.packages.check.source = "no")
-          remotes::install_deps(dependencies = TRUE, type = "binary")
-          install.packages(c("pkgdown", "tidyverse", "ggrepel", "ggimage", "knitr", "tictoc", "ragg"), type = "binary")
-        shell: Rscript {0}
+          extra-packages: >
+            pkgdown
+            tidyverse
+            ggrepel
+            ggimage
+            knitr
+            tictoc
+            ragg
+          needs: website
 
       - name: Install package
         run: R CMD INSTALL .
 
-      - name: Deploy package
+      - name: Build and deploy pkgdown site
+        if: contains(env.isPush, 'true')
         run: |
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
+          git config --local user.name "$GITHUB_ACTOR"
+          git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
           Rscript -e 'pkgdown::deploy_to_branch(new_process = FALSE)'
+
+      - name: Create website
+        if: contains(env.isPush, 'false')
+        run: |
+          pkgdown::build_site()
+        shell: Rscript {0}
+
+      - name: Create index file
+        if: contains(env.isPush, 'false')
+        run: |
+          echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;URL=/dev/index.html" />  <script language="javascript"> window.location.replace('/dev/index.html')</script></head></html>' > ./docs/index.html
+
+      - name: Deploy to Netlify
+        if: contains(env.isPush, 'false')
+        id: netlify-deploy
+        uses: nwtgck/actions-netlify@v1.1
+        with:
+          publish-dir: './docs'
+          production-branch: master
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message:
+            'Deploy from GHA: ${{ github.event.pull_request.title || github.event.head_commit.message }} (${{ github.sha }})'
+          # these all default to 'true'
+          enable-pull-request-comment: false
+          enable-commit-comment: false
+          # enable-commit-status: true
+          #o verwrites-pull-request-comment: true
+        timeout-minutes: 1
