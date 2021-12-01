@@ -2,21 +2,21 @@
   "index_name": "nflfastr",
   "start_urls": [
     {
-      "url": "https://www.nflfastr.com//index.html",
+      "url": "https://www.nflfastr.com/index.html",
       "selectors_key": "homepage",
       "tags": [
         "homepage"
       ]
     },
     {
-      "url": "https://www.nflfastr.com//reference",
+      "url": "https://www.nflfastr.com/reference",
       "selectors_key": "reference",
       "tags": [
         "reference"
       ]
     },
     {
-      "url": "https://www.nflfastr.com//articles",
+      "url": "https://www.nflfastr.com/articles",
       "selectors_key": "articles",
       "tags": [
         "articles"
@@ -30,7 +30,7 @@
     "/articles/index.html"
   ],
   "sitemap_urls": [
-    "https://www.nflfastr.com//sitemap.xml"
+    "https://www.nflfastr.com/sitemap.xml"
   ],
   "selectors": {
     "homepage": {
