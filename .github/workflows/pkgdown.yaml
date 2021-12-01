@@ -55,10 +55,10 @@ jobs:
           pkgdown::build_site()
         shell: Rscript {0}
 
-      - name: Create index file
-        if: contains(env.isPush, 'false')
-        run: |
-          echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;URL=/dev/index.html" />  <script language="javascript"> window.location.replace('/dev/index.html')</script></head></html>' > ./docs/index.html
+      # - name: Create index file
+      #   if: contains(env.isPush, 'false')
+      #   run: |
+      #     echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;URL=/dev/index.html" />  <script language="javascript"> window.location.replace('/dev/index.html')</script></head></html>' > ./docs/index.html
 
       - name: Deploy to Netlify
         if: contains(env.isPush, 'false')
@@ -68,11 +68,7 @@ jobs:
           publish-dir: './docs'
           production-branch: master
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          overwrites-pull-request-comment: false
           deploy-message:
             'Deploy from GHA: ${{ github.event.pull_request.title || github.event.head_commit.message }} (${{ github.sha }})'
-          # these all default to 'true'
-          enable-pull-request-comment: false
-          enable-commit-comment: false
-          # enable-commit-status: true
-          #o verwrites-pull-request-comment: true
         timeout-minutes: 1
