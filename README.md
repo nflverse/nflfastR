@@ -103,12 +103,12 @@ here](https://arxiv.org/pdf/1802.00998.pdf).
 Here is a visualization of the Expected Points model by down and
 yardline.
 
-<img src="https://github.com/nflverse/nflfastR/raw/master/man/figures/readme-epa-model-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/readme-epa-model-1.png" width="100%" style="display: block; margin: auto;" />
 
 Here is a visualization of the Completion Probability model by air yards
 and pass direction.
 
-<img src="https://github.com/nflverse/nflfastR/raw/master/man/figures/readme-cp-model-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/readme-cp-model-1.png" width="100%" style="display: block; margin: auto;" />
 
 `nflfastR` includes two win probability models: one with and one without
 incorporating the pre-game spread.

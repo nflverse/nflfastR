@@ -107,7 +107,7 @@ df %>%
 ```
 
 ```{r echo=FALSE, fig.align='center', fig.cap='', out.width='100%'}
-knitr::include_graphics('https://github.com/nflverse/nflfastR/raw/master/man/figures/readme-epa-model-1.png')
+knitr::include_graphics('man/figures/readme-epa-model-1.png')
 ```
 
 Here is a visualization of the Completion Probability model by air yards and pass direction.
@@ -142,7 +142,7 @@ df %>%
 ```
 
 ```{r echo=FALSE, fig.align='center', fig.cap='', out.width='100%'}
-knitr::include_graphics('https://github.com/nflverse/nflfastR/raw/master/man/figures/readme-cp-model-1.png')
+knitr::include_graphics('man/figures/readme-cp-model-1.png')
 ```
 
 `nflfastR` includes two win probability models: one with and one without incorporating the pre-game spread.
