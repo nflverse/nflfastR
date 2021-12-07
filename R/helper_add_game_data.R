@@ -9,7 +9,7 @@ add_game_data <- function(pbp) {
   out <- pbp
   tryCatch(
     expr = {
-      url <- "https://github.com/leesharpe/nfldata/blob/master/data/games.rds?raw=true"
+      url <- "https://github.com/nflverse/nfldata/blob/master/data/games.rds?raw=true"
 
       fetched <- curl::curl_fetch_memory(url)
 

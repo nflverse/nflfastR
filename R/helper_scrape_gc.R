@@ -34,7 +34,7 @@ get_pbp_gc <- function(gameId, dir = NULL, qs = FALSE) {
       season <- as.integer(substr(gameId, 1, 4))
 
       if (is.null(dir)) {
-        path <- "https://raw.githubusercontent.com/guga31bb/nflfastR-raw/master/raw"
+        path <- "https://raw.githubusercontent.com/nflverse/nflfastR-raw/master/raw"
 
         if(isFALSE(qs)) fetched <- curl::curl_fetch_memory(glue::glue("{path}/{season}/{gameId}.rds"))
 
