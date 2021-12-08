@@ -4,7 +4,10 @@
 \alias{report}
 \title{Get a Situation Report on System, nflverse Package Versions and Dependencies}
 \usage{
-report(pkg = NULL, recursive = FALSE)
+report(
+  pkg = c("nflreadr", "nflfastR", "nflseedR", "nfl4th", "nflplotR"),
+  recursive = TRUE
+)
 }
 \arguments{
 \item{pkg}{a character vector naming installed packages, or \code{NULL}
@@ -21,13 +24,13 @@ Character string \code{"all"} is shorthand for that vector, character string
 }
 \description{
 This function gives a quick overview of the versions of R and the operating
-system as well as the versions of nflverse packages and their dependencies.
+system as well as the versions of nflverse/ffverse packages and their dependencies.
 It's primarily designed to help you get a quick idea of what's going on when
 you're helping someone else debug a problem.
 }
 \examples{
 \donttest{
-report()
-report("nflreadr", TRUE)
+report(recursive = FALSE)
+report(pkg = "nflreadr", recursive = TRUE)
 }
 }

@@ -44,6 +44,7 @@ Depends:
 Imports: 
     cli (>= 3.0.0),
     curl,
+    data.table (>= 1.14.0),
     dplyr,
     fastrmodels (>= 1.0.1),
     furrr,
