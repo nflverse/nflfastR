@@ -15,7 +15,7 @@ purrr::walk(teams$team_abbr, function(x) {
   rl <- (700 - info$width) / 2
   tb <- (192 - info$height) / 2
 
-  image <- magick::image_border(load, "white", glue::glue("{rl}x{tb}"))
+  image <- magick::image_border(load, "transparent", glue::glue("{rl}x{tb}"))
 
   magick::image_write(image, path = glue::glue("wordmarks/{x}.png"), format = "png")
 
