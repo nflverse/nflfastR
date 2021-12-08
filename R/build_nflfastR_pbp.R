@@ -42,7 +42,7 @@
 #' # output of `fast_scraper_schedules` as input
 #' library(dplyr, warn.conflicts = FALSE)
 #' fast_scraper_schedules(2020) %>%
-#'   tail(3) %>%
+#'   slice_tail(n = 3) %>%
 #'   build_nflfastR_pbp()
 #'
 #' \dontshow{

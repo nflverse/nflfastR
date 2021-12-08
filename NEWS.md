@@ -6,6 +6,7 @@
 * Fixed a bug where `play_type` showed `no_play` on plays with penalties that don't result in a replay of the down. (#277, #281)
 * The embedded data frame `?teams_colors_logos` has been updated to reflect the most recent team color themes and gained additional variables for conference and division as well as logo urls to the conference and league logos. (#290)
 * Fixed a bug in the variable descriptions of `total_home_score` and `total_away_score`. (#300)
+* `fast_scraper_rosters()` and `fast_scraper_schedules()` now call `nflreadr::load_rosters()` and `nflreadr::load_schedules()` under the hood (#304)
 
 # nflfastR 4.3.0
 
