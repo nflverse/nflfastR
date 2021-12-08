@@ -387,7 +387,7 @@
 #' # output of `fast_scraper_schedules` as input
 #' library(dplyr, warn.conflicts = FALSE)
 #' fast_scraper_schedules(2020) %>%
-#'   slice_tail(3) %>%
+#'   slice_tail(n = 3) %>%
 #'   fast_scraper()
 #'
 #' \dontshow{
