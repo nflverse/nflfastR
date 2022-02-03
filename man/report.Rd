@@ -5,7 +5,7 @@
 \title{Get a Situation Report on System, nflverse Package Versions and Dependencies}
 \usage{
 report(
-  pkg = c("nflreadr", "nflfastR", "nflseedR", "nfl4th", "nflplotR"),
+  pkg = c("nflreadr", "nflfastR", "nflseedR", "nfl4th", "nflplotR", "nflverse"),
   recursive = TRUE
 )
 }
