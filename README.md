@@ -9,16 +9,15 @@
 status](https://www.r-pkg.org/badges/version-last-release/nflfastR)](https://CRAN.R-project.org/package=nflfastR)
 [![CRAN
 downloads](http://cranlogs.r-pkg.org/badges/grand-total/nflfastR)](https://CRAN.R-project.org/package=nflfastR)
-[![R build
-status](https://github.com/nflverse/nflfastR/workflows/R-CMD-check/badge.svg)](https://github.com/nflverse/nflfastR/actions)
+[![Dev
+status](https://img.shields.io/github/r-package/v/nflverse/nflfastR/master?label=dev%20version&style=flat-square&logo=github)](https://www.nflfastr.com/)
+[![R-CMD-check](https://github.com/nflverse/nflfastR/workflows/R-CMD-check/badge.svg)](https://github.com/nflverse/nflfastR/actions)
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![nflverse
 support](https://img.shields.io/discord/789805604076126219?color=7289da&label=nflverse%20support&logo=discord&logoColor=fff&style=flat-square)](https://discord.com/invite/5Er2FBnnQa)
 [![Twitter
 Follow](https://img.shields.io/twitter/follow/nflfastR.svg?style=social)](https://twitter.com/nflfastR)
-<!-- [![Travis build status](https://travis-ci.com/mrcaseb/nflfastR.svg?branch=master)](https://travis-ci.com/mrcaseb/nflfastR) -->
-<!-- ![GitHub release (latest by date)](https://img.shields.io/github/v/release/mrcaseb/nflfastR?label=development%20version) -->
 <!-- badges: end -->
 
 `nflfastR` is a set of functions to efficiently scrape NFL play-by-play
@@ -56,12 +55,19 @@ install.packages("nflfastR")
 ```
 
 To get a bug fix or to use a feature from the development version, you
-can install the development version of nflfastR from
+can install the development version of nflfastR either from
 [GitHub](https://github.com/nflverse/nflfastR/) with:
 
 ``` r
 if (!require("remotes")) install.packages("remotes")
 remotes::install_github("nflverse/nflfastR")
+```
+
+or prebuilt from the [development repo](https://nflverse.r-universe.dev)
+with:
+
+``` r
+install.packages("nflfastR", repos = "https://nflverse.r-universe.dev")
 ```
 
 ## Usage
