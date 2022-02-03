@@ -14,7 +14,7 @@ options(dplyr.summarise.inform = FALSE)
 
 If you are new to R or are having trouble understanding the code in the below sections we highly recommend the **nflfastR beginner's guide** in `vignette("beginners_guide")`.
 
-## The Main Functions
+# The Main Functions
 
 nflfastR comes with a set of functions to access NFL play-by-play data and team rosters. This section provides a brief introduction to the essential functions.
 
@@ -39,7 +39,7 @@ pbp <- nflfastR::load_pbp(2018:2020, qs = TRUE)
 
 If you don't care to install `qs` for whatever reason, omit `qs = TRUE` from the above and it will work without it. Joining roster data to the play-by-play dataset is possible as well. The data can be accessed with the function `fast_scraper_roster()` and its application is demonstrated in [Example 10: Working with roster and position data].
 
-## Application Examples
+# Application Examples
 
 All examples listed below assume that the following two libraries are installed and loaded.
 
@@ -586,21 +586,21 @@ nflfastR::load_pbp(2020) %>%
 
 Comparing to [the FantasyPros website](https://www.fantasypros.com/nfl/reports/leaders/ppr-wr.php?year=2020&start=1&end=16), this is an exact match.
 
-## Frequent issues
+# Frequent issues
 
-### The `drive` column looks wacky
+## The `drive` column looks wacky
 
 Use `fixed_drive` and `fixed_drive_result` instead. See [Example 4: Using Drive Information].
 
-### Why are there so many win probability columns?
+## Why are there so many win probability columns?
 
 `vegas_wp` and `vegas_home_wp` incorporate the pregame spread and are much better models.
 
-### I'm trying to do X. Help!
+## I'm trying to do X. Help!
 
 Please ask [in the Discord channel](https://discord.com/invite/5Er2FBnnQa).
 
-## Links
+# Links
 
 This section is a helper that holds the hyperlinks to the above chapters. It's a workaround for the missing sections anchor bug in pkgdown which will hopefully be fixed with [this pull request](https://github.com/r-lib/pkgdown/pull/1536) at some point in the future. 
 
