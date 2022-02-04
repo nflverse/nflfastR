@@ -1,15 +1,15 @@
 /*
-Credits to Garrick Aden-Buie
-https://twitter.com/grrrck/status/1488974783811403776?s=20&t=jWdegKWBazA2nge0Jo8NjQ
+Check: https://www.w3schools.com/css/css_rwd_mediaqueries.asp
+for Responsive Web Design - Media Queries
 */
-.row > main {
-  max-width: 75%;
+[class*="col-"] {
+  max-width: 100%;
 }
 
-@media
- (min-width: 1400px) {
+@media only screen and (min-width: 640px) {
   main + .col-md-3 {
     margin-left: unset;
     padding-left: 5rem;
+    max-width: 75%;
   }
 }
