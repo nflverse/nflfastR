@@ -102,6 +102,8 @@ navbar:
           href: https://nflreadr.nflverse.com/
         - text: nflplotR
           href: https://nflplotr.nflverse.com/
+        - text: nflverse
+          href: https://nflverse.nflverse.com/
         - text: "Open Source Football"
           href: https://www.opensourcefootball.com
         - text: "nflverse Data"
