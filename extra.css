@@ -2,7 +2,7 @@
 Check: https://www.w3schools.com/css/css_rwd_mediaqueries.asp
 for Responsive Web Design - Media Queries
 */
-[class*="col-"] {
+.row > main {
   max-width: 100%;
 }
 
