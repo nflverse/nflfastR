@@ -506,7 +506,7 @@ add_ep_variables <- function(pbp_data) {
                   epa = dplyr::if_else(((.data$qtr == 2 &
                                            (dplyr::lead(.data$qtr) == 3 |
                                               dplyr::lead(.data$desc) == "END QUARTER 2")) |
-                                          (.data$qtr == 4 &
+                                          (.data$qtr >= 4 &
                                              (dplyr::lead(.data$qtr) == 5 |
                                                 dplyr::lead(.data$desc) == "END QUARTER 4" |
                                                 dplyr::lead(.data$desc) == "END GAME"))) &
