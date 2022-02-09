@@ -8,6 +8,7 @@
 * Fixed a bug in the variable descriptions of `total_home_score` and `total_away_score`. (#300)
 * `fast_scraper_rosters()` and `fast_scraper_schedules()` now call `nflreadr::load_rosters()` and `nflreadr::load_schedules()` under the hood (#304)
 * The embedded data frame `?teams_colors_logos` has been updated with the Washington Commanders. (#312)
+* Fixed a bug causing missing EPA on game-ending turnovers in overtime
 
 # nflfastR 4.3.0
 
