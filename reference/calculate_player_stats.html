@@ -18,7 +18,7 @@ either at the game level or at the level of the entire data frame passed."><meta
     
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0.9006</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0.9007</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -304,7 +304,7 @@ on <a href="https://www.nflfastr.com/articles/nflfastR.html#example-11-replicati
 <span class="r-in"><span class="va">pbp</span> <span class="op">&lt;-</span> <span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="load_pbp.html">load_pbp</a></span><span class="op">(</span><span class="fl">2020</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">weekly</span> <span class="op">&lt;-</span> <span class="fu">calculate_player_stats</span><span class="op">(</span><span class="va">pbp</span>, weekly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">weekly</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">weekly</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rows: 5,447</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Columns: 48</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ player_id                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "00-0019596", "00-0019596", "00-0019596", …</span>
@@ -357,7 +357,7 @@ on <a href="https://www.nflfastr.com/articles/nflfastR.html#example-11-replicati
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ fantasy_points_ppr          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 20.46, 8.68, 23.88, 32.46, 14.12, 14.64, 3…</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">overall</span> <span class="op">&lt;-</span> <span class="fu">calculate_player_stats</span><span class="op">(</span><span class="va">pbp</span>, weekly <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">overall</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">overall</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rows: 636</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Columns: 46</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ player_id                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "00-0019596", "00-0020531", "00-0022127", …</span>
