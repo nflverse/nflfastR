@@ -506,13 +506,17 @@ add_ep_variables <- function(pbp_data) {
                   epa = dplyr::if_else(((.data$qtr == 2 &
                                            (dplyr::lead(.data$qtr) == 3 |
                                               dplyr::lead(.data$desc) == "END QUARTER 2")) |
-                                          (.data$qtr >= 4 &
+                                          (.data$qtr == 4 &
                                              (dplyr::lead(.data$qtr) == 5 |
                                                 dplyr::lead(.data$desc) == "END QUARTER 4" |
                                                 dplyr::lead(.data$desc) == "END GAME"))) &
                                          .data$sp == 0 &
                                          !is.na(.data$play_type),
                                        0 - .data$ep, .data$epa),
+                  # last play of OT
+                  epa = dplyr::if_else(.data$qtr > 4 & dplyr::lead(.data$desc) == "END GAME" & .data$sp == 0,
+                                       0 - .data$ep,
+                                       .data$epa),
                   epa = dplyr::if_else(.data$desc == "END QUARTER 2", NA_real_, .data$epa),
                   epa = dplyr::if_else(.data$desc == "GAME", NA_real_, .data$epa),
                   ep = dplyr::if_else(.data$desc == "END QUARTER 2", NA_real_, .data$ep),
