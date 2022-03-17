@@ -2,6 +2,8 @@ on:
   push:
     branches: [main, master]
     tags: ['*']
+  pull_request:
+    branches: [master, main]
   workflow_dispatch:
 
 name: pkgdown
