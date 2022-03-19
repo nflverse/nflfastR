@@ -9,6 +9,7 @@
 * `fast_scraper_rosters()` and `fast_scraper_schedules()` now call `nflreadr::load_rosters()` and `nflreadr::load_schedules()` under the hood (#304)
 * The embedded data frame `?teams_colors_logos` has been updated with the Washington Commanders. (#312)
 * Fixed a bug causing missing EPA on game-ending turnovers in overtime
+* Bump minimum nflreadr version to 1.2.0 for data repository change
 
 # nflfastR 4.3.0
 
