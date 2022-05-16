@@ -10,6 +10,7 @@
 * The embedded data frame `?teams_colors_logos` has been updated with the Washington Commanders. (#312)
 * Fixed a bug causing missing EPA on game-ending turnovers in overtime
 * Bump minimum nflreadr version to 1.2.0 for data repository change
+* Fix a bug affecting yardline for a very small number of plays in the 2000 season
 
 # nflfastR 4.3.0
 
