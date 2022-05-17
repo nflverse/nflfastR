@@ -172,6 +172,9 @@ write_pbp <- function(seasons, dbConnection, tablename){
   p <- progressr::progressor(along = seasons)
   purrr::walk(seasons, function(x, p){
     pbp <- nflreadr::load_pbp(x)
+    if (!DBI::dbExistsTable(dbConnection, tablename)){
+      pbp <- dplyr::bind_rows(default_play, pbp)
+    }
     DBI::dbWriteTable(dbConnection, tablename, pbp, append = TRUE)
     p("loading...")
   }, p)
