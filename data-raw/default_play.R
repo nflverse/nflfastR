@@ -10,8 +10,10 @@ sk <- pbp_db |>
 
 readr::write_csv(sk, "data-raw/pbp_datatypes.csv")
 
+sk <- readr::read_csv("data-raw/pbp_datatypes.csv")
+
 random_play <- pbp_db |>
-  dplyr::filter(season == 2021) |>
+  dplyr::filter(season == 1999) |>
   dplyr::collect() |>
   dplyr::slice_sample(n = 1) |>
   as.list()
@@ -47,3 +49,4 @@ default_play <-
   dplyr::mutate(game_id = "9999_99_DEF_TYP")
 
 readr::write_csv(default_play, "data-raw/pbp_defaultplay.csv")
+saveRDS(default_play, "data-raw/pbp_defaultplay.rds")

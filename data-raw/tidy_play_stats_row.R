@@ -31,7 +31,7 @@ tidy_play_stats_row <-
 
 tidy_play_stats_row <- nflfastR:::tidy_play_stats_row
 scramble_fix <- readRDS("data-raw/scramble_fix.rds")
-default_play <- readr::read_csv("data-raw/pbp_defaultplay.csv")
+default_play <- readRDS("data-raw/pbp_defaultplay.rds")
 usethis::use_data(
   tidy_play_stats_row, scramble_fix, default_play,
   internal = TRUE,
