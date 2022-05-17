@@ -31,7 +31,7 @@ jobs:
         with:
           extra-packages: |
             any::pkgdown
-            tidyverse
+            any::tidyverse
             any::ggrepel
             any::ggimage
             any::knitr
