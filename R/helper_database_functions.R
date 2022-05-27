@@ -114,6 +114,16 @@ update_db <- function(dbdir = getOption("nflfastR.dbdirectory", default = "."),
     }
   }
 
+  # Remove default play which is just a helper to define columns correctly
+  DBI::dbExecute(
+    connection,
+    glue::glue_sql(
+      "DELETE FROM {`tblname`} WHERE game_id IN ({vals*})",
+      vals = "9999_99_DEF_TYP",
+      .con = connection
+      )
+    )
+
   message_completed("Database update completed", in_builder = TRUE)
   cli::cli_alert_info("{my_time()} | Path to your db: {.file {DBI::dbGetInfo(connection)$dbname}}")
   if (is.null(db_connection)) DBI::dbDisconnect(connection)
@@ -170,11 +180,12 @@ build_db <- function(tblname = "nflfastR_pbp", db_conn, rebuild = FALSE, show_me
 get_missing_games <- function(completed_games, dbConnection, tablename) {
   db_ids <- dplyr::tbl(dbConnection, tablename) %>%
     dplyr::select("game_id") %>%
+    dplyr::filter(.data$game_id != "9999_99_DEF_TYP") %>%
     dplyr::distinct() %>%
     dplyr::collect() %>%
     dplyr::pull("game_id")
 
-  need_scrape <- completed_games[!completed_games %in% db_ids]
+  need_scrape <- completed_games[!completed_games %in% c(db_ids, "9999_99_DEF_TYP")]
 
   cli::cli_alert_info("{my_time()} | You have {length(db_ids)} game{?s} and are missing {length(need_scrape)}.")
   return(need_scrape)
