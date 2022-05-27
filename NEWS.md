@@ -12,6 +12,7 @@
 * Bump minimum nflreadr version to 1.2.0 for data repository change
 * Fix a bug affecting yardline for a very small number of plays in the 2000 season
 * `update_db()` now uses a default play to predefine column types for all db drivers. (#324)
+* Fix a bug that resulted in incorrect `xyac_mean_yardage` on 4th downs
 
 # nflfastR 4.3.0
 
