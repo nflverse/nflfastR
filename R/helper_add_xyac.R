@@ -171,7 +171,7 @@ prepare_xyac_data <- function(pbp) {
     make_model_mutations() %>%
     dplyr::mutate(
       receiver_player_name =
-        stringr::str_extract(.data$desc, "(?<=((to)|(for))\\s[:digit:]{0,2}\\-{0,1})[A-Z][A-z]*\\.\\s?[A-Z][A-z]+(\\s(I{2,3})|(IV))?"),
+        stringr::str_extract(.data$desc, glue::glue('{receiver_finder}{big_parser}')),
       pass_middle = dplyr::if_else(.data$pass_location == "middle", 1, 0),
       air_is_zero = dplyr::if_else(.data$air_yards == 0, 1, 0),
       distance_to_sticks = .data$air_yards - .data$ydstogo,

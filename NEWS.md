@@ -13,6 +13,7 @@
 * Fix a bug affecting yardline for a very small number of plays in the 2000 season
 * `update_db()` now uses a default play to predefine column types for all db drivers. (#324)
 * Fix a bug that resulted in incorrect `xyac_mean_yardage` on 4th downs
+* Fix a bug that resulted in missing `xyac` information for plays involving J.O'Shaughnessy
 
 # nflfastR 4.3.0
 
