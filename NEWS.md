@@ -10,10 +10,11 @@
 * The embedded data frame `?teams_colors_logos` has been updated with the Washington Commanders. (#312)
 * Fixed a bug causing missing EPA on game-ending turnovers in overtime
 * Bump minimum nflreadr version to 1.2.0 for data repository change
-* Fix a bug affecting yardline for a very small number of plays in the 2000 season
+* Fix a bug affecting yardline for a very small number of plays in the 2000 season (#323)
 * `update_db()` now uses a default play to predefine column types for all db drivers. (#324)
-* Fix a bug that resulted in incorrect `xyac_mean_yardage` on 4th downs
-* Fix a bug that resulted in missing `xyac` information for plays involving J.O'Shaughnessy
+* Fix a bug that resulted in incorrect `xyac_mean_yardage` on 4th downs (#327)
+* Fix a bug that resulted in missing `xyac` information for plays involving J.O'Shaughnessy (#329)
+* Fix a bug that resulted in missing `epa` on the last play of some games involving NE and BUF (#331)
 
 # nflfastR 4.3.0
 
