@@ -500,6 +500,11 @@ add_ep_variables <- function(pbp_data) {
                   ) %>%
     # Create columns with cumulative epa totals for both teams:
     dplyr::mutate(
+                  # helper for end of game
+                  end_game = ifelse(
+                    stringr::str_detect(tolower(.data$desc), "(end of game)|(end game)"),
+                    1, 0
+                  ),
 
                   # Change epa for plays occurring at end of half with no scoring
                   # plays to be just the difference between 0 and starting ep:
@@ -509,18 +514,18 @@ add_ep_variables <- function(pbp_data) {
                                           (.data$qtr == 4 &
                                              (dplyr::lead(.data$qtr) == 5 |
                                                 dplyr::lead(.data$desc) == "END QUARTER 4" |
-                                                dplyr::lead(.data$desc) == "END GAME"))) &
+                                                dplyr::lead(.data$end_game) == 1))) &
                                          .data$sp == 0 &
                                          !is.na(.data$play_type),
                                        0 - .data$ep, .data$epa),
                   # last play of OT
-                  epa = dplyr::if_else(.data$qtr > 4 & dplyr::lead(.data$desc) == "END GAME" & .data$sp == 0,
+                  epa = dplyr::if_else(.data$qtr > 4 & dplyr::lead(.data$end_game) == 1 & .data$sp == 0,
                                        0 - .data$ep,
                                        .data$epa),
                   epa = dplyr::if_else(.data$desc == "END QUARTER 2", NA_real_, .data$epa),
-                  epa = dplyr::if_else(.data$desc == "GAME", NA_real_, .data$epa),
+                  epa = dplyr::if_else(.data$end_game == 1, NA_real_, .data$epa),
                   ep = dplyr::if_else(.data$desc == "END QUARTER 2", NA_real_, .data$ep),
-                  ep = dplyr::if_else(.data$desc == "GAME", NA_real_, .data$ep),
+                  ep = dplyr::if_else(.data$end_game == 1, NA_real_, .data$ep),
                   home_team_epa = dplyr::if_else(.data$posteam == .data$home_team,
                                                  .data$epa, -.data$epa),
                   away_team_epa = dplyr::if_else(.data$posteam == .data$away_team,
