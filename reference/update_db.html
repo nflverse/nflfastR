@@ -131,12 +131,29 @@ play by play data of all completed games since 1999.</p>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <p></p>
-<p></p>
-<p></p>
-<p></p>
-<p></p>
-    </div>
+    <dl><dt>dbdir</dt>
+<dd><p>Directory in which the database is or shall be located. Can also
+be set globally with <code>options(nflfastR.dbdirectory)</code></p></dd>
+
+
+<dt>dbname</dt>
+<dd><p>File name of an existing or desired SQLite database within <code>dbdir</code></p></dd>
+
+
+<dt>tblname</dt>
+<dd><p>The name of the play by play data table within the database</p></dd>
+
+
+<dt>force_rebuild</dt>
+<dd><p>Hybrid parameter (logical or numeric) to rebuild parts
+of or the complete play by play data table within the database (please see details for further information)</p></dd>
+
+
+<dt>db_connection</dt>
+<dd><p>A <code>DBIConnection</code> object, as returned by
+<code><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">DBI::dbConnect()</a></code> (please see details for further information)</p></dd>
+
+</dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This function creates and updates a data table with the name <code>tblname</code>

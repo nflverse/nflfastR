@@ -122,9 +122,23 @@
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <p></p>
-<p></p>
-    </div>
+    <dl><dt>...</dt>
+<dd><p>Arguments passed on to <code><a href="https://nflreadr.nflverse.com/reference/load_pbp.html" class="external-link">nflreadr::load_pbp</a></code></p><dl><dt><code>seasons</code></dt>
+<dd><p>A numeric vector of 4-digit years associated with given NFL seasons - defaults to latest season. If set to <code>TRUE</code>, returns all available data since 1999.</p></dd>
+
+    <dt><code>file_type</code></dt>
+<dd><p>One of <code>"rds"</code> or <code>"qs"</code>. Can also be set globally with
+<code>options(nflreadr.prefer)</code></p></dd>
+
+  
+</dl></dd>
+
+
+<dt>qs</dt>
+<dd><p><a href="https://lifecycle.r-lib.org/articles/stages.html#deprecated" class="external-link"><img src="figures/lifecycle-deprecated.svg" alt="[Deprecated]"></a> has no effect and will be
+removed in a future release.</p></dd>
+
+</dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
@@ -223,8 +237,8 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ td_prob                              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.0000000, 0.3818542, 0.3818542, …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ extra_point_prob                     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.0000000, 0.0000000, 0.0000000, …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ two_point_conversion_prob            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ ep                                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> NA, 1.0082514, 1.0082514, -0.6505…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ epa                                  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> NA, 0.00000000, -1.65876303, -0.5…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ ep                                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 1.0082514, 1.0082514, 1.0082514, …</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ epa                                  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.00000000, 0.00000000, -1.658763…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ total_home_epa                       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.000000, 0.000000, 1.658763, 2.1…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ total_away_epa                       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.000000, 0.000000, -1.658763, -2…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ total_home_rush_epa                  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.0000000, 0.0000000, 0.0000000, …</span>
@@ -491,7 +505,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ stadium_id                           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "MIN01", "MIN01", "MIN01", "MIN01…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ game_stadium                         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "U.S. Bank Stadium", "U.S. Bank S…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ aborted_play                         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ success                              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> NA, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0,…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ success                              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ passer                               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> NA, NA, "M.Ryan", NA, "M.Ryan", N…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ passer_jersey_number                 <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> NA, NA, 2, NA, 2, NA, NA, 8, 8, N…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ rusher                               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> NA, NA, NA, "D.Freeman", NA, NA, …</span>
@@ -515,7 +529,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ fantasy_id                           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> NA, NA, NA, "00-0031285", "00-002…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ out_of_bounds                        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ home_opening_kickoff                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ qb_epa                               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> NA, 0.00000000, -1.65876303, -0.5…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ qb_epa                               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.00000000, 0.00000000, -1.658763…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ xyac_epa                             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> NA, NA, NA, NA, NA, NA, NA, 0.747…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ xyac_mean_yardage                    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> NA, NA, NA, NA, NA, NA, NA, 6.732…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ xyac_median_yardage                  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> NA, NA, NA, NA, NA, NA, NA, 6, 0,…</span>
