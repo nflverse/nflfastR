@@ -32,9 +32,9 @@ jobs:
           extra-packages: |
             r-lib/pkgdown
             nflverse/fastrmodels
+            nflverse/nflplotR
             any::tidyverse
             any::ggrepel
-            any::ggimage
             any::knitr
             any::tictoc
             any::ragg
