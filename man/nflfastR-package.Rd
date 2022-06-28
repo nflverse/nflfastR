@@ -6,9 +6,9 @@
 \alias{nflfastR-package}
 \title{nflfastR: Functions to Efficiently Access NFL Play by Play Data}
 \description{
-\if{html}{\figure{logo.png}{options: align='right' alt='logo' width='120'}}
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-A set of functions to access National Football League play-by-play data from <https://www.nfl.com/>.
+A set of functions to access National Football League play-by-play data from \url{https://www.nfl.com/}.
 }
 \section{Parallel Processing and Progress Updates in nflfastR}{
 \subsection{Preface}{
@@ -32,10 +32,12 @@ Please see the documentation of the functions for detailed information.
 As an example, the following code block will resolve all function calls in the
 current session using multiple sessions in the background and load play-by-play
 data for the 2018 through 2020 seasons or build them freshly for the 2018 and
-2019 Super Bowls:\preformatted{future::plan("multisession")
+2019 Super Bowls:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{future::plan("multisession")
 load_pbp(2018:2020)
 build_nflfastR_pbp(c("2018_21_NE_LA", "2019_21_SF_KC"))
-}
+}\if{html}{\out{</div>}}
 
 We recommend choosing a default parallel processing method and saving it
 as an environment variable in the R user profile to make sure all futures
@@ -43,19 +45,25 @@ will be resolved with the chosen method by default.
 This can be done by following the below given steps.
 
 First, run the following line and the file \code{.Renviron} should be opened automatically.
-If you haven't saved any environment variables yet, this will be an empty file.\preformatted{usethis::edit_r_environ()
-}
+If you haven't saved any environment variables yet, this will be an empty file.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{usethis::edit_r_environ()
+}\if{html}{\out{</div>}}
 
 In the opened file \code{.Renviron} add the next line, then save the file and restart your R session.
 Please note that this example sets "multisession" as default. For most users
-this should be the appropriate plan but please make sure it truly is.\preformatted{R_FUTURE_PLAN="multisession"
-}
+this should be the appropriate plan but please make sure it truly is.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{R_FUTURE_PLAN="multisession"
+}\if{html}{\out{</div>}}
 
 After the session is freshly restarted please check if the above method worked
 by running the next line. If the output is \code{FALSE} you successfully set up a
 default non-sequential \code{\link[future:plan]{future::plan()}}. If the output is \code{TRUE} all functions
-will behave like they were called with \code{\link[purrr:map]{purrr::map()}} and NOT in multisession.\preformatted{inherits(future::plan(), "sequential")
-}
+will behave like they were called with \code{\link[purrr:map]{purrr::map()}} and NOT in multisession.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{inherits(future::plan(), "sequential")
+}\if{html}{\out{</div>}}
 
 For more information on possible plans please see
 \href{https://github.com/HenrikBengtsson/future/blob/develop/README.md}{the future package Readme}.
@@ -69,30 +77,40 @@ For more information on \code{.Renviron} please see
 Most nflfastR functions are able to show progress updates
 using \code{\link[progressr:progressor]{progressr::progressor()}} if they are turned on before the function is
 called. There are at least two basic ways to do this by either activating
-progress updates globally (for the current session) with\preformatted{progressr::handlers(global = TRUE)
-}
+progress updates globally (for the current session) with
 
-or by piping the function call into \code{\link[progressr:with_progress]{progressr::with_progress()}}:\preformatted{load_pbp(2018:2020) \%>\%
+\if{html}{\out{<div class="sourceCode">}}\preformatted{progressr::handlers(global = TRUE)
+}\if{html}{\out{</div>}}
+
+or by piping the function call into \code{\link[progressr:with_progress]{progressr::with_progress()}}:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{load_pbp(2018:2020) \%>\%
   progressr::with_progress()
-}
+}\if{html}{\out{</div>}}
 
 Just like in the previous section, it is possible to activate global
 progression handlers by default. This can be done by following the below given steps.
 
 First, run the following line and the file \code{.Rprofile} should be opened automatically.
-If you haven't saved any code yet, this will be an empty file.\preformatted{usethis::edit_r_profile()
-}
+If you haven't saved any code yet, this will be an empty file.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{usethis::edit_r_profile()
+}\if{html}{\out{</div>}}
 
 In the opened file \code{.Rprofile} add the next line, then save the file and restart your R
 session. All code in this file will be executed when a new R session starts.
 The part \verb{if (require("progressr"))} makes sure this will only run if the
-package progressr is installed to avoid crashing R sessions.\preformatted{if (requireNamespace("progressr", quietly = TRUE)) progressr::handlers(global = TRUE)
-}
+package progressr is installed to avoid crashing R sessions.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{if (requireNamespace("progressr", quietly = TRUE)) progressr::handlers(global = TRUE)
+}\if{html}{\out{</div>}}
 
 After the session is freshly restarted please check if the above method worked
 by running the next line. If the output is \code{TRUE} you successfully activated
-global progression handlers for all sessions.\preformatted{progressr::handlers(global = NA)
-}
+global progression handlers for all sessions.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{progressr::handlers(global = NA)
+}\if{html}{\out{</div>}}
 
 For more information how to work with progress handlers please see \link[progressr:progressr]{progressr::progressr}.
 
