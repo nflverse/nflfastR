@@ -128,6 +128,7 @@ reference:
       - calculate_expected_points
       - calculate_win_probability
       - calculate_player_stats
+      - calculate_standings
       - report
   - title: Documentation
     contents:
