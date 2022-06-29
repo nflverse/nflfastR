@@ -40,7 +40,7 @@ to learn about the output."><meta property="og:image" content="https://www.nflfa
     
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0.9015</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0.9016</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -150,7 +150,7 @@ to learn about the output.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">build_nflfastR_pbp</span><span class="op">(</span><span class="va">game_ids</span>, <span class="va">...</span>, decode <span class="op">=</span> <span class="cn">TRUE</span>, rules <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">build_nflfastR_pbp</span><span class="op">(</span><span class="va">game_ids</span>, <span class="va">...</span>, decode <span class="op">=</span> <span class="cn">TRUE</span>, rules <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -190,30 +190,30 @@ see <a href="nflfastR-package.html">nflfastR</a>.</p></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"><span class="co"># Build nflfastR pbp for the 2018 and 2019 Super Bowls</span></span>
-<span class="r-in"><span class="fu">build_nflfastR_pbp</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2018_21_NE_LA"</span>, <span class="st">"2019_21_SF_KC"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Build nflfastR Play-by-Play Data</span> ───────────── nflfastR version 4.3.0.9015 ──</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> • 14:55:20 | Start download of 2 games...</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co"># Build nflfastR pbp for the 2018 and 2019 Super Bowls</span></span></span>
+<span class="r-in"><span><span class="fu">build_nflfastR_pbp</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2018_21_NE_LA"</span>, <span class="st">"2019_21_SF_KC"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Build nflfastR Play-by-Play Data</span> ───────────── nflfastR version 4.3.0.9016 ──</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> • 19:51:52 | Start download of 2 games...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> It is recommended to use parallel processing when trying to load multiple games.Please consider running `future::plan("multisession")`! Will go on sequentially...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:24 | Download finished. Adding variables...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:25 | added game variables</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:26 | added nflscrapR variables</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:26 | added ep variables</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:26 | added air_yac_ep variables</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:26 | added wp variables</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:26 | added air_yac_wp variables</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:27 | added cp and cpoe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:27 | added fixed drive variables</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:27 | added series variables</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> • 14:55:27 | Cleaning up play-by-play...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:27 | Cleaning completed</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:27 | added qb_epa</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> • 14:55:27 | Computing xyac...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:30 | added xyac variables</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> • 14:55:30 | Computing xpass...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:30 | added xpass and pass_oe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:30 | Decoding of player ids completed</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:51:59 | Download finished. Adding variables...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:00 | added game variables</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:00 | added nflscrapR variables</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:00 | added ep variables</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:00 | added air_yac_ep variables</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:01 | added wp variables</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:01 | added air_yac_wp variables</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:01 | added cp and cpoe</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:01 | added fixed drive variables</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:01 | added series variables</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> • 19:52:01 | Cleaning up play-by-play...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:02 | Cleaning completed</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:02 | added qb_epa</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> • 19:52:02 | Computing xyac...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:05 | added xyac variables</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> • 19:52:05 | Computing xpass...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:05 | added xpass and pass_oe</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:05 | Decoding of player ids completed</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">DONE</span> ────────────────────────────────────────────────────────────────────────</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 353 × 372</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    play_id game_id     old_game_id home_team away_team season_type  week posteam</span>
@@ -235,34 +235,34 @@ see <a href="nflfastR-package.html">nflfastR</a>.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   drive &lt;dbl&gt;, sp &lt;dbl&gt;, qtr &lt;dbl&gt;, down &lt;dbl&gt;, goal_to_go &lt;dbl&gt;, time &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   yrdln &lt;chr&gt;, ydstogo &lt;dbl&gt;, ydsnet &lt;dbl&gt;, desc &lt;chr&gt;, play_type &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   yards_gained &lt;dbl&gt;, shotgun &lt;dbl&gt;, no_huddle &lt;dbl&gt;, qb_dropback &lt;dbl&gt;, …</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># It is also possible to directly use the</span></span>
-<span class="r-in"><span class="co"># output of `fast_scraper_schedules` as input</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="fast_scraper_schedules.html">fast_scraper_schedules</a></span><span class="op">(</span><span class="fl">2020</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_tail</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">  <span class="fu">build_nflfastR_pbp</span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Build nflfastR Play-by-Play Data</span> ───────────── nflfastR version 4.3.0.9015 ──</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> • 14:55:30 | Start download of 3 games...</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># It is also possible to directly use the</span></span></span>
+<span class="r-in"><span><span class="co"># output of `fast_scraper_schedules` as input</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="fast_scraper_schedules.html">fast_scraper_schedules</a></span><span class="op">(</span><span class="fl">2020</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_tail</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu">build_nflfastR_pbp</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Build nflfastR Play-by-Play Data</span> ───────────── nflfastR version 4.3.0.9016 ──</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> • 19:52:05 | Start download of 3 games...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> It is recommended to use parallel processing when trying to load multiple games.Please consider running `future::plan("multisession")`! Will go on sequentially...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:38 | Download finished. Adding variables...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:38 | added game variables</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:38 | added nflscrapR variables</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:38 | added ep variables</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:38 | added air_yac_ep variables</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:39 | added wp variables</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:39 | added air_yac_wp variables</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:39 | added cp and cpoe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:39 | added fixed drive variables</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:39 | added series variables</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> • 14:55:39 | Cleaning up play-by-play...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:39 | Cleaning completed</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:39 | added qb_epa</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> • 14:55:39 | Computing xyac...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:40 | added xyac variables</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> • 14:55:40 | Computing xpass...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:40 | added xpass and pass_oe</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 14:55:40 | Decoding of player ids completed</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:15 | Download finished. Adding variables...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:15 | added game variables</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:16 | added nflscrapR variables</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:16 | added ep variables</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:16 | added air_yac_ep variables</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:17 | added wp variables</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:17 | added air_yac_wp variables</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:17 | added cp and cpoe</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:17 | added fixed drive variables</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:17 | added series variables</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> • 19:52:17 | Cleaning up play-by-play...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:18 | Cleaning completed</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:18 | added qb_epa</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> • 19:52:18 | Computing xyac...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:19 | added xyac variables</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> • 19:52:19 | Computing xpass...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:19 | added xpass and pass_oe</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 19:52:19 | Decoding of player ids completed</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">DONE</span> ────────────────────────────────────────────────────────────────────────</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 545 × 372</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    play_id game_id     old_game_id home_team away_team season_type  week posteam</span>
@@ -284,12 +284,12 @@ see <a href="nflfastR-package.html">nflfastR</a>.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   drive &lt;dbl&gt;, sp &lt;dbl&gt;, qtr &lt;dbl&gt;, down &lt;dbl&gt;, goal_to_go &lt;dbl&gt;, time &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   yrdln &lt;chr&gt;, ydstogo &lt;dbl&gt;, ydsnet &lt;dbl&gt;, desc &lt;chr&gt;, play_type &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   yards_gained &lt;dbl&gt;, shotgun &lt;dbl&gt;, no_huddle &lt;dbl&gt;, qb_dropback &lt;dbl&gt;, …</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># \dontshow{</span></span>
-<span class="r-in"><span class="co"># Close open connections for R CMD Check</span></span>
-<span class="r-in"><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="st">"sequential"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># }</span></span>
-<span class="r-in"><span class="co"># }</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># \dontshow{</span></span></span>
+<span class="r-in"><span><span class="co"># Close open connections for R CMD Check</span></span></span>
+<span class="r-in"><span><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="st">"sequential"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -301,7 +301,7 @@ see <a href="nflfastR-package.html">nflfastR</a>.</p></div>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
 </div>
 
     </footer></div>
