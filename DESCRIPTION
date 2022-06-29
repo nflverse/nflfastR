@@ -1,7 +1,7 @@
 Type: Package
 Package: nflfastR
 Title: Functions to Efficiently Access NFL Play by Play Data
-Version: 4.3.0.9015
+Version: 4.3.0.9016
 Authors@R: 
     c(person(given = "Sebastian",
              family = "Carl",
@@ -61,7 +61,6 @@ Imports:
     tidyr (>= 1.0.0),
     tidyselect (>= 1.1.0),
     xgboost (>= 1.1)
-Remotes: nflverse/nflreadr
 Suggests: 
     crayon (>= 1.3.4),
     DBI,
@@ -69,6 +68,7 @@ Suggests:
     gsisdecoder,
     httr,
     jsonlite,
+    nflseedR (>= 1.0.2),
     purrr (>= 0.3.0),
     qs (>= 0.25.1),
     rmarkdown,
@@ -76,5 +76,5 @@ Suggests:
     testthat
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
 Roxygen: list(markdown = TRUE)

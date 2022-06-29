@@ -11,7 +11,7 @@ load_pbp(..., qs = lifecycle::deprecated())
   Arguments passed on to \code{\link[nflreadr:load_pbp]{nflreadr::load_pbp}}
   \describe{
     \item{\code{seasons}}{A numeric vector of 4-digit years associated with given NFL seasons - defaults to latest season. If set to \code{TRUE}, returns all available data since 1999.}
-    \item{\code{file_type}}{One of \code{"rds"} or \code{"qs"}. Can also be set globally with
+    \item{\code{file_type}}{One of \code{c("rds", "qs", "csv", "parquet")}. Can also be set globally with
 \code{options(nflreadr.prefer)}}
   }}
 
@@ -23,7 +23,7 @@ The complete nflfastR dataset as returned by \code{nflfastR::build_nflfastR_pbp(
 (see below) for all given \code{seasons}
 }
 \description{
-Loads multiple seasons from the \href{https://github.com/nflverse/nflfastR-data}{nflfastR data repository}
+Loads play by play seasons from the \href{https://github.com/nflverse/nflverse-data}{nflverse-data repository}
 }
 \examples{
 \donttest{

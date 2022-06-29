@@ -59,8 +59,8 @@ can install the development version of nflfastR either from
 [GitHub](https://github.com/nflverse/nflfastR/) with:
 
 ``` r
-if (!require("remotes")) install.packages("remotes")
-remotes::install_github("nflverse/nflfastR")
+if (!require("pak")) install.packages("pak")
+pak::pak("nflverse/nflfastR")
 ```
 
 or prebuilt from the [development repo](https://nflverse.r-universe.dev)

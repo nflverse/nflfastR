@@ -33,8 +33,10 @@ jobs:
             r-lib/pkgdown
             nflverse/fastrmodels
             nflverse/nflplotR
+            nflverse/nflreadr
             any::tidyverse
             any::ggrepel
+            any::ggimage
             any::knitr
             any::tictoc
             any::ragg
