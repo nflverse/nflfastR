@@ -33,7 +33,9 @@ Compute Division Standings and Conference Seeds from Play by Play
 }
 \examples{
 \donttest{
-pbp <- nflreadr::load_pbp(c(2018, 2021))
-calculate_standings(pbp)
+try({# to avoid CRAN test problems
+  pbp <- nflreadr::load_pbp(c(2018, 2021))
+  calculate_standings(pbp)
+})
 }
 }

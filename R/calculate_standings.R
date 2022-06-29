@@ -13,8 +13,10 @@
 #'
 #' @examples
 #' \donttest{
-#' pbp <- nflreadr::load_pbp(c(2018, 2021))
-#' calculate_standings(pbp)
+#' try({# to avoid CRAN test problems
+#'   pbp <- nflreadr::load_pbp(c(2018, 2021))
+#'   calculate_standings(pbp)
+#' })
 #' }
 calculate_standings <- function(pbp,
                                 tiebreaker_depth = 3,
