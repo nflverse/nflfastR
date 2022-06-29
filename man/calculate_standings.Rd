@@ -4,7 +4,7 @@
 \alias{calculate_standings}
 \title{Compute Division Standings and Conference Seeds from Play by Play}
 \usage{
-calculate_standings(pbp, tiebreaker_depth = 3, playoff_seeds = 7)
+calculate_standings(pbp, tiebreaker_depth = 3, playoff_seeds = NULL)
 }
 \arguments{
 \item{pbp}{nflfastR play-by-play data either loaded via \code{load_pbp()} or
@@ -20,8 +20,10 @@ values are valid:
 \item{tiebreaker_depth = 3}{Apply all tiebreakers through strength of schedule. Random if still tied.}
 }}
 
-\item{playoff_seeds}{Number of playoff teams per conference (increased
-in 2020 from 6 to 7).}
+\item{playoff_seeds}{Number of playoff teams per conference. If \code{NULL} (the
+default), the function will try to split \code{pbp} in seasons prior 2020 (6
+seeds) and 2020ff (7 seeds). If set to a numeric, it will be used for all
+seasons in \code{pbp}!}
 }
 \value{
 A tibble with NFL regular season standings
@@ -31,7 +33,7 @@ Compute Division Standings and Conference Seeds from Play by Play
 }
 \examples{
 \donttest{
-pbp <- nflreadr::load_pbp(2020:2021)
+pbp <- nflreadr::load_pbp(c(2018, 2021))
 calculate_standings(pbp)
 }
 }
