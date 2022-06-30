@@ -4,11 +4,17 @@
 \alias{calculate_standings}
 \title{Compute Division Standings and Conference Seeds from Play by Play}
 \usage{
-calculate_standings(pbp, tiebreaker_depth = 3, playoff_seeds = NULL)
+calculate_standings(
+  nflverse_object,
+  tiebreaker_depth = 3,
+  playoff_seeds = NULL
+)
 }
 \arguments{
-\item{pbp}{nflfastR play-by-play data either loaded via \code{load_pbp()} or
-computed via \code{build_nflfastR_pbp()}.}
+\item{nflverse_object}{Data object of class \code{nflverse_data}. Either schedules
+as returned by \code{\link[=fast_scraper_schedules]{fast_scraper_schedules()}} or \code{\link[nflreadr:load_schedules]{nflreadr::load_schedules()}}.
+Or play-by-play data as returned by \code{\link[=load_pbp]{load_pbp()}}, \code{\link[=build_nflfastR_pbp]{build_nflfastR_pbp()}}, or
+\code{\link[=fast_scraper]{fast_scraper()}}.}
 
 \item{tiebreaker_depth}{A single value equal to 1, 2, or 3. The default is 3. The
 value controls the depth of tiebreakers that shall be applied. The deepest
@@ -21,21 +27,30 @@ values are valid:
 }}
 
 \item{playoff_seeds}{Number of playoff teams per conference. If \code{NULL} (the
-default), the function will try to split \code{pbp} in seasons prior 2020 (6
-seeds) and 2020ff (7 seeds). If set to a numeric, it will be used for all
-seasons in \code{pbp}!}
+default), the function will try to split \code{nflverse_object} into seasons prior
+2020 (6 seeds) and 2020ff (7 seeds). If set to a numeric, it will be used
+for all seasons in \code{nflverse_object}!}
 }
 \value{
 A tibble with NFL regular season standings
 }
 \description{
-Compute Division Standings and Conference Seeds from Play by Play
+This function calculates division standings as well as playoff
+seeds per conference based on either nflverse play-by-play data or nflverse
+schedule data.
 }
 \examples{
 \donttest{
 try({# to avoid CRAN test problems
-  pbp <- nflreadr::load_pbp(c(2018, 2021))
+  # load nflverse data both schedules and pbp
+  scheds <- fast_scraper_schedules(2014)
+  pbp <- load_pbp(c(2018, 2021))
+
+  # calculate standings based on pbp
   calculate_standings(pbp)
+
+  # calculate standings based on schedules
+  calculate_standings(scheds)
 })
 }
 }
