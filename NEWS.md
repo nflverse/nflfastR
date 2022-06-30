@@ -16,6 +16,7 @@
 * Fix a bug that resulted in missing `xyac` information for plays involving J.O'Shaughnessy (#329)
 * Fix a bug that resulted in missing `epa` on the last play of some games involving NE and BUF (#331)
 * Added new function `calculate_standings()` that computes regular season division standings and playoff seeds from play-by-play data.
+* `fast_scraper()` and `build_nflfastR_pbp()` now return data frames of class `nflverse_data` to be consistent with `nflreadr`.
 
 # nflfastR 4.3.0
 

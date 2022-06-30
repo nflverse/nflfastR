@@ -17,7 +17,7 @@ build_nflfastR_pbp(game_ids, ..., decode = TRUE, rules = TRUE)
 \item{rules}{If \code{FALSE}, printing of the header and footer in the console output will be suppressed.}
 }
 \value{
-An nflfastR play-by-play data frame like it can be loaded from \url{https://github.com/nflverse/nflfastR-data}.
+An nflfastR play-by-play data frame like it can be loaded from \url{https://github.com/nflverse/nflverse-data}.
 }
 \description{
 \code{build_nflfastR_pbp} is a convenient wrapper around 6 nflfastR functions:
