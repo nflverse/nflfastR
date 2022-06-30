@@ -448,7 +448,7 @@ fast_scraper <- function(game_ids,
     str <- paste0(my_time(), " | Procedure completed.")
     cli::cli_alert_success("{.field {str}}")
   }
-  return(pbp)
+  make_nflverse_data(pbp)
 }
 
 

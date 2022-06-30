@@ -179,3 +179,11 @@ write_pbp <- function(seasons, dbConnection, tablename){
     p("loading...")
   }, p)
 }
+
+make_nflverse_data <- function(data, type = c("play by play")){
+  attr(data, "nflverse_timestamp") <- Sys.time()
+  attr(data, "nflverse_type") <- type
+  attr(data, "nflfastR_version") <- packageVersion("nflfastR")
+  class(data) <- c("nflverse_data", "tbl_df", "tbl", "data.table", "data.frame")
+  data
+}
