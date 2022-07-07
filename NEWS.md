@@ -1,13 +1,19 @@
-# nflfastR (development version)
+# nflfastR 4.4.0
 
+## New Functions, Options, Data
+
+* Added new function `calculate_standings()` that computes regular season division standings and playoff seeds from nflverse data.
 * The database function `update_db()` now supports the option "nflfastR.dbdirectory" which can be used to set the directory of the nflfastR pbp database globally and independent of any project structure or working directories.
+* The embedded data frame `?teams_colors_logos` has been updated to reflect the most recent team color themes and gained additional variables for conference and division as well as logo urls to the conference and league logos. (#290)
+* The embedded data frame `?teams_colors_logos` has been updated with the Washington Commanders. (#312)
+
+## Bugfixes and Minor Improvements
+
 * Fixed bug where a player could be duplicated in `calculate_player_stats()` in very rare cases caused by plays with laterals. (#289)
 * Fixed a bug where the function `add_xpass()` failed when called with an empty data frame. (#296)
 * Fixed a bug where `play_type` showed `no_play` on plays with penalties that don't result in a replay of the down. (#277, #281)
-* The embedded data frame `?teams_colors_logos` has been updated to reflect the most recent team color themes and gained additional variables for conference and division as well as logo urls to the conference and league logos. (#290)
 * Fixed a bug in the variable descriptions of `total_home_score` and `total_away_score`. (#300)
 * `fast_scraper_rosters()` and `fast_scraper_schedules()` now call `nflreadr::load_rosters()` and `nflreadr::load_schedules()` under the hood (#304)
-* The embedded data frame `?teams_colors_logos` has been updated with the Washington Commanders. (#312)
 * Fixed a bug causing missing EPA on game-ending turnovers in overtime
 * Bump minimum nflreadr version to 1.2.0 for data repository change
 * Fix a bug affecting yardline for a very small number of plays in the 2000 season (#323)
@@ -15,7 +21,6 @@
 * Fix a bug that resulted in incorrect `xyac_mean_yardage` on 4th downs (#327)
 * Fix a bug that resulted in missing `xyac` information for plays involving J.O'Shaughnessy (#329)
 * Fix a bug that resulted in missing `epa` on the last play of some games involving NE and BUF (#331)
-* Added new function `calculate_standings()` that computes regular season division standings and playoff seeds from nflverse data.
 * `fast_scraper()` and `build_nflfastR_pbp()` now return data frames of class `nflverse_data` to be consistent with `nflreadr`.
 
 # nflfastR 4.3.0
