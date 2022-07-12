@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Describe a bug you've seen or make a case for a new feature
+about: Describe a bug you've seen
 labels: bug
 ---
 <!-- If you have a question, please don't use this form. Instead, ask in the nflverse Discord server:  https://discord.com/invite/5Er2FBnnQa -->
