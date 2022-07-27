@@ -78,9 +78,9 @@ calculate_standings <- function(nflverse_object,
 
   if(is.null(playoff_seeds)){
     g6 <- g %>%
-      dplyr::filter(sim %in% 1999:2019)
+      dplyr::filter(.data$sim %in% 1999:2019)
     g7 <- g %>%
-      dplyr::filter(sim >= 2020)
+      dplyr::filter(.data$sim >= 2020)
     dplyr::bind_rows(
       .compute_standings(g6, tiebreaker_depth = tiebreaker_depth, playoff_seeds = 6),
       .compute_standings(g7, tiebreaker_depth = tiebreaker_depth, playoff_seeds = 7)
@@ -101,9 +101,9 @@ calculate_standings <- function(nflverse_object,
 
   if(is.null(playoff_seeds)){
     g6 <- g %>%
-      dplyr::filter(sim %in% 1999:2019)
+      dplyr::filter(.data$sim %in% 1999:2019)
     g7 <- g %>%
-      dplyr::filter(sim >= 2020)
+      dplyr::filter(.data$sim >= 2020)
     dplyr::bind_rows(
       .compute_standings(g6, tiebreaker_depth = tiebreaker_depth, playoff_seeds = 6),
       .compute_standings(g7, tiebreaker_depth = tiebreaker_depth, playoff_seeds = 7)
