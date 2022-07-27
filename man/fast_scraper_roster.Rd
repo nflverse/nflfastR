@@ -4,11 +4,17 @@
 \alias{fast_scraper_roster}
 \title{Load Team Rosters for Multiple Seasons}
 \usage{
-fast_scraper_roster(seasons = most_recent_season(roster = TRUE))
+fast_scraper_roster(
+  seasons = most_recent_season(roster = TRUE),
+  file_type = getOption("nflreadr.prefer", default = "rds")
+)
 }
 \arguments{
 \item{seasons}{a numeric vector of seasons to return, defaults to returning
 this year's data if it is March or later. If set to \code{TRUE}, will return all available data.}
+
+\item{file_type}{One of \code{c("rds", "qs", "csv", "parquet")}. Can also be set globally with
+\code{options(nflreadr.prefer)}}
 }
 \value{
 A tibble of season-level roster data.
