@@ -17,7 +17,6 @@
 * Fix a bug that resulted in missing `epa` on the last play of some games involving NE and BUF (#331)
 * Added new function `calculate_standings()` that computes regular season division standings and playoff seeds from nflverse data.
 * `fast_scraper()` and `build_nflfastR_pbp()` now return data frames of class `nflverse_data` to be consistent with `nflreadr`.
-* Fix behavior of EP model in neutral site games (treats both teams as away teams)
 
 # nflfastR 4.3.0
 
