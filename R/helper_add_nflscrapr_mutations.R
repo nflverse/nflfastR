@@ -625,15 +625,6 @@ make_model_mutations <- function(pbp) {
       outdoors = dplyr::if_else(.data$model_roof == 'outdoors', 1, 0)
     )
 
-  if ("location" %in% names(pbp)) {
-
-    pbp <- pbp %>%
-      dplyr::mutate(
-        home = dplyr::if_else(.data$location == "Neutral", 0, .data$home)
-      )
-
-  }
-
   return(pbp)
 }
 
