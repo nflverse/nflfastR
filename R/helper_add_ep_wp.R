@@ -4,9 +4,6 @@
 # Code Style Guide: styler::tidyverse_style()
 ################################################################################
 
-# For now those functions are only a call to nflscrapR but we may want to
-# use other models and epa wpa definitions. This is the place where this
-# could happen
 add_ep <- function(pbp) {
   out <- pbp %>% add_ep_variables()
   user_message("added ep variables", "done")
@@ -86,8 +83,17 @@ add_air_yac_wp <- function(pbp) {
 }
 
 #get predictions for a set of pbp data
-#for predict stage
+#for predict stage of EP
 get_preds <- function(pbp) {
+
+  if ("location" %in% names(pbp)) {
+
+    pbp <- pbp %>%
+      dplyr::mutate(
+        home = dplyr::if_else(.data$location == "Neutral", 0, .data$home)
+      )
+
+  }
 
   preds <- as.data.frame(
     matrix(stats::predict(fastrmodels::ep_model, as.matrix(pbp %>% ep_model_select())), ncol=7, byrow=TRUE)
