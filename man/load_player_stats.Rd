@@ -12,7 +12,7 @@ load_player_stats(..., qs = lifecycle::deprecated())
   \describe{
     \item{\code{seasons}}{a numeric vector of seasons to return, defaults to most recent season. If set to \code{TRUE}, returns all available data.}
     \item{\code{stat_type}}{one of \code{offense} or \code{kicking}}
-    \item{\code{file_type}}{One of \code{c("rds", "csv","qs", "parquet")}. Can also be set globally with
+    \item{\code{file_type}}{One of \code{c("rds", "qs", "csv", "parquet")}. Can also be set globally with
 \code{options(nflreadr.prefer)}}
   }}
 
