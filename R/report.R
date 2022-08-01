@@ -5,13 +5,12 @@
 #'   and their dependencies. It's primarily designed to help you get a quick
 #'   idea of what's going on when you're helping someone else debug a problem.
 #' @details See [`nflreadr::nflverse_sitrep`] for details.
-#' @name report
+#' @inheritDotParams nflreadr::nflverse_sitrep
+#' @inherit nflreadr::nflverse_sitrep
 #' @examples
 #' \donttest{
 #' report(recursive = FALSE)
 #' report(pkg = "nflreadr", recursive = TRUE)
 #' }
-NULL
-
 #' @export
-report <- nflreadr::nflverse_sitrep
+report <- function(...) nflreadr::nflverse_sitrep(...)

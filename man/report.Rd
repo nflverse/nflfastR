@@ -3,6 +3,27 @@
 \name{report}
 \alias{report}
 \title{Get a Situation Report on System, nflverse Package Versions and Dependencies}
+\usage{
+report(...)
+}
+\arguments{
+\item{...}{
+  Arguments passed on to \code{\link[nflreadr:sitrep]{nflreadr::nflverse_sitrep}}
+  \describe{
+    \item{\code{pkg}}{a character vector naming installed packages, or \code{NULL}
+(the default) meaning all nflverse packages. The function checks internally
+if all packages are installed and informs if that is not the case.}
+    \item{\code{recursive}}{a logical indicating whether dependencies of \code{pkg} and their
+dependencies (and so on) should be included.
+Can also be a character vector listing the types of dependencies, a subset
+of \code{c("Depends", "Imports", "LinkingTo", "Suggests", "Enhances")}.
+Character string \code{"all"} is shorthand for that vector, character string
+\code{"most"} for the same vector without \code{"Enhances"}, character string \code{"strong"}
+(default) for the first three elements of that vector.}
+    \item{\code{redact_path}}{a logical indicating whether options that contain "path"
+in the name should be redacted, default = TRUE}
+  }}
+}
 \description{
 This function gives a quick overview of the versions of R and
 the operating system as well as the versions of nflverse packages, options,
