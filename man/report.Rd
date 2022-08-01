@@ -2,7 +2,15 @@
 % Please edit documentation in R/report.R
 \name{report}
 \alias{report}
+\alias{nflverse_sitrep}
 \title{Get a Situation Report on System, nflverse Package Versions and Dependencies}
+\usage{
+nflverse_sitrep(
+  pkg = c("nflreadr", "nflfastR", "nflseedR", "nfl4th", "nflplotR", "nflverse"),
+  recursive = TRUE,
+  redact_path = TRUE
+)
+}
 \description{
 This function gives a quick overview of the versions of R and
 the operating system as well as the versions of nflverse packages, options,
@@ -11,4 +19,10 @@ idea of what's going on when you're helping someone else debug a problem.
 }
 \details{
 See \code{\link[nflreadr:sitrep]{nflreadr::nflverse_sitrep}} for details.
+}
+\examples{
+\donttest{
+report(recursive = FALSE)
+report(pkg = "nflreadr", recursive = TRUE)
+}
 }

@@ -6,7 +6,16 @@
 #'   idea of what's going on when you're helping someone else debug a problem.
 #' @details See [`nflreadr::nflverse_sitrep`] for details.
 #' @name report
+#' @examples
+#' \donttest{
+#' report(recursive = FALSE)
+#' report(pkg = "nflreadr", recursive = TRUE)
+#' }
 NULL
 
 #' @export
 report <- nflreadr::nflverse_sitrep
+
+#' @export
+#' @name report
+nflverse_sitrep <- nflreadr::nflverse_sitrep
