@@ -455,7 +455,7 @@ fast_scraper <- function(game_ids,
 # roster ------------------------------------------------------------------
 
 #' Load Team Rosters for Multiple Seasons
-#' @inherit nflreadr::load_rosters
+#' @details See [`nflreadr::load_rosters`] for details.
 #' @seealso For information on parallel processing and progress updates please
 #' see [nflfastR].
 #' @examples
@@ -463,19 +463,25 @@ fast_scraper <- function(game_ids,
 #' # Roster of the 2019 and 2020 seasons
 #' fast_scraper_roster(2019:2020)
 #' }
+#' @name fast_scraper_roster
+NULL
+
 #' @export
 fast_scraper_roster <- nflreadr::load_rosters
 
 # schedules ---------------------------------------------------------------
 
 #' Load NFL Season Schedules
-#' @inherit nflreadr::load_schedules
+#' @details See [`nflreadr::load_schedules`] for details.
 #' @seealso For information on parallel processing and progress updates please
 #' see [nflfastR].
-#' @export
 #' @examples
 #'\donttest{
 #' # Get schedules for the whole 2015 - 2018 seasons
 #' fast_scraper_schedules(2015:2018)
 #' }
+#' @name fast_scraper_schedules
+NULL
+
+#' @export
 fast_scraper_schedules <- nflreadr::load_schedules
