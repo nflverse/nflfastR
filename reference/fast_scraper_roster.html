@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0.9020</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.3.0.9021</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -117,22 +117,22 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">fast_scraper_roster</span><span class="op">(</span></span>
-<span>  seasons <span class="op">=</span> <span class="fu">most_recent_season</span><span class="op">(</span>roster <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span>  file_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"nflreadr.prefer"</span>, default <span class="op">=</span> <span class="st">"rds"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">fast_scraper_roster</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>seasons</dt>
+    <dl><dt>...</dt>
+<dd><p>Arguments passed on to <code><a href="https://nflreadr.nflverse.com/reference/load_rosters.html" class="external-link">nflreadr::load_rosters</a></code></p><dl><dt><code>seasons</code></dt>
 <dd><p>a numeric vector of seasons to return, defaults to returning
 this year's data if it is March or later. If set to <code>TRUE</code>, will return all available data.</p></dd>
 
-
-<dt>file_type</dt>
+    <dt><code>file_type</code></dt>
 <dd><p>One of <code>c("rds", "qs", "csv", "parquet")</code>. Can also be set globally with
 <code>options(nflreadr.prefer)</code></p></dd>
+
+  
+</dl></dd>
 
 </dl></div>
     <div class="section level2">
@@ -140,6 +140,10 @@ this year's data if it is March or later. If set to <code>TRUE</code>, will retu
     
 
 <p>A tibble of season-level roster data.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>See <code><a href="https://nflreadr.nflverse.com/reference/load_rosters.html" class="external-link">nflreadr::load_rosters</a></code> for details.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -152,30 +156,28 @@ see <a href="nflfastR-package.html">nflfastR</a>.</p></div>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co"># Roster of the 2019 and 2020 seasons</span></span></span>
 <span class="r-in"><span><span class="fu">fast_scraper_roster</span><span class="op">(</span><span class="fl">2019</span><span class="op">:</span><span class="fl">2020</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>cannot open URL 'https://objects.githubusercontent.com/github-production-release-asset-2e65be/452908115/bf84a274-0c0b-429b-b7f0-1fd8a9cf09df?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20220728%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20220728T184635Z&amp;X-Amz-Expires=300&amp;X-Amz-Signature=8a87850a1b8b80d383f1d474005ba2e66db1b3010f9b35e0e0b37b33112bbcf7&amp;X-Amz-SignedHeaders=host&amp;actor_id=0&amp;key_id=0&amp;repo_id=452908115&amp;response-content-disposition=attachment%3B%20filename%3Droster_2019.rds&amp;response-content-type=application%2Foctet-stream': HTTP status was '503 Service Unavailable'</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Failed to readRDS from</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/nflverse/nflverse-data/releases/download/rosters/roster_2019.rds&gt;</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-style: italic;">nflverse rosters</span> ────────────────────────────────────────────────────────────</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-03-10 17:46:36 UTC</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4,624 × 25</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-style: italic;">nflverse roster data</span> ────────────────────────────────────────────────────────</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-08-01 15:48:55 UTC</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5,808 × 30</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    season team  position depth_chart_po…¹ jerse…² status full_…³ first…⁴ last_…⁵</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>   <span style="text-decoration: underline;">2</span>020 ARI   C        C                     52 Active Mason … Mason   Cole   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>   <span style="text-decoration: underline;">2</span>020 ARI   C        C                     53 Active Lamont… Lamont  Gailla…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>   <span style="text-decoration: underline;">2</span>020 ARI   CB       NB                    33 Active Byron … Byron   Murphy </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>   <span style="text-decoration: underline;">2</span>020 ARI   CB       <span style="color: #BB0000;">NA</span>                    20 Active Prince… Prince  Amukam…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>   <span style="text-decoration: underline;">2</span>020 ARI   CB       <span style="color: #BB0000;">NA</span>                    39 Active Jace W… Jace    Whitta…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>   <span style="text-decoration: underline;">2</span>020 ARI   CB       LCB                   27 Active Kevin … Kevin   Peters…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>   <span style="text-decoration: underline;">2</span>020 ARI   CB       RCB                   25 Active Johnat… Johnat… Joseph </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>   <span style="text-decoration: underline;">2</span>020 ARI   CB       LCB                   23 Active Robert… Robert  Alford </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>   <span style="text-decoration: underline;">2</span>020 ARI   CB       LCB                   21 Active Patric… Patrick Peters…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>   <span style="text-decoration: underline;">2</span>020 ARI   CB       RCB                   20 Active Dre Ki… Dre     Kirkpa…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 4,614 more rows, 16 more variables: birth_date &lt;date&gt;, height &lt;chr&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   weight &lt;chr&gt;, college &lt;chr&gt;, high_school &lt;chr&gt;, gsis_id &lt;chr&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   espn_id &lt;int&gt;, yahoo_id &lt;int&gt;, rotowire_id &lt;int&gt;, pff_id &lt;int&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   pfr_id &lt;chr&gt;, headshot_url &lt;chr&gt;, fantasy_data_id &lt;int&gt;, sleeper_id &lt;chr&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   years_exp &lt;int&gt;, sportradar_id &lt;chr&gt;, and abbreviated variable names</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   ¹​depth_chart_position, ²​jersey_number, ³​full_name, ⁴​first_name, ⁵​last_name</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>   <span style="text-decoration: underline;">2</span>019 ARI   DB       CB                    21 Active Patric… Patrick Peters…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>   <span style="text-decoration: underline;">2</span>019 ARI   DB       SS                    38 Active Chris … Ayorun… Banjo  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>   <span style="text-decoration: underline;">2</span>019 ARI   DB       CB                    23 <span style="color: #BB0000;">NA</span>     Robert… Robert  Alford </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>   <span style="text-decoration: underline;">2</span>019 ARI   DB       CB                    27 <span style="color: #BB0000;">NA</span>     Josh S… Josh    Shaw   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>   <span style="text-decoration: underline;">2</span>019 ARI   DB       CB                    26 <span style="color: #BB0000;">NA</span>     Brando… Brandon Willia…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>   <span style="text-decoration: underline;">2</span>019 ARI   DB       FS                    28 Active Charle… Charles Washin…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>   <span style="text-decoration: underline;">2</span>019 ARI   DB       CB                    34 <span style="color: #BB0000;">NA</span>     Duke T… Duke    Thomas </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>   <span style="text-decoration: underline;">2</span>019 ARI   DB       CB                    27 <span style="color: #BB0000;">NA</span>     Kevin … Kevin   Peters…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>   <span style="text-decoration: underline;">2</span>019 ARI   DB       CB                    22 <span style="color: #BB0000;">NA</span>     Trevor… Trevor  Willia…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>   <span style="text-decoration: underline;">2</span>019 ARI   DB       FS                    32 Active Budda … Budda   Baker  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 5,798 more rows, 21 more variables: birth_date &lt;date&gt;, height &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   weight &lt;int&gt;, college &lt;chr&gt;, gsis_id &lt;chr&gt;, espn_id &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   sportradar_id &lt;chr&gt;, yahoo_id &lt;chr&gt;, rotowire_id &lt;chr&gt;, pff_id &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   pfr_id &lt;chr&gt;, fantasy_data_id &lt;chr&gt;, sleeper_id &lt;chr&gt;, years_exp &lt;int&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   headshot_url &lt;chr&gt;, ngs_position &lt;chr&gt;, esb_id &lt;chr&gt;, gsis_it_id &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   smart_id &lt;chr&gt;, entry_year &lt;int&gt;, rookie_year &lt;int&gt;, and abbreviated</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   variable names ¹​depth_chart_position, ²​jersey_number, ³​full_name, …</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows, and `colnames()` to see all variable names</span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
