@@ -15,7 +15,3 @@ NULL
 
 #' @export
 report <- nflreadr::nflverse_sitrep
-
-#' @export
-#' @name report
-nflverse_sitrep <- nflreadr::nflverse_sitrep
