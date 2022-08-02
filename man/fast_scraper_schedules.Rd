@@ -4,16 +4,23 @@
 \alias{fast_scraper_schedules}
 \title{Load NFL Season Schedules}
 \usage{
-fast_scraper_schedules(seasons = TRUE)
+fast_scraper_schedules(...)
 }
 \arguments{
-\item{seasons}{a numeric vector of seasons to return, default \code{TRUE} returns all available data.}
+\item{...}{
+  Arguments passed on to \code{\link[nflreadr:load_schedules]{nflreadr::load_schedules}}
+  \describe{
+    \item{\code{seasons}}{a numeric vector of seasons to return, default \code{TRUE} returns all available data.}
+  }}
 }
 \value{
 A tibble of game information for past and/or future games.
 }
 \description{
 This returns game/schedule information as maintained by Lee Sharpe.
+}
+\details{
+See \code{\link[nflreadr:load_schedules]{nflreadr::load_schedules}} for details.
 }
 \examples{
 \donttest{
