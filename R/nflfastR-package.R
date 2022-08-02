@@ -112,7 +112,7 @@
 #' @importFrom future plan
 #' @importFrom glue glue glue_sql
 #' @importFrom janitor clean_names
-#' @importFrom lifecycle deprecated is_present deprecate_warn
+# @importFrom lifecycle deprecated is_present deprecate_warn
 #' @importFrom mgcv predict.bam
 #' @importFrom progressr progressor
 #' @importFrom rlang .data inform dots_list
