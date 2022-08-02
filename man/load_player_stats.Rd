@@ -4,7 +4,7 @@
 \alias{load_player_stats}
 \title{Load Player Level Weekly Stats}
 \usage{
-load_player_stats(..., qs = lifecycle::deprecated())
+load_player_stats(...)
 }
 \arguments{
 \item{...}{
@@ -15,9 +15,6 @@ load_player_stats(..., qs = lifecycle::deprecated())
     \item{\code{file_type}}{One of \code{c("rds", "qs", "csv", "parquet")}. Can also be set globally with
 \code{options(nflreadr.prefer)}}
   }}
-
-\item{qs}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} has no effect and will be
-removed in a future release.}
 }
 \value{
 A tibble of week-level player statistics that aims to match NFL official box scores.

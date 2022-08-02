@@ -7,6 +7,10 @@
 * The embedded data frame `?teams_colors_logos` has been updated to reflect the most recent team color themes and gained additional variables for conference and division as well as logo urls to the conference and league logos. (#290)
 * The embedded data frame `?teams_colors_logos` has been updated with the Washington Commanders. (#312)
 
+## Deprecation
+
+* The argument `qs` in the functions `load_pbp()` and `load_player_stats()` has been deprecated as of nflfastR 4.3.0. This release removes the argument entirely. 
+
 ## Bugfixes and Minor Improvements
 
 * Fixed bug where a player could be duplicated in `calculate_player_stats()` in very rare cases caused by plays with laterals. (#289)

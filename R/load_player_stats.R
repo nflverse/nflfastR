@@ -1,9 +1,6 @@
 #' @inherit nflreadr::load_player_stats
 #' @inheritDotParams nflreadr::load_player_stats
-#' @param qs `r lifecycle::badge("deprecated")` has no effect and will be
-#' removed in a future release.
 #' @param ... Arguments passed on to nflreadr::load_player_stats
-#'
 #' @seealso The function [calculate_player_stats()] and the corresponding examples
 #' on [the nflfastR website](https://www.nflfastr.com/articles/nflfastR.html#example-11-replicating-official-stats)
 #' @examples
@@ -12,14 +9,7 @@
 #' dplyr::glimpse(stats)
 #' }
 #' @export
-load_player_stats <- function(..., qs = lifecycle::deprecated()){
-  if (lifecycle::is_present(qs)) {
-    lifecycle::deprecate_warn(
-      when = "4.3.0",
-      what = "load_pbp(qs = )",
-      details = cli::cli_text("The {.val qs} argument is deprecated and replaced by {.val file_type} - see {.code ?nflreadr::load_player_stats} for details.")
-    )
-  }
+load_player_stats <- function(...){
 
   # if the dots are empty, we now have the same behavior like nflreadr which
   # differs from the previous versions where it was "load all seasons"
