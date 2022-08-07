@@ -69,7 +69,7 @@ For more information on possible plans please see
 \href{https://github.com/HenrikBengtsson/future/blob/develop/README.md}{the future package Readme}.
 
 For more information on \code{.Renviron} please see
-\href{https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf}{this RStudio article}.
+\href{https://rstats.wtf/r-startup.html}{this book chapter}.
 }
 
 \subsection{Get Progress Updates while Functions are Running}{
@@ -115,7 +115,7 @@ global progression handlers for all sessions.
 For more information how to work with progress handlers please see \link[progressr:progressr]{progressr::progressr}.
 
 For more information on \code{.Rprofile} please see
-\href{https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf}{this RStudio article}.
+\href{https://rstats.wtf/r-startup.html}{this book chapter}.
 }
 }
 

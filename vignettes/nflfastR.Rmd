@@ -374,7 +374,7 @@ Some other notes:
 Let's create measures for EPA and first downs over expected in 2015:
 
 ``` {r ex9-xyac, warning = FALSE, message = FALSE}
-nflfastR::load_pbp(2015, qs = TRUE) %>%
+nflfastR::load_pbp(2015) %>%
   dplyr::group_by(receiver, receiver_id, posteam) %>%
   dplyr::mutate(tgt = sum(complete_pass + incomplete_pass)) %>%
   dplyr::filter(tgt >= 50) %>%

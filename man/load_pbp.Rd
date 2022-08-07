@@ -4,7 +4,7 @@
 \alias{load_pbp}
 \title{Load Play By Play}
 \usage{
-load_pbp(..., qs = lifecycle::deprecated())
+load_pbp(...)
 }
 \arguments{
 \item{...}{
@@ -14,9 +14,6 @@ load_pbp(..., qs = lifecycle::deprecated())
     \item{\code{file_type}}{One of \code{c("rds", "qs", "csv", "parquet")}. Can also be set globally with
 \code{options(nflreadr.prefer)}}
   }}
-
-\item{qs}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} has no effect and will be
-removed in a future release.}
 }
 \value{
 The complete nflfastR dataset as returned by \code{nflfastR::build_nflfastR_pbp()}
