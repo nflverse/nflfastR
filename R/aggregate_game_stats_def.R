@@ -310,44 +310,43 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
   # get fumble stats for opponent recoveries
   fumble_df_opp <- data %>%
     dplyr::filter(fumble == 1 | fumble_lost == 1) %>%
-    dplyr::filter(defteam==fumble_recovery_1_team | defteam==fumble_recovery_2_team) %>%
-    dplyr::mutate(fumble_recovery_1_player_id = ifelse(defteam!=fumbled_1_team,fumble_recovery_1_player_id,NA),
-                  fumble_recovery_2_player_id = ifelse(defteam!=fumbled_2_team,fumble_recovery_2_player_id,NA)
+    dplyr::filter(
+      defteam == fumble_recovery_1_team |
+        defteam == fumble_recovery_2_team
+    ) %>%
+    dplyr::mutate(
+      fumble_recovery_1_player_id =
+        ifelse(defteam != fumbled_1_team, fumble_recovery_1_player_id, NA),
+      fumble_recovery_2_player_id =
+        ifelse(defteam != fumbled_2_team, fumble_recovery_2_player_id, NA)
     ) %>%
     dplyr::select(
-      tidyselect::starts_with("fumble_recovery_"),
+      "season", "week",
+      tidyselect::starts_with("fumble_recovery_") & tidyselect::ends_with("_id"),
       -(tidyselect::ends_with("_yards"))
     ) %>%
-    tidyr::pivot_longer(cols = c(
-      tidyselect::starts_with("fumble_recovery_"),
-    ),
-    names_to = "desc",
-    names_prefix = "fm_",
-    values_to = "fumble_player_id",
-    values_drop_na = TRUE
+    tidyr::pivot_longer(
+      cols = tidyselect::ends_with("_id"),
+      names_to = "desc",
+      names_prefix = "fm_",
+      values_to = "fumble_player_id",
+      values_drop_na = TRUE
     ) %>%
-    dplyr::filter(grepl("_id",desc)) %>%
-    dplyr::mutate(n = 1) %>%
+    dplyr::mutate(
+      n = 1,
+      desc = stringr::str_remove_all(.data$desc,"_player_id") %>%
+        stringr::str_remove_all("_[0-9]")
+    ) %>%
     tidyr::pivot_wider(
       names_from = desc,
       values_from = n,
-      values_fn = sum
+      values_fn = sum,
+      values_fill = 0
     ) %>%
-    dplyr::group_by(.data$fumble_player_id) %>%
-    dplyr::mutate(
-      fm_recovery_opp = sum(
-        data.frame(
-          .data$fumble_recovery_1_player_id,
-          .data$fumble_recovery_2_player_id
-        ), na.rm = TRUE
-      )) %>%
-    dplyr::select(
-      player_id = .data$fumble_player_id,
-      .data$fm_recovery_opp) %>%
-    dplyr::ungroup()
-
-  fumble_df_opp_nas <- is.na(fumble_df_opp)
-  fumble_df_opp[fumble_df_opp_nas] <- 0
+    dplyr::rename(
+      "player_id" = "fumble_player_id",
+      "fumble_recovery_opp" = "fumble_recovery"
+    )
 
   # get fumble yards for own recoveries
   fumble_yds_own_df <- data %>%
