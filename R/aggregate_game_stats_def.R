@@ -404,32 +404,30 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       .data$defteam == .data$penalty_team
     ) %>%
     dplyr::select(
-      "season","week","yards_gained","team" = "defteam",
-      tidyselect::contains("penalty_player_")
+      "season", "week", "yards_gained",
+      tidyselect::contains("penalty_player_") & tidyselect::ends_with("_id")
     ) %>%
-    tidyr::pivot_longer(cols = c(
-      tidyselect::contains("penalty_player_")
-    ),
-    names_to = "desc",
-    names_prefix = "penalty_",
-    values_to = "penalty_player_id",
-    values_drop_na = TRUE
+    tidyr::pivot_longer(
+      cols = c(
+        tidyselect::contains("penalty_player_")
+      ),
+      names_to = "desc",
+      names_prefix = "penalty_",
+      values_to = "penalty_player_id",
+      values_drop_na = TRUE
     ) %>%
-    dplyr::filter(grepl("_id",desc)) %>%
     dplyr::mutate(n = 1) %>%
     tidyr::pivot_wider(
       names_from = desc,
       values_from = n,
-      values_fn = sum
+      values_fn = sum,
+      values_fill = 0
     ) %>%
     dplyr::select(
-      player_id = penalty_player_id,
-      penalty = .data$player_id
-    ) %>%
-    dplyr::ungroup()
-
-  penalty_df_nas <- is.na(penalty_df)
-  penalty_df[penalty_df_nas] <- 0
+      "season", "week",
+      "player_id" = "penalty_player_id",
+      "penalty" = "player_id"
+    )
 
   # Touchdown stats -----------------------------------------------------------
 
