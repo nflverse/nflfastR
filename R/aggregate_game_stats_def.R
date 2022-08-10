@@ -237,7 +237,7 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       "team",
       "player_id" = "db_player_id",
       "int" = "n_interception",
-      "pass_defensed" = "n_pass_defense",
+      "pass_defended" = "n_pass_defense",
       "int_yards" = "return_yards_interception"
     )
 
@@ -343,7 +343,7 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
   fumble_yds_own_df <- fumble_yds_own_data %>%
     dplyr::group_by(
       .data$season, .data$week,
-      player_id = .data$fumble_recovery_1_player_id
+      "player_id" = .data$fumble_recovery_1_player_id
     ) %>%
     dplyr::summarise(recovery_yards = sum(.data$fumble_recovery_1_yards)) %>%
     dplyr::filter(!is.na(.data$player_id)) %>% ### this happens when a fumble goes out of bounds. Noone gets yards --> NA/NA
@@ -351,7 +351,7 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       fumble_yds_own_data %>%
         dplyr::group_by(
           .data$season, .data$week,
-          player_id = .data$fumble_recovery_2_player_id
+          "player_id" = .data$fumble_recovery_2_player_id
         ) %>%
         dplyr::summarise(recovery_yards = sum(.data$fumble_recovery_2_yards)) %>%
         dplyr::filter(!is.na(.data$player_id))
@@ -359,9 +359,6 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     dplyr::group_by(.data$season, .data$week, .data$player_id) %>%
     dplyr::summarise(fumble_recovery_yards_own = sum(.data$recovery_yards)) %>%
     dplyr::ungroup()
-
-  fumble_yds_own_df_nas <- is.na(fumble_yds_own_df)
-  fumble_yds_own_df[fumble_yds_own_df_nas] <- 0
 
   # get fumble yards for opp recoveries
   fumble_yds_opp_data <- data %>%
@@ -374,7 +371,7 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
   fumble_yds_opp_df <- fumble_yds_opp_data %>%
     dplyr::group_by(
       .data$season, .data$week,
-      player_id = .data$fumble_recovery_1_player_id
+      "player_id" = .data$fumble_recovery_1_player_id
     ) %>%
     dplyr::summarise(recovery_yards = sum(.data$fumble_recovery_1_yards)) %>%
     dplyr::filter(!is.na(.data$player_id)) %>%
@@ -382,7 +379,7 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       fumble_yds_opp_data %>%
         dplyr::group_by(
           .data$season, .data$week,
-          player_id = .data$fumble_recovery_2_player_id
+          "player_id" = .data$fumble_recovery_2_player_id
         ) %>%
         dplyr::summarise(recovery_yards = sum(.data$fumble_recovery_2_yards)) %>%
         dplyr::filter(!is.na(.data$player_id))
@@ -390,10 +387,6 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     dplyr::group_by(.data$season, .data$week, .data$player_id) %>%
     dplyr::summarise(fumble_recovery_yards_opp = sum(.data$recovery_yards)) %>%
     dplyr::ungroup()
-
-  fumble_yds_opp_df_nas <- is.na(fumble_yds_opp_df)
-  fumble_yds_opp_df[fumble_yds_opp_df_nas] <- 0
-
 
   # Penalty stats -----------------------------------------------------------
 
