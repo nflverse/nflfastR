@@ -293,16 +293,16 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
 
   # get fumble stats for opponent recoveries
   fumble_df_opp <- data %>%
-    dplyr::filter(fumble == 1 | fumble_lost == 1) %>%
+    dplyr::filter(.data$fumble == 1 | .data$fumble_lost == 1) %>%
     dplyr::filter(
-      defteam == fumble_recovery_1_team |
-        defteam == fumble_recovery_2_team
+      .data$defteam == .data$fumble_recovery_1_team |
+        .data$defteam == .data$fumble_recovery_2_team
     ) %>%
     dplyr::mutate(
       fumble_recovery_1_player_id =
-        ifelse(defteam != fumbled_1_team, fumble_recovery_1_player_id, NA),
+        ifelse(.data$defteam != .data$fumbled_1_team, .data$fumble_recovery_1_player_id, NA),
       fumble_recovery_2_player_id =
-        ifelse(defteam != fumbled_2_team, fumble_recovery_2_player_id, NA)
+        ifelse(.data$defteam != .data$fumbled_2_team, .data$fumble_recovery_2_player_id, NA)
     ) %>%
     dplyr::select(
       "season", "week",
