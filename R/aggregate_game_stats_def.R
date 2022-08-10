@@ -448,9 +448,9 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     dplyr::full_join(fumble_df_opp, by = c("season","week","player_id")) %>%
     dplyr::full_join(fumble_yds_own_df, by = c("season","week","player_id")) %>%
     dplyr::full_join(fumble_yds_opp_df, by = c("season","week","player_id")) %>%
-    # dplyr::full_join(penalty_df, by = c("player_id")) %>%
-    # dplyr::full_join(touchdown_df, by = c("player_id")) %>%
-    dplyr::mutate_if(is.numeric,tidyr::replace_na,0) %>%
+    dplyr::full_join(penalty_df, by = c("season","week","player_id")) %>%
+    dplyr::full_join(touchdown_df, by = c("season","week","player_id")) %>%
+    dplyr::mutate_if(is.numeric, tidyr::replace_na, 0) %>%
     dplyr::left_join(
       nflreadr::load_players() %>%
         dplyr::select(
@@ -466,16 +466,17 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       "season", "week",
 
       # id information
-      "player_id", "player_name", "recent_team", "position",
+      "player_id", "player_name", "team", "recent_team", "position",
 
       # tackle stats
-      "tkl", "tkl_solo", "tkl_with_assist", "assist", "tfl", "tfl_yards", "forced_fml",
+      "tackles", "tackles_solo", "tackles_with_assist", "tackle_assists",
+      "tackles_for_loss", "tackles_for_loss_yards" = "tfl_yards", "forced_fumbles",
 
       # pressure stats
-      "sk", "sack_yards", "qb_hit",
+      "sacks", "sack_yards", "qb_hit",
 
       # coverage stats
-      "INT", "PD",
+      "int", "pass_defended", "int_yards",
 
       # misc stats
       "td", "fumble", "fumble_recovery_own", "fumble_recovery_yards_own",
@@ -483,42 +484,43 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
 
     ))) %>%
     dplyr::filter(!is.na(.data$player_id), !is.na(.data$player_name)) %>%  ### player_name only because of Terell Bonds
-    dplyr::arrange(.data$season, .data$week, .data$player_id)
+    dplyr::arrange(.data$player_id, .data$season, .data$week)
 
-  player_df_nas <- is.na(player_df)
-  player_df[player_df_nas] <- 0
+  # if user doesn't want week-by-week input, aggregate the whole df
+  if (isFALSE(weekly)) {
+    player_df <- player_df %>%
+      dplyr::group_by(.data$player_id) %>%
+      dplyr::summarise(
+        player_name = custom_mode(.data$player_name),
+        games = dplyr::n(),
+        recent_team = dplyr::last(.data$team),
+        position = custom_mode(.data$position),
+        tackles = sum(.data$tackles),
+        tackles_solo = sum(.data$tackles_solo),
+        tackles_with_assist = sum(.data$tackles_with_assist),
+        tackle_assists = sum(.data$tackle_assists),
+        tackles_for_loss = sum(.data$tackles_for_loss),
+        tackles_for_loss_yards = sum(.data$tackles_for_loss_yards),
+        forced_fumbles = sum(.data$forced_fumbles),
+        sacks = sum(.data$sacks),
+        sack_yards = sum(.data$sack_yards),
+        qb_hit = sum(.data$qb_hit),
+        int = sum(.data$int),
+        int_yards = sum(.data$int_yards),
+        pass_defended = sum(.data$pass_defended),
+        td = sum(.data$td),
+        fumble = sum(.data$fumble),
+        fumble_recovery_own = sum(.data$fumble_recovery_own),
+        fumble_recovery_yards_own = sum(.data$fumble_recovery_yards_own),
+        fumble_recovery_opp = sum(.data$fumble_recovery_opp),
+        fumble_recovery_yards_opp = sum(.data$fumble_recovery_yards_opp),
+        safety = sum(.data$safety),
+        penalty = sum(.data$penalty)
+      ) %>%
+      dplyr::ungroup()
+  }
 
-  # player_df <- player_df %>%
-  # dplyr::mutate(
-  # fantasy_points_123 =
-  #   1 * (assist + tkl_with_assist + qb_hit) +
-  #   2 * (tkl_solo + tfl) +
-  #   3 * (PD + forced_fml + fm_recovery_own + fm_recovery_opp + safety) +
-  #   6 * (sk + INT + td)
-  # fantasy_points_mppr =
-  #   -4 * (fm) +
-  #   -0.5 * (sk) +
-  #   -0.2 * (penalty) + #usually penalty yards, need to add that
-  #   0.15 * (fm_recovery_yards_opp + fm_recovery_yards_own) +
-  #   0.2 * (sack_yards) +
-  #   1 * (qb_hit) +
-  #   2 * (tfl + safety) +
-  #   4 * (fm_recovery_own) +
-  #   5 * (fm_recovery_opp + td) +
-  #   6 * (forced_fml + INT) +
-  #   dplyr::case_when(position %in% c("DT","DE","LB","ILB","OLB") ~ 3 * PD,
-  #                                    position %in% c("CB","S","FS","SS") ~ 4 * PD,
-  #                                                    TRUE ~ 0) +
-  #   dplyr::case_when(position=="DT" ~ 2.5 * tkl_solo + 1.5 * tkl_with_assist + 1.5 * assist,
-  #                    position %in% c("DE","OLB") ~ 2 * tkl_solo + 1 * tkl_with_assist + 1 * assist,
-  #                    position %in% c("LB","ILB") ~ 1 * tkl_solo + 0.5 * tkl_with_assist + 0.5 * assist,
-  #                    position=="CB" ~ 1 * tkl_solo + 1 * tkl_with_assist + 1 * assist,
-  #                    position %in% c("S","FS","SS") ~ 1 * tkl_solo + 0.5 * tkl_with_assist + 0.5 * assist,
-  #                    TRUE ~ 0)
-  # ) %>%
-  # dplyr::arrange(.data$player_id)
-
-  return(player_df)
+  player_df
 }
 
 
