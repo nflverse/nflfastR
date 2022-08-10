@@ -426,15 +426,14 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
 
   # get defensive touchdowns
   touchdown_df <- data %>%
-    dplyr::filter(touchdown==1) %>%
-    dplyr::filter(defteam==td_team) %>%
-    dplyr::group_by(player_id=td_player_id) %>%
-    dplyr::summarise(td = sum(touchdown)) %>%
+    dplyr::filter(.data$touchdown == 1) %>%
+    dplyr::filter(.data$defteam == .data$td_team) %>%
+    dplyr::group_by(
+      .data$season, .data$week,
+      "player_id" = .data$td_player_id
+    ) %>%
+    dplyr::summarise(td = sum(.data$touchdown)) %>%
     dplyr::ungroup()
-
-  touchdown_df_nas <- is.na(touchdown_df)
-  touchdown_df[touchdown_df_nas] <- 0
-
 
   # Combine all stats -------------------------------------------------------
 
