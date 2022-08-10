@@ -53,7 +53,7 @@
 #' [the future package Readme](https://github.com/HenrikBengtsson/future/blob/develop/README.md).
 #'
 #' For more information on `.Renviron` please see
-#' [this RStudio article](https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf).
+#' [this book chapter](https://rstats.wtf/r-startup.html).
 #'
 #' ## Get Progress Updates while Functions are Running
 #'
@@ -96,7 +96,7 @@
 #' For more information how to work with progress handlers please see [progressr::progressr].
 #'
 #' For more information on `.Rprofile` please see
-#' [this RStudio article](https://support.rstudio.com/hc/en-us/articles/360047157094-Managing-R-with-Rprofile-Renviron-Rprofile-site-Renviron-site-rsession-conf-and-repos-conf).
+#' [this book chapter](https://rstats.wtf/r-startup.html).
 #'
 "_PACKAGE"
 
@@ -106,12 +106,13 @@
 #' @import dplyr
 #' @importFrom cli rule
 #' @importFrom curl curl_fetch_memory
+#' @importFrom data.table setDT
 #' @import fastrmodels
 #' @importFrom furrr future_map_chr future_map_dfr future_map
 #' @importFrom future plan
 #' @importFrom glue glue glue_sql
 #' @importFrom janitor clean_names
-#' @importFrom lifecycle deprecated is_present deprecate_warn
+# @importFrom lifecycle deprecated is_present deprecate_warn
 #' @importFrom mgcv predict.bam
 #' @importFrom progressr progressor
 #' @importFrom rlang .data inform dots_list

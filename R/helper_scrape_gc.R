@@ -34,7 +34,7 @@ get_pbp_gc <- function(gameId, dir = NULL, qs = FALSE) {
       season <- as.integer(substr(gameId, 1, 4))
 
       if (is.null(dir)) {
-        path <- "https://raw.githubusercontent.com/guga31bb/nflfastR-raw/master/raw"
+        path <- "https://raw.githubusercontent.com/nflverse/nflfastR-raw/master/raw"
 
         if(isFALSE(qs)) fetched <- curl::curl_fetch_memory(glue::glue("{path}/{season}/{gameId}.rds"))
 
@@ -261,6 +261,29 @@ get_pbp_gc <- function(gameId, dir = NULL, qs = FALSE) {
           drive_play_seq_ended = max(.data$play_id, na.rm = TRUE)
         ) %>%
         dplyr::ungroup()
+
+      # missing space in side of field breaks parser
+      if (gameId %in% c('2000_01_CAR_WAS', '2000_02_NE_NYJ', '2000_03_ATL_CAR')) {
+        combined <- combined %>%
+          dplyr::mutate(
+            yardline_number = case_when(
+              .data$yardline %in% c("WAS20", "NYJ20", "ATL20") ~ 20,
+              TRUE ~ .data$yardline_number
+            ),
+            yardline = case_when(
+              .data$yardline == "WAS20" ~ "WAS 20",
+              .data$yardline == "NYJ20" ~ "NYJ 20",
+              .data$yardline == "ATL20" ~ "ATL 20",
+              TRUE ~ .data$yardline
+            ),
+            yardline_side = case_when(
+              .data$yardline_side == "WAS20" ~ "WAS",
+              .data$yardline_side == "NYJ20" ~ "NYJ",
+              .data$yardline_side == "ATL20" ~ "ATL",
+              TRUE ~ .data$yardline_side
+            )
+          )
+      }
     },
     error = function(e) {
       message("The following error has occured:")

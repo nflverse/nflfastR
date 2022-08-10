@@ -4,9 +4,6 @@
 # Code Style Guide: styler::tidyverse_style()
 ################################################################################
 
-# For now those functions are only a call to nflscrapR but we may want to
-# use other models and epa wpa definitions. This is the place where this
-# could happen
 add_ep <- function(pbp) {
   out <- pbp %>% add_ep_variables()
   user_message("added ep variables", "done")
@@ -86,8 +83,17 @@ add_air_yac_wp <- function(pbp) {
 }
 
 #get predictions for a set of pbp data
-#for predict stage
+#for predict stage of EP
 get_preds <- function(pbp) {
+
+  if ("location" %in% names(pbp)) {
+
+    pbp <- pbp %>%
+      dplyr::mutate(
+        home = dplyr::if_else(.data$location == "Neutral", 0, .data$home)
+      )
+
+  }
 
   preds <- as.data.frame(
     matrix(stats::predict(fastrmodels::ep_model, as.matrix(pbp %>% ep_model_select())), ncol=7, byrow=TRUE)
@@ -500,6 +506,11 @@ add_ep_variables <- function(pbp_data) {
                   ) %>%
     # Create columns with cumulative epa totals for both teams:
     dplyr::mutate(
+                  # helper for end of game
+                  end_game = ifelse(
+                    stringr::str_detect(tolower(.data$desc), "(end of game)|(end game)"),
+                    1, 0
+                  ),
 
                   # Change epa for plays occurring at end of half with no scoring
                   # plays to be just the difference between 0 and starting ep:
@@ -509,14 +520,18 @@ add_ep_variables <- function(pbp_data) {
                                           (.data$qtr == 4 &
                                              (dplyr::lead(.data$qtr) == 5 |
                                                 dplyr::lead(.data$desc) == "END QUARTER 4" |
-                                                dplyr::lead(.data$desc) == "END GAME"))) &
+                                                dplyr::lead(.data$end_game) == 1))) &
                                          .data$sp == 0 &
                                          !is.na(.data$play_type),
                                        0 - .data$ep, .data$epa),
+                  # last play of OT
+                  epa = dplyr::if_else(.data$qtr > 4 & dplyr::lead(.data$end_game) == 1 & .data$sp == 0,
+                                       0 - .data$ep,
+                                       .data$epa),
                   epa = dplyr::if_else(.data$desc == "END QUARTER 2", NA_real_, .data$epa),
-                  epa = dplyr::if_else(.data$desc == "GAME", NA_real_, .data$epa),
+                  epa = dplyr::if_else(.data$end_game == 1, NA_real_, .data$epa),
                   ep = dplyr::if_else(.data$desc == "END QUARTER 2", NA_real_, .data$ep),
-                  ep = dplyr::if_else(.data$desc == "GAME", NA_real_, .data$ep),
+                  ep = dplyr::if_else(.data$end_game == 1, NA_real_, .data$ep),
                   home_team_epa = dplyr::if_else(.data$posteam == .data$home_team,
                                                  .data$epa, -.data$epa),
                   away_team_epa = dplyr::if_else(.data$posteam == .data$away_team,

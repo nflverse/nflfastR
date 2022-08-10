@@ -83,7 +83,7 @@ add_xyac <- function(pbp, ...) {
             .data$yac == .data$max_gain ~ 1 - dplyr::lag(.data$cum_prob, 1),
             TRUE ~ .data$prob
           ),
-          # get end result for each possibility
+          # get updated end result for each possibility
           yardline_100 = .data$distance_to_goal - .data$yac
         ) %>%
         dplyr::filter(.data$yac >= .data$max_loss, .data$yac <= .data$max_gain) %>%
@@ -98,7 +98,9 @@ add_xyac <- function(pbp, ...) {
           # possession change if 4th down failed
           down = dplyr::if_else(.data$turnover == 1, as.integer(1), as.integer(.data$down)),
           ydstogo = dplyr::if_else(.data$turnover == 1, as.integer(10), as.integer(.data$ydstogo)),
-          # flip yardline_100 and timeouts for turnovers
+          # save yardline_100 for yards gained calculation
+          yardline_100_noflip = .data$yardline_100,
+          # flip yardline_100 and timeouts for turnovers for EP calculation
           yardline_100 = dplyr::if_else(.data$turnover == 1, as.integer(100 - .data$yardline_100), as.integer(.data$yardline_100)),
           posteam_timeouts_remaining = dplyr::if_else(
             .data$turnover == 1,
@@ -124,7 +126,7 @@ add_xyac <- function(pbp, ...) {
           ),
           epa = .data$ep - .data$original_ep,
           wt_epa = .data$epa * .data$prob,
-          wt_yardln = .data$yardline_100 * .data$prob,
+          wt_yardln = .data$yardline_100_noflip * .data$prob,
           med = dplyr::if_else(
             cumsum(.data$prob) > .5 & dplyr::lag(cumsum(.data$prob) < .5), .data$yac, as.integer(0)
           )
@@ -169,7 +171,7 @@ prepare_xyac_data <- function(pbp) {
     make_model_mutations() %>%
     dplyr::mutate(
       receiver_player_name =
-        stringr::str_extract(.data$desc, "(?<=((to)|(for))\\s[:digit:]{0,2}\\-{0,1})[A-Z][A-z]*\\.\\s?[A-Z][A-z]+(\\s(I{2,3})|(IV))?"),
+        stringr::str_extract(.data$desc, glue::glue('{receiver_finder}{big_parser}')),
       pass_middle = dplyr::if_else(.data$pass_location == "middle", 1, 0),
       air_is_zero = dplyr::if_else(.data$air_yards == 0, 1, 0),
       distance_to_sticks = .data$air_yards - .data$ydstogo,
