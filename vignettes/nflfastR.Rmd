@@ -10,6 +10,7 @@ knitr::opts_chunk$set(
 )
 future::plan("multisession")
 options(dplyr.summarise.inform = FALSE)
+options(nflreadr.verbose = FALSE)
 ```
 
 If you are new to R or are having trouble understanding the code in the below sections we highly recommend the **nflfastR beginner's guide** in `vignette("beginners_guide")`.
@@ -31,13 +32,13 @@ pbp <- nflfastR::build_nflfastR_pbp(ids)
 
 In most cases, however, it is not necessary to use this function for individual games, because nflfastR provides both a [data repository](https://github.com/nflverse/nflfastR-data) and two main play-by-play functions: `load_pbp()` and `update_db()`. We cover `load_pbp()` below, and please see [Example 8: Using the built-in database function] for how to work with the database function `update_db()`.
 
-The easiest way to access the data in the data repository is the new function `load_pbp()`. It can load multiple seasons directly into memory and supports the efficient data format [`qs`](https://github.com/traversc/qs). Loading all play-by-play data of the 2018-2020 seasons is as easy as 
+The easiest way to access the data in the data repository is the new function `load_pbp()`. It can load multiple seasons directly into memory and supports multiple data formats. Loading all play-by-play data of the 2018-2020 seasons is as easy as 
 
 ```{r}
-pbp <- nflfastR::load_pbp(2018:2020, qs = TRUE)
+pbp <- nflfastR::load_pbp(2018:2020)
 ```
 
-If you don't care to install `qs` for whatever reason, omit `qs = TRUE` from the above and it will work without it. Joining roster data to the play-by-play dataset is possible as well. The data can be accessed with the function `fast_scraper_roster()` and its application is demonstrated in [Example 10: Working with roster and position data].
+Joining roster data to the play-by-play data set is possible as well. The data can be accessed with the function `fast_scraper_roster()` and its application is demonstrated in [Example 10: Working with roster and position data].
 
 # Application Examples
 
@@ -48,17 +49,17 @@ library(nflfastR)
 library(tidyverse)
 ```
 
-# Example 1: replicate nflscrapR with fast_scraper
+## Example 1: replicate nflscrapR with fast_scraper
 
 The functionality of `nflscrapR` can be duplicated by using `fast_scraper()`. This obtains the same information contained in `nflscrapR` (plus some extra) but much more quickly. To compare to `nflscrapR`, we use their data repository as the program no longer functions now that the NFL has taken down the old Gamecenter feed. Note that EP differs from nflscrapR as we use a newer era-adjusted model (more on this in [this post on Open Source Football](https://www.opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/)).
 
 This example also uses the built-in function `clean_pbp()` to create a 'name' column for the primary player involved (the QB on pass play or ball-carrier on run play).
 
 ``` {r ex1-nflscrapR, warning = FALSE, message = FALSE}
-readr::read_csv(url("https://github.com/ryurko/nflscrapR-data/blob/master/play_by_play_data/regular_season/reg_pbp_2019.csv?raw=true")) %>%
+readr::read_csv("https://github.com/ryurko/nflscrapR-data/blob/master/play_by_play_data/regular_season/reg_pbp_2019.csv?raw=true") %>%
   dplyr::filter(home_team == "SF" & away_team == "SEA") %>%
   dplyr::select(desc, play_type, ep, epa, home_wp) %>%
-  utils::head(5) %>%
+  utils::head(6) %>%
   knitr::kable(digits = 3)
 ```
 
@@ -70,7 +71,7 @@ nflfastR::fast_scraper("2019_10_SEA_SF") %>%
   knitr::kable(digits = 3)
 ```
 
-# Example 2: scrape a batch of games very quickly with fast_scraper
+## Example 2: scrape a batch of games very quickly with fast_scraper
 
 This is a demonstration of `nflfastR`'s capabilities. While `nflfastR` can scrape a batch of games very quickly, **please be respectful of Github's servers and use the [data repository](https://github.com/nflverse/nflfastR-data) which hosts all the scraped and cleaned data** whenever possible. The only reason to ever actually use the scraper is if it's in the middle of the season and we haven't updated the repository with recent games (but it is automatically updated overnight every day).
 
@@ -84,7 +85,7 @@ f <- nflfastR::fast_scraper(games_2019)
 tictoc::toc()
 ```
 
-# Example 3: Completion Percentage Over Expected (CPOE)
+## Example 3: Completion Percentage Over Expected (CPOE)
 
 Let's look at CPOE leaders from the 2009 regular season.
 
@@ -104,12 +105,12 @@ games_2009 %>%
   knitr::kable(digits = 1)
 ```
 
-# Example 4: Using Drive Information
+## Example 4: Using Drive Information
 
 When working with `nflfastR`, drive results are automatically included. We use `fixed_drive` and `fixed_drive_result` since the NFL-provided information is a bit wonky. Let's look at how much more likely teams were to score starting from 1st & 10 at their own 20 yard line in 2015 (the last year before touchbacks on kickoffs changed to the 25) than in 2000.
 
 ``` {r ex4, warning = FALSE, message = FALSE}
-pbp <- nflfastR::load_pbp(c(2003, 2015), qs = TRUE)
+pbp <- nflfastR::load_pbp(c(2003, 2015))
 
 out <- pbp %>%
   dplyr::filter(season_type == "REG" & down == 1 & ydstogo == 10 & yardline_100 == 80) %>%
@@ -123,32 +124,29 @@ out %>%
 
 So `r scales::percent(out$drive_score[1], accuracy = 0.1)` of 1st & 10 plays from teams' own 20 would see the drive end up in a score in 2003, compared to `r scales::percent(out$drive_score[2], accuracy = 0.1)` in 2015. This has implications for Expected Points models (see [this article](https://www.opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/)).
 
-# Example 5: Plot offensive and defensive EPA per play for a given season
+## Example 5: Plot offensive and defensive EPA per play for a given season
 
-Let's build the **[NFL team tiers](https://rbsdm.com/stats/stats/)** using offensive and defensive expected points added per play for the 2005 regular season. The logo urls of the espn logos are integrated into the `?teams_colors_logos` data frame which is delivered with the package. 
+Let's build the **[NFL team tiers](https://rbsdm.com/stats/stats/)** using offensive and defensive expected points added per play for the 2005 regular season. Creating data viz including NFL team logos (or wordmarks, or headshots), we recommend the nflverse R package [nflplotR](https://nflplotr.nflverse.com).
 
 When using `load_pbp()`, the helper function `clean_pbp()` has already been run, which creates "rush" and "pass" columns that (a) properly count sacks and scrambles as pass plays and (b) properly include plays with penalties. Using this, we can keep only rush or pass plays.
 
 ```{r ex5, warning = FALSE, message = FALSE, results = 'hide', fig.keep = 'all', dpi = 600}
-library(ggimage)
-pbp <- nflfastR::load_pbp(2005, qs = TRUE) %>%
+library(nflplotR)
+pbp <- nflfastR::load_pbp(2005) %>%
   dplyr::filter(season_type == "REG") %>%
   dplyr::filter(!is.na(posteam) & (rush == 1 | pass == 1))
 offense <- pbp %>%
-  dplyr::group_by(posteam) %>%
+  dplyr::group_by(team = posteam) %>%
   dplyr::summarise(off_epa = mean(epa, na.rm = TRUE))
 defense <- pbp %>%
-  dplyr::group_by(defteam) %>%
+  dplyr::group_by(team = defteam) %>%
   dplyr::summarise(def_epa = mean(epa, na.rm = TRUE))
-logos <- teams_colors_logos %>% dplyr::select(team_abbr, team_logo_espn)
 offense %>%
-  dplyr::inner_join(defense, by = c("posteam" = "defteam")) %>%
-  dplyr::inner_join(logos, by = c("posteam" = "team_abbr")) %>%
+  dplyr::inner_join(defense, by = "team") %>%
   ggplot2::ggplot(aes(x = off_epa, y = def_epa)) +
   ggplot2::geom_abline(slope = -1.5, intercept = c(.4, .3, .2, .1, 0, -.1, -.2, -.3), alpha = .2) +
-  ggplot2::geom_hline(aes(yintercept = mean(off_epa)), color = "red", linetype = "dashed") +
-  ggplot2::geom_vline(aes(xintercept = mean(def_epa)), color = "red", linetype = "dashed") +
-  ggimage::geom_image(aes(image = team_logo_espn), size = 0.05, asp = 16 / 9) +
+  nflplotR::geom_mean_lines(aes(h_var = off_epa, v_var = def_epa)) +
+  nflplotR::geom_nfl_logos(aes(team_abbr = team), width = 0.07, alpha = 0.7) +
   ggplot2::labs(
     x = "Offense EPA/play",
     y = "Defense EPA/play",
@@ -157,13 +155,12 @@ offense %>%
   ) +
   ggplot2::theme_bw() +
   ggplot2::theme(
-    aspect.ratio = 9 / 16,
     plot.title = ggplot2::element_text(size = 12, hjust = 0.5, face = "bold")
   ) +
   ggplot2::scale_y_reverse()
 ```
 
-# Example 6: Expected Points calculator
+## Example 6: Expected Points calculator
 
 We have provided a calculator for working with the Expected Points model. Here is an example of how to use it, looking for how the Expected Points on a drive beginning following a touchback has changed over time.
 
@@ -212,8 +209,8 @@ nflfastR::calculate_expected_points(data) %>%
 
 So for 2018 and 2019, 1st & 10 from a home team's own 25 yard line had higher EP in domes than at home, which is to be expected.
 
+## Example 7: Win probability calculator
 
-# Example 7: Win probability calculator
 We have also provided a calculator for working with the win probability models. Here is an example of how to use it, looking for how the win probability to begin the game depends on the pre-game spread.
 
 While I have put in `'SEA'` for `home_team` and `posteam`, this only matters for figuring out whether the team with the ball is the home team (there's no actual effect for given team; it would be the same no matter what team is supplied).
@@ -240,7 +237,7 @@ nflfastR::calculate_win_probability(data) %>%
 
 Not surprisingly, `vegas_wp` increases with the amount a team was coming into the game favored by.
 
-# Example 8: Using the built-in database function
+## Example 8: Using the built-in database function
 
 If you're comfortable using `dplyr` functions to manipulate and tidy data, you're ready to use a database. Why should you use a database?
 
@@ -248,9 +245,9 @@ If you're comfortable using `dplyr` functions to manipulate and tidy data, you'r
 * Play-by-play data over 20+ seasons takes up a lot of memory: working with a database allows you to only bring into memory what you actually need
 * R makes it *extremely* easy to work with databases.
 
-## Start: install and load packages
+### Start: install and load packages
 
-To start, we need to install the two packages required for this that aren't installed automatically when `nflfastR` installs: `DBI` and `RSQLite` (advanced users can use other types of databases, but this example will use SQLite. The `if` statements make sure the packages won't be updated if they are already installed):
+To start, we need to install the two packages required for this that aren't installed automatically when `nflfastR` installs: `DBI` and `RSQLite` (advanced users can use other types of databases, but this example will use SQLite). The `if` statements make sure the packages won't be updated if they are already installed:
 
 ``` {r eval = FALSE}
 if (!require("DBI")) install.packages("DBI")
@@ -264,7 +261,7 @@ library(DBI)
 library(RSQLite)
 ```
 
-## Build database
+### Build database
 
 There's exactly one function in `nflfastR` that works with databases: `update_db()`. Some notes:
 
@@ -296,7 +293,7 @@ If it's partway through a season and you want to re-build a season to allow for 
 nflfastR::update_db(force_rebuild = 2020)
 ```
 
-## Connect to database
+### Connect to database
 
 Now we can make a connection to the database. This is the only part that will look a little bit foreign, but all you need to know is where your database is located. If it's in your current working directory, this will work:
 
@@ -354,9 +351,9 @@ So we've searched through about 1 million rows of data across 300+ columns and o
 DBI::dbDisconnect(connection)
 ```
 
-For more details on using a database with `nflfastR`, see [Thomas Mock's life-changing post here](https://themockup.blog/posts/2019-04-28-nflfastr-dbplyr-rsqlite/).
+For more details on using a database with `nflfastR`, see [Thomas Mock's life-changing post here](https://themockup.blog/posts/2019-04-28-nflfastr-dbplyr-rsqlite/). More detailed information on dbplyr (the dplyr database back-end) are given in the second edition of [Hadley Wickham's R for Data Science (2e)](https://r4ds.hadley.nz/import-databases.html).
 
-# Example 9: working with the expected yards after catch model
+## Example 9: working with the expected yards after catch model
 
 The variables in `xyac` are as follows:
 
@@ -377,7 +374,7 @@ Some other notes:
 Let's create measures for EPA and first downs over expected in 2015:
 
 ``` {r ex9-xyac, warning = FALSE, message = FALSE}
-nflfastR::load_pbp(2015, qs = TRUE) %>%
+nflfastR::load_pbp(2015) %>%
   dplyr::group_by(receiver, receiver_id, posteam) %>%
   dplyr::mutate(tgt = sum(complete_pass + incomplete_pass)) %>%
   dplyr::filter(tgt >= 50) %>%
@@ -398,7 +395,7 @@ nflfastR::load_pbp(2015, qs = TRUE) %>%
 
 The presence of so many running backs on this list suggests that even though it takes into account target depth and pass direction, the model doesn't do a great job capturing space. Alternatively, running backs might be better at generating yards after the catch since running with the football is their primary role.
 
-# Example 10: Working with roster and position data
+## Example 10: Working with roster and position data
 
 At long last, there's a way to merge the new play-by-play data with roster information. Use the function to get the rosters:
 
@@ -445,11 +442,11 @@ joined %>%
 
 Not surprisingly, all 5 of the top 5 WRs in terms of EPA added come in ahead of the top RB. Note that the number of targets won't match official stats because we're including plays with penalties.
 
-# Example 11: Replicating official stats
+## Example 11: Replicating official stats
 
 The columns like `name`, `passer`, `fantasy` etc are `nflfastR`-created columns that mimic "real" football: i.e., excluding plays with spikes, counting scrambles and sacks as pass plays, etc. But if you're trying to replicate official statistics -- perhaps for fantasy purposes -- use the `*_player_name` and `*_player_id` columns.
 
-## Leaderboards
+### Leaderboards
 
 [Let's try to replicate this page of passing leaders](https://www.nfl.com/stats/player-stats/).
 
@@ -470,7 +467,7 @@ nflfastR::load_pbp(2020) %>%
 
 These match the official stats on NFL.com (note the filter for `season_type == "REG"` since official stats only count regular season games). Note that we're using `passing_yards` here because `yards_gained` is not equal to passing yards on plays with laterals.
 
-While the above works, we've also provided a function that does this all for you: `calculate_player_stats()`. This function takes an `nflfastR` play-by-play dataframe as an input along with one other argument, `weekly`, which defaults to FALSE. When `weekly` is true, a week-by-week dataframe is returned (rather than an aggregate over the whole provided dataframe). Let's again replicate the top 10 players in passing yards:
+While the above works, we've also provided a function that does this all for you: `calculate_player_stats()`. This function takes an `nflfastR` play-by-play dataframe as an input along with one other argument, `weekly`, which defaults to `FALSE`. When `weekly` is true, a week-by-week dataframe is returned (rather than an aggregate over the whole provided dataframe). Let's again replicate the top 10 players in passing yards:
 
 ``` {r stats2}
 nflfastR::load_pbp(2020) %>%
@@ -496,7 +493,7 @@ nflfastR::load_pbp(2020) %>%
 
 Again, this matches up exactly.
 
-## Yards from scrimmage
+### Yards from scrimmage
 
 What if we want total yards from scrimmage? We'll demonstrate three methods here. The hardest way is to use the `fantasy_player_name` column, which is the rusher on rush plays and receiver on receiving plays:
 
@@ -537,11 +534,11 @@ nflfastR::load_pbp(2020) %>%
 
 And we get the same thing.
 
-The third way is to use the `load_player_stats()` function, which loads a data frame of player-level stats for every week since 1999.
+The third way is to use the `load_player_stats()` function, which can load a data frame of player-level stats for every week since 1999.
 
 ``` {r stats_fantasy3}
-nflfastR::load_player_stats() %>%
-  dplyr::filter(season == 2020, week <= 17) %>%
+nflfastR::load_player_stats(seasons = 2020) %>%
+  dplyr::filter(season_type == "REG") %>%
   dplyr::group_by(player_id) %>%
   dplyr::summarize(
     player_name = dplyr::first(player_name),
@@ -561,7 +558,7 @@ nflfastR::load_player_stats() %>%
 
 And again the output is identical.
 
-## Fantasy points
+### Fantasy points
 
 Let's calculate PPR fantasy points per game in the first 16 weeks of the season among wide receivers who appeared in more than 5 games.
 
@@ -572,11 +569,13 @@ nflfastR::load_pbp(2020) %>%
   dplyr::mutate(
     ppg = fantasy_points_ppr / games
   ) %>%
-  filter(games > 5) %>%
+  dplyr::filter(games > 5) %>%
   # only keep the WRs
-  inner_join(
-    nflfastR::fast_scraper_roster(2020) %>% filter(position == "WR") %>% select(gsis_id),
-    by = c("player_id" = "gsis_id")
+  dplyr::inner_join(
+    nflfastR::fast_scraper_roster(2020) %>% 
+      dplyr::filter(position == "WR") %>% 
+      dplyr::select(player_id = gsis_id),
+    by = "player_id"
   ) %>%
   dplyr::arrange(-ppg) %>%
   dplyr::select(player_name, recent_team, games, fantasy_points_ppr, ppg) %>%

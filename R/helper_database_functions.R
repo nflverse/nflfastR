@@ -56,15 +56,15 @@ update_db <- function(dbdir = getOption("nflfastR.dbdirectory", default = "."),
 
   if (!is_installed("DBI") | !is_installed("purrr") |
       (!is_installed("RSQLite") & is.null(db_connection))) {
-    cli::cli_abort("{my_time()} | Packages {.val DBI}, {.val RSQLite} and {.val purrr} required for database communication. Please install them.")
+    cli::cli_abort("{my_time()} | Packages {.pkg DBI}, {.pkg RSQLite} and {.pkg purrr} required for database communication. Please install them.")
   }
 
   if (any(force_rebuild == "NEW")) {
-    cli::cli_abort("{my_time()} | The argument {.val force_rebuild = NEW} is only for internal usage!")
+    cli::cli_abort("{my_time()} | The argument {.arg force_rebuild = NEW} is only for internal usage!")
   }
 
   if (!(is.logical(force_rebuild) | is.numeric(force_rebuild))) {
-    cli::cli_abort("{my_time()} | The argument {.val force_rebuild} has to be either logical or numeric!")
+    cli::cli_abort("{my_time()} | The argument {.arg force_rebuild} has to be either logical or numeric!")
   }
 
   if (!dir.exists(dbdir) & is.null(db_connection)) {
@@ -73,7 +73,7 @@ update_db <- function(dbdir = getOption("nflfastR.dbdirectory", default = "."),
   }
 
   if (is.null(db_connection)) {
-    connection <- DBI::dbConnect(RSQLite::SQLite(), glue::glue("{dbdir}/{dbname}"))
+    connection <- DBI::dbConnect(RSQLite::SQLite(), file.path(dbdir, dbname))
   } else {
     connection <- db_connection
   }
@@ -114,6 +114,16 @@ update_db <- function(dbdir = getOption("nflfastR.dbdirectory", default = "."),
     }
   }
 
+  # Remove default play which is just a helper to define columns correctly
+  DBI::dbExecute(
+    connection,
+    glue::glue_sql(
+      "DELETE FROM {`tblname`} WHERE game_id IN ({vals*})",
+      vals = "9999_99_DEF_TYP",
+      .con = connection
+      )
+    )
+
   message_completed("Database update completed", in_builder = TRUE)
   cli::cli_alert_info("{my_time()} | Path to your db: {.file {DBI::dbGetInfo(connection)$dbname}}")
   if (is.null(db_connection)) DBI::dbDisconnect(connection)
@@ -130,23 +140,33 @@ build_db <- function(tblname = "nflfastR_pbp", db_conn, rebuild = FALSE, show_me
     dplyr::ungroup()
 
   if (all(rebuild == TRUE)) {
-    cli::cli_ul("{my_time()} | Purging the complete data table {.val {tblname}} in your connected database...")
+    cli::cli_ul("{my_time()} | Purging the complete data table {.val {tblname}}
+                in your connected database...")
     DBI::dbRemoveTable(db_conn, tblname)
     seasons <- valid_seasons %>% dplyr::pull("season")
-    cli::cli_ul("{my_time()} | Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}...")
+    cli::cli_ul("{my_time()} | Starting download of {length(seasons)} seasons
+                between {min(seasons)} and {max(seasons)}...")
   } else if (is.numeric(rebuild) & all(rebuild %in% valid_seasons$season)) {
-    string <- paste0(rebuild, collapse = ", ")
-    if (show_message){cli::cli_ul("{my_time()} | Purging {string} season(s) from the data table {.val {tblname}} in your connected database...")}
+    # s <- glue::glue_collapse(rebuild, sep = ", ", last = ", and ")
+    # string <- stringr::str_c(stringr::str_sub(s, 1, 11), "...", stringr::str_sub(s, -16, -1))
+    if (show_message){cli::cli_ul("{my_time()} | Purging
+                                  {cli::qty(length(rebuild))}season{?s} {rebuild}
+                                  from the data table {.val {tblname}} in your
+                                  connected database...")}
     DBI::dbExecute(db_conn, glue::glue_sql("DELETE FROM {`tblname`} WHERE season IN ({vals*})", vals = rebuild, .con = db_conn))
     seasons <- valid_seasons %>% dplyr::filter(.data$season %in% rebuild) %>% dplyr::pull("season")
-    cli::cli_ul("{my_time()} | Starting download of the {string} season(s)...")
+    cli::cli_ul("{my_time()} | Starting download of the {length(rebuild)}
+                season{?s} {rebuild}")
   } else if (all(rebuild == "NEW")) {
-    cli::cli_alert_info("{my_time()} | Can't find the data table {.val {tblname}} in your database. Will load the play by play data from scratch.")
+    cli::cli_alert_info("{my_time()} | Can't find the data table {.val {tblname}}
+                        in your database. Will load the play by play data from
+                        scratch.")
     seasons <- valid_seasons %>% dplyr::pull("season")
-    cli::cli_ul("{my_time()} | Starting download of {length(seasons)} seasons between {min(seasons)} and {max(seasons)}...")
+    cli::cli_ul("{my_time()} | Starting download of {length(seasons)} seasons
+                between {min(seasons)} and {max(seasons)}...")
   } else {
     seasons <- NULL
-    cli::cli_alert_danger("{my_time()} | At least one invalid value passed to argument {.val force_rebuild}. Please try again with valid input.")
+    cli::cli_alert_danger("{my_time()} | At least one invalid value passed to argument {.arg force_rebuild}. Please try again with valid input.")
   }
 
   if (!is.null(seasons)) {
@@ -160,12 +180,13 @@ build_db <- function(tblname = "nflfastR_pbp", db_conn, rebuild = FALSE, show_me
 get_missing_games <- function(completed_games, dbConnection, tablename) {
   db_ids <- dplyr::tbl(dbConnection, tablename) %>%
     dplyr::select("game_id") %>%
+    dplyr::filter(.data$game_id != "9999_99_DEF_TYP") %>%
     dplyr::distinct() %>%
     dplyr::collect() %>%
     dplyr::pull("game_id")
 
-  need_scrape <- completed_games[!completed_games %in% db_ids]
+  need_scrape <- completed_games[!completed_games %in% c(db_ids, "9999_99_DEF_TYP")]
 
-  cli::cli_alert_info("{my_time()} | You have {length(db_ids)} games and are missing {length(need_scrape)}.")
+  cli::cli_alert_info("{my_time()} | You have {length(db_ids)} game{?s} and are missing {length(need_scrape)}.")
   return(need_scrape)
 }

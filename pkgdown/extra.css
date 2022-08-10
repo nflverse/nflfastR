@@ -1,0 +1,15 @@
+/*
+Check: https://www.w3schools.com/css/css_rwd_mediaqueries.asp
+for Responsive Web Design - Media Queries
+*/
+.row > main {
+  max-width: 100%;
+}
+
+@media only screen and (min-width: 640px) {
+  main + .col-md-3 {
+    margin-left: unset;
+    padding-left: 5rem;
+    max-width: 75%;
+  }
+}

@@ -17,7 +17,7 @@ build_nflfastR_pbp(game_ids, ..., decode = TRUE, rules = TRUE)
 \item{rules}{If \code{FALSE}, printing of the header and footer in the console output will be suppressed.}
 }
 \value{
-An nflfastR play-by-play data frame like it can be loaded from \url{https://github.com/nflverse/nflfastR-data}.
+An nflfastR play-by-play data frame like it can be loaded from \url{https://github.com/nflverse/nflverse-data}.
 }
 \description{
 \code{build_nflfastR_pbp} is a convenient wrapper around 6 nflfastR functions:
@@ -47,7 +47,7 @@ build_nflfastR_pbp(c("2018_21_NE_LA", "2019_21_SF_KC"))
 # output of `fast_scraper_schedules` as input
 library(dplyr, warn.conflicts = FALSE)
 fast_scraper_schedules(2020) \%>\%
-  tail(3) \%>\%
+  slice_tail(n = 3) \%>\%
   build_nflfastR_pbp()
 
 \dontshow{

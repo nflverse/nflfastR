@@ -2,54 +2,33 @@
 % Please edit documentation in R/top-level_scraper.R
 \name{fast_scraper_roster}
 \alias{fast_scraper_roster}
-\title{Get team rosters for multiple seasons}
+\title{Load Team Rosters for Multiple Seasons}
 \usage{
-fast_scraper_roster(seasons)
+fast_scraper_roster(...)
 }
 \arguments{
-\item{seasons}{A vector of 4-digit years associated with given NFL seasons}
+\item{...}{
+  Arguments passed on to \code{\link[nflreadr:load_rosters]{nflreadr::load_rosters}}
+  \describe{
+    \item{\code{seasons}}{a numeric vector of seasons to return, defaults to returning
+this year's data if it is March or later. If set to \code{TRUE}, will return all available data.}
+    \item{\code{file_type}}{One of \code{c("rds", "qs", "csv", "parquet")}. Can also be set globally with
+\code{options(nflreadr.prefer)}}
+  }}
 }
 \value{
-Data frame where each individual row represents a player in
-the roster of the given team and season containing the following information:
-\describe{
-\item{season}{4 digit season year.}
-\item{team}{Team abbreviation.}
-\item{position}{Abbreviation of the player's position (e.g. "QB", "WR", "RB", "CB"...).}
-\item{depth_chart_position}{Starting with the 2020 season: the abbreviation of the players depth_chart_position.}
-\item{jersey_number}{The player's 2 digit jersey number.}
-\item{status}{String indicating the status of the player (e.g. "Active", "Inactive", "Injured Reserve"...) at the update time \code{update_dt} (see below)}
-\item{full_name}{Full name of the player.}
-\item{first_name}{First name of the player.}
-\item{last_name}{Last name of the player.}
-\item{birth_date}{Birth date of the player.}
-\item{height}{Height of the player.}
-\item{weight}{Weight of the player.}
-\item{college}{Name of the college the player has attended.}
-\item{high_school}{Name of the High School the player has attended (only non-NA for players who were listed in the 2020 season).}
-\item{gsis_id}{The player's NFL GSIS ID, which can be used to link the player to play-by-play data.}
-\item{espn_id}{The player's ESPN ID (only non-NA for players who were listed in the 2020 season).}
-\item{sportradar_id}{The player's Sportradar ID (only non-NA for players who were listed in the 2020 season).}
-\item{yahoo_id}{The player's Yahoo Sports ID (only non-NA for players who were listed in the 2020 season).}
-\item{rotowire_id}{The player's Rotowire ID (only non-NA for players who were listed in the 2020 season).}
-\item{update_dt}{Date and time when the current entry was last updated (starting with the 2020 season).}
-\item{headshot_url}{URL to a player image (starting in the 2020 season on ESPN servers).}
-}
+A tibble of season-level roster data.
 }
 \description{
-Given years return a dataset with each player listed as part of the roster.
+Load Rosters
 }
 \details{
-The roster data is accessed via the free to use Sleeper API.
+See \code{\link[nflreadr:load_rosters]{nflreadr::load_rosters}} for details.
 }
 \examples{
 \donttest{
 # Roster of the 2019 and 2020 seasons
 fast_scraper_roster(2019:2020)
-\dontshow{
-# Close open connections for R CMD Check
-future::plan("sequential")
-}
 }
 }
 \seealso{

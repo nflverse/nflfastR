@@ -4,6 +4,9 @@
 # Code Style Guide: styler::tidyverse_style()
 ################################################################################
 
+
+# pbp ---------------------------------------------------------------------
+
 #' Get NFL Play by Play Data
 #'
 #' @description Load and parse NFL play-by-play data and add all of the original
@@ -387,7 +390,7 @@
 #' # output of `fast_scraper_schedules` as input
 #' library(dplyr, warn.conflicts = FALSE)
 #' fast_scraper_schedules(2020) %>%
-#'   tail(3) %>%
+#'   slice_tail(n = 3) %>%
 #'   fast_scraper()
 #'
 #' \dontshow{
@@ -445,131 +448,38 @@ fast_scraper <- function(game_ids,
     str <- paste0(my_time(), " | Procedure completed.")
     cli::cli_alert_success("{.field {str}}")
   }
-  return(pbp)
+  make_nflverse_data(pbp)
 }
 
-#' Get team rosters for multiple seasons
-#'
-#' @description Given years return a dataset with each player listed as part of the roster.
-#'
-#' @param seasons A vector of 4-digit years associated with given NFL seasons
-#' @details The roster data is accessed via the free to use Sleeper API.
+
+# roster ------------------------------------------------------------------
+
+#' Load Team Rosters for Multiple Seasons
+#' @details See [`nflreadr::load_rosters`] for details.
+#' @inheritDotParams nflreadr::load_rosters
+#' @inherit nflreadr::load_rosters
 #' @seealso For information on parallel processing and progress updates please
 #' see [nflfastR].
-#' @return Data frame where each individual row represents a player in
-#' the roster of the given team and season containing the following information:
-#' \describe{
-#' \item{season}{4 digit season year.}
-#' \item{team}{Team abbreviation.}
-#' \item{position}{Abbreviation of the player's position (e.g. "QB", "WR", "RB", "CB"...).}
-#' \item{depth_chart_position}{Starting with the 2020 season: the abbreviation of the players depth_chart_position.}
-#' \item{jersey_number}{The player's 2 digit jersey number.}
-#' \item{status}{String indicating the status of the player (e.g. "Active", "Inactive", "Injured Reserve"...) at the update time \code{update_dt} (see below)}
-#' \item{full_name}{Full name of the player.}
-#' \item{first_name}{First name of the player.}
-#' \item{last_name}{Last name of the player.}
-#' \item{birth_date}{Birth date of the player.}
-#' \item{height}{Height of the player.}
-#' \item{weight}{Weight of the player.}
-#' \item{college}{Name of the college the player has attended.}
-#' \item{high_school}{Name of the High School the player has attended (only non-NA for players who were listed in the 2020 season).}
-#' \item{gsis_id}{The player's NFL GSIS ID, which can be used to link the player to play-by-play data.}
-#' \item{espn_id}{The player's ESPN ID (only non-NA for players who were listed in the 2020 season).}
-#' \item{sportradar_id}{The player's Sportradar ID (only non-NA for players who were listed in the 2020 season).}
-#' \item{yahoo_id}{The player's Yahoo Sports ID (only non-NA for players who were listed in the 2020 season).}
-#' \item{rotowire_id}{The player's Rotowire ID (only non-NA for players who were listed in the 2020 season).}
-#' \item{update_dt}{Date and time when the current entry was last updated (starting with the 2020 season).}
-#' \item{headshot_url}{URL to a player image (starting in the 2020 season on ESPN servers).}
-#' }
 #' @examples
 #' \donttest{
 #' # Roster of the 2019 and 2020 seasons
 #' fast_scraper_roster(2019:2020)
-#' \dontshow{
-#' # Close open connections for R CMD Check
-#' future::plan("sequential")
-#' }
 #' }
 #' @export
-fast_scraper_roster <- function(seasons) {
+fast_scraper_roster <- function(...) nflreadr::load_rosters(...)
 
-  if (length(seasons) > 1 && is_sequential()) {
-    cli::cli_alert_info(
-      c(
-        "It is recommended to use parallel processing when trying to load multiple seasons. ",
-        "Please consider running {.code future::plan(\"multisession\")}! ",
-        "Will go on sequentially..."
-      )
-    )
-  }
+# schedules ---------------------------------------------------------------
 
-  suppressWarnings({
-    p <- progressr::progressor(along = seasons)
-    ret <- furrr::future_map_dfr(seasons, function(x, p) {
-      out <- get_scheds_and_rosters(x, "roster")
-      p(sprintf("season=%s", as.integer(x)))
-      return(out)
-    }, p)
-  })
-  return(ret)
-}
-
-#' Get NFL Season Schedules
-#'
-#' @param seasons Vector of numeric or character 4 digit seasons
-#' @details This functions now incorporates the games file provided and maintained
-#' by Lee Sharpe.
+#' Load NFL Season Schedules
+#' @details See [`nflreadr::load_schedules`] for details.
+#' @inheritDotParams nflreadr::load_schedules
+#' @inherit nflreadr::load_schedules
 #' @seealso For information on parallel processing and progress updates please
 #' see [nflfastR].
-#' @return Data frame containing the following detailed game information:
-#' \describe{
-#' \item{game_id}{Character identifier including season, week, away team and home team}
-#' \item{season}{4 digit season year.}
-#' \item{game_type}{One of 'REG', 'WC', 'DIV', 'CON', 'SB' indicating if a game was a regular season game or one of the playoff rounds.}
-#' \item{week}{Numeric week number.}
-#' \item{gameday}{Game date in format yyyy/mm/dd.}
-#' \item{weekday}{The day of the week on which the game occcured.}
-#' \item{gametime}{The kickoff time of the game. This is represented in 24-hour time and the Eastern time zone, regardless of what time zone the game was being played in.}
-#' \item{away_team}{Away team abbreviation.}
-#' \item{home_team}{Home team abbreviation.}
-#' \item{away_score}{The number of points the away team scored. Is 'NA' for games which haven't yet been played.}
-#' \item{home_score}{The number of points the home team scored. Is 'NA' for games which haven't yet been played.}
-#' \item{home_result}{Equals home_score - away_score and means the game outcome from the perspective of the home team.}
-#' \item{stadium}{Name of the stadium the game was or will be played in. (Source: Pro-Football-Reference)}
-#' \item{location}{Either 'Home' o 'Neutral' indicating if the home team played at home or at a neutral site. }
-#' \item{roof}{One of 'dome', 'outdoors', 'closed', 'open' indicating indicating the roof status of the stadium the game was played in. (Source: Pro-Football-Reference)}
-#' \item{surface}{What type of ground the game was played on. (Source: Pro-Football-Reference)}
-#' \item{old_game_id}{Unique game identifier of the old NFL API.}
-#' }
-#' @export
 #' @examples
 #'\donttest{
 #' # Get schedules for the whole 2015 - 2018 seasons
 #' fast_scraper_schedules(2015:2018)
-#' \dontshow{
-#' # Close open connections for R CMD Check
-#' future::plan("sequential")
 #' }
-#' }
-fast_scraper_schedules <- function(seasons) {
-
-    if (length(seasons) > 1 && is_sequential()) {
-    cli::cli_alert_info(
-      c(
-        "It is recommended to use parallel processing when trying to load multiple seasons. ",
-        "Please consider running {.code future::plan(\"multisession\")}! ",
-        "Will go on sequentially..."
-      )
-    )
-  }
-
-  suppressWarnings({
-    p <- progressr::progressor(along = seasons)
-    ret <- furrr::future_map_dfr(seasons, function(x, p) {
-      out <- get_scheds_and_rosters(x, "schedule")
-      p(sprintf("season=%s", as.integer(x)))
-      return(out)
-    }, p)
-  })
-  return(ret)
-}
+#' @export
+fast_scraper_schedules <- function(...) nflreadr::load_schedules(...)
