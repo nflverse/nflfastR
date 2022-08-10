@@ -1,5 +1,5 @@
 ################################################################################
-# Author: Christian Lohr, Sebastian Carl
+# Author: Christian Lohr, Sebastian Carl, Tan Ho
 # Styleguide: styler::tidyverse_style()
 ################################################################################
 
@@ -463,19 +463,21 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     dplyr::full_join(pressure_df, by = c("season","week","player_id","team")) %>%
     dplyr::full_join(int_df, by = c("season","week","player_id","team")) %>%
     dplyr::full_join(safety_df, by = c("season","week","player_id","team")) %>%
-    dplyr::mutate_if(is.numeric,tidyr::replace_na,0)
+    dplyr::mutate_if(is.numeric,tidyr::replace_na,0) %>%
     # dplyr::full_join(fumble_df_own, by = c("player_id")) %>%
     # dplyr::full_join(fumble_df_opp, by = c("player_id")) %>%
     # dplyr::full_join(fumble_yds_own_df, by = c("player_id")) %>%
     # dplyr::full_join(fumble_yds_opp_df, by = c("player_id")) %>%
     # dplyr::full_join(penalty_df, by = c("player_id")) %>%
     # dplyr::full_join(touchdown_df, by = c("player_id")) %>%
-    dplyr::left_join(nflfastR::fast_scraper_roster(2020) %>%
-                       dplyr::select(player_id=gsis_id,
-                                     player_name=full_name,
-                                     recent_team=team,
-                                     position),
-                     by = "player_id"
+    dplyr::left_join(
+      nflreadr::load_players() %>%
+        dplyr::select(
+          "player_name" = "display_name",
+          "player_id" = "gsis_id",
+          "position"
+        ),
+      by = "player_id"
     ) %>%
     dplyr::select(tidyselect::any_of(c(
 
