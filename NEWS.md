@@ -1,5 +1,8 @@
 # nflfastR (development version)
 
+* Added new function `calculate_player_stats_def()` that aggregates defensive
+player stats either at game level or overall. (#288)
+
 # nflfastR 4.4.0
 
 ## New Functions, Options, Data

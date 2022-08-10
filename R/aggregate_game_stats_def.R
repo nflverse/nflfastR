@@ -66,6 +66,9 @@
 
 calculate_player_stats_def <- function(pbp, weekly = FALSE) {
 
+  # need newer version of nflreadr to use load_players
+  rlang::check_installed("nflreadr (>= 1.3.0)")
+
   # Prepare data ------------------------------------------------------------
 
   suppressMessages({
