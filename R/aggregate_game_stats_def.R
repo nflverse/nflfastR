@@ -522,8 +522,3 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
 
   player_df
 }
-
-
-sum_cols <- function(data, ...){
-  purrr::reduce(dplyr::select(data, tidyselect::any_of(c(...))), `+`)
-}
