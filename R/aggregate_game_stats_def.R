@@ -63,15 +63,14 @@
 # Own Fumble Recoveries --> done
 # Own Fumble Recovery Yards --> done
 # Own Fumble Recovery TDs ///// --> only "TD" for defense
-#  #-----------------------------------------------------------------------------------------------------
-#'
-#'
+
 calculate_player_stats_def <- function(pbp, weekly = FALSE) {
 
   # Prepare data ------------------------------------------------------------
 
   suppressMessages({
     # 1. for "normal" plays: get plays that count in official stats
+    # we exclude special teams and 2pts here for now
     data <- pbp %>%
       dplyr::filter(
         !is.na(.data$down),
@@ -79,31 +78,15 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       ) %>%
       nflfastR::decode_player_ids()
 
-    # # 2. for 2pt conversions only, get those plays
-    # two_points <- pbp %>%
-    #   dplyr::filter(.data$two_point_conv_result == "success") %>%
-    #   dplyr::select(
-    #     "week", "season", "posteam",
-    #     "pass_attempt", "rush_attempt",
-    #     "passer_player_name", "passer_player_id",
-    #     "rusher_player_name", "rusher_player_id",
-    #     "lateral_rusher_player_name", "lateral_rusher_player_id",
-    #     "receiver_player_name", "receiver_player_id",
-    #     "lateral_receiver_player_name", "lateral_receiver_player_id"
-    #   ) %>%
-    #   nflfastR::decode_player_ids()
-    #
-    # if (!"special" %in% names(pbp)) {
-    #   # we need this column for the special teams tds
-    #   pbp <- pbp %>%
-    #     dplyr::mutate(
-    #       special = dplyr::if_else(
-    #         .data$play_type %in% c("extra_point","field_goal","kickoff","punt"),
-    #         1, 0
-    #       )
-    #     ) %>%
-    #     nflfastR::decode_player_ids()
-    # }
+    # 2. filter penalty plays that are no_plays for penalty stats
+    penalty_data <- pbp %>%
+      dplyr::filter(
+        !is.na(.data$down),
+        .data$play_type == "no_play",
+        .data$penalty == 1
+      ) %>%
+      nflfastR::decode_player_ids()
+
   })
 
   # Tackling stats -----------------------------------------------------------
@@ -415,10 +398,13 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
   # Penalty stats -----------------------------------------------------------
 
   # get penalty stats
-  penalty_df <- data %>%
-    dplyr::filter(!is.na(penalty_player_id), defteam == penalty_team) %>%
+  penalty_df <- penalty_data %>%
+    dplyr::filter(
+      !is.na(.data$penalty_player_id),
+      .data$defteam == .data$penalty_team
+    ) %>%
     dplyr::select(
-      "season","week","yards_gained","team"="defteam",
+      "season","week","yards_gained","team" = "defteam",
       tidyselect::contains("penalty_player_")
     ) %>%
     tidyr::pivot_longer(cols = c(
