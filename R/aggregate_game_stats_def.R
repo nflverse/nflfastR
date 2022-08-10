@@ -304,7 +304,8 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     ) %>%
     dplyr::rename(
       "fumble" = "fumbled",
-      "fumble_recovery_own" = "fumble_recovery"
+      "fumble_recovery_own" = "fumble_recovery",
+      "player_id" = "fumble_player_id"
     )
 
   # get fumble stats for opponent recoveries
@@ -349,44 +350,63 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     )
 
   # get fumble yards for own recoveries
-  fumble_yds_own_df <- data %>%
-    dplyr::filter(fumble == 1 | fumble_lost == 1) %>%
-    dplyr::filter(defteam==fumbled_1_team | defteam==fumbled_2_team) %>%
-    dplyr::group_by(player_id=fumble_recovery_1_player_id) %>%
-    dplyr::summarise(recovery_yards = sum(fumble_recovery_1_yards)) %>%
-    dplyr::filter(!is.na(player_id)) %>% ### this happens when a fumble goes out of bounds. Noone gets yards --> NA/NA
-    dplyr::bind_rows(
-      data %>%
-        dplyr::filter(fumble == 1 | fumble_lost == 1) %>%
-        dplyr::filter(defteam==fumbled_1_team | defteam==fumbled_2_team) %>%
-        dplyr::group_by(player_id=fumble_recovery_2_player_id) %>%
-        dplyr::summarise(recovery_yards = sum(fumble_recovery_2_yards)) %>%
-        dplyr::filter(!is.na(player_id))
+  fumble_yds_own_data <- data %>%
+    dplyr::filter(.data$fumble == 1 | .data$fumble_lost == 1) %>%
+    dplyr::filter(
+      .data$defteam == .data$fumbled_1_team |
+        .data$defteam == .data$fumbled_2_team
+      )
+
+  fumble_yds_own_df <- fumble_yds_own_data %>%
+    dplyr::group_by(
+      .data$season, .data$week,
+      player_id = .data$fumble_recovery_1_player_id
     ) %>%
-    dplyr::group_by(player_id) %>%
-    dplyr::summarise(fm_recovery_yards_own = sum(recovery_yards))
+    dplyr::summarise(recovery_yards = sum(.data$fumble_recovery_1_yards)) %>%
+    dplyr::filter(!is.na(.data$player_id)) %>% ### this happens when a fumble goes out of bounds. Noone gets yards --> NA/NA
+    dplyr::bind_rows(
+      fumble_yds_own_data %>%
+        dplyr::group_by(
+          .data$season, .data$week,
+          player_id = .data$fumble_recovery_2_player_id
+        ) %>%
+        dplyr::summarise(recovery_yards = sum(.data$fumble_recovery_2_yards)) %>%
+        dplyr::filter(!is.na(.data$player_id))
+    ) %>%
+    dplyr::group_by(.data$season, .data$week, .data$player_id) %>%
+    dplyr::summarise(fumble_recovery_yards_own = sum(.data$recovery_yards)) %>%
+    dplyr::ungroup()
 
   fumble_yds_own_df_nas <- is.na(fumble_yds_own_df)
   fumble_yds_own_df[fumble_yds_own_df_nas] <- 0
 
   # get fumble yards for opp recoveries
+  fumble_yds_opp_data <- data %>%
+    dplyr::filter(.data$fumble == 1 | .data$fumble_lost == 1) %>%
+    dplyr::filter(
+      .data$defteam == .data$fumble_recovery_1_team,
+      .data$defteam != .data$fumbled_1_team
+    )
 
-  fumble_yds_opp_df <- data %>%
-    dplyr::filter(fumble == 1 | fumble_lost == 1) %>%
-    dplyr::filter(defteam==fumble_recovery_1_team,defteam!=fumbled_1_team) %>%
-    dplyr::group_by(player_id=fumble_recovery_1_player_id) %>%
-    dplyr::summarise(recovery_yards = sum(fumble_recovery_1_yards)) %>%
-    dplyr::filter(!is.na(player_id)) %>%
-    dplyr::bind_rows(
-      data %>%
-        dplyr::filter(fumble == 1 | fumble_lost == 1) %>%
-        dplyr::filter(defteam==fumble_recovery_1_team,defteam!=fumbled_1_team) %>%
-        dplyr::group_by(player_id=fumble_recovery_2_player_id) %>%
-        dplyr::summarise(recovery_yards = sum(fumble_recovery_2_yards)) %>%
-        dplyr::filter(!is.na(player_id))
+  fumble_yds_opp_df <- fumble_yds_opp_data %>%
+    dplyr::group_by(
+      .data$season, .data$week,
+      player_id = .data$fumble_recovery_1_player_id
     ) %>%
-    dplyr::group_by(player_id) %>%
-    dplyr::summarise(fm_recovery_yards_opp = sum(recovery_yards))
+    dplyr::summarise(recovery_yards = sum(.data$fumble_recovery_1_yards)) %>%
+    dplyr::filter(!is.na(.data$player_id)) %>%
+    dplyr::bind_rows(
+      fumble_yds_opp_data %>%
+        dplyr::group_by(
+          .data$season, .data$week,
+          player_id = .data$fumble_recovery_2_player_id
+        ) %>%
+        dplyr::summarise(recovery_yards = sum(.data$fumble_recovery_2_yards)) %>%
+        dplyr::filter(!is.na(.data$player_id))
+    ) %>%
+    dplyr::group_by(.data$season, .data$week, .data$player_id) %>%
+    dplyr::summarise(fumble_recovery_yards_opp = sum(.data$recovery_yards)) %>%
+    dplyr::ungroup()
 
   fumble_yds_opp_df_nas <- is.na(fumble_yds_opp_df)
   fumble_yds_opp_df[fumble_yds_opp_df_nas] <- 0
@@ -444,17 +464,17 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
   # combine all the stats together
 
   player_df <- tackle_df %>%
-    dplyr::full_join(tackle_yards_df, by = c("season","week","player_id","team")) %>%
-    dplyr::full_join(pressure_df, by = c("season","week","player_id","team")) %>%
-    dplyr::full_join(int_df, by = c("season","week","player_id","team")) %>%
-    dplyr::full_join(safety_df, by = c("season","week","player_id","team")) %>%
-    dplyr::mutate_if(is.numeric,tidyr::replace_na,0) %>%
-    # dplyr::full_join(fumble_df_own, by = c("player_id")) %>%
-    # dplyr::full_join(fumble_df_opp, by = c("player_id")) %>%
-    # dplyr::full_join(fumble_yds_own_df, by = c("player_id")) %>%
-    # dplyr::full_join(fumble_yds_opp_df, by = c("player_id")) %>%
+    dplyr::full_join(tackle_yards_df, by = c("season","week","player_id", "team")) %>%
+    dplyr::full_join(pressure_df, by = c("season","week","player_id", "team")) %>%
+    dplyr::full_join(int_df, by = c("season","week","player_id", "team")) %>%
+    dplyr::full_join(safety_df, by = c("season","week","player_id", "team")) %>%
+    dplyr::full_join(fumble_df_own, by = c("season","week","player_id")) %>%
+    dplyr::full_join(fumble_df_opp, by = c("season","week","player_id")) %>%
+    dplyr::full_join(fumble_yds_own_df, by = c("season","week","player_id")) %>%
+    dplyr::full_join(fumble_yds_opp_df, by = c("season","week","player_id")) %>%
     # dplyr::full_join(penalty_df, by = c("player_id")) %>%
     # dplyr::full_join(touchdown_df, by = c("player_id")) %>%
+    dplyr::mutate_if(is.numeric,tidyr::replace_na,0) %>%
     dplyr::left_join(
       nflreadr::load_players() %>%
         dplyr::select(
@@ -465,6 +485,9 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       by = "player_id"
     ) %>%
     dplyr::select(tidyselect::any_of(c(
+
+      # game information
+      "season", "week",
 
       # id information
       "player_id", "player_name", "recent_team", "position",
@@ -479,11 +502,12 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       "INT", "PD",
 
       # misc stats
-      "td", "fm", "fm_recovery_own", "fm_recovery_yards_own",
-      "fm_recovery_opp", "fm_recovery_yards_opp", "safety", "penalty"
+      "td", "fumble", "fumble_recovery_own", "fumble_recovery_yards_own",
+      "fumble_recovery_opp", "fumble_recovery_yards_opp", "safety", "penalty"
 
     ))) %>%
-    dplyr::filter(!is.na(.data$player_id), !is.na(.data$player_name)) ### player_name only because of Terell Bonds
+    dplyr::filter(!is.na(.data$player_id), !is.na(.data$player_name)) %>%  ### player_name only because of Terell Bonds
+    dplyr::arrange(.data$season, .data$week, .data$player_id)
 
   player_df_nas <- is.na(player_df)
   player_df[player_df_nas] <- 0
