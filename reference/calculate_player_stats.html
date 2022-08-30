@@ -309,6 +309,8 @@ on <a href="https://www.nflfastr.com/articles/nflfastR.html#example-11-replicati
 <span class="r-in"><span><span class="va">pbp</span> <span class="op">&lt;-</span> <span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="load_pbp.html">load_pbp</a></span><span class="op">(</span><span class="fl">2020</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">weekly</span> <span class="op">&lt;-</span> <span class="fu">calculate_player_stats</span><span class="op">(</span><span class="va">pbp</span>, weekly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Failed to parse file with `qs::qdeserialize()()` from</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/nflverse/nflfastR-roster/raw/master/data/nflfastR-RB_ids.qs&gt;</span></span>
 <span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">weekly</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rows: 5,447</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Columns: 48</span>

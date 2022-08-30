@@ -171,18 +171,18 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"tidyverse"</span>, type <span class="op">=</span> <span class="st">"binary"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"ggrepel"</span>, type <span class="op">=</span> <span class="st">"binary"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"ggimage"</span>, type <span class="op">=</span> <span class="st">"binary"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"nflfastR"</span>, type <span class="op">=</span> <span class="st">"binary"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"nflreadr"</span>, type <span class="op">=</span> <span class="st">"binary"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"nflplotR"</span>, type <span class="op">=</span> <span class="st">"binary"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="load-packages">Load packages<a class="anchor" aria-label="anchor" href="#load-packages"></a>
 </h3>
-<p>Okay, now here’s the stuff you’re going to want to start putting into your R script. The following loads <code>tidyverse</code>, which contains a lot of helper functions for working with data, and <code>ggrepel</code> and <code>ggimage</code> for making figures, along with <code>nflfastR</code>.</p>
+<p>Okay, now here’s the stuff you’re going to want to start putting into your R script. The following loads <code>tidyverse</code>, which contains a lot of helper functions for working with data and <code>ggrepel</code> for making figures, along with <code>nflreadr</code> (which allows one to quickly download <code>nflfastR</code> data, along with a lot of other data). Finally, <code>nflplotR</code> makes plotting easier.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/slowkow/ggrepel" class="external-link">ggrepel</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/GuangchuangYu/ggimage" class="external-link">ggimage</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.nflfastr.com/">nflfastR</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://nflreadr.nflverse.com" class="external-link">nflreadr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://nflplotr.nflverse.com" class="external-link">nflplotR</a></span><span class="op">)</span></span></code></pre></div>
 <p>This one is optional but makes R prefer not to display numbers in scientific notation, which I find very annoying:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>scipen <span class="op">=</span> <span class="fl">9999</span><span class="op">)</span></span></code></pre></div>
@@ -223,386 +223,28 @@
 <span><span class="co">#&gt;  - attr(*, "nflverse_type")= chr "play by play"</span></span>
 <span><span class="co">#&gt;  - attr(*, "nflfastR_version")=Classes 'package_version', 'numeric_version'  hidden list of 1</span></span>
 <span><span class="co">#&gt;   ..$ : int [1:4] 4 3 0 9020</span></span></code></pre></div>
-<p>In the above, I’ve added in the <code>[1:10]</code>, which selects only the first 10 columns, otherwise the list is extremely long (remember from above that there are <code>372</code> columns!).</p>
+<p>In the above, I’ve added in the <code>[1:10]</code>, which selects only the first 10 columns, otherwise the list is extremely long (remember from above that there are <code>372</code> columns!). Normally, you would just type <code>str(data)</code>.</p>
+<p>You can similarly take a glimpse at your data:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">data</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Rows: 48,034</span></span>
+<span><span class="co">#&gt; Columns: 10</span></span>
+<span><span class="co">#&gt; $ play_id      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 1, 36, 51, 79, 100, 121, 148, 185, 214, 239, 255, 277, 29…</span></span>
+<span><span class="co">#&gt; $ game_id      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "2019_01_ATL_MIN", "2019_01_ATL_MIN", "2019_01_ATL_MIN", …</span></span>
+<span><span class="co">#&gt; $ old_game_id  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "2019090804", "2019090804", "2019090804", "2019090804", "…</span></span>
+<span><span class="co">#&gt; $ home_team    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "MIN", "MIN", "MIN", "MIN", "MIN", "MIN", "MIN", "MIN", "…</span></span>
+<span><span class="co">#&gt; $ away_team    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "ATL", "ATL", "ATL", "ATL", "ATL", "ATL", "ATL", "ATL", "…</span></span>
+<span><span class="co">#&gt; $ season_type  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "REG", "REG", "REG", "REG", "REG", "REG", "REG", "REG", "…</span></span>
+<span><span class="co">#&gt; $ week         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …</span></span>
+<span><span class="co">#&gt; $ posteam      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> NA, "ATL", "ATL", "ATL", "ATL", "ATL", "MIN", "MIN", "MIN…</span></span>
+<span><span class="co">#&gt; $ posteam_type <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> NA, "away", "away", "away", "away", "away", "home", "home…</span></span>
+<span><span class="co">#&gt; $ defteam      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> NA, "MIN", "MIN", "MIN", "MIN", "MIN", "ATL", "ATL", "ATL…</span></span></code></pre></div>
+<p>Where again I’m only showing the first 10 columns. The usual command would be <code>glimpse(data)</code>.</p>
 </div>
 <div class="section level3">
 <h3 id="variable-names">Variable names<a class="anchor" aria-label="anchor" href="#variable-names"></a>
 </h3>
-<p>Another very useful command is to get the <code>names</code> of the variables in the data:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   [1] "play_id"                             </span></span>
-<span><span class="co">#&gt;   [2] "game_id"                             </span></span>
-<span><span class="co">#&gt;   [3] "old_game_id"                         </span></span>
-<span><span class="co">#&gt;   [4] "home_team"                           </span></span>
-<span><span class="co">#&gt;   [5] "away_team"                           </span></span>
-<span><span class="co">#&gt;   [6] "season_type"                         </span></span>
-<span><span class="co">#&gt;   [7] "week"                                </span></span>
-<span><span class="co">#&gt;   [8] "posteam"                             </span></span>
-<span><span class="co">#&gt;   [9] "posteam_type"                        </span></span>
-<span><span class="co">#&gt;  [10] "defteam"                             </span></span>
-<span><span class="co">#&gt;  [11] "side_of_field"                       </span></span>
-<span><span class="co">#&gt;  [12] "yardline_100"                        </span></span>
-<span><span class="co">#&gt;  [13] "game_date"                           </span></span>
-<span><span class="co">#&gt;  [14] "quarter_seconds_remaining"           </span></span>
-<span><span class="co">#&gt;  [15] "half_seconds_remaining"              </span></span>
-<span><span class="co">#&gt;  [16] "game_seconds_remaining"              </span></span>
-<span><span class="co">#&gt;  [17] "game_half"                           </span></span>
-<span><span class="co">#&gt;  [18] "quarter_end"                         </span></span>
-<span><span class="co">#&gt;  [19] "drive"                               </span></span>
-<span><span class="co">#&gt;  [20] "sp"                                  </span></span>
-<span><span class="co">#&gt;  [21] "qtr"                                 </span></span>
-<span><span class="co">#&gt;  [22] "down"                                </span></span>
-<span><span class="co">#&gt;  [23] "goal_to_go"                          </span></span>
-<span><span class="co">#&gt;  [24] "time"                                </span></span>
-<span><span class="co">#&gt;  [25] "yrdln"                               </span></span>
-<span><span class="co">#&gt;  [26] "ydstogo"                             </span></span>
-<span><span class="co">#&gt;  [27] "ydsnet"                              </span></span>
-<span><span class="co">#&gt;  [28] "desc"                                </span></span>
-<span><span class="co">#&gt;  [29] "play_type"                           </span></span>
-<span><span class="co">#&gt;  [30] "yards_gained"                        </span></span>
-<span><span class="co">#&gt;  [31] "shotgun"                             </span></span>
-<span><span class="co">#&gt;  [32] "no_huddle"                           </span></span>
-<span><span class="co">#&gt;  [33] "qb_dropback"                         </span></span>
-<span><span class="co">#&gt;  [34] "qb_kneel"                            </span></span>
-<span><span class="co">#&gt;  [35] "qb_spike"                            </span></span>
-<span><span class="co">#&gt;  [36] "qb_scramble"                         </span></span>
-<span><span class="co">#&gt;  [37] "pass_length"                         </span></span>
-<span><span class="co">#&gt;  [38] "pass_location"                       </span></span>
-<span><span class="co">#&gt;  [39] "air_yards"                           </span></span>
-<span><span class="co">#&gt;  [40] "yards_after_catch"                   </span></span>
-<span><span class="co">#&gt;  [41] "run_location"                        </span></span>
-<span><span class="co">#&gt;  [42] "run_gap"                             </span></span>
-<span><span class="co">#&gt;  [43] "field_goal_result"                   </span></span>
-<span><span class="co">#&gt;  [44] "kick_distance"                       </span></span>
-<span><span class="co">#&gt;  [45] "extra_point_result"                  </span></span>
-<span><span class="co">#&gt;  [46] "two_point_conv_result"               </span></span>
-<span><span class="co">#&gt;  [47] "home_timeouts_remaining"             </span></span>
-<span><span class="co">#&gt;  [48] "away_timeouts_remaining"             </span></span>
-<span><span class="co">#&gt;  [49] "timeout"                             </span></span>
-<span><span class="co">#&gt;  [50] "timeout_team"                        </span></span>
-<span><span class="co">#&gt;  [51] "td_team"                             </span></span>
-<span><span class="co">#&gt;  [52] "td_player_name"                      </span></span>
-<span><span class="co">#&gt;  [53] "td_player_id"                        </span></span>
-<span><span class="co">#&gt;  [54] "posteam_timeouts_remaining"          </span></span>
-<span><span class="co">#&gt;  [55] "defteam_timeouts_remaining"          </span></span>
-<span><span class="co">#&gt;  [56] "total_home_score"                    </span></span>
-<span><span class="co">#&gt;  [57] "total_away_score"                    </span></span>
-<span><span class="co">#&gt;  [58] "posteam_score"                       </span></span>
-<span><span class="co">#&gt;  [59] "defteam_score"                       </span></span>
-<span><span class="co">#&gt;  [60] "score_differential"                  </span></span>
-<span><span class="co">#&gt;  [61] "posteam_score_post"                  </span></span>
-<span><span class="co">#&gt;  [62] "defteam_score_post"                  </span></span>
-<span><span class="co">#&gt;  [63] "score_differential_post"             </span></span>
-<span><span class="co">#&gt;  [64] "no_score_prob"                       </span></span>
-<span><span class="co">#&gt;  [65] "opp_fg_prob"                         </span></span>
-<span><span class="co">#&gt;  [66] "opp_safety_prob"                     </span></span>
-<span><span class="co">#&gt;  [67] "opp_td_prob"                         </span></span>
-<span><span class="co">#&gt;  [68] "fg_prob"                             </span></span>
-<span><span class="co">#&gt;  [69] "safety_prob"                         </span></span>
-<span><span class="co">#&gt;  [70] "td_prob"                             </span></span>
-<span><span class="co">#&gt;  [71] "extra_point_prob"                    </span></span>
-<span><span class="co">#&gt;  [72] "two_point_conversion_prob"           </span></span>
-<span><span class="co">#&gt;  [73] "ep"                                  </span></span>
-<span><span class="co">#&gt;  [74] "epa"                                 </span></span>
-<span><span class="co">#&gt;  [75] "total_home_epa"                      </span></span>
-<span><span class="co">#&gt;  [76] "total_away_epa"                      </span></span>
-<span><span class="co">#&gt;  [77] "total_home_rush_epa"                 </span></span>
-<span><span class="co">#&gt;  [78] "total_away_rush_epa"                 </span></span>
-<span><span class="co">#&gt;  [79] "total_home_pass_epa"                 </span></span>
-<span><span class="co">#&gt;  [80] "total_away_pass_epa"                 </span></span>
-<span><span class="co">#&gt;  [81] "air_epa"                             </span></span>
-<span><span class="co">#&gt;  [82] "yac_epa"                             </span></span>
-<span><span class="co">#&gt;  [83] "comp_air_epa"                        </span></span>
-<span><span class="co">#&gt;  [84] "comp_yac_epa"                        </span></span>
-<span><span class="co">#&gt;  [85] "total_home_comp_air_epa"             </span></span>
-<span><span class="co">#&gt;  [86] "total_away_comp_air_epa"             </span></span>
-<span><span class="co">#&gt;  [87] "total_home_comp_yac_epa"             </span></span>
-<span><span class="co">#&gt;  [88] "total_away_comp_yac_epa"             </span></span>
-<span><span class="co">#&gt;  [89] "total_home_raw_air_epa"              </span></span>
-<span><span class="co">#&gt;  [90] "total_away_raw_air_epa"              </span></span>
-<span><span class="co">#&gt;  [91] "total_home_raw_yac_epa"              </span></span>
-<span><span class="co">#&gt;  [92] "total_away_raw_yac_epa"              </span></span>
-<span><span class="co">#&gt;  [93] "wp"                                  </span></span>
-<span><span class="co">#&gt;  [94] "def_wp"                              </span></span>
-<span><span class="co">#&gt;  [95] "home_wp"                             </span></span>
-<span><span class="co">#&gt;  [96] "away_wp"                             </span></span>
-<span><span class="co">#&gt;  [97] "wpa"                                 </span></span>
-<span><span class="co">#&gt;  [98] "vegas_wpa"                           </span></span>
-<span><span class="co">#&gt;  [99] "vegas_home_wpa"                      </span></span>
-<span><span class="co">#&gt; [100] "home_wp_post"                        </span></span>
-<span><span class="co">#&gt; [101] "away_wp_post"                        </span></span>
-<span><span class="co">#&gt; [102] "vegas_wp"                            </span></span>
-<span><span class="co">#&gt; [103] "vegas_home_wp"                       </span></span>
-<span><span class="co">#&gt; [104] "total_home_rush_wpa"                 </span></span>
-<span><span class="co">#&gt; [105] "total_away_rush_wpa"                 </span></span>
-<span><span class="co">#&gt; [106] "total_home_pass_wpa"                 </span></span>
-<span><span class="co">#&gt; [107] "total_away_pass_wpa"                 </span></span>
-<span><span class="co">#&gt; [108] "air_wpa"                             </span></span>
-<span><span class="co">#&gt; [109] "yac_wpa"                             </span></span>
-<span><span class="co">#&gt; [110] "comp_air_wpa"                        </span></span>
-<span><span class="co">#&gt; [111] "comp_yac_wpa"                        </span></span>
-<span><span class="co">#&gt; [112] "total_home_comp_air_wpa"             </span></span>
-<span><span class="co">#&gt; [113] "total_away_comp_air_wpa"             </span></span>
-<span><span class="co">#&gt; [114] "total_home_comp_yac_wpa"             </span></span>
-<span><span class="co">#&gt; [115] "total_away_comp_yac_wpa"             </span></span>
-<span><span class="co">#&gt; [116] "total_home_raw_air_wpa"              </span></span>
-<span><span class="co">#&gt; [117] "total_away_raw_air_wpa"              </span></span>
-<span><span class="co">#&gt; [118] "total_home_raw_yac_wpa"              </span></span>
-<span><span class="co">#&gt; [119] "total_away_raw_yac_wpa"              </span></span>
-<span><span class="co">#&gt; [120] "punt_blocked"                        </span></span>
-<span><span class="co">#&gt; [121] "first_down_rush"                     </span></span>
-<span><span class="co">#&gt; [122] "first_down_pass"                     </span></span>
-<span><span class="co">#&gt; [123] "first_down_penalty"                  </span></span>
-<span><span class="co">#&gt; [124] "third_down_converted"                </span></span>
-<span><span class="co">#&gt; [125] "third_down_failed"                   </span></span>
-<span><span class="co">#&gt; [126] "fourth_down_converted"               </span></span>
-<span><span class="co">#&gt; [127] "fourth_down_failed"                  </span></span>
-<span><span class="co">#&gt; [128] "incomplete_pass"                     </span></span>
-<span><span class="co">#&gt; [129] "touchback"                           </span></span>
-<span><span class="co">#&gt; [130] "interception"                        </span></span>
-<span><span class="co">#&gt; [131] "punt_inside_twenty"                  </span></span>
-<span><span class="co">#&gt; [132] "punt_in_endzone"                     </span></span>
-<span><span class="co">#&gt; [133] "punt_out_of_bounds"                  </span></span>
-<span><span class="co">#&gt; [134] "punt_downed"                         </span></span>
-<span><span class="co">#&gt; [135] "punt_fair_catch"                     </span></span>
-<span><span class="co">#&gt; [136] "kickoff_inside_twenty"               </span></span>
-<span><span class="co">#&gt; [137] "kickoff_in_endzone"                  </span></span>
-<span><span class="co">#&gt; [138] "kickoff_out_of_bounds"               </span></span>
-<span><span class="co">#&gt; [139] "kickoff_downed"                      </span></span>
-<span><span class="co">#&gt; [140] "kickoff_fair_catch"                  </span></span>
-<span><span class="co">#&gt; [141] "fumble_forced"                       </span></span>
-<span><span class="co">#&gt; [142] "fumble_not_forced"                   </span></span>
-<span><span class="co">#&gt; [143] "fumble_out_of_bounds"                </span></span>
-<span><span class="co">#&gt; [144] "solo_tackle"                         </span></span>
-<span><span class="co">#&gt; [145] "safety"                              </span></span>
-<span><span class="co">#&gt; [146] "penalty"                             </span></span>
-<span><span class="co">#&gt; [147] "tackled_for_loss"                    </span></span>
-<span><span class="co">#&gt; [148] "fumble_lost"                         </span></span>
-<span><span class="co">#&gt; [149] "own_kickoff_recovery"                </span></span>
-<span><span class="co">#&gt; [150] "own_kickoff_recovery_td"             </span></span>
-<span><span class="co">#&gt; [151] "qb_hit"                              </span></span>
-<span><span class="co">#&gt; [152] "rush_attempt"                        </span></span>
-<span><span class="co">#&gt; [153] "pass_attempt"                        </span></span>
-<span><span class="co">#&gt; [154] "sack"                                </span></span>
-<span><span class="co">#&gt; [155] "touchdown"                           </span></span>
-<span><span class="co">#&gt; [156] "pass_touchdown"                      </span></span>
-<span><span class="co">#&gt; [157] "rush_touchdown"                      </span></span>
-<span><span class="co">#&gt; [158] "return_touchdown"                    </span></span>
-<span><span class="co">#&gt; [159] "extra_point_attempt"                 </span></span>
-<span><span class="co">#&gt; [160] "two_point_attempt"                   </span></span>
-<span><span class="co">#&gt; [161] "field_goal_attempt"                  </span></span>
-<span><span class="co">#&gt; [162] "kickoff_attempt"                     </span></span>
-<span><span class="co">#&gt; [163] "punt_attempt"                        </span></span>
-<span><span class="co">#&gt; [164] "fumble"                              </span></span>
-<span><span class="co">#&gt; [165] "complete_pass"                       </span></span>
-<span><span class="co">#&gt; [166] "assist_tackle"                       </span></span>
-<span><span class="co">#&gt; [167] "lateral_reception"                   </span></span>
-<span><span class="co">#&gt; [168] "lateral_rush"                        </span></span>
-<span><span class="co">#&gt; [169] "lateral_return"                      </span></span>
-<span><span class="co">#&gt; [170] "lateral_recovery"                    </span></span>
-<span><span class="co">#&gt; [171] "passer_player_id"                    </span></span>
-<span><span class="co">#&gt; [172] "passer_player_name"                  </span></span>
-<span><span class="co">#&gt; [173] "passing_yards"                       </span></span>
-<span><span class="co">#&gt; [174] "receiver_player_id"                  </span></span>
-<span><span class="co">#&gt; [175] "receiver_player_name"                </span></span>
-<span><span class="co">#&gt; [176] "receiving_yards"                     </span></span>
-<span><span class="co">#&gt; [177] "rusher_player_id"                    </span></span>
-<span><span class="co">#&gt; [178] "rusher_player_name"                  </span></span>
-<span><span class="co">#&gt; [179] "rushing_yards"                       </span></span>
-<span><span class="co">#&gt; [180] "lateral_receiver_player_id"          </span></span>
-<span><span class="co">#&gt; [181] "lateral_receiver_player_name"        </span></span>
-<span><span class="co">#&gt; [182] "lateral_receiving_yards"             </span></span>
-<span><span class="co">#&gt; [183] "lateral_rusher_player_id"            </span></span>
-<span><span class="co">#&gt; [184] "lateral_rusher_player_name"          </span></span>
-<span><span class="co">#&gt; [185] "lateral_rushing_yards"               </span></span>
-<span><span class="co">#&gt; [186] "lateral_sack_player_id"              </span></span>
-<span><span class="co">#&gt; [187] "lateral_sack_player_name"            </span></span>
-<span><span class="co">#&gt; [188] "interception_player_id"              </span></span>
-<span><span class="co">#&gt; [189] "interception_player_name"            </span></span>
-<span><span class="co">#&gt; [190] "lateral_interception_player_id"      </span></span>
-<span><span class="co">#&gt; [191] "lateral_interception_player_name"    </span></span>
-<span><span class="co">#&gt; [192] "punt_returner_player_id"             </span></span>
-<span><span class="co">#&gt; [193] "punt_returner_player_name"           </span></span>
-<span><span class="co">#&gt; [194] "lateral_punt_returner_player_id"     </span></span>
-<span><span class="co">#&gt; [195] "lateral_punt_returner_player_name"   </span></span>
-<span><span class="co">#&gt; [196] "kickoff_returner_player_name"        </span></span>
-<span><span class="co">#&gt; [197] "kickoff_returner_player_id"          </span></span>
-<span><span class="co">#&gt; [198] "lateral_kickoff_returner_player_id"  </span></span>
-<span><span class="co">#&gt; [199] "lateral_kickoff_returner_player_name"</span></span>
-<span><span class="co">#&gt; [200] "punter_player_id"                    </span></span>
-<span><span class="co">#&gt; [201] "punter_player_name"                  </span></span>
-<span><span class="co">#&gt; [202] "kicker_player_name"                  </span></span>
-<span><span class="co">#&gt; [203] "kicker_player_id"                    </span></span>
-<span><span class="co">#&gt; [204] "own_kickoff_recovery_player_id"      </span></span>
-<span><span class="co">#&gt; [205] "own_kickoff_recovery_player_name"    </span></span>
-<span><span class="co">#&gt; [206] "blocked_player_id"                   </span></span>
-<span><span class="co">#&gt; [207] "blocked_player_name"                 </span></span>
-<span><span class="co">#&gt; [208] "tackle_for_loss_1_player_id"         </span></span>
-<span><span class="co">#&gt; [209] "tackle_for_loss_1_player_name"       </span></span>
-<span><span class="co">#&gt; [210] "tackle_for_loss_2_player_id"         </span></span>
-<span><span class="co">#&gt; [211] "tackle_for_loss_2_player_name"       </span></span>
-<span><span class="co">#&gt; [212] "qb_hit_1_player_id"                  </span></span>
-<span><span class="co">#&gt; [213] "qb_hit_1_player_name"                </span></span>
-<span><span class="co">#&gt; [214] "qb_hit_2_player_id"                  </span></span>
-<span><span class="co">#&gt; [215] "qb_hit_2_player_name"                </span></span>
-<span><span class="co">#&gt; [216] "forced_fumble_player_1_team"         </span></span>
-<span><span class="co">#&gt; [217] "forced_fumble_player_1_player_id"    </span></span>
-<span><span class="co">#&gt; [218] "forced_fumble_player_1_player_name"  </span></span>
-<span><span class="co">#&gt; [219] "forced_fumble_player_2_team"         </span></span>
-<span><span class="co">#&gt; [220] "forced_fumble_player_2_player_id"    </span></span>
-<span><span class="co">#&gt; [221] "forced_fumble_player_2_player_name"  </span></span>
-<span><span class="co">#&gt; [222] "solo_tackle_1_team"                  </span></span>
-<span><span class="co">#&gt; [223] "solo_tackle_2_team"                  </span></span>
-<span><span class="co">#&gt; [224] "solo_tackle_1_player_id"             </span></span>
-<span><span class="co">#&gt; [225] "solo_tackle_2_player_id"             </span></span>
-<span><span class="co">#&gt; [226] "solo_tackle_1_player_name"           </span></span>
-<span><span class="co">#&gt; [227] "solo_tackle_2_player_name"           </span></span>
-<span><span class="co">#&gt; [228] "assist_tackle_1_player_id"           </span></span>
-<span><span class="co">#&gt; [229] "assist_tackle_1_player_name"         </span></span>
-<span><span class="co">#&gt; [230] "assist_tackle_1_team"                </span></span>
-<span><span class="co">#&gt; [231] "assist_tackle_2_player_id"           </span></span>
-<span><span class="co">#&gt; [232] "assist_tackle_2_player_name"         </span></span>
-<span><span class="co">#&gt; [233] "assist_tackle_2_team"                </span></span>
-<span><span class="co">#&gt; [234] "assist_tackle_3_player_id"           </span></span>
-<span><span class="co">#&gt; [235] "assist_tackle_3_player_name"         </span></span>
-<span><span class="co">#&gt; [236] "assist_tackle_3_team"                </span></span>
-<span><span class="co">#&gt; [237] "assist_tackle_4_player_id"           </span></span>
-<span><span class="co">#&gt; [238] "assist_tackle_4_player_name"         </span></span>
-<span><span class="co">#&gt; [239] "assist_tackle_4_team"                </span></span>
-<span><span class="co">#&gt; [240] "tackle_with_assist"                  </span></span>
-<span><span class="co">#&gt; [241] "tackle_with_assist_1_player_id"      </span></span>
-<span><span class="co">#&gt; [242] "tackle_with_assist_1_player_name"    </span></span>
-<span><span class="co">#&gt; [243] "tackle_with_assist_1_team"           </span></span>
-<span><span class="co">#&gt; [244] "tackle_with_assist_2_player_id"      </span></span>
-<span><span class="co">#&gt; [245] "tackle_with_assist_2_player_name"    </span></span>
-<span><span class="co">#&gt; [246] "tackle_with_assist_2_team"           </span></span>
-<span><span class="co">#&gt; [247] "pass_defense_1_player_id"            </span></span>
-<span><span class="co">#&gt; [248] "pass_defense_1_player_name"          </span></span>
-<span><span class="co">#&gt; [249] "pass_defense_2_player_id"            </span></span>
-<span><span class="co">#&gt; [250] "pass_defense_2_player_name"          </span></span>
-<span><span class="co">#&gt; [251] "fumbled_1_team"                      </span></span>
-<span><span class="co">#&gt; [252] "fumbled_1_player_id"                 </span></span>
-<span><span class="co">#&gt; [253] "fumbled_1_player_name"               </span></span>
-<span><span class="co">#&gt; [254] "fumbled_2_player_id"                 </span></span>
-<span><span class="co">#&gt; [255] "fumbled_2_player_name"               </span></span>
-<span><span class="co">#&gt; [256] "fumbled_2_team"                      </span></span>
-<span><span class="co">#&gt; [257] "fumble_recovery_1_team"              </span></span>
-<span><span class="co">#&gt; [258] "fumble_recovery_1_yards"             </span></span>
-<span><span class="co">#&gt; [259] "fumble_recovery_1_player_id"         </span></span>
-<span><span class="co">#&gt; [260] "fumble_recovery_1_player_name"       </span></span>
-<span><span class="co">#&gt; [261] "fumble_recovery_2_team"              </span></span>
-<span><span class="co">#&gt; [262] "fumble_recovery_2_yards"             </span></span>
-<span><span class="co">#&gt; [263] "fumble_recovery_2_player_id"         </span></span>
-<span><span class="co">#&gt; [264] "fumble_recovery_2_player_name"       </span></span>
-<span><span class="co">#&gt; [265] "sack_player_id"                      </span></span>
-<span><span class="co">#&gt; [266] "sack_player_name"                    </span></span>
-<span><span class="co">#&gt; [267] "half_sack_1_player_id"               </span></span>
-<span><span class="co">#&gt; [268] "half_sack_1_player_name"             </span></span>
-<span><span class="co">#&gt; [269] "half_sack_2_player_id"               </span></span>
-<span><span class="co">#&gt; [270] "half_sack_2_player_name"             </span></span>
-<span><span class="co">#&gt; [271] "return_team"                         </span></span>
-<span><span class="co">#&gt; [272] "return_yards"                        </span></span>
-<span><span class="co">#&gt; [273] "penalty_team"                        </span></span>
-<span><span class="co">#&gt; [274] "penalty_player_id"                   </span></span>
-<span><span class="co">#&gt; [275] "penalty_player_name"                 </span></span>
-<span><span class="co">#&gt; [276] "penalty_yards"                       </span></span>
-<span><span class="co">#&gt; [277] "replay_or_challenge"                 </span></span>
-<span><span class="co">#&gt; [278] "replay_or_challenge_result"          </span></span>
-<span><span class="co">#&gt; [279] "penalty_type"                        </span></span>
-<span><span class="co">#&gt; [280] "defensive_two_point_attempt"         </span></span>
-<span><span class="co">#&gt; [281] "defensive_two_point_conv"            </span></span>
-<span><span class="co">#&gt; [282] "defensive_extra_point_attempt"       </span></span>
-<span><span class="co">#&gt; [283] "defensive_extra_point_conv"          </span></span>
-<span><span class="co">#&gt; [284] "safety_player_name"                  </span></span>
-<span><span class="co">#&gt; [285] "safety_player_id"                    </span></span>
-<span><span class="co">#&gt; [286] "season"                              </span></span>
-<span><span class="co">#&gt; [287] "cp"                                  </span></span>
-<span><span class="co">#&gt; [288] "cpoe"                                </span></span>
-<span><span class="co">#&gt; [289] "series"                              </span></span>
-<span><span class="co">#&gt; [290] "series_success"                      </span></span>
-<span><span class="co">#&gt; [291] "series_result"                       </span></span>
-<span><span class="co">#&gt; [292] "order_sequence"                      </span></span>
-<span><span class="co">#&gt; [293] "start_time"                          </span></span>
-<span><span class="co">#&gt; [294] "time_of_day"                         </span></span>
-<span><span class="co">#&gt; [295] "stadium"                             </span></span>
-<span><span class="co">#&gt; [296] "weather"                             </span></span>
-<span><span class="co">#&gt; [297] "nfl_api_id"                          </span></span>
-<span><span class="co">#&gt; [298] "play_clock"                          </span></span>
-<span><span class="co">#&gt; [299] "play_deleted"                        </span></span>
-<span><span class="co">#&gt; [300] "play_type_nfl"                       </span></span>
-<span><span class="co">#&gt; [301] "special_teams_play"                  </span></span>
-<span><span class="co">#&gt; [302] "st_play_type"                        </span></span>
-<span><span class="co">#&gt; [303] "end_clock_time"                      </span></span>
-<span><span class="co">#&gt; [304] "end_yard_line"                       </span></span>
-<span><span class="co">#&gt; [305] "fixed_drive"                         </span></span>
-<span><span class="co">#&gt; [306] "fixed_drive_result"                  </span></span>
-<span><span class="co">#&gt; [307] "drive_real_start_time"               </span></span>
-<span><span class="co">#&gt; [308] "drive_play_count"                    </span></span>
-<span><span class="co">#&gt; [309] "drive_time_of_possession"            </span></span>
-<span><span class="co">#&gt; [310] "drive_first_downs"                   </span></span>
-<span><span class="co">#&gt; [311] "drive_inside20"                      </span></span>
-<span><span class="co">#&gt; [312] "drive_ended_with_score"              </span></span>
-<span><span class="co">#&gt; [313] "drive_quarter_start"                 </span></span>
-<span><span class="co">#&gt; [314] "drive_quarter_end"                   </span></span>
-<span><span class="co">#&gt; [315] "drive_yards_penalized"               </span></span>
-<span><span class="co">#&gt; [316] "drive_start_transition"              </span></span>
-<span><span class="co">#&gt; [317] "drive_end_transition"                </span></span>
-<span><span class="co">#&gt; [318] "drive_game_clock_start"              </span></span>
-<span><span class="co">#&gt; [319] "drive_game_clock_end"                </span></span>
-<span><span class="co">#&gt; [320] "drive_start_yard_line"               </span></span>
-<span><span class="co">#&gt; [321] "drive_end_yard_line"                 </span></span>
-<span><span class="co">#&gt; [322] "drive_play_id_started"               </span></span>
-<span><span class="co">#&gt; [323] "drive_play_id_ended"                 </span></span>
-<span><span class="co">#&gt; [324] "away_score"                          </span></span>
-<span><span class="co">#&gt; [325] "home_score"                          </span></span>
-<span><span class="co">#&gt; [326] "location"                            </span></span>
-<span><span class="co">#&gt; [327] "result"                              </span></span>
-<span><span class="co">#&gt; [328] "total"                               </span></span>
-<span><span class="co">#&gt; [329] "spread_line"                         </span></span>
-<span><span class="co">#&gt; [330] "total_line"                          </span></span>
-<span><span class="co">#&gt; [331] "div_game"                            </span></span>
-<span><span class="co">#&gt; [332] "roof"                                </span></span>
-<span><span class="co">#&gt; [333] "surface"                             </span></span>
-<span><span class="co">#&gt; [334] "temp"                                </span></span>
-<span><span class="co">#&gt; [335] "wind"                                </span></span>
-<span><span class="co">#&gt; [336] "home_coach"                          </span></span>
-<span><span class="co">#&gt; [337] "away_coach"                          </span></span>
-<span><span class="co">#&gt; [338] "stadium_id"                          </span></span>
-<span><span class="co">#&gt; [339] "game_stadium"                        </span></span>
-<span><span class="co">#&gt; [340] "aborted_play"                        </span></span>
-<span><span class="co">#&gt; [341] "success"                             </span></span>
-<span><span class="co">#&gt; [342] "passer"                              </span></span>
-<span><span class="co">#&gt; [343] "passer_jersey_number"                </span></span>
-<span><span class="co">#&gt; [344] "rusher"                              </span></span>
-<span><span class="co">#&gt; [345] "rusher_jersey_number"                </span></span>
-<span><span class="co">#&gt; [346] "receiver"                            </span></span>
-<span><span class="co">#&gt; [347] "receiver_jersey_number"              </span></span>
-<span><span class="co">#&gt; [348] "pass"                                </span></span>
-<span><span class="co">#&gt; [349] "rush"                                </span></span>
-<span><span class="co">#&gt; [350] "first_down"                          </span></span>
-<span><span class="co">#&gt; [351] "special"                             </span></span>
-<span><span class="co">#&gt; [352] "play"                                </span></span>
-<span><span class="co">#&gt; [353] "passer_id"                           </span></span>
-<span><span class="co">#&gt; [354] "rusher_id"                           </span></span>
-<span><span class="co">#&gt; [355] "receiver_id"                         </span></span>
-<span><span class="co">#&gt; [356] "name"                                </span></span>
-<span><span class="co">#&gt; [357] "jersey_number"                       </span></span>
-<span><span class="co">#&gt; [358] "id"                                  </span></span>
-<span><span class="co">#&gt; [359] "fantasy_player_name"                 </span></span>
-<span><span class="co">#&gt; [360] "fantasy_player_id"                   </span></span>
-<span><span class="co">#&gt; [361] "fantasy"                             </span></span>
-<span><span class="co">#&gt; [362] "fantasy_id"                          </span></span>
-<span><span class="co">#&gt; [363] "out_of_bounds"                       </span></span>
-<span><span class="co">#&gt; [364] "home_opening_kickoff"                </span></span>
-<span><span class="co">#&gt; [365] "qb_epa"                              </span></span>
-<span><span class="co">#&gt; [366] "xyac_epa"                            </span></span>
-<span><span class="co">#&gt; [367] "xyac_mean_yardage"                   </span></span>
-<span><span class="co">#&gt; [368] "xyac_median_yardage"                 </span></span>
-<span><span class="co">#&gt; [369] "xyac_success"                        </span></span>
-<span><span class="co">#&gt; [370] "xyac_fd"                             </span></span>
-<span><span class="co">#&gt; [371] "xpass"                               </span></span>
-<span><span class="co">#&gt; [372] "pass_oe"</span></span></code></pre></div>
+<p>Another very useful command is to get the <code>names</code> of the variables in the data, which you would get by entering <code>names(data)</code> (I won’t show here because, again, it is <code>372</code> columns).</p>
 <p>That is a lot to work with!</p>
 </div>
 <div class="section level3">
@@ -847,8 +489,7 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> TB          0.551   321</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> GB          0.550   291</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> ARI         0.548   325</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 22 more rows</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 22 more rows</span></span></span></code></pre></div>
 <p>Again, we’ve already used <code>filter</code>, <code>group_by</code>, and <code>summarize</code>. The new function we are using here is <code>arrange</code>, which sorts the data by the variable(s) given. The minus sign in front of <code>mean_pass</code> means to sort in descending order.</p>
 <p>Let’s make our first figure:</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
@@ -919,28 +560,34 @@
 <span><span class="co">#&gt; argument.</span></span></code></pre></div>
 <p>Lots of new stuff here. First, we’re grouping by <code>id</code> and <code>name</code> to make sure we’re getting unique players; i.e., if two players have the same name (like Javorius Allen and Josh Allen both being J.Allen), we are also using their id to differentiate them. <code>qb_epa</code> is an <code>nflfastR</code> creation that is equal to EPA in all instances except for when a pass is completed and a fumble is lost, in which case a QB gets “credit” for the play up to the spot the fumble was lost (making EPA function like passing yards). The <code>last</code> part in the <code>summarize</code> comment gets the last team that a player was observed playing with.</p>
 <p>My way of getting a dataset with only quarterbacks without joining to external roster data is to make sure they hit some number of dropbacks. In this case, filtering with <code>n_dropbacks &gt; 100</code> makes sure we’re only including quarterbacks. The <code><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup()</a></code> near the end is good practice after grouping to make sure you don’t get weird behavior with the data you created down the line.</p>
-<p>Let’s make some more figures. The <code>team_colors_logos</code> dataframe is provided in the <code>nflfastR</code> package, so since we have already loaded the package, it’s ready to use.</p>
+<p>Let’s make some more figures. The <code><a href="https://nflreadr.nflverse.com/reference/load_teams.html" class="external-link">load_teams()</a></code> function is provided in the <code>nflreadr</code> package, so since we have already loaded the package, it’s ready to use.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">teams_colors_logos</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 15</span></span></span>
-<span><span class="co">#&gt;   team_abbr team_name    team_id team_…¹ team_…² team_…³ team_…⁴ team_…⁵ team_…⁶</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> ARI       Arizona Car… 3800    Cardin… NFC     NFC We… #97233F #000000 #ffb612</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ATL       Atlanta Fal… 0200    Falcons NFC     NFC So… #A71930 #000000 #a5acaf</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BAL       Baltimore R… 0325    Ravens  AFC     AFC No… #241773 #9E7C0C #9e7c0c</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> BUF       Buffalo Bil… 0610    Bills   AFC     AFC Ea… #00338D #C60C30 #0c2e82</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> CAR       Carolina Pa… 0750    Panthe… NFC     NFC So… #0085CA #000000 #bfc0bf</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> CHI       Chicago Bea… 0810    Bears   NFC     NFC No… #0B162A #C83803 #0b162a</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 6 more variables: team_color4 &lt;chr&gt;, team_logo_wikipedia &lt;chr&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   team_logo_espn &lt;chr&gt;, team_wordmark &lt;chr&gt;, team_conference_logo &lt;chr&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   team_league_logo &lt;chr&gt;, and abbreviated variable names ¹​team_nick,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   ²​team_conf, ³​team_division, ⁴​team_color, ⁵​team_color2, ⁶​team_color3</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `colnames()` to see all variable names</span></span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://nflreadr.nflverse.com/reference/load_teams.html" class="external-link">load_teams</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse team graphics</span> ──────────────────────────────────────────────────────</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-08-30 14:21:59 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 36 × 15</span></span></span>
+<span><span class="co">#&gt;    team_abbr team_name   team_id team_…¹ team_…² team_…³ team_…⁴ team_…⁵ team_…⁶</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> ARI       Arizona Ca… 3800    Cardin… NFC     NFC We… #97233F #000000 #ffb612</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ATL       Atlanta Fa… 0200    Falcons NFC     NFC So… #A71930 #000000 #a5acaf</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> BAL       Baltimore … 0325    Ravens  AFC     AFC No… #241773 #9E7C0C #9e7c0c</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> BUF       Buffalo Bi… 0610    Bills   AFC     AFC Ea… #00338D #C60C30 #0c2e82</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> CAR       Carolina P… 0750    Panthe… NFC     NFC So… #0085CA #000000 #bfc0bf</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> CHI       Chicago Be… 0810    Bears   NFC     NFC No… #0B162A #C83803 #0b162a</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> CIN       Cincinnati… 0920    Bengals AFC     AFC No… #FB4F14 #000000 #000000</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> CLE       Cleveland … 1050    Browns  AFC     AFC No… #FF3C00 #311D00 #a5acaf</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> DAL       Dallas Cow… 1200    Cowboys NFC     NFC Ea… #002244 #B0B7BC #acc0c6</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> DEN       Denver Bro… 1400    Broncos AFC     AFC We… #002244 #FB4F14 #00234c</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 26 more rows, 6 more variables: team_color4 &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   team_logo_wikipedia &lt;chr&gt;, team_logo_espn &lt;chr&gt;, team_wordmark &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   team_conference_logo &lt;chr&gt;, team_league_logo &lt;chr&gt;, and abbreviated</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   variable names ¹​team_nick, ²​team_conf, ³​team_division, ⁴​team_color,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   ⁵​team_color2, ⁶​team_color3</span></span></span></code></pre></div>
 <p>Let’s join this to the <code>qbs</code> dataframe we created:</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qbs</span> <span class="op">&lt;-</span> <span class="va">qbs</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">teams_colors_logos</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'team'</span> <span class="op">=</span> <span class="st">'team_abbr'</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><code>left_join</code> means keep all the rows from the left dataframe (the first one provided, <code>qbs</code>), and join those rows to available rows in the other dataframe. We also need to provide the joining variables, <code>team</code> from <code>qbs</code> and <code>team_abbr</code> from <code>team_colors_logos</code>. Why do we have to type <code>by = c('team' = 'team_abbr')</code>? Who knows, but it’s what <code>left_join</code> requires as instructions for how to match.</p>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="fu"><a href="https://nflreadr.nflverse.com/reference/load_teams.html" class="external-link">load_teams</a></span><span class="op">(</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'team'</span> <span class="op">=</span> <span class="st">'team_abbr'</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><code>left_join</code> means keep all the rows from the left dataframe (the first one provided, <code>qbs</code>), and join those rows to available rows in the other dataframe. We also need to provide the joining variables, <code>team</code> from <code>qbs</code> and <code>team_abbr</code> from <code><a href="https://nflreadr.nflverse.com/reference/load_teams.html" class="external-link">load_teams()</a></code>. Why do we have to type <code>by = c('team' = 'team_abbr')</code>? Who knows, but it’s what <code>left_join</code> requires as instructions for how to match.</p>
 <div class="section level3">
 <h3 id="with-team-color-dots">With team color dots<a class="anchor" aria-label="anchor" href="#with-team-color-dots"></a>
 </h3>
@@ -988,8 +635,8 @@
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_hline</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">qbs</span><span class="op">$</span><span class="va">epa</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"red"</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, alpha<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="co">#vertical line with mean CPOE</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">qbs</span><span class="op">$</span><span class="va">cpoe</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"red"</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, alpha<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="co">#add points for the QBs with the logos</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/ggimage/man/geom_image.html" class="external-link">geom_image</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>image <span class="op">=</span> <span class="va">team_logo_espn</span><span class="op">)</span>, size <span class="op">=</span> <span class="va">qbs</span><span class="op">$</span><span class="va">n_plays</span> <span class="op">/</span> <span class="fl">45000</span>, asp <span class="op">=</span> <span class="fl">16</span> <span class="op">/</span> <span class="fl">9</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="co">#add points for the QBs with the logos (this uses nflplotR package)</span></span>
+<span>  <span class="fu"><a href="https://nflplotr.nflverse.com/reference/geom_nfl_logos.html" class="external-link">geom_nfl_logos</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>team_abbr <span class="op">=</span> <span class="va">team</span><span class="op">)</span>, width <span class="op">=</span> <span class="va">qbs</span><span class="op">$</span><span class="va">n_plays</span> <span class="op">/</span> <span class="fl">45000</span>, alpha <span class="op">=</span> <span class="fl">0.75</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="co">#add names using ggrepel, which tries to make them not overlap</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/ggrepel/man/geom_text_repel.html" class="external-link">geom_text_repel</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>label<span class="op">=</span><span class="va">name</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="co">#add a smooth line fitting cpoe + epa</span></span>
@@ -1002,15 +649,21 @@
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="co">#center title</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span></span>
-<span>    aspect.ratio <span class="op">=</span> <span class="fl">9</span> <span class="op">/</span> <span class="fl">16</span>,</span>
 <span>    plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">14</span>, hjust <span class="op">=</span> <span class="fl">0.5</span>, face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="co">#make ticks look nice</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/pretty_breaks.html" class="external-link">pretty_breaks</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/pretty_breaks.html" class="external-link">pretty_breaks</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="beginners_guide_files/figure-html/fig3-1.png" width="100%"></p>
-<p>The only changes we’ve made are to use <code>geom_image</code> instead of <code>geom_point</code>, and to put <code>aspect.ratio = 9 / 16</code> in the <code><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme()</a></code> part. This makes the plot output dimensions consistent with the provided images and leads to the images not looking squished (how to figure out the right size for the images? Trial and error).</p>
-<p>This figure would look better with transparent logos or fewer players shown, but the point of this is explaining how to do stuff, so let’s call this good enough.</p>
+<p>The only changes we’ve made are to use <code>geom_nfl_logos</code> instead of <code>geom_point</code> (how to figure out the right size for the images in the <code>width</code> part? Trial and error).</p>
+<p>This figure would look better with fewer players shown, but the point of this is explaining how to do stuff, so let’s call this good enough.</p>
+</div>
+<div class="section level3">
+<h3 id="a-few-more-things-on-plotting">A few more things on plotting<a class="anchor" aria-label="anchor" href="#a-few-more-things-on-plotting"></a>
+</h3>
+<p>There are two ways to view plots. One is in the RStudio Viewer, which shows up in RStudio when you plot something. If plots in your RStudio viewer look ugly and pixelated, you probably need to install the <code>cairo</code> package and then set that as the default viewer by doing Tools –&gt; Global Options –&gt; General –&gt; Graphics –&gt; Backend: Set to Cairo.</p>
+<p>The other is to save a .png with your preferred dimensions and resolution. For example, <code>ggsave("test.png", width = 16, height = 9, units = "cm")</code> would save the current plot as “<code>test.png</code>” with the units specified (you can view all the ggsave options <a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">here</a>).</p>
+<p>One more note: the RStudio Viewer can take a long time to preview ggplots, especially if you’re doing things like adding images. If you’re getting frustrated with a plot taking a long time to display, you can take advantage of <a href="https://nflplotr.nflverse.com/reference/ggpreview.html" class="external-link">ggpreview</a> from <code>nflplotR</code>. To do this, first save the plot to an object and then run <code>ggpreview</code> on it (if this doesn’t make sense, see the examples <a href="https://nflplotr.nflverse.com/reference/ggpreview.html" class="external-link">here</a>).</p>
 </div>
 </div>
 <div class="section level2">
@@ -1071,7 +724,7 @@
 <span><span class="co">#&gt;  $ stadium_id      : chr [1:6409] "ATL00" "CHI98" "CLE00" "GNB00" ...</span></span>
 <span><span class="co">#&gt;  $ stadium         : chr [1:6409] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...</span></span>
 <span><span class="co">#&gt;  - attr(*, "nflverse_type")= chr "games and schedules"</span></span>
-<span><span class="co">#&gt;  - attr(*, "nflverse_timestamp")= POSIXct[1:1], format: "2022-08-08 15:03:41"</span></span></code></pre></div>
+<span><span class="co">#&gt;  - attr(*, "nflverse_timestamp")= POSIXct[1:1], format: "2022-08-30 14:22:27"</span></span></code></pre></div>
 <p>To start, we want to create a dataframe where each row is a team-season observation, listing how many games they won. There are multiple ways to do this, but I’m going to just take the home and away results and bind together. As an example, here’s what the <code>home</code> results look like:</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">home</span> <span class="op">&lt;-</span> <span class="va">games</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -1080,7 +733,7 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>team <span class="op">=</span> <span class="va">home_team</span><span class="op">)</span></span>
 <span><span class="va">home</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-08-08 15:03:41 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-08-30 14:22:27 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 4</span></span></span>
 <span><span class="co">#&gt;   season  week team  result</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
@@ -1098,7 +751,7 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>result <span class="op">=</span> <span class="op">-</span><span class="va">result</span><span class="op">)</span></span>
 <span><span class="va">away</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-08-08 15:03:41 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-08-30 14:22:27 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 4</span></span></span>
 <span><span class="co">#&gt;   season  week team  result</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
@@ -1121,7 +774,7 @@
 <span></span>
 <span><span class="va">results</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op">==</span> <span class="fl">2019</span> <span class="op">&amp;</span> <span class="va">team</span> <span class="op">==</span> <span class="st">'SEA'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-08-08 15:03:41 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-08-30 14:22:27 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 16 × 5</span></span></span>
 <span><span class="co">#&gt;    season  week team  result   win</span></span>
 <span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
@@ -1282,8 +935,7 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> ARI      24</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> ATL      24</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> BAL      24</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 25 more rows</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 25 more rows</span></span></span></code></pre></div>
 <p>Nope, not yet, we need to fix the Raiders, Rams, and Chargers, which are LV, LA, and LAC in <code>nflfastR</code>.</p>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">team_wins</span> <span class="op">&lt;-</span> <span class="va">team_wins</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -1314,9 +966,8 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> CIN      24</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> CLE      24</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> DAL      24</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 22 more rows</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span></code></pre></div>
-<p>HOU has 3 fewer seasons because it didn’t exist from 1999 through 2001, which is fine, and all the other team names have 22 seasons like they should. Okay NOW we can join:</p>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 22 more rows</span></span></span></code></pre></div>
+<p>HOU has 3 fewer seasons because it didn’t exist from 1999 through 2001, which is fine, and all the other team names have number of seasons that they should. Okay NOW we can join:</p>
 <div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">team_wins</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">offense</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'team'</span> <span class="op">=</span> <span class="st">'posteam'</span>, <span class="st">'season'</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -1366,8 +1017,7 @@
 <span><span class="co">#&gt; <span style="color: #949494;"># … with 3 more variables: prior_def_rush_epa &lt;dbl&gt;, prior_def_pass_epa &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   prior_point_diff &lt;int&gt;, and abbreviated variable names ¹​off_rush_epa,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   ²​off_pass_epa, ³​def_rush_epa, ⁴​def_pass_epa, ⁵​prior_off_rush_epa,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   ⁶​prior_off_pass_epa</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `colnames()` to see all variable names</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;">#   ⁶​prior_off_pass_epa</span></span></span></code></pre></div>
 <p>Finally! Now we have the data in place and can start doing things with it.</p>
 </div>
 <div class="section level3">

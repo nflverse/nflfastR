@@ -157,8 +157,8 @@ see <a href="nflfastR-package.html">nflfastR</a>.</p></div>
 <span class="r-in"><span><span class="co"># Roster of the 2019 and 2020 seasons</span></span></span>
 <span class="r-in"><span><span class="fu">fast_scraper_roster</span><span class="op">(</span><span class="fl">2019</span><span class="op">:</span><span class="fl">2020</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-style: italic;">nflverse roster data</span> ────────────────────────────────────────────────────────</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-08-03 16:16:37 UTC</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5,808 × 30</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-08-18 20:01:49 UTC</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6,428 × 36</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    season team  position depth_chart_po…¹ jerse…² status full_…³ first…⁴ last_…⁵</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>   <span style="text-decoration: underline;">2</span>019 ARI   DB       CB                    21 Active Patric… Patrick Peters…</span>
@@ -170,15 +170,14 @@ see <a href="nflfastR-package.html">nflfastR</a>.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>   <span style="text-decoration: underline;">2</span>019 ARI   DB       CB                    34 <span style="color: #BB0000;">NA</span>     Duke T… Duke    Thomas </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>   <span style="text-decoration: underline;">2</span>019 ARI   DB       CB                    27 <span style="color: #BB0000;">NA</span>     Kevin … Kevin   Peters…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>   <span style="text-decoration: underline;">2</span>019 ARI   DB       CB                    22 <span style="color: #BB0000;">NA</span>     Trevor… Trevor  Willia…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>   <span style="text-decoration: underline;">2</span>019 ARI   DB       FS                    32 Active Budda … Budda   Baker  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 5,798 more rows, 21 more variables: birth_date &lt;date&gt;, height &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>   <span style="text-decoration: underline;">2</span>019 ARI   DB       CB                    22 <span style="color: #BB0000;">NA</span>     Trevor… Trevor  Willia…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 6,418 more rows, 27 more variables: birth_date &lt;date&gt;, height &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   weight &lt;int&gt;, college &lt;chr&gt;, gsis_id &lt;chr&gt;, espn_id &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   sportradar_id &lt;chr&gt;, yahoo_id &lt;chr&gt;, rotowire_id &lt;chr&gt;, pff_id &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   pfr_id &lt;chr&gt;, fantasy_data_id &lt;chr&gt;, sleeper_id &lt;chr&gt;, years_exp &lt;int&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   headshot_url &lt;chr&gt;, ngs_position &lt;chr&gt;, esb_id &lt;chr&gt;, gsis_it_id &lt;chr&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   smart_id &lt;chr&gt;, entry_year &lt;int&gt;, rookie_year &lt;int&gt;, and abbreviated</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   variable names ¹​depth_chart_position, ²​jersey_number, ³​full_name, …</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows, and `colnames()` to see all variable names</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   headshot_url &lt;chr&gt;, ngs_position &lt;chr&gt;, week &lt;int&gt;, game_type &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   status_description_abbr &lt;chr&gt;, football_name &lt;chr&gt;, esb_id &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   gsis_it_id &lt;chr&gt;, smart_id &lt;chr&gt;, entry_year &lt;int&gt;, rookie_year &lt;int&gt;, …</span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
