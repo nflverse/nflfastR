@@ -421,7 +421,7 @@ There are two ways to view plots. One is in the RStudio Viewer, which shows up i
 
 The other is to save a .png with your preferred dimensions and resolution. For example, `ggsave("test.png", width = 16, height = 9, units = "cm")` would save the current plot as "`test.png`" with the units specified (you can view all the ggsave options [here](https://ggplot2.tidyverse.org/reference/ggsave.html)). 
 
-One more note: the RStudio Viewer can take a long time to preview ggplots, especially if you're doing things like adding images. If you're getting frustrated with a plot taking a long time to display, you can take advantage of [ggpreview](https://nflplotr.nflverse.com/reference/ggpreview.html) from `nflreadr`. To do this, first save the plot to an object and then run `ggpreview` on it (if this doesn't make sense, see the examples [here](https://nflplotr.nflverse.com/reference/ggpreview.html)).
+One more note: the RStudio Viewer can take a long time to preview ggplots, especially if you're doing things like adding images. If you're getting frustrated with a plot taking a long time to display, you can take advantage of [ggpreview](https://nflplotr.nflverse.com/reference/ggpreview.html) from `nflplotR`. To do this, first save the plot to an object and then run `ggpreview` on it (if this doesn't make sense, see the examples [here](https://nflplotr.nflverse.com/reference/ggpreview.html)).
 
 ## Real life example: let's make a win total model
 
