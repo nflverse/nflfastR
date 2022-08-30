@@ -389,7 +389,7 @@ qbs %>%
   geom_hline(yintercept = mean(qbs$epa), color = "red", linetype = "dashed", alpha=0.5) +
   #vertical line with mean CPOE
   geom_vline(xintercept =  mean(qbs$cpoe), color = "red", linetype = "dashed", alpha=0.5) +
-  #add points for the QBs with the logos (this uses nflreadr package)
+  #add points for the QBs with the logos (this uses nflreadR package)
   geom_nfl_logos(aes(team_abbr = team), width = qbs$n_plays / 45000, alpha = 0.75) +
   #add names using ggrepel, which tries to make them not overlap
   geom_text_repel(aes(label=name)) +
