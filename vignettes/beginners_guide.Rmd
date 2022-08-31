@@ -47,7 +47,7 @@ options(scipen = 9999)
 
 ### Load data
 
-This will load the full play by play for the 2019 season (including playoffs). We'll get to how to get more seasons later. Note that this is downloading pre-cleaned data from the nflfastR data repository using the `load_pbp()` function included in `nflfastR`, which is much faster than building pbp from scratch.
+This will load the full play by play for the 2019 season (including playoffs). We'll get to how to get more seasons later. Note that this is downloading pre-cleaned data from the nflfastR data repository using the `load_pbp()` function included in `nflreadr`, which is much faster than building pbp from scratch.
 
 ``` {r}
 data <- load_pbp(2019)
@@ -415,9 +415,56 @@ The only changes we've made are to use `geom_nfl_logos` instead of `geom_point` 
 
 This figure would look better with fewer players shown, but the point of this is explaining how to do stuff, so let's call this good enough.
 
+### Team tiers plot
+
+If it's helpful, here are a few notes about the [chart originally shown here](https://www.nflfastr.com/articles/nflfastR.html#example-5-plot-offensive-and-defensive-epa-per-play-for-a-given-season), which like the above uses nflplotR for team logos.
+
+```{r ex5, warning = FALSE, message = FALSE, results = 'hide', fig.keep = 'all', dpi = 600}
+library(nflplotR)
+# get pbp and filter to regular season rush and pass plays
+pbp <- nflreadr::load_pbp(2005) %>%
+  dplyr::filter(season_type == "REG") %>%
+  dplyr::filter(!is.na(posteam) & (rush == 1 | pass == 1))
+# offense epa
+offense <- pbp %>%
+  dplyr::group_by(team = posteam) %>%
+  dplyr::summarise(off_epa = mean(epa, na.rm = TRUE))
+# defense epa
+defense <- pbp %>%
+  dplyr::group_by(team = defteam) %>%
+  dplyr::summarise(def_epa = mean(epa, na.rm = TRUE))
+# make figure
+offense %>%
+  dplyr::inner_join(defense, by = "team") %>%
+  ggplot2::ggplot(aes(x = off_epa, y = def_epa)) +
+  # tier lines
+  ggplot2::geom_abline(slope = -1.5, intercept = (4:-3)/10, alpha = .2) +
+  # nflplotR magic
+  nflplotR::geom_mean_lines(aes(h_var = off_epa, v_var = def_epa)) +
+  nflplotR::geom_nfl_logos(aes(team_abbr = team), width = 0.07, alpha = 0.7) +
+  ggplot2::labs(
+    x = "Offense EPA/play",
+    y = "Defense EPA/play",
+    caption = "Data: @nflfastR",
+    title = "2005 NFL Offensive and Defensive EPA per Play"
+  ) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(
+    plot.title = ggplot2::element_text(size = 12, hjust = 0.5, face = "bold")
+  ) +
+  ggplot2::scale_y_reverse()
+```
+
+
+* The `geom_mean_lines()` function adds mean lines for offensive and defensive EPA per play 
+* The slope lines are created using `geom_abline()`
+* `scale_y_reverse()` reverses the vertical axis so that up = better defense
+
+Everything else should be comprehensible by now!
+
 ### A few more things on plotting
 
-There are two ways to view plots. One is in the RStudio Viewer, which shows up in RStudio when you plot something. If plots in your RStudio viewer look ugly and pixelated, you probably need to install the `cairo` package and then set that as the default viewer by doing Tools --> Global Options --> General --> Graphics --> Backend: Set to Cairo.
+There are two ways to view plots. One is in the RStudio Viewer, which shows up in RStudio when you plot something. If plots in your RStudio viewer look ugly and pixelated, you probably need to install the `Cairo` package and then set that as the default viewer by doing Tools --> Global Options --> General --> Graphics --> Backend: Set to Cairo.
 
 The other is to save a .png with your preferred dimensions and resolution. For example, `ggsave("test.png", width = 16, height = 9, units = "cm")` would save the current plot as "`test.png`" with the units specified (you can view all the ggsave options [here](https://ggplot2.tidyverse.org/reference/ggsave.html)). 
 
