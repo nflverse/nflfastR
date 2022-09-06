@@ -17,6 +17,10 @@
 #' \describe{
 #' \item{player_id}{ID of the player. Use this to join to other sources.}
 #' \item{player_name}{Name of the player}
+#' \item{player_display_name}{Full name of the player}
+#' \item{position}{Position of the player}
+#' \item{position_group}{Position group of the player}
+#' \item{headshot_url}{URL to a player headshot image}
 #' \item{games}{The number of games where the player recorded passing, rushing or receiving stats.}
 #' \item{recent_team}{Most recent team player appears in `pbp` with.}
 #' \item{season}{Season if `weekly` is `TRUE`}
@@ -610,6 +614,31 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         dplyr::everything()
       )
   }
+
+  # data is missing position and player name can be messed up in pbp
+  # so we join player information next
+  player_info <- nflreadr::load_players() %>%
+    dplyr::select(
+      "player_id" = "gsis_id",
+      "player_display_name" = "display_name",
+      "player_name" = "short_name",
+      "position",
+      "position_group",
+      "headshot_url" = "headshot"
+    )
+
+  player_df <- player_df %>%
+    dplyr::select(-"player_name") %>%
+    dplyr::left_join(player_info, by = "player_id") %>%
+    dplyr::select(
+      "player_id",
+      "player_name",
+      "player_display_name",
+      "position",
+      "position_group",
+      "headshot_url",
+      dplyr::everything()
+    )
 
   return(player_df)
 }

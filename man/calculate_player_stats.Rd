@@ -20,6 +20,10 @@ decoded to the gsis ID format):
 \describe{
 \item{player_id}{ID of the player. Use this to join to other sources.}
 \item{player_name}{Name of the player}
+\item{player_display_name}{Full name of the player}
+\item{position}{Position of the player}
+\item{position_group}{Position group of the player}
+\item{headshot_url}{URL to a player headshot image}
 \item{games}{The number of games where the player recorded passing, rushing or receiving stats.}
 \item{recent_team}{Most recent team player appears in \code{pbp} with.}
 \item{season}{Season if \code{weekly} is \code{TRUE}}

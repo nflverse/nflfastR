@@ -1,6 +1,7 @@
 # nflfastR (development version)
 
 * Internal change to `calculate_player_stats()` that reflects new nflverse data infrastructure.
+* `calculate_player_stats()` now joins player information like position or headshot url via `nflreadr::load_players()`.
 
 # nflfastR 4.4.0
 

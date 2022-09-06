@@ -11,7 +11,8 @@ fast_scraper_roster(...)
   Arguments passed on to \code{\link[nflreadr:load_rosters]{nflreadr::load_rosters}}
   \describe{
     \item{\code{seasons}}{a numeric vector of seasons to return, defaults to returning
-this year's data if it is March or later. If set to \code{TRUE}, will return all available data.}
+this year's data if it is March or later. If set to \code{TRUE}, will return all available data.
+Data available back to 1920.}
     \item{\code{file_type}}{One of \code{c("rds", "qs", "csv", "parquet")}. Can also be set globally with
 \code{options(nflreadr.prefer)}}
   }}
