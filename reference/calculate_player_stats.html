@@ -18,7 +18,7 @@ either at the game level or at the level of the entire data frame passed."><meta
     
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.4.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -146,6 +146,18 @@ decoded to the gsis ID format):</p><dl><dt>player_id</dt>
 
 <dt>player_name</dt>
 <dd><p>Name of the player</p></dd>
+
+<dt>player_display_name</dt>
+<dd><p>Full name of the player</p></dd>
+
+<dt>position</dt>
+<dd><p>Position of the player</p></dd>
+
+<dt>position_group</dt>
+<dd><p>Position group of the player</p></dd>
+
+<dt>headshot_url</dt>
+<dd><p>URL to a player headshot image</p></dd>
 
 <dt>games</dt>
 <dd><p>The number of games where the player recorded passing, rushing or receiving stats.</p></dd>
@@ -309,13 +321,15 @@ on <a href="https://www.nflfastr.com/articles/nflfastR.html#example-11-replicati
 <span class="r-in"><span><span class="va">pbp</span> <span class="op">&lt;-</span> <span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="load_pbp.html">load_pbp</a></span><span class="op">(</span><span class="fl">2020</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">weekly</span> <span class="op">&lt;-</span> <span class="fu">calculate_player_stats</span><span class="op">(</span><span class="va">pbp</span>, weekly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Failed to parse file with `qs::qdeserialize()()` from</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/nflverse/nflfastR-roster/raw/master/data/nflfastR-RB_ids.qs&gt;</span></span>
 <span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">weekly</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rows: 5,447</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Columns: 48</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Columns: 52</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ player_id                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "00-0019596", "00-0019596", "00-0019596", …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ player_name                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "T.Brady", "T.Brady", "T.Brady", "T.Brady"…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ player_display_name         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Tom Brady", "Tom Brady", "Tom Brady", "To…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ position                    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "QB", "QB", "QB", "QB", "QB", "QB", "QB", …</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ position_group              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "QB", "QB", "QB", "QB", "QB", "QB", "QB", …</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ headshot_url                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "https://static.www.nfl.com/image/private/…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ recent_team                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "TB", "TB", "TB", "TB", "TB", "TB", "TB", …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ season                      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 2020, 2020, 2020, 2020, 2020, 2020, 2020, …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ week                        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14,…</span>
@@ -366,9 +380,13 @@ on <a href="https://www.nflfastr.com/articles/nflfastR.html#example-11-replicati
 <span class="r-in"><span><span class="va">overall</span> <span class="op">&lt;-</span> <span class="fu">calculate_player_stats</span><span class="op">(</span><span class="va">pbp</span>, weekly <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">overall</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rows: 636</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Columns: 46</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Columns: 50</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ player_id                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "00-0019596", "00-0020531", "00-0022127", …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ player_name                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "T.Brady", "D.Brees", "J.Witten", "M.Schau…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ player_display_name         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Tom Brady", "Drew Brees", "Jason Witten",…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ position                    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "QB", "QB", "TE", "QB", "P", "WR", "QB", "…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ position_group              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "QB", "QB", "TE", "QB", "SPEC", "WR", "QB"…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ headshot_url                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "https://static.www.nfl.com/image/private/…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ games                       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 20, 14, 10, 1, 1, 13, 16, 17, 8, 18, 15, 9…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ recent_team                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "TB", "NO", "LV", "ATL", "ARI", "ARI", "PI…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ completions                 <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 482, 322, 0, 0, 1, 0, 446, 396, 168, 428, …</span>
