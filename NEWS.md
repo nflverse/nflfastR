@@ -1,3 +1,7 @@
+# nflfastR (development version)
+
+* Internal change to `calculate_player_stats()` that reflects new nflverse data infrastructure.
+
 # nflfastR 4.4.0
 
 ## New Functions, Options, Data

@@ -97,7 +97,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
 # Prepare data ------------------------------------------------------------
 
   # load plays with multiple laterals
-  mult_lats <- nflreadr::rds_from_url("https://github.com/mrcaseb/nfl-data/raw/master/data/lateral_yards/multiple_lateral_yards.rds") %>%
+  mult_lats <- nflreadr::rds_from_url("https://github.com/nflverse/nflverse-data/releases/download/misc/multiple_lateral_yards.rds") %>%
     dplyr::mutate(
       season = substr(.data$game_id, 1, 4) %>% as.integer(),
       week = substr(.data$game_id, 6, 7) %>% as.integer()
