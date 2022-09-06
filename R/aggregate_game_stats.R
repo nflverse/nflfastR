@@ -161,8 +161,22 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     dplyr::select(.data$season, .data$season_type, .data$week) %>%
     dplyr::distinct()
 
-  # load gsis_ids of FBs and RBs for RACR
-  racr_ids <- nflreadr::qs_from_url("https://github.com/nflverse/nflfastR-roster/raw/master/data/nflfastR-RB_ids.qs")
+  # we'll join some player information like position or full name later
+  # so we load it here to be able to use it for racr ids as well
+  player_info <- nflreadr::load_players() %>%
+    dplyr::select(
+      "player_id" = "gsis_id",
+      "player_display_name" = "display_name",
+      "player_name" = "short_name",
+      "position",
+      "position_group",
+      "headshot_url" = "headshot"
+    )
+
+  # load gsis_ids of RBs, FBs and HBs for RACR
+  racr_ids <- player_info %>%
+    dplyr::filter(.data$position %in% c("RB", "FB", "HB")) %>%
+    dplyr::select("gsis_id" = "player_id")
 
 # Passing stats -----------------------------------------------------------
 
@@ -617,16 +631,6 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
 
   # data is missing position and player name can be messed up in pbp
   # so we join player information next
-  player_info <- nflreadr::load_players() %>%
-    dplyr::select(
-      "player_id" = "gsis_id",
-      "player_display_name" = "display_name",
-      "player_name" = "short_name",
-      "position",
-      "position_group",
-      "headshot_url" = "headshot"
-    )
-
   player_df <- player_df %>%
     dplyr::select(-"player_name") %>%
     dplyr::left_join(player_info, by = "player_id") %>%
