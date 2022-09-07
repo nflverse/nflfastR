@@ -97,6 +97,8 @@
 #' }
 calculate_player_stats <- function(pbp, weekly = FALSE) {
 
+  # need newer version of nflreadr to use load_players
+  rlang::check_installed("nflreadr (>= 1.3.0)", "to join player information.")
 
 # Prepare data ------------------------------------------------------------
 
