@@ -2,6 +2,12 @@
 
 * Added new function `calculate_player_stats_def()` that aggregates defensive
 player stats either at game level or overall. (#288)
+* Internal change to `calculate_player_stats()` that reflects new nflverse data infrastructure.
+* `calculate_player_stats()` now unifies player names and joins the following player information via `nflreadr::load_players()`:
+  - `player_display_name` - Full name of the player
+  - `position` - Position of the player
+  - `position_group` - Position group of the player
+  - `headshot_url` - URL to a player headshot image
 
 # nflfastR 4.4.0
 

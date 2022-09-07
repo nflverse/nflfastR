@@ -26,18 +26,18 @@ First, you need to install the magic packages. You only need to run this step on
 ``` {r eval = FALSE}
 install.packages("tidyverse", type = "binary")
 install.packages("ggrepel", type = "binary")
-install.packages("ggimage", type = "binary")
-install.packages("nflfastR", type = "binary")
+install.packages("nflreadr", type = "binary")
+install.packages("nflplotR", type = "binary")
 ```
 
 ### Load packages
 
-Okay, now here's the stuff you're going to want to start putting into your R script. The following loads `tidyverse`, which contains a lot of helper functions for working with data, and `ggrepel` and `ggimage` for making figures, along with `nflfastR`.
+Okay, now here's the stuff you're going to want to start putting into your R script. The following loads `tidyverse`, which contains a lot of helper functions for working with data and `ggrepel` for making figures, along with `nflreadr` (which allows one to quickly download `nflfastR` data, along with a lot of other data). Finally, `nflplotR` makes plotting easier.
 ``` {r, results = 'hide', message = FALSE }
 library(tidyverse)
 library(ggrepel)
-library(ggimage)
-library(nflfastR)
+library(nflreadr)
+library(nflplotR)
 ```
 
 This one is optional but makes R prefer not to display numbers in scientific notation, which I find very annoying:
@@ -47,7 +47,7 @@ options(scipen = 9999)
 
 ### Load data
 
-This will load the full play by play for the 2019 season (including playoffs). We'll get to how to get more seasons later. Note that this is downloading pre-cleaned data from the nflfastR data repository using the `load_pbp()` function included in `nflfastR`, which is much faster than building pbp from scratch.
+This will load the full play by play for the 2019 season (including playoffs). We'll get to how to get more seasons later. Note that this is downloading pre-cleaned data from the nflfastR data repository using the `load_pbp()` function included in `nflreadr`, which is much faster than building pbp from scratch.
 
 ``` {r}
 data <- load_pbp(2019)
@@ -73,15 +73,19 @@ dim(data)
 str(data[1:10])
 ```
 
-In the above, I've added in the `[1:10]`, which selects only the first 10 columns, otherwise the list is extremely long (remember from above that there are ```r cols``` columns!).
+In the above, I've added in the `[1:10]`, which selects only the first 10 columns, otherwise the list is extremely long (remember from above that there are ```r cols``` columns!). Normally, you would just type `str(data)`.
+
+You can similarly take a glimpse at your data:
+
+``` {r}
+glimpse(data[1:10])
+```
+
+Where again I'm only showing the first 10 columns. The usual command would be `glimpse(data)`.
 
 ### Variable names
 
-Another very useful command is to get the `names` of the variables in the data:
-
-``` {r}
-names(data)
-```
+Another very useful command is to get the `names` of the variables in the data, which you would get by entering `names(data)` (I won't show here because, again, it is  ```r cols``` columns).
 
 That is a lot to work with!
 
@@ -321,20 +325,20 @@ Lots of new stuff here. First, we're grouping by `id` and `name` to make sure we
 
 My way of getting a dataset with only quarterbacks without joining to external roster data is to make sure they hit some number of dropbacks. In this case, filtering with `n_dropbacks > 100` makes sure we're only including quarterbacks. The `ungroup()` near the end is good practice after grouping to make sure you don't get weird behavior with the data you created down the line.
 
-Let's make some more figures. The `team_colors_logos` dataframe is provided in the `nflfastR` package, so since we have already loaded the package, it's ready to use.
+Let's make some more figures. The `load_teams()` function is provided in the `nflreadr` package, so since we have already loaded the package, it's ready to use.
 
 ``` {r}
-head(teams_colors_logos)
+load_teams()
 ```
 
 Let's join this to the `qbs` dataframe we created:
 
 ``` {r}
 qbs <- qbs %>%
-  left_join(teams_colors_logos, by = c('team' = 'team_abbr'))
+  left_join(load_teams(), by = c('team' = 'team_abbr'))
 ```
 
-`left_join` means keep all the rows from the left dataframe (the first one provided, `qbs`), and join those rows to available rows in the other dataframe. We also need to provide the joining variables, `team` from `qbs` and `team_abbr` from `team_colors_logos`. Why do we have to type `by = c('team' = 'team_abbr')`? Who knows, but it's what `left_join` requires as instructions for how to match.
+`left_join` means keep all the rows from the left dataframe (the first one provided, `qbs`), and join those rows to available rows in the other dataframe. We also need to provide the joining variables, `team` from `qbs` and `team_abbr` from `load_teams()`. Why do we have to type `by = c('team' = 'team_abbr')`? Who knows, but it's what `left_join` requires as instructions for how to match.
 
 ### With team color dots
 
@@ -385,8 +389,8 @@ qbs %>%
   geom_hline(yintercept = mean(qbs$epa), color = "red", linetype = "dashed", alpha=0.5) +
   #vertical line with mean CPOE
   geom_vline(xintercept =  mean(qbs$cpoe), color = "red", linetype = "dashed", alpha=0.5) +
-  #add points for the QBs with the logos
-  geom_image(aes(image = team_logo_espn), size = qbs$n_plays / 45000, asp = 16 / 9) +
+  #add points for the QBs with the logos (this uses nflplotR package)
+  geom_nfl_logos(aes(team_abbr = team), width = qbs$n_plays / 45000, alpha = 0.75) +
   #add names using ggrepel, which tries to make them not overlap
   geom_text_repel(aes(label=name)) +
   #add a smooth line fitting cpoe + epa
@@ -399,7 +403,6 @@ qbs %>%
   theme_bw() +
   #center title
   theme(
-    aspect.ratio = 9 / 16,
     plot.title = element_text(size = 14, hjust = 0.5, face = "bold")
   ) +
   #make ticks look nice
@@ -408,9 +411,64 @@ qbs %>%
 
 ```
 
-The only changes we've made are to use `geom_image` instead of `geom_point`, and to put `aspect.ratio = 9 / 16` in the `theme()` part. This makes the plot output dimensions consistent with the provided images and leads to the images not looking squished (how to figure out the right size for the images? Trial and error).
+The only changes we've made are to use `geom_nfl_logos` instead of `geom_point` (how to figure out the right size for the images in the `width` part? Trial and error).
 
-This figure would look better with transparent logos or fewer players shown, but the point of this is explaining how to do stuff, so let's call this good enough.
+This figure would look better with fewer players shown, but the point of this is explaining how to do stuff, so let's call this good enough.
+
+### Team tiers plot
+
+If it's helpful, here are a few notes about the [chart originally shown here](https://www.nflfastr.com/articles/nflfastR.html#example-5-plot-offensive-and-defensive-epa-per-play-for-a-given-season), which like the above uses nflplotR for team logos.
+
+```{r ex5, warning = FALSE, message = FALSE, results = 'hide', fig.keep = 'all', dpi = 600}
+library(nflplotR)
+# get pbp and filter to regular season rush and pass plays
+pbp <- nflreadr::load_pbp(2005) %>%
+  dplyr::filter(season_type == "REG") %>%
+  dplyr::filter(!is.na(posteam) & (rush == 1 | pass == 1))
+# offense epa
+offense <- pbp %>%
+  dplyr::group_by(team = posteam) %>%
+  dplyr::summarise(off_epa = mean(epa, na.rm = TRUE))
+# defense epa
+defense <- pbp %>%
+  dplyr::group_by(team = defteam) %>%
+  dplyr::summarise(def_epa = mean(epa, na.rm = TRUE))
+# make figure
+offense %>%
+  dplyr::inner_join(defense, by = "team") %>%
+  ggplot2::ggplot(aes(x = off_epa, y = def_epa)) +
+  # tier lines
+  ggplot2::geom_abline(slope = -1.5, intercept = (4:-3)/10, alpha = .2) +
+  # nflplotR magic
+  nflplotR::geom_mean_lines(aes(h_var = off_epa, v_var = def_epa)) +
+  nflplotR::geom_nfl_logos(aes(team_abbr = team), width = 0.07, alpha = 0.7) +
+  ggplot2::labs(
+    x = "Offense EPA/play",
+    y = "Defense EPA/play",
+    caption = "Data: @nflfastR",
+    title = "2005 NFL Offensive and Defensive EPA per Play"
+  ) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(
+    plot.title = ggplot2::element_text(size = 12, hjust = 0.5, face = "bold")
+  ) +
+  ggplot2::scale_y_reverse()
+```
+
+
+* The `geom_mean_lines()` function adds mean lines for offensive and defensive EPA per play 
+* The slope lines are created using `geom_abline()`
+* `scale_y_reverse()` reverses the vertical axis so that up = better defense
+
+Everything else should be comprehensible by now!
+
+### A few more things on plotting
+
+There are two ways to view plots. One is in the RStudio Viewer, which shows up in RStudio when you plot something. If plots in your RStudio viewer look ugly and pixelated, you probably need to install the `Cairo` package and then set that as the default viewer by doing Tools --> Global Options --> General --> Graphics --> Backend: Set to Cairo.
+
+The other is to save a .png with your preferred dimensions and resolution. For example, `ggsave("test.png", width = 16, height = 9, units = "cm")` would save the current plot as "`test.png`" with the units specified (you can view all the ggsave options [here](https://ggplot2.tidyverse.org/reference/ggsave.html)). 
+
+One more note: the RStudio Viewer can take a long time to preview ggplots, especially if you're doing things like adding images. If you're getting frustrated with a plot taking a long time to display, you can take advantage of [ggpreview](https://nflplotr.nflverse.com/reference/ggpreview.html) from `nflplotR`. To do this, first save the plot to an object and then run `ggpreview` on it (if this doesn't make sense, see the examples [here](https://nflplotr.nflverse.com/reference/ggpreview.html)).
 
 ## Real life example: let's make a win total model
 
@@ -584,7 +642,7 @@ team_wins %>%
   arrange(n)
 ```
 
-HOU has 3 fewer seasons because it didn't exist from 1999 through 2001, which is fine, and all the other team names have 22 seasons like they should. Okay NOW we can join:
+HOU has 3 fewer seasons because it didn't exist from 1999 through 2001, which is fine, and all the other team names have number of seasons that they should. Okay NOW we can join:
 
 ``` {r}
 data <- team_wins %>%
