@@ -27,7 +27,7 @@ decoded to the gsis ID format):
 }
 }
 \description{
-Build columns that aggregate official passing, rushing, and receiving stats
+Build columns that aggregate official defense stats
 either at the game level or at the level of the entire data frame passed.
 }
 \examples{
