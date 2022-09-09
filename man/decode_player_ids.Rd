@@ -30,6 +30,9 @@ The function uses by default the high efficient \link[gsisdecoder:decode_ids]{de
 of the package \href{https://cran.r-project.org/package=gsisdecoder}{\code{gsisdecoder}}.
 In the unlikely event that there is a problem with this function, an nflfastR
 internal decoder can be used with the option \code{fast = FALSE}.
+
+The 2022 play by play data introduced new player IDs that can't be decoded
+with gsisdecoder. In that case, IDs are joined through \link[nflreadr:load_players]{nflreadr::load_players}.
 }
 \examples{
 \donttest{
