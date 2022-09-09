@@ -85,7 +85,7 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
         bad_game <- 0
       }
 
-      if (id %in% c("2022_01_BUF_LA")) {
+      if (season >= 2022) {
         bad_game <- 1
       }
 
