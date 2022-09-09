@@ -67,7 +67,7 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
         ),
         decode_ids
       )
-  } else if (season >= 2022) {
+  } else if (any(season >= 2022)) {
     # 2022 data changed player IDs. GSIS ID is no longer hashed so we have no
     # other choice than using nflreadr::load_players()
 
