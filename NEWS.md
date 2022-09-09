@@ -6,6 +6,7 @@
   - `position` - Position of the player
   - `position_group` - Position group of the player
   - `headshot_url` - URL to a player headshot image
+* Fix bad possession team info in BUF-LA
 
 # nflfastR 4.4.0
 

@@ -85,6 +85,10 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
         bad_game <- 0
       }
 
+      if (id %in% c("2022_01_BUF_LA")) {
+        bad_game <- 1
+      }
+
       weather <- dplyr::if_else(
         is.null(raw_data$data$viewer$gameDetail$weather$shortDescription),
         NA_character_,
