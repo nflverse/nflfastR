@@ -72,7 +72,7 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
     # other choice than using nflreadr::load_players()
 
     # need newer version of nflreadr to use load_players
-    rlang::check_installed("nflreadr (>= 1.3.0)", "to decode 2022 player IDs.")
+    rlang::check_installed("nflreadr (>= 1.3.0)", "to decode 2022ff player IDs.")
 
     players <- nflreadr::load_players()
 
