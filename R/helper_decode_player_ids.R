@@ -85,7 +85,14 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
           tidyselect::any_of(c("passer_id", "rusher_id", "receiver_id", "id", "fantasy_id")),
           tidyselect::ends_with("player_id")
         ),
-        function(id, id_vec = id_vector) id_vec[id]
+        function(id, id_vec = id_vector){
+          chars <- nchar(id)
+          dplyr::case_when(
+            is.na(chars) ~ NA_character_,
+            chars == 36 ~ id_vec[id],
+            TRUE ~ id
+          )
+        }
       )
   } else if (isTRUE(fast)) {
     if (!is_installed("gsisdecoder")) {
