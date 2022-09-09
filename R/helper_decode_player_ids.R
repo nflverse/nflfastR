@@ -23,6 +23,9 @@
 #' In the unlikely event that there is a problem with this function, an nflfastR
 #' internal decoder can be used with the option `fast = FALSE`.
 #'
+#' The 2022 play by play data introduced new player IDs that can't be decoded
+#' with gsisdecoder. In that case, IDs are joined through [nflreadr::load_players].
+#'
 #' @return The input data frame of the parameter `pbp` with decoded player IDs.
 #' @export
 #' @examples
@@ -40,6 +43,12 @@
 #' ))
 #' }
 decode_player_ids <- function(pbp, ..., fast = TRUE) {
+  if ("game_id" %in% names(pbp)){
+    season <- substr(pbp$game_id, 1, 4) %>% unique() %>% as.numeric()
+  }  else {
+    season <- 0
+  }
+
   if (isFALSE(fast)) {
     if (nrow(pbp) > 1000 && is_sequential()) {
       cli::cli_alert_info(c(
@@ -57,6 +66,26 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
           tidyselect::ends_with("player_id")
         ),
         decode_ids
+      )
+  } else if (season >= 2022) {
+    # 2022 data changed player IDs. GSIS ID is no longer hashed so we have no
+    # other choice than using nflreadr::load_players()
+
+    # need newer version of nflreadr to use load_players
+    rlang::check_installed("nflreadr (>= 1.3.0)", "to decode 2022 player IDs.")
+
+    players <- nflreadr::load_players()
+
+    id_vector <- players$gsis_id
+    names(id_vector) <- players$smart_id
+
+    ret <- pbp %>%
+      dplyr::mutate_at(
+        dplyr::vars(
+          tidyselect::any_of(c("passer_id", "rusher_id", "receiver_id", "id", "fantasy_id")),
+          tidyselect::ends_with("player_id")
+        ),
+        function(id, id_vec = id_vector) id_vec[id]
       )
   } else if (isTRUE(fast)) {
     if (!is_installed("gsisdecoder")) {
