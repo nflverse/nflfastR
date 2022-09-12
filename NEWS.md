@@ -9,6 +9,8 @@
 * Fix bad possession team info in BUF-LA and potentially other 2022 games
 * `decode_player_ids()` uses `nflreadr::load_players()` to translate player IDs to gsis IDs starting in the 2022 season.
 * Added new function `calculate_player_stats_def()` that aggregates defensive player stats either at game level or overall. (#288)
+* Make data work in 2022 (hopefully)
+
 
 # nflfastR 4.4.0
 
