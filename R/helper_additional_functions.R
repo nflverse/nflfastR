@@ -159,6 +159,7 @@ clean_pbp <- function(pbp, ...) {
           receiver_player_name == "JulioJones" ~ "J.Jones",
           receiver_player_name == "Andre' Davis" ~ "A.Davis",
           receiver_player_name == "A.al-Jabbar" ~ "A.al-Jabbar",
+          receiver_player_name == "A.St. Brown" ~ "A.St. Brown",
           TRUE ~ receiver
         ),
         first_down = dplyr::if_else(.data$first_down_rush == 1 | .data$first_down_pass == 1 | .data$first_down_penalty == 1, 1, 0),
