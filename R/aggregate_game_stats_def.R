@@ -12,16 +12,7 @@
 #'   for the entire Data frame.
 #' @description Build columns that aggregate official defense stats
 #'   either at the game level or at the level of the entire data frame passed.
-#' @return A data frame including the following columns (all ID columns are
-#'   decoded to the gsis ID format):
-#' \describe{
-#' \item{player_id}{ID of the player. Use this to join to other sources.}
-#' \item{player_name}{Name of the player}
-#' \item{games}{The number of games where the player recorded passing, rushing or receiving stats.}
-#' \item{recent_team}{Most recent team player appears in `pbp` with.}
-#' \item{season}{Season if `weekly` is `TRUE`}
-#' \item{week}{Week if `weekly` is `TRUE`}
-#' }
+#' @return A data frame of defensive player stats. See dictionary (# TODO)
 #' @export
 #' @seealso The function [load_player_stats()] and the corresponding examples
 #' on [the nflfastR website](https://www.nflfastr.com/articles/nflfastR.html#example-11-replicating-official-stats)
@@ -503,25 +494,47 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     dplyr::select(tidyselect::any_of(c(
 
       # game information
-      "season", "week",
+      "season",
+      "week",
 
       # id information
-      "player_id", "player_name", "player_display_name", "position",
-      "position_group", "headshot_url", "team", "recent_team",
+      "player_id",
+      "player_name",
+      "player_display_name",
+      "position",
+      "position_group",
+      "headshot_url",
+      "team",
 
       # tackle stats
-      "tackles", "tackles_solo", "tackles_with_assist", "tackle_assists",
-      "tackles_for_loss", "tackles_for_loss_yards" = "tfl_yards", "forced_fumbles",
+      "def_tackles" = "tackles",
+      "def_tackles_solo" = "tackles_solo",
+      "def_tackles_with_assist" = "tackles_with_assist",
+      "def_tackle_assists" = "tackle_assists",
+      "def_tackles_for_loss" = "tackles_for_loss",
+      "def_tackles_for_loss_yards" = "tfl_yards",
+      "def_fumbles_forced" = "forced_fumbles",
 
       # pressure stats
-      "sacks", "sack_yards", "qb_hit",
+      "def_sacks"="sacks",
+      "def_sack_yards"="sack_yards",
+      "def_qb_hits"="qb_hit",
 
       # coverage stats
-      "int", "pass_defended", "int_yards",
+      "def_interceptions"="int",
+      "def_interception_yards"="int_yards",
+      "def_pass_defended"="pass_defended",
 
       # misc stats
-      "td", "fumble", "fumble_recovery_own", "fumble_recovery_yards_own",
-      "fumble_recovery_opp", "fumble_recovery_yards_opp", "safety", "penalty", "penalty_yards"
+      "def_tds"="td",
+      "def_fumbles"="fumble",
+      "def_fumble_recovery_own"="fumble_recovery_own",
+      "def_fumble_recovery_yards_own"="fumble_recovery_yards_own",
+      "def_fumble_recovery_opp"="fumble_recovery_opp",
+      "def_fumble_recovery_yards_opp"="fumble_recovery_yards_opp",
+      "def_safety"="safety",
+      "def_penalty"="penalty",
+      "def_penalty_yards"="penalty_yards"
     ))) %>%
     dplyr::filter(!is.na(.data$player_id)) %>%
     dplyr::arrange(.data$player_id, .data$season, .data$week)
@@ -529,37 +542,36 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
   # if user doesn't want week-by-week input, aggregate the whole df
   if (isFALSE(weekly)) {
     player_df <- player_df %>%
-      dplyr::group_by(.data$player_id) %>%
+      dplyr::group_by(.data$player_id, .data$team) %>%
       dplyr::summarise(
         player_name = custom_mode(.data$player_name),
         player_display_name = custom_mode(.data$player_display_name),
         games = dplyr::n(),
-        recent_team = dplyr::last(.data$team),
         position = custom_mode(.data$position),
         position_group = custom_mode(.data$position_group),
         headshot_url = custom_mode(.data$headshot_url),
-        tackles = sum(.data$tackles),
-        tackles_solo = sum(.data$tackles_solo),
-        tackles_with_assist = sum(.data$tackles_with_assist),
-        tackle_assists = sum(.data$tackle_assists),
-        tackles_for_loss = sum(.data$tackles_for_loss),
-        tackles_for_loss_yards = sum(.data$tackles_for_loss_yards),
-        forced_fumbles = sum(.data$forced_fumbles),
-        sacks = sum(.data$sacks),
-        sack_yards = sum(.data$sack_yards),
-        qb_hit = sum(.data$qb_hit),
-        int = sum(.data$int),
-        int_yards = sum(.data$int_yards),
-        pass_defended = sum(.data$pass_defended),
-        td = sum(.data$td),
-        fumble = sum(.data$fumble),
-        fumble_recovery_own = sum(.data$fumble_recovery_own),
-        fumble_recovery_yards_own = sum(.data$fumble_recovery_yards_own),
-        fumble_recovery_opp = sum(.data$fumble_recovery_opp),
-        fumble_recovery_yards_opp = sum(.data$fumble_recovery_yards_opp),
-        safety = sum(.data$safety),
-        penalty = sum(.data$penalty),
-        penalty_yards = sum(.data$penalty_yards)
+        def_tackles = sum(.data$def_tackles),
+        def_tackles_solo = sum(.data$def_tackles_solo),
+        def_tackles_with_assist = sum(.data$def_tackles_with_assist),
+        def_tackle_assists = sum(.data$def_tackle_assists),
+        def_tackles_for_loss = sum(.data$def_tackles_for_loss),
+        def_tackles_for_loss_yards = sum(.data$def_tackles_for_loss_yards),
+        def_fumbles_forced = sum(.data$def_fumbles_forced),
+        def_sacks = sum(.data$def_sacks),
+        def_sack_yards = sum(.data$def_sack_yards),
+        def_qb_hit = sum(.data$def_qb_hits),
+        def_interceptions = sum(.data$def_interceptions),
+        def_interception_yards = sum(.data$def_interception_yards),
+        def_pass_defended = sum(.data$def_pass_defended),
+        def_tds = sum(.data$def_tds),
+        def_fumbles = sum(.data$def_fumbles),
+        def_fumble_recovery_own = sum(.data$def_fumble_recovery_own),
+        def_fumble_recovery_yards_own = sum(.data$def_fumble_recovery_yards_own),
+        def_fumble_recovery_opp = sum(.data$def_fumble_recovery_opp),
+        def_fumble_recovery_yards_opp = sum(.data$def_fumble_recovery_yards_opp),
+        def_safety = sum(.data$def_safety),
+        def_penalty = sum(.data$def_penalty),
+        def_penalty_yards = sum(.data$def_penalty_yards)
       ) %>%
       dplyr::ungroup()
   }

@@ -1,7 +1,5 @@
 # nflfastR (development version)
 
-* Added new function `calculate_player_stats_def()` that aggregates defensive
-player stats either at game level or overall. (#288)
 * Internal change to `calculate_player_stats()` that reflects new nflverse data infrastructure.
 * `calculate_player_stats()` now unifies player names and joins the following player information via `nflreadr::load_players()`:
   - `player_display_name` - Full name of the player
@@ -10,6 +8,7 @@ player stats either at game level or overall. (#288)
   - `headshot_url` - URL to a player headshot image
 * Fix bad possession team info in BUF-LA and potentially other 2022 games
 * `decode_player_ids()` uses `nflreadr::load_players()` to translate player IDs to gsis IDs starting in the 2022 season.
+* Added new function `calculate_player_stats_def()` that aggregates defensive player stats either at game level or overall. (#288)
 
 # nflfastR 4.4.0
 
