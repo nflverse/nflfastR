@@ -7,7 +7,8 @@
   - `position_group` - Position group of the player
   - `headshot_url` - URL to a player headshot image
 * Added new function `calculate_player_stats_def()` that aggregates defensive player stats either at game level or overall. (#288) v4.4.0.9006
-
+* Make data work in 2022 (hopefully)
+* Fix Amon-Ra St. Brown breaking the name parser
 
 # nflfastR 4.4.0
 
