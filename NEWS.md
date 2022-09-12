@@ -6,10 +6,7 @@
   - `position` - Position of the player
   - `position_group` - Position group of the player
   - `headshot_url` - URL to a player headshot image
-* Fix bad possession team info in BUF-LA and potentially other 2022 games
-* `decode_player_ids()` uses `nflreadr::load_players()` to translate player IDs to gsis IDs starting in the 2022 season.
-* Added new function `calculate_player_stats_def()` that aggregates defensive player stats either at game level or overall. (#288)
-* Make data work in 2022 (hopefully)
+* Added new function `calculate_player_stats_def()` that aggregates defensive player stats either at game level or overall. (#288) v4.4.0.9006
 
 
 # nflfastR 4.4.0
