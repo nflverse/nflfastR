@@ -1,8 +1,12 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-labels: 'Feature Request'
+title: ''
+labels: Feature Request
+assignees: ''
+
 ---
+
 <!-- It's often a good idea to discuss these in the nflverse Discord: https://discord.com/invite/5Er2FBnnQa -->
 
 <!-- Please fill in the below -->

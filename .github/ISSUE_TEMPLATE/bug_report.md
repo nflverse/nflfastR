@@ -1,8 +1,12 @@
 ---
 name: Bug report
 about: Describe a bug you've seen
-labels: bug
+title: ''
+labels: ''
+assignees: ''
+
 ---
+
 <!-- If you have a question, please don't use this form. Instead, ask in the nflverse Discord server:  https://discord.com/invite/5Er2FBnnQa -->
 
 
@@ -46,4 +50,3 @@ labels: bug
 7. **Additional context**
 
 <!-- If applicable -->
-
