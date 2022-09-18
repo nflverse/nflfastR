@@ -12,7 +12,7 @@ assignees: ''
 
 <!-- Please fill in the following questions -->
 
-1. **Have you installed the latest development version of the package(s) in question? **
+1. **Have you installed the latest development version of the package(s) in question?**
 <!-- use `nflverse::nflverse_update(devel = TRUE)` to do this efficiently -->
 
 2. **Describe the bug**
