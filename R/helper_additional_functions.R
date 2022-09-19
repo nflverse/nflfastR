@@ -1,5 +1,5 @@
 ################################################################################
-# Author: Ben Baldwin, Sebastian Carl
+# Author: Ben Baldwin, Sebastian Carl, Tan Ho
 # Stlyeguide: styler::tidyverse_style()
 ################################################################################
 
@@ -52,7 +52,7 @@ clean_pbp <- function(pbp, ...) {
   if (nrow(pbp) == 0) {
     user_message("Nothing to clean. Return passed data frame.", "info")
     r <- pbp
-  } else{
+  } else {
     user_message("Cleaning up play-by-play...", "todo")
 
     if(any(pbp$season >= 2022)){
@@ -89,7 +89,8 @@ clean_pbp <- function(pbp, ...) {
           id = dplyr::coalesce(.data$id,.data$gsis_id),
           gsis_id = NULL,
           club_code = NULL,
-          name = NULL)  %>%
+          name = NULL
+        )  %>%
         tidyr::pivot_wider(
           names_from = "stat",
           values_from = "id",
