@@ -6,8 +6,6 @@
 \title{Get a Situation Report on System, nflverse Package Versions and Dependencies}
 \usage{
 report(...)
-
-nflverse_sitrep(pkg = "nflreadr", recursive = TRUE)
 }
 \arguments{
 \item{...}{
@@ -40,5 +38,6 @@ See \code{\link[nflreadr:sitrep]{nflreadr::nflverse_sitrep}} for details.
 \donttest{
 report(recursive = FALSE)
 report(pkg = "nflreadr", recursive = TRUE)
+nflverse_sitrep(pkg = "nflseedR", recursive = TRUE)
 }
 }

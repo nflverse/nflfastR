@@ -11,6 +11,7 @@
 #' \donttest{
 #' report(recursive = FALSE)
 #' report(pkg = "nflreadr", recursive = TRUE)
+#' nflverse_sitrep(pkg = "nflseedR", recursive = TRUE)
 #' }
 #' @export
 report <- function(...) nflreadr::nflverse_sitrep(...)
@@ -18,6 +19,5 @@ report <- function(...) nflreadr::nflverse_sitrep(...)
 #' @export
 #' @name nflverse_sitrep
 #' @rdname report
-#' @usage nflverse_sitrep(pkg = "nflreadr", recursive = TRUE)
 #' @importFrom nflreadr nflverse_sitrep
 NULL
