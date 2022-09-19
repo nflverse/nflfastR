@@ -76,21 +76,21 @@ clean_pbp <- function(pbp, ...) {
           dplyr::matches("player_id|player_name")
         ) |>
         tidyr::pivot_longer(
-          cols = -c(game_id,play_id),
+          cols = -c("game_id","play_id"),
           names_to = c("stat",".value"),
           names_pattern = c("(.+)_(id|name)"),
           values_drop_na = TRUE
         ) |>
-        dplyr::filter(is.na(id)) %>%
+        dplyr::filter(is.na(.data$id)) %>%
         dplyr::left_join(patch_ids, by = c("game_id","play_id","name")) |>
         dplyr::mutate(
-          id = dplyr::coalesce(id,gsis_id),
+          id = dplyr::coalesce(.data$id,.data$gsis_id),
           gsis_id = NULL,
           club_code = NULL,
           name = NULL) |>
         tidyr::pivot_wider(
-          names_from = stat,
-          values_from = id,
+          names_from = "stat",
+          values_from = "id",
           names_glue = "{stat}_id"
         )
 
