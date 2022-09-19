@@ -11,7 +11,7 @@
 #' \donttest{
 #' report(recursive = FALSE)
 #' report(pkg = "nflreadr", recursive = TRUE)
-#' nflverse_sitrep(pkg = "nflseedR", recursive = TRUE)
+#' nflverse_sitrep(pkg = "nflfastR", recursive = TRUE)
 #' }
 #' @export
 report <- function(...) nflreadr::nflverse_sitrep(...)

@@ -38,6 +38,6 @@ See \code{\link[nflreadr:sitrep]{nflreadr::nflverse_sitrep}} for details.
 \donttest{
 report(recursive = FALSE)
 report(pkg = "nflreadr", recursive = TRUE)
-nflverse_sitrep(pkg = "nflseedR", recursive = TRUE)
+nflverse_sitrep(pkg = "nflfastR", recursive = TRUE)
 }
 }
