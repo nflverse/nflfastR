@@ -55,7 +55,7 @@ clean_pbp <- function(pbp, ...) {
 
     if(any(pbp$season >= 2022)){
 
-      user_message("Loading pbp player ID patch files", "info")
+      # user_message("Loading pbp player ID patch files", "info")
 
       patch_seasons <- unique(pbp$season[pbp$season >= 2022])
 
@@ -99,7 +99,7 @@ clean_pbp <- function(pbp, ...) {
           dplyr::rows_patch(patchable_ids, by = c("game_id","play_id"))
       }
 
-      cli::cli_alert_success("{my_time()} | Patched {nrow(patchable_ids)} missing gsis_id field{?s}")
+      # cli::cli_alert_success("{my_time()} | Patched {nrow(patchable_ids)} missing gsis_id field{?s}")
 
     }
 
