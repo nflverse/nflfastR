@@ -10,8 +10,7 @@
 #' @examples
 #' \donttest{
 #' report(recursive = FALSE)
-#' report(pkg = "nflreadr", recursive = TRUE)
-#' nflverse_sitrep(pkg = "nflfastR", recursive = TRUE)
+#' nflverse_sitrep(pkg = "nflreadr", recursive = TRUE)
 #' }
 #' @export
 report <- function(...) nflreadr::nflverse_sitrep(...)
