@@ -53,6 +53,8 @@ but updated to work with the RS data, which has a different player format in
 the play description; e.g. 24-M.Lynch instead of M.Lynch.
 The function also standardizes team abbreviations so that, for example,
 the Chargers are always represented by 'LAC' regardless of which year it was.
+Starting in 2022, play-by-play data was missing gsis player IDs of rookies.
+This functions tries to fix as many as possible.
 }
 \seealso{
 For information on parallel processing and progress updates please
