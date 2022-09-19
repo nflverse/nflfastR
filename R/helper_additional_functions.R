@@ -63,7 +63,7 @@ clean_pbp <- function(pbp, ...) {
 
       patch_ids <- nflreadr::load_from_url(
         glue::glue("https://github.com/nflverse/nflverse-data/releases/download/misc/pbp_patch_ids_{patch_seasons}.rds")
-      )
+      ) %>% suppressMessages()
 
       patchable_ids <- pbp  %>%
         dplyr::select(
