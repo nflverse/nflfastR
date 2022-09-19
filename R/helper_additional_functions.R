@@ -63,7 +63,7 @@ clean_pbp <- function(pbp, ...) {
         glue::glue("https://github.com/nflverse/nflverse-data/releases/download/misc/pbp_patch_ids_{patch_seasons}.rds")
       )
 
-      patchable_ids <- pbp |>
+      patchable_ids <- pbp %>%
         dplyr::select(
           dplyr::any_of(c(
             "game_id", "play_id",
@@ -74,20 +74,20 @@ clean_pbp <- function(pbp, ...) {
             "fantasy_player_name"
           )),
           dplyr::matches("player_id|player_name")
-        ) |>
+        ) %>%
         tidyr::pivot_longer(
           cols = -c(game_id,play_id),
           names_to = c("stat",".value"),
           names_pattern = c("(.+)_(id|name)"),
           values_drop_na = TRUE
-        ) |>
+        ) %>%
         dplyr::filter(is.na(id)) %>%
-        dplyr::left_join(patch_ids, by = c("game_id","play_id","name")) |>
+        dplyr::left_join(patch_ids, by = c("game_id","play_id","name")) %>%
         dplyr::mutate(
           id = dplyr::coalesce(id,gsis_id),
           gsis_id = NULL,
           club_code = NULL,
-          name = NULL) |>
+          name = NULL) %>%
         tidyr::pivot_wider(
           names_from = stat,
           values_from = id,
@@ -95,7 +95,7 @@ clean_pbp <- function(pbp, ...) {
         )
 
       if(nrow(patchable_ids) > 0){
-        pbp <- tibble::tibble(pbp) |>
+        pbp <- tibble::tibble(pbp) %>%
           dplyr::rows_patch(patchable_ids, by = c("game_id","play_id"))
       }
 
