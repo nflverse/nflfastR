@@ -118,16 +118,20 @@ reference:
   - title: Main Functions
     contents:
       - build_nflfastR_pbp
-      - load_pbp
       - update_db
-      - fast_scraper_roster
-      - fast_scraper_schedules
+  - title: Load Functions
+    desc: >
+      These functions access precomputed data using the nflreadr package.
+      See <https://nflreadr.nflverse.com> for info and more data load functions.
+    contents:
+      - load_pbp
       - load_player_stats
   - title: Utility Functions
     contents:
       - calculate_expected_points
       - calculate_win_probability
       - calculate_player_stats
+      - calculate_player_stats_def
       - calculate_standings
       - report
   - title: Documentation
@@ -147,3 +151,8 @@ reference:
       - add_xyac
       - clean_pbp
       - decode_player_ids
+  - title: Deprecated
+    desc: 'These functions are no longer recommended for use, see nflreadr for latest versions.'
+    contents:
+      - fast_scraper_roster
+      - fast_scraper_schedules
