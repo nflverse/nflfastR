@@ -69,7 +69,7 @@ jobs:
           publish-dir: './docs'
           production-branch: master
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          overwrites-pull-request-comment: false
+          overwrites-pull-request-comment: true
           deploy-message:
             'Deploy from GHA: ${{ github.event.pull_request.title || github.event.head_commit.message }} (${{ github.sha }})'
         timeout-minutes: 1
