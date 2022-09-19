@@ -187,16 +187,3 @@ make_nflverse_data <- function(data, type = c("play by play")){
   class(data) <- c("nflverse_data", "tbl_df", "tbl", "data.table", "data.frame")
   data
 }
-
-#' nflverse sitrep
-#'
-#' See \code{nflreadr::nflverse_sitrep} for details.
-#'
-#' @name nflverse_sitrep
-#' @keywords internal
-#' @export nflverse_sitrep
-#' @importFrom nflreadr nflverse_sitrep
-#' @usage nflverse_sitrep()
-#' @return Situation report of R and package/dependencies.
-NULL
-

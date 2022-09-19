@@ -14,3 +14,16 @@
 #' }
 #' @export
 report <- function(...) nflreadr::nflverse_sitrep(...)
+
+#' nflverse sitrep
+#'
+#' See \code{nflreadr::nflverse_sitrep} for details.
+#'
+#' @name nflverse_sitrep
+#' @rdname report
+#' @keywords internal
+#' @export nflverse_sitrep
+#' @importFrom nflreadr nflverse_sitrep
+#' @usage nflverse_sitrep()
+#' @return Situation report of R and package/dependencies.
+NULL
