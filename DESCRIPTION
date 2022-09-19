@@ -45,7 +45,7 @@ Imports:
     cli (>= 3.0.0),
     curl,
     data.table (>= 1.14.0),
-    dplyr,
+    dplyr (>= 1.0.0),
     fastrmodels (>= 1.0.1),
     furrr,
     future,
