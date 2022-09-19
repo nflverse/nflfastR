@@ -2,6 +2,7 @@
 % Please edit documentation in R/report.R
 \name{report}
 \alias{report}
+\alias{nflverse_sitrep}
 \title{Get a Situation Report on System, nflverse Package Versions and Dependencies}
 \usage{
 report(...)
@@ -36,6 +37,6 @@ See \code{\link[nflreadr:sitrep]{nflreadr::nflverse_sitrep}} for details.
 \examples{
 \donttest{
 report(recursive = FALSE)
-report(pkg = "nflreadr", recursive = TRUE)
+nflverse_sitrep(pkg = "nflreadr", recursive = TRUE)
 }
 }

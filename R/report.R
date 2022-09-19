@@ -10,7 +10,13 @@
 #' @examples
 #' \donttest{
 #' report(recursive = FALSE)
-#' report(pkg = "nflreadr", recursive = TRUE)
+#' nflverse_sitrep(pkg = "nflreadr", recursive = TRUE)
 #' }
 #' @export
 report <- function(...) nflreadr::nflverse_sitrep(...)
+
+#' @export
+#' @name nflverse_sitrep
+#' @rdname report
+#' @importFrom nflreadr nflverse_sitrep
+NULL
