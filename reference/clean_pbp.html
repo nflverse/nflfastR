@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.4.0.9006</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.4.0.9009</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -220,7 +220,9 @@ Loosely based on Ben's nflfastR guide (<a href="https://www.nflfastr.com/article
 but updated to work with the RS data, which has a different player format in
 the play description; e.g. 24-M.Lynch instead of M.Lynch.
 The function also standardizes team abbreviations so that, for example,
-the Chargers are always represented by 'LAC' regardless of which year it was.</p>
+the Chargers are always represented by 'LAC' regardless of which year it was.
+Starting in 2022, play-by-play data was missing gsis player IDs of rookies.
+This functions tries to fix as many as possible.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
