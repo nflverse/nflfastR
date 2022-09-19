@@ -99,7 +99,7 @@ clean_pbp <- function(pbp, ...) {
           dplyr::rows_patch(patchable_ids, by = c("game_id","play_id"))
       }
 
-      user_message("Patched {nrow(patchable_ids)} missing gsis_id fields.", "done")
+      cli::cli_alert_success("{my_time()} | Patched {nrow(patchable_ids)} missing gsis_id field{?s}")
 
     }
 
