@@ -57,7 +57,7 @@ clean_pbp <- function(pbp, ...) {
 
       user_message("Loading pbp player ID patch files", "info")
 
-      patch_seasons <- unique(pbp$season) %>% purrr::keep(~.x>=2022)
+      patch_seasons <- unique(pbp$season[pbp$season >= 2022])
 
       patch_ids <- nflreadr::load_from_url(
         glue::glue("https://github.com/nflverse/nflverse-data/releases/download/misc/pbp_patch_ids_{patch_seasons}.rds")
