@@ -2,9 +2,12 @@
 % Please edit documentation in R/report.R
 \name{report}
 \alias{report}
+\alias{nflverse_sitrep}
 \title{Get a Situation Report on System, nflverse Package Versions and Dependencies}
 \usage{
 report(...)
+
+nflverse_sitrep(pkg = "nflreadr", recursive = TRUE)
 }
 \arguments{
 \item{...}{
