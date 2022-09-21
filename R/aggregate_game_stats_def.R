@@ -306,10 +306,10 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       values_fill = 0
     ) %>%
     # Renaming fails if the columns don't exist. So we row bind a dummy tibble
-    # including the relevat columns. The row will be filtered after renaming
+    # including the relevant columns. The row will be filtered after renaming
     dplyr::bind_rows(
       tibble::tibble(
-        player_id = NA_character_, fumbled = 0, fumble_recovery = 0
+        player_id = NA_character_, fumbled = numeric(), fumble_recovery = numeric()
       )
     ) %>%
     dplyr::rename(
