@@ -283,7 +283,7 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     ) %>%
     dplyr::mutate(
       fumbled_1_player_id =
-        ifelse(.data$defteam == .data$fumbled_1_team, .data$fumbled_1_player_id, NA)
+        dplyr::if_else(.data$defteam == .data$fumbled_1_team, .data$fumbled_1_player_id, NA_character_, NA_character_)
     ) %>%
     dplyr::select(
       "season", "week",
@@ -305,11 +305,18 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       values_fn = sum,
       values_fill = 0
     ) %>%
-    dplyr::filter(!is.na(.data$player_id)) %>%
+    # Renaming fails if the columns don't exist. So we row bind a dummy tibble
+    # including the relevat columns. The row will be filtered after renaming
+    dplyr::bind_rows(
+      tibble::tibble(
+        player_id = NA_character_, fumbled = 0, fumble_recovery = 0
+      )
+    ) %>%
     dplyr::rename(
       "fumble" = "fumbled",
       "fumble_recovery_own" = "fumble_recovery"
     ) %>%
+    dplyr::filter(!is.na(.data$player_id)) %>%
     dplyr::group_by(.data$season, .data$week, .data$team, .data$player_id) %>%
     dplyr::summarise(
       fumble = sum(.data$fumble, na.rm = TRUE),
@@ -364,7 +371,7 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     dplyr::filter(
       .data$defteam == .data$fumbled_1_team |
         .data$defteam == .data$fumbled_2_team
-      )
+    )
 
   fumble_yds_own_df <- fumble_yds_own_data %>%
     dplyr::group_by(
