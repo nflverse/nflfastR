@@ -11,6 +11,7 @@
 * Fix Amon-Ra St. Brown breaking the name parser
 * import/export `nflverse_sitrep`
 * Add gsis_id patch to `clean_pbp()`. (v4.4.0.9009)
+* `calculate_player_stats_def()` failed in situations where play-by-play data is missing certain stats. (#382) (v4.4.0.9010)
 
 # nflfastR 4.4.0
 
