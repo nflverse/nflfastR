@@ -169,7 +169,7 @@ calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
   })
 
   # This replaces NA in the attempts columns with zero
-  attempt_cols = c("fg_att", "pat_att", "gwfg_att")
+  attempt_cols <- c("fg_att", "pat_att", "gwfg_att")
   full_kicks[attempt_cols] <- lapply(full_kicks[attempt_cols], function(x) {
     replace(x, is.na(x), 0)
   })
