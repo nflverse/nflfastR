@@ -67,7 +67,7 @@ or prebuilt from the [development repo](https://nflverse.r-universe.dev)
 with:
 
 ``` r
-install.packages("nflfastR", repos = "https://nflverse.r-universe.dev")
+install.packages("nflfastR", repos = c("https://nflverse.r-universe.dev", getOption("repos")))
 ```
 
 ## Usage
