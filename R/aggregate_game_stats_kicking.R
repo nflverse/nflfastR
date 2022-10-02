@@ -161,19 +161,12 @@ calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
       dplyr::any_of(c("season", "week","season_type")), "player_id",
       "team", "player_name", "player_display_name", "games", "position",
       "position_group", "headshot_url", dplyr::everything()
-    )
-
-  # This replaces NA/NaN, and zero-length character values with NA
-  full_kicks[] <- lapply(full_kicks, function(x) {
-    replace(x, is.na(x) | nchar(x) == 0, NA)
-  })
-
-  # This replaces NA in the attempts columns with zero
-  attempt_cols <- c("fg_att", "pat_att", "gwfg_att")
-  full_kicks[attempt_cols] <- lapply(full_kicks[attempt_cols], function(x) {
-    replace(x, is.na(x), 0)
-  })
-
+    ) %>%
+    # replace "" with NA
+    dplyr::mutate_all(~replace(.x, nchar(x) == 0 | is.nan(x), NA) %>%
+    # replace NA in attempt columns with 0
+    dplyr::mutate_at(c("fg_att", "pat_att", "gwfg_att"), ~tidyr::replace_na(.x, 0))
+    
 
   if (weekly) {
     full_kicks %>%
