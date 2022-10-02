@@ -158,7 +158,7 @@ calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
     dplyr::mutate(games = dplyr::n()) %>%
     dplyr::ungroup() %>%
     dplyr::select(
-      "season", dplyr::any_of("week"), dplyr::any_of("season_type"), "player_id",
+      dplyr::any_of(c("season", "week","season_type")), "player_id",
       "team", "player_name", "player_display_name", "games", "position",
       "position_group", "headshot_url", dplyr::everything()
     )
