@@ -149,7 +149,6 @@ calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
     )
 
   # Joining all the data together and organizing the first few columns.
-  # I was not sure what order you want the columns
   full_kicks <- df_field_goals %>%
     dplyr::full_join(df_pat, as.character(grp_vars)) %>%
     dplyr::full_join(game_winners, as.character(grp_vars)) %>%
@@ -163,7 +162,7 @@ calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
       "position_group", "headshot_url", dplyr::everything()
     ) %>%
     # replace "" with NA
-    dplyr::mutate_all(~replace(.x, nchar(x) == 0 | is.nan(x), NA)) %>%
+    dplyr::mutate_all(~replace(.x, nchar(.x) == 0 | is.nan(.x), NA)) %>%
     # replace NA in attempt columns with 0
     dplyr::mutate_at(c("fg_att", "pat_att", "gwfg_att"), ~tidyr::replace_na(.x, 0))
     
