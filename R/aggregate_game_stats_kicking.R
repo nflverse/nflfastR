@@ -163,7 +163,7 @@ calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
       "position_group", "headshot_url", dplyr::everything()
     ) %>%
     # replace "" with NA
-    dplyr::mutate_all(~replace(.x, nchar(x) == 0 | is.nan(x), NA) %>%
+    dplyr::mutate_all(~replace(.x, nchar(x) == 0 | is.nan(x), NA)) %>%
     # replace NA in attempt columns with 0
     dplyr::mutate_at(c("fg_att", "pat_att", "gwfg_att"), ~tidyr::replace_na(.x, 0))
     
