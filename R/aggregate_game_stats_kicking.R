@@ -9,8 +9,10 @@
 #'
 #' @examples
 #' \donttest{
-#' pbp <- nflreadr::load_pbp(2021)
-#' calculate_player_stats_kicking(pbp, weekly = TRUE)
+#' try({
+#'     pbp <- nflreadr::load_pbp(2021)
+#'     calculate_player_stats_kicking(pbp, weekly = TRUE)
+#' })
 #' }
 #'
 #' @return a dataframe of kicking stats
