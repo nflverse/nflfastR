@@ -164,7 +164,7 @@ calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
     dplyr::mutate(games = dplyr::n()) %>%
     dplyr::ungroup() %>%
     dplyr::select(
-      dplyr::any_of(c("season", "week","season_type")), "player_id",
+      dplyr::any_of(c("season", "week", "season_type")), "player_id",
       "team", "player_name", "player_display_name", "games", "position",
       "position_group", "headshot_url", dplyr::everything()
     ) %>%
@@ -172,14 +172,14 @@ calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
     dplyr::mutate_all(~replace(.x, nchar(.x) == 0 | is.nan(.x), NA)) %>%
     # replace NA in attempt columns with 0
     dplyr::mutate_at(c("fg_att", "pat_att", "gwfg_att"), ~tidyr::replace_na(.x, 0))
-    
+
 
   if (weekly) {
     full_kicks %>%
       dplyr::select(-"games") %>%
-      dplyr::arrange(.data$season, .data$week, .data$team, .data$player_name)
+      dplyr::arrange(.data$player_id, .data$season, .data$week)
   } else {
     full_kicks %>%
-      dplyr::arrange(.data$season, .data$team, .data$player_name)
+      dplyr::arrange(.data$player_id)
   }
 }
