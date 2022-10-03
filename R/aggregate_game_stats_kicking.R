@@ -28,8 +28,11 @@ calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
   rlang::check_installed("nflreadr (>= 1.3.0)")
 
   # First, creating a grouping variable object to toggle the weekly argument w/
-  grp_vars <- list("season", "week", "season_type", "player_id", "team")
-  if (!weekly) grp_vars <- list("player_id","team")
+  grp_vars <- if (isTRUE(weekly)){
+    list("season", "week", "season_type", "player_id", "team")
+  } else if (isFALSE(weekly)){
+    list("player_id", "team")
+  }
   grp_vars <- lapply(grp_vars, as.symbol)
 
   # Filtering down / creating a base dataset
