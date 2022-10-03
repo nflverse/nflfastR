@@ -5,13 +5,17 @@
 #' @param pbp A Data frame of NFL play-by-play data typically loaded with
 #' [load_pbp()] or [build_nflfastR_pbp()].
 #' @param weekly If `TRUE`, returns week-by-week stats, otherwise, stats for
-#' the entire season.
+#' the entire data frame in argument `pbp`.
 #'
 #' @examples
 #' \donttest{
 #' try({
 #'     pbp <- nflreadr::load_pbp(2021)
-#'     calculate_player_stats_kicking(pbp, weekly = TRUE)
+#'     weekly <- calculate_player_stats_kicking(pbp, weekly = TRUE)
+#'     dplyr::glimpse(weekly)
+#'
+#'     overall <- calculate_player_stats_kicking(pbp, weekly = FALSE)
+#'     dplyr::glimpse(overall)
 #' })
 #' }
 #'
