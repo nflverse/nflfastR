@@ -11,7 +11,7 @@ calculate_player_stats_kicking(pbp, weekly = FALSE)
 \code{\link[=load_pbp]{load_pbp()}} or \code{\link[=build_nflfastR_pbp]{build_nflfastR_pbp()}}.}
 
 \item{weekly}{If \code{TRUE}, returns week-by-week stats, otherwise, stats for
-the entire season.}
+the entire data frame in argument \code{pbp}.}
 }
 \value{
 a dataframe of kicking stats
@@ -21,8 +21,14 @@ Build columns that aggregate kicking stats at the game level.
 }
 \examples{
 \donttest{
-pbp <- nflreadr::load_pbp(2021)
-calculate_player_stats_kicking(pbp, weekly = TRUE)
+try({
+    pbp <- nflreadr::load_pbp(2021)
+    weekly <- calculate_player_stats_kicking(pbp, weekly = TRUE)
+    dplyr::glimpse(weekly)
+
+    overall <- calculate_player_stats_kicking(pbp, weekly = FALSE)
+    dplyr::glimpse(overall)
+})
 }
 
 }
