@@ -12,6 +12,7 @@
 * import/export `nflverse_sitrep`
 * Add gsis_id patch to `clean_pbp()`. (v4.4.0.9009)
 * `calculate_player_stats_def()` failed in situations where play-by-play data is missing certain stats. (#382) (v4.4.0.9010)
+* Spot-fixing `calculate_player_stats` for NA names. (v4.4.0.9011)
 
 # nflfastR 4.4.0
 
