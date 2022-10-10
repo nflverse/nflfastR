@@ -457,7 +457,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     # a receiving two point are dropped in any other join
     dplyr::full_join(rec_two_points, by = c("player_id", "week", "season", "name_receiver", "team_receiver")) %>%
     dplyr::mutate(receiving_2pt_conversions = dplyr::if_else(is.na(.data$receiving_2pt_conversions), 0L, .data$receiving_2pt_conversions)) %>%
-    dplyr::filter(!is.na(.data$player_id))
+    dplyr::filter(!is.na(.data$player_id), !is.na(.data$name_receiver))
 
   rec_df_nas <- is.na(rec_df)
   epa_index <- which(dimnames(rec_df_nas)[[2]] == c("receiving_epa", "racr", "target_share", "air_yards_share", "wopr"))
@@ -524,7 +524,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       "special_teams_tds"
 
     ))) %>%
-    dplyr::filter(!is.na(.data$player_id))
+    dplyr::filter(!is.na(.data$player_id), !is.na(.data$player_name))
 
   player_df_nas <- is.na(player_df)
   epa_index <- which(dimnames(player_df_nas)[[2]] %in% c("passing_epa", "rushing_epa", "receiving_epa", "dakota", "racr", "target_share", "air_yards_share", "wopr", "pacr"))
