@@ -12,7 +12,7 @@
 * import/export `nflverse_sitrep`
 * Add gsis_id patch to `clean_pbp()`. (v4.4.0.9009)
 * `calculate_player_stats_def()` failed in situations where play-by-play data is missing certain stats. (#382) (v4.4.0.9010)
-* Added new function `calculate_player_stats_kicking()` that aggregates player stats for field goals and extra points at game level or overall. (v4.4.0.9011)
+* Added new function `calculate_player_stats_kicking()` that aggregates player stats for field goals and extra points at game level or overall. (v4.4.0.9012)
 
 ---
 
