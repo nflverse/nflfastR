@@ -72,6 +72,7 @@ calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
       temp_block_idx = .data$fg_res == "blocked"
     ) %>%
     dplyr::summarise(
+      games_fg = length(unique(.data$game_id)),
       fg_made = sum(.data$temp_made_idx, na.rm = TRUE),
       fg_att = sum(.data$field_goal_attempt, na.rm = TRUE),
       fg_missed = sum(.data$temp_miss_idx, na.rm = TRUE),
@@ -105,6 +106,7 @@ calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
     dplyr::filter(.data$extra_point_attempt == 1) %>%
     dplyr::group_by(!!!grp_vars) %>%
     dplyr::summarise(
+      games_pat = length(unique(.data$game_id)),
       pat_made = sum(.data$pat_res == "good", na.rm = TRUE),
       pat_att = sum(.data$extra_point_attempt, na.rm = TRUE),
       pat_missed = sum(.data$pat_res == "failed", na.rm = TRUE),
@@ -136,6 +138,7 @@ calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
     dplyr::filter(.data$field_goal_attempt == 1, dplyr::between(.data$score_differential, -2, 0)) %>%
     dplyr::group_by(!!!grp_vars) %>%
     dplyr::summarise(
+      games_gwfg = length(unique(.data$game_id)),
       gwfg_att = dplyr::n(),
       !!gw_dist_name := if (weekly) .data$dist else paste(na.omit(.data$dist), collapse = ";"),
       gwfg_made = sum(.data$fg_res == "made", na.rm = TRUE),
@@ -161,12 +164,13 @@ calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
     dplyr::full_join(game_winners, as.character(grp_vars)) %>%
     dplyr::left_join(df_player_names, "player_id") %>%
     dplyr::group_by(!!!grp_vars) %>%
-    dplyr::mutate(games = dplyr::n()) %>%
+    dplyr::mutate(games = max(games_fg, games_pat, games_gwfg, na.rm = TRUE)) %>%
     dplyr::ungroup() %>%
     dplyr::select(
       dplyr::any_of(c("season", "week", "season_type")), "player_id",
       "team", "player_name", "player_display_name", "games", "position",
-      "position_group", "headshot_url", dplyr::everything()
+      "position_group", "headshot_url", dplyr::everything(),
+      -c("games_fg", "games_pat", "games_gwfg")
     ) %>%
     # replace "" with NA
     dplyr::mutate_all(~replace(.x, nchar(.x) == 0 | is.nan(.x), NA)) %>%
