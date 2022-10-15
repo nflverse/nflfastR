@@ -175,7 +175,11 @@ write_pbp <- function(seasons, dbConnection, tablename){
     if (!DBI::dbExistsTable(dbConnection, tablename)){
       pbp <- dplyr::bind_rows(default_play, pbp)
     }
-    DBI::dbWriteTable(dbConnection, tablename, pbp, append = TRUE)
+    if (DBI::dbExistsTable(dbConnection, tablename)) {
+      DBI::dbWriteTable(dbConnection, tablename, pbp, append = TRUE)
+    } else {
+      DBI::dbWriteTable(dbConnection, tablename, pbp, append = FALSE)
+    }
     p("loading...")
   }, p)
 }
