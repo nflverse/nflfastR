@@ -173,6 +173,7 @@ write_pbp <- function(seasons, dbConnection, tablename){
   purrr::walk(seasons, function(x, p){
     pbp <- nflreadr::load_pbp(x)
     if (!DBI::dbExistsTable(dbConnection, tablename)){
+      default_play$weather <- "some other string"
       pbp <- dplyr::bind_rows(default_play, pbp)
     }
     if (DBI::dbExistsTable(dbConnection, tablename)) {
