@@ -137,7 +137,8 @@ build_db <- function(tblname = "nflfastR_pbp", db_conn, rebuild = FALSE, show_me
     dplyr::filter(.data$season >= 1999 & !is.na(.data$result)) %>%
     dplyr::group_by(.data$season) %>%
     dplyr::summarise() %>%
-    dplyr::ungroup()
+    dplyr::ungroup() %>%
+    dplyr::arrange(dplyr::desc(season))
 
   if (all(rebuild == TRUE)) {
     cli::cli_ul("{my_time()} | Purging the complete data table {.val {tblname}}
