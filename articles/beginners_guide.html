@@ -46,7 +46,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.4.0.9012</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.4.0.9013</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -146,7 +146,8 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>A beginner's guide to nflfastR</h1>
-                        <h4 data-toc-skip class="author">Ben Baldwin</h4>
+                        <h4 data-toc-skip class="author">Ben
+Baldwin</h4>
             
       
       <small class="dont-index">Source: <a href="https://github.com/nflverse/nflfastR/blob/HEAD/vignettes/beginners_guide.Rmd" class="external-link"><code>vignettes/beginners_guide.Rmd</code></a></small>
@@ -158,13 +159,29 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>The following guide will assume you have R installed. I also highly recommend working in RStudio. If you need help getting those installed or are unfamiliar with how RStudio is laid out, <a href="https://github.com/leesharpe/nfldata/blob/master/RSTUDIO-INTRO.md#r-and-rstudio-introduction" class="external-link">please see this section of Lee Sharpe’s guide</a>.</p>
-<p>A quick word if you’re new to programming: all of this is happening in R. Obviously, you need to install R on your computer to do any of this. Make sure you save what you’re doing in a script (in RStudio, File –&gt; New File –&gt; R script) so you can save your work and run multiple lines of code at once. To run code from a script, highlight what you want, and press control + enter or press the Run button in the top of the editor (see Lee’s guide). If you don’t highlight anything and press control + enter, the currently selected line will run. As you go through your R journey, you might get stuck and have to google a bunch of things, but that’s totally okay and normal. That’s how I got started!</p>
+<p>The following guide will assume you have R installed. I also highly
+recommend working in RStudio. If you need help getting those installed
+or are unfamiliar with how RStudio is laid out, <a href="https://github.com/leesharpe/nfldata/blob/master/RSTUDIO-INTRO.md#r-and-rstudio-introduction" class="external-link">please
+see this section of Lee Sharpe’s guide</a>.</p>
+<p>A quick word if you’re new to programming: all of this is happening
+in R. Obviously, you need to install R on your computer to do any of
+this. Make sure you save what you’re doing in a script (in RStudio, File
+–&gt; New File –&gt; R script) so you can save your work and run
+multiple lines of code at once. To run code from a script, highlight
+what you want, and press control + enter or press the Run button in the
+top of the editor (see Lee’s guide). If you don’t highlight anything and
+press control + enter, the currently selected line will run. As you go
+through your R journey, you might get stuck and have to google a bunch
+of things, but that’s totally okay and normal. That’s how I got
+started!</p>
 </div>
 <div class="section level2">
 <h2 id="setup">Setup<a class="anchor" aria-label="anchor" href="#setup"></a>
 </h2>
-<p>First, you need to install the magic packages. You only need to run this step once on a given computer. For these you can just type them into the RStudio console (look for the Console pane in RStudio) directly since you’re never going to be doing this again.</p>
+<p>First, you need to install the magic packages. You only need to run
+this step once on a given computer. For these you can just type them
+into the RStudio console (look for the Console pane in RStudio) directly
+since you’re never going to be doing this again.</p>
 <div class="section level3">
 <h3 id="install-packages">Install packages<a class="anchor" aria-label="anchor" href="#install-packages"></a>
 </h3>
@@ -177,20 +194,31 @@
 <div class="section level3">
 <h3 id="load-packages">Load packages<a class="anchor" aria-label="anchor" href="#load-packages"></a>
 </h3>
-<p>Okay, now here’s the stuff you’re going to want to start putting into your R script. The following loads <code>tidyverse</code>, which contains a lot of helper functions for working with data and <code>ggrepel</code> for making figures, along with <code>nflreadr</code> (which allows one to quickly download <code>nflfastR</code> data, along with a lot of other data). Finally, <code>nflplotR</code> makes plotting easier.</p>
+<p>Okay, now here’s the stuff you’re going to want to start putting into
+your R script. The following loads <code>tidyverse</code>, which
+contains a lot of helper functions for working with data and
+<code>ggrepel</code> for making figures, along with
+<code>nflreadr</code> (which allows one to quickly download
+<code>nflfastR</code> data, along with a lot of other data). Finally,
+<code>nflplotR</code> makes plotting easier.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/slowkow/ggrepel" class="external-link">ggrepel</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://nflreadr.nflverse.com" class="external-link">nflreadr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://nflplotr.nflverse.com" class="external-link">nflplotR</a></span><span class="op">)</span></span></code></pre></div>
-<p>This one is optional but makes R prefer not to display numbers in scientific notation, which I find very annoying:</p>
+<p>This one is optional but makes R prefer not to display numbers in
+scientific notation, which I find very annoying:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>scipen <span class="op">=</span> <span class="fl">9999</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="load-data">Load data<a class="anchor" aria-label="anchor" href="#load-data"></a>
 </h3>
-<p>This will load the full play by play for the 2019 season (including playoffs). We’ll get to how to get more seasons later. Note that this is downloading pre-cleaned data from the nflfastR data repository using the <code><a href="../reference/load_pbp.html">load_pbp()</a></code> function included in <code>nflreadr</code>, which is much faster than building pbp from scratch.</p>
+<p>This will load the full play by play for the 2019 season (including
+playoffs). We’ll get to how to get more seasons later. Note that this is
+downloading pre-cleaned data from the nflfastR data repository using the
+<code><a href="../reference/load_pbp.html">load_pbp()</a></code> function included in <code>nflreadr</code>,
+which is much faster than building pbp from scratch.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_pbp.html">load_pbp</a></span><span class="op">(</span><span class="fl">2019</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -201,14 +229,18 @@
 <div class="section level3">
 <h3 id="dimensions">Dimensions<a class="anchor" aria-label="anchor" href="#dimensions"></a>
 </h3>
-<p>Before moving forward, here are a few ways to get a sense of what’s in a dataframe. We can check the <strong>dim</strong>ensions of the data, and this tells us that there are <code>48034</code> rows (i.e., plays) in the data and <code>372</code> columns (variables):</p>
+<p>Before moving forward, here are a few ways to get a sense of what’s
+in a dataframe. We can check the <strong>dim</strong>ensions of the
+data, and this tells us that there are <code>48034</code> rows (i.e.,
+plays) in the data and <code>372</code> columns (variables):</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 48034   372</span></span></code></pre></div>
-<p><code>str</code> displays the <strong>str</strong>ucture of the dataframe:</p>
+<p><code>str</code> displays the <strong>str</strong>ucture of the
+dataframe:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">data</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt; nflverse_data [48,034 × 10] (S3: nflverse_data/tbl_df/tbl/data.table/data.frame)</span></span>
+<span><span class="co">#&gt; nflvrs_d [48,034 × 10] (S3: nflverse_data/tbl_df/tbl/data.table/data.frame)</span></span>
 <span><span class="co">#&gt;  $ play_id     : num [1:48034] 1 36 51 79 100 121 148 185 214 239 ...</span></span>
 <span><span class="co">#&gt;  $ game_id     : chr [1:48034] "2019_01_ATL_MIN" "2019_01_ATL_MIN" "2019_01_ATL_MIN" "2019_01_ATL_MIN" ...</span></span>
 <span><span class="co">#&gt;  $ old_game_id : chr [1:48034] "2019090804" "2019090804" "2019090804" "2019090804" ...</span></span>
@@ -223,7 +255,10 @@
 <span><span class="co">#&gt;  - attr(*, "nflverse_type")= chr "play by play data"</span></span>
 <span><span class="co">#&gt;  - attr(*, "nflfastR_version")=Classes 'package_version', 'numeric_version'  hidden list of 1</span></span>
 <span><span class="co">#&gt;   ..$ : int [1:4] 4 4 0 9010</span></span></code></pre></div>
-<p>In the above, I’ve added in the <code>[1:10]</code>, which selects only the first 10 columns, otherwise the list is extremely long (remember from above that there are <code>372</code> columns!). Normally, you would just type <code>str(data)</code>.</p>
+<p>In the above, I’ve added in the <code>[1:10]</code>, which selects
+only the first 10 columns, otherwise the list is extremely long
+(remember from above that there are <code>372</code> columns!).
+Normally, you would just type <code>str(data)</code>.</p>
 <p>You can similarly take a glimpse at your data:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">data</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span></span>
@@ -239,31 +274,44 @@
 <span><span class="co">#&gt; $ posteam      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> NA, "ATL", "ATL", "ATL", "ATL", "ATL", "MIN", "MIN", "MIN…</span></span>
 <span><span class="co">#&gt; $ posteam_type <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> NA, "away", "away", "away", "away", "away", "home", "home…</span></span>
 <span><span class="co">#&gt; $ defteam      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> NA, "MIN", "MIN", "MIN", "MIN", "MIN", "ATL", "ATL", "ATL…</span></span></code></pre></div>
-<p>Where again I’m only showing the first 10 columns. The usual command would be <code>glimpse(data)</code>.</p>
+<p>Where again I’m only showing the first 10 columns. The usual command
+would be <code>glimpse(data)</code>.</p>
 </div>
 <div class="section level3">
 <h3 id="variable-names">Variable names<a class="anchor" aria-label="anchor" href="#variable-names"></a>
 </h3>
-<p>Another very useful command is to get the <code>names</code> of the variables in the data, which you would get by entering <code>names(data)</code> (I won’t show here because, again, it is <code>372</code> columns).</p>
+<p>Another very useful command is to get the <code>names</code> of the
+variables in the data, which you would get by entering
+<code>names(data)</code> (I won’t show here because, again, it is
+<code>372</code> columns).</p>
 <p>That is a lot to work with!</p>
 </div>
 <div class="section level3">
 <h3 id="viewer">Viewer<a class="anchor" aria-label="anchor" href="#viewer"></a>
 </h3>
-<p>One more way to look at your data is with the <code><a href="https://rdrr.io/r/utils/View.html" class="external-link">View()</a></code> function. If you’re coming from an Excel background, this will help you feel more at home as a way to see what’s in the data.</p>
+<p>One more way to look at your data is with the <code><a href="https://rdrr.io/r/utils/View.html" class="external-link">View()</a></code>
+function. If you’re coming from an Excel background, this will help you
+feel more at home as a way to see what’s in the data.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/View.html" class="external-link">View</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></code></pre></div>
-<p>This will open the viewer in RStudio in a new panel. Try it out yourself! Since there are so many columns, the Viewer won’t show them all. To pick which columns to view, you can <strong>select</strong> some:</p>
+<p>This will open the viewer in RStudio in a new panel. Try it out
+yourself! Since there are so many columns, the Viewer won’t show them
+all. To pick which columns to view, you can <strong>select</strong>
+some:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">home_team</span>, <span class="va">away_team</span>, <span class="va">posteam</span>, <span class="va">desc</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/View.html" class="external-link">View</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>The <code>%&gt;%</code> thing lets you pipe together a bunch of different commands. So we’re taking our data, “<code>select</code>”ing a few variables we want to look at, and then Viewing. Again, I can’t display the results of that here, but try it out yourself!</p>
+<p>The <code>%&gt;%</code> thing lets you pipe together a bunch of
+different commands. So we’re taking our data, “<code>select</code>”ing a
+few variables we want to look at, and then Viewing. Again, I can’t
+display the results of that here, but try it out yourself!</p>
 </div>
 <div class="section level3">
 <h3 id="head-manipulation">Head + manipulation<a class="anchor" aria-label="anchor" href="#head-manipulation"></a>
 </h3>
-<p>To start, let’s just look at the first few rows (the “head”) of the data.</p>
+<p>To start, let’s just look at the first few rows (the “head”) of the
+data.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">posteam</span>, <span class="va">defteam</span>, <span class="va">desc</span>, <span class="va">rush</span>, <span class="va">pass</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -279,11 +327,22 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> ATL     MIN     (14:20) 24-D.Freeman right tackle to ATL 21 for 4…     1     0</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> ATL     MIN     (13:41) (Shotgun) 2-M.Ryan scrambles left end to …     0     1</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> ATL     MIN     (12:59) 5-M.Bosher punt is BLOCKED by 50-E.Wilson…     0     0</span></span></code></pre></div>
-<p>A couple things. “<code>desc</code>” is the important variable that lists the description of what happened on the play, and <code>head</code> says to show the first few rows (the “head” of the data). Since this is already sorted by game, these are the first 6 rows from a week 1 game, ATL @ MIN. To make code easier to read, people often put each part of a pipe on a new line, which is useful when working with more complicated functions. We could run:</p>
+<p>A couple things. “<code>desc</code>” is the important variable that
+lists the description of what happened on the play, and
+<code>head</code> says to show the first few rows (the “head” of the
+data). Since this is already sorted by game, these are the first 6 rows
+from a week 1 game, ATL @ MIN. To make code easier to read, people often
+put each part of a pipe on a new line, which is useful when working with
+more complicated functions. We could run:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">posteam</span>, <span class="va">defteam</span>, <span class="va">desc</span>, <span class="va">rush</span>, <span class="va">pass</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>And it would return the exact same output as the one written out in multiple lines, but the code isn’t as easy to read.</p>
-<p>We’ve covered <code>select</code>, and the next important function to learn is <code>filter</code>, which lets you filter the data to what you want. The following returns only plays that are run plays and pass plays; i.e., no punts, kickoffs, field goals, or dead ball penalties (e.g. false starts) where we don’t know what the attempted play was.</p>
+<p>And it would return the exact same output as the one written out in
+multiple lines, but the code isn’t as easy to read.</p>
+<p>We’ve covered <code>select</code>, and the next important function to
+learn is <code>filter</code>, which lets you filter the data to what you
+want. The following returns only plays that are run plays and pass
+plays; i.e., no punts, kickoffs, field goals, or dead ball penalties
+(e.g. false starts) where we don’t know what the attempted play was.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">rush</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">|</span> <span class="va">pass</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -301,9 +360,24 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> MIN     (12:32) 8-K.Cousins pass shor…     0     1 K.Co… K.Cou… <span style="color: #BB0000;">NA</span>     D.Cook </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> MIN     (11:57) 8-K.Cousins pass shor…     0     1 K.Co… K.Cou… <span style="color: #BB0000;">NA</span>     A.Thie…</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># … with abbreviated variable name ¹​receiver</span></span></span></code></pre></div>
-<p>Compared to the first time we did this, the opening line for the start of the game, the kickoff, and the punt are now gone. Note that if you’re checking whether a variable is equal to something, we need to use the double equals sign <code>==</code> like above. There’s probably some technical reason for this [shrug emoji]. Also, the character <code>|</code> is used for “or”, and <code>&amp;</code> for “and”. So <code>rush == 1 | pass == 1</code> means “rush or pass”.</p>
-<p>Note that the <code>rush</code>, <code>pass</code>, <code>name</code>, <code>passer</code>, <code>rusher</code>, and <code>receiver</code> columns are all <code>nflfastR</code> creations, where we have provided these to make working with the data easier. As we can see above, <code>passer</code> is filled in for all dropbacks (including sacks and scrambles, which also have <code>pass</code> = 1), and <code>name</code> is equal to the passer on pass plays and the rusher on rush plays. Think of this as the primary player involved on a play.</p>
-<p>What if we wanted to view special teams plays? Again, we can use <code>filter</code>:</p>
+<p>Compared to the first time we did this, the opening line for the
+start of the game, the kickoff, and the punt are now gone. Note that if
+you’re checking whether a variable is equal to something, we need to use
+the double equals sign <code>==</code> like above. There’s probably some
+technical reason for this [shrug emoji]. Also, the character
+<code>|</code> is used for “or”, and <code>&amp;</code> for “and”. So
+<code>rush == 1 | pass == 1</code> means “rush or pass”.</p>
+<p>Note that the <code>rush</code>, <code>pass</code>,
+<code>name</code>, <code>passer</code>, <code>rusher</code>, and
+<code>receiver</code> columns are all <code>nflfastR</code> creations,
+where we have provided these to make working with the data easier. As we
+can see above, <code>passer</code> is filled in for all dropbacks
+(including sacks and scrambles, which also have <code>pass</code> = 1),
+and <code>name</code> is equal to the passer on pass plays and the
+rusher on rush plays. Think of this as the primary player involved on a
+play.</p>
+<p>What if we wanted to view special teams plays? Again, we can use
+<code>filter</code>:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">special</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -354,21 +428,32 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>     4       1 (2:59) (Punt formation) Direct snap to 41-A.Levine.  41-A.Levin…</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>     4       3 (9:30) (Shotgun) 3-R.Griffin pass short left to 89-M.Andrews fo…</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>     4       1 (3:55) 17-J.Allen FUMBLES (Aborted) at NYJ 37, RECOVERED by NYJ…</span></span></code></pre></div>
-<p>So far, we’ve just been taking a look at the initial dataset we downloaded, but none of our results are preserved. To save a new dataframe of just the plays we want, we need to use <code>&lt;-</code> to assign a new dataframe. Let’s save a new dataframe that’s just run plays and pass plays with non-missing EPA, called <code>pbp_rp</code>.</p>
+<p>So far, we’ve just been taking a look at the initial dataset we
+downloaded, but none of our results are preserved. To save a new
+dataframe of just the plays we want, we need to use <code>&lt;-</code>
+to assign a new dataframe. Let’s save a new dataframe that’s just run
+plays and pass plays with non-missing EPA, called
+<code>pbp_rp</code>.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pbp_rp</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">rush</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">|</span> <span class="va">pass</span> <span class="op">==</span> <span class="fl">1</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">epa</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>In the above, <code>!is.na(epa)</code> means to exclude plays with missing (<code>na</code>) EPA. The <code>!</code> symbol is often used by computer folk to negate something, so <code>is.na(epa)</code> means “EPA is missing” and <code>!is.na(epa)</code> means “EPA is not missing”, which we have used above.</p>
+<p>In the above, <code>!is.na(epa)</code> means to exclude plays with
+missing (<code>na</code>) EPA. The <code>!</code> symbol is often used
+by computer folk to negate something, so <code>is.na(epa)</code> means
+“EPA is missing” and <code>!is.na(epa)</code> means “EPA is not
+missing”, which we have used above.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="some-basic-stuff-part-1">Some basic stuff: Part 1<a class="anchor" aria-label="anchor" href="#some-basic-stuff-part-1"></a>
 </h2>
-<p>Okay, we have a big dataset where we call dropbacks pass plays and non-dropbacks rush plays. Now we actually want to, like, do stuff.</p>
+<p>Okay, we have a big dataset where we call dropbacks pass plays and
+non-dropbacks rush plays. Now we actually want to, like, do stuff.</p>
 <div class="section level3">
 <h3 id="group-by-and-summarize">Group by and Summarize<a class="anchor" aria-label="anchor" href="#group-by-and-summarize"></a>
 </h3>
-<p>Let’s take a look at how various Cowboys’ running backs fared on run plays in 2019:</p>
+<p>Let’s take a look at how various Cowboys’ running backs fared on run
+plays in 2019:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pbp_rp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">posteam</span> <span class="op">==</span> <span class="st">"DAL"</span>, <span class="va">rush</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -384,8 +469,26 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> D.Prescott   0.288         0.591  6.41    22</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> T.Pollard   -<span style="color: #BB0000;">0.026</span><span style="color: #BB0000; text-decoration: underline;">5</span>        0.456  5.08    90</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> E.Elliott   -<span style="color: #BB0000;">0.041</span><span style="color: #BB0000; text-decoration: underline;">2</span>        0.411  4.39   309</span></span></code></pre></div>
-<p>There’s a lot going on here. We’ve covered <code>filter</code> already. The <code>group_by</code> function is an <em>extremely</em> useful function that, well, groups by what you tell it – in this case the rusher. Summarize is useful for collapsing the data down to a summary of what you’re looking at, and here, while grouping by player, we’re summarizing the mean of EPA, success, yardage (a bad rushing stat, but since we’re here), and getting the number of plays using <code><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n()</a></code>, which returns the number in a group. Unsurprisingly, Prescott was much more effective as a rusher in 2019 than the running backs, and there was no meaningful difference between Pollard and Elliott in efficiency.</p>
-<p>If you check the <a href="https://www.pro-football-reference.com/teams/dal/2019.htm" class="external-link">PFR team stats page</a>, you’ll notice that the above doesn’t match up with the official stats. This is because <code>nflfastR</code> computes EPA and provides player names on plays with penalties and on two-point conversions. So if wanting to match the official stats, we need to restrict to <code>down &lt;= 4</code> (to excluded two-point conversions, which have down listed as <code>NA</code>) and <code>play_type = run</code> (to exclude penalties, which are <code>play_type = no_play</code>):</p>
+<p>There’s a lot going on here. We’ve covered <code>filter</code>
+already. The <code>group_by</code> function is an <em>extremely</em>
+useful function that, well, groups by what you tell it – in this case
+the rusher. Summarize is useful for collapsing the data down to a
+summary of what you’re looking at, and here, while grouping by player,
+we’re summarizing the mean of EPA, success, yardage (a bad rushing stat,
+but since we’re here), and getting the number of plays using
+<code><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n()</a></code>, which returns the number in a group. Unsurprisingly,
+Prescott was much more effective as a rusher in 2019 than the running
+backs, and there was no meaningful difference between Pollard and
+Elliott in efficiency.</p>
+<p>If you check the <a href="https://www.pro-football-reference.com/teams/dal/2019.htm" class="external-link">PFR
+team stats page</a>, you’ll notice that the above doesn’t match up with
+the official stats. This is because <code>nflfastR</code> computes EPA
+and provides player names on plays with penalties and on two-point
+conversions. So if wanting to match the official stats, we need to
+restrict to <code>down &lt;= 4</code> (to excluded two-point
+conversions, which have down listed as <code>NA</code>) and
+<code>play_type = run</code> (to exclude penalties, which are
+<code>play_type = no_play</code>):</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pbp_rp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">posteam</span> <span class="op">==</span> <span class="st">"DAL"</span>, <span class="va">down</span> <span class="op">&lt;=</span> <span class="fl">4</span>, <span class="va">play_type</span> <span class="op">==</span> <span class="st">'run'</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -400,12 +503,17 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> D.Prescott   0.288         0.591  6.41    22</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> E.Elliott   -<span style="color: #BB0000;">0.018</span><span style="color: #BB0000; text-decoration: underline;">5</span>        0.422  4.51   301</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> T.Pollard   -<span style="color: #BB0000;">0.021</span><span style="color: #BB0000; text-decoration: underline;">0</span>        0.453  5.29    86</span></span></code></pre></div>
-<p>Now we exactly match PFR: Zeke has 301 carries at 4.5 yards/carry, and Pollard has 86 carries for 5.3 yards/carry. Note that we still aren’t matching Dak’s stats to PFR because the NFL classifies scrambles as rush attempts and <code>nflfastR</code> does not.</p>
+<p>Now we exactly match PFR: Zeke has 301 carries at 4.5 yards/carry,
+and Pollard has 86 carries for 5.3 yards/carry. Note that we still
+aren’t matching Dak’s stats to PFR because the NFL classifies scrambles
+as rush attempts and <code>nflfastR</code> does not.</p>
 </div>
 <div class="section level3">
 <h3 id="manipulating-columns-mutate-if_else-and-case_when">Manipulating columns: mutate, if_else, and case_when<a class="anchor" aria-label="anchor" href="#manipulating-columns-mutate-if_else-and-case_when"></a>
 </h3>
-<p>Let’s say we want to make a new column, named <code>home</code>, which is equal to 1 if the team with the ball is the home team. Let’s introduce another extremely useful function, <code>if_else</code>:</p>
+<p>Let’s say we want to make a new column, named <code>home</code>,
+which is equal to 1 if the team with the ball is the home team. Let’s
+introduce another extremely useful function, <code>if_else</code>:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pbp_rp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
@@ -428,7 +536,14 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> ATL     MIN           0</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> ATL     MIN           0</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> MIN     MIN           1</span></span></code></pre></div>
-<p><code>mutate</code> is R’s word for creating a new column (or overwriting an existing one); in this case, we’ve created a new column called <code>home</code>. The above uses <code>if_else</code>, which uses the following pattern: condition (in this case, <code>posteam == home_team</code>), value if condition is true (in this case, if <code>posteam == home_team</code>, it is 1), and value if the condition is false (0). So we could use this to, for example, look at average EPA/play by home and road teams:</p>
+<p><code>mutate</code> is R’s word for creating a new column (or
+overwriting an existing one); in this case, we’ve created a new column
+called <code>home</code>. The above uses <code>if_else</code>, which
+uses the following pattern: condition (in this case,
+<code>posteam == home_team</code>), value if condition is true (in this
+case, if <code>posteam == home_team</code>, it is 1), and value if the
+condition is false (0). So we could use this to, for example, look at
+average EPA/play by home and road teams:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pbp_rp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
@@ -441,8 +556,15 @@
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     0  0.021<span style="text-decoration: underline;">5</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     1 -<span style="color: #BB0000;">0.015</span><span style="color: #BB0000; text-decoration: underline;">8</span></span></span></code></pre></div>
-<p>Note that EPA/play is similar for home teams and away teams because <code>home</code> is already built into the <code>nflfastR</code> EPA model, so this result is expected. Actually, away EPA/play is actually somewhat higher, presumably because away teams out-performed their usual in 2019 as homefield advantage continues to decline generally.</p>
-<p><code>if_else</code> is nice if you’re creating a new column based on a simple condition. But what if you need to do something more complicated? <code>case_when</code> is a good option. Here’s how it works:</p>
+<p>Note that EPA/play is similar for home teams and away teams because
+<code>home</code> is already built into the <code>nflfastR</code> EPA
+model, so this result is expected. Actually, away EPA/play is actually
+somewhat higher, presumably because away teams out-performed their usual
+in 2019 as homefield advantage continues to decline generally.</p>
+<p><code>if_else</code> is nice if you’re creating a new column based on
+a simple condition. But what if you need to do something more
+complicated? <code>case_when</code> is a good option. Here’s how it
+works:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pbp_rp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">cp</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -463,12 +585,22 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Medium   0.573</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Negative 0.847</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> Short    0.718</span></span></code></pre></div>
-<p>Note the new syntax for <code>case_when</code>: we have condition (for the first one, air yards less than 0), followed by <code>~</code>, followed by assignment (for the first one, “Negative”). In the above, we created 4 bins based on air yards and got average completion probability (<code>cp</code>) based on the <code>nflfastR</code> model. Unsurprisingly, <code>cp</code> is lower the longer downfield a throw goes.</p>
+<p>Note the new syntax for <code>case_when</code>: we have condition
+(for the first one, air yards less than 0), followed by <code>~</code>,
+followed by assignment (for the first one, “Negative”). In the above, we
+created 4 bins based on air yards and got average completion probability
+(<code>cp</code>) based on the <code>nflfastR</code> model.
+Unsurprisingly, <code>cp</code> is lower the longer downfield a throw
+goes.</p>
 </div>
 <div class="section level3">
 <h3 id="a-basic-figure">A basic figure<a class="anchor" aria-label="anchor" href="#a-basic-figure"></a>
 </h3>
-<p>Now that we’ve gained some skills at manipulating data, let’s put it to use by making things. Which teams were the most pass-heavy in the first half on early downs with win probability between 20 and 80, excluding the final 2 minutes of the half when everyone is pass-happy?</p>
+<p>Now that we’ve gained some skills at manipulating data, let’s put it
+to use by making things. Which teams were the most pass-heavy in the
+first half on early downs with win probability between 20 and 80,
+excluding the final 2 minutes of the half when everyone is
+pass-happy?</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">schotty</span> <span class="op">&lt;-</span> <span class="va">pbp_rp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">wp</span> <span class="op">&gt;</span> <span class="fl">.20</span> <span class="op">&amp;</span> <span class="va">wp</span> <span class="op">&lt;</span> <span class="fl">.80</span> <span class="op">&amp;</span> <span class="va">down</span> <span class="op">&lt;=</span> <span class="fl">2</span> <span class="op">&amp;</span> <span class="va">qtr</span> <span class="op">&lt;=</span> <span class="fl">2</span> <span class="op">&amp;</span> <span class="va">half_seconds_remaining</span> <span class="op">&gt;</span> <span class="fl">120</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -490,24 +622,37 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> GB          0.550   291</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> ARI         0.548   325</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># … with 22 more rows</span></span></span></code></pre></div>
-<p>Again, we’ve already used <code>filter</code>, <code>group_by</code>, and <code>summarize</code>. The new function we are using here is <code>arrange</code>, which sorts the data by the variable(s) given. The minus sign in front of <code>mean_pass</code> means to sort in descending order.</p>
+<p>Again, we’ve already used <code>filter</code>, <code>group_by</code>,
+and <code>summarize</code>. The new function we are using here is
+<code>arrange</code>, which sorts the data by the variable(s) given. The
+minus sign in front of <code>mean_pass</code> means to sort in
+descending order.</p>
 <p>Let’s make our first figure:</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">schotty</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/reorder.factor.html" class="external-link">reorder</a></span><span class="op">(</span><span class="va">posteam</span>,<span class="op">-</span><span class="va">mean_pass</span><span class="op">)</span>, y<span class="op">=</span><span class="va">mean_pass</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>label<span class="op">=</span><span class="va">posteam</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="beginners_guide_files/figure-html/fig1-1.png" width="100%"></p>
-<p>This image is kind of a mess – we still need a title, axis labels, etc – but gets the point across. We’ll get to that other stuff later. But more importantly, we made something interesting using <code>nflfastR</code> data! The “reorder” sorts the teams according to pass rate, with the “-” again saying to do it in descending order. “aes” is short for “aesthetic”, which is R’s weird way of asking which variables should go on the x and y axes.</p>
-<p>Looking at the figure, the Chiefs will never have playoff success until they establish the run.</p>
+<p>This image is kind of a mess – we still need a title, axis labels,
+etc – but gets the point across. We’ll get to that other stuff later.
+But more importantly, we made something interesting using
+<code>nflfastR</code> data! The “reorder” sorts the teams according to
+pass rate, with the “-” again saying to do it in descending order. “aes”
+is short for “aesthetic”, which is R’s weird way of asking which
+variables should go on the x and y axes.</p>
+<p>Looking at the figure, the Chiefs will never have playoff success
+until they establish the run.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="loading-multiple-seasons">Loading multiple seasons<a class="anchor" aria-label="anchor" href="#loading-multiple-seasons"></a>
 </h2>
-<p>Because all the data is stored in the data repository, it is very fast to load data from multiple seasons.</p>
+<p>Because all the data is stored in the data repository, it is very
+fast to load data from multiple seasons.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pbp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_pbp.html">load_pbp</a></span><span class="op">(</span><span class="fl">2015</span><span class="op">:</span><span class="fl">2019</span><span class="op">)</span></span></code></pre></div>
 <p>This loads play-by-play data from the 2015 through 2019 seasons.</p>
-<p>Let’s make sure we got it all. By now, you should understand what this is doing:</p>
+<p>Let’s make sure we got it all. By now, you should understand what
+this is doing:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pbp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">season</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -520,7 +665,8 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   <span style="text-decoration: underline;">2</span>017 <span style="text-decoration: underline;">47</span>997</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>   <span style="text-decoration: underline;">2</span>018 <span style="text-decoration: underline;">47</span>874</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>   <span style="text-decoration: underline;">2</span>019 <span style="text-decoration: underline;">48</span>034</span></span></code></pre></div>
-<p>So each season has about 48,000 plays. Just for fun, let’s look at the various play types:</p>
+<p>So each season has about 48,000 plays. Just for fun, let’s look at
+the various play types:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pbp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">play_type</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -558,14 +704,30 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">n_dropbacks</span> <span class="op">&gt;</span> <span class="fl">100</span> <span class="op">&amp;</span> <span class="va">n_plays</span> <span class="op">&gt;</span> <span class="fl">1000</span><span class="op">)</span></span>
 <span><span class="co">#&gt; `summarise()` has grouped output by 'id'. You can override using the `.groups`</span></span>
 <span><span class="co">#&gt; argument.</span></span></code></pre></div>
-<p>Lots of new stuff here. First, we’re grouping by <code>id</code> and <code>name</code> to make sure we’re getting unique players; i.e., if two players have the same name (like Javorius Allen and Josh Allen both being J.Allen), we are also using their id to differentiate them. <code>qb_epa</code> is an <code>nflfastR</code> creation that is equal to EPA in all instances except for when a pass is completed and a fumble is lost, in which case a QB gets “credit” for the play up to the spot the fumble was lost (making EPA function like passing yards). The <code>last</code> part in the <code>summarize</code> comment gets the last team that a player was observed playing with.</p>
-<p>My way of getting a dataset with only quarterbacks without joining to external roster data is to make sure they hit some number of dropbacks. In this case, filtering with <code>n_dropbacks &gt; 100</code> makes sure we’re only including quarterbacks. The <code><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup()</a></code> near the end is good practice after grouping to make sure you don’t get weird behavior with the data you created down the line.</p>
-<p>Let’s make some more figures. The <code><a href="https://nflreadr.nflverse.com/reference/load_teams.html" class="external-link">load_teams()</a></code> function is provided in the <code>nflreadr</code> package, so since we have already loaded the package, it’s ready to use.</p>
+<p>Lots of new stuff here. First, we’re grouping by <code>id</code> and
+<code>name</code> to make sure we’re getting unique players; i.e., if
+two players have the same name (like Javorius Allen and Josh Allen both
+being J.Allen), we are also using their id to differentiate them.
+<code>qb_epa</code> is an <code>nflfastR</code> creation that is equal
+to EPA in all instances except for when a pass is completed and a fumble
+is lost, in which case a QB gets “credit” for the play up to the spot
+the fumble was lost (making EPA function like passing yards). The
+<code>last</code> part in the <code>summarize</code> comment gets the
+last team that a player was observed playing with.</p>
+<p>My way of getting a dataset with only quarterbacks without joining to
+external roster data is to make sure they hit some number of dropbacks.
+In this case, filtering with <code>n_dropbacks &gt; 100</code> makes
+sure we’re only including quarterbacks. The <code><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup()</a></code> near
+the end is good practice after grouping to make sure you don’t get weird
+behavior with the data you created down the line.</p>
+<p>Let’s make some more figures. The <code><a href="https://nflreadr.nflverse.com/reference/load_teams.html" class="external-link">load_teams()</a></code> function
+is provided in the <code>nflreadr</code> package, so since we have
+already loaded the package, it’s ready to use.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://nflreadr.nflverse.com/reference/load_teams.html" class="external-link">load_teams</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse team graphics</span> ──────────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-10-10 19:53:15 UTC</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 36 × 16</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-10-26 15:24:39 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 16</span></span></span>
 <span><span class="co">#&gt;    team_abbr team_name   team_id team_…¹ team_…² team_…³ team_…⁴ team_…⁵ team_…⁶</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> ARI       Arizona Ca… 3800    Cardin… NFC     NFC We… #97233F #000000 #ffb612</span></span>
@@ -578,7 +740,7 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> CLE       Cleveland … 1050    Browns  AFC     AFC No… #FF3C00 #311D00 #a5acaf</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> DAL       Dallas Cow… 1200    Cowboys NFC     NFC Ea… #002244 #B0B7BC #acc0c6</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> DEN       Denver Bro… 1400    Broncos AFC     AFC We… #002244 #FB4F14 #00234c</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 26 more rows, 7 more variables: team_color4 &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 22 more rows, 7 more variables: team_color4 &lt;chr&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   team_logo_wikipedia &lt;chr&gt;, team_logo_espn &lt;chr&gt;, team_wordmark &lt;chr&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   team_conference_logo &lt;chr&gt;, team_league_logo &lt;chr&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   team_logo_squared &lt;chr&gt;, and abbreviated variable names ¹​team_nick,</span></span></span>
@@ -587,7 +749,13 @@
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qbs</span> <span class="op">&lt;-</span> <span class="va">qbs</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="fu"><a href="https://nflreadr.nflverse.com/reference/load_teams.html" class="external-link">load_teams</a></span><span class="op">(</span><span class="op">)</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'team'</span> <span class="op">=</span> <span class="st">'team_abbr'</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><code>left_join</code> means keep all the rows from the left dataframe (the first one provided, <code>qbs</code>), and join those rows to available rows in the other dataframe. We also need to provide the joining variables, <code>team</code> from <code>qbs</code> and <code>team_abbr</code> from <code><a href="https://nflreadr.nflverse.com/reference/load_teams.html" class="external-link">load_teams()</a></code>. Why do we have to type <code>by = c('team' = 'team_abbr')</code>? Who knows, but it’s what <code>left_join</code> requires as instructions for how to match.</p>
+<p><code>left_join</code> means keep all the rows from the left
+dataframe (the first one provided, <code>qbs</code>), and join those
+rows to available rows in the other dataframe. We also need to provide
+the joining variables, <code>team</code> from <code>qbs</code> and
+<code>team_abbr</code> from <code><a href="https://nflreadr.nflverse.com/reference/load_teams.html" class="external-link">load_teams()</a></code>. Why do we have to
+type <code>by = c('team' = 'team_abbr')</code>? Who knows, but it’s what
+<code>left_join</code> requires as instructions for how to match.</p>
 <div class="section level3">
 <h3 id="with-team-color-dots">With team color dots<a class="anchor" aria-label="anchor" href="#with-team-color-dots"></a>
 </h3>
@@ -622,7 +790,11 @@
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/pretty_breaks.html" class="external-link">pretty_breaks</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/pretty_breaks.html" class="external-link">pretty_breaks</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="beginners_guide_files/figure-html/fig2-1.png" width="100%"></p>
-<p>This looks complicated, but is just a way of getting a bunch of different stuff on the same plot: we have lines for averages, dots, names, etc. I added comments above to explain what is going on, but in practice for making figures I usually just copy and paste stuff and/or google what I need.</p>
+<p>This looks complicated, but is just a way of getting a bunch of
+different stuff on the same plot: we have lines for averages, dots,
+names, etc. I added comments above to explain what is going on, but in
+practice for making figures I usually just copy and paste stuff and/or
+google what I need.</p>
 </div>
 <div class="section level3">
 <h3 id="with-team-logos">With team logos<a class="anchor" aria-label="anchor" href="#with-team-logos"></a>
@@ -655,13 +827,19 @@
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/pretty_breaks.html" class="external-link">pretty_breaks</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/pretty_breaks.html" class="external-link">pretty_breaks</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="beginners_guide_files/figure-html/fig3-1.png" width="100%"></p>
-<p>The only changes we’ve made are to use <code>geom_nfl_logos</code> instead of <code>geom_point</code> (how to figure out the right size for the images in the <code>width</code> part? Trial and error).</p>
-<p>This figure would look better with fewer players shown, but the point of this is explaining how to do stuff, so let’s call this good enough.</p>
+<p>The only changes we’ve made are to use <code>geom_nfl_logos</code>
+instead of <code>geom_point</code> (how to figure out the right size for
+the images in the <code>width</code> part? Trial and error).</p>
+<p>This figure would look better with fewer players shown, but the point
+of this is explaining how to do stuff, so let’s call this good
+enough.</p>
 </div>
 <div class="section level3">
 <h3 id="team-tiers-plot">Team tiers plot<a class="anchor" aria-label="anchor" href="#team-tiers-plot"></a>
 </h3>
-<p>If it’s helpful, here are a few notes about the <a href="https://www.nflfastr.com/articles/nflfastR.html#example-5-plot-offensive-and-defensive-epa-per-play-for-a-given-season">chart originally shown here</a>, which like the above uses nflplotR for team logos.</p>
+<p>If it’s helpful, here are a few notes about the <a href="https://www.nflfastr.com/articles/nflfastR.html#example-5-plot-offensive-and-defensive-epa-per-play-for-a-given-season">chart
+originally shown here</a>, which like the above uses nflplotR for team
+logos.</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://nflplotr.nflverse.com" class="external-link">nflplotR</a></span><span class="op">)</span></span>
 <span><span class="co"># get pbp and filter to regular season rush and pass plays</span></span>
@@ -698,34 +876,60 @@
 <span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_reverse</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="beginners_guide_files/figure-html/ex5-1.png" width="100%"></p>
 <ul>
-<li>The <code><a href="https://nflplotr.nflverse.com/reference/geom_lines.html" class="external-link">geom_mean_lines()</a></code> function adds mean lines for offensive and defensive EPA per play</li>
+<li>The <code><a href="https://nflplotr.nflverse.com/reference/geom_lines.html" class="external-link">geom_mean_lines()</a></code> function adds mean lines for
+offensive and defensive EPA per play</li>
 <li>The slope lines are created using <code><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_abline()</a></code>
 </li>
 <li>
-<code><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_reverse()</a></code> reverses the vertical axis so that up = better defense</li>
+<code><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_reverse()</a></code> reverses the vertical axis so that up
+= better defense</li>
 </ul>
 <p>Everything else should be comprehensible by now!</p>
 </div>
 <div class="section level3">
 <h3 id="a-few-more-things-on-plotting">A few more things on plotting<a class="anchor" aria-label="anchor" href="#a-few-more-things-on-plotting"></a>
 </h3>
-<p>There are two ways to view plots. One is in the RStudio Viewer, which shows up in RStudio when you plot something. If plots in your RStudio viewer look ugly and pixelated, you probably need to install the <code>Cairo</code> package and then set that as the default viewer by doing Tools –&gt; Global Options –&gt; General –&gt; Graphics –&gt; Backend: Set to Cairo.</p>
-<p>The other is to save a .png with your preferred dimensions and resolution. For example, <code>ggsave("test.png", width = 16, height = 9, units = "cm")</code> would save the current plot as “<code>test.png</code>” with the units specified (you can view all the ggsave options <a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">here</a>).</p>
-<p>One more note: the RStudio Viewer can take a long time to preview ggplots, especially if you’re doing things like adding images. If you’re getting frustrated with a plot taking a long time to display, you can take advantage of <a href="https://nflplotr.nflverse.com/reference/ggpreview.html" class="external-link">ggpreview</a> from <code>nflplotR</code>. To do this, first save the plot to an object and then run <code>ggpreview</code> on it (if this doesn’t make sense, see the examples <a href="https://nflplotr.nflverse.com/reference/ggpreview.html" class="external-link">here</a>).</p>
+<p>There are two ways to view plots. One is in the RStudio Viewer, which
+shows up in RStudio when you plot something. If plots in your RStudio
+viewer look ugly and pixelated, you probably need to install the
+<code>Cairo</code> package and then set that as the default viewer by
+doing Tools –&gt; Global Options –&gt; General –&gt; Graphics –&gt;
+Backend: Set to Cairo.</p>
+<p>The other is to save a .png with your preferred dimensions and
+resolution. For example,
+<code>ggsave("test.png", width = 16, height = 9, units = "cm")</code>
+would save the current plot as “<code>test.png</code>” with the units
+specified (you can view all the ggsave options <a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">here</a>).</p>
+<p>One more note: the RStudio Viewer can take a long time to preview
+ggplots, especially if you’re doing things like adding images. If you’re
+getting frustrated with a plot taking a long time to display, you can
+take advantage of <a href="https://nflplotr.nflverse.com/reference/ggpreview.html" class="external-link">ggpreview</a>
+from <code>nflplotR</code>. To do this, first save the plot to an object
+and then run <code>ggpreview</code> on it (if this doesn’t make sense,
+see the examples <a href="https://nflplotr.nflverse.com/reference/ggpreview.html" class="external-link">here</a>).</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="real-life-example-lets-make-a-win-total-model">Real life example: let’s make a win total model<a class="anchor" aria-label="anchor" href="#real-life-example-lets-make-a-win-total-model"></a>
 </h2>
-<p>I’m going to try to go through the process of cleaning and joining multiple data sets to try to get a sense of how I would approach something like this, step-by-step.</p>
+<p>I’m going to try to go through the process of cleaning and joining
+multiple data sets to try to get a sense of how I would approach
+something like this, step-by-step.</p>
 <div class="section level3">
 <h3 id="get-team-wins-each-season">Get team wins each season<a class="anchor" aria-label="anchor" href="#get-team-wins-each-season"></a>
 </h3>
-<p>We’re going to cheat a little and take advantage of Lee Sharpe’s famous <code>games</code> file. Most of this stuff has been added into <code>nflfastR</code>, but it’s easier working with this file where each game is one row. If you’re curious, the triple colon is a way to access what is referred to as non-exported functions in a package. Think of this as like a secret menu (why is this secret? Sometimes package developers want to limit the number of exported functions as to be not overwhelming).</p>
+<p>We’re going to cheat a little and take advantage of Lee Sharpe’s
+famous <code>games</code> file. Most of this stuff has been added into
+<code>nflfastR</code>, but it’s easier working with this file where each
+game is one row. If you’re curious, the triple colon is a way to access
+what is referred to as non-exported functions in a package. Think of
+this as like a secret menu (why is this secret? Sometimes package
+developers want to limit the number of exported functions as to be not
+overwhelming).</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">games</span> <span class="op">&lt;-</span> <span class="fu">nflreadr</span><span class="fu">::</span><span class="fu"><a href="https://nflreadr.nflverse.com/reference/load_schedules.html" class="external-link">load_schedules</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">games</span><span class="op">)</span></span>
-<span><span class="co">#&gt; nflverse_data [6,409 × 45] (S3: nflverse_data/tbl_df/tbl/data.table/data.frame)</span></span>
+<span><span class="co">#&gt; nflvrs_d [6,409 × 45] (S3: nflverse_data/tbl_df/tbl/data.table/data.frame)</span></span>
 <span><span class="co">#&gt;  $ game_id         : chr [1:6409] "1999_01_MIN_ATL" "1999_01_KC_CHI" "1999_01_PIT_CLE" "1999_01_OAK_GB" ...</span></span>
 <span><span class="co">#&gt;  $ season          : int [1:6409] 1999 1999 1999 1999 1999 1999 1999 1999 1999 1999 ...</span></span>
 <span><span class="co">#&gt;  $ game_type       : chr [1:6409] "REG" "REG" "REG" "REG" ...</span></span>
@@ -772,8 +976,12 @@
 <span><span class="co">#&gt;  $ stadium_id      : chr [1:6409] "ATL00" "CHI98" "CLE00" "GNB00" ...</span></span>
 <span><span class="co">#&gt;  $ stadium         : chr [1:6409] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...</span></span>
 <span><span class="co">#&gt;  - attr(*, "nflverse_type")= chr "games and schedules"</span></span>
-<span><span class="co">#&gt;  - attr(*, "nflverse_timestamp")= POSIXct[1:1], format: "2022-10-10 19:53:54"</span></span></code></pre></div>
-<p>To start, we want to create a dataframe where each row is a team-season observation, listing how many games they won. There are multiple ways to do this, but I’m going to just take the home and away results and bind together. As an example, here’s what the <code>home</code> results look like:</p>
+<span><span class="co">#&gt;  - attr(*, "nflverse_timestamp")= POSIXct[1:1], format: "2022-10-26 15:25:19"</span></span></code></pre></div>
+<p>To start, we want to create a dataframe where each row is a
+team-season observation, listing how many games they won. There are
+multiple ways to do this, but I’m going to just take the home and away
+results and bind together. As an example, here’s what the
+<code>home</code> results look like:</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">home</span> <span class="op">&lt;-</span> <span class="va">games</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">game_type</span> <span class="op">==</span> <span class="st">'REG'</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -781,7 +989,7 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>team <span class="op">=</span> <span class="va">home_team</span><span class="op">)</span></span>
 <span><span class="va">home</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-10-10 19:53:54 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-10-26 15:25:19 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 4</span></span></span>
 <span><span class="co">#&gt;   season  week team  result</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
@@ -790,7 +998,8 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   <span style="text-decoration: underline;">1</span>999     1 CLE      -<span style="color: #BB0000;">43</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>   <span style="text-decoration: underline;">1</span>999     1 GB         4</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>   <span style="text-decoration: underline;">1</span>999     1 IND       17</span></span></code></pre></div>
-<p>Note that we used <code>rename</code> to change <code>home_team</code> to <code>team</code>.</p>
+<p>Note that we used <code>rename</code> to change
+<code>home_team</code> to <code>team</code>.</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">away</span> <span class="op">&lt;-</span> <span class="va">games</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">game_type</span> <span class="op">==</span> <span class="st">'REG'</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -799,7 +1008,7 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>result <span class="op">=</span> <span class="op">-</span><span class="va">result</span><span class="op">)</span></span>
 <span><span class="va">away</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-10-10 19:53:54 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-10-26 15:25:19 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 4</span></span></span>
 <span><span class="co">#&gt;   season  week team  result</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
@@ -808,7 +1017,9 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   <span style="text-decoration: underline;">1</span>999     1 PIT       43</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>   <span style="text-decoration: underline;">1</span>999     1 OAK       -<span style="color: #BB0000;">4</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>   <span style="text-decoration: underline;">1</span>999     1 BUF      -<span style="color: #BB0000;">17</span></span></span></code></pre></div>
-<p>For away teams, we need to flip the result since result is given from the perspective of the home team. Now let’s make a columns called <code>win</code> based on the result.</p>
+<p>For away teams, we need to flip the result since result is given from
+the perspective of the home team. Now let’s make a columns called
+<code>win</code> based on the result.</p>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">home</span>, <span class="va">away</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">week</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -822,7 +1033,7 @@
 <span></span>
 <span><span class="va">results</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op">==</span> <span class="fl">2019</span> <span class="op">&amp;</span> <span class="va">team</span> <span class="op">==</span> <span class="st">'SEA'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-10-10 19:53:54 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-10-26 15:25:19 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 16 × 5</span></span></span>
 <span><span class="co">#&gt;    season  week team  result   win</span></span>
 <span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
@@ -842,8 +1053,14 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span>   <span style="text-decoration: underline;">2</span>019    15 SEA        6     1</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span>   <span style="text-decoration: underline;">2</span>019    16 SEA      -<span style="color: #BB0000;">14</span>     0</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span>   <span style="text-decoration: underline;">2</span>019    17 SEA       -<span style="color: #BB0000;">5</span>     0</span></span></code></pre></div>
-<p>Doing the <code>results %&gt;% filter(season == 2019 &amp; team == 'SEA')</code> part at the end isn’t actually for saving the data in a new form, but just making sure the previous step did what I wanted. This is a good habit to get into: frequently inspect your data and make sure it looks like you think it should.</p>
-<p>Now that we have the dataframe we wanted, we can get team wins by season easily:</p>
+<p>Doing the
+<code>results %&gt;% filter(season == 2019 &amp; team == 'SEA')</code>
+part at the end isn’t actually for saving the data in a new form, but
+just making sure the previous step did what I wanted. This is a good
+habit to get into: frequently inspect your data and make sure it looks
+like you think it should.</p>
+<p>Now that we have the dataframe we wanted, we can get team wins by
+season easily:</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">team_wins</span> <span class="op">&lt;-</span> <span class="va">results</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">team</span>, <span class="va">season</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -865,19 +1082,30 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> GB      <span style="text-decoration: underline;">2</span>011    15        201</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> PIT     <span style="text-decoration: underline;">2</span>004    15        121</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> BAL     <span style="text-decoration: underline;">2</span>019    14        249</span></span></code></pre></div>
-<p>Again, we’re making sure the data looks like it “should” by checking the 5 seasons with the most wins, and making sure it looks right.</p>
-<p>Now that the team-season win and point differential data is ready, we need to go back to the <code>nflfastR</code> data to get EPA/play.</p>
+<p>Again, we’re making sure the data looks like it “should” by checking
+the 5 seasons with the most wins, and making sure it looks right.</p>
+<p>Now that the team-season win and point differential data is ready, we
+need to go back to the <code>nflfastR</code> data to get EPA/play.</p>
 </div>
 <div class="section level3">
 <h3 id="get-team-epa-by-season">Get team EPA by season<a class="anchor" aria-label="anchor" href="#get-team-epa-by-season"></a>
 </h3>
-<p>Let’s start by getting data from every season from the <code>nflfastR</code> data repository:</p>
+<p>Let’s start by getting data from every season from the
+<code>nflfastR</code> data repository:</p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pbp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_pbp.html">load_pbp</a></span><span class="op">(</span><span class="fl">1999</span><span class="op">:</span><span class="fl">2019</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">rush</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">|</span> <span class="va">pass</span> <span class="op">==</span> <span class="fl">1</span>, <span class="va">season_type</span> <span class="op">==</span> <span class="st">"REG"</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">epa</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">posteam</span><span class="op">)</span>, <span class="va">posteam</span> <span class="op">!=</span> <span class="st">""</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">season</span>, <span class="va">posteam</span>, <span class="va">pass</span>, <span class="va">defteam</span>, <span class="va">epa</span><span class="op">)</span></span></code></pre></div>
-<p>I’m being pretty aggressive with dropping rows and columns (<code>filter</code> and <code>select</code>) because otherwise loading this all into memory can be painful on the computer. But this is all we need for what we’re doing. Note that I’m only keeping regular season games here (<code>season_type == "REG"</code>) since this is how this analysis is usually done.</p>
-<p>Now we can get EPA/play on offense and defense. Let’s break it out by pass and rush too. I don’t remember how to do some of this so let’s do it in steps. We know we need to group by team, season, and pass, so there’s the beginning:</p>
+<p>I’m being pretty aggressive with dropping rows and columns
+(<code>filter</code> and <code>select</code>) because otherwise loading
+this all into memory can be painful on the computer. But this is all we
+need for what we’re doing. Note that I’m only keeping regular season
+games here (<code>season_type == "REG"</code>) since this is how this
+analysis is usually done.</p>
+<p>Now we can get EPA/play on offense and defense. Let’s break it out by
+pass and rush too. I don’t remember how to do some of this so let’s do
+it in steps. We know we need to group by team, season, and pass, so
+there’s the beginning:</p>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pbp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">posteam</span>, <span class="va">season</span>, <span class="va">pass</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -893,7 +1121,8 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ARI       <span style="text-decoration: underline;">1</span>999     1 -<span style="color: #BB0000;">0.162</span> </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> ARI       <span style="text-decoration: underline;">2</span>000     0 -<span style="color: #BB0000;">0.240</span> </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> ARI       <span style="text-decoration: underline;">2</span>000     1 -<span style="color: #BB0000;">0.071</span><span style="color: #BB0000; text-decoration: underline;">8</span></span></span></code></pre></div>
-<p>But this makes two rows per team-season. How to get each team-season on the same row? <code>pivot_wider</code> is what we need:</p>
+<p>But this makes two rows per team-season. How to get each team-season
+on the same row? <code>pivot_wider</code> is what we need:</p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pbp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">posteam</span>, <span class="va">season</span>, <span class="va">pass</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -910,7 +1139,11 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ARI       <span style="text-decoration: underline;">2</span>000 -<span style="color: #BB0000;">0.240</span> -<span style="color: #BB0000;">0.071</span><span style="color: #BB0000; text-decoration: underline;">8</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> ARI       <span style="text-decoration: underline;">2</span>001 -<span style="color: #BB0000;">0.177</span>  0.074<span style="text-decoration: underline;">0</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> ARI       <span style="text-decoration: underline;">2</span>002 -<span style="color: #BB0000;">0.134</span> -<span style="color: #BB0000;">0.066</span><span style="color: #BB0000; text-decoration: underline;">1</span></span></span></code></pre></div>
-<p>This one is hard to wrap my head around so I usually open up the <a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" class="external-link">reference page</a>, read the example, and pray that what I try works. In this case it did. Hooray! This turned our two-lines-per-team dataframe into one, with the 0 column being pass == 0 (run plays) and the 1 column pass == 1.</p>
+<p>This one is hard to wrap my head around so I usually open up the <a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" class="external-link">reference
+page</a>, read the example, and pray that what I try works. In this case
+it did. Hooray! This turned our two-lines-per-team dataframe into one,
+with the 0 column being pass == 0 (run plays) and the 1 column pass ==
+1.</p>
 <p>Now let’s rename to something more sensible and save:</p>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">offense</span> <span class="op">&lt;-</span> <span class="va">pbp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -920,7 +1153,8 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>off_pass_epa <span class="op">=</span> <span class="va">`1`</span>, off_rush_epa <span class="op">=</span> <span class="va">`0`</span><span class="op">)</span></span>
 <span><span class="co">#&gt; `summarise()` has grouped output by 'posteam', 'season'. You can override using</span></span>
 <span><span class="co">#&gt; the `.groups` argument.</span></span></code></pre></div>
-<p>Note that variable names that are numbers need to be surrounded in tick marks for this to work.</p>
+<p>Note that variable names that are numbers need to be surrounded in
+tick marks for this to work.</p>
 <p>Now we can repeat the same process for defense:</p>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">defense</span> <span class="op">&lt;-</span> <span class="va">pbp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -930,7 +1164,8 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>def_pass_epa <span class="op">=</span> <span class="va">`1`</span>, def_rush_epa <span class="op">=</span> <span class="va">`0`</span><span class="op">)</span></span>
 <span><span class="co">#&gt; `summarise()` has grouped output by 'defteam', 'season'. You can override using</span></span>
 <span><span class="co">#&gt; the `.groups` argument.</span></span></code></pre></div>
-<p>Let’s do another sanity check looking at the top 5 pass offenses and defenses:</p>
+<p>Let’s do another sanity check looking at the top 5 pass offenses and
+defenses:</p>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#top 5 offenses</span></span>
 <span><span class="va">offense</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -959,12 +1194,14 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> JAX       <span style="text-decoration: underline;">2</span>017      -<span style="color: #BB0000;">0.141</span>        -<span style="color: #BB0000;">0.223</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> NYJ       <span style="text-decoration: underline;">2</span>009      -<span style="color: #BB0000;">0.104</span>        -<span style="color: #BB0000;">0.220</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> LA        <span style="text-decoration: underline;">2</span>003      -<span style="color: #BB0000;">0.054</span><span style="color: #BB0000; text-decoration: underline;">8</span>       -<span style="color: #BB0000;">0.214</span></span></span></code></pre></div>
-<p>The top pass defenses (2002 TB, 2017 JAX, 2019 NE) and offenses (2007 Pats, 2004 Colts, 2011 Packers) definitely check out!</p>
+<p>The top pass defenses (2002 TB, 2017 JAX, 2019 NE) and offenses (2007
+Pats, 2004 Colts, 2011 Packers) definitely check out!</p>
 </div>
 <div class="section level3">
 <h3 id="fix-team-names-and-join">Fix team names and join<a class="anchor" aria-label="anchor" href="#fix-team-names-and-join"></a>
 </h3>
-<p>Now we’re ready to bind it all together. Actually, let’s make sure all the team names are ready too.</p>
+<p>Now we’re ready to bind it all together. Actually, let’s make sure
+all the team names are ready too.</p>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">team_wins</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -984,7 +1221,8 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> ATL      24</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> BAL      24</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># … with 25 more rows</span></span></span></code></pre></div>
-<p>Nope, not yet, we need to fix the Raiders, Rams, and Chargers, which are LV, LA, and LAC in <code>nflfastR</code>.</p>
+<p>Nope, not yet, we need to fix the Raiders, Rams, and Chargers, which
+are LV, LA, and LAC in <code>nflfastR</code>.</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">team_wins</span> <span class="op">&lt;-</span> <span class="va">team_wins</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
@@ -995,7 +1233,9 @@
 <span>      <span class="cn">TRUE</span> <span class="op">~</span> <span class="va">team</span></span>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p>The <code>TRUE</code> statement at the bottom says that if none of the above cases are found, keep team the same. Let’s make sure this worked:</p>
+<p>The <code>TRUE</code> statement at the bottom says that if none of
+the above cases are found, keep team the same. Let’s make sure this
+worked:</p>
 <div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">team_wins</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">team</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -1015,7 +1255,9 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> CLE      24</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> DAL      24</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># … with 22 more rows</span></span></span></code></pre></div>
-<p>HOU has 3 fewer seasons because it didn’t exist from 1999 through 2001, which is fine, and all the other team names have number of seasons that they should. Okay NOW we can join:</p>
+<p>HOU has 3 fewer seasons because it didn’t exist from 1999 through
+2001, which is fine, and all the other team names have number of seasons
+that they should. Okay NOW we can join:</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">team_wins</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">offense</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'team'</span> <span class="op">=</span> <span class="st">'posteam'</span>, <span class="st">'season'</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -1038,7 +1280,9 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> SEA     <span style="text-decoration: underline;">2</span>021   7           29     <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>     </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> SEA     <span style="text-decoration: underline;">2</span>022  <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>     </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># … with abbreviated variable name ¹​def_pass_epa</span></span></span></code></pre></div>
-<p>Now we’re getting really close to doing what we want! Next we need to create new columns for prior year EPA, and let’s do point differential too.</p>
+<p>Now we’re getting really close to doing what we want! Next we need to
+create new columns for prior year EPA, and let’s do point differential
+too.</p>
 <div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">team</span>, <span class="va">season</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -1066,7 +1310,8 @@
 <span><span class="co">#&gt; <span style="color: #949494;">#   prior_point_diff &lt;int&gt;, and abbreviated variable names ¹​off_rush_epa,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   ²​off_pass_epa, ³​def_rush_epa, ⁴​def_pass_epa, ⁵​prior_off_rush_epa,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   ⁶​prior_off_pass_epa</span></span></span></code></pre></div>
-<p>Finally! Now we have the data in place and can start doing things with it.</p>
+<p>Finally! Now we have the data in place and can start doing things
+with it.</p>
 </div>
 <div class="section level3">
 <h3 id="correlations-and-regressions">Correlations and regressions<a class="anchor" aria-label="anchor" href="#correlations-and-regressions"></a>
@@ -1112,8 +1357,21 @@
 <span><span class="co">#&gt; prior_def_rush_epa               1.00               0.32            -0.34</span></span>
 <span><span class="co">#&gt; prior_def_pass_epa               0.32               1.00            -0.60</span></span>
 <span><span class="co">#&gt; prior_point_diff                -0.34              -0.60             1.00</span></span></code></pre></div>
-<p>We’ve covered <code>select</code>, but here we see a new use where a minus sign de-selects variables (we need to de-select team name for correlation to work because it doesn’t work for character strings, and correlation with the season number itself is meaningless). We’ve run the correlation on this dataframe, removing missing values, and then rounding to 2 digits. Not surprisingly, we see that wins in the current season are more strongly related to passing offense EPA than rushing EPA or defense EPA, and prior offense carries more predictive power than prior defense. Pass offense is more stable year to year (<code>0.46</code>) than rush offense (<code>0.32</code>), pass defense (<code>0.28</code>), or rush defense (<code>0.27</code>).</p>
-<p>I’m actually surprised that the values for passing offense aren’t higher relative to the others. Maybe it was because most of our prior results come from the <code>nflscrapR</code> era (2009 - 2019)? Let’s check what this looks like since 2009 relative to earlier seasons:</p>
+<p>We’ve covered <code>select</code>, but here we see a new use where a
+minus sign de-selects variables (we need to de-select team name for
+correlation to work because it doesn’t work for character strings, and
+correlation with the season number itself is meaningless). We’ve run the
+correlation on this dataframe, removing missing values, and then
+rounding to 2 digits. Not surprisingly, we see that wins in the current
+season are more strongly related to passing offense EPA than rushing EPA
+or defense EPA, and prior offense carries more predictive power than
+prior defense. Pass offense is more stable year to year
+(<code>0.46</code>) than rush offense (<code>0.32</code>), pass defense
+(<code>0.28</code>), or rush defense (<code>0.27</code>).</p>
+<p>I’m actually surprised that the values for passing offense aren’t
+higher relative to the others. Maybe it was because most of our prior
+results come from the <code>nflscrapR</code> era (2009 - 2019)? Let’s
+check what this looks like since 2009 relative to earlier seasons:</p>
 <div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"2009 through 2019"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 2009 through 2019</span></span>
@@ -1162,8 +1420,16 @@
 <span><span class="co">#&gt; prior_point_diff                 0.74               0.50</span></span>
 <span><span class="co">#&gt; prior_off_pass_epa               1.00               0.48</span></span>
 <span><span class="co">#&gt; prior_off_rush_epa               0.48               1.00</span></span></code></pre></div>
-<p>Yep, that seems to be the case. So in the more recent period, passing offense has become slightly more stable but more predictive of following-year success, while at the same time rushing offense has become substantially less stable and less predictive of future team success.</p>
-<p>Now let’s do a basic regression of wins on prior offense and defense EPA/play. Maybe we should only look at this more recent period to fit our model since it’s more relevant for 2020. In the real world, we would be more rigorous about making decisions like this, but let’s proceed anyway.</p>
+<p>Yep, that seems to be the case. So in the more recent period, passing
+offense has become slightly more stable but more predictive of
+following-year success, while at the same time rushing offense has
+become substantially less stable and less predictive of future team
+success.</p>
+<p>Now let’s do a basic regression of wins on prior offense and defense
+EPA/play. Maybe we should only look at this more recent period to fit
+our model since it’s more relevant for 2020. In the real world, we would
+be more rigorous about making decisions like this, but let’s proceed
+anyway.</p>
 <div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op">&gt;=</span> <span class="fl">2009</span><span class="op">)</span></span>
 <span></span>
@@ -1193,7 +1459,8 @@
 <span><span class="co">#&gt;   (64 observations deleted due to missingness)</span></span>
 <span><span class="co">#&gt; Multiple R-squared:  0.1639, Adjusted R-squared:  0.155 </span></span>
 <span><span class="co">#&gt; F-statistic: 18.57 on 4 and 379 DF,  p-value: 0.00000000000005992</span></span></code></pre></div>
-<p>I’m actually pretty surprised passing offense isn’t higher here. How does this compare to simply using point differential?</p>
+<p>I’m actually pretty surprised passing offense isn’t higher here. How
+does this compare to simply using point differential?</p>
 <div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">wins</span> <span class="op">~</span> <span class="va">prior_point_diff</span>, data <span class="op">=</span> <span class="va">data</span><span class="op">)</span></span>
 <span></span>
@@ -1217,7 +1484,10 @@
 <span><span class="co">#&gt;   (32 observations deleted due to missingness)</span></span>
 <span><span class="co">#&gt; Multiple R-squared:  0.1904, Adjusted R-squared:  0.1885 </span></span>
 <span><span class="co">#&gt; F-statistic: 97.39 on 1 and 414 DF,  p-value: &lt; 0.00000000000000022</span></span></code></pre></div>
-<p>So R2 is somewhat higher for just point differential. This isn’t surprising as we’ve thrown away special teams plays and haven’t attempted to make any adjustments for things like fumble luck that we know can improve EPA’s predictive power.</p>
+<p>So R2 is somewhat higher for just point differential. This isn’t
+surprising as we’ve thrown away special teams plays and haven’t
+attempted to make any adjustments for things like fumble luck that we
+know can improve EPA’s predictive power.</p>
 </div>
 <div class="section level3">
 <h3 id="predictions">Predictions<a class="anchor" aria-label="anchor" href="#predictions"></a>
@@ -1271,68 +1541,114 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>       10.3 SF   </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>        9.9 KC   </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>        9.6 NO</span></span></code></pre></div>
-<p>Not surprisingly, this looks pretty similar. These are very basic models that don’t incorporate schedule, roster changes, etc. For example, a better model would take into account Tom Brady no longer playing for the Patriots. But hopefully this has been useful!</p>
+<p>Not surprisingly, this looks pretty similar. These are very basic
+models that don’t incorporate schedule, roster changes, etc. For
+example, a better model would take into account Tom Brady no longer
+playing for the Patriots. But hopefully this has been useful!</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="next-steps">Next Steps<a class="anchor" aria-label="anchor" href="#next-steps"></a>
 </h2>
-<p>You now should know enough to be able to tackle a great deal of questions using <code>nflfastR</code> data. A good way to build up skills is to take interesting things you see and try to replicate them (for making figures, this will also involve a heavy dose of googling stuff).</p>
-<p>Looking at others’ code is also a good way to learn. One option is to look through the <code>nflfastR</code> code base, much of which you should now understand what it’s doing. For example, <a href="https://github.com/mrcaseb/nflfastR/blob/master/R/helper_add_nflscrapr_mutations.R" class="external-link">here is the function that cleans up the data and prepares it for later stages</a>: there’s a heavy dose of <code>mutate</code>, <code>group_by</code>, <code>arrange</code>, <code>lag</code>, <code>if_else</code>, and <code>case_when</code>.</p>
+<p>You now should know enough to be able to tackle a great deal of
+questions using <code>nflfastR</code> data. A good way to build up
+skills is to take interesting things you see and try to replicate them
+(for making figures, this will also involve a heavy dose of googling
+stuff).</p>
+<p>Looking at others’ code is also a good way to learn. One option is to
+look through the <code>nflfastR</code> code base, much of which you
+should now understand what it’s doing. For example, <a href="https://github.com/mrcaseb/nflfastR/blob/master/R/helper_add_nflscrapr_mutations.R" class="external-link">here
+is the function that cleans up the data and prepares it for later
+stages</a>: there’s a heavy dose of <code>mutate</code>,
+<code>group_by</code>, <code>arrange</code>, <code>lag</code>,
+<code>if_else</code>, and <code>case_when</code>.</p>
 <div class="section level3">
 <h3 id="resources-the-gold-standards">Resources: The gold standards<a class="anchor" aria-label="anchor" href="#resources-the-gold-standards"></a>
 </h3>
 <p>This is an R package so this section is pretty R heavy.</p>
 <ul>
-<li><a href="https://r4ds.had.co.nz/explore-intro.html" class="external-link">Introduction to R (<strong>recommended</strong>)</a></li>
+<li><a href="https://r4ds.had.co.nz/explore-intro.html" class="external-link">Introduction to
+R (<strong>recommended</strong>)</a></li>
 <li>
-<a href="https://www.opensourcefootball.com/" class="external-link">Open Source Football</a>: Mix of R and Python</li>
+<a href="https://www.opensourcefootball.com/" class="external-link">Open Source
+Football</a>: Mix of R and Python</li>
 <li>
-<a href="https://themockup.blog/" class="external-link">The Mockup Blog (Thomas Mock)</a>: Invaluable resource for making cool stuff in R</li>
+<a href="https://themockup.blog/" class="external-link">The Mockup Blog (Thomas Mock)</a>:
+Invaluable resource for making cool stuff in R</li>
 </ul>
 </div>
 <div class="section level3">
 <h3 id="code-examples-r">Code examples: R<a class="anchor" aria-label="anchor" href="#code-examples-r"></a>
 </h3>
 <ul>
-<li><a href="https://github.com/leesharpe/nfldata/blob/master/RSTUDIO-INTRO.md" class="external-link">Lee Sharpe: basic intro to R and RStudio</a></li>
-<li><a href="https://github.com/leesharpe/nfldata" class="external-link">Lee Sharpe: lots of useful NFL / nflscrapR code</a></li>
-<li><a href="https://github.com/leesharpe/nfldata/blob/master/UPDATING-NFLSCRAPR.md" class="external-link">Lee Sharpe: how to update current season games</a></li>
-<li><a href="https://t.co/gxDDhOYhcI" class="external-link">Josh Hermsmeyer: Getting Started with R for NFL Analysis</a></li>
-<li><a href="https://slavin22.github.io/SFB9-Positional-Tiers/Guide.nb" class="external-link">Slavin: visualizing positional tiers in SFB9</a></li>
-<li><a href="https://github.com/ryurko/nflscrapR-data/tree/master/R" class="external-link">Ron Yurko: assorted examples</a></li>
-<li><a href="https://github.com/dhouston890/cowboys-stats/blob/master/playmaking_epa_pbp.R" class="external-link">CowboysStats: defensive playmaking EPA</a></li>
-<li><a href="https://github.com/statsbylopez/BlogPosts/blob/master/scrapr-data.R" class="external-link">Michael Lopez: function to sample plays</a></li>
-<li><a href="https://statsbylopez.netlify.com/post/r-for-nfl-analysis/" class="external-link">Michael Lopez: R for NFL analysis (presentation to club staffers)</a></li>
-<li><a href="https://gist.github.com/wessonmo/45781bd25a74e8097e0c8bc8fbacf796" class="external-link">Mitchell Wesson: QB hits investigation</a></li>
-<li><a href="https://gist.github.com/wessonmo/ef44ea9873d70f816454cb88b86dcce6" class="external-link">Mitchell Wesson: Investigation of the nflscrapR EP model</a></li>
-<li><a href="https://github.com/whoffman21279/Steelers/blob/master/receiving_stats" class="external-link">WHoffman: graphs for receivers (aDoT, success rate, and more)</a></li>
-<li><a href="https://gist.github.com/ChiBearsStats/dac3266037797032a23f38fd9d64d6a8#file-adjustedthirddowns-txt" class="external-link">ChiBearsStats: investigation of 3rd downs vs offensive efficiency</a></li>
-<li><a href="https://gist.github.com/ChiBearsStats/78e33baeed3cd6d3cac0040b47d4ec69" class="external-link">ChiBearsStats: the insignificance of field goal kicking</a></li>
+<li><a href="https://github.com/leesharpe/nfldata/blob/master/RSTUDIO-INTRO.md" class="external-link">Lee
+Sharpe: basic intro to R and RStudio</a></li>
+<li><a href="https://github.com/leesharpe/nfldata" class="external-link">Lee Sharpe: lots of
+useful NFL / nflscrapR code</a></li>
+<li><a href="https://github.com/leesharpe/nfldata/blob/master/UPDATING-NFLSCRAPR.md" class="external-link">Lee
+Sharpe: how to update current season games</a></li>
+<li><a href="https://t.co/gxDDhOYhcI" class="external-link">Josh Hermsmeyer: Getting Started
+with R for NFL Analysis</a></li>
+<li><a href="https://slavin22.github.io/SFB9-Positional-Tiers/Guide.nb" class="external-link">Slavin:
+visualizing positional tiers in SFB9</a></li>
+<li><a href="https://github.com/ryurko/nflscrapR-data/tree/master/R" class="external-link">Ron
+Yurko: assorted examples</a></li>
+<li><a href="https://github.com/dhouston890/cowboys-stats/blob/master/playmaking_epa_pbp.R" class="external-link">CowboysStats:
+defensive playmaking EPA</a></li>
+<li><a href="https://github.com/statsbylopez/BlogPosts/blob/master/scrapr-data.R" class="external-link">Michael
+Lopez: function to sample plays</a></li>
+<li><a href="https://statsbylopez.netlify.com/post/r-for-nfl-analysis/" class="external-link">Michael
+Lopez: R for NFL analysis (presentation to club staffers)</a></li>
+<li><a href="https://gist.github.com/wessonmo/45781bd25a74e8097e0c8bc8fbacf796" class="external-link">Mitchell
+Wesson: QB hits investigation</a></li>
+<li><a href="https://gist.github.com/wessonmo/ef44ea9873d70f816454cb88b86dcce6" class="external-link">Mitchell
+Wesson: Investigation of the nflscrapR EP model</a></li>
+<li><a href="https://github.com/whoffman21279/Steelers/blob/master/receiving_stats" class="external-link">WHoffman:
+graphs for receivers (aDoT, success rate, and more)</a></li>
+<li><a href="https://gist.github.com/ChiBearsStats/dac3266037797032a23f38fd9d64d6a8#file-adjustedthirddowns-txt" class="external-link">ChiBearsStats:
+investigation of 3rd downs vs offensive efficiency</a></li>
+<li><a href="https://gist.github.com/ChiBearsStats/78e33baeed3cd6d3cac0040b47d4ec69" class="external-link">ChiBearsStats:
+the insignificance of field goal kicking</a></li>
 </ul>
 </div>
 <div class="section level3">
 <h3 id="more-data-sources">More data sources<a class="anchor" aria-label="anchor" href="#more-data-sources"></a>
 </h3>
 <ul>
-<li><a href="https://github.com/leesharpe/nfldata/blob/master/DATASETS.md" class="external-link">Lee Sharpe: Draft Picks, Draft Values, Games, Logos, Rosters, Standings</a></li>
-<li><a href="https://github.com/greerre/pfr_metadata_pull" class="external-link">greerre: how to get .csv file of weather &amp; stadium data from PFR in python</a></li>
-<li><a href="https://gist.github.com/spfleming/2527a6ca2b940af2a8aa1fee9320171d" class="external-link">Parker Fleming: Introduction to College Football Data with R and cfbscrapR</a></li>
+<li><a href="https://github.com/leesharpe/nfldata/blob/master/DATASETS.md" class="external-link">Lee
+Sharpe: Draft Picks, Draft Values, Games, Logos, Rosters,
+Standings</a></li>
+<li><a href="https://github.com/greerre/pfr_metadata_pull" class="external-link">greerre: how
+to get .csv file of weather &amp; stadium data from PFR in
+python</a></li>
+<li><a href="https://gist.github.com/spfleming/2527a6ca2b940af2a8aa1fee9320171d" class="external-link">Parker
+Fleming: Introduction to College Football Data with R and
+cfbscrapR</a></li>
 </ul>
 </div>
 <div class="section level3">
 <h3 id="other-code-examples-python">Other code examples: Python<a class="anchor" aria-label="anchor" href="#other-code-examples-python"></a>
 </h3>
 <ul>
-<li><a href="https://gist.github.com/Deryck97/dff8d33e9f841568201a2a0d5519ac5e" class="external-link">Deryck97: nflfastR Python Guide</a></li>
-<li><a href="https://colab.research.google.com/github/nickwan/colab_nflfastR/blob/master/nflfastR_starter.ipynb" class="external-link">Nick Wan: nflfastR Python Colab Guide</a></li>
-<li><a href="https://github.com/jezlax/sports_analytics/blob/master/animated_nfl_scatter.py" class="external-link">Cory Jez: animated plot</a></li>
-<li><a href="https://gist.github.com/903124/6693fdf6b991437a6d6ef9c5d935c83b" class="external-link">903124S: Sampling EP</a></li>
-<li><a href="https://gist.github.com/903124/d304f76688b0699497a35b61b6d1e267" class="external-link">903124S: estimating EPA using nfldb</a></li>
-<li><a href="https://gist.github.com/903124/3c6f0dc0a100d78b8622573ef4c504f5" class="external-link">903124S: estimate EPA for college football</a></li>
-<li>Blake Atkinson: explosiveness <a href="https://medium.com/@BlakeAtkinson/the-2018-kansas-city-chiefs-and-an-explosiveness-metric-in-football-c3b3fd447d73" class="external-link">blog post</a> and <a href="https://github.com/btatkinson/yard_value/blob/master/yard_value.ipynb" class="external-link">python code</a>
+<li><a href="https://gist.github.com/Deryck97/dff8d33e9f841568201a2a0d5519ac5e" class="external-link">Deryck97:
+nflfastR Python Guide</a></li>
+<li><a href="https://colab.research.google.com/github/nickwan/colab_nflfastR/blob/master/nflfastR_starter.ipynb" class="external-link">Nick
+Wan: nflfastR Python Colab Guide</a></li>
+<li><a href="https://github.com/jezlax/sports_analytics/blob/master/animated_nfl_scatter.py" class="external-link">Cory
+Jez: animated plot</a></li>
+<li><a href="https://gist.github.com/903124/6693fdf6b991437a6d6ef9c5d935c83b" class="external-link">903124S:
+Sampling EP</a></li>
+<li><a href="https://gist.github.com/903124/d304f76688b0699497a35b61b6d1e267" class="external-link">903124S:
+estimating EPA using nfldb</a></li>
+<li><a href="https://gist.github.com/903124/3c6f0dc0a100d78b8622573ef4c504f5" class="external-link">903124S:
+estimate EPA for college football</a></li>
+<li>Blake Atkinson: explosiveness <a href="https://medium.com/@BlakeAtkinson/the-2018-kansas-city-chiefs-and-an-explosiveness-metric-in-football-c3b3fd447d73" class="external-link">blog
+post</a> and <a href="https://github.com/btatkinson/yard_value/blob/master/yard_value.ipynb" class="external-link">python
+code</a>
 </li>
-<li>Blake Atkinson: player type visualizations <a href="https://medium.com/@BlakeAtkinson/visualizing-different-nfl-player-styles-88ef31420539" class="external-link">blog post</a> and <a href="https://github.com/btatkinson/player_vectors/blob/master/player_vectors.ipynb" class="external-link">python code</a>
+<li>Blake Atkinson: player type visualizations <a href="https://medium.com/@BlakeAtkinson/visualizing-different-nfl-player-styles-88ef31420539" class="external-link">blog
+post</a> and <a href="https://github.com/btatkinson/player_vectors/blob/master/player_vectors.ipynb" class="external-link">python
+code</a>
 </li>
 </ul>
 </div>

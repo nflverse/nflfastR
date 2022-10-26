@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.4.0.9012</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.4.0.9013</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -114,7 +114,8 @@
 <h2 class="pkg-version" data-toc-text="development version" id="nflfastr-development-version">nflfastR (development version)<a class="anchor" aria-label="anchor" href="#nflfastr-development-version"></a></h2>
 <ul><li>Internal change to <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> that reflects new nflverse data infrastructure.</li>
 <li>
-<code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> now unifies player names and joins the following player information via <code><a href="https://nflreadr.nflverse.com/reference/load_players.html" class="external-link">nflreadr::load_players()</a></code>:<ul><li>
+<code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> now unifies player names and joins the following player information via <code><a href="https://nflreadr.nflverse.com/reference/load_players.html" class="external-link">nflreadr::load_players()</a></code>:
+<ul><li>
 <code>player_display_name</code> - Full name of the player</li>
 <li>
 <code>position</code> - Position of the player</li>
@@ -131,8 +132,9 @@
 <li>Add gsis_id patch to <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code>. (v4.4.0.9009)</li>
 <li>
 <code><a href="../reference/calculate_player_stats_def.html">calculate_player_stats_def()</a></code> failed in situations where play-by-play data is missing certain stats. (<a href="https://github.com/nflverse/nflfastR/issues/382" class="external-link">#382</a>) (v4.4.0.9010)</li>
-<li>Spot-fixing <code>calculate_player_stats</code> for NA names. (v4.4.0.9011)</li>
+<li>Spot-fixing <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> for NA names. (v4.4.0.9011)</li>
 <li>Added new function <code><a href="../reference/calculate_player_stats_kicking.html">calculate_player_stats_kicking()</a></code> that aggregates player stats for field goals and extra points at game level or overall. (v4.4.0.9012)</li>
+<li>Added new function <code><a href="../reference/calculate_series_conversion_rates.html">calculate_series_conversion_rates()</a></code> that computes series conversion and series result rates at a game level or season level. (v4.4.0.9013)</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="4.4.0" id="nflfastr-440">nflfastR 4.4.0<a class="anchor" aria-label="anchor" href="#nflfastr-440"></a></h2><p class="text-muted">CRAN release: 2022-08-06</p>
@@ -145,7 +147,8 @@
 </ul></div>
 <div class="section level3">
 <h3 id="deprecation-4-4-0">Deprecation<a class="anchor" aria-label="anchor" href="#deprecation-4-4-0"></a></h3>
-<ul><li>The argument <code>qs</code> in the functions <code><a href="../reference/load_pbp.html">load_pbp()</a></code> and <code><a href="../reference/load_player_stats.html">load_player_stats()</a></code> has been deprecated as of nflfastR 4.3.0. This release removes the argument entirely.</li></ul></div>
+<ul><li>The argument <code>qs</code> in the functions <code><a href="../reference/load_pbp.html">load_pbp()</a></code> and <code><a href="../reference/load_player_stats.html">load_player_stats()</a></code> has been deprecated as of nflfastR 4.3.0. This release removes the argument entirely.</li>
+</ul></div>
 <div class="section level3">
 <h3 id="bugfixes-and-minor-improvements-4-4-0">Bugfixes and Minor Improvements<a class="anchor" aria-label="anchor" href="#bugfixes-and-minor-improvements-4-4-0"></a></h3>
 <ul><li>Fixed bug where a player could be duplicated in <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> in very rare cases caused by plays with laterals. (<a href="https://github.com/nflverse/nflfastR/issues/289" class="external-link">#289</a>)</li>
@@ -401,10 +404,12 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.2.0" id="nflfastr-220">nflfastR 2.2.0<a class="anchor" aria-label="anchor" href="#nflfastr-220"></a></h2>
 <ul><li>New function <code><a href="../reference/add_xyac.html">add_xyac()</a></code> which adds the following columns associated with expected yards after the catch (xYAC): <code>xyac_epa</code>, <code>xyac_success</code>, <code>xyac_fd</code>, <code>xyac_mean_yardage</code>, <code>xyac_median_yardage</code>
-</li></ul></div>
+</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.1.3" id="nflfastr-213">nflfastR 2.1.3<a class="anchor" aria-label="anchor" href="#nflfastr-213"></a></h2>
-<ul><li>Fixed a bug in <code>series_success</code> caused by bad <code>drive</code> information provided by NFL</li></ul></div>
+<ul><li>Fixed a bug in <code>series_success</code> caused by bad <code>drive</code> information provided by NFL</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.1.2" id="nflfastr-212">nflfastR 2.1.2<a class="anchor" aria-label="anchor" href="#nflfastr-212"></a></h2>
 <ul><li>Added the following columns that are available 2011 and later: <code>special_teams_play</code>, <code>st_play_type</code>, <code>time_of_day</code>, and <code>order_sequence</code>
@@ -423,7 +428,8 @@
 <div class="section level4">
 <h4 id="functions-2-1-1">Functions<a class="anchor" aria-label="anchor" href="#functions-2-1-1"></a></h4>
 <ul><li>
-<code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> now standardizes player IDs across the old (1999-2010) and new (2011+) data sources. Player IDs once again uniquely identify players, and each unique player has one unique ID (as they did before the NFL data source change):<ul><li>For players whose careers finished before 2011, their IDs remain the same</li>
+<code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> now standardizes player IDs across the old (1999-2010) and new (2011+) data sources. Player IDs once again uniquely identify players, and each unique player has one unique ID (as they did before the NFL data source change):
+<ul><li>For players whose careers finished before 2011, their IDs remain the same</li>
 <li>For players who played in both eras or only in the new era, their ID is the new ID</li>
 <li>For example, Akili Smith (ID: 00-0015082) and Alex Smith (ID: 32013030-2d30-3032-3334-3336b638d37d) are both abbreviated as “A.Smith” but can be distinguished by their IDs, with Akili showing what the old format ID looks like, and Smith the new one</li>
 <li>Standardization is realized by using an ID map available in the data repo</li>
@@ -443,7 +449,8 @@
 <div class="section level4">
 <h4 id="models-2-1-0">Models<a class="anchor" aria-label="anchor" href="#models-2-1-0"></a></h4>
 <ul><li>Removed <code>week</code> from Expected Points models along with an update of <code>vignette("nflfastR-models")</code> and <code>vignette("examples")</code>
-</li></ul></div>
+</li>
+</ul></div>
 <div class="section level4">
 <h4 id="functions-2-1-0">Functions<a class="anchor" aria-label="anchor" href="#functions-2-1-0"></a></h4>
 <ul><li>Added function <code><a href="../reference/update_db.html">update_db()</a></code> which adds all completed games to a SQLite database</li>
@@ -508,7 +515,8 @@
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.0.1" id="nflfastr-201">nflfastR 2.0.1<a class="anchor" aria-label="anchor" href="#nflfastr-201"></a></h2>
-<ul><li>Added minimum version requirement on <code>xgboost</code> (&gt;= 1.1) as the recent <code>xgboost</code> update caused a breaking change leading to failure in adding model results to data</li></ul></div>
+<ul><li>Added minimum version requirement on <code>xgboost</code> (&gt;= 1.1) as the recent <code>xgboost</code> update caused a breaking change leading to failure in adding model results to data</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.0.0" id="nflfastr-200">nflfastR 2.0.0<a class="anchor" aria-label="anchor" href="#nflfastr-200"></a></h2>
 <div class="section level4">
