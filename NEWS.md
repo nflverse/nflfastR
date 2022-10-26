@@ -14,6 +14,7 @@
 * `calculate_player_stats_def()` failed in situations where play-by-play data is missing certain stats. (#382) (v4.4.0.9010)
 * Spot-fixing `calculate_player_stats` for NA names. (v4.4.0.9011)
 * Added new function `calculate_player_stats_kicking()` that aggregates player stats for field goals and extra points at game level or overall. (v4.4.0.9012)
+* Added new function `calculate_series_conversion_rates()` that computes series conversion and series result rates at a game level or season level. (v4.4.0.9013)  
 
 # nflfastR 4.4.0
 
