@@ -134,6 +134,7 @@ reference:
       - calculate_player_stats_def
       - calculate_player_stats_kicking
       - calculate_standings
+      - calculate_series_conversion_rates
       - report
   - title: Documentation
     contents:
