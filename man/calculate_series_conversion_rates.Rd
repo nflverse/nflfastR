@@ -24,23 +24,23 @@ downs, kickoffs, extra point/two point conversion attempts, non-plays, and
 plays that do not list a "posteam")}
 \item{off_scr}{The rate at which a series ended in either new 1st down or
 touchdown while the offense was on the field}
-\item{off_scr_1st}{The rate at which an offense converted a series to 1st down
-or touchdown on 1st down}
-\item{off_scr_2nd}{The rate at which an offense converted a series to 1st down
-or touchdown on 2nd down}
-\item{off_scr_3rd}{The rate at which an offense converted a series to 1st down
-or touchdown on 3rd down}
-\item{off_scr_4th}{The rate at which an offense converted a series to 1st down
-or touchdown on 4th down}
+\item{off_scr_1st}{The rate at which an offense earned a 1st down
+or scored a touchdown on 1st down}
+\item{off_scr_2nd}{The rate at which an offense earned a 1st down
+or scored a touchdown on 2nd down}
+\item{off_scr_3rd}{The rate at which an offense earned a 1st down
+or scored a touchdown on 3rd down}
+\item{off_scr_4th}{The rate at which an offense earned a 1st down
+or scored a touchdown on 4th down}
 \item{off_1st}{The rate of series that ended in a new 1st down while the
-offense was on the field}
+offense was on the field (does not include offensive touchdown)}
 \item{off_td}{The rate of series that ended in an offensive touchdown while the
 offense was on the field}
-\item{off_fg}{The rate of series that ended in a field goal try while the
+\item{off_fg}{The rate of series that ended in a field goal attempt while the
 offense was on the field}
 \item{off_punt}{The rate of series that ended in a punt while the
 offense was on the field}
-\item{off_to}{The rate of series that ended in a turnover (on downs), in an
+\item{off_to}{The rate of series that ended in a turnover (including on downs), in an
 opponent score, or at the end of half (or game) while the
 offense was on the field}
 \item{def_n}{The number of series the defense played (excludes QB kneel
@@ -48,34 +48,34 @@ downs, kickoffs, extra point/two point conversion attempts, non-plays, and
 plays that do not list a "posteam")}
 \item{def_scr}{The rate at which a series ended in either new 1st down or
 touchdown while the defense was on the field}
-\item{def_scr_1st}{The rate at which a defense allowed conversion of a series
-to 1st down or touchdown on 1st down}
-\item{def_scr_2nd}{The rate at which a defense allowed conversion of a series
-to 1st down or touchdown on 2nd down}
-\item{def_scr_3rd}{The rate at which a defense allowed conversion of a series
-to 1st down or touchdown on 3rd down}
-\item{def_scr_4th}{The rate at which a defense allowed conversion of a series
-to 1st down or touchdown on 4th down}
+\item{def_scr_1st}{The rate at which a defense allowed a
+1st down or touchdown on 1st down}
+\item{def_scr_2nd}{The rate at which a defense allowed a
+1st down or touchdown on 2nd down}
+\item{def_scr_3rd}{The rate at which a defense allowed a
+1st down or touchdown on 3rd down}
+\item{def_scr_4th}{The rate at which a defense allowed a
+1st down or touchdown on 4th down}
 \item{def_1st}{The rate of series that ended in a new 1st down while the
-defense was on the field}
+defense was on the field (does not include offensive touchdown)}
 \item{def_td}{The rate of series that ended in an offensive touchdown while the
 defense was on the field}
-\item{def_fg}{The rate of series that ended in a field goal try while the
+\item{def_fg}{The rate of series that ended in a field goal attempt while the
 defense was on the field}
 \item{def_punt}{The rate of series that ended in a punt while the
 defense was on the field}
-\item{def_to}{The rate of series that ended in a turnover (on downs), in an
+\item{def_to}{The rate of series that ended in a turnover (including on downs), in an
 opponent score, or at the end of half (or game) while the
 defense was on the field}
 }
 }
 \description{
-A "Series" is a series of downs a team plays to either convert
-to a new 1st down (on offense) or prevent the offense from converting a new
-1st down (on defense). The series conversion rate describes how many series
+A "Series" begins on a 1st and 10 and each team attempts to either earn
+a new 1st down (on offense) or prevent the offense from converting a new
+1st down (on defense). Series conversion rate represents how many series
 have been either converted to a new 1st down or ended in a touchdown.
 This function computes series conversion rates on offense and defense from
-nflverse play-by-play data along with other series result rates.
+nflverse play-by-play data along with other series results.
 The function automatically removes series that ended in a QB kneel down.
 }
 \examples{
