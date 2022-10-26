@@ -1,6 +1,6 @@
 #' Compute Series Conversion Information from Play by Play
 #'
-#' @description A "Series" begins on a 1st and 10 and each team plays to either earn
+#' @description A "Series" begins on a 1st and 10 and each team attempts to either earn
 #'   a new 1st down (on offense) or prevent the offense from converting a new
 #'   1st down (on defense). Series conversion rate represents how many series
 #'   have been either converted to a new 1st down or ended in a touchdown.
