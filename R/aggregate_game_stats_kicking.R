@@ -164,7 +164,7 @@ calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
     dplyr::full_join(game_winners, as.character(grp_vars)) %>%
     dplyr::left_join(df_player_names, "player_id") %>%
     dplyr::group_by(!!!grp_vars) %>%
-    dplyr::mutate(games = length(unique(unlist(c(games_fg, games_pat, games_gwfg))))) %>%
+    dplyr::mutate(games = length(unique(unlist(c(.data$games_fg, .data$games_pat, .data$games_gwfg))))) %>%
     dplyr::ungroup() %>%
     dplyr::select(
       dplyr::any_of(c("season", "week", "season_type")), "player_id",
