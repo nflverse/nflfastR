@@ -1,4 +1,4 @@
-# nflfastR (development version)
+# nflfastR 4.5.0
 
 * Internal change to `calculate_player_stats()` that reflects new nflverse data infrastructure.
 * `calculate_player_stats()` now unifies player names and joins the following player information via `nflreadr::load_players()`:
