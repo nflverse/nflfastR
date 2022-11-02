@@ -310,7 +310,12 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
           )
 
         ) %>%
-        dplyr::mutate_all(dplyr::na_if, "")
+        dplyr::mutate(
+          dplyr::across(
+            .cols = tidyselect::where(is.character),
+            .fns = ~dplyr::na_if(.x, "")
+          )
+        )
 
       # fix for games where home_team == away_team and fields are messed up
       if (bad_game == 1) {
