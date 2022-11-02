@@ -32,7 +32,7 @@ knitr::opts_chunk$set(
 * Includes completion probability (`cp`), completion percentage over expected (`cpoe`), and expected yards after the catch (`xyac_epa` and `xyac_mean_yardage`) in play-by-play going back to 2006
 * Includes drive information, including drive starting position and drive result
 * Includes series information, including series number and series success
-* Hosts [a repository of play-by-play data going back to 1999](https://github.com/nflverse/nflfastR-data) for very quick access
+* Hosts [a repository of play-by-play data going back to 1999](https://github.com/nflverse/nflverse-pbp) for very quick access
 * Features models for Expected Points, Win Probability, Completion Probability, and Yards After the Catch (see section below)
 * Includes a function `update_db()` that creates and updates a database
 
