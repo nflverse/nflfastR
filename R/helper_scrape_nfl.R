@@ -178,7 +178,7 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
       pbp_stats <- dplyr::bind_rows(pbp_stats)
 
       combined <- game_info %>%
-        dplyr::left_join(plays %>% dplyr::select(-"playStats"), by = c("game_id")) %>%
+        dplyr::bind_cols(plays %>% dplyr::select(-"playStats", -"game_id")) %>%
         dplyr::left_join(drives, by = c("driveSequenceNumber" = "drive_order_sequence")) %>%
         dplyr::left_join(pbp_stats, by = c("playId" = "play_id")) %>%
         dplyr::mutate_if(is.logical, as.numeric) %>%
