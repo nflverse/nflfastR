@@ -178,7 +178,7 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
       pbp_stats <- dplyr::bind_rows(pbp_stats)
 
       combined <- game_info %>%
-        dplyr::left_join(plays %>% dplyr::select(-"playStats"), by = c("game_id")) %>%
+        dplyr::bind_cols(plays %>% dplyr::select(-"playStats", -"game_id")) %>%
         dplyr::left_join(drives, by = c("driveSequenceNumber" = "drive_order_sequence")) %>%
         dplyr::left_join(pbp_stats, by = c("playId" = "play_id")) %>%
         dplyr::mutate_if(is.logical, as.numeric) %>%
@@ -310,7 +310,12 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
           )
 
         ) %>%
-        dplyr::mutate_all(dplyr::na_if, "")
+        dplyr::mutate(
+          dplyr::across(
+            .cols = tidyselect::where(is.character),
+            .fns = ~dplyr::na_if(.x, "")
+          )
+        )
 
       # fix for games where home_team == away_team and fields are messed up
       if (bad_game == 1) {

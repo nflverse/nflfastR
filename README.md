@@ -33,7 +33,7 @@ data. `nflfastR` expands upon the features of nflscrapR:
 -   Includes series information, including series number and series
     success
 -   Hosts [a repository of play-by-play data going back to
-    1999](https://github.com/nflverse/nflfastR-data) for very quick
+    1999](https://github.com/nflverse/nflverse-pbp) for very quick
     access
 -   Features models for Expected Points, Win Probability, Completion
     Probability, and Yards After the Catch (see section below)

@@ -87,7 +87,7 @@ add_xyac <- function(pbp, ...) {
           yardline_100 = .data$distance_to_goal - .data$yac
         ) %>%
         dplyr::filter(.data$yac >= .data$max_loss, .data$yac <= .data$max_gain) %>%
-        dplyr::select(-.data$cum_prob) %>%
+        dplyr::select(-"cum_prob") %>%
         dplyr::mutate(
           posteam_timeouts_pre = .data$posteam_timeouts_remaining,
           defeam_timeouts_pre = .data$defteam_timeouts_remaining,
@@ -142,7 +142,7 @@ add_xyac <- function(pbp, ...) {
 
       pbp <- pbp %>%
         dplyr::left_join(xyac_vars, by = "index") %>%
-        dplyr::select(-.data$index)
+        dplyr::select(-"index")
 
       message_completed("added xyac variables", ...)
     } else { # means no valid pass plays in the pbp
@@ -154,7 +154,7 @@ add_xyac <- function(pbp, ...) {
           xyac_success = NA_real_,
           xyac_fd = NA_real_
         ) %>%
-        dplyr::select(-.data$index)
+        dplyr::select(-"index")
       user_message("No non-NA values for xyac calculation detected. xyac variables set to NA", "info")
     }
   }
