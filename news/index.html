@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.4.0.9013</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -111,7 +111,17 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="nflfastr-development-version">nflfastR (development version)<a class="anchor" aria-label="anchor" href="#nflfastr-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="4.5.0" id="nflfastr-450">nflfastR 4.5.0<a class="anchor" aria-label="anchor" href="#nflfastr-450"></a></h2>
+<div class="section level3">
+<h3 id="new-experimental-functions-4-5-0">New (experimental) functions<a class="anchor" aria-label="anchor" href="#new-experimental-functions-4-5-0"></a></h3>
+<ul><li>Added new function <code><a href="../reference/calculate_player_stats_def.html">calculate_player_stats_def()</a></code> that aggregates defensive player stats either at game level or overall. (<a href="https://github.com/nflverse/nflfastR/issues/288" class="external-link">#288</a>)</li>
+<li>The situation report <code>nflverse_sitrep</code> which is an alias of the already available <code><a href="../reference/report.html">report()</a></code>
+</li>
+<li>Added new function <code><a href="../reference/calculate_player_stats_kicking.html">calculate_player_stats_kicking()</a></code> that aggregates player stats for field goals and extra points at game level or overall. (<a href="https://github.com/nflverse/nflfastR/issues/381" class="external-link">#381</a>)</li>
+<li>Added new function <code><a href="../reference/calculate_series_conversion_rates.html">calculate_series_conversion_rates()</a></code> that computes series conversion and series result rates at a game level or season level. (<a href="https://github.com/nflverse/nflfastR/issues/393" class="external-link">#393</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bugfixes-and-minor-improvements-4-5-0">Bugfixes and Minor Improvements<a class="anchor" aria-label="anchor" href="#bugfixes-and-minor-improvements-4-5-0"></a></h3>
 <ul><li>Internal change to <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> that reflects new nflverse data infrastructure.</li>
 <li>
 <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> now unifies player names and joins the following player information via <code><a href="https://nflreadr.nflverse.com/reference/load_players.html" class="external-link">nflreadr::load_players()</a></code>:
@@ -124,18 +134,14 @@
 <li>
 <code>headshot_url</code> - URL to a player headshot image</li>
 </ul></li>
-<li>Added new function <code><a href="../reference/calculate_player_stats_def.html">calculate_player_stats_def()</a></code> that aggregates defensive player stats either at game level or overall. (<a href="https://github.com/nflverse/nflfastR/issues/288" class="external-link">#288</a>) v4.4.0.9006</li>
 <li>Make data work in 2022 (hopefully)</li>
 <li>Fix Amon-Ra St. Brown breaking the name parser</li>
-<li>import/export <code>nflverse_sitrep</code>
-</li>
-<li>Add gsis_id patch to <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code>. (v4.4.0.9009)</li>
+<li>Add gsis_id patch to <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code>.</li>
 <li>
-<code><a href="../reference/calculate_player_stats_def.html">calculate_player_stats_def()</a></code> failed in situations where play-by-play data is missing certain stats. (<a href="https://github.com/nflverse/nflfastR/issues/382" class="external-link">#382</a>) (v4.4.0.9010)</li>
-<li>Spot-fixing <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> for NA names. (v4.4.0.9011)</li>
-<li>Added new function <code><a href="../reference/calculate_player_stats_kicking.html">calculate_player_stats_kicking()</a></code> that aggregates player stats for field goals and extra points at game level or overall. (v4.4.0.9012)</li>
-<li>Added new function <code><a href="../reference/calculate_series_conversion_rates.html">calculate_series_conversion_rates()</a></code> that computes series conversion and series result rates at a game level or season level. (v4.4.0.9013)</li>
+<code><a href="../reference/calculate_player_stats_def.html">calculate_player_stats_def()</a></code> failed in situations where play-by-play data is missing certain stats. (<a href="https://github.com/nflverse/nflfastR/issues/382" class="external-link">#382</a>)</li>
+<li>Spot-fixing <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> for <code>NA</code> names.</li>
 </ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="4.4.0" id="nflfastr-440">nflfastR 4.4.0<a class="anchor" aria-label="anchor" href="#nflfastr-440"></a></h2><p class="text-muted">CRAN release: 2022-08-06</p>
 <div class="section level3">
