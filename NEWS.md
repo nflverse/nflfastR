@@ -1,3 +1,7 @@
+# nflfastR (development version)
+
+* New implementation of tests to be able to identify breaking changes in reverse dependencies
+
 # nflfastR 4.5.0
 
 ## New (experimental) functions
