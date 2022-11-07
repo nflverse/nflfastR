@@ -5,7 +5,7 @@
 ################################################################################
 
 # Thanks Lee!
-add_game_data <- function(pbp, games = NULL) {
+add_game_data <- function(pbp, games = NULL, ...) {
   out <- pbp
   tryCatch(
     expr = {
@@ -17,7 +17,7 @@ add_game_data <- function(pbp, games = NULL) {
       } else {
         stopifnot(
            inherits(games, "nflverse_data"),
-           isTRUE(attr(games, "nflverse_type")=="games and schedules")
+           isTRUE(attr(games, "nflverse_type") == "games and schedules")
          )
       }
 

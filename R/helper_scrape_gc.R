@@ -8,7 +8,7 @@
 #
 # @param gameId Specifies the game
 
-get_pbp_gc <- function(gameId, dir = NULL, qs = FALSE) {
+get_pbp_gc <- function(gameId, dir = NULL, qs = FALSE, ...) {
 
   warn <- 0
 

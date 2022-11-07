@@ -11,9 +11,11 @@ load_test_pbp <- function(pbp = pbp_cache, dir = test_dir){
     return(readRDS(pbp))
   }
 
+  g <- readRDS(file.path(test_dir, paste0("games.rds")))
+
   # model output differs across machines so we round to 4 significant digits
   # to prevent failing tests
-  pbp_data <- build_nflfastR_pbp(game_ids, dir = dir) %>%
+  pbp_data <- build_nflfastR_pbp(game_ids, dir = dir, games = g) %>%
     dplyr::mutate_if(is.numeric, signif, digits = 4)
   if(!is.null(dir)) saveRDS(pbp_data, pbp)
   pbp_data
