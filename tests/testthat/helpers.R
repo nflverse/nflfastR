@@ -10,7 +10,8 @@ load_test_pbp <- function(pbp = pbp_cache, dir = test_dir){
     cli::cli_alert_info("Will return pbp from cache")
     return(readRDS(pbp))
   }
-  pbp_data <- build_nflfastR_pbp(game_ids, dir = dir)
+  pbp_data <- build_nflfastR_pbp(game_ids, dir = dir) %>%
+    dplyr::mutate_if(is.numeric, signif)
   if(!is.null(dir)) saveRDS(pbp_data, pbp)
   pbp_data
 }
