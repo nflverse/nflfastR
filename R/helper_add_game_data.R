@@ -5,7 +5,7 @@
 ################################################################################
 
 # Thanks Lee!
-add_game_data <- function(pbp, dir = NULL) {
+add_game_data <- function(pbp, games = NULL) {
   out <- pbp
   tryCatch(
     expr = {
