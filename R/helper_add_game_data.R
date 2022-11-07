@@ -12,10 +12,13 @@ add_game_data <- function(pbp, games = NULL) {
 
       # we use dir to specify the directory of a locally stored games file
       # for unit tests
-      if (is.null(dir)){
+      if (is.null(games)){
         games <- nflreadr::load_schedules()
       } else {
-        games <- readRDS(file.path(dir, paste0("games.rds")))
+        stopifnot(
+           inherits(games, "nflverse_data"),
+           isTRUE(attr(games, "nflverse_type")=="games and schedules")
+         )
       }
 
       out <- out %>%
