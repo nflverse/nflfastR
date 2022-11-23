@@ -5,21 +5,25 @@
 ################################################################################
 
 # Thanks Lee!
-add_game_data <- function(pbp) {
+add_game_data <- function(pbp, games = NULL, ...) {
   out <- pbp
   tryCatch(
     expr = {
-      url <- "https://github.com/nflverse/nfldata/blob/master/data/games.rds?raw=true"
 
-      fetched <- curl::curl_fetch_memory(url)
-
-      if (fetched$status_code %in% c(404, 500)) {
-        warning(warn <- 1)
+      # we use dir to specify the directory of a locally stored games file
+      # for unit tests
+      if (is.null(games)){
+        games <- nflreadr::load_schedules()
+      } else {
+        stopifnot(
+           inherits(games, "nflverse_data"),
+           isTRUE(attr(games, "nflverse_type") == "games and schedules")
+         )
       }
 
       out <- out %>%
         dplyr::left_join(
-          read_raw_rds(fetched$content) %>%
+          games %>%
             dplyr::select(
               "game_id", "old_game_id", "away_score", "home_score", "location", "result", "total",
               "spread_line", "total_line", "div_game", "roof", "surface", "temp", "wind",

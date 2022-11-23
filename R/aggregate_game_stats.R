@@ -160,7 +160,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
   }
 
   s_type <- pbp %>%
-    dplyr::select(.data$season, .data$season_type, .data$week) %>%
+    dplyr::select("season", "season_type", "week") %>%
     dplyr::distinct()
 
   # we'll join some player information like position or full name later
@@ -209,7 +209,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         TRUE ~ .data$pacr
       ),
     ) %>%
-    dplyr::rename(player_id = .data$passer_player_id) %>%
+    dplyr::rename("player_id" = "passer_player_id") %>%
     dplyr::ungroup()
 
   if (isTRUE(weekly)) pass_df <- add_dakota(pass_df, pbp = pbp, weekly = weekly)
@@ -223,7 +223,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       team_pass = custom_mode(.data$posteam),
       passing_2pt_conversions = dplyr::n()
     ) %>%
-    dplyr::rename(player_id = .data$passer_player_id) %>%
+    dplyr::rename("player_id" = "passer_player_id") %>%
     dplyr::ungroup()
 
   pass_df <- pass_df %>%
@@ -271,13 +271,13 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       lateral_fumbles_lost = sum(.data$fumble_lost, na.rm = TRUE)
     ) %>%
     dplyr::ungroup() %>%
-    dplyr::rename(rusher_player_id = .data$lateral_rusher_player_id) %>%
+    dplyr::rename("rusher_player_id" = "lateral_rusher_player_id") %>%
     dplyr::bind_rows(
       mult_lats %>%
         dplyr::filter(
           .data$type == "lateral_rushing" & .data$season %in% data$season & .data$week %in% data$week
         ) %>%
-        dplyr::select("season", "week", "rusher_player_id" = .data$gsis_player_id, "lateral_yards" = .data$yards) %>%
+        dplyr::select("season", "week", "rusher_player_id" = "gsis_player_id", "lateral_yards" = "yards") %>%
         dplyr::mutate(lateral_tds = 0L, lateral_att = 1L)
     ) %>%
     # at this stage it is possible that a player is duplicated because he
@@ -307,7 +307,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       rushing_fumbles = .data$rushing_fumbles + .data$lateral_fumbles,
       rushing_fumbles_lost = .data$rushing_fumbles_lost + .data$lateral_fumbles_lost
       ) %>%
-    dplyr::rename(player_id = .data$rusher_player_id) %>%
+    dplyr::rename("player_id" = "rusher_player_id") %>%
     dplyr::select("player_id", "week", "season", "name_rush", "team_rush",
                   "rushing_yards", "carries", "rushing_tds", "rushing_fumbles",
                   "rushing_fumbles_lost", "rushing_first_downs", "rushing_epa") %>%
@@ -322,7 +322,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       team_rush = custom_mode(.data$posteam),
       rushing_2pt_conversions = dplyr::n()
     ) %>%
-    dplyr::rename(player_id = .data$rusher_player_id) %>%
+    dplyr::rename("player_id" = "rusher_player_id") %>%
     dplyr::ungroup()
 
   rush_df <- rush_df %>%
@@ -373,13 +373,13 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       lateral_fumbles_lost = sum(.data$fumble_lost, na.rm = T)
     ) %>%
     dplyr::ungroup() %>%
-    dplyr::rename(receiver_player_id = .data$lateral_receiver_player_id) %>%
+    dplyr::rename("receiver_player_id" = "lateral_receiver_player_id") %>%
     dplyr::bind_rows(
       mult_lats %>%
         dplyr::filter(
           .data$type == "lateral_receiving" & .data$season %in% data$season & .data$week %in% data$week
         ) %>%
-        dplyr::select("season", "week", "receiver_player_id" = .data$gsis_player_id, "lateral_yards" = .data$yards) %>%
+        dplyr::select("season", "week", "receiver_player_id" = "gsis_player_id", "lateral_yards" = "yards") %>%
         dplyr::mutate(lateral_tds = 0L, lateral_att = 1L)
     ) %>%
     # at this stage it is possible that a player is duplicated because he
@@ -433,7 +433,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       air_yards_share = .data$receiving_air_yards / .data$team_air_yards,
       wopr = 1.5 * .data$target_share + 0.7 * .data$air_yards_share
       ) %>%
-    dplyr::rename(player_id = .data$receiver_player_id) %>%
+    dplyr::rename("player_id" = "receiver_player_id") %>%
     dplyr::select("player_id", "week", "season", "name_receiver", "team_receiver",
                   "receiving_yards", "receiving_air_yards", "receiving_yards_after_catch",
                   "receptions", "targets", "receiving_tds", "receiving_fumbles",
@@ -449,7 +449,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       team_receiver = custom_mode(.data$posteam),
       receiving_2pt_conversions = dplyr::n()
     ) %>%
-    dplyr::rename(player_id = .data$receiver_player_id) %>%
+    dplyr::rename("player_id" = "receiver_player_id") %>%
     dplyr::ungroup()
 
   rec_df <- rec_df %>%
@@ -476,7 +476,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       team_st = custom_mode(.data$td_team),
       special_teams_tds = sum(.data$touchdown, na.rm = TRUE)
     ) %>%
-    dplyr::rename(player_id = .data$td_player_id)
+    dplyr::rename("player_id" = "td_player_id")
 
 # Combine all stats -------------------------------------------------------
 
@@ -625,8 +625,8 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       ) %>%
       add_dakota(pbp = pbp, weekly = weekly) %>%
       dplyr::select(
-        .data$player_id:.data$pacr,
-        .data$dakota,
+        "player_id":"pacr",
+        tidyselect::any_of("dakota"),
         dplyr::everything()
       )
   }
@@ -686,7 +686,7 @@ add_dakota <- function(add_to_this, pbp, weekly) {
       ) %>%
       dplyr::ungroup() %>%
       dplyr::mutate(cpoe = dplyr::if_else(is.na(.data$cpoe), 0, .data$cpoe)) %>%
-      dplyr::rename(player_id = .data$id) %>%
+      dplyr::rename("player_id" = "id") %>%
       dplyr::mutate(filter_id = paste(.data$player_id, .data$season, .data$week, sep = "_")) %>%
       dplyr::filter(.data$filter_id %in% relevant_players)
 
@@ -695,7 +695,7 @@ add_dakota <- function(add_to_this, pbp, weekly) {
     out <- add_to_this %>%
       dplyr::left_join(
         model_data %>%
-          dplyr::select(.data$player_id, .data$week, .data$season, .data$dakota),
+          dplyr::select("player_id", "week", "season", "dakota"),
         by = c("player_id", "week", "season")
       )
   } else if (isFALSE(weekly)) {
@@ -712,7 +712,7 @@ add_dakota <- function(add_to_this, pbp, weekly) {
       ) %>%
       dplyr::ungroup() %>%
       dplyr::mutate(cpoe = dplyr::if_else(is.na(.data$cpoe), 0, .data$cpoe)) %>%
-      dplyr::rename(player_id = .data$id) %>%
+      dplyr::rename("player_id" = "id") %>%
       dplyr::filter(.data$player_id %in% relevant_players)
 
     model_data$dakota <- mgcv::predict.gam(dakota_model, model_data) %>% as.vector()
@@ -720,7 +720,7 @@ add_dakota <- function(add_to_this, pbp, weekly) {
     out <- add_to_this %>%
       dplyr::left_join(
         model_data %>%
-          dplyr::select(.data$player_id, .data$dakota),
+          dplyr::select("player_id", "dakota"),
         by = "player_id"
       )
   }

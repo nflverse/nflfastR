@@ -7,7 +7,7 @@
 # Build a tidy version of scraped NFL data
 #
 # @param id Specifies the game
-get_pbp_nfl <- function(id, dir = NULL, qs = FALSE) {
+get_pbp_nfl <- function(id, dir = NULL, qs = FALSE, ...) {
 
   warn <- 0
 

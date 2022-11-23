@@ -431,7 +431,7 @@ fast_scraper <- function(game_ids,
     if (length(pbp) != 0) {
       user_message("Download finished. Adding variables...", "done")
       pbp <- pbp %>%
-        add_game_data() %>%
+        add_game_data(...) %>%
         add_nflscrapr_mutations() %>%
         add_ep() %>%
         add_air_yac_ep() %>%
