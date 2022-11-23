@@ -94,7 +94,7 @@ calculate_standings <- function(nflverse_object,
 
 .standings_from_games <- function(games, tiebreaker_depth, playoff_seeds){
   g <- games %>%
-    dplyr::filter(.data$game_type == "REG") %>%
+    dplyr::filter(.data$game_type == "REG", !is.na(.data$result)) %>%
     dplyr::select(
       "sim" = "season", "game_type", "week", "away_team", "home_team", "result"
     )
