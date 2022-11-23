@@ -726,7 +726,7 @@ already loaded the package, it’s ready to use.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://nflreadr.nflverse.com/reference/load_teams.html" class="external-link">load_teams</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse team graphics</span> ──────────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-11-23 15:31:27 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-11-23 17:41:03 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 16</span></span></span>
 <span><span class="co">#&gt;    team_abbr team_name   team_id team_…¹ team_…² team_…³ team_…⁴ team_…⁵ team_…⁶</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
@@ -976,7 +976,7 @@ overwhelming).</p>
 <span><span class="co">#&gt;  $ stadium_id      : chr [1:6409] "ATL00" "CHI98" "CLE00" "GNB00" ...</span></span>
 <span><span class="co">#&gt;  $ stadium         : chr [1:6409] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...</span></span>
 <span><span class="co">#&gt;  - attr(*, "nflverse_type")= chr "games and schedules"</span></span>
-<span><span class="co">#&gt;  - attr(*, "nflverse_timestamp")= POSIXct[1:1], format: "2022-11-23 15:32:06"</span></span></code></pre></div>
+<span><span class="co">#&gt;  - attr(*, "nflverse_timestamp")= POSIXct[1:1], format: "2022-11-23 17:41:42"</span></span></code></pre></div>
 <p>To start, we want to create a dataframe where each row is a
 team-season observation, listing how many games they won. There are
 multiple ways to do this, but I’m going to just take the home and away
@@ -989,7 +989,7 @@ results and bind together. As an example, here’s what the
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>team <span class="op">=</span> <span class="va">home_team</span><span class="op">)</span></span>
 <span><span class="va">home</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-11-23 15:32:06 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-11-23 17:41:42 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 4</span></span></span>
 <span><span class="co">#&gt;   season  week team  result</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
@@ -1008,7 +1008,7 @@ results and bind together. As an example, here’s what the
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>result <span class="op">=</span> <span class="op">-</span><span class="va">result</span><span class="op">)</span></span>
 <span><span class="va">away</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-11-23 15:32:06 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-11-23 17:41:42 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 4</span></span></span>
 <span><span class="co">#&gt;   season  week team  result</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
@@ -1033,7 +1033,7 @@ the perspective of the home team. Now let’s make a columns called
 <span></span>
 <span><span class="va">results</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op">==</span> <span class="fl">2019</span> <span class="op">&amp;</span> <span class="va">team</span> <span class="op">==</span> <span class="st">'SEA'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-11-23 15:32:06 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-11-23 17:41:42 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 16 × 5</span></span></span>
 <span><span class="co">#&gt;    season  week team  result   win</span></span>
 <span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
@@ -1095,18 +1095,7 @@ need to go back to the <code>nflfastR</code> data to get EPA/play.</p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pbp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_pbp.html">load_pbp</a></span><span class="op">(</span><span class="fl">1999</span><span class="op">:</span><span class="fl">2019</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">rush</span> <span class="op">==</span> <span class="fl">1</span> <span class="op">|</span> <span class="va">pass</span> <span class="op">==</span> <span class="fl">1</span>, <span class="va">season_type</span> <span class="op">==</span> <span class="st">"REG"</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">epa</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">posteam</span><span class="op">)</span>, <span class="va">posteam</span> <span class="op">!=</span> <span class="st">""</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">season</span>, <span class="va">posteam</span>, <span class="va">pass</span>, <span class="va">defteam</span>, <span class="va">epa</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in readRDS(con): cannot open URL 'https://</span></span>
-<span><span class="co">#&gt; objects.githubusercontent.com/github-production-release-asset-2e65be/</span></span>
-<span><span class="co">#&gt; 452908115/6b4f078f-dc1e-4994-984e-138a825b4db8?X-Amz-Algorithm=AWS4-</span></span>
-<span><span class="co">#&gt; HMAC-SHA256&amp;X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20221123%2Fus-</span></span>
-<span><span class="co">#&gt; east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20221123T153237Z&amp;X-Amz-Expires=300&amp;X-Amz-</span></span>
-<span><span class="co">#&gt; Signature=dbd9b79c07f55bc30bc045f65a070eed344a5dd9f1c289e7fd0be1429d810e1c&amp;X-</span></span>
-<span><span class="co">#&gt; Amz-SignedHeaders=host&amp;actor_id=0&amp;key_id=0&amp;repo_id=452908115&amp;response-content-</span></span>
-<span><span class="co">#&gt; disposition=attachment%3B%20filename%3Dplay_by_play_2011.rds&amp;response-content-</span></span>
-<span><span class="co">#&gt; type=application%2Foctet-stream': HTTP status was '503 Service Unavailable'</span></span>
-<span><span class="co">#&gt; Warning: Failed to readRDS from</span></span>
-<span><span class="co">#&gt; <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/nflverse/nflverse-data/releases/download/pbp/play_by_play_2011.rds&gt;</span></span></span></code></pre></div>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">season</span>, <span class="va">posteam</span>, <span class="va">pass</span>, <span class="va">defteam</span>, <span class="va">epa</span><span class="op">)</span></span></code></pre></div>
 <p>I’m being pretty aggressive with dropping rows and columns
 (<code>filter</code> and <code>select</code>) because otherwise loading
 this all into memory can be painful on the computer. But this is all we
@@ -1188,9 +1177,9 @@ defenses:</p>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> NE        <span style="text-decoration: underline;">2</span>007      0.003<span style="text-decoration: underline;">80</span>        0.422</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> IND       <span style="text-decoration: underline;">2</span>004     -<span style="color: #BB0000;">0.001</span><span style="color: #BB0000; text-decoration: underline;">25</span>        0.413</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> KC        <span style="text-decoration: underline;">2</span>018      0.020<span style="text-decoration: underline;">9</span>         0.348</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> DEN       <span style="text-decoration: underline;">2</span>013     -<span style="color: #BB0000;">0.029</span><span style="color: #BB0000; text-decoration: underline;">6</span>         0.343</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> IND       <span style="text-decoration: underline;">2</span>005     -<span style="color: #BB0000;">0.007</span><span style="color: #BB0000; text-decoration: underline;">10</span>        0.337</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> GB        <span style="text-decoration: underline;">2</span>011     -<span style="color: #BB0000;">0.114</span>          0.412</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> KC        <span style="text-decoration: underline;">2</span>018      0.020<span style="text-decoration: underline;">9</span>         0.348</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> DEN       <span style="text-decoration: underline;">2</span>013     -<span style="color: #BB0000;">0.029</span><span style="color: #BB0000; text-decoration: underline;">6</span>         0.343</span></span>
 <span></span>
 <span><span class="co">#top 5 defenses</span></span>
 <span><span class="va">defense</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -1333,41 +1322,41 @@ with it.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span>use<span class="op">=</span><span class="st">"complete.obs"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                     wins point_diff off_rush_epa off_pass_epa def_rush_epa</span></span>
-<span><span class="co">#&gt; wins                1.00       0.92         0.44         0.69        -0.29</span></span>
-<span><span class="co">#&gt; point_diff          0.92       1.00         0.49         0.75        -0.33</span></span>
-<span><span class="co">#&gt; off_rush_epa        0.44       0.49         1.00         0.40         0.06</span></span>
-<span><span class="co">#&gt; off_pass_epa        0.69       0.75         0.40         1.00        -0.01</span></span>
-<span><span class="co">#&gt; def_rush_epa       -0.29      -0.33         0.06        -0.01         1.00</span></span>
-<span><span class="co">#&gt; def_pass_epa       -0.58      -0.63        -0.05        -0.11         0.29</span></span>
-<span><span class="co">#&gt; prior_off_rush_epa  0.25       0.27         0.34         0.22         0.04</span></span>
-<span><span class="co">#&gt; prior_off_pass_epa  0.28       0.32         0.21         0.46        -0.01</span></span>
-<span><span class="co">#&gt; prior_def_rush_epa -0.11      -0.14         0.03        -0.03         0.26</span></span>
-<span><span class="co">#&gt; prior_def_pass_epa -0.18      -0.21        -0.08        -0.04         0.07</span></span>
-<span><span class="co">#&gt; prior_point_diff    0.36       0.41         0.24         0.35        -0.08</span></span>
+<span><span class="co">#&gt; wins                1.00       0.92         0.43         0.70        -0.29</span></span>
+<span><span class="co">#&gt; point_diff          0.92       1.00         0.49         0.76        -0.33</span></span>
+<span><span class="co">#&gt; off_rush_epa        0.43       0.49         1.00         0.40         0.05</span></span>
+<span><span class="co">#&gt; off_pass_epa        0.70       0.76         0.40         1.00        -0.01</span></span>
+<span><span class="co">#&gt; def_rush_epa       -0.29      -0.33         0.05        -0.01         1.00</span></span>
+<span><span class="co">#&gt; def_pass_epa       -0.57      -0.62        -0.04        -0.10         0.31</span></span>
+<span><span class="co">#&gt; prior_off_rush_epa  0.23       0.26         0.32         0.23         0.02</span></span>
+<span><span class="co">#&gt; prior_off_pass_epa  0.29       0.32         0.18         0.46        -0.01</span></span>
+<span><span class="co">#&gt; prior_def_rush_epa -0.12      -0.15         0.03        -0.04         0.27</span></span>
+<span><span class="co">#&gt; prior_def_pass_epa -0.18      -0.20        -0.07        -0.05         0.05</span></span>
+<span><span class="co">#&gt; prior_point_diff    0.36       0.41         0.22         0.36        -0.09</span></span>
 <span><span class="co">#&gt;                    def_pass_epa prior_off_rush_epa prior_off_pass_epa</span></span>
-<span><span class="co">#&gt; wins                      -0.58               0.25               0.28</span></span>
-<span><span class="co">#&gt; point_diff                -0.63               0.27               0.32</span></span>
-<span><span class="co">#&gt; off_rush_epa              -0.05               0.34               0.21</span></span>
-<span><span class="co">#&gt; off_pass_epa              -0.11               0.22               0.46</span></span>
-<span><span class="co">#&gt; def_rush_epa               0.29               0.04              -0.01</span></span>
+<span><span class="co">#&gt; wins                      -0.57               0.23               0.29</span></span>
+<span><span class="co">#&gt; point_diff                -0.62               0.26               0.32</span></span>
+<span><span class="co">#&gt; off_rush_epa              -0.04               0.32               0.18</span></span>
+<span><span class="co">#&gt; off_pass_epa              -0.10               0.23               0.46</span></span>
+<span><span class="co">#&gt; def_rush_epa               0.31               0.02              -0.01</span></span>
 <span><span class="co">#&gt; def_pass_epa               1.00              -0.10               0.00</span></span>
-<span><span class="co">#&gt; prior_off_rush_epa        -0.10               1.00               0.40</span></span>
-<span><span class="co">#&gt; prior_off_pass_epa         0.00               0.40               1.00</span></span>
-<span><span class="co">#&gt; prior_def_rush_epa         0.15               0.05              -0.02</span></span>
-<span><span class="co">#&gt; prior_def_pass_epa         0.29              -0.02              -0.09</span></span>
-<span><span class="co">#&gt; prior_point_diff          -0.20               0.48               0.75</span></span>
+<span><span class="co">#&gt; prior_off_rush_epa        -0.10               1.00               0.41</span></span>
+<span><span class="co">#&gt; prior_off_pass_epa         0.00               0.41               1.00</span></span>
+<span><span class="co">#&gt; prior_def_rush_epa         0.16               0.05              -0.01</span></span>
+<span><span class="co">#&gt; prior_def_pass_epa         0.28              -0.01              -0.09</span></span>
+<span><span class="co">#&gt; prior_point_diff          -0.19               0.47               0.76</span></span>
 <span><span class="co">#&gt;                    prior_def_rush_epa prior_def_pass_epa prior_point_diff</span></span>
-<span><span class="co">#&gt; wins                            -0.11              -0.18             0.36</span></span>
-<span><span class="co">#&gt; point_diff                      -0.14              -0.21             0.41</span></span>
-<span><span class="co">#&gt; off_rush_epa                     0.03              -0.08             0.24</span></span>
-<span><span class="co">#&gt; off_pass_epa                    -0.03              -0.04             0.35</span></span>
-<span><span class="co">#&gt; def_rush_epa                     0.26               0.07            -0.08</span></span>
-<span><span class="co">#&gt; def_pass_epa                     0.15               0.29            -0.20</span></span>
-<span><span class="co">#&gt; prior_off_rush_epa               0.05              -0.02             0.48</span></span>
-<span><span class="co">#&gt; prior_off_pass_epa              -0.02              -0.09             0.75</span></span>
-<span><span class="co">#&gt; prior_def_rush_epa               1.00               0.29            -0.34</span></span>
-<span><span class="co">#&gt; prior_def_pass_epa               0.29               1.00            -0.61</span></span>
-<span><span class="co">#&gt; prior_point_diff                -0.34              -0.61             1.00</span></span></code></pre></div>
+<span><span class="co">#&gt; wins                            -0.12              -0.18             0.36</span></span>
+<span><span class="co">#&gt; point_diff                      -0.15              -0.20             0.41</span></span>
+<span><span class="co">#&gt; off_rush_epa                     0.03              -0.07             0.22</span></span>
+<span><span class="co">#&gt; off_pass_epa                    -0.04              -0.05             0.36</span></span>
+<span><span class="co">#&gt; def_rush_epa                     0.27               0.05            -0.09</span></span>
+<span><span class="co">#&gt; def_pass_epa                     0.16               0.28            -0.19</span></span>
+<span><span class="co">#&gt; prior_off_rush_epa               0.05              -0.01             0.47</span></span>
+<span><span class="co">#&gt; prior_off_pass_epa              -0.01              -0.09             0.76</span></span>
+<span><span class="co">#&gt; prior_def_rush_epa               1.00               0.32            -0.34</span></span>
+<span><span class="co">#&gt; prior_def_pass_epa               0.32               1.00            -0.60</span></span>
+<span><span class="co">#&gt; prior_point_diff                -0.34              -0.60             1.00</span></span></code></pre></div>
 <p>We’ve covered <code>select</code>, but here we see a new use where a
 minus sign de-selects variables (we need to de-select team name for
 correlation to work because it doesn’t work for character strings, and
@@ -1377,8 +1366,8 @@ rounding to 2 digits. Not surprisingly, we see that wins in the current
 season are more strongly related to passing offense EPA than rushing EPA
 or defense EPA, and prior offense carries more predictive power than
 prior defense. Pass offense is more stable year to year
-(<code>0.46</code>) than rush offense (<code>0.34</code>), pass defense
-(<code>0.29</code>), or rush defense (<code>0.26</code>).</p>
+(<code>0.46</code>) than rush offense (<code>0.32</code>), pass defense
+(<code>0.28</code>), or rush defense (<code>0.27</code>).</p>
 <p>I’m actually surprised that the values for passing offense aren’t
 higher relative to the others. Maybe it was because most of our prior
 results come from the <code>nflscrapR</code> era (2009 - 2019)? Let’s
@@ -1392,21 +1381,21 @@ check what this looks like since 2009 relative to earlier seasons:</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span>use<span class="op">=</span><span class="st">"complete.obs"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                    wins point_diff off_pass_epa off_rush_epa prior_point_diff</span></span>
-<span><span class="co">#&gt; wins               1.00       0.91         0.72         0.41             0.44</span></span>
-<span><span class="co">#&gt; point_diff         0.91       1.00         0.79         0.47             0.45</span></span>
-<span><span class="co">#&gt; off_pass_epa       0.72       0.79         1.00         0.36             0.37</span></span>
-<span><span class="co">#&gt; off_rush_epa       0.41       0.47         0.36         1.00             0.23</span></span>
-<span><span class="co">#&gt; prior_point_diff   0.44       0.45         0.37         0.23             1.00</span></span>
-<span><span class="co">#&gt; prior_off_pass_epa 0.34       0.36         0.44         0.15             0.77</span></span>
-<span><span class="co">#&gt; prior_off_rush_epa 0.27       0.26         0.15         0.27             0.45</span></span>
+<span><span class="co">#&gt; wins               1.00       0.92         0.73         0.40             0.43</span></span>
+<span><span class="co">#&gt; point_diff         0.92       1.00         0.79         0.47             0.44</span></span>
+<span><span class="co">#&gt; off_pass_epa       0.73       0.79         1.00         0.37             0.39</span></span>
+<span><span class="co">#&gt; off_rush_epa       0.40       0.47         0.37         1.00             0.19</span></span>
+<span><span class="co">#&gt; prior_point_diff   0.43       0.44         0.39         0.19             1.00</span></span>
+<span><span class="co">#&gt; prior_off_pass_epa 0.34       0.36         0.45         0.11             0.78</span></span>
+<span><span class="co">#&gt; prior_off_rush_epa 0.24       0.25         0.16         0.24             0.45</span></span>
 <span><span class="co">#&gt;                    prior_off_pass_epa prior_off_rush_epa</span></span>
-<span><span class="co">#&gt; wins                             0.34               0.27</span></span>
-<span><span class="co">#&gt; point_diff                       0.36               0.26</span></span>
-<span><span class="co">#&gt; off_pass_epa                     0.44               0.15</span></span>
-<span><span class="co">#&gt; off_rush_epa                     0.15               0.27</span></span>
-<span><span class="co">#&gt; prior_point_diff                 0.77               0.45</span></span>
-<span><span class="co">#&gt; prior_off_pass_epa               1.00               0.33</span></span>
-<span><span class="co">#&gt; prior_off_rush_epa               0.33               1.00</span></span></code></pre></div>
+<span><span class="co">#&gt; wins                             0.34               0.24</span></span>
+<span><span class="co">#&gt; point_diff                       0.36               0.25</span></span>
+<span><span class="co">#&gt; off_pass_epa                     0.45               0.16</span></span>
+<span><span class="co">#&gt; off_rush_epa                     0.11               0.24</span></span>
+<span><span class="co">#&gt; prior_point_diff                 0.78               0.45</span></span>
+<span><span class="co">#&gt; prior_off_pass_epa               1.00               0.35</span></span>
+<span><span class="co">#&gt; prior_off_rush_epa               0.35               1.00</span></span></code></pre></div>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"1999 through 2008"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 1999 through 2008</span></span>
@@ -1454,22 +1443,22 @@ anyway.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Residuals:</span></span>
 <span><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
-<span><span class="co">#&gt; -7.7485 -1.8987  0.0086  2.2714  7.0756 </span></span>
+<span><span class="co">#&gt; -7.7039 -1.8906  0.0644  2.2506  7.0871 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;                    Estimate Std. Error t value             Pr(&gt;|t|)    </span></span>
-<span><span class="co">#&gt; (Intercept)          8.0832     0.4042  19.998 &lt; 0.0000000000000002 ***</span></span>
-<span><span class="co">#&gt; prior_off_pass_epa   6.7282     1.3531   4.973           0.00000104 ***</span></span>
-<span><span class="co">#&gt; prior_off_rush_epa   6.5134     2.3515   2.770              0.00591 ** </span></span>
-<span><span class="co">#&gt; prior_def_pass_epa  -4.4012     1.6830  -2.615              0.00931 ** </span></span>
-<span><span class="co">#&gt; prior_def_rush_epa  -4.5601     2.4157  -1.888              0.05990 .  </span></span>
+<span><span class="co">#&gt; (Intercept)          7.9634     0.3884  20.504 &lt; 0.0000000000000002 ***</span></span>
+<span><span class="co">#&gt; prior_off_pass_epa   6.5867     1.2805   5.144          0.000000433 ***</span></span>
+<span><span class="co">#&gt; prior_off_rush_epa   5.9976     2.2712   2.641              0.00861 ** </span></span>
+<span><span class="co">#&gt; prior_def_pass_epa  -4.0619     1.6449  -2.469              0.01397 *  </span></span>
+<span><span class="co">#&gt; prior_def_rush_epa  -5.1581     2.3329  -2.211              0.02763 *  </span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Residual standard error: 2.85 on 347 degrees of freedom</span></span>
-<span><span class="co">#&gt;   (96 observations deleted due to missingness)</span></span>
-<span><span class="co">#&gt; Multiple R-squared:  0.1732, Adjusted R-squared:  0.1637 </span></span>
-<span><span class="co">#&gt; F-statistic: 18.18 on 4 and 347 DF,  p-value: 0.0000000000001441</span></span></code></pre></div>
+<span><span class="co">#&gt; Residual standard error: 2.86 on 379 degrees of freedom</span></span>
+<span><span class="co">#&gt;   (64 observations deleted due to missingness)</span></span>
+<span><span class="co">#&gt; Multiple R-squared:  0.1639, Adjusted R-squared:  0.155 </span></span>
+<span><span class="co">#&gt; F-statistic: 18.57 on 4 and 379 DF,  p-value: 0.00000000000005992</span></span></code></pre></div>
 <p>I’m actually pretty surprised passing offense isn’t higher here. How
 does this compare to simply using point differential?</p>
 <div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
@@ -1522,10 +1511,10 @@ know can improve EPA’s predictive power.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 2</span></span></span>
 <span><span class="co">#&gt;   prediction team </span></span>
 <span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>       11.6 BAL  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>       11.4 BAL  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>       10.2 SF   </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>        9.8 NE   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>        9.7 DAL  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>        9.6 DAL  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>        9.6 NO</span></span></code></pre></div>
 <p>This mostly checks out.</p>
 <p>What if we just used simple point differential to predict?</p>
