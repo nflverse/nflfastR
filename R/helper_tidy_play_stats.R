@@ -13,9 +13,9 @@
 # @param stats A dataframe including multiple rows for each play_Id holding
 # gsis stat ids and stats
 sum_play_stats <- function(play_Id, stats) {
-  play_stats <- stats %>% filter(.data$playId == play_Id)
+  play_stats <- stats[stats$playId == play_Id,]
 
-  row <- bind_cols(play_id = as.integer(play_Id), tidy_play_stats_row)
+  row <- c("play_id" = as.integer(play_Id), tidy_play_stats_row)
 
   for (index in seq_along(play_stats$playId)) {
     stat_id <- play_stats$statId[index]
