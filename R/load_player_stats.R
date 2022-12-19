@@ -5,8 +5,10 @@
 #' on [the nflfastR website](https://www.nflfastr.com/articles/nflfastR.html#example-11-replicating-official-stats)
 #' @examples
 #' \donttest{
+#' try({
 #' stats <- load_player_stats()
 #' dplyr::glimpse(stats)
+#' })
 #' }
 #' @export
 load_player_stats <- function(...){
