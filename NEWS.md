@@ -4,6 +4,8 @@
 * `calculate_standings()` no more freezes when computing standings from schedules where some games are missing results, i.e. upcoming games. (v4.5.0.9000)
 * Bug fix that caused problems with upcoming dplyr and tidyselect updates that weren't reverse compatible.
 * Significant performance improvements of internal functions. (#402)
+* Wrap examples in `try()` to avoid CRAN problems. (#404)
+* Fixed a bug where `calculate_standings()` wasn't able to handle nflverse pbp data. (#404)
 
 # nflfastR 4.5.0
 

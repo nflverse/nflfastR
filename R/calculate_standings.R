@@ -47,7 +47,7 @@ calculate_standings <- function(nflverse_object,
 
   type <- attr(nflverse_object, "nflverse_type")
 
-  if (type == "play by play"){
+  if (type == "play by play data"){
     .standings_from_pbp(nflverse_object,
                         tiebreaker_depth = tiebreaker_depth,
                         playoff_seeds = playoff_seeds)
@@ -56,7 +56,7 @@ calculate_standings <- function(nflverse_object,
                           tiebreaker_depth = tiebreaker_depth,
                           playoff_seeds = playoff_seeds)
   } else {
-    cli::cli_abort("Can only handle nflverse_type {.val play by play} or
+    cli::cli_abort("Can only handle nflverse_type {.val play by play data} or
                    {.val games and schedules} and not {.val {type}}")
   }
 }
@@ -129,5 +129,6 @@ calculate_standings <- function(nflverse_object,
     dplyr::select(-"exit", -"wins") %>%
     dplyr::select("sim":"division", "div_rank", "seed", dplyr::everything()) %>%
     dplyr::rename("season" = "sim", "wins" = "true_wins") %>%
-    dplyr::arrange(.data$season, .data$division, .data$div_rank, .data$seed)
+    dplyr::arrange(.data$season, .data$division, .data$div_rank, .data$seed) %>%
+    tibble::as_tibble()
 }

@@ -71,6 +71,7 @@
 #'
 #' @examples
 #' \donttest{
+#' try({# to avoid CRAN test problems
 #'   pbp <- nflfastR::load_pbp(2021)
 #'
 #'   weekly <- calculate_series_conversion_rates(pbp, weekly = TRUE)
@@ -78,6 +79,7 @@
 #'
 #'   overall <- calculate_series_conversion_rates(pbp, weekly = FALSE)
 #'   dplyr::glimpse(overall)
+#' })
 #' }
 calculate_series_conversion_rates <- function(pbp,
                                               weekly = FALSE){

@@ -384,14 +384,19 @@
 #' @examples
 #' \donttest{
 #' # Get pbp data for two games
+#' try({# to avoid CRAN test problems
 #' fast_scraper(c("2019_01_GB_CHI", "2013_21_SEA_DEN"))
+#' })
+#'
 #'
 #' # It is also possible to directly use the
 #' # output of `fast_scraper_schedules` as input
+#' try({# to avoid CRAN test problems
 #' library(dplyr, warn.conflicts = FALSE)
 #' fast_scraper_schedules(2020) %>%
 #'   slice_tail(n = 3) %>%
 #'   fast_scraper()
+#' })
 #'
 #' \dontshow{
 #' # Close open connections for R CMD Check
@@ -463,7 +468,9 @@ fast_scraper <- function(game_ids,
 #' @examples
 #' \donttest{
 #' # Roster of the 2019 and 2020 seasons
+#' try({# to avoid CRAN test problems
 #' fast_scraper_roster(2019:2020)
+#' })
 #' }
 #' @export
 fast_scraper_roster <- function(...) nflreadr::load_rosters(...)
@@ -479,7 +486,9 @@ fast_scraper_roster <- function(...) nflreadr::load_rosters(...)
 #' @examples
 #'\donttest{
 #' # Get schedules for the whole 2015 - 2018 seasons
+#' try({# to avoid CRAN test problems
 #' fast_scraper_schedules(2015:2018)
+#' })
 #' }
 #' @export
 fast_scraper_schedules <- function(...) nflreadr::load_schedules(...)

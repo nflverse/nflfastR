@@ -80,6 +80,7 @@ The function automatically removes series that ended in a QB kneel down.
 }
 \examples{
 \donttest{
+try({# to avoid CRAN test problems
   pbp <- nflfastR::load_pbp(2021)
 
   weekly <- calculate_series_conversion_rates(pbp, weekly = TRUE)
@@ -87,5 +88,6 @@ The function automatically removes series that ended in a QB kneel down.
 
   overall <- calculate_series_conversion_rates(pbp, weekly = FALSE)
   dplyr::glimpse(overall)
+})
 }
 }
