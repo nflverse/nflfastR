@@ -129,5 +129,6 @@ calculate_standings <- function(nflverse_object,
     dplyr::select(-"exit", -"wins") %>%
     dplyr::select("sim":"division", "div_rank", "seed", dplyr::everything()) %>%
     dplyr::rename("season" = "sim", "wins" = "true_wins") %>%
-    dplyr::arrange(.data$season, .data$division, .data$div_rank, .data$seed)
+    dplyr::arrange(.data$season, .data$division, .data$div_rank, .data$seed) %>%
+    tibble::as_tibble()
 }
