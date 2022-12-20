@@ -48,7 +48,7 @@ must be present:
 }
 \examples{
 \donttest{
-try({
+try({# to avoid CRAN test problems
 library(dplyr)
 data <- tibble::tibble(
 "season" = 1999:2019,

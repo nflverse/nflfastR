@@ -387,14 +387,14 @@ output of that function)
 \examples{
 \donttest{
 # Get pbp data for two games
-try({
+try({# to avoid CRAN test problems
 fast_scraper(c("2019_01_GB_CHI", "2013_21_SEA_DEN"))
 })
 
 
 # It is also possible to directly use the
 # output of `fast_scraper_schedules` as input
-try({
+try({# to avoid CRAN test problems
 library(dplyr, warn.conflicts = FALSE)
 fast_scraper_schedules(2020) \%>\%
   slice_tail(n = 3) \%>\%

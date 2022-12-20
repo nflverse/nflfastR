@@ -18,7 +18,7 @@
 #' on [the nflfastR website](https://www.nflfastr.com/articles/nflfastR.html#example-11-replicating-official-stats)
 #' @examples
 #' \donttest{
-#' try({
+#' try({# to avoid CRAN test problems
 #'   pbp <- nflfastR::load_pbp(2020)
 #'
 #'   weekly <- calculate_player_stats_def(pbp, weekly = TRUE)
@@ -26,7 +26,7 @@
 #'
 #'   overall <- calculate_player_stats_def(pbp, weekly = FALSE)
 #'   dplyr::glimpse(overall)
-#'   })
+#' })
 #' }
 #'
 

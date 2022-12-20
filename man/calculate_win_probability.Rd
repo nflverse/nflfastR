@@ -46,7 +46,7 @@ must be present:
 }
 \examples{
 \donttest{
-try({
+try({# to avoid CRAN test problems
 library(dplyr)
 data <- tibble::tibble(
 "receive_2h_ko" = 0,

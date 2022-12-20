@@ -29,7 +29,7 @@ See \code{\link[nflreadr:load_rosters]{nflreadr::load_rosters}} for details.
 \examples{
 \donttest{
 # Roster of the 2019 and 2020 seasons
-try({
+try({# to avoid CRAN test problems
 fast_scraper_roster(2019:2020)
 })
 }

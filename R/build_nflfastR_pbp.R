@@ -36,13 +36,13 @@
 #' @examples
 #' \donttest{
 #' # Build nflfastR pbp for the 2018 and 2019 Super Bowls
-#' try({
+#' try({# to avoid CRAN test problems
 #' build_nflfastR_pbp(c("2018_21_NE_LA", "2019_21_SF_KC"))
 #' })
 #'
 #' # It is also possible to directly use the
 #' # output of `fast_scraper_schedules` as input
-#' try({
+#' try({# to avoid CRAN test problems
 #' library(dplyr, warn.conflicts = FALSE)
 #' fast_scraper_schedules(2020) %>%
 #'   slice_tail(n = 3) %>%

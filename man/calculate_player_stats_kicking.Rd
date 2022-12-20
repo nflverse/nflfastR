@@ -21,7 +21,7 @@ Build columns that aggregate kicking stats at the game level.
 }
 \examples{
 \donttest{
-try({
+try({# to avoid CRAN test problems
     pbp <- nflreadr::load_pbp(2021)
     weekly <- calculate_player_stats_kicking(pbp, weekly = TRUE)
     dplyr::glimpse(weekly)
