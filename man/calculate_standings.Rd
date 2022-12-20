@@ -16,16 +16,6 @@ as returned by \code{\link[=fast_scraper_schedules]{fast_scraper_schedules()}} o
 Or play-by-play data as returned by \code{\link[=load_pbp]{load_pbp()}}, \code{\link[=build_nflfastR_pbp]{build_nflfastR_pbp()}}, or
 \code{\link[=fast_scraper]{fast_scraper()}}.}
 
-\item{tiebreaker_depth}{A single value equal to 1, 2, or 3. The default is 3. The
-value controls the depth of tiebreakers that shall be applied. The deepest
-currently implemented tiebreaker is strength of schedule. The following
-values are valid:
-\describe{
-\item{tiebreaker_depth = 1}{Break all ties with a coinflip. Fastest variant.}
-\item{tiebreaker_depth = 2}{Apply head-to-head and division win percentage tiebreakers. Random if still tied.}
-\item{tiebreaker_depth = 3}{Apply all tiebreakers through strength of schedule. Random if still tied.}
-}}
-
 \item{playoff_seeds}{Number of playoff teams per conference. If \code{NULL} (the
 default), the function will try to split \code{nflverse_object} into seasons prior
 2020 (6 seeds) and 2020ff (7 seeds). If set to a numeric, it will be used
