@@ -53,7 +53,7 @@
 #'
 #' nflfastR::calculate_expected_points(data) %>%
 #'   dplyr::select(season, yardline_100, td_prob, ep)
-#'   })
+#' })
 #' }
 calculate_expected_points <- function(pbp_data) {
 
@@ -152,7 +152,7 @@ drop.cols <- c(
 #'
 #' nflfastR::calculate_win_probability(data) %>%
 #'   dplyr::select(spread_line, wp, vegas_wp)
-#'   })
+#' })
 #' }
 calculate_win_probability <- function(pbp_data) {
 

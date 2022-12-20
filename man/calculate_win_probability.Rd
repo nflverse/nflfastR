@@ -65,6 +65,6 @@ data <- tibble::tibble(
 
 nflfastR::calculate_win_probability(data) \%>\%
   dplyr::select(spread_line, wp, vegas_wp)
-  })
+})
 }
 }
