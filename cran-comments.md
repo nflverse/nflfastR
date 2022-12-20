@@ -2,7 +2,6 @@
 
 This is a minor release that 
 * fixes bugs
-* add new functions 
 * Wrap examples in `try()` to avoid CRAN problems
 
 ## R CMD check results
