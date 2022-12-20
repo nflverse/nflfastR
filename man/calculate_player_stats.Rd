@@ -92,6 +92,7 @@ either at the game level or at the level of the entire data frame passed.
 }
 \examples{
 \donttest{
+try({
 pbp <- nflfastR::load_pbp(2020)
 
 weekly <- calculate_player_stats(pbp, weekly = TRUE)
@@ -99,6 +100,7 @@ dplyr::glimpse(weekly)
 
 overall <- calculate_player_stats(pbp, weekly = FALSE)
 dplyr::glimpse(overall)
+})
 }
 }
 \seealso{

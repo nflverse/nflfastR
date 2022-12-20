@@ -48,6 +48,7 @@ must be present:
 }
 \examples{
 \donttest{
+try({
 library(dplyr)
 data <- tibble::tibble(
 "season" = 1999:2019,
@@ -64,5 +65,6 @@ data <- tibble::tibble(
 
 nflfastR::calculate_expected_points(data) \%>\%
   dplyr::select(season, yardline_100, td_prob, ep)
+  })
 }
 }

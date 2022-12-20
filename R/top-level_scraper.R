@@ -468,7 +468,9 @@ fast_scraper <- function(game_ids,
 #' @examples
 #' \donttest{
 #' # Roster of the 2019 and 2020 seasons
-#' try({fast_scraper_roster(2019:2020)})
+#' try({
+#' fast_scraper_roster(2019:2020)
+#' })
 #' }
 #' @export
 fast_scraper_roster <- function(...) nflreadr::load_rosters(...)
@@ -484,7 +486,9 @@ fast_scraper_roster <- function(...) nflreadr::load_rosters(...)
 #' @examples
 #'\donttest{
 #' # Get schedules for the whole 2015 - 2018 seasons
-#' try({fast_scraper_schedules(2015:2018)})
+#' try({
+#' fast_scraper_schedules(2015:2018)
+#' })
 #' }
 #' @export
 fast_scraper_schedules <- function(...) nflreadr::load_schedules(...)
