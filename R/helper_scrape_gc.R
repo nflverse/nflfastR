@@ -128,12 +128,8 @@ get_pbp_gc <- function(gameId, dir = NULL, qs = FALSE, ...) {
           playStatSeq = "sequence"
         )
 
-
-      pbp_stats <- furrr::future_map(unique(stats$playId), function(x, s) {
-        sum_play_stats(x, s)
-      }, stats)
-
-      pbp_stats <- dplyr::bind_rows(pbp_stats)
+      pbp_stats <- lapply(unique(stats$playId), sum_play_stats, stats)
+      pbp_stats <- data.table::rbindlist(pbp_stats) %>% tibble::as_tibble()
 
       # drive info
       d <- tibble::tibble(drives) %>%

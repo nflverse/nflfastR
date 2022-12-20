@@ -169,13 +169,9 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE, ...) {
 
       # if I don't put this here it breaks
       suppressWarnings(
-        pbp_stats <-
-          furrr::future_map(unique(stats$playId), function(x, s) {
-            sum_play_stats(x, s)
-          }, stats)
+        pbp_stats <- lapply(unique(stats$playId), sum_play_stats, stats)
       )
-
-      pbp_stats <- dplyr::bind_rows(pbp_stats)
+      pbp_stats <- data.table::rbindlist(pbp_stats) %>% tibble::as_tibble()
 
       combined <- game_info %>%
         dplyr::bind_cols(plays %>% dplyr::select(-"playStats", -"game_id")) %>%
