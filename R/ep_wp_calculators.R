@@ -36,6 +36,7 @@
 #' @export
 #' @examples
 #' \donttest{
+#' try({# to avoid CRAN test problems
 #' library(dplyr)
 #' data <- tibble::tibble(
 #' "season" = 1999:2019,
@@ -52,6 +53,7 @@
 #'
 #' nflfastR::calculate_expected_points(data) %>%
 #'   dplyr::select(season, yardline_100, td_prob, ep)
+#' })
 #' }
 calculate_expected_points <- function(pbp_data) {
 
@@ -131,6 +133,7 @@ drop.cols <- c(
 #' @export
 #' @examples
 #' \donttest{
+#' try({# to avoid CRAN test problems
 #' library(dplyr)
 #' data <- tibble::tibble(
 #' "receive_2h_ko" = 0,
@@ -149,6 +152,7 @@ drop.cols <- c(
 #'
 #' nflfastR::calculate_win_probability(data) %>%
 #'   dplyr::select(spread_line, wp, vegas_wp)
+#' })
 #' }
 calculate_win_probability <- function(pbp_data) {
 

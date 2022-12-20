@@ -46,6 +46,7 @@ must be present:
 }
 \examples{
 \donttest{
+try({# to avoid CRAN test problems
 library(dplyr)
 data <- tibble::tibble(
 "receive_2h_ko" = 0,
@@ -64,5 +65,6 @@ data <- tibble::tibble(
 
 nflfastR::calculate_win_probability(data) \%>\%
   dplyr::select(spread_line, wp, vegas_wp)
+})
 }
 }

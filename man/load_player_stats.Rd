@@ -24,8 +24,10 @@ Load Player Level Weekly Stats
 }
 \examples{
 \donttest{
+try({# to avoid CRAN test problems
 stats <- load_player_stats()
 dplyr::glimpse(stats)
+})
 }
 }
 \seealso{
