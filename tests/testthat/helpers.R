@@ -24,6 +24,6 @@ save_test_object <- function(object){
   obj_name <- deparse(substitute(object))
   tmp_file <- tempfile(obj_name, fileext = ".csv")
   modify_digits <- dplyr::mutate_if(object, is.numeric, signif, digits = 4)
-  write.csv(modify_digits, tmp_file)
+  data.table::fwrite(modify_digits, tmp_file, na = "NA")
   invisible(tmp_file)
 }
