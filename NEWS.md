@@ -1,4 +1,4 @@
-# nflfastR 4.6.0
+# nflfastR 4.5.1
 
 * New implementation of tests to be able to identify breaking changes in reverse dependencies
 * `calculate_standings()` no more freezes when computing standings from schedules where some games are missing results, i.e. upcoming games.
