@@ -15,8 +15,7 @@ load_test_pbp <- function(pbp = pbp_cache, dir = test_dir){
 
   # model output differs across machines so we round to 4 significant digits
   # to prevent failing tests
-  pbp_data <- build_nflfastR_pbp(game_ids, dir = dir, games = g) %>%
-    dplyr::mutate_if(is.numeric, signif, digits = 4)
+  pbp_data <- build_nflfastR_pbp(game_ids, dir = dir, games = g)
   if(!is.null(dir)) saveRDS(pbp_data, pbp)
   pbp_data
 }
@@ -24,6 +23,7 @@ load_test_pbp <- function(pbp = pbp_cache, dir = test_dir){
 save_test_object <- function(object){
   obj_name <- deparse(substitute(object))
   tmp_file <- tempfile(obj_name, fileext = ".csv")
-  write.csv(object, tmp_file)
+  modify_digits <- dplyr::mutate_if(object, is.numeric, signif, digits = 4)
+  write.csv(modify_digits, tmp_file)
   invisible(tmp_file)
 }
