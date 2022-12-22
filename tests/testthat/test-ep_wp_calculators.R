@@ -11,8 +11,9 @@ test_that("calculate_expected_points works", {
     "posteam_timeouts_remaining" = 3,
     "defteam_timeouts_remaining" = 3
   )
-  ep <- calculate_expected_points(data)
-  expect_snapshot_file(save_test_object(ep), "ep.csv", cran = TRUE)
+  ep <- calculate_expected_points(data) %>% round_double_to_digits()
+  exp <- load_expectation("ep")
+  expect_equal(ep, exp)
 })
 
 test_that("calculate_expected_points works", {
@@ -30,6 +31,7 @@ test_that("calculate_expected_points works", {
     "posteam_timeouts_remaining" = 3,
     "defteam_timeouts_remaining" = 3
   )
-  wp <- calculate_win_probability(data)
-  expect_snapshot_file(save_test_object(wp), "wp.csv", cran = TRUE)
+  wp <- calculate_win_probability(data) %>% round_double_to_digits()
+  exp <- load_expectation("wp")
+  expect_equal(wp, exp)
 })

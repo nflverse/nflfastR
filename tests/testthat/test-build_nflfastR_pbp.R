@@ -2,9 +2,13 @@ test_that("build_nflfastR_pbp works (on CRAN)", {
   # this test will run on everywhere, including CRAN. It uses locally available data
   # so it can't break because of failed downloads
   pbp <- load_test_pbp(dir = test_dir)
-
-  expect_snapshot_file(save_test_object(pbp), "pbp.csv", cran = TRUE)
   expect_s3_class(pbp, "nflverse_data")
+  pbp <- strip_nflverse_attributes(pbp) %>%
+    # we gotta round floating point numbers because of different model output
+    # across platforms
+    round_double_to_digits()
+  exp <- load_expectation("pbp")
+  expect_equal(pbp, exp)
 })
 
 test_that("build_nflfastR_pbp works (outside CRAN)", {
@@ -13,6 +17,10 @@ test_that("build_nflfastR_pbp works (outside CRAN)", {
   skip_on_cran()
   skip_if_offline("github.com")
   pbp <- load_test_pbp(dir = NULL)
-  expect_snapshot_file(save_test_object(pbp), "pbp.csv", cran = TRUE)
-  expect_s3_class(pbp, "nflverse_data")
+  pbp <- strip_nflverse_attributes(pbp) %>%
+    # we gotta round floating point numbers because of different model output
+    # across platforms
+    round_double_to_digits()
+  exp <- load_expectation("pbp")
+  expect_equal(pbp, exp)
 })

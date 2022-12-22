@@ -23,22 +23,20 @@ Follow](https://img.shields.io/twitter/follow/nflfastR.svg?style=social)](https:
 `nflfastR` is a set of functions to efficiently scrape NFL play-by-play
 data. `nflfastR` expands upon the features of nflscrapR:
 
--   The package contains NFL play-by-play data back to 1999
--   As suggested by the package name, it obtains games **much** faster
--   Includes completion probability (`cp`), completion percentage over
-    expected (`cpoe`), and expected yards after the catch (`xyac_epa`
-    and `xyac_mean_yardage`) in play-by-play going back to 2006
--   Includes drive information, including drive starting position and
-    drive result
--   Includes series information, including series number and series
-    success
--   Hosts [a repository of play-by-play data going back to
-    1999](https://github.com/nflverse/nflverse-pbp) for very quick
-    access
--   Features models for Expected Points, Win Probability, Completion
-    Probability, and Yards After the Catch (see section below)
--   Includes a function `update_db()` that creates and updates a
-    database
+- The package contains NFL play-by-play data back to 1999
+- As suggested by the package name, it obtains games **much** faster
+- Includes completion probability (`cp`), completion percentage over
+  expected (`cpoe`), and expected yards after the catch (`xyac_epa` and
+  `xyac_mean_yardage`) in play-by-play going back to 2006
+- Includes drive information, including drive starting position and
+  drive result
+- Includes series information, including series number and series
+  success
+- Hosts [a repository of play-by-play data going back to
+  1999](https://github.com/nflverse/nflverse-pbp) for very quick access
+- Features models for Expected Points, Win Probability, Completion
+  Probability, and Yards After the Catch (see section below)
+- Includes a function `update_db()` that creates and updates a database
 
 We owe a debt of gratitude to the original
 [`nflscrapR`](https://github.com/maksimhorowitz/nflscrapR) team, Maksim
@@ -120,26 +118,25 @@ incorporating the pre-game spread.
 
 ## Special thanks
 
--   To Nick Shoemaker for [finding and making available JSON-formatted
-    NFL play-by-play back to
-    1999](https://github.com/CroppedClamp/nfl_pbps) (`nflfastR` uses
-    this source for 1999 and 2000 and previously also used it for
-    2001-2010)
--   To Lau Sze Yui for developing a scraping function to access
-    JSON-formatted NFL play-by-play beginning in 2001
--   To Aaron Schatz and Football Outsiders for providing charting data
-    to correctly mark scrambles in the 2005 season
--   To Lee Sharpe for curating a resource for game information
--   To Timo Riske, Lau Sze Yui, Sean Clement, and Daniel Houston for
-    many helpful discussions regarding the development of the new
-    `nflfastR` models
--   To Zach Feldman and Josh Hermsmeyer for many helpful discussions
-    about CPOE models as well as Peter Owen for many helpful suggestions
-    for the CP model
--   To Florian Schmitt for the logo design
--   The many users who found and reported bugs in `nflfastR` 1.0
--   And of course, the original
-    [`nflscrapR`](https://github.com/maksimhorowitz/nflscrapR) team,
-    Maksim Horowitz, Ronald Yurko, and Samuel Ventura, whose work
-    represented a dramatic step forward for the state of public NFL
-    research
+- To Nick Shoemaker for [finding and making available JSON-formatted NFL
+  play-by-play back to 1999](https://github.com/CroppedClamp/nfl_pbps)
+  (`nflfastR` uses this source for 1999 and 2000 and previously also
+  used it for 2001-2010)
+- To Lau Sze Yui for developing a scraping function to access
+  JSON-formatted NFL play-by-play beginning in 2001
+- To Aaron Schatz and Football Outsiders for providing charting data to
+  correctly mark scrambles in the 2005 season
+- To Lee Sharpe for curating a resource for game information
+- To Timo Riske, Lau Sze Yui, Sean Clement, and Daniel Houston for many
+  helpful discussions regarding the development of the new `nflfastR`
+  models
+- To Zach Feldman and Josh Hermsmeyer for many helpful discussions about
+  CPOE models as well as Peter Owen for many helpful suggestions for the
+  CP model
+- To Florian Schmitt for the logo design
+- The many users who found and reported bugs in `nflfastR` 1.0
+- And of course, the original
+  [`nflscrapR`](https://github.com/maksimhorowitz/nflscrapR) team,
+  Maksim Horowitz, Ronald Yurko, and Samuel Ventura, whose work
+  represented a dramatic step forward for the state of public NFL
+  research

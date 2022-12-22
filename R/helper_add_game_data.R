@@ -7,6 +7,7 @@
 # Thanks Lee!
 add_game_data <- function(pbp, games = NULL, ...) {
   out <- pbp
+  warn <- 0
   tryCatch(
     expr = {
 
