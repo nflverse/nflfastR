@@ -15,10 +15,7 @@ load_test_pbp <- function(pbp = pbp_cache, dir = test_dir){
 
   # model output differs across machines so we round to 4 significant digits
   # to prevent failing tests
-  pbp_data <- build_nflfastR_pbp(game_ids, dir = dir, games = g) %>%
-    # we gotta round floating point numbers because of different model output
-    # across platforms
-    round_double_to_digits()
+  pbp_data <- build_nflfastR_pbp(game_ids, dir = dir, games = g)
   if(!is.null(dir)) saveRDS(pbp_data, pbp)
   pbp_data
 }
@@ -58,5 +55,5 @@ strip_nflverse_attributes <- function(df){
 }
 
 round_double_to_digits <- function(df, digits = 4){
-  dplyr::mutate_if(df, is.double, signif, digits = digits)
+  dplyr::mutate_if(df, is.double, formatC, digits = digits, format = "fg")
 }
