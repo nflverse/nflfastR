@@ -85,12 +85,12 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE, ...) {
         bad_game <- 0
       }
 
-      weather <- dplyr::if_else(
+      weather <- ifelse(
         is.null(raw_data$data$viewer$gameDetail$weather$shortDescription),
         NA_character_,
         raw_data$data$viewer$gameDetail$weather$shortDescription
       )
-      stadium <- dplyr::if_else(
+      stadium <- ifelse(
         is.null(raw_data$data$viewer$gameDetail$stadium),
         NA_character_,
         raw_data$data$viewer$gameDetail$stadium
