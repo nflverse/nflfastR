@@ -145,7 +145,7 @@ offense %>%
   dplyr::inner_join(defense, by = "team") %>%
   ggplot2::ggplot(aes(x = off_epa, y = def_epa)) +
   ggplot2::geom_abline(slope = -1.5, intercept = c(.4, .3, .2, .1, 0, -.1, -.2, -.3), alpha = .2) +
-  nflplotR::geom_mean_lines(aes(h_var = off_epa, v_var = def_epa)) +
+  nflplotR::geom_mean_lines(aes(y0 = off_epa, x0 = def_epa)) +
   nflplotR::geom_nfl_logos(aes(team_abbr = team), width = 0.07, alpha = 0.7) +
   ggplot2::labs(
     x = "Offense EPA/play",
