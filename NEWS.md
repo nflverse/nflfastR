@@ -1,6 +1,7 @@
 # nflfastR (development version)
 
 - internal function `get_pbp_nfl()` now uses `ifelse()` instead of `dplyr::if_else()` to handle some null-checking, fixes bug found in 2022_21_CIN_KC match. (v4.5.1.9001)
+- The function `calculate_player_stats()` now summarises target share and air yards share correctly when called with argument `weekly = FALSE` (#413)
 
 # nflfastR 4.5.1
 
