@@ -15,8 +15,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><link href="../deps/Roboto-0.4.5/font.css" rel="stylesheet">
-<link href="../deps/Kanit-0.4.5/font.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><link href="../deps/Roboto-0.4.6/font.css" rel="stylesheet">
+<link href="../deps/Kanit-0.4.6/font.css" rel="stylesheet">
 <!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
@@ -46,7 +46,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.1.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.1.9002</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -351,15 +351,14 @@ plays; i.e., no punts, kickoffs, field goals, or dead ball penalties
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse play by play data</span> ──────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2022-09-27 11:19:31 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 8</span></span></span>
-<span><span class="co">#&gt;   posteam desc                            rush  pass name  passer rusher recei…¹</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> ATL     (15:00) 2-M.Ryan sacked at AT…     0     1 M.Ry… M.Ryan <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ATL     (14:20) 24-D.Freeman right ta…     1     0 D.Fr… <span style="color: #BB0000;">NA</span>     D.Fre… <span style="color: #BB0000;">NA</span>     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> ATL     (13:41) (Shotgun) 2-M.Ryan sc…     0     1 M.Ry… M.Ryan <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> MIN     (12:53) 33-D.Cook right end p…     1     0 D.Co… <span style="color: #BB0000;">NA</span>     D.Cook <span style="color: #BB0000;">NA</span>     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> MIN     (12:32) 8-K.Cousins pass shor…     0     1 K.Co… K.Cou… <span style="color: #BB0000;">NA</span>     D.Cook </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> MIN     (11:57) 8-K.Cousins pass shor…     0     1 K.Co… K.Cou… <span style="color: #BB0000;">NA</span>     A.Thie…</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with abbreviated variable name ¹​receiver</span></span></span></code></pre></div>
+<span><span class="co">#&gt;   posteam desc                           rush  pass name  passer rusher receiver</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> ATL     (15:00) 2-M.Ryan sacked at A…     0     1 M.Ry… M.Ryan <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ATL     (14:20) 24-D.Freeman right t…     1     0 D.Fr… <span style="color: #BB0000;">NA</span>     D.Fre… <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> ATL     (13:41) (Shotgun) 2-M.Ryan s…     0     1 M.Ry… M.Ryan <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> MIN     (12:53) 33-D.Cook right end …     1     0 D.Co… <span style="color: #BB0000;">NA</span>     D.Cook <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> MIN     (12:32) 8-K.Cousins pass sho…     0     1 K.Co… K.Cou… <span style="color: #BB0000;">NA</span>     D.Cook  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> MIN     (11:57) 8-K.Cousins pass sho…     0     1 K.Co… K.Cou… <span style="color: #BB0000;">NA</span>     A.Thiel…</span></span></code></pre></div>
 <p>Compared to the first time we did this, the opening line for the
 start of the game, the kickoff, and the punt are now gone. Note that if
 you’re checking whether a variable is equal to something, we need to use
@@ -621,7 +620,7 @@ pass-happy?</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> TB          0.551   321</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> GB          0.550   291</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> ARI         0.548   325</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 22 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 22 more rows</span></span></span></code></pre></div>
 <p>Again, we’ve already used <code>filter</code>, <code>group_by</code>,
 and <code>summarize</code>. The new function we are using here is
 <code>arrange</code>, which sorts the data by the variable(s) given. The
@@ -726,25 +725,24 @@ already loaded the package, it’s ready to use.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://nflreadr.nflverse.com/reference/load_teams.html" class="external-link">load_teams</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse team graphics</span> ──────────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2023-01-30 17:00:48 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2023-07-11 15:17:33 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 16</span></span></span>
-<span><span class="co">#&gt;    team_abbr team_name   team_id team_…¹ team_…² team_…³ team_…⁴ team_…⁵ team_…⁶</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> ARI       Arizona Ca… 3800    Cardin… NFC     NFC We… #97233F #000000 #ffb612</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ATL       Atlanta Fa… 0200    Falcons NFC     NFC So… #A71930 #000000 #a5acaf</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> BAL       Baltimore … 0325    Ravens  AFC     AFC No… #241773 #9E7C0C #9e7c0c</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> BUF       Buffalo Bi… 0610    Bills   AFC     AFC Ea… #00338D #C60C30 #0c2e82</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> CAR       Carolina P… 0750    Panthe… NFC     NFC So… #0085CA #000000 #bfc0bf</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> CHI       Chicago Be… 0810    Bears   NFC     NFC No… #0B162A #C83803 #0b162a</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> CIN       Cincinnati… 0920    Bengals AFC     AFC No… #FB4F14 #000000 #000000</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> CLE       Cleveland … 1050    Browns  AFC     AFC No… #FF3C00 #311D00 #a5acaf</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> DAL       Dallas Cow… 1200    Cowboys NFC     NFC Ea… #002244 #B0B7BC #acc0c6</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> DEN       Denver Bro… 1400    Broncos AFC     AFC We… #002244 #FB4F14 #00234c</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 22 more rows, 7 more variables: team_color4 &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt;    team_abbr team_name      team_id team_nick team_conf team_division team_color</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> ARI       Arizona Cardi… 3800    Cardinals NFC       NFC West      #97233F   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ATL       Atlanta Falco… 0200    Falcons   NFC       NFC South     #A71930   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> BAL       Baltimore Rav… 0325    Ravens    AFC       AFC North     #241773   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> BUF       Buffalo Bills  0610    Bills     AFC       AFC East      #00338D   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> CAR       Carolina Pant… 0750    Panthers  NFC       NFC South     #0085CA   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> CHI       Chicago Bears  0810    Bears     NFC       NFC North     #0B162A   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> CIN       Cincinnati Be… 0920    Bengals   AFC       AFC North     #FB4F14   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> CLE       Cleveland Bro… 1050    Browns    AFC       AFC North     #FF3C00   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> DAL       Dallas Cowboys 1200    Cowboys   NFC       NFC East      #002244   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> DEN       Denver Broncos 1400    Broncos   AFC       AFC West      #002244   </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 22 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 9 more variables: team_color2 &lt;chr&gt;, team_color3 &lt;chr&gt;, team_color4 &lt;chr&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   team_logo_wikipedia &lt;chr&gt;, team_logo_espn &lt;chr&gt;, team_wordmark &lt;chr&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   team_conference_logo &lt;chr&gt;, team_league_logo &lt;chr&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   team_logo_squared &lt;chr&gt;, and abbreviated variable names ¹​team_nick,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   ²​team_conf, ³​team_division, ⁴​team_color, ⁵​team_color2, ⁶​team_color3</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;">#   team_conference_logo &lt;chr&gt;, team_league_logo &lt;chr&gt;, team_logo_squared &lt;chr&gt;</span></span></span></code></pre></div>
 <p>Let’s join this to the <code>qbs</code> dataframe we created:</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qbs</span> <span class="op">&lt;-</span> <span class="va">qbs</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -861,7 +859,7 @@ logos.</p>
 <span>  <span class="co"># tier lines</span></span>
 <span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_abline</a></span><span class="op">(</span>slope <span class="op">=</span> <span class="op">-</span><span class="fl">1.5</span>, intercept <span class="op">=</span> <span class="op">(</span><span class="fl">4</span><span class="op">:</span><span class="op">-</span><span class="fl">3</span><span class="op">)</span><span class="op">/</span><span class="fl">10</span>, alpha <span class="op">=</span> <span class="fl">.2</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="co"># nflplotR magic</span></span>
-<span>  <span class="fu">nflplotR</span><span class="fu">::</span><span class="fu"><a href="https://nflplotr.nflverse.com/reference/geom_lines.html" class="external-link">geom_mean_lines</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>h_var <span class="op">=</span> <span class="va">off_epa</span>, v_var <span class="op">=</span> <span class="va">def_epa</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">nflplotR</span><span class="fu">::</span><span class="fu"><a href="https://nflplotr.nflverse.com/reference/geom_lines.html" class="external-link">geom_mean_lines</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y0 <span class="op">=</span> <span class="va">off_epa</span>, x0 <span class="op">=</span> <span class="va">def_epa</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">nflplotR</span><span class="fu">::</span><span class="fu"><a href="https://nflplotr.nflverse.com/reference/geom_nfl_logos.html" class="external-link">geom_nfl_logos</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>team_abbr <span class="op">=</span> <span class="va">team</span><span class="op">)</span>, width <span class="op">=</span> <span class="fl">0.07</span>, alpha <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
 <span>    x <span class="op">=</span> <span class="st">"Offense EPA/play"</span>,</span>
@@ -929,54 +927,54 @@ overwhelming).</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">games</span> <span class="op">&lt;-</span> <span class="fu">nflreadr</span><span class="fu">::</span><span class="fu"><a href="https://nflreadr.nflverse.com/reference/load_schedules.html" class="external-link">load_schedules</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">games</span><span class="op">)</span></span>
-<span><span class="co">#&gt; nflvrs_d [6,421 × 45] (S3: nflverse_data/tbl_df/tbl/data.table/data.frame)</span></span>
-<span><span class="co">#&gt;  $ game_id         : chr [1:6421] "1999_01_MIN_ATL" "1999_01_KC_CHI" "1999_01_PIT_CLE" "1999_01_OAK_GB" ...</span></span>
-<span><span class="co">#&gt;  $ season          : int [1:6421] 1999 1999 1999 1999 1999 1999 1999 1999 1999 1999 ...</span></span>
-<span><span class="co">#&gt;  $ game_type       : chr [1:6421] "REG" "REG" "REG" "REG" ...</span></span>
-<span><span class="co">#&gt;  $ week            : int [1:6421] 1 1 1 1 1 1 1 1 1 1 ...</span></span>
-<span><span class="co">#&gt;  $ gameday         : chr [1:6421] "1999-09-12" "1999-09-12" "1999-09-12" "1999-09-12" ...</span></span>
-<span><span class="co">#&gt;  $ weekday         : chr [1:6421] "Sunday" "Sunday" "Sunday" "Sunday" ...</span></span>
-<span><span class="co">#&gt;  $ gametime        : chr [1:6421] NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ away_team       : chr [1:6421] "MIN" "KC" "PIT" "OAK" ...</span></span>
-<span><span class="co">#&gt;  $ away_score      : int [1:6421] 17 17 43 24 14 3 10 30 25 28 ...</span></span>
-<span><span class="co">#&gt;  $ home_team       : chr [1:6421] "ATL" "CHI" "CLE" "GB" ...</span></span>
-<span><span class="co">#&gt;  $ home_score      : int [1:6421] 14 20 0 28 31 41 19 28 24 20 ...</span></span>
-<span><span class="co">#&gt;  $ location        : chr [1:6421] "Home" "Home" "Home" "Home" ...</span></span>
-<span><span class="co">#&gt;  $ result          : int [1:6421] -3 3 -43 4 17 38 9 -2 -1 -8 ...</span></span>
-<span><span class="co">#&gt;  $ total           : int [1:6421] 31 37 43 52 45 44 29 58 49 48 ...</span></span>
-<span><span class="co">#&gt;  $ overtime        : int [1:6421] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
-<span><span class="co">#&gt;  $ old_game_id     : chr [1:6421] "1999091210" "1999091206" "1999091213" "1999091208" ...</span></span>
-<span><span class="co">#&gt;  $ gsis            : int [1:6421] 598 597 604 602 591 603 592 600 588 596 ...</span></span>
-<span><span class="co">#&gt;  $ nfl_detail_id   : chr [1:6421] NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ pfr             : chr [1:6421] "199909120atl" "199909120chi" "199909120cle" "199909120gnb" ...</span></span>
-<span><span class="co">#&gt;  $ pff             : int [1:6421] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ espn            : chr [1:6421] "190912001" "190912003" "190912005" "190912009" ...</span></span>
-<span><span class="co">#&gt;  $ away_rest       : int [1:6421] 7 7 7 7 7 7 7 7 7 7 ...</span></span>
-<span><span class="co">#&gt;  $ home_rest       : int [1:6421] 7 7 7 7 7 7 7 7 7 7 ...</span></span>
-<span><span class="co">#&gt;  $ away_moneyline  : int [1:6421] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ home_moneyline  : int [1:6421] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ spread_line     : num [1:6421] -4 -3 -6 9 -3 5.5 3.5 7 -3 9.5 ...</span></span>
-<span><span class="co">#&gt;  $ away_spread_odds: int [1:6421] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ home_spread_odds: int [1:6421] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ total_line      : num [1:6421] 49 38 37 43 45.5 49 38 44.5 37 42 ...</span></span>
-<span><span class="co">#&gt;  $ under_odds      : int [1:6421] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ over_odds       : int [1:6421] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ div_game        : int [1:6421] 0 0 1 0 1 0 1 1 1 0 ...</span></span>
-<span><span class="co">#&gt;  $ roof            : chr [1:6421] "dome" "outdoors" "outdoors" "outdoors" ...</span></span>
-<span><span class="co">#&gt;  $ surface         : chr [1:6421] "astroturf" "grass" "grass" "grass" ...</span></span>
-<span><span class="co">#&gt;  $ temp            : int [1:6421] NA 80 78 67 NA 76 NA 73 75 NA ...</span></span>
-<span><span class="co">#&gt;  $ wind            : int [1:6421] NA 12 12 10 NA 8 NA 5 3 NA ...</span></span>
-<span><span class="co">#&gt;  $ away_qb_id      : chr [1:6421] "00-0003761" "00-0006300" "00-0015700" "00-0005741" ...</span></span>
-<span><span class="co">#&gt;  $ home_qb_id      : chr [1:6421] "00-0002876" "00-0010560" "00-0004230" "00-0005106" ...</span></span>
-<span><span class="co">#&gt;  $ away_qb_name    : chr [1:6421] "Randall Cunningham" "Elvis Grbac" "Kordell Stewart" "Rich Gannon" ...</span></span>
-<span><span class="co">#&gt;  $ home_qb_name    : chr [1:6421] "Chris Chandler" "Shane Matthews" "Ty Detmer" "Brett Favre" ...</span></span>
-<span><span class="co">#&gt;  $ away_coach      : chr [1:6421] "Dennis Green" "Gunther Cunningham" "Bill Cowher" "Jon Gruden" ...</span></span>
-<span><span class="co">#&gt;  $ home_coach      : chr [1:6421] "Dan Reeves" "Dick Jauron" "Chris Palmer" "Ray Rhodes" ...</span></span>
-<span><span class="co">#&gt;  $ referee         : chr [1:6421] "Gerry Austin" "Phil Luckett" "Bob McElwee" "Tony Corrente" ...</span></span>
-<span><span class="co">#&gt;  $ stadium_id      : chr [1:6421] "ATL00" "CHI98" "CLE00" "GNB00" ...</span></span>
-<span><span class="co">#&gt;  $ stadium         : chr [1:6421] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...</span></span>
+<span><span class="co">#&gt; nflvrs_d [6,693 × 45] (S3: nflverse_data/tbl_df/tbl/data.table/data.frame)</span></span>
+<span><span class="co">#&gt;  $ game_id         : chr [1:6693] "1999_01_MIN_ATL" "1999_01_KC_CHI" "1999_01_PIT_CLE" "1999_01_OAK_GB" ...</span></span>
+<span><span class="co">#&gt;  $ season          : int [1:6693] 1999 1999 1999 1999 1999 1999 1999 1999 1999 1999 ...</span></span>
+<span><span class="co">#&gt;  $ game_type       : chr [1:6693] "REG" "REG" "REG" "REG" ...</span></span>
+<span><span class="co">#&gt;  $ week            : int [1:6693] 1 1 1 1 1 1 1 1 1 1 ...</span></span>
+<span><span class="co">#&gt;  $ gameday         : chr [1:6693] "1999-09-12" "1999-09-12" "1999-09-12" "1999-09-12" ...</span></span>
+<span><span class="co">#&gt;  $ weekday         : chr [1:6693] "Sunday" "Sunday" "Sunday" "Sunday" ...</span></span>
+<span><span class="co">#&gt;  $ gametime        : chr [1:6693] NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ away_team       : chr [1:6693] "MIN" "KC" "PIT" "OAK" ...</span></span>
+<span><span class="co">#&gt;  $ away_score      : int [1:6693] 17 17 43 24 14 3 10 30 25 28 ...</span></span>
+<span><span class="co">#&gt;  $ home_team       : chr [1:6693] "ATL" "CHI" "CLE" "GB" ...</span></span>
+<span><span class="co">#&gt;  $ home_score      : int [1:6693] 14 20 0 28 31 41 19 28 24 20 ...</span></span>
+<span><span class="co">#&gt;  $ location        : chr [1:6693] "Home" "Home" "Home" "Home" ...</span></span>
+<span><span class="co">#&gt;  $ result          : int [1:6693] -3 3 -43 4 17 38 9 -2 -1 -8 ...</span></span>
+<span><span class="co">#&gt;  $ total           : int [1:6693] 31 37 43 52 45 44 29 58 49 48 ...</span></span>
+<span><span class="co">#&gt;  $ overtime        : int [1:6693] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;  $ old_game_id     : chr [1:6693] "1999091210" "1999091206" "1999091213" "1999091208" ...</span></span>
+<span><span class="co">#&gt;  $ gsis            : int [1:6693] 598 597 604 602 591 603 592 600 588 596 ...</span></span>
+<span><span class="co">#&gt;  $ nfl_detail_id   : chr [1:6693] NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ pfr             : chr [1:6693] "199909120atl" "199909120chi" "199909120cle" "199909120gnb" ...</span></span>
+<span><span class="co">#&gt;  $ pff             : int [1:6693] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ espn            : chr [1:6693] "190912001" "190912003" "190912005" "190912009" ...</span></span>
+<span><span class="co">#&gt;  $ away_rest       : int [1:6693] 7 7 7 7 7 7 7 7 7 7 ...</span></span>
+<span><span class="co">#&gt;  $ home_rest       : int [1:6693] 7 7 7 7 7 7 7 7 7 7 ...</span></span>
+<span><span class="co">#&gt;  $ away_moneyline  : int [1:6693] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ home_moneyline  : int [1:6693] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ spread_line     : num [1:6693] -4 -3 -6 9 -3 5.5 3.5 7 -3 9.5 ...</span></span>
+<span><span class="co">#&gt;  $ away_spread_odds: int [1:6693] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ home_spread_odds: int [1:6693] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ total_line      : num [1:6693] 49 38 37 43 45.5 49 38 44.5 37 42 ...</span></span>
+<span><span class="co">#&gt;  $ under_odds      : int [1:6693] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ over_odds       : int [1:6693] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ div_game        : int [1:6693] 0 0 1 0 1 0 1 1 1 0 ...</span></span>
+<span><span class="co">#&gt;  $ roof            : chr [1:6693] "dome" "outdoors" "outdoors" "outdoors" ...</span></span>
+<span><span class="co">#&gt;  $ surface         : chr [1:6693] "astroturf" "grass" "grass" "grass" ...</span></span>
+<span><span class="co">#&gt;  $ temp            : int [1:6693] NA 80 78 67 NA 76 NA 73 75 NA ...</span></span>
+<span><span class="co">#&gt;  $ wind            : int [1:6693] NA 12 12 10 NA 8 NA 5 3 NA ...</span></span>
+<span><span class="co">#&gt;  $ away_qb_id      : chr [1:6693] "00-0003761" "00-0006300" "00-0015700" "00-0005741" ...</span></span>
+<span><span class="co">#&gt;  $ home_qb_id      : chr [1:6693] "00-0002876" "00-0010560" "00-0004230" "00-0005106" ...</span></span>
+<span><span class="co">#&gt;  $ away_qb_name    : chr [1:6693] "Randall Cunningham" "Elvis Grbac" "Kordell Stewart" "Rich Gannon" ...</span></span>
+<span><span class="co">#&gt;  $ home_qb_name    : chr [1:6693] "Chris Chandler" "Shane Matthews" "Ty Detmer" "Brett Favre" ...</span></span>
+<span><span class="co">#&gt;  $ away_coach      : chr [1:6693] "Dennis Green" "Gunther Cunningham" "Bill Cowher" "Jon Gruden" ...</span></span>
+<span><span class="co">#&gt;  $ home_coach      : chr [1:6693] "Dan Reeves" "Dick Jauron" "Chris Palmer" "Ray Rhodes" ...</span></span>
+<span><span class="co">#&gt;  $ referee         : chr [1:6693] "Gerry Austin" "Phil Luckett" "Bob McElwee" "Tony Corrente" ...</span></span>
+<span><span class="co">#&gt;  $ stadium_id      : chr [1:6693] "ATL00" "CHI98" "CLE00" "GNB00" ...</span></span>
+<span><span class="co">#&gt;  $ stadium         : chr [1:6693] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...</span></span>
 <span><span class="co">#&gt;  - attr(*, "nflverse_type")= chr "games and schedules"</span></span>
-<span><span class="co">#&gt;  - attr(*, "nflverse_timestamp")= POSIXct[1:1], format: "2023-01-30 17:01:25"</span></span></code></pre></div>
+<span><span class="co">#&gt;  - attr(*, "nflverse_timestamp")= POSIXct[1:1], format: "2023-07-11 15:18:19"</span></span></code></pre></div>
 <p>To start, we want to create a dataframe where each row is a
 team-season observation, listing how many games they won. There are
 multiple ways to do this, but I’m going to just take the home and away
@@ -989,7 +987,7 @@ results and bind together. As an example, here’s what the
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>team <span class="op">=</span> <span class="va">home_team</span><span class="op">)</span></span>
 <span><span class="va">home</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2023-01-30 17:01:25 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2023-07-11 15:18:19 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 4</span></span></span>
 <span><span class="co">#&gt;   season  week team  result</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
@@ -1008,7 +1006,7 @@ results and bind together. As an example, here’s what the
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>result <span class="op">=</span> <span class="op">-</span><span class="va">result</span><span class="op">)</span></span>
 <span><span class="va">away</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2023-01-30 17:01:25 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2023-07-11 15:18:19 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 4</span></span></span>
 <span><span class="co">#&gt;   season  week team  result</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
@@ -1033,7 +1031,7 @@ the perspective of the home team. Now let’s make a columns called
 <span></span>
 <span><span class="va">results</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op">==</span> <span class="fl">2019</span> <span class="op">&amp;</span> <span class="va">team</span> <span class="op">==</span> <span class="st">'SEA'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2023-01-30 17:01:25 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2023-07-11 15:18:19 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 16 × 5</span></span></span>
 <span><span class="co">#&gt;    season  week team  result   win</span></span>
 <span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
@@ -1210,17 +1208,17 @@ all the team names are ready too.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 35 × 2</span></span></span>
 <span><span class="co">#&gt;    team      n</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> LV        3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> LAC       6</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> LA        7</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> LV        4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> LAC       7</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> LA        8</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> STL      17</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> SD       18</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> HOU      21</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> OAK      21</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> ARI      24</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> ATL      24</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> BAL      24</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 25 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> OAK      21</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> HOU      22</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> ARI      25</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> ATL      25</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> BAL      25</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 25 more rows</span></span></span></code></pre></div>
 <p>Nope, not yet, we need to fix the Raiders, Rams, and Chargers, which
 are LV, LA, and LAC in <code>nflfastR</code>.</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
@@ -1244,17 +1242,17 @@ worked:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 2</span></span></span>
 <span><span class="co">#&gt;    team      n</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> HOU      21</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ARI      24</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> ATL      24</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> BAL      24</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> BUF      24</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> CAR      24</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> CHI      24</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> CIN      24</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> CLE      24</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> DAL      24</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 22 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> HOU      22</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ARI      25</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> ATL      25</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> BAL      25</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> BUF      25</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> CAR      25</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> CHI      25</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> CIN      25</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> CLE      25</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> DAL      25</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 22 more rows</span></span></span></code></pre></div>
 <p>HOU has 3 fewer seasons because it didn’t exist from 1999 through
 2001, which is fine, and all the other team names have number of seasons
 that they should. Okay NOW we can join:</p>
@@ -1265,21 +1263,22 @@ that they should. Okay NOW we can join:</p>
 <span></span>
 <span><span class="va">data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">team</span> <span class="op">==</span> <span class="st">'SEA'</span> <span class="op">&amp;</span> <span class="va">season</span> <span class="op">&gt;=</span> <span class="fl">2012</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 11 × 8</span></span></span>
-<span><span class="co">#&gt;    team  season  wins point_diff off_rush_epa off_pass_epa def_rush_epa def_pa…¹</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> SEA     <span style="text-decoration: underline;">2</span>012  11          167     -<span style="color: #BB0000;">0.004</span><span style="color: #BB0000; text-decoration: underline;">76</span>       0.213       -<span style="color: #BB0000;">0.073</span><span style="color: #BB0000; text-decoration: underline;">8</span>  -<span style="color: #BB0000;">0.043</span><span style="color: #BB0000; text-decoration: underline;">4</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> SEA     <span style="text-decoration: underline;">2</span>013  13          186     -<span style="color: #BB0000;">0.101</span>         0.188       -<span style="color: #BB0000;">0.126</span>   -<span style="color: #BB0000;">0.165</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> SEA     <span style="text-decoration: underline;">2</span>014  12          140      0.021<span style="text-decoration: underline;">6</span>        0.139       -<span style="color: #BB0000;">0.231</span>   -<span style="color: #BB0000;">0.036</span><span style="color: #BB0000; text-decoration: underline;">4</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> SEA     <span style="text-decoration: underline;">2</span>015  10          146     -<span style="color: #BB0000;">0.105</span>         0.249       -<span style="color: #BB0000;">0.148</span>   -<span style="color: #BB0000;">0.042</span><span style="color: #BB0000; text-decoration: underline;">1</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> SEA     <span style="text-decoration: underline;">2</span>016  10.5         62     -<span style="color: #BB0000;">0.126</span>         0.102       -<span style="color: #BB0000;">0.207</span>    0.058<span style="text-decoration: underline;">8</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> SEA     <span style="text-decoration: underline;">2</span>017   9           34     -<span style="color: #BB0000;">0.192</span>         0.058<span style="text-decoration: underline;">4</span>      -<span style="color: #BB0000;">0.122</span>   -<span style="color: #BB0000;">0.013</span><span style="color: #BB0000; text-decoration: underline;">9</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> SEA     <span style="text-decoration: underline;">2</span>018  10           81     -<span style="color: #BB0000;">0.027</span><span style="color: #BB0000; text-decoration: underline;">3</span>        0.210       -<span style="color: #BB0000;">0.130</span>    0.073<span style="text-decoration: underline;">8</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> SEA     <span style="text-decoration: underline;">2</span>019  11            7     -<span style="color: #BB0000;">0.136</span>         0.119       -<span style="color: #BB0000;">0.093</span><span style="color: #BB0000; text-decoration: underline;">0</span>   0.074<span style="text-decoration: underline;">5</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> SEA     <span style="text-decoration: underline;">2</span>020  12           88     <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> SEA     <span style="text-decoration: underline;">2</span>021   7           29     <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> SEA     <span style="text-decoration: underline;">2</span>022   9            6     <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span>       <span style="color: #BB0000;">NA</span>     </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with abbreviated variable name ¹​def_pass_epa</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 12 × 8</span></span></span>
+<span><span class="co">#&gt;    team  season  wins point_diff off_rush_epa off_pass_epa def_rush_epa</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> SEA     <span style="text-decoration: underline;">2</span>012  11          167     -<span style="color: #BB0000;">0.004</span><span style="color: #BB0000; text-decoration: underline;">76</span>       0.213       -<span style="color: #BB0000;">0.073</span><span style="color: #BB0000; text-decoration: underline;">8</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> SEA     <span style="text-decoration: underline;">2</span>013  13          186     -<span style="color: #BB0000;">0.101</span>         0.188       -<span style="color: #BB0000;">0.126</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> SEA     <span style="text-decoration: underline;">2</span>014  12          140      0.021<span style="text-decoration: underline;">6</span>        0.139       -<span style="color: #BB0000;">0.231</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> SEA     <span style="text-decoration: underline;">2</span>015  10          146     -<span style="color: #BB0000;">0.105</span>         0.249       -<span style="color: #BB0000;">0.148</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> SEA     <span style="text-decoration: underline;">2</span>016  10.5         62     -<span style="color: #BB0000;">0.126</span>         0.102       -<span style="color: #BB0000;">0.207</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> SEA     <span style="text-decoration: underline;">2</span>017   9           34     -<span style="color: #BB0000;">0.192</span>         0.058<span style="text-decoration: underline;">4</span>      -<span style="color: #BB0000;">0.122</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> SEA     <span style="text-decoration: underline;">2</span>018  10           81     -<span style="color: #BB0000;">0.027</span><span style="color: #BB0000; text-decoration: underline;">3</span>        0.210       -<span style="color: #BB0000;">0.130</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> SEA     <span style="text-decoration: underline;">2</span>019  11            7     -<span style="color: #BB0000;">0.136</span>         0.119       -<span style="color: #BB0000;">0.093</span><span style="color: #BB0000; text-decoration: underline;">0</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> SEA     <span style="text-decoration: underline;">2</span>020  12           88     <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span>     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> SEA     <span style="text-decoration: underline;">2</span>021   7           29     <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span>     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> SEA     <span style="text-decoration: underline;">2</span>022   9            6     <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span>     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> SEA     <span style="text-decoration: underline;">2</span>023  <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span>     </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1 more variable: def_pass_epa &lt;dbl&gt;</span></span></span></code></pre></div>
 <p>Now we’re getting really close to doing what we want! Next we need to
 create new columns for prior year EPA, and let’s do point differential
 too.</p>
@@ -1299,17 +1298,16 @@ too.</p>
 <span><span class="va">data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 13</span></span></span>
-<span><span class="co">#&gt;   team  season  wins point_diff off_ru…¹ off_p…² def_r…³ def_p…⁴ prior…⁵ prior…⁶</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> ARI     <span style="text-decoration: underline;">1</span>999     6       -<span style="color: #BB0000;">137</span>   -<span style="color: #BB0000;">0.201</span> -<span style="color: #BB0000;">0.162</span>  -<span style="color: #BB0000;">0.010</span><span style="color: #BB0000; text-decoration: underline;">5</span> 0.001<span style="text-decoration: underline;">98</span>  <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ARI     <span style="text-decoration: underline;">2</span>000     3       -<span style="color: #BB0000;">233</span>   -<span style="color: #BB0000;">0.240</span> -<span style="color: #BB0000;">0.071</span><span style="color: #BB0000; text-decoration: underline;">8</span>  0.033<span style="text-decoration: underline;">3</span> 0.180    -<span style="color: #BB0000;">0.201</span> -<span style="color: #BB0000;">0.162</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> ARI     <span style="text-decoration: underline;">2</span>001     7        -<span style="color: #BB0000;">48</span>   -<span style="color: #BB0000;">0.177</span>  0.074<span style="text-decoration: underline;">0</span> -<span style="color: #BB0000;">0.068</span><span style="color: #BB0000; text-decoration: underline;">9</span> 0.080<span style="text-decoration: underline;">2</span>   -<span style="color: #BB0000;">0.240</span> -<span style="color: #BB0000;">0.071</span><span style="color: #BB0000; text-decoration: underline;">8</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> ARI     <span style="text-decoration: underline;">2</span>002     5       -<span style="color: #BB0000;">155</span>   -<span style="color: #BB0000;">0.134</span> -<span style="color: #BB0000;">0.066</span><span style="color: #BB0000; text-decoration: underline;">1</span> -<span style="color: #BB0000;">0.019</span><span style="color: #BB0000; text-decoration: underline;">2</span> 0.165    -<span style="color: #BB0000;">0.177</span>  0.074<span style="text-decoration: underline;">0</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> ARI     <span style="text-decoration: underline;">2</span>003     4       -<span style="color: #BB0000;">227</span>   -<span style="color: #BB0000;">0.219</span> -<span style="color: #BB0000;">0.120</span>  -<span style="color: #BB0000;">0.062</span><span style="color: #BB0000; text-decoration: underline;">7</span> 0.191    -<span style="color: #BB0000;">0.134</span> -<span style="color: #BB0000;">0.066</span><span style="color: #BB0000; text-decoration: underline;">1</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 3 more variables: prior_def_rush_epa &lt;dbl&gt;, prior_def_pass_epa &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   prior_point_diff &lt;int&gt;, and abbreviated variable names ¹​off_rush_epa,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   ²​off_pass_epa, ³​def_rush_epa, ⁴​def_pass_epa, ⁵​prior_off_rush_epa,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   ⁶​prior_off_pass_epa</span></span></span></code></pre></div>
+<span><span class="co">#&gt;   team  season  wins point_diff off_rush_epa off_pass_epa def_rush_epa</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> ARI     <span style="text-decoration: underline;">1</span>999     6       -<span style="color: #BB0000;">137</span>       -<span style="color: #BB0000;">0.201</span>      -<span style="color: #BB0000;">0.162</span>       -<span style="color: #BB0000;">0.010</span><span style="color: #BB0000; text-decoration: underline;">5</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ARI     <span style="text-decoration: underline;">2</span>000     3       -<span style="color: #BB0000;">233</span>       -<span style="color: #BB0000;">0.240</span>      -<span style="color: #BB0000;">0.071</span><span style="color: #BB0000; text-decoration: underline;">8</span>       0.033<span style="text-decoration: underline;">3</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> ARI     <span style="text-decoration: underline;">2</span>001     7        -<span style="color: #BB0000;">48</span>       -<span style="color: #BB0000;">0.177</span>       0.074<span style="text-decoration: underline;">0</span>      -<span style="color: #BB0000;">0.068</span><span style="color: #BB0000; text-decoration: underline;">9</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> ARI     <span style="text-decoration: underline;">2</span>002     5       -<span style="color: #BB0000;">155</span>       -<span style="color: #BB0000;">0.134</span>      -<span style="color: #BB0000;">0.066</span><span style="color: #BB0000; text-decoration: underline;">1</span>      -<span style="color: #BB0000;">0.019</span><span style="color: #BB0000; text-decoration: underline;">2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> ARI     <span style="text-decoration: underline;">2</span>003     4       -<span style="color: #BB0000;">227</span>       -<span style="color: #BB0000;">0.219</span>      -<span style="color: #BB0000;">0.120</span>       -<span style="color: #BB0000;">0.062</span><span style="color: #BB0000; text-decoration: underline;">7</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 6 more variables: def_pass_epa &lt;dbl&gt;, prior_off_rush_epa &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   prior_off_pass_epa &lt;dbl&gt;, prior_def_rush_epa &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   prior_def_pass_epa &lt;dbl&gt;, prior_point_diff &lt;int&gt;</span></span></span></code></pre></div>
 <p>Finally! Now we have the data in place and can start doing things
 with it.</p>
 </div>
@@ -1456,7 +1454,7 @@ anyway.</p>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Residual standard error: 2.86 on 379 degrees of freedom</span></span>
-<span><span class="co">#&gt;   (64 observations deleted due to missingness)</span></span>
+<span><span class="co">#&gt;   (96 observations deleted due to missingness)</span></span>
 <span><span class="co">#&gt; Multiple R-squared:  0.1639, Adjusted R-squared:  0.155 </span></span>
 <span><span class="co">#&gt; F-statistic: 18.57 on 4 and 379 DF,  p-value: 0.00000000000005992</span></span></code></pre></div>
 <p>I’m actually pretty surprised passing offense isn’t higher here. How
@@ -1481,6 +1479,7 @@ does this compare to simply using point differential?</p>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Residual standard error: 2.795 on 446 degrees of freedom</span></span>
+<span><span class="co">#&gt;   (32 observations deleted due to missingness)</span></span>
 <span><span class="co">#&gt; Multiple R-squared:  0.183,  Adjusted R-squared:  0.1811 </span></span>
 <span><span class="co">#&gt; F-statistic: 99.88 on 1 and 446 DF,  p-value: &lt; 0.00000000000000022</span></span></code></pre></div>
 <p>So R2 is somewhat higher for just point differential. This isn’t
