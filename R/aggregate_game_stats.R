@@ -553,6 +553,12 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
   # if user doesn't want week-by-week input, aggregate the whole df
   if (isFALSE(weekly)) {
     player_df <- player_df %>%
+      # helper variables to summarise targetshare and air yard share
+      # because targets and air yards summarise first
+      dplyr::mutate(
+        tgts = .data$targets,
+        rec_air_yds = .data$receiving_air_yards
+      ) %>%
       dplyr::group_by(.data$player_id) %>%
       dplyr::summarise(
         player_name = custom_mode(.data$player_name),
@@ -598,8 +604,8 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         receiving_epa = dplyr::if_else(all(is.na(.data$receiving_epa)), NA_real_, sum(.data$receiving_epa, na.rm = TRUE)),
         receiving_2pt_conversions = sum(.data$receiving_2pt_conversions),
         racr = .data$receiving_yards / .data$receiving_air_yards,
-        target_share = dplyr::if_else(all(is.na(.data$target_share)), NA_real_, mean(.data$target_share, na.rm = TRUE)),
-        air_yards_share = dplyr::if_else(all(is.na(.data$air_yards_share)), NA_real_, mean(.data$air_yards_share, na.rm = TRUE)),
+        target_share = dplyr::if_else(all(is.na(.data$target_share)), NA_real_, sum(.data$tgts, na.rm = TRUE) / sum(.data$tgts / .data$target_share, na.rm = TRUE)),
+        air_yards_share = dplyr::if_else(all(is.na(.data$air_yards_share)), NA_real_, sum(.data$rec_air_yds, na.rm = TRUE) / sum(.data$rec_air_yds / .data$air_yards_share, na.rm = TRUE)),
         wopr = 1.5 * .data$target_share + 0.7 * .data$air_yards_share,
 
         # special teams
