@@ -26,6 +26,7 @@
 #' \item{season}{Season if `weekly` is `TRUE`}
 #' \item{week}{Week if `weekly` is `TRUE`}
 #' \item{season_type}{`REG` or `POST` if `weekly` is `TRUE`}
+#' \item{opponent_team}{The player's opponent team if `weekly` is `TRUE`}
 #' \item{completions}{The number of completed passes.}
 #' \item{attempts}{The number of pass attempts as defined by the NFL.}
 #' \item{passing_yards}{Yards gained on pass plays.}
