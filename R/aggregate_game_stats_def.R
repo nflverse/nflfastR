@@ -200,7 +200,7 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       names_from = .data$desc,
       values_from = c(.data$n, .data$sack_yards),
       values_fn = sum,
-      values_fill = 0
+      values_fill = 0L
     ) %>%
     add_column_if_missing("n_sack", "n_qb_hit", "sack_yards_sack") %>%
     dplyr::select(
@@ -248,7 +248,7 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       names_from = "desc",
       values_from = c("n","return_yards"),
       values_fn = sum,
-      values_fill = 0
+      values_fill = 0L
     ) %>%
     add_column_if_missing(
       "n_interception", "n_pass_defense", "return_yards_interception"
@@ -313,7 +313,7 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       names_from = .data$desc,
       values_from = .data$n,
       values_fn = sum,
-      values_fill = 0
+      values_fill = 0L
     ) %>%
     # Renaming fails if the columns don't exist. So we row bind a dummy tibble
     # including the relevant columns. The row will be filtered after renaming
@@ -367,7 +367,7 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       names_from = .data$desc,
       values_from = .data$n,
       values_fn = sum,
-      values_fill = 0
+      values_fill = 0L
     ) %>%
     dplyr::filter(!is.na(.data$player_id)) %>%
     add_column_if_missing("fumble_recovery") %>%
@@ -456,7 +456,7 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       names_from = .data$desc,
       values_from = c(.data$n, .data$yards),
       values_fn = sum,
-      values_fill = 0
+      values_fill = 0L
     ) %>%
     add_column_if_missing("n_penalty", "yards_penalty") %>%
     dplyr::select(
@@ -603,7 +603,7 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
 # This function checks if the variables in ... exists as column
 # names in the argument .data. If not, it adds those columns and assigns
 # them the value in the argument value
-add_column_if_missing <- function(.data, ..., value = 0){
+add_column_if_missing <- function(.data, ..., value = 0L){
   dots <- rlang::list2(...)
   new_cols <- dots[!dots %in% names(.data)]
   .data[,unlist(new_cols)] <- value
