@@ -114,6 +114,10 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       values_fill = 0L,
       values_fn = sum
     ) %>%
+    add_column_if_missing(
+      "solo_tackle", "tackle_with_assist", "tackle_for_loss", "assist_tackle",
+      "forced_fumble_player"
+    ) %>%
     dplyr::mutate(
       tackles = .data$solo_tackle + .data$tackle_with_assist
     ) %>%
@@ -198,6 +202,7 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       values_fn = sum,
       values_fill = 0
     ) %>%
+    add_column_if_missing("n_sack", "n_qb_hit", "sack_yards_sack") %>%
     dplyr::select(
       "season",
       "week",
@@ -244,6 +249,9 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       values_from = c("n","return_yards"),
       values_fn = sum,
       values_fill = 0
+    ) %>%
+    add_column_if_missing(
+      "n_interception", "n_pass_defense", "return_yards_interception"
     ) %>%
     dplyr::select(
       "season",
@@ -334,10 +342,12 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
         .data$defteam == .data$fumble_recovery_2_team
     ) %>%
     dplyr::mutate(
+      # use data.table fifelse because base ifelse changed data type to logical
+      # if there are 0 rows
       fumble_recovery_1_player_id =
-        ifelse(.data$defteam != .data$fumbled_1_team, .data$fumble_recovery_1_player_id, NA),
+        data.table::fifelse(.data$defteam != .data$fumbled_1_team, .data$fumble_recovery_1_player_id, NA_character_),
       fumble_recovery_2_player_id =
-        ifelse(.data$defteam != .data$fumbled_2_team, .data$fumble_recovery_2_player_id, NA)
+        data.table::fifelse(.data$defteam != .data$fumbled_2_team, .data$fumble_recovery_2_player_id, NA_character_)
     ) %>%
     dplyr::select(
       "season", "week",
@@ -360,6 +370,7 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       values_fill = 0
     ) %>%
     dplyr::filter(!is.na(.data$player_id)) %>%
+    add_column_if_missing("fumble_recovery") %>%
     dplyr::rename("fumble_recovery_opp" = "fumble_recovery") %>%
     dplyr::group_by(.data$season, .data$week, .data$team, .data$player_id) %>%
     dplyr::summarise(
@@ -447,6 +458,7 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       values_fn = sum,
       values_fill = 0
     ) %>%
+    add_column_if_missing("n_penalty", "yards_penalty") %>%
     dplyr::select(
       "season", "week", "team", "player_id",
       "penalty" = "n_penalty",
@@ -587,3 +599,14 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
 
   player_df
 }
+
+# This function checks if the variables in ... exists as column
+# names in the argument .data. If not, it adds those columns and assigns
+# them the value in the argument value
+add_column_if_missing <- function(.data, ..., value = 0){
+  dots <- rlang::list2(...)
+  new_cols <- dots[!dots %in% names(.data)]
+  .data[,unlist(new_cols)] <- value
+  .data
+}
+
