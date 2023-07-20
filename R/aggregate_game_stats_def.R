@@ -580,7 +580,7 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
         def_fumbles_forced = sum(.data$def_fumbles_forced),
         def_sacks = sum(.data$def_sacks),
         def_sack_yards = sum(.data$def_sack_yards),
-        def_qb_hit = sum(.data$def_qb_hits),
+        def_qb_hits = sum(.data$def_qb_hits),
         def_interceptions = sum(.data$def_interceptions),
         def_interception_yards = sum(.data$def_interception_yards),
         def_pass_defended = sum(.data$def_pass_defended),
@@ -594,7 +594,18 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
         def_penalty = sum(.data$def_penalty),
         def_penalty_yards = sum(.data$def_penalty_yards)
       ) %>%
-      dplyr::ungroup()
+      dplyr::ungroup() %>%
+      dplyr::select(
+        "player_id",
+        "player_name",
+        "player_display_name",
+        "games",
+        "position",
+        "position_group",
+        "headshot_url",
+        "team",
+        dplyr::everything()
+      )
   }
 
   player_df
