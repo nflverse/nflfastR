@@ -29,6 +29,7 @@ decoded to the gsis ID format):
 \item{season}{Season if \code{weekly} is \code{TRUE}}
 \item{week}{Week if \code{weekly} is \code{TRUE}}
 \item{season_type}{\code{REG} or \code{POST} if \code{weekly} is \code{TRUE}}
+\item{opponent_team}{The player's opponent team if \code{weekly} is \code{TRUE}}
 \item{completions}{The number of completed passes.}
 \item{attempts}{The number of pass attempts as defined by the NFL.}
 \item{passing_yards}{Yards gained on pass plays.}
