@@ -159,15 +159,15 @@ calculate_series_conversion_rates <- function(pbp,
 
 # Offense + Defense -------------------------------------------------------
 
-  combined <- dplyr::left_join(offense, defense, by = c("season", "team", "week"))
+  combined <- dplyr::full_join(offense, defense, by = c("season", "team", "week"))
 
   if (isFALSE(weekly)){
     combined <- combined %>%
       dplyr::select(-"week") %>%
       dplyr::group_by(.data$season, .data$team) %>%
       dplyr::summarise(
-        dplyr::across(.cols = dplyr::ends_with("_n"), .fns = sum),
-        dplyr::across(.cols = !dplyr::ends_with("_n"), .fns = mean),
+        dplyr::across(.cols = dplyr::ends_with("_n"), .fns = ~ sum(.x, na.rm = TRUE)),
+        dplyr::across(.cols = !dplyr::ends_with("_n"), .fns = ~ mean(.x, na.rm = TRUE)),
         .groups = "drop"
       ) %>%
       dplyr::relocate("def_n", .after = "off_to")
