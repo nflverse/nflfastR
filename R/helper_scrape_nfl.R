@@ -108,6 +108,32 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE, ...) {
 
       plays <- raw_data$data$viewer$gameDetail$plays %>% dplyr::mutate(game_id = as.character(game_id))
 
+      # We have this issue https://github.com/nflverse/nflfastR/issues/309 with 2013 postseason games
+      # where the driveSequenceNumber in the plays df is NA for all plays. That prevents drive information
+      # from being joined.
+      # In this case, we compute our own driveSequenceNumber by incrementing a counter depending on the
+      # value of driveTimeOfPossession.
+      # driveTimeOfPossession will be a constant value during a drive so this should actually be accurate
+      if (all(is.na(plays$driveSequenceNumber))){
+        plays <- plays %>%
+          dplyr::mutate(
+            # First, create a trigger for cumsum
+            drive_trigger = dplyr::case_when(
+              # this is the first play of the first drive
+              is.na(dplyr::lag(driveTimeOfPossession)) & !is.na(driveTimeOfPossession) ~ 1,
+              # if driveTimeOfPossession changes, there is a new drive
+              dplyr::lag(driveTimeOfPossession) != driveTimeOfPossession ~ 1,
+              TRUE ~ 0
+            ),
+            # Now create the drive number by accumulationg triggers
+            driveSequenceNumber = cumsum(drive_trigger),
+            # driveSequenceNumber should be NA on plays where driveTimeOfPossession is NA
+            driveSequenceNumber = ifelse(is.na(driveTimeOfPossession), NA_real_, driveSequenceNumber),
+            # drop the helper
+            drive_trigger = NULL
+          )
+      }
+
       #fill missing posteam info for this
       if (
         ((home_team %in% c("JAC", "JAX") | away_team %in% c("JAC", "JAX")) & season <= 2015) |

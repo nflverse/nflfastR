@@ -6,6 +6,8 @@
 - The function `calculate_player_stats_def()` no longer errors when small subsets of pbp data are missing stats. (#415)
 - The function `calculate_series_conversion_rates()` no longer returns `NA` values if a small subset of pbp data is missing series on offense or defense. (#417)
 - `fixed_drive` now correctly increments on plays where posteam lost a fumble but remains posteam because defteam also lost a fumble during the same play. (#419)
+- nflfastR now fixes missing drive number counts in raw pbp data in order to provide accurate drive information. (#420)
+
 
 # nflfastR 4.5.1
 
