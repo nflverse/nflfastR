@@ -111,7 +111,7 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE, ...) {
       # We have this issue https://github.com/nflverse/nflfastR/issues/309 with 2013 postseason games
       # where the driveSequenceNumber in the plays df is NA for all plays. That prevents drive information
       # from being joined.
-      # In this case, we compute our own driveSequenceNumber buy incrementing a counter depending on the
+      # In this case, we compute our own driveSequenceNumber by incrementing a counter depending on the
       # value of driveTimeOfPossession.
       # driveTimeOfPossession will be a constant value during a drive so this should actually be accurate
       if (all(is.na(plays$driveSequenceNumber))){
