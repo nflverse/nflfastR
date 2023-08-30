@@ -67,44 +67,24 @@ add_drive_results <- function(d) {
       new_drive = dplyr::if_else(
         # this line is to prevent it from overwriting already-defined new drives with NA
         # when there's a timeout on prior line bc if_else is obnoxious like that
-        ( .data$new_drive != 1 | is.na(.data$new_drive) ) &
-
-          # same team has ball after lost fumble on punt
+        (.data$new_drive != 1 | is.na(.data$new_drive)) &
           (
-            (.data$posteam == dplyr::lag(.data$posteam) & dplyr::lag(.data$fumble_lost) == 1 & dplyr::lag(.data$play_type) == "punt" &
-          # but not if the play resulted in a touchdown because otherwise the
-          # following extra point or 2pt conversion will be new drives
+            # same team has ball after lost fumble on punt, pass or rush
+            (.data$posteam == dplyr::lag(.data$posteam) & dplyr::lag(.data$fumble_lost) == 1 & dplyr::lag(.data$play_type) %in% c("punt", "pass", "run") &
+            # but not if the play resulted in a touchdown because otherwise the
+            # following extra point or 2pt conversion will be new drives
             dplyr::lag(.data$touchdown) == 0) |
 
-          # same team has ball after lost fumble on interception
-            (.data$posteam == dplyr::lag(.data$posteam) & dplyr::lag(.data$fumble_lost) == 1 & dplyr::lag(.data$interception) == 1 &
-               # but not if the play resulted in a touchdown because otherwise the
-               # following extra point or 2pt conversion will be new drives
-               dplyr::lag(.data$touchdown) == 0) |
-
-          # same team has ball after lost fumble on punt 2 plays earlier with prior play missing posteam
-          (is.na(dplyr::lag(.data$posteam)) &
-             # posteam is same as posteam 2 plays ago
-              .data$posteam == dplyr::lag(.data$posteam, 2) &
-             # muffed punt 2 plays ago
-             dplyr::lag(.data$fumble_lost, 2) == 1 & dplyr::lag(.data$play_type, 2) == "punt" &
-             # but not if the muff 2 plays ago resulted in a touchdown because otherwise the
-             # following extra point or 2pt conversion will be new drives
-             dplyr::lag(.data$touchdown, 2) == 0) |
-
-            # same team has ball after lost fumble on interception 2 plays earlier with prior play missing posteam
+            # same team has ball after lost fumble on punt, pass or rush 2 plays earlier with prior play missing posteam
             (is.na(dplyr::lag(.data$posteam)) &
-               # posteam is same as posteam 2 plays ago
-               .data$posteam == dplyr::lag(.data$posteam, 2) &
-               # muffed punt 2 plays ago
-               dplyr::lag(.data$fumble_lost, 2) == 1 & dplyr::lag(.data$interception, 2) == 1 &
-               # but not if the lost fumble 2 plays ago resulted in a touchdown because otherwise the
-               # following extra point or 2pt conversion will be new drives
-               dplyr::lag(.data$touchdown, 2) == 0)
-
-          )
-
-        ,
+            # posteam is same as posteam 2 plays ago
+            .data$posteam == dplyr::lag(.data$posteam, 2) &
+            # lost fumble 2 plays ago
+            dplyr::lag(.data$fumble_lost, 2) == 1 & dplyr::lag(.data$play_type, 2) %in% c("punt", "pass", "run") &
+            # but not if the lost fumble 2 plays ago resulted in a touchdown because otherwise the
+            # following extra point or 2pt conversion will be new drives
+            dplyr::lag(.data$touchdown, 2) == 0)
+          ),
         1, .data$new_drive
       ),
       # first observation of a half is also a new drive
