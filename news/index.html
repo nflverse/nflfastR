@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.1.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.1.9005</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -117,6 +117,8 @@
 <li>The function <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> now returns the opponent team when called with argument <code>weekly = TRUE</code> (<a href="https://github.com/nflverse/nflfastR/issues/414" class="external-link">#414</a>)</li>
 <li>The function <code><a href="../reference/calculate_player_stats_def.html">calculate_player_stats_def()</a></code> no longer errors when small subsets of pbp data are missing stats. (<a href="https://github.com/nflverse/nflfastR/issues/415" class="external-link">#415</a>)</li>
 <li>The function <code><a href="../reference/calculate_series_conversion_rates.html">calculate_series_conversion_rates()</a></code> no longer returns <code>NA</code> values if a small subset of pbp data is missing series on offense or defense. (<a href="https://github.com/nflverse/nflfastR/issues/417" class="external-link">#417</a>)</li>
+<li>
+<code>fixed_drive</code> now correctly increments on plays where posteam lost a fumble but remains posteam because defteam also lost a fumble during the same play. (<a href="https://github.com/nflverse/nflfastR/issues/419" class="external-link">#419</a>)</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="4.5.1" id="nflfastr-451">nflfastR 4.5.1<a class="anchor" aria-label="anchor" href="#nflfastr-451"></a></h2><p class="text-muted">CRAN release: 2022-12-22</p>

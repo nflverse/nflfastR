@@ -22,7 +22,7 @@ idea of what's going on when you're helping someone else debug a problem."><meta
     
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.1.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.1.9005</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -162,28 +162,40 @@ in the name should be redacted, default = TRUE</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co"># \dontshow{</span></span></span>
+<span class="r-in"><span><span class="co"># set CRAN mirror to avoid failing checks in weird scenarios</span></span></span>
+<span class="r-in"><span><span class="va">old_ops</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CRAN"</span> <span class="op">=</span> <span class="st">"https://cran.rstudio.com/"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">report</span><span class="op">(</span>recursive <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> You've asked for the packages nfl4th and nflverse which are not installed. </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> They are skipped.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="color: #00BBBB; font-weight: bold;">System Info</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────────</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> • R version 4.3.1 (2023-06-16)   • Running under: Ubuntu 22.04.2 LTS</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="color: #00BBBB; font-weight: bold;">nflverse Packages</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────────</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> • nflreadr (1.3.2.03)    • nflseedR (1.2.0)         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> • nflfastR (4.5.1.9004)  • nflplotR (1.1.0.9006)    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="color: #00BBBB; font-weight: bold;">nflverse Options</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> No options set for nflreadr, nflfastR, nflseedR, and nflplotR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • R version 4.3.1 (2023-06-16) • Running under: Ubuntu 22.04.3 LTS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="color: #00BBBB; font-weight: bold;">Package Status</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────────────────</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • nflreadr (1.3.2.09)    • nflseedR (1.2.0)         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • nflfastR (4.5.1.9005)  • nflplotR (1.1.0.9006)    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="color: #00BBBB; font-weight: bold;">Package Options</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> No options set for above packages</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="color: #00BBBB; font-weight: bold;">Not Installed</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────────────</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • nfl4th   ()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • nflverse ()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────────────────────────────</span></span>
 <span class="r-in"><span><span class="fu">nflverse_sitrep</span><span class="op">(</span>pkg <span class="op">=</span> <span class="st">"nflreadr"</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="color: #00BBBB; font-weight: bold;">System Info</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────────</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> • R version 4.3.1 (2023-06-16)   • Running under: Ubuntu 22.04.2 LTS</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="color: #00BBBB; font-weight: bold;">nflverse Packages</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────────</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> • nflreadr (1.3.2.03)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="color: #00BBBB; font-weight: bold;">nflverse Options</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────────</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> No options set for nflreadr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="color: #00BBBB; font-weight: bold;">nflverse Dependencies</span> <span style="color: #00BBBB;">───────────────────────────────────────────────────────</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • R version 4.3.1 (2023-06-16) • Running under: Ubuntu 22.04.3 LTS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="color: #00BBBB; font-weight: bold;">Package Status</span> <span style="color: #00BBBB;">──────────────────────────────────────────────────────────────</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • nflreadr (1.3.2.09)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="color: #00BBBB; font-weight: bold;">Package Options</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> No options set for above packages</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> <span style="color: #00BBBB; font-weight: bold;">Package Dependencies</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> • cachem (1.0.8)  • data.table (1.14.8)  • memoise  (2.0.1)  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> • cli    (3.6.1)  • fastmap    (1.1.1)   • rappdirs (0.3.3)  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> • curl   (5.0.1)  • glue       (1.6.2)   • rlang    (1.1.1)  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> • curl   (5.0.2)  • glue       (1.6.2)   • rlang    (1.1.1)  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────────────────────────────</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># \dontshow{</span></span></span>
+<span class="r-in"><span><span class="co"># restore old options</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span><span class="va">old_ops</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
