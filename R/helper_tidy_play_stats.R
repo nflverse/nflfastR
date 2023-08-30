@@ -218,6 +218,7 @@ sum_play_stats <- function(play_Id, stats) {
       row$kick_distance <- play_stats$yards[index]
     } else if (stat_id == 32) {
       row$punt_attempt <- 1
+      row$kick_distance <- play_stats$yards[index]
       row$punter_player_id <- play_stats$player.esbId[index]
       row$punter_player_name <- play_stats$player.displayName[index]
     } else if (stat_id == 33) {
@@ -290,10 +291,12 @@ sum_play_stats <- function(play_Id, stats) {
     } else if (stat_id == 43) {
       row$kickoff_in_endzone <- 1
       row$kickoff_attempt <- 1
+      row$kick_distance <- play_stats$yards[index]
       row$kicker_player_id <- play_stats$player.esbId[index]
       row$kicker_player_name <- play_stats$player.displayName[index]
     } else if (stat_id == 44) {
       row$kickoff_attempt <- 1
+      row$kick_distance <- play_stats$yards[index]
       row$kicker_player_id <- play_stats$player.esbId[index]
       row$kicker_player_name <- play_stats$player.displayName[index]
     } else if (stat_id == 45) {
