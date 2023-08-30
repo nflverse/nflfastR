@@ -580,7 +580,21 @@ add_nflscrapr_mutations <- function(pbp) {
       !is.na(.data$qtr)
     ) %>%
     dplyr::ungroup() %>%
-    dplyr::mutate(game_id = as.character(.data$game_id)) %>%
+    dplyr::mutate(
+      game_id = as.character(.data$game_id),
+      # kick distance is NA on kickoffs and punts that result in touchbacks
+      # (unless the kick/punt) was caught between endzones
+      # we use yardline_100 to add it in those cases
+      is_relevant_touchback = as.numeric(is.na(.data$kick_distance) & .data$touchback == 1 & .data$play_type %in% c("punt", "kickoff")),
+      kick_distance = dplyr::case_when(
+        .data$is_relevant_touchback == 1 & .data$kickoff_attempt == 0 ~ yardline_100,
+        # gotta reverse yardline_100 on kickoffs
+        .data$is_relevant_touchback == 1 & .data$kickoff_attempt == 1 ~ 100 - yardline_100,
+        TRUE ~ .data$kick_distance
+      ),
+      # drop helper variable
+      is_relevant_touchback = NULL
+    ) %>%
     fix_scrambles() %>%
     make_model_mutations()
 
