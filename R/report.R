@@ -9,8 +9,18 @@
 #' @inherit nflreadr::nflverse_sitrep
 #' @examples
 #' \donttest{
+#' \dontshow{
+#' # set CRAN mirror to avoid failing checks in weird scenarios
+#' old_ops <- options(repos = c("CRAN" = "https://cran.rstudio.com/"))
+#' }
+#'
 #' report(recursive = FALSE)
 #' nflverse_sitrep(pkg = "nflreadr", recursive = TRUE)
+#'
+#' \dontshow{
+#' # restore old options
+#' options(old_ops)
+#' }
 #' }
 #' @export
 report <- function(...) nflreadr::nflverse_sitrep(...)
