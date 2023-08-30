@@ -55,57 +55,6 @@ clean_pbp <- function(pbp, ...) {
   } else {
     user_message("Cleaning up play-by-play...", "todo")
 
-    if(any(pbp$season >= 2022)){
-
-      # user_message("Loading pbp player ID patch files", "info")
-
-      patch_seasons <- unique(pbp$season[pbp$season >= 2022])
-
-      patch_ids <- nflreadr::load_from_url(
-        glue::glue("https://github.com/nflverse/nflverse-data/releases/download/misc/pbp_patch_ids_{patch_seasons}.rds")
-      ) %>% suppressMessages()
-
-      patchable_ids <- pbp  %>%
-        dplyr::select(
-          dplyr::any_of(c(
-            "game_id", "play_id",
-            "passer_id", "passer_name" = "passer",
-            "receiver_id", "receiver_name" = "receiver",
-            "rusher_id", "rusher_name" = "rusher",
-            "fantasy_id", "fantasy_name" = "fantasy",
-            "fantasy_player_name"
-          )),
-          dplyr::matches("player_id|player_name")
-        )  %>%
-        tidyr::pivot_longer(
-          cols = -c("game_id","play_id"),
-          names_to = c("stat",".value"),
-          names_pattern = c("(.+)_(id|name)"),
-          values_drop_na = TRUE
-        )  %>%
-        dplyr::filter(is.na(.data$id)) %>%
-        dplyr::left_join(patch_ids, by = c("game_id","play_id","name"))  %>%
-        dplyr::mutate(
-          id = dplyr::coalesce(.data$id,.data$gsis_id),
-          gsis_id = NULL,
-          club_code = NULL,
-          name = NULL
-        )  %>%
-        tidyr::pivot_wider(
-          names_from = "stat",
-          values_from = "id",
-          names_glue = "{stat}_id"
-        )
-
-      if(nrow(patchable_ids) > 0){
-        pbp <- tibble::tibble(pbp)  %>%
-          dplyr::rows_patch(patchable_ids, by = c("game_id","play_id"))
-      }
-
-      # cli::cli_alert_success("{my_time()} | Patched {nrow(patchable_ids)} missing gsis_id field{?s}")
-
-    }
-
     # drop existing values of clean_pbp
     pbp <- pbp %>% dplyr::select(-tidyselect::any_of(drop.cols))
 
