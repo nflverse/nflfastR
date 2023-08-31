@@ -206,6 +206,7 @@ sum_play_stats <- function(play_Id, stats) {
       row$punter_player_name <- play_stats$player.displayName[index]
       row$kick_distance <- play_stats$yards[index]
     } else if (stat_id == 30) {
+      # yards always zero for stat_id 30 (punt inside 20) so we don't write kick_distance here
       row$punt_inside_twenty <- 1
       row$punt_attempt <- 1
       row$punter_player_id <- play_stats$player.esbId[index]
@@ -284,6 +285,7 @@ sum_play_stats <- function(play_Id, stats) {
       row$kicker_player_name <- play_stats$player.displayName[index]
       row$kick_distance <- play_stats$yards[index]
     } else if (stat_id == 42) {
+      # yards always zero for stat_id 42 so we don't write kick_distance here
       row$kickoff_inside_twenty <- 1
       row$kickoff_attempt <- 1
       row$kicker_player_id <- play_stats$player.esbId[index]
