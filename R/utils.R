@@ -138,7 +138,7 @@ check_stat_ids <- function(seasons,
   furrr::future_map_dfr(games, function(id, stats, p, dir, skip_local){
     raw_data <- load_raw_game(id, dir = dir, skip_local = skip_local)
     plays <- janitor::clean_names(raw_data$data$viewer$gameDetail$plays) %>%
-      dplyr::select("play_id", "play_stats", "desc" = play_description_with_jersey_numbers)
+      dplyr::select("play_id", "play_stats", "desc" = .data$play_description_with_jersey_numbers)
 
     p(sprintf("ID=%s", as.character(id)))
 

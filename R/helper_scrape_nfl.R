@@ -81,15 +81,15 @@ get_pbp_nfl <- function(id,
         # First, create a trigger for cumsum
         drive_trigger = dplyr::case_when(
           # this is the first play of the first drive
-          is.na(dplyr::lag(driveTimeOfPossession)) & !is.na(driveTimeOfPossession) ~ 1,
+          is.na(dplyr::lag(.data$driveTimeOfPossession)) & !is.na(.data$driveTimeOfPossession) ~ 1,
           # if driveTimeOfPossession changes, there is a new drive
-          dplyr::lag(driveTimeOfPossession) != driveTimeOfPossession ~ 1,
+          dplyr::lag(.data$driveTimeOfPossession) != .data$driveTimeOfPossession ~ 1,
           TRUE ~ 0
         ),
         # Now create the drive number by accumulationg triggers
-        driveSequenceNumber = cumsum(drive_trigger),
+        driveSequenceNumber = cumsum(.data$drive_trigger),
         # driveSequenceNumber should be NA on plays where driveTimeOfPossession is NA
-        driveSequenceNumber = ifelse(is.na(driveTimeOfPossession), NA_real_, driveSequenceNumber),
+        driveSequenceNumber = ifelse(is.na(.data$driveTimeOfPossession), NA_real_, .data$driveSequenceNumber),
         # drop the helper
         drive_trigger = NULL
       )
