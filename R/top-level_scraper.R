@@ -425,9 +425,9 @@ fast_scraper <- function(game_ids,
     p <- progressr::progressor(along = game_ids)
     pbp <- furrr::future_map_dfr(game_ids, function(x, p, ...) {
       if (substr(x, 1, 4) < 2001) {
-        plays <- get_pbp_gc(x, ...)
+        plays <- please_work(get_pbp_gc)(x, ...)
       } else {
-        plays <- get_pbp_nfl(x, ...)
+        plays <- please_work(get_pbp_nfl)(x, ...)
       }
       p(sprintf("ID=%s", as.character(x)))
       return(plays)
