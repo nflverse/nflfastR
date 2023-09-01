@@ -187,3 +187,7 @@ make_nflverse_data <- function(data, type = c("play by play")){
   class(data) <- c("nflverse_data", "tbl_df", "tbl", "data.table", "data.frame")
   data
 }
+
+str_split_and_extract <- function(string, pattern, i){
+  split_list <- stringr::str_split(string, pattern, simplify = TRUE, n = i + 1)
+  split_list[, i]
