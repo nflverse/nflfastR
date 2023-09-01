@@ -21,6 +21,13 @@ user_message <- function(x, type) {
   }
 }
 
+cli_message <- function(msg,
+                        ...,
+                        .cli_fct = cli::cli_alert_info,
+                        .envir = parent.frame()) {
+  .cli_fct(c(my_time(), " | ", msg), ..., .envir = .envir)
+}
+
 my_time <- function() strftime(Sys.time(), format = "%H:%M:%S")
 
 # custom mode function from https://stackoverflow.com/questions/2547402/is-there-a-built-in-function-for-finding-the-mode/8189441
