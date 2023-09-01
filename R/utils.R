@@ -204,29 +204,30 @@ please_work <- function(.f, otherwise = data.frame(), quiet = FALSE){
   }
 }
 
-
+# THIS IS CALLED FROM INSIDE get_pbp_gc AND get_pbp_nfl
+# MODIFY WITH CAUTION
 fetch_raw <- function(game_id,
                       dir = getOption("nflfastR.raw_directory", default = NULL)){
 
-  season <- substr(id, 1, 4)
+  season <- substr(game_id, 1, 4)
 
   if (is.null(dir)) {
 
     to_load <- file.path(
       "https://raw.githubusercontent.com/nflverse/nflfastR-raw/master/raw",
       season,
-      paste0(id, ".rds"),
+      paste0(game_id, ".rds"),
       fsep = "/"
     )
 
     fetched <- curl::curl_fetch_memory(to_load)
 
-    if (fetched$status_code == 404 & maybe_valid(id)) {
-      cli::cli_abort("The requested GameID {.val {id}} is not loaded yet, please try again later!")
+    if (fetched$status_code == 404 & maybe_valid(game_id)) {
+      cli::cli_abort("The requested GameID {.val {game_id}} is not loaded yet, please try again later!")
     } else if (fetched$status_code == 500) {
       cli::cli_abort("The data hosting servers are down, please try again later!")
     } else if (fetched$status_code == 404) {
-      cli::cli_abort("The requested GameID {.val {id}} is invalid!")
+      cli::cli_abort("The requested GameID {.val {game_id}} is invalid!")
     }
 
     out <- read_raw_rds(fetched$content)
@@ -236,7 +237,7 @@ fetch_raw <- function(game_id,
     local_file <- file.path(
       dir,
       season,
-      paste0(id, ".rds")
+      paste0(game_id, ".rds")
     )
 
     if (!file.exists(local_file)) {
