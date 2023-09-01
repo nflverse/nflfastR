@@ -223,14 +223,8 @@ get_pbp_nfl <- function(id, dir = NULL, qs = FALSE, ...) {
         dplyr::mutate(
           posteam_id = .data$posteam,
           # have to do all this nonsense to make goal_to_go and yardline_side for compatibility with later functions
-          yardline_side = furrr::future_map_chr(
-            stringr::str_split(.data$yardline, " "),
-            function(x) x[1]
-          ),
-          yardline_number = as.numeric(furrr::future_map_chr(
-            stringr::str_split(.data$yardline, " "),
-            function(x) x[2]
-          )),
+          yardline_side = str_split_and_extract(.data$yardline, " ", 1),
+          yardline_number = as.numeric(str_split_and_extract(.data$yardline, " ", 2)),
           quarter_end = dplyr::if_else(stringr::str_detect(.data$play_description, "END QUARTER"), 1, 0),
           game_year = as.integer(season),
           season = as.integer(season),
