@@ -63,8 +63,8 @@ qs_from_url <- function(url) qs::qdeserialize(curl::curl_fetch_memory(url)$conte
 read_raw_rds <- function(raw) {
   con <- gzcon(rawConnection(raw))
   ret <- readRDS(con)
-  close(con)
-  return(ret)
+  on.exit(close(con))
+  ret
 }
 
 # helper to make sure the output of the
@@ -189,4 +189,62 @@ make_nflverse_data <- function(data, type = c("play by play")){
 str_split_and_extract <- function(string, pattern, i){
   split_list <- stringr::str_split(string, pattern, simplify = TRUE, n = i + 1)
   split_list[, i]
+}
+
+# slightly modified version of purrr::possibly
+please_work <- function(.f, otherwise = data.frame(), quiet = FALSE){
+  function(...){
+    tryCatch(
+      expr = .f(...),
+      error = function(e){
+        if(isFALSE(quiet)) cli::cli_alert_warning(conditionMessage(e))
+        otherwise
+      }
+    )
+  }
+}
+
+
+fetch_raw <- function(game_id,
+                      dir = getOption("nflfastR.raw_directory", default = NULL)){
+
+  season <- substr(id, 1, 4)
+
+  if (is.null(dir)) {
+
+    to_load <- file.path(
+      "https://raw.githubusercontent.com/nflverse/nflfastR-raw/master/raw",
+      season,
+      paste0(id, ".rds"),
+      fsep = "/"
+    )
+
+    fetched <- curl::curl_fetch_memory(to_load)
+
+    if (fetched$status_code == 404 & maybe_valid(id)) {
+      cli::cli_abort("The requested GameID {.val {id}} is not loaded yet, please try again later!")
+    } else if (fetched$status_code == 500) {
+      cli::cli_abort("The data hosting servers are down, please try again later!")
+    } else if (fetched$status_code == 404) {
+      cli::cli_abort("The requested GameID {.val {id}} is invalid!")
+    }
+
+    out <- read_raw_rds(fetched$content)
+
+  } else {
+    # build path to locally stored game files
+    local_file <- file.path(
+      dir,
+      season,
+      paste0(id, ".rds")
+    )
+
+    if (!file.exists(local_file)) {
+      cli::cli_abort("File {.path {local_file}} doesn't exist!")
+    }
+
+    out <- readRDS(local_file)
+  }
+
+  out
 }
