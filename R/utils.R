@@ -21,6 +21,13 @@ user_message <- function(x, type) {
   }
 }
 
+cli_message <- function(msg,
+                        ...,
+                        .cli_fct = cli::cli_alert_info,
+                        .envir = parent.frame()) {
+  .cli_fct(c(my_time(), " | ", msg), ..., .envir = .envir)
+}
+
 my_time <- function() strftime(Sys.time(), format = "%H:%M:%S")
 
 # custom mode function from https://stackoverflow.com/questions/2547402/is-there-a-built-in-function-for-finding-the-mode/8189441
@@ -56,8 +63,8 @@ qs_from_url <- function(url) qs::qdeserialize(curl::curl_fetch_memory(url)$conte
 read_raw_rds <- function(raw) {
   con <- gzcon(rawConnection(raw))
   ret <- readRDS(con)
-  close(con)
-  return(ret)
+  on.exit(close(con))
+  ret
 }
 
 # helper to make sure the output of the
@@ -76,46 +83,50 @@ maybe_valid <- function(id) {
 is_installed <- function(pkg) requireNamespace(pkg, quietly = TRUE)
 
 # load raw game files esp. for debugging
-load_raw_game <- function(game_id, qs = FALSE){
+load_raw_game <- function(game_id,
+                          dir = getOption("nflfastR.raw_directory", default = NULL),
+                          skip_local = FALSE){
 
-  if (isTRUE(qs) && !is_installed("qs")) {
-    cli::cli_abort("Package {.val qs} required for argument {.val qs = TRUE}. Please install it.")
-  }
+  # game_id <- "2022_19_LAC_JAX"
 
   season <- substr(game_id, 1, 4)
-  path <- "https://raw.githubusercontent.com/guga31bb/nflfastR-raw/master/raw"
 
-  if(isFALSE(qs)) fetched <- curl::curl_fetch_memory(glue::glue("{path}/{season}/{game_id}.rds"))
+  local_file <- file.path(
+    dir,
+    season,
+    paste0(game_id, ".rds")
+  )
 
-  if(isTRUE(qs)) fetched <- curl::curl_fetch_memory(glue::glue("{path}/{season}/{game_id}.qs"))
-
-  if (fetched$status_code == 404 & maybe_valid(game_id)) {
-    cli::cli_abort("The requested GameID {game_id} is not loaded yet, please try again later!")
-  } else if (fetched$status_code == 500) {
-    cli::cli_abort("The data hosting servers are down, please try again later!")
-  } else if (fetched$status_code == 404) {
-    cli::cli_abort("The requested GameID {game_id} is invalid!")
+  if (length(local_file) == 1 && file.exists(local_file) && isFALSE(skip_local)) {
+    # cli::cli_progress_step("Load locally from {.path {local_file}}")
+    raw <- readRDS(local_file)
+  } else {
+    to_load <- file.path(
+      "https://raw.githubusercontent.com/nflverse/nflfastR-raw/master/raw",
+      season,
+      paste0(game_id, ".rds"),
+      fsep = "/"
+    )
+    raw <- nflreadr::rds_from_url(to_load)
   }
 
-  if(isFALSE(qs)) raw_data <- read_raw_rds(fetched$content)
-
-  if(isTRUE(qs)) raw_data <- qs::qdeserialize(fetched$content)
-
-  return(raw_data)
+  raw
 
 }
 
 # Identify sessions with sequential future resolving
 is_sequential <- function() inherits(future::plan(), "sequential")
 
-check_stat_ids <- function(seasons, stat_ids){
+check_stat_ids <- function(seasons,
+                           stat_ids = 1:500,
+                           dir = getOption("nflfastR.raw_directory", default = NULL),
+                           skip_local = FALSE){
 
   if (is_sequential()) {
-    cli::cli_alert_info(c(
-        "It is recommended to use parallel processing when using this function.",
-        "Please consider running {.code future::plan(\"multisession\")}!",
-        "Will go on sequentially..."
-    ))
+    cli::cli_alert_info(
+        "It is recommended to use parallel processing when using this function. \\
+        Please consider running {.code future::plan(\"multisession\")}! \\
+        Will go on sequentially...", wrap = TRUE)
   }
 
   games <- nflreadr::load_schedules() %>%
@@ -124,10 +135,10 @@ check_stat_ids <- function(seasons, stat_ids){
 
   p <- progressr::progressor(along = games)
 
-  furrr::future_map_dfr(games, function(id, stats, p){
-    raw_data <- load_raw_game(id)
+  furrr::future_map_dfr(games, function(id, stats, p, dir, skip_local){
+    raw_data <- load_raw_game(id, dir = dir, skip_local = skip_local)
     plays <- janitor::clean_names(raw_data$data$viewer$gameDetail$plays) %>%
-      dplyr::select(.data$play_id, .data$play_stats)
+      dplyr::select("play_id", "play_stats", "desc" = .data$play_description_with_jersey_numbers)
 
     p(sprintf("ID=%s", as.character(id)))
 
@@ -142,23 +153,10 @@ check_stat_ids <- function(seasons, stat_ids){
         "yards",
         "team_abbr" = "team_abbreviation",
         "player_name",
-        "gsis_player_id"
+        "gsis_player_id",
+        "desc"
       )
-  }, stat_ids, p)
-}
-
-# compute most recent season
-most_recent_season <- function(roster = FALSE) {
-  today <- Sys.Date()
-  current_year <- as.integer(format(today, format = "%Y"))
-  current_month <- as.integer(format(today, format = "%m"))
-
-  if ((isFALSE(roster) && current_month >= 9) ||
-      (isTRUE(roster) && current_month >= 3)) {
-    return(current_year)
-  }
-
-  return(current_year - 1)
+  }, stats = stat_ids, p = p, dir = dir, skip_local = skip_local)
 }
 
 # take a time string of the format "MM:SS" and convert it to seconds
@@ -186,4 +184,68 @@ make_nflverse_data <- function(data, type = c("play by play")){
   attr(data, "nflfastR_version") <- packageVersion("nflfastR")
   class(data) <- c("nflverse_data", "tbl_df", "tbl", "data.table", "data.frame")
   data
+}
+
+str_split_and_extract <- function(string, pattern, i){
+  split_list <- stringr::str_split(string, pattern, simplify = TRUE, n = i + 1)
+  split_list[, i]
+}
+
+# slightly modified version of purrr::possibly
+please_work <- function(.f, otherwise = data.frame(), quiet = FALSE){
+  function(...){
+    tryCatch(
+      expr = .f(...),
+      error = function(e){
+        if(isFALSE(quiet)) cli::cli_alert_warning(conditionMessage(e))
+        otherwise
+      }
+    )
+  }
+}
+
+# THIS IS CALLED FROM INSIDE get_pbp_gc AND get_pbp_nfl
+# MODIFY WITH CAUTION
+fetch_raw <- function(game_id,
+                      dir = getOption("nflfastR.raw_directory", default = NULL)){
+
+  season <- substr(game_id, 1, 4)
+
+  if (is.null(dir)) {
+
+    to_load <- file.path(
+      "https://raw.githubusercontent.com/nflverse/nflfastR-raw/master/raw",
+      season,
+      paste0(game_id, ".rds"),
+      fsep = "/"
+    )
+
+    fetched <- curl::curl_fetch_memory(to_load)
+
+    if (fetched$status_code == 404 & maybe_valid(game_id)) {
+      cli::cli_abort("The requested GameID {.val {game_id}} is not loaded yet, please try again later!")
+    } else if (fetched$status_code == 500) {
+      cli::cli_abort("The data hosting servers are down, please try again later!")
+    } else if (fetched$status_code == 404) {
+      cli::cli_abort("The requested GameID {.val {game_id}} is invalid!")
+    }
+
+    out <- read_raw_rds(fetched$content)
+
+  } else {
+    # build path to locally stored game files
+    local_file <- file.path(
+      dir,
+      season,
+      paste0(game_id, ".rds")
+    )
+
+    if (!file.exists(local_file)) {
+      cli::cli_abort("File {.path {local_file}} doesn't exist!")
+    }
+
+    out <- readRDS(local_file)
+  }
+
+  out
 }

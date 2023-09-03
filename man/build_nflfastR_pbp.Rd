@@ -4,11 +4,21 @@
 \alias{build_nflfastR_pbp}
 \title{Build a Complete nflfastR Data Set}
 \usage{
-build_nflfastR_pbp(game_ids, ..., decode = TRUE, rules = TRUE)
+build_nflfastR_pbp(
+  game_ids,
+  dir = getOption("nflfastR.raw_directory", default = NULL),
+  ...,
+  decode = TRUE,
+  rules = TRUE
+)
 }
 \arguments{
 \item{game_ids}{Vector of character ids or a data frame including the variable
 \code{game_id} (see details for further information).}
+
+\item{dir}{Path to local directory (defaults to option "nflfastR.raw_directory")
+where nflfastR searches for raw game play-by-play data.
+See \code{\link[=save_raw_pbp]{save_raw_pbp()}} for additional information.}
 
 \item{...}{Additional arguments passed to the scraping functions (for internal use)}
 
