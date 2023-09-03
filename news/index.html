@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.1.9008</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.1.9009</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -121,6 +121,9 @@
 <code>fixed_drive</code> now correctly increments on plays where posteam lost a fumble but remains posteam because defteam also lost a fumble during the same play. (<a href="https://github.com/nflverse/nflfastR/issues/419" class="external-link">#419</a>)</li>
 <li>nflfastR now fixes missing drive number counts in raw pbp data in order to provide accurate drive information. (<a href="https://github.com/nflverse/nflfastR/issues/420" class="external-link">#420</a>)</li>
 <li>nflfastR now returns correct <code>kick_distance</code> on all punts and kickoffs. (<a href="https://github.com/nflverse/nflfastR/issues/422" class="external-link">#422</a>)</li>
+<li>nflfastR now fully supports loading raw pbp data from local file system. The best way to use this feature is to set <code>options("nflfastR.raw_directory" = {"your/local/directory"})</code>. Alternatively, both <code><a href="../reference/build_nflfastR_pbp.html">build_nflfastR_pbp()</a></code> and <code><a href="../reference/fast_scraper.html">fast_scraper()</a></code> support the argument <code>dir</code> which defaults to the above option. (<a href="https://github.com/nflverse/nflfastR/issues/423" class="external-link">#423</a>)</li>
+<li>Added the new function <code><a href="../reference/save_raw_pbp.html">save_raw_pbp()</a></code> which efficiently downloads raw play-by-play data and saves it to the local file system. This serves as a helper to setup the system for faster play-by-play parsing via the above functionality. (<a href="https://github.com/nflverse/nflfastR/issues/423" class="external-link">#423</a>)</li>
+<li>Added the new function <code><a href="../reference/missing_raw_pbp.html">missing_raw_pbp()</a></code> that computes a vector of game IDs missing in the local raw play-by-play directory. (<a href="https://github.com/nflverse/nflfastR/issues/423" class="external-link">#423</a>)</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="4.5.1" id="nflfastr-451">nflfastR 4.5.1<a class="anchor" aria-label="anchor" href="#nflfastr-451"></a></h2><p class="text-muted">CRAN release: 2022-12-22</p>

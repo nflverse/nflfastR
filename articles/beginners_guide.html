@@ -46,7 +46,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.1.9008</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.1.9009</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -725,7 +725,7 @@ already loaded the package, it’s ready to use.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://nflreadr.nflverse.com/reference/load_teams.html" class="external-link">load_teams</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse team graphics</span> ──────────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2023-08-31 12:40:01 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2023-09-03 19:20:34 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 16</span></span></span>
 <span><span class="co">#&gt;    team_abbr team_name      team_id team_nick team_conf team_division team_color</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span></span>
@@ -927,7 +927,7 @@ overwhelming).</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">games</span> <span class="op">&lt;-</span> <span class="fu">nflreadr</span><span class="fu">::</span><span class="fu"><a href="https://nflreadr.nflverse.com/reference/load_schedules.html" class="external-link">load_schedules</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">games</span><span class="op">)</span></span>
-<span><span class="co">#&gt; nflvrs_d [6,693 × 45] (S3: nflverse_data/tbl_df/tbl/data.table/data.frame)</span></span>
+<span><span class="co">#&gt; nflvrs_d [6,693 × 46] (S3: nflverse_data/tbl_df/tbl/data.table/data.frame)</span></span>
 <span><span class="co">#&gt;  $ game_id         : chr [1:6693] "1999_01_MIN_ATL" "1999_01_KC_CHI" "1999_01_PIT_CLE" "1999_01_OAK_GB" ...</span></span>
 <span><span class="co">#&gt;  $ season          : int [1:6693] 1999 1999 1999 1999 1999 1999 1999 1999 1999 1999 ...</span></span>
 <span><span class="co">#&gt;  $ game_type       : chr [1:6693] "REG" "REG" "REG" "REG" ...</span></span>
@@ -949,6 +949,7 @@ overwhelming).</p>
 <span><span class="co">#&gt;  $ pfr             : chr [1:6693] "199909120atl" "199909120chi" "199909120cle" "199909120gnb" ...</span></span>
 <span><span class="co">#&gt;  $ pff             : int [1:6693] NA NA NA NA NA NA NA NA NA NA ...</span></span>
 <span><span class="co">#&gt;  $ espn            : chr [1:6693] "190912001" "190912003" "190912005" "190912009" ...</span></span>
+<span><span class="co">#&gt;  $ ftn             : int [1:6693] NA NA NA NA NA NA NA NA NA NA ...</span></span>
 <span><span class="co">#&gt;  $ away_rest       : int [1:6693] 7 7 7 7 7 7 7 7 7 7 ...</span></span>
 <span><span class="co">#&gt;  $ home_rest       : int [1:6693] 7 7 7 7 7 7 7 7 7 7 ...</span></span>
 <span><span class="co">#&gt;  $ away_moneyline  : int [1:6693] NA NA NA NA NA NA NA NA NA NA ...</span></span>
@@ -974,7 +975,7 @@ overwhelming).</p>
 <span><span class="co">#&gt;  $ stadium_id      : chr [1:6693] "ATL00" "CHI98" "CLE00" "GNB00" ...</span></span>
 <span><span class="co">#&gt;  $ stadium         : chr [1:6693] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...</span></span>
 <span><span class="co">#&gt;  - attr(*, "nflverse_type")= chr "games and schedules"</span></span>
-<span><span class="co">#&gt;  - attr(*, "nflverse_timestamp")= POSIXct[1:1], format: "2023-08-31 12:40:35"</span></span></code></pre></div>
+<span><span class="co">#&gt;  - attr(*, "nflverse_timestamp")= POSIXct[1:1], format: "2023-09-03 19:21:12"</span></span></code></pre></div>
 <p>To start, we want to create a dataframe where each row is a
 team-season observation, listing how many games they won. There are
 multiple ways to do this, but I’m going to just take the home and away
@@ -987,7 +988,7 @@ results and bind together. As an example, here’s what the
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>team <span class="op">=</span> <span class="va">home_team</span><span class="op">)</span></span>
 <span><span class="va">home</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2023-08-31 12:40:35 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2023-09-03 19:21:12 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 4</span></span></span>
 <span><span class="co">#&gt;   season  week team  result</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
@@ -1006,7 +1007,7 @@ results and bind together. As an example, here’s what the
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>result <span class="op">=</span> <span class="op">-</span><span class="va">result</span><span class="op">)</span></span>
 <span><span class="va">away</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2023-08-31 12:40:35 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2023-09-03 19:21:12 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 4</span></span></span>
 <span><span class="co">#&gt;   season  week team  result</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
@@ -1031,7 +1032,7 @@ the perspective of the home team. Now let’s make a columns called
 <span></span>
 <span><span class="va">results</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op">==</span> <span class="fl">2019</span> <span class="op">&amp;</span> <span class="va">team</span> <span class="op">==</span> <span class="st">'SEA'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2023-08-31 12:40:35 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2023-09-03 19:21:12 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 16 × 5</span></span></span>
 <span><span class="co">#&gt;    season  week team  result   win</span></span>
 <span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>

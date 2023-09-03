@@ -91,10 +91,16 @@
     <loc>https://www.nflfastr.com/reference/load_player_stats.html</loc>
   </url>
   <url>
+    <loc>https://www.nflfastr.com/reference/missing_raw_pbp.html</loc>
+  </url>
+  <url>
     <loc>https://www.nflfastr.com/reference/nflfastR-package.html</loc>
   </url>
   <url>
     <loc>https://www.nflfastr.com/reference/report.html</loc>
+  </url>
+  <url>
+    <loc>https://www.nflfastr.com/reference/save_raw_pbp.html</loc>
   </url>
   <url>
     <loc>https://www.nflfastr.com/reference/stat_ids.html</loc>
