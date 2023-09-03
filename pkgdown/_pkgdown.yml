@@ -128,6 +128,8 @@ reference:
       - load_player_stats
   - title: Utility Functions
     contents:
+      - save_raw_pbp
+      - missing_raw_pbp
       - calculate_expected_points
       - calculate_win_probability
       - calculate_player_stats
