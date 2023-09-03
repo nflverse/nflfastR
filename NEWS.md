@@ -8,6 +8,9 @@
 - `fixed_drive` now correctly increments on plays where posteam lost a fumble but remains posteam because defteam also lost a fumble during the same play. (#419)
 - nflfastR now fixes missing drive number counts in raw pbp data in order to provide accurate drive information. (#420)
 - nflfastR now returns correct `kick_distance` on all punts and kickoffs. (#422)
+- nflfastR now fully supports loading raw pbp data from local file system. The best way to use this feature is to set `options("nflfastR.raw_directory" = {"your/local/directory"})`. Alternatively, both `build_nflfastR_pbp()` and `fast_scraper()` support the argument `dir` which defaults to the above option. (#423)
+- Added the new function `save_raw_pbp()` which efficiently downloads raw play-by-play data and saves it to the local file system. This serves as a helper to setup the system for faster play-by-play parsing via the above functionality. (#423)
+- Added the new function `missing_raw_pbp()` that computes a vector of game IDs missing in the local raw play-by-play directory. (#423)
 
 
 # nflfastR 4.5.1
