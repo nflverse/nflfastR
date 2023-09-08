@@ -67,16 +67,22 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
         ),
         decode_ids
       )
-  } else if (any(season >= 9999)) {
-    # this isn't necessary now, but keeping this here in case the ID system changes
-
+  } else if (any(season >= 2023)) {
     # need newer version of nflreadr to use load_players
-    rlang::check_installed("nflreadr (>= 1.3.0)", "to decode 2022ff player IDs.")
+    rlang::check_installed("nflreadr (>= 1.3.0)", "to decode 2023ff player IDs.")
 
     players <- nflreadr::load_players()
 
+    extract_elias <- function(smart_id){
+      name_abbr <- gsisdecoder::decode_ids(smart_id) %>% substr(1,3)
+      id_no <- stringr::str_remove_all(smart_id, "-") %>%
+        stringr::str_sub(11, 16)
+      elias_id <- paste0(name_abbr, id_no)
+      elias_id
+    }
+
     id_vector <- players$gsis_id
-    names(id_vector) <- players$smart_id
+    names(id_vector) <- players$esb_id
 
     ret <- pbp %>%
       dplyr::mutate_at(
@@ -88,7 +94,10 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
           chars <- nchar(id)
           dplyr::case_when(
             is.na(chars) ~ NA_character_,
-            chars == 36 ~ id_vec[id],
+            # this means it's gsis ID. 30 30 2d 30 30 translates to 00-00
+            stringr::str_sub(id, 5, 16) == "3030-2d30-30" ~ gsisdecoder::decode_ids(id),
+            # if it's not gsis, it is likely elias. We drop names to avoid confusion
+            nchar(id) == 36 ~ unname(id_vec[extract_elias(id)]),
             TRUE ~ id
           )
         }
