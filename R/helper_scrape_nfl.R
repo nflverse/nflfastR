@@ -287,6 +287,11 @@ get_pbp_nfl <- function(id,
     dplyr::mutate_if(
       .predicate = is.character,
       .funs = ~dplyr::na_if(.x, "")
+    ) %>%
+    # Data in 2023 pbp introduced separate "plays" for TV timeouts and two minute warnings
+    # These mess up some of our logic. Since they are useless, we remove them here
+    dplyr::filter(
+      !(is.na(.data$timeout_team) & stringr::str_detect(tolower(.data$play_description), "timeout at|two-minute"))
     )
 
   # fix for games where home_team == away_team and fields are messed up
