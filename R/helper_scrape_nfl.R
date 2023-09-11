@@ -391,6 +391,7 @@ fix_posteams <- function(pbp){
       dplyr::mutate(
         parsed_posteam = stringr::str_extract(.data$pre_play_by_play, posteam_regex) %>% stringr::str_trim(),
         posteam = dplyr::case_when(
+          stringr::str_detect(.data$play_description, "^Timeout ") ~ NA_character_,
           is.na(.data$parsed_posteam) ~ .data$posteam,
           .data$play_description == "GAME" ~ .data$posteam,
           TRUE ~ .data$parsed_posteam
