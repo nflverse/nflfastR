@@ -384,12 +384,12 @@ fix_posteams <- function(pbp){
   if (any(pbp$season >= 2023) && ("pre_play_by_play" %in% names(pbp))){
     # Let's be as explicit as possible about what we want to extract from the string
     # It's really only the first valid team abbreviation followed by a blank space
-    valid_team_abbrs <- paste(nflfastR::teams_colors_logos$team_abbr, collapse = "|")
+    valid_team_abbrs <- paste(nflfastR::teams_colors_logos$team_abbr, collapse = " |")
     posteam_regex <- paste0("^", valid_team_abbrs, "(?=[:space:])")
 
     pbp <- pbp %>%
       dplyr::mutate(
-        parsed_posteam = stringr::str_extract(.data$pre_play_by_play, posteam_regex),
+        parsed_posteam = stringr::str_extract(.data$pre_play_by_play, posteam_regex) %>% stringr::str_trim(),
         posteam = dplyr::case_when(
           is.na(.data$parsed_posteam) ~ .data$posteam,
           .data$play_description == "GAME" ~ .data$posteam,
