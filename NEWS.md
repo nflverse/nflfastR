@@ -12,6 +12,7 @@
 - Added the new function `save_raw_pbp()` which efficiently downloads raw play-by-play data and saves it to the local file system. This serves as a helper to setup the system for faster play-by-play parsing via the above functionality. (#423)
 - Added the new function `missing_raw_pbp()` that computes a vector of game IDs missing in the local raw play-by-play directory. (#423)
 - Decode player IDs in 2023 pbp. (#425)
+- Drop the pseudo plays TV Timeout and Two-Minute Warning. (#426)
 
 
 # nflfastR 4.5.1
