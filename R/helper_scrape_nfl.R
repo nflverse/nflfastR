@@ -287,7 +287,8 @@ get_pbp_nfl <- function(id,
     dplyr::mutate_if(
       .predicate = is.character,
       .funs = ~dplyr::na_if(.x, "")
-    )
+    ) %>%
+    fix_posteams()
 
   # fix for games where home_team == away_team and fields are messed up
   if (bad_game == 1) {
@@ -367,5 +368,33 @@ fix_bad_games <- function(pbp) {
 
 }
 
+fix_posteams <- function(pbp){
+  # 2023 pbp introduces two new problems
+  # 1. Definition of posteam on kick offs changed to receiving team. That's our
+  #    definition and we swap teams later.
+  # 2. Posteam doesn't change on the PAT after defensive TD
+  #
+  # We adjust both things here, but only for 2023ff to avoid backwards compatibility problems
+  # We need the variable pre_play_by_play which usually looks like "KC  1-10  NYJ 40"
+  if (any(pbp$season >= 2023) && ("pre_play_by_play" %in% names(pbp))){
+    # Let's be as explicit as possible about what we want to extract from the string
+    # It's really only the first valid team abbreviation followed by a blank space
+    valid_team_abbrs <- paste(nflfastR::teams_colors_logos$team_abbr, collapse = "|")
+    posteam_regex <- paste0("^", valid_team_abbrs, "(?=[:space:])")
 
+    pbp <- pbp %>%
+      dplyr::mutate(
+        parsed_posteam = stringr::str_extract(.data$pre_play_by_play, posteam_regex),
+        posteam = dplyr::case_when(
+          is.na(.data$parsed_posteam) ~ .data$posteam,
+          .data$play_description == "GAME" ~ .data$posteam,
+          TRUE ~ .data$parsed_posteam
+        ),
+        # drop helper
+        parsed_posteam = NULL
+      )
+  }
+
+  pbp
+}
 
