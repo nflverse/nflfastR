@@ -393,7 +393,7 @@ fix_posteams <- function(pbp){
         posteam = dplyr::case_when(
           stringr::str_detect(.data$play_description, "^Timeout ") ~ NA_character_,
           is.na(.data$parsed_posteam) ~ .data$posteam,
-          .data$play_description == "GAME" ~ .data$posteam,
+          .data$play_description == "GAME" ~ NA_character_,
           TRUE ~ .data$parsed_posteam
         ),
         # drop helper
