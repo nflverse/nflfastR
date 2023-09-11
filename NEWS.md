@@ -13,7 +13,7 @@
 - Added the new function `missing_raw_pbp()` that computes a vector of game IDs missing in the local raw play-by-play directory. (#423)
 - Decode player IDs in 2023 pbp. (#425)
 - Drop the pseudo plays TV Timeout and Two-Minute Warning. (#426)
-
+- Fix posteam on kickoffs and PATs following a defensive TD in 2023+ pbp. (#427)
 
 # nflfastR 4.5.1
 
