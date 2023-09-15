@@ -14,6 +14,7 @@
 - Decode player IDs in 2023 pbp. (#425)
 - Drop the pseudo plays TV Timeout and Two-Minute Warning. (#426)
 - Fix posteam on kickoffs and PATs following a defensive TD in 2023+ pbp. (#427)
+- `calculate_player_stats()` no more counts lost fumbles on plays where a player fumbles, a team mate recovers and then loses a fumble to the defense. (#431)
 
 # nflfastR 4.5.1
 
