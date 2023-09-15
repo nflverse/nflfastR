@@ -200,7 +200,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       attempts = sum(.data$complete_pass == 1 | .data$incomplete_pass == 1 | .data$interception == 1),
       completions = sum(.data$complete_pass == 1),
       sack_fumbles = sum(.data$fumble == 1 & .data$fumbled_1_player_id == .data$passer_player_id),
-      sack_fumbles_lost = sum(.data$fumble_lost == 1 & .data$fumbled_1_player_id == .data$passer_player_id),
+      sack_fumbles_lost = sum(.data$fumble_lost == 1 & .data$fumbled_1_player_id == .data$passer_player_id & .data$fumble_recovery_1_team != .data$posteam),
       passing_air_yards = sum(.data$air_yards, na.rm = TRUE),
       sacks = sum(.data$sack),
       sack_yards = -1*sum(.data$yards_gained * .data$sack),
@@ -258,7 +258,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       tds = sum(.data$td_player_id == .data$rusher_player_id, na.rm = TRUE),
       carries = dplyr::n(),
       rushing_fumbles = sum(.data$fumble == 1 & .data$fumbled_1_player_id == .data$rusher_player_id & is.na(.data$lateral_rusher_player_id)),
-      rushing_fumbles_lost = sum(.data$fumble_lost == 1 & .data$fumbled_1_player_id == .data$rusher_player_id & is.na(.data$lateral_rusher_player_id)),
+      rushing_fumbles_lost = sum(.data$fumble_lost == 1 & .data$fumbled_1_player_id == .data$rusher_player_id & is.na(.data$lateral_rusher_player_id) & .data$fumble_recovery_1_team != .data$posteam),
       rushing_first_downs = sum(.data$first_down_rush & is.na(.data$lateral_rusher_player_id)),
       rushing_epa = sum(.data$epa, na.rm = TRUE)
     ) %>%
@@ -360,7 +360,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       targets = dplyr::n(),
       tds = sum(.data$td_player_id == .data$receiver_player_id, na.rm = TRUE),
       receiving_fumbles = sum(.data$fumble == 1 & .data$fumbled_1_player_id == .data$receiver_player_id & is.na(.data$lateral_receiver_player_id)),
-      receiving_fumbles_lost = sum(.data$fumble_lost == 1 & .data$fumbled_1_player_id == .data$receiver_player_id & is.na(.data$lateral_receiver_player_id)),
+      receiving_fumbles_lost = sum(.data$fumble_lost == 1 & .data$fumbled_1_player_id == .data$receiver_player_id & is.na(.data$lateral_receiver_player_id) & .data$fumble_recovery_1_team != .data$posteam),
       receiving_air_yards = sum(.data$air_yards, na.rm = TRUE),
       receiving_yards_after_catch = sum(.data$yards_after_catch, na.rm = TRUE),
       receiving_first_downs = sum(.data$first_down_pass & is.na(.data$lateral_receiver_player_id)),
