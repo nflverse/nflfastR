@@ -78,15 +78,15 @@ clean_pbp <- function(pbp, ...) {
         receiver_jersey_number = stringr::str_extract(stringr::str_extract(.data$desc, glue::glue('{receiver_number}{big_parser}')), "[:digit:]*") %>% as.integer(),
         #overwrite all these weird plays messing with the parser
         receiver = dplyr::case_when(
-          stringr::str_detect(.data$desc, glue::glue('{abnormal_play}')) ~ .data$receiver_player_name,
+          stringr::str_detect(.data$desc, glue::glue('{abnormal_play}')) & !is.na(.data$receiver_player_name) ~ .data$receiver_player_name,
           TRUE ~ .data$receiver
         ),
         rusher = dplyr::case_when(
-          stringr::str_detect(.data$desc, glue::glue('{abnormal_play}')) ~ .data$rusher_player_name,
+          stringr::str_detect(.data$desc, glue::glue('{abnormal_play}')) & !is.na(.data$rusher_player_name) ~ .data$rusher_player_name,
           TRUE ~ .data$rusher
         ),
         passer = dplyr::case_when(
-          stringr::str_detect(.data$desc, glue::glue('{abnormal_play}')) ~ .data$passer_player_name,
+          stringr::str_detect(.data$desc, glue::glue('{abnormal_play}')) & !is.na(.data$passer_player_name) ~ .data$passer_player_name,
           TRUE ~ .data$passer
         ),
         # fix the plays where scramble was fixed using charting data in 2005

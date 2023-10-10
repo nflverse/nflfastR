@@ -15,6 +15,7 @@
 - Drop the pseudo plays TV Timeout and Two-Minute Warning. (#426)
 - Fix posteam on kickoffs and PATs following a defensive TD in 2023+ pbp. (#427)
 - `calculate_player_stats()` no more counts lost fumbles on plays where a player fumbles, a team mate recovers and then loses a fumble to the defense. (#431)
+- The variables `passer`, `receiver`, and `rusher` no more return `NA` on "abnormal" plays - like direct snaps, aborted snaps, laterals etc. - that resulted in a penalty. (#435) 
 
 # nflfastR 4.5.1
 
