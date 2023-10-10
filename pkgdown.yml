@@ -1,11 +1,11 @@
 pandoc: 2.19.2
 pkgdown: 2.0.7.9000
-pkgdown_sha: c9206802f2888992de92aa41f517ba7812f05331
+pkgdown_sha: 170015984ae234da3028b2b083df757227fdd241
 articles:
   beginners_guide: beginners_guide.html
   field_descriptions: field_descriptions.html
   nflfastR: nflfastR.html
-last_built: 2023-09-15T19:35Z
+last_built: 2023-10-10T15:40Z
 urls:
   reference: https://www.nflfastr.com/reference
   article: https://www.nflfastr.com/articles
