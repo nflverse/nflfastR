@@ -16,8 +16,7 @@ status](https://img.shields.io/github/r-package/v/nflverse/nflfastR/master?label
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![nflverse
 support](https://img.shields.io/discord/789805604076126219?color=7289da&label=nflverse%20support&logo=discord&logoColor=fff&style=flat-square)](https://discord.com/invite/5Er2FBnnQa)
-[![Twitter
-Follow](https://img.shields.io/twitter/follow/nflfastR.svg?style=social)](https://twitter.com/nflfastR)
+<!-- [![Twitter Follow](https://img.shields.io/twitter/follow/nflfastR.svg?style=social)](https://twitter.com/nflfastR) -->
 <!-- badges: end -->
 
 `nflfastR` is a set of functions to efficiently scrape NFL play-by-play
@@ -98,7 +97,7 @@ occurred in the postseason.
 `nflfastR` uses its own models for Expected Points, Win Probability,
 Completion Probability, and Expected Yards After the Catch. To read
 about the models, please see [this post on Open Source
-Football](https://www.opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/).
+Football](https://opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/).
 For a more detailed description of the motivation for Expected Points
 models, we highly recommend this paper [from the nflscrapR team located
 here](https://arxiv.org/pdf/1802.00998.pdf).
