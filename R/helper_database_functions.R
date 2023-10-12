@@ -20,16 +20,14 @@
 #' by play data table either for the whole nflfastR era (with `force_rebuild = TRUE`)
 #' or just for specified seasons (e.g. `force_rebuild = c(2019, 2020)`).
 #' Please note the following behavior:
-#' \itemize{
-#'  \item{`force_rebuild = TRUE`}{: The data table with the name `tblname`
+#' * `force_rebuild = TRUE`: The data table with the name `tblname`
 #'   will be removed completely and rebuilt from scratch. This is helpful when
-#'   new columns are added during the Off-Season.}
-#'  \item{`force_rebuild = c(2019, 2020)`}{: The data table with the name `tblname`
-#'  will be preserved and only rows from the 2019 and 2020 seasons will be
-#'  deleted and re-added. This is intended to be used for ongoing seasons because
-#'  the NFL fixes bugs in the underlying data during the week and we recommend
-#'  rebuilding the current season every Thursday during the season.}
-#' }
+#'   new columns are added during the Off-Season.
+#' * `force_rebuild = c(2019, 2020)`: The data table with the name `tblname`
+#'   will be preserved and only rows from the 2019 and 2020 seasons will be
+#'   deleted and re-added. This is intended to be used for ongoing seasons because
+#'   the NFL fixes bugs in the underlying data during the week and we recommend
+#'   rebuilding the current season every Thursday during the season.
 #'
 #' The parameter `db_connection` is intended for advanced users who want
 #' to use other DBI drivers, such as MariaDB, Postgres or odbc. Please note that
