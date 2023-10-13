@@ -1,4 +1,8 @@
 test_that("calculate_expected_points works", {
+  # This test used to run on CRAN but their changes to env vars which cause
+  # check NOTES for multi-threading forced us to skip on cran.
+  skip_on_cran()
+
   data <- tibble::tibble(
     "season" = 2018:2019,
     "home_team" = "SEA",
@@ -17,6 +21,10 @@ test_that("calculate_expected_points works", {
 })
 
 test_that("calculate_expected_points works", {
+  # This test used to run on CRAN but their changes to env vars which cause
+  # check NOTES for multi-threading forced us to skip on cran.
+  skip_on_cran()
+
   data <- tibble::tibble(
     "receive_2h_ko" = 0,
     "home_team" = "SEA",

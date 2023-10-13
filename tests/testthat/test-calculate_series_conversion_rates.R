@@ -1,4 +1,8 @@
 test_that("calculate_series_conversion_rates works", {
+  # This test used to run on CRAN but their changes to env vars which cause
+  # check NOTES for multi-threading forced us to skip on cran.
+  skip_on_cran()
+
   pbp <- load_test_pbp()
 
   sc <- calculate_series_conversion_rates(pbp = pbp, weekly = FALSE) %>%
