@@ -1,3 +1,7 @@
+# nflfastR (development version)
+
+- The function `calculate_series_conversion_rates()` now correctly aggregates season level conversion rates. Performance has also been improved. (#440)
+
 # nflfastR 4.6.0
 
 ## New Features
