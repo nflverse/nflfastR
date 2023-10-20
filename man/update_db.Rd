@@ -43,14 +43,14 @@ by play data table either for the whole nflfastR era (with \code{force_rebuild =
 or just for specified seasons (e.g. \code{force_rebuild = c(2019, 2020)}).
 Please note the following behavior:
 \itemize{
-\item{\code{force_rebuild = TRUE}}{: The data table with the name \code{tblname}
+\item \code{force_rebuild = TRUE}: The data table with the name \code{tblname}
 will be removed completely and rebuilt from scratch. This is helpful when
-new columns are added during the Off-Season.}
-\item{\code{force_rebuild = c(2019, 2020)}}{: The data table with the name \code{tblname}
+new columns are added during the Off-Season.
+\item \code{force_rebuild = c(2019, 2020)}: The data table with the name \code{tblname}
 will be preserved and only rows from the 2019 and 2020 seasons will be
 deleted and re-added. This is intended to be used for ongoing seasons because
 the NFL fixes bugs in the underlying data during the week and we recommend
-rebuilding the current season every Thursday during the season.}
+rebuilding the current season every Thursday during the season.
 }
 
 The parameter \code{db_connection} is intended for advanced users who want

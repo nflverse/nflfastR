@@ -14,7 +14,7 @@
 #' \item{season}
 #' \item{home_team}
 #' \item{posteam}
-#' \item{roof (coded as 'outdoors', 'dome', or {'open' / 'closed' / NA} (retractable))}
+#' \item{roof (coded as 'outdoors', 'dome', or 'open'/'closed'/NA (retractable))}
 #' \item{half_seconds_remaining}
 #' \item{yardline_100}
 #' \item{down}

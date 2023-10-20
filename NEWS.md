@@ -1,6 +1,14 @@
-# nflfastR (development version)
+# nflfastR 4.6.0
 
-- internal function `get_pbp_nfl()` now uses `ifelse()` instead of `dplyr::if_else()` to handle some null-checking, fixes bug found in 2022_21_CIN_KC match. (v4.5.1.9001)
+## New Features
+
+- nflfastR now fully supports loading raw pbp data from local file system. The best way to use this feature is to set `options("nflfastR.raw_directory" = {"your/local/directory"})`. Alternatively, both `build_nflfastR_pbp()` and `fast_scraper()` support the argument `dir` which defaults to the above option. (#423)
+- Added the new function `save_raw_pbp()` which efficiently downloads raw play-by-play data and saves it to the local file system. This serves as a helper to setup the system for faster play-by-play parsing via the above functionality. (#423)
+- Added the new function `missing_raw_pbp()` that computes a vector of game IDs missing in the local raw play-by-play directory. (#423)
+
+## Minor Improvements and Bugfixes
+
+- The internal function `get_pbp_nfl()` now uses `ifelse()` instead of `dplyr::if_else()` to handle some null-checking, fixes bug found in `2022_21_CIN_KC` match.
 - The function `calculate_player_stats()` now summarises target share and air yards share correctly when called with argument `weekly = FALSE` (#413)
 - The function `calculate_player_stats()` now returns the opponent team when called with argument `weekly = TRUE` (#414)
 - The function `calculate_player_stats_def()` no longer errors when small subsets of pbp data are missing stats. (#415)
@@ -8,14 +16,14 @@
 - `fixed_drive` now correctly increments on plays where posteam lost a fumble but remains posteam because defteam also lost a fumble during the same play. (#419)
 - nflfastR now fixes missing drive number counts in raw pbp data in order to provide accurate drive information. (#420)
 - nflfastR now returns correct `kick_distance` on all punts and kickoffs. (#422)
-- nflfastR now fully supports loading raw pbp data from local file system. The best way to use this feature is to set `options("nflfastR.raw_directory" = {"your/local/directory"})`. Alternatively, both `build_nflfastR_pbp()` and `fast_scraper()` support the argument `dir` which defaults to the above option. (#423)
-- Added the new function `save_raw_pbp()` which efficiently downloads raw play-by-play data and saves it to the local file system. This serves as a helper to setup the system for faster play-by-play parsing via the above functionality. (#423)
-- Added the new function `missing_raw_pbp()` that computes a vector of game IDs missing in the local raw play-by-play directory. (#423)
 - Decode player IDs in 2023 pbp. (#425)
 - Drop the pseudo plays TV Timeout and Two-Minute Warning. (#426)
 - Fix posteam on kickoffs and PATs following a defensive TD in 2023+ pbp. (#427)
 - `calculate_player_stats()` no more counts lost fumbles on plays where a player fumbles, a team mate recovers and then loses a fumble to the defense. (#431)
 - The variables `passer`, `receiver`, and `rusher` no more return `NA` on "abnormal" plays - like direct snaps, aborted snaps, laterals etc. - that resulted in a penalty. (#435) 
+
+Thank you to
+[&#x0040;903124](https://github.com/903124), [&#x0040;ak47twq](https://github.com/ak47twq), [&#x0040;andrewtek](https://github.com/andrewtek), [&#x0040;darkhark](https://github.com/darkhark), [&#x0040;dennisbrookner](https://github.com/dennisbrookner), [&#x0040;marvin3FF](https://github.com/marvin3FF), [&#x0040;mistakia](https://github.com/mistakia), [&#x0040;mrcaseb](https://github.com/mrcaseb), [&#x0040;nicholasmendoza22](https://github.com/nicholasmendoza22), [&#x0040;rickstarblazer](https://github.com/rickstarblazer), [&#x0040;RileyJohnson22](https://github.com/RileyJohnson22), and [&#x0040;tanho63](https://github.com/tanho63) for their questions, feedback, and contributions towards this release.
 
 # nflfastR 4.5.1
 

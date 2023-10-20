@@ -105,8 +105,8 @@ missing_raw_pbp <- function(dir = getOption("nflfastR.raw_directory", default = 
     tools::file_path_sans_ext()
 
   finished_games <- nflreadr::load_schedules() %>%
-    dplyr::filter(!is.na(result)) %>%
-    dplyr::pull(game_id)
+    dplyr::filter(!is.na(.data$result)) %>%
+    dplyr::pull(.data$game_id)
 
   local_missing_games <- finished_games[!finished_games %in% local_games]
 
