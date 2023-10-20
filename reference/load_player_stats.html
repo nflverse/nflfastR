@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.1.9014</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.6.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -161,7 +161,7 @@ on <a href="https://www.nflfastr.com/articles/nflfastR.html#example-11-replicati
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> all available seasons.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> Please try `load_player_stats(seasons = TRUE)` to get all seasons.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Rows: 1,549</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Rows: 1,865</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Columns: 53</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ player_id                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "00-0023459", "00-0024243", "00-0026498", …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ player_name                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "A.Rodgers", "M.Lewis", "M.Stafford", "M.S…</span>
@@ -171,47 +171,47 @@ on <a href="https://www.nflfastr.com/articles/nflfastR.html#example-11-replicati
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ headshot_url                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "https://static.www.nfl.com/image/private/…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ recent_team                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "NYJ", "CHI", "LA", "LA", "LA", "LA", "LA"…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ season                      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 2023, 2023, 2023, 2023, 2023, 2023, 2023, …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ week                        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1, 4, 1, 2, 3, 4, 5, 3, 5, 3, 3, 5, 1, 2, …</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ week                        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1, 4, 1, 2, 3, 4, 5, 6, 6, 3, 5, 3, 3, 5, …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ season_type                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "REG", "REG", "REG", "REG", "REG", "REG", …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ completions                 <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 0, 24, 34, 18, 27, 21, 0, 0, 3, 34, 0, …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ attempts                    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1, 0, 38, 55, 33, 40, 37, 0, 0, 5, 58, 0, …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ passing_yards               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 334, 307, 269, 319, 222, 0, 0, 31, 3…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ passing_tds                 <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 0, 0, 1, 1, 1, 2, 0, 0, 0, 2, 0, 0, 0, …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ interceptions               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 2, 2, 1, 0, 0, 0, 2, 0, 0, 0, 0, …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ sacks                       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 1, 0, 0, 1, 6, 2, 4, 0, 0, 0, 3, 0, 0, 0, …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ sack_yards                  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 10, 0, 0, 10, 48, 16, 27, 0, 0, 0, 27, 0, …</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ completions                 <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 0, 24, 34, 18, 27, 21, 15, 6, 0, 0, 3, …</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ attempts                    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1, 0, 38, 55, 33, 40, 37, 24, 10, 0, 0, 5,…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ passing_yards               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 334, 307, 269, 319, 222, 226, 102, 0…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ passing_tds                 <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 0, 0, 1, 1, 1, 2, 1, 0, 0, 0, 0, 2, 0, …</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ interceptions               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 2, 2, 1, 0, 0, 0, 0, 0, 2, 0, 0, …</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ sacks                       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 1, 0, 0, 1, 6, 2, 4, 3, 0, 0, 0, 0, 3, 0, …</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ sack_yards                  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 10, 0, 0, 10, 48, 16, 27, 23, 0, 0, 0, 0, …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ sack_fumbles                <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ sack_fumbles_lost           <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ passing_air_yards           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 17, 0, 409, 363, 317, 297, 366, 0, 0, 31, …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ passing_yards_after_catch   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 106, 144, 99, 114, 90, 0, 0, 9, 128,…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ passing_first_downs         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 17, 17, 12, 16, 13, 0, 0, 2, 17, 0, …</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ passing_air_yards           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 17, 0, 409, 363, 317, 297, 366, 191, 120, …</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ passing_yards_after_catch   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 106, 144, 99, 114, 90, 84, 24, 0, 0,…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ passing_first_downs         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 17, 17, 12, 16, 13, 7, 4, 0, 0, 2, 1…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ passing_epa                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> -2.0319599, NA, 20.6799815, -5.0891927, -8…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ passing_2pt_conversions     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ pacr                        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.0000000, NA, 0.8166259, 0.8457300, 0.848…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ dakota                      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> NA, NA, 0.21719006, -0.02970462, -0.010766…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ carries                     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 0, 3, 4, 1, 2, 0, 0, 0, 2, 2, 1, 0, 0, …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ rushing_yards               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 11, 17, 7, 14, 0, 0, 0, -1, 11, 1, 0…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ carries                     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 0, 3, 4, 1, 2, 0, 1, 3, 0, 0, 2, 2, 1, …</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ rushing_yards               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 11, 17, 7, 14, 0, 2, -3, 0, 0, -1, 1…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ rushing_tds                 <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ rushing_fumbles             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ rushing_fumbles_lost        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ rushing_first_downs         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, …</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ rushing_first_downs         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ rushing_epa                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> NA, NA, 0.8680859, -0.4383297, 2.5295763, …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ rushing_2pt_conversions     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ receptions                  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ targets                     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ receiving_yards             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 8, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ receiving_tds               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, …</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ receptions                  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, …</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ targets                     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, …</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ receiving_yards             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 8, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, …</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ receiving_tds               <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ receiving_fumbles           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ receiving_fumbles_lost      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ receiving_air_yards         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, -3, 0, 0, 0, 0, 0, 8, 6, 0, 0, 0, 10, 1…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ receiving_air_yards         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, -3, 0, 0, 0, 0, 0, 0, 0, 8, 6, 0, 0, 0,…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ receiving_yards_after_catch <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ receiving_first_downs       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ receiving_epa               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> NA, 0.4834648, NA, NA, NA, NA, NA, 2.70802…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ receiving_first_downs       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, …</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ receiving_epa               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> NA, 0.4834648, NA, NA, NA, NA, NA, NA, NA,…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ receiving_2pt_conversions   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ racr                        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> NA, 0.0000000, NA, NA, NA, NA, NA, 1.00000…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ target_share                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> NA, 0.03125000, NA, NA, NA, NA, NA, 0.0294…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ air_yards_share             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> NA, -0.01239669, NA, NA, NA, NA, NA, 0.029…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ wopr                        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> NA, 0.03819731, NA, NA, NA, NA, NA, 0.0644…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ racr                        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> NA, 0.0000000, NA, NA, NA, NA, NA, NA, NA,…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ target_share                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> NA, 0.03125000, NA, NA, NA, NA, NA, NA, NA…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ air_yards_share             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> NA, -0.01239669, NA, NA, NA, NA, NA, NA, N…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ wopr                        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> NA, 0.03819731, NA, NA, NA, NA, NA, NA, NA…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ special_teams_tds           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ fantasy_points              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.00, 0.80, 14.46, 13.98, 11.46, 16.16, 16…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ fantasy_points_ppr          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.00, 1.80, 14.46, 13.98, 11.46, 16.16, 16…</span>

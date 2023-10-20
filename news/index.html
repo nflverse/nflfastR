@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.5.1.9014</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.6.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -111,8 +111,16 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="nflfastr-development-version">nflfastR (development version)<a class="anchor" aria-label="anchor" href="#nflfastr-development-version"></a></h2>
-<ul><li>internal function <code>get_pbp_nfl()</code> now uses <code><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse()</a></code> instead of <code><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">dplyr::if_else()</a></code> to handle some null-checking, fixes bug found in 2022_21_CIN_KC match. (v4.5.1.9001)</li>
+<h2 class="pkg-version" data-toc-text="4.6.0" id="nflfastr-460">nflfastR 4.6.0<a class="anchor" aria-label="anchor" href="#nflfastr-460"></a></h2><p class="text-muted">CRAN release: 2023-10-20</p>
+<div class="section level3">
+<h3 id="new-features-4-6-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-4-6-0"></a></h3>
+<ul><li>nflfastR now fully supports loading raw pbp data from local file system. The best way to use this feature is to set <code>options("nflfastR.raw_directory" = {"your/local/directory"})</code>. Alternatively, both <code><a href="../reference/build_nflfastR_pbp.html">build_nflfastR_pbp()</a></code> and <code><a href="../reference/fast_scraper.html">fast_scraper()</a></code> support the argument <code>dir</code> which defaults to the above option. (<a href="https://github.com/nflverse/nflfastR/issues/423" class="external-link">#423</a>)</li>
+<li>Added the new function <code><a href="../reference/save_raw_pbp.html">save_raw_pbp()</a></code> which efficiently downloads raw play-by-play data and saves it to the local file system. This serves as a helper to setup the system for faster play-by-play parsing via the above functionality. (<a href="https://github.com/nflverse/nflfastR/issues/423" class="external-link">#423</a>)</li>
+<li>Added the new function <code><a href="../reference/missing_raw_pbp.html">missing_raw_pbp()</a></code> that computes a vector of game IDs missing in the local raw play-by-play directory. (<a href="https://github.com/nflverse/nflfastR/issues/423" class="external-link">#423</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="minor-improvements-and-bugfixes-4-6-0">Minor Improvements and Bugfixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-bugfixes-4-6-0"></a></h3>
+<ul><li>The internal function <code>get_pbp_nfl()</code> now uses <code><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse()</a></code> instead of <code><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">dplyr::if_else()</a></code> to handle some null-checking, fixes bug found in <code>2022_21_CIN_KC</code> match.</li>
 <li>The function <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> now summarises target share and air yards share correctly when called with argument <code>weekly = FALSE</code> (<a href="https://github.com/nflverse/nflfastR/issues/413" class="external-link">#413</a>)</li>
 <li>The function <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> now returns the opponent team when called with argument <code>weekly = TRUE</code> (<a href="https://github.com/nflverse/nflfastR/issues/414" class="external-link">#414</a>)</li>
 <li>The function <code><a href="../reference/calculate_player_stats_def.html">calculate_player_stats_def()</a></code> no longer errors when small subsets of pbp data are missing stats. (<a href="https://github.com/nflverse/nflfastR/issues/415" class="external-link">#415</a>)</li>
@@ -121,16 +129,15 @@
 <code>fixed_drive</code> now correctly increments on plays where posteam lost a fumble but remains posteam because defteam also lost a fumble during the same play. (<a href="https://github.com/nflverse/nflfastR/issues/419" class="external-link">#419</a>)</li>
 <li>nflfastR now fixes missing drive number counts in raw pbp data in order to provide accurate drive information. (<a href="https://github.com/nflverse/nflfastR/issues/420" class="external-link">#420</a>)</li>
 <li>nflfastR now returns correct <code>kick_distance</code> on all punts and kickoffs. (<a href="https://github.com/nflverse/nflfastR/issues/422" class="external-link">#422</a>)</li>
-<li>nflfastR now fully supports loading raw pbp data from local file system. The best way to use this feature is to set <code>options("nflfastR.raw_directory" = {"your/local/directory"})</code>. Alternatively, both <code><a href="../reference/build_nflfastR_pbp.html">build_nflfastR_pbp()</a></code> and <code><a href="../reference/fast_scraper.html">fast_scraper()</a></code> support the argument <code>dir</code> which defaults to the above option. (<a href="https://github.com/nflverse/nflfastR/issues/423" class="external-link">#423</a>)</li>
-<li>Added the new function <code><a href="../reference/save_raw_pbp.html">save_raw_pbp()</a></code> which efficiently downloads raw play-by-play data and saves it to the local file system. This serves as a helper to setup the system for faster play-by-play parsing via the above functionality. (<a href="https://github.com/nflverse/nflfastR/issues/423" class="external-link">#423</a>)</li>
-<li>Added the new function <code><a href="../reference/missing_raw_pbp.html">missing_raw_pbp()</a></code> that computes a vector of game IDs missing in the local raw play-by-play directory. (<a href="https://github.com/nflverse/nflfastR/issues/423" class="external-link">#423</a>)</li>
 <li>Decode player IDs in 2023 pbp. (<a href="https://github.com/nflverse/nflfastR/issues/425" class="external-link">#425</a>)</li>
 <li>Drop the pseudo plays TV Timeout and Two-Minute Warning. (<a href="https://github.com/nflverse/nflfastR/issues/426" class="external-link">#426</a>)</li>
 <li>Fix posteam on kickoffs and PATs following a defensive TD in 2023+ pbp. (<a href="https://github.com/nflverse/nflfastR/issues/427" class="external-link">#427</a>)</li>
 <li>
 <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> no more counts lost fumbles on plays where a player fumbles, a team mate recovers and then loses a fumble to the defense. (<a href="https://github.com/nflverse/nflfastR/issues/431" class="external-link">#431</a>)</li>
 <li>The variables <code>passer</code>, <code>receiver</code>, and <code>rusher</code> no more return <code>NA</code> on “abnormal” plays - like direct snaps, aborted snaps, laterals etc. - that resulted in a penalty. (<a href="https://github.com/nflverse/nflfastR/issues/435" class="external-link">#435</a>)</li>
-</ul></div>
+</ul><p>Thank you to <a href="https://github.com/903124" class="external-link">@903124</a>, <a href="https://github.com/ak47twq" class="external-link">@ak47twq</a>, <a href="https://github.com/andrewtek" class="external-link">@andrewtek</a>, <a href="https://github.com/darkhark" class="external-link">@darkhark</a>, <a href="https://github.com/dennisbrookner" class="external-link">@dennisbrookner</a>, <a href="https://github.com/marvin3FF" class="external-link">@marvin3FF</a>, <a href="https://github.com/mistakia" class="external-link">@mistakia</a>, <a href="https://github.com/mrcaseb" class="external-link">@mrcaseb</a>, <a href="https://github.com/nicholasmendoza22" class="external-link">@nicholasmendoza22</a>, <a href="https://github.com/rickstarblazer" class="external-link">@rickstarblazer</a>, <a href="https://github.com/RileyJohnson22" class="external-link">@RileyJohnson22</a>, and <a href="https://github.com/tanho63" class="external-link">@tanho63</a> for their questions, feedback, and contributions towards this release.</p>
+</div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="4.5.1" id="nflfastr-451">nflfastR 4.5.1<a class="anchor" aria-label="anchor" href="#nflfastr-451"></a></h2><p class="text-muted">CRAN release: 2022-12-22</p>
 <ul><li>New implementation of tests to be able to identify breaking changes in reverse dependencies (<a href="https://github.com/nflverse/nflfastR/issues/396" class="external-link">#396</a>, <a href="https://github.com/nflverse/nflfastR/issues/406" class="external-link">#406</a>)</li>
