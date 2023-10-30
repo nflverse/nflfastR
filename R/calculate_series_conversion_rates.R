@@ -83,8 +83,13 @@
 #' }
 calculate_series_conversion_rates <- function(pbp,
                                               weekly = FALSE){
-  # For tests
-  # pbp <- nflreadr::load_pbp()
+
+  if (isTRUE(weekly)){
+    grp <- c("season", "team", "week")
+  } else if (isFALSE(weekly)){
+    grp <- c("season", "team")
+  }
+  grp_vars <- lapply(grp, as.symbol)
 
 # Offense -----------------------------------------------------------------
 
@@ -103,7 +108,7 @@ calculate_series_conversion_rates <- function(pbp,
     )
 
   offense <- off_series %>%
-    dplyr::group_by(.data$season, .data$team, .data$week) %>%
+    dplyr::group_by(!!!grp_vars) %>%
     dplyr::summarise(
       off_n = dplyr::n(),
       off_scr = mean(.data$conversion),
@@ -138,7 +143,7 @@ calculate_series_conversion_rates <- function(pbp,
     )
 
   defense <- def_series %>%
-    dplyr::group_by(.data$season, .data$team, .data$week) %>%
+    dplyr::group_by(!!!grp_vars) %>%
     dplyr::summarise(
       def_n = dplyr::n(),
       def_scr = mean(.data$conversion),
@@ -159,19 +164,7 @@ calculate_series_conversion_rates <- function(pbp,
 
 # Offense + Defense -------------------------------------------------------
 
-  combined <- dplyr::full_join(offense, defense, by = c("season", "team", "week"))
-
-  if (isFALSE(weekly)){
-    combined <- combined %>%
-      dplyr::select(-"week") %>%
-      dplyr::group_by(.data$season, .data$team) %>%
-      dplyr::summarise(
-        dplyr::across(.cols = dplyr::ends_with("_n"), .fns = ~ sum(.x, na.rm = TRUE)),
-        dplyr::across(.cols = !dplyr::ends_with("_n"), .fns = ~ mean(.x, na.rm = TRUE)),
-        .groups = "drop"
-      ) %>%
-      dplyr::relocate("def_n", .after = "off_to")
-  }
+  combined <- dplyr::full_join(offense, defense, by = grp)
 
   combined
 }
