@@ -117,48 +117,6 @@ load_raw_game <- function(game_id,
 # Identify sessions with sequential future resolving
 is_sequential <- function() inherits(future::plan(), "sequential")
 
-check_stat_ids <- function(seasons,
-                           stat_ids = 1:500,
-                           dir = getOption("nflfastR.raw_directory", default = NULL),
-                           skip_local = FALSE){
-
-  if (is_sequential()) {
-    cli::cli_alert_info(
-        "It is recommended to use parallel processing when using this function. \\
-        Please consider running {.code future::plan(\"multisession\")}! \\
-        Will go on sequentially...", wrap = TRUE)
-  }
-
-  games <- nflreadr::load_schedules() %>%
-    dplyr::filter(!is.na(.data$result), .data$season %in% seasons) %>%
-    dplyr::pull(.data$game_id)
-
-  p <- progressr::progressor(along = games)
-
-  furrr::future_map_dfr(games, function(id, stats, p, dir, skip_local){
-    raw_data <- load_raw_game(id, dir = dir, skip_local = skip_local)
-    plays <- janitor::clean_names(raw_data$data$viewer$gameDetail$plays) %>%
-      dplyr::select("play_id", "play_stats", "desc" = .data$play_description_with_jersey_numbers)
-
-    p(sprintf("ID=%s", as.character(id)))
-
-    tidyr::unnest(plays, cols = c("play_stats")) %>%
-      janitor::clean_names() %>%
-      dplyr::filter(.data$stat_id %in% stats) %>%
-      dplyr::mutate(game_id = as.character(id)) %>%
-      dplyr::select(
-        "game_id",
-        "play_id",
-        "stat_id",
-        "yards",
-        "team_abbr" = "team_abbreviation",
-        "player_name",
-        "gsis_player_id",
-        "desc"
-      )
-  }, stats = stat_ids, p = p, dir = dir, skip_local = skip_local)
-}
-
 # take a time string of the format "MM:SS" and convert it to seconds
 time_to_seconds <- function(time){
   as.numeric(strptime(time, format = "%M:%S")) -
