@@ -14,7 +14,7 @@ cpu_check <- as.numeric(
   )
 )
 
-if (any(cpu_check != 0)) {
+if (any(is.na(cpu_check)) || any(cpu_check[!is.na(cpu_check)] != 0)) {
   cores <- min(
     floor(as.integer(Sys.getenv("_R_CHECK_EXAMPLE_TIMING_CPU_TO_ELAPSED_THRESHOLD_"))),
     floor(as.integer(Sys.getenv("_R_CHECK_TEST_TIMING_CPU_TO_ELAPSED_THRESHOLD_"))),
