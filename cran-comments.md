@@ -1,7 +1,7 @@
 ## Release summary
 
 This is a minor release that 
-* fixes bugs
+* adjusts the setup process of unit tests per request
 
 ## R CMD check results
 
