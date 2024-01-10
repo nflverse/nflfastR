@@ -1,7 +1,7 @@
 Type: Package
 Package: nflfastR
 Title: Functions to Efficiently Access NFL Play by Play Data
-Version: 4.6.1
+Version: 4.6.1.9000
 Authors@R: 
     c(person(given = "Sebastian",
              family = "Carl",
@@ -70,7 +70,6 @@ Suggests:
     lifecycle (>= 0.2.0),
     nflseedR (>= 1.0.2),
     purrr (>= 0.3.0),
-    qs (>= 0.25.1),
     rmarkdown,
     RSQLite,
     testthat (>= 3.0.0)
