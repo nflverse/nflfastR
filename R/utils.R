@@ -56,9 +56,6 @@ rule_footer <- function(x) {
   )
 }
 
-# read qs files form an url
-qs_from_url <- function(url) qs::qdeserialize(curl::curl_fetch_memory(url)$content)
-
 # read rds that has been pre-fetched
 read_raw_rds <- function(raw) {
   con <- gzcon(rawConnection(raw))
