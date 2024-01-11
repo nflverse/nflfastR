@@ -61,12 +61,8 @@ Imports:
     tidyselect (>= 1.1.0),
     xgboost (>= 1.1)
 Suggests: 
-    crayon (>= 1.3.4),
     DBI,
-    DT,
     gsisdecoder,
-    httr,
-    jsonlite,
     lifecycle (>= 0.2.0),
     nflseedR (>= 1.0.2),
     purrr (>= 0.3.0),
