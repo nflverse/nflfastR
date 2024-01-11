@@ -38,22 +38,16 @@ custom_mode <- function(x, na.rm = TRUE) {
 }
 
 rule_header <- function(x) {
-  rlang::inform(
-    cli::rule(
-      left = ifelse(is_installed("crayon"), crayon::bold(x), glue::glue("\033[1m{x}\033[22m")),
-      right = paste0("nflfastR version ", utils::packageVersion("nflfastR")),
-      width = getOption("width")
-    )
-  )
+  print(cli::rule(
+    left = cli::style_bold(x),
+    right = paste("nflfastR version", utils::packageVersion("nflfastR")),
+  ))
 }
 
 rule_footer <- function(x) {
-  rlang::inform(
-    cli::rule(
-      left = ifelse(is_installed("crayon"), crayon::bold(x), glue::glue("\033[1m{x}\033[22m")),
-      width = getOption("width")
-    )
-  )
+  print(cli::rule(
+    left = cli::style_bold(x)
+  ))
 }
 
 # read rds that has been pre-fetched

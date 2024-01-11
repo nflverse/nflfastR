@@ -46,6 +46,7 @@ jobs:
             any::knitr
             any::tictoc
             any::ragg
+            any::DT
             local::.
           needs: website
 
