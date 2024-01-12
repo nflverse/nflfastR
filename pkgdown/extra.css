@@ -13,3 +13,13 @@ for Responsive Web Design - Media Queries
     max-width: 75%;
   }
 }
+
+.navbar-brand {
+  font-weight: 300;
+  font-size: 1.5rem;
+  font-family: 'Kanit', sans-serif;
+}
+
+.me-auto {
+    color: yellow !important;
+}
