@@ -1,6 +1,6 @@
 # nflfastR (development version)
 
-- Drop `{qs}` dependency. (#453)
+- Drop `{crayon}`, `{DT}`, `{httr}`, `{jsonlite}`, `{qs}` dependencies. (#453)
 
 # nflfastR 4.6.1
 
