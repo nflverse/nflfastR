@@ -81,6 +81,10 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
 
   })
 
+  stype <- data %>%
+    dplyr::select("season", "week", "season_type") %>%
+    dplyr::distinct()
+
   # Tackling stats -----------------------------------------------------------
 
   tackle_vars <- c(
@@ -512,11 +516,13 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
         ),
       by = "player_id"
     ) %>%
+    dplyr::left_join(stype, by = c("season", "week")) %>%
     dplyr::select(tidyselect::any_of(c(
 
       # game information
       "season",
       "week",
+      "season_type",
 
       # id information
       "player_id",

@@ -1,6 +1,7 @@
 # nflfastR (development version)
 
 - Drop `{crayon}`, `{DT}`, `{httr}`, `{jsonlite}`, `{qs}` dependencies. (#453)
+- The function `calculate_player_stats_def` now returns `season_type` if argument `weekly` is set to `TRUE` for consistency with the other player stats functions. (#455) 
 
 # nflfastR 4.6.1
 
