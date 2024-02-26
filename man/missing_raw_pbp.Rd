@@ -6,6 +6,7 @@
 \usage{
 missing_raw_pbp(
   dir = getOption("nflfastR.raw_directory", default = NULL),
+  seasons = TRUE,
   verbose = TRUE
 )
 }
@@ -13,6 +14,8 @@ missing_raw_pbp(
 \item{dir}{Path to local directory (defaults to option "nflfastR.raw_directory").
 nflfastR will download the raw game files split by season into one sub
 directory per season.}
+
+\item{seasons}{a numeric vector of seasons to return, default \code{TRUE} returns all available data.}
 
 \item{verbose}{If \code{TRUE}, will print number of missing game files as well as
 oldest and most recent missing ID to console.}
