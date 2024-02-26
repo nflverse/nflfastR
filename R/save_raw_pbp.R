@@ -76,6 +76,7 @@ save_raw_pbp <- function(game_ids,
 #' This function is intended to serve as input for [save_raw_pbp()].
 #'
 #' @inheritParams save_raw_pbp
+#' @inheritParams nflreadr::load_schedules
 #' @param verbose If `TRUE`, will print number of missing game files as well as
 #'   oldest and most recent missing ID to console.
 #'
@@ -92,6 +93,7 @@ save_raw_pbp <- function(game_ids,
 #' )
 #' }
 missing_raw_pbp <- function(dir = getOption("nflfastR.raw_directory", default = NULL),
+                            seasons = TRUE,
                             verbose = TRUE){
   if(is.null(dir)){
     cli::cli_abort("Invalid argument {.arg dir}. Do you need to set \\
@@ -104,7 +106,7 @@ missing_raw_pbp <- function(dir = getOption("nflfastR.raw_directory", default = 
     unlist(use.names = FALSE) %>%
     tools::file_path_sans_ext()
 
-  finished_games <- nflreadr::load_schedules() %>%
+  finished_games <- nflreadr::load_schedules(seasons = seasons) %>%
     dplyr::filter(!is.na(.data$result)) %>%
     dplyr::pull(.data$game_id)
 
