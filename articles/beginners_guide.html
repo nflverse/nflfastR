@@ -36,11 +36,11 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-dark"><div class="container">
+    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-dark" data-bs-theme="light"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.6.1.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.6.1.9002</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -719,7 +719,7 @@ already loaded the package, it’s ready to use.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://nflreadr.nflverse.com/reference/load_teams.html" class="external-link">load_teams</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse team graphics</span> ──────────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2024-01-15 19:12:09 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2024-02-26 20:19:06 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 16</span></span></span>
 <span><span class="co">#&gt;    team_abbr team_name      team_id team_nick team_conf team_division team_color</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span></span>
@@ -921,55 +921,55 @@ overwhelming).</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">games</span> <span class="op">&lt;-</span> <span class="fu">nflreadr</span><span class="fu">::</span><span class="fu"><a href="https://nflreadr.nflverse.com/reference/load_schedules.html" class="external-link">load_schedules</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">games</span><span class="op">)</span></span>
-<span><span class="co">#&gt; nflvrs_d [6,699 × 46] (S3: nflverse_data/tbl_df/tbl/data.table/data.frame)</span></span>
-<span><span class="co">#&gt;  $ game_id         : chr [1:6699] "1999_01_MIN_ATL" "1999_01_KC_CHI" "1999_01_PIT_CLE" "1999_01_OAK_GB" ...</span></span>
-<span><span class="co">#&gt;  $ season          : int [1:6699] 1999 1999 1999 1999 1999 1999 1999 1999 1999 1999 ...</span></span>
-<span><span class="co">#&gt;  $ game_type       : chr [1:6699] "REG" "REG" "REG" "REG" ...</span></span>
-<span><span class="co">#&gt;  $ week            : int [1:6699] 1 1 1 1 1 1 1 1 1 1 ...</span></span>
-<span><span class="co">#&gt;  $ gameday         : chr [1:6699] "1999-09-12" "1999-09-12" "1999-09-12" "1999-09-12" ...</span></span>
-<span><span class="co">#&gt;  $ weekday         : chr [1:6699] "Sunday" "Sunday" "Sunday" "Sunday" ...</span></span>
-<span><span class="co">#&gt;  $ gametime        : chr [1:6699] NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ away_team       : chr [1:6699] "MIN" "KC" "PIT" "OAK" ...</span></span>
-<span><span class="co">#&gt;  $ away_score      : int [1:6699] 17 17 43 24 14 3 10 30 25 28 ...</span></span>
-<span><span class="co">#&gt;  $ home_team       : chr [1:6699] "ATL" "CHI" "CLE" "GB" ...</span></span>
-<span><span class="co">#&gt;  $ home_score      : int [1:6699] 14 20 0 28 31 41 19 28 24 20 ...</span></span>
-<span><span class="co">#&gt;  $ location        : chr [1:6699] "Home" "Home" "Home" "Home" ...</span></span>
-<span><span class="co">#&gt;  $ result          : int [1:6699] -3 3 -43 4 17 38 9 -2 -1 -8 ...</span></span>
-<span><span class="co">#&gt;  $ total           : int [1:6699] 31 37 43 52 45 44 29 58 49 48 ...</span></span>
-<span><span class="co">#&gt;  $ overtime        : int [1:6699] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
-<span><span class="co">#&gt;  $ old_game_id     : chr [1:6699] "1999091210" "1999091206" "1999091213" "1999091208" ...</span></span>
-<span><span class="co">#&gt;  $ gsis            : int [1:6699] 598 597 604 602 591 603 592 600 588 596 ...</span></span>
-<span><span class="co">#&gt;  $ nfl_detail_id   : chr [1:6699] NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ pfr             : chr [1:6699] "199909120atl" "199909120chi" "199909120cle" "199909120gnb" ...</span></span>
-<span><span class="co">#&gt;  $ pff             : int [1:6699] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ espn            : chr [1:6699] "190912001" "190912003" "190912005" "190912009" ...</span></span>
-<span><span class="co">#&gt;  $ ftn             : int [1:6699] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ away_rest       : int [1:6699] 7 7 7 7 7 7 7 7 7 7 ...</span></span>
-<span><span class="co">#&gt;  $ home_rest       : int [1:6699] 7 7 7 7 7 7 7 7 7 7 ...</span></span>
-<span><span class="co">#&gt;  $ away_moneyline  : int [1:6699] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ home_moneyline  : int [1:6699] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ spread_line     : num [1:6699] -4 -3 -6 9 -3 5.5 3.5 7 -3 9.5 ...</span></span>
-<span><span class="co">#&gt;  $ away_spread_odds: int [1:6699] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ home_spread_odds: int [1:6699] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ total_line      : num [1:6699] 49 38 37 43 45.5 49 38 44.5 37 42 ...</span></span>
-<span><span class="co">#&gt;  $ under_odds      : int [1:6699] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ over_odds       : int [1:6699] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ div_game        : int [1:6699] 0 0 1 0 1 0 1 1 1 0 ...</span></span>
-<span><span class="co">#&gt;  $ roof            : chr [1:6699] "dome" "outdoors" "outdoors" "outdoors" ...</span></span>
-<span><span class="co">#&gt;  $ surface         : chr [1:6699] "astroturf" "grass" "grass" "grass" ...</span></span>
-<span><span class="co">#&gt;  $ temp            : int [1:6699] NA 80 78 67 NA 76 NA 73 75 NA ...</span></span>
-<span><span class="co">#&gt;  $ wind            : int [1:6699] NA 12 12 10 NA 8 NA 5 3 NA ...</span></span>
-<span><span class="co">#&gt;  $ away_qb_id      : chr [1:6699] "00-0003761" "00-0006300" "00-0015700" "00-0005741" ...</span></span>
-<span><span class="co">#&gt;  $ home_qb_id      : chr [1:6699] "00-0002876" "00-0010560" "00-0004230" "00-0005106" ...</span></span>
-<span><span class="co">#&gt;  $ away_qb_name    : chr [1:6699] "Randall Cunningham" "Elvis Grbac" "Kordell Stewart" "Rich Gannon" ...</span></span>
-<span><span class="co">#&gt;  $ home_qb_name    : chr [1:6699] "Chris Chandler" "Shane Matthews" "Ty Detmer" "Brett Favre" ...</span></span>
-<span><span class="co">#&gt;  $ away_coach      : chr [1:6699] "Dennis Green" "Gunther Cunningham" "Bill Cowher" "Jon Gruden" ...</span></span>
-<span><span class="co">#&gt;  $ home_coach      : chr [1:6699] "Dan Reeves" "Dick Jauron" "Chris Palmer" "Ray Rhodes" ...</span></span>
-<span><span class="co">#&gt;  $ referee         : chr [1:6699] "Gerry Austin" "Phil Luckett" "Bob McElwee" "Tony Corrente" ...</span></span>
-<span><span class="co">#&gt;  $ stadium_id      : chr [1:6699] "ATL00" "CHI98" "CLE00" "GNB00" ...</span></span>
-<span><span class="co">#&gt;  $ stadium         : chr [1:6699] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...</span></span>
+<span><span class="co">#&gt; nflvrs_d [6,706 × 46] (S3: nflverse_data/tbl_df/tbl/data.table/data.frame)</span></span>
+<span><span class="co">#&gt;  $ game_id         : chr [1:6706] "1999_01_MIN_ATL" "1999_01_KC_CHI" "1999_01_PIT_CLE" "1999_01_OAK_GB" ...</span></span>
+<span><span class="co">#&gt;  $ season          : int [1:6706] 1999 1999 1999 1999 1999 1999 1999 1999 1999 1999 ...</span></span>
+<span><span class="co">#&gt;  $ game_type       : chr [1:6706] "REG" "REG" "REG" "REG" ...</span></span>
+<span><span class="co">#&gt;  $ week            : int [1:6706] 1 1 1 1 1 1 1 1 1 1 ...</span></span>
+<span><span class="co">#&gt;  $ gameday         : chr [1:6706] "1999-09-12" "1999-09-12" "1999-09-12" "1999-09-12" ...</span></span>
+<span><span class="co">#&gt;  $ weekday         : chr [1:6706] "Sunday" "Sunday" "Sunday" "Sunday" ...</span></span>
+<span><span class="co">#&gt;  $ gametime        : chr [1:6706] NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ away_team       : chr [1:6706] "MIN" "KC" "PIT" "OAK" ...</span></span>
+<span><span class="co">#&gt;  $ away_score      : int [1:6706] 17 17 43 24 14 3 10 30 25 28 ...</span></span>
+<span><span class="co">#&gt;  $ home_team       : chr [1:6706] "ATL" "CHI" "CLE" "GB" ...</span></span>
+<span><span class="co">#&gt;  $ home_score      : int [1:6706] 14 20 0 28 31 41 19 28 24 20 ...</span></span>
+<span><span class="co">#&gt;  $ location        : chr [1:6706] "Home" "Home" "Home" "Home" ...</span></span>
+<span><span class="co">#&gt;  $ result          : int [1:6706] -3 3 -43 4 17 38 9 -2 -1 -8 ...</span></span>
+<span><span class="co">#&gt;  $ total           : int [1:6706] 31 37 43 52 45 44 29 58 49 48 ...</span></span>
+<span><span class="co">#&gt;  $ overtime        : int [1:6706] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;  $ old_game_id     : chr [1:6706] "1999091210" "1999091206" "1999091213" "1999091208" ...</span></span>
+<span><span class="co">#&gt;  $ gsis            : int [1:6706] 598 597 604 602 591 603 592 600 588 596 ...</span></span>
+<span><span class="co">#&gt;  $ nfl_detail_id   : chr [1:6706] NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ pfr             : chr [1:6706] "199909120atl" "199909120chi" "199909120cle" "199909120gnb" ...</span></span>
+<span><span class="co">#&gt;  $ pff             : int [1:6706] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ espn            : chr [1:6706] "190912001" "190912003" "190912005" "190912009" ...</span></span>
+<span><span class="co">#&gt;  $ ftn             : int [1:6706] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ away_rest       : int [1:6706] 7 7 7 7 7 7 7 7 7 7 ...</span></span>
+<span><span class="co">#&gt;  $ home_rest       : int [1:6706] 7 7 7 7 7 7 7 7 7 7 ...</span></span>
+<span><span class="co">#&gt;  $ away_moneyline  : int [1:6706] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ home_moneyline  : int [1:6706] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ spread_line     : num [1:6706] -4 -3 -6 9 -3 5.5 3.5 7 -3 9.5 ...</span></span>
+<span><span class="co">#&gt;  $ away_spread_odds: int [1:6706] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ home_spread_odds: int [1:6706] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ total_line      : num [1:6706] 49 38 37 43 45.5 49 38 44.5 37 42 ...</span></span>
+<span><span class="co">#&gt;  $ under_odds      : int [1:6706] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ over_odds       : int [1:6706] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ div_game        : int [1:6706] 0 0 1 0 1 0 1 1 1 0 ...</span></span>
+<span><span class="co">#&gt;  $ roof            : chr [1:6706] "dome" "outdoors" "outdoors" "outdoors" ...</span></span>
+<span><span class="co">#&gt;  $ surface         : chr [1:6706] "astroturf" "grass" "grass" "grass" ...</span></span>
+<span><span class="co">#&gt;  $ temp            : int [1:6706] NA 80 78 67 NA 76 NA 73 75 NA ...</span></span>
+<span><span class="co">#&gt;  $ wind            : int [1:6706] NA 12 12 10 NA 8 NA 5 3 NA ...</span></span>
+<span><span class="co">#&gt;  $ away_qb_id      : chr [1:6706] "00-0003761" "00-0006300" "00-0015700" "00-0005741" ...</span></span>
+<span><span class="co">#&gt;  $ home_qb_id      : chr [1:6706] "00-0002876" "00-0010560" "00-0004230" "00-0005106" ...</span></span>
+<span><span class="co">#&gt;  $ away_qb_name    : chr [1:6706] "Randall Cunningham" "Elvis Grbac" "Kordell Stewart" "Rich Gannon" ...</span></span>
+<span><span class="co">#&gt;  $ home_qb_name    : chr [1:6706] "Chris Chandler" "Shane Matthews" "Ty Detmer" "Brett Favre" ...</span></span>
+<span><span class="co">#&gt;  $ away_coach      : chr [1:6706] "Dennis Green" "Gunther Cunningham" "Bill Cowher" "Jon Gruden" ...</span></span>
+<span><span class="co">#&gt;  $ home_coach      : chr [1:6706] "Dan Reeves" "Dick Jauron" "Chris Palmer" "Ray Rhodes" ...</span></span>
+<span><span class="co">#&gt;  $ referee         : chr [1:6706] "Gerry Austin" "Phil Luckett" "Bob McElwee" "Tony Corrente" ...</span></span>
+<span><span class="co">#&gt;  $ stadium_id      : chr [1:6706] "ATL00" "CHI98" "CLE00" "GNB00" ...</span></span>
+<span><span class="co">#&gt;  $ stadium         : chr [1:6706] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...</span></span>
 <span><span class="co">#&gt;  - attr(*, "nflverse_type")= chr "games and schedules"</span></span>
-<span><span class="co">#&gt;  - attr(*, "nflverse_timestamp")= POSIXct[1:1], format: "2024-01-15 19:12:37"</span></span></code></pre></div>
+<span><span class="co">#&gt;  - attr(*, "nflverse_timestamp")= POSIXct[1:1], format: "2024-02-26 20:19:34"</span></span></code></pre></div>
 <p>To start, we want to create a dataframe where each row is a
 team-season observation, listing how many games they won. There are
 multiple ways to do this, but I’m going to just take the home and away
@@ -982,7 +982,7 @@ results and bind together. As an example, here’s what the
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>team <span class="op">=</span> <span class="va">home_team</span><span class="op">)</span></span>
 <span><span class="va">home</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2024-01-15 19:12:37 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2024-02-26 20:19:34 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 4</span></span></span>
 <span><span class="co">#&gt;   season  week team  result</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
@@ -1001,7 +1001,7 @@ results and bind together. As an example, here’s what the
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>result <span class="op">=</span> <span class="op">-</span><span class="va">result</span><span class="op">)</span></span>
 <span><span class="va">away</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2024-01-15 19:12:37 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2024-02-26 20:19:34 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 4</span></span></span>
 <span><span class="co">#&gt;   season  week team  result</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
@@ -1026,7 +1026,7 @@ the perspective of the home team. Now let’s make a columns called
 <span></span>
 <span><span class="va">results</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op">==</span> <span class="fl">2019</span> <span class="op">&amp;</span> <span class="va">team</span> <span class="op">==</span> <span class="st">'SEA'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2024-01-15 19:12:37 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2024-02-26 20:19:34 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 16 × 5</span></span></span>
 <span><span class="co">#&gt;    season  week team  result   win</span></span>
 <span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
@@ -1316,18 +1316,18 @@ with it.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                     wins point_diff off_rush_epa off_pass_epa def_rush_epa</span></span>
 <span><span class="co">#&gt; wins                1.00       0.92         0.43         0.70        -0.29</span></span>
-<span><span class="co">#&gt; point_diff          0.92       1.00         0.49         0.76        -0.33</span></span>
-<span><span class="co">#&gt; off_rush_epa        0.43       0.49         1.00         0.40         0.05</span></span>
+<span><span class="co">#&gt; point_diff          0.92       1.00         0.48         0.76        -0.33</span></span>
+<span><span class="co">#&gt; off_rush_epa        0.43       0.48         1.00         0.40         0.06</span></span>
 <span><span class="co">#&gt; off_pass_epa        0.70       0.76         0.40         1.00        -0.01</span></span>
-<span><span class="co">#&gt; def_rush_epa       -0.29      -0.33         0.05        -0.01         1.00</span></span>
+<span><span class="co">#&gt; def_rush_epa       -0.29      -0.33         0.06        -0.01         1.00</span></span>
 <span><span class="co">#&gt; def_pass_epa       -0.57      -0.62        -0.04        -0.10         0.31</span></span>
-<span><span class="co">#&gt; prior_off_rush_epa  0.23       0.26         0.32         0.23         0.02</span></span>
+<span><span class="co">#&gt; prior_off_rush_epa  0.24       0.26         0.32         0.23         0.02</span></span>
 <span><span class="co">#&gt; prior_off_pass_epa  0.29       0.32         0.18         0.46        -0.01</span></span>
 <span><span class="co">#&gt; prior_def_rush_epa -0.12      -0.15         0.03        -0.04         0.27</span></span>
 <span><span class="co">#&gt; prior_def_pass_epa -0.18      -0.20        -0.07        -0.05         0.05</span></span>
 <span><span class="co">#&gt; prior_point_diff    0.36       0.41         0.22         0.36        -0.09</span></span>
 <span><span class="co">#&gt;                    def_pass_epa prior_off_rush_epa prior_off_pass_epa</span></span>
-<span><span class="co">#&gt; wins                      -0.57               0.23               0.29</span></span>
+<span><span class="co">#&gt; wins                      -0.57               0.24               0.29</span></span>
 <span><span class="co">#&gt; point_diff                -0.62               0.26               0.32</span></span>
 <span><span class="co">#&gt; off_rush_epa              -0.04               0.32               0.18</span></span>
 <span><span class="co">#&gt; off_pass_epa              -0.10               0.23               0.46</span></span>
@@ -1335,7 +1335,7 @@ with it.</p>
 <span><span class="co">#&gt; def_pass_epa               1.00              -0.10               0.00</span></span>
 <span><span class="co">#&gt; prior_off_rush_epa        -0.10               1.00               0.41</span></span>
 <span><span class="co">#&gt; prior_off_pass_epa         0.00               0.41               1.00</span></span>
-<span><span class="co">#&gt; prior_def_rush_epa         0.16               0.05              -0.01</span></span>
+<span><span class="co">#&gt; prior_def_rush_epa         0.15               0.05              -0.01</span></span>
 <span><span class="co">#&gt; prior_def_pass_epa         0.28              -0.01              -0.09</span></span>
 <span><span class="co">#&gt; prior_point_diff          -0.19               0.47               0.76</span></span>
 <span><span class="co">#&gt;                    prior_def_rush_epa prior_def_pass_epa prior_point_diff</span></span>
@@ -1344,7 +1344,7 @@ with it.</p>
 <span><span class="co">#&gt; off_rush_epa                     0.03              -0.07             0.22</span></span>
 <span><span class="co">#&gt; off_pass_epa                    -0.04              -0.05             0.36</span></span>
 <span><span class="co">#&gt; def_rush_epa                     0.27               0.05            -0.09</span></span>
-<span><span class="co">#&gt; def_pass_epa                     0.16               0.28            -0.19</span></span>
+<span><span class="co">#&gt; def_pass_epa                     0.15               0.28            -0.19</span></span>
 <span><span class="co">#&gt; prior_off_rush_epa               0.05              -0.01             0.47</span></span>
 <span><span class="co">#&gt; prior_off_pass_epa              -0.01              -0.09             0.76</span></span>
 <span><span class="co">#&gt; prior_def_rush_epa               1.00               0.32            -0.34</span></span>
@@ -1380,11 +1380,11 @@ check what this looks like since 2009 relative to earlier seasons:</p>
 <span><span class="co">#&gt; off_rush_epa       0.40       0.47         0.37         1.00             0.19</span></span>
 <span><span class="co">#&gt; prior_point_diff   0.43       0.44         0.39         0.19             1.00</span></span>
 <span><span class="co">#&gt; prior_off_pass_epa 0.34       0.36         0.45         0.11             0.78</span></span>
-<span><span class="co">#&gt; prior_off_rush_epa 0.24       0.25         0.16         0.24             0.45</span></span>
+<span><span class="co">#&gt; prior_off_rush_epa 0.24       0.25         0.17         0.24             0.45</span></span>
 <span><span class="co">#&gt;                    prior_off_pass_epa prior_off_rush_epa</span></span>
 <span><span class="co">#&gt; wins                             0.34               0.24</span></span>
 <span><span class="co">#&gt; point_diff                       0.36               0.25</span></span>
-<span><span class="co">#&gt; off_pass_epa                     0.45               0.16</span></span>
+<span><span class="co">#&gt; off_pass_epa                     0.45               0.17</span></span>
 <span><span class="co">#&gt; off_rush_epa                     0.11               0.24</span></span>
 <span><span class="co">#&gt; prior_point_diff                 0.78               0.45</span></span>
 <span><span class="co">#&gt; prior_off_pass_epa               1.00               0.35</span></span>
@@ -1436,22 +1436,22 @@ anyway.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Residuals:</span></span>
 <span><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
-<span><span class="co">#&gt; -7.7039 -1.8906  0.0644  2.2506  7.0871 </span></span>
+<span><span class="co">#&gt; -7.7037 -1.8892  0.0635  2.2526  7.0866 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;                    Estimate Std. Error t value             Pr(&gt;|t|)    </span></span>
-<span><span class="co">#&gt; (Intercept)          7.9634     0.3884  20.504 &lt; 0.0000000000000002 ***</span></span>
-<span><span class="co">#&gt; prior_off_pass_epa   6.5867     1.2805   5.144          0.000000433 ***</span></span>
-<span><span class="co">#&gt; prior_off_rush_epa   5.9976     2.2712   2.641              0.00861 ** </span></span>
-<span><span class="co">#&gt; prior_def_pass_epa  -4.0619     1.6449  -2.469              0.01397 *  </span></span>
-<span><span class="co">#&gt; prior_def_rush_epa  -5.1581     2.3329  -2.211              0.02763 *  </span></span>
+<span><span class="co">#&gt; (Intercept)          7.9683     0.3884  20.515 &lt; 0.0000000000000002 ***</span></span>
+<span><span class="co">#&gt; prior_off_pass_epa   6.5795     1.2802   5.140          0.000000442 ***</span></span>
+<span><span class="co">#&gt; prior_off_rush_epa   6.0135     2.2698   2.649               0.0084 ** </span></span>
+<span><span class="co">#&gt; prior_def_pass_epa  -4.0710     1.6451  -2.475               0.0138 *  </span></span>
+<span><span class="co">#&gt; prior_def_rush_epa  -5.1335     2.3301  -2.203               0.0282 *  </span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Residual standard error: 2.86 on 379 degrees of freedom</span></span>
 <span><span class="co">#&gt;   (96 observations deleted due to missingness)</span></span>
-<span><span class="co">#&gt; Multiple R-squared:  0.1639, Adjusted R-squared:  0.155 </span></span>
-<span><span class="co">#&gt; F-statistic: 18.57 on 4 and 379 DF,  p-value: 0.00000000000005992</span></span></code></pre></div>
+<span><span class="co">#&gt; Multiple R-squared:  0.1638, Adjusted R-squared:  0.155 </span></span>
+<span><span class="co">#&gt; F-statistic: 18.56 on 4 and 379 DF,  p-value: 0.00000000000006099</span></span></code></pre></div>
 <p>I’m actually pretty surprised passing offense isn’t higher here. How
 does this compare to simply using point differential?</p>
 <div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
