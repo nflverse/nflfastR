@@ -23,7 +23,12 @@ add_nflscrapr_mutations <- function(pbp) {
                               (.data$play_description == "END GAME" & is.na(.data$time)), "00:00", .data$time),
       time = dplyr::if_else(.data$play_description == 'GAME', "15:00", .data$time),
       # Create a column with the time in seconds remaining for the quarter:
-      quarter_seconds_remaining = time_to_seconds(.data$time)
+      quarter_seconds_remaining = time_to_seconds(.data$time),
+      play_description = dplyr::case_when(
+        stringr::str_detect(.data$play_description, "(?<=kicks )[:alpha:]{1,}.[:alpha:]{1,}(?= yards)") ~
+          stringr::str_replace(.data$play_description, "(?<=kicks )[:alpha:]{1,}.[:alpha:]{1,}(?= yards)", as.character(.data$kick_distance)),
+        TRUE ~ .data$play_description
+      )
     ) %>%
     #put plays in the right order
     dplyr::group_by(.data$game_id) %>%

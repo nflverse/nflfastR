@@ -6,6 +6,7 @@
 - More robust handling of player IDs in `decode_player_ids()`. (#458)
 - Fixed rare cases where the value of the `yrdln` variable didn't equal `"MID 50"` at midfield. (#459)
 - Fixed rare cases where `drive_start_yard_line` missed the blank space between team name and yard line number. (#459)
+- Fixed play description in some 1999 and 2000 games where the string "D.Holland" replaced the kick distance. (#459)
 
 # nflfastR 4.6.1
 
