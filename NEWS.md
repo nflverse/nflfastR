@@ -4,6 +4,8 @@
 - The function `calculate_player_stats_def` now returns `season_type` if argument `weekly` is set to `TRUE` for consistency with the other player stats functions. (#455)
 - The function `missing_raw_pbp()` now allows filtering by season. (#457)
 - More robust handling of player IDs in `decode_player_ids()`. (#458)
+- Fixed rare cases where the value of the `yrdln` variable didn't equal `"MID 50"` at midfield. (#459)
+- Fixed rare cases where `drive_start_yard_line` missed the blank space between team name and yard line number. (#459)
 
 # nflfastR 4.6.1
 
