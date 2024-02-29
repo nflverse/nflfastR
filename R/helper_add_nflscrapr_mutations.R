@@ -23,7 +23,12 @@ add_nflscrapr_mutations <- function(pbp) {
                               (.data$play_description == "END GAME" & is.na(.data$time)), "00:00", .data$time),
       time = dplyr::if_else(.data$play_description == 'GAME', "15:00", .data$time),
       # Create a column with the time in seconds remaining for the quarter:
-      quarter_seconds_remaining = time_to_seconds(.data$time)
+      quarter_seconds_remaining = time_to_seconds(.data$time),
+      play_description = dplyr::case_when(
+        stringr::str_detect(.data$play_description, "(?<=kicks )[:alpha:]{1,}.[:alpha:]{1,}(?= yards)") ~
+          stringr::str_replace(.data$play_description, "(?<=kicks )[:alpha:]{1,}.[:alpha:]{1,}(?= yards)", as.character(.data$kick_distance)),
+        TRUE ~ .data$play_description
+      )
     ) %>%
     #put plays in the right order
     dplyr::group_by(.data$game_id) %>%
@@ -196,7 +201,7 @@ add_nflscrapr_mutations <- function(pbp) {
         .data$away_team, .data$home_team
       ),
 
-      yardline = dplyr::if_else(.data$yardline == "50", "MID 50", .data$yardline),
+      yardline = dplyr::if_else(stringr::str_detect(.data$yardline, "50"), "MID 50", .data$yardline),
       yardline = dplyr::if_else(
         nchar(.data$yardline) == 0 | is.null(.data$yardline) | .data$yardline == "NULL" | is.na(.data$yardline),
         dplyr::lead(.data$yardline), .data$yardline
@@ -424,6 +429,23 @@ add_nflscrapr_mutations <- function(pbp) {
       away_timeout_used = dplyr::if_else(
         is.na(.data$away_timeout_used),
         0, .data$away_timeout_used
+      )
+    ) %>%
+    # replace empty strings in yard line variables
+    dplyr::mutate_at(
+      .vars = c("yardline", "drive_start_yard_line" ,"drive_end_yard_line"),
+      .funs = ~ dplyr::na_if(.x, "")
+    ) %>%
+    # fix cases where a yardline variable misses the blank space between team name
+    # and yard number. At the point of adding this, the only spot where this happened
+    # was in the variable drive_start_yard_line in the games
+    # "2000_01_CAR_WAS", "2000_02_NE_NYJ", and "2000_03_ATL_CAR"
+    dplyr::mutate_at(
+      .vars = c("yardline", "drive_start_yard_line" ,"drive_end_yard_line"),
+      .funs = ~ dplyr::case_when(
+        stringr::str_detect(.x, "[:upper:]{2,3}(?=[:digit:]{1,2})") ~
+          stringr::str_c(stringr::str_extract(.x, "[:upper:]{2,3}"), stringr::str_extract(.x, "[:digit:]{1,2}"), sep = " "),
+        TRUE ~ .x
       )
     ) %>%
     # Group by the game_half to then create cumulative timeouts used for both
