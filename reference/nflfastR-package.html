@@ -12,7 +12,7 @@ A set of functions to access National Football League play-by-play data from htt
     
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.6.1.9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.6.1.9004</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -140,25 +140,25 @@ Please see the documentation of the functions for detailed information.</p>
 current session using multiple sessions in the background and load play-by-play
 data for the 2018 through 2020 seasons or build them freshly for the 2018 and
 2019 Super Bowls:</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>future<span class="sc">::</span><span class="fu">plan</span>(<span class="st">"multisession"</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">load_pbp</span>(<span class="dv">2018</span><span class="sc">:</span><span class="dv">2020</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">build_nflfastR_pbp</span>(<span class="fu">c</span>(<span class="st">"2018_21_NE_LA"</span>, <span class="st">"2019_21_SF_KC"</span>))</span></code></pre><p></p></div>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>future<span class="sc">::</span><span class="fu">plan</span>(<span class="st">"multisession"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">load_pbp</span>(<span class="dv">2018</span><span class="sc">:</span><span class="dv">2020</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">build_nflfastR_pbp</span>(<span class="fu">c</span>(<span class="st">"2018_21_NE_LA"</span>, <span class="st">"2019_21_SF_KC"</span>))</span></code></pre><p></p></div>
 <p>We recommend choosing a default parallel processing method and saving it
 as an environment variable in the R user profile to make sure all futures
 will be resolved with the chosen method by default.
 This can be done by following the below given steps.</p>
 <p>First, run the following line and the file <code>.Renviron</code> should be opened automatically.
 If you haven't saved any environment variables yet, this will be an empty file.</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">edit_r_environ</span>()</span></code></pre><p></p></div>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">edit_r_environ</span>()</span></code></pre><p></p></div>
 <p>In the opened file <code>.Renviron</code> add the next line, then save the file and restart your R session.
 Please note that this example sets "multisession" as default. For most users
 this should be the appropriate plan but please make sure it truly is.</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>R_FUTURE_PLAN<span class="ot">=</span><span class="st">"multisession"</span></span></code></pre><p></p></div>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>R_FUTURE_PLAN<span class="ot">=</span><span class="st">"multisession"</span></span></code></pre><p></p></div>
 <p>After the session is freshly restarted please check if the above method worked
 by running the next line. If the output is <code>FALSE</code> you successfully set up a
 default non-sequential <code><a href="https://future.futureverse.org/reference/plan.html" class="external-link">future::plan()</a></code>. If the output is <code>TRUE</code> all functions
 will behave like they were called with <code><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">purrr::map()</a></code> and NOT in multisession.</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">inherits</span>(future<span class="sc">::</span><span class="fu">plan</span>(), <span class="st">"sequential"</span>)</span></code></pre><p></p></div>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">inherits</span>(future<span class="sc">::</span><span class="fu">plan</span>(), <span class="st">"sequential"</span>)</span></code></pre><p></p></div>
 <p>For more information on possible plans please see
 <a href="https://github.com/HenrikBengtsson/future/blob/develop/README.md" class="external-link">the future package Readme</a>.</p>
 <p>For more information on <code>.Renviron</code> please see
@@ -173,24 +173,24 @@ will behave like they were called with <code><a href="https://purrr.tidyverse.or
 using <code><a href="https://progressr.futureverse.org/reference/progressor.html" class="external-link">progressr::progressor()</a></code> if they are turned on before the function is
 called. There are at least two basic ways to do this by either activating
 progress updates globally (for the current session) with</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>progressr<span class="sc">::</span><span class="fu">handlers</span>(<span class="at">global =</span> <span class="cn">TRUE</span>)</span></code></pre><p></p></div>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>progressr<span class="sc">::</span><span class="fu">handlers</span>(<span class="at">global =</span> <span class="cn">TRUE</span>)</span></code></pre><p></p></div>
 <p>or by piping the function call into <code><a href="https://progressr.futureverse.org/reference/with_progress.html" class="external-link">progressr::with_progress()</a></code>:</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load_pbp</span>(<span class="dv">2018</span><span class="sc">:</span><span class="dv">2020</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  progressr<span class="sc">::</span><span class="fu">with_progress</span>()</span></code></pre><p></p></div>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">load_pbp</span>(<span class="dv">2018</span><span class="sc">:</span><span class="dv">2020</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>  progressr<span class="sc">::</span><span class="fu">with_progress</span>()</span></code></pre><p></p></div>
 <p>Just like in the previous section, it is possible to activate global
 progression handlers by default. This can be done by following the below given steps.</p>
 <p>First, run the following line and the file <code>.Rprofile</code> should be opened automatically.
 If you haven't saved any code yet, this will be an empty file.</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">edit_r_profile</span>()</span></code></pre><p></p></div>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">edit_r_profile</span>()</span></code></pre><p></p></div>
 <p>In the opened file <code>.Rprofile</code> add the next line, then save the file and restart your R
 session. All code in this file will be executed when a new R session starts.
 The part <code>if (require("progressr"))</code> makes sure this will only run if the
 package progressr is installed to avoid crashing R sessions.</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">requireNamespace</span>(<span class="st">"progressr"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) progressr<span class="sc">::</span><span class="fu">handlers</span>(<span class="at">global =</span> <span class="cn">TRUE</span>)</span></code></pre><p></p></div>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">requireNamespace</span>(<span class="st">"progressr"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) progressr<span class="sc">::</span><span class="fu">handlers</span>(<span class="at">global =</span> <span class="cn">TRUE</span>)</span></code></pre><p></p></div>
 <p>After the session is freshly restarted please check if the above method worked
 by running the next line. If the output is <code>TRUE</code> you successfully activated
 global progression handlers for all sessions.</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>progressr<span class="sc">::</span><span class="fu">handlers</span>(<span class="at">global =</span> <span class="cn">NA</span>)</span></code></pre><p></p></div>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>progressr<span class="sc">::</span><span class="fu">handlers</span>(<span class="at">global =</span> <span class="cn">NA</span>)</span></code></pre><p></p></div>
 <p>For more information how to work with progress handlers please see <a href="https://progressr.futureverse.org/reference/progressr.html" class="external-link">progressr::progressr</a>.</p>
 <p>For more information on <code>.Rprofile</code> please see
 <a href="https://rstats.wtf/r-startup.html" class="external-link">this book chapter</a>.</p>

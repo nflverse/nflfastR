@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.6.1.9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.6.1.9004</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -110,6 +110,9 @@
 <li>The function <code>calculate_player_stats_def</code> now returns <code>season_type</code> if argument <code>weekly</code> is set to <code>TRUE</code> for consistency with the other player stats functions. (<a href="https://github.com/nflverse/nflfastR/issues/455" class="external-link">#455</a>)</li>
 <li>The function <code><a href="../reference/missing_raw_pbp.html">missing_raw_pbp()</a></code> now allows filtering by season. (<a href="https://github.com/nflverse/nflfastR/issues/457" class="external-link">#457</a>)</li>
 <li>More robust handling of player IDs in <code><a href="../reference/decode_player_ids.html">decode_player_ids()</a></code>. (<a href="https://github.com/nflverse/nflfastR/issues/458" class="external-link">#458</a>)</li>
+<li>Fixed rare cases where the value of the <code>yrdln</code> variable didn’t equal <code>"MID 50"</code> at midfield. (<a href="https://github.com/nflverse/nflfastR/issues/459" class="external-link">#459</a>)</li>
+<li>Fixed rare cases where <code>drive_start_yard_line</code> missed the blank space between team name and yard line number. (<a href="https://github.com/nflverse/nflfastR/issues/459" class="external-link">#459</a>)</li>
+<li>Fixed play description in some 1999 and 2000 games where the string “D.Holland” replaced the kick distance. (<a href="https://github.com/nflverse/nflfastR/issues/459" class="external-link">#459</a>)</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="4.6.1" id="nflfastr-461">nflfastR 4.6.1<a class="anchor" aria-label="anchor" href="#nflfastr-461"></a></h2><p class="text-muted">CRAN release: 2024-01-09</p>
