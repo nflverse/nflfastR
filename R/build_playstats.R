@@ -10,19 +10,53 @@ build_playstats <- function(seasons = nflreadr::most_recent_season(),
         Will go on sequentially...", wrap = TRUE)
   }
 
-  games <- nflreadr::load_schedules() %>%
-    dplyr::filter(!is.na(.data$result), .data$season %in% seasons) %>%
+  games <- nflreadr::load_schedules(seasons = seasons) %>%
+    dplyr::filter(!is.na(.data$result)) %>%
     dplyr::pull(.data$game_id)
 
   p <- progressr::progressor(along = games)
 
   l <- furrr::future_map(
     games,
-    function(id, p, dir, skip_local){
+    function(id, p = NULL, dir, skip_local){
+      season <- substr(id, 1, 4)
       raw_data <- load_raw_game(id, dir = dir, skip_local = skip_local)
-      out <- raw_data$data$viewer$gameDetail$plays[, c("playId", "playStats")]
+      if (season <= 2001){
+        drives <- raw_data[[1]][["drives"]] %>%
+          purrr::keep(is.list)
+        out <- tibble::tibble(d = drives) %>%
+          tidyr::unnest_wider(d) %>%
+          tidyr::unnest_longer(plays) %>%
+          tidyr::unnest_wider(plays, names_sep = "_") %>%
+          dplyr::select(playId = plays_id, playStats = plays_players) %>%
+          tidyr::unnest_longer(playStats) %>%
+          tidyr::unnest_longer(playStats) %>%
+          tidyr::unnest_wider(playStats) %>%
+          dplyr::mutate(
+            playId = as.integer(playId),
+            statId = as.integer(statId),
+            yards = as.integer(yards),
+            team.id = NA_character_
+          ) %>%
+          dplyr::select(-"sequence") %>%
+          dplyr::rename(
+            team.abbreviation = "clubcode",
+            gsis.Player.id = "playStats_id"
+          ) %>%
+          tidyr::nest(
+            playStats = c(
+              statId,
+              yards,
+              playerName,
+              team.id,
+              team.abbreviation,
+              gsis.Player.id
+            )
+          )
+      } else {
+        out <- raw_data$data$viewer$gameDetail$plays[, c("playId", "playStats")]
+      }
       out$game_id <- as.character(id)
-      # out$desc <- raw_data$data$viewer$gameDetail$plays$playDescriptionWithJerseyNumbers
       p(sprintf("ID=%s", as.character(id)))
       out
     },
@@ -50,7 +84,6 @@ build_playstats <- function(seasons = nflreadr::most_recent_season(),
       "team_abbr" = "team_abbreviation",
       "player_name",
       "gsis_player_id",
-      # "desc"
     ) %>%
     dplyr::mutate_if(
       .predicate = is.character,
