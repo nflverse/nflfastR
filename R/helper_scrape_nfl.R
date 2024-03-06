@@ -281,7 +281,10 @@ get_pbp_nfl <- function(id,
       safety_team = ifelse(
         .data$safety == 1 & .data$season <= 2015 & (.data$home_team %in% c("JAC", "JAX") | .data$away_team %in% c("JAC", "JAX")),
         ifelse(.data$posteam == .data$home_team, .data$away_team, .data$home_team), .data$safety_team
-      )
+      ),
+
+      # can't trust the goal_to_go variable so we overwrite it here
+      goal_to_go = as.integer(stringr::str_detect(tolower(.data$pre_play_by_play), "goal"))
 
     ) %>%
     dplyr::mutate_if(
