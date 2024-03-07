@@ -8,6 +8,7 @@
 - Fixed rare cases where `drive_start_yard_line` missed the blank space between team name and yard line number. (#459)
 - Fixed play description in some 1999 and 2000 games where the string "D.Holland" replaced the kick distance. (#459)
 - Fixed a problem where the `goal_to_go` variable was `FALSE` in actual goal to go situations. (#460)
+- Fixed a bug in `fixed_drive` and `fixed_drive_result` where the second weather delay in `2023_13_ARI_PIT` wasn't identified correctly. (#461)
 
 # nflfastR 4.6.1
 
