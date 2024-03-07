@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.6.1.9006</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.6.1.9007</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -114,6 +114,7 @@
 <li>Fixed rare cases where <code>drive_start_yard_line</code> missed the blank space between team name and yard line number. (<a href="https://github.com/nflverse/nflfastR/issues/459" class="external-link">#459</a>)</li>
 <li>Fixed play description in some 1999 and 2000 games where the string “D.Holland” replaced the kick distance. (<a href="https://github.com/nflverse/nflfastR/issues/459" class="external-link">#459</a>)</li>
 <li>Fixed a problem where the <code>goal_to_go</code> variable was <code>FALSE</code> in actual goal to go situations. (<a href="https://github.com/nflverse/nflfastR/issues/460" class="external-link">#460</a>)</li>
+<li>Fixed a bug in <code>fixed_drive</code> and <code>fixed_drive_result</code> where the second weather delay in <code>2023_13_ARI_PIT</code> wasn’t identified correctly. (<a href="https://github.com/nflverse/nflfastR/issues/461" class="external-link">#461</a>)</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="4.6.1" id="nflfastr-461">nflfastR 4.6.1<a class="anchor" aria-label="anchor" href="#nflfastr-461"></a></h2><p class="text-muted">CRAN release: 2024-01-09</p>
