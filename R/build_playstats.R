@@ -25,7 +25,7 @@ build_playstats <- function(seasons = nflreadr::most_recent_season(),
       }
       season <- substr(id, 1, 4)
       raw_data <- load_raw_game(id, dir = dir, skip_local = skip_local)
-      if (season <= 2001){
+      if (season <= 2000){
         drives <- raw_data[[1]][["drives"]] %>%
           purrr::keep(is.list)
         out <- tibble::tibble(d = drives) %>%
