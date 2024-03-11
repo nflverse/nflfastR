@@ -19,6 +19,10 @@ build_playstats <- function(seasons = nflreadr::most_recent_season(),
   l <- furrr::future_map(
     games,
     function(id, p = NULL, dir, skip_local){
+      if (id %in% c("2000_03_SD_KC", "2000_06_BUF_MIA", "1999_01_BAL_STL")){
+        cli::cli_alert_warning("We are missing raw game data of {.val {id}}. Skipping.")
+        return(data.frame())
+      }
       season <- substr(id, 1, 4)
       raw_data <- load_raw_game(id, dir = dir, skip_local = skip_local)
       if (season <= 2001){
