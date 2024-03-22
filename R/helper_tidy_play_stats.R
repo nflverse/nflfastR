@@ -23,6 +23,8 @@ sum_play_stats <- function(play_Id, stats) {
       row$punt_blocked <- 1
       row$punt_attempt <- 1
       row$kick_distance <- play_stats$yards[index]
+      row$punter_player_id <- play_stats$player.esbId[index]
+      row$punter_player_name <- play_stats$player.displayName[index]
     } else if (stat_id == 3) {
       row$first_down_rush <- 1
     } else if (stat_id == 4) {
@@ -1285,6 +1287,7 @@ sum_play_stats <- function(play_Id, stats) {
       row$extra_point_aborted <- 1
       row$extra_point_attempt <- 1
     } else if (stat_id == 402) {
+      # tackle for loss player information is recorded in stat id 120
       NULL
     } else if (stat_id == 403) {
       row$defensive_two_point_attempt <- 1
