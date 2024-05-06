@@ -10,6 +10,7 @@
 - Fixed a problem where the `goal_to_go` variable was `FALSE` in actual goal to go situations. (#460)
 - Fixed a bug in `fixed_drive` and `fixed_drive_result` where the second weather delay in `2023_13_ARI_PIT` wasn't identified correctly. (#461)
 - `punter_player_id`, and `punter_player_name` are filled for blocked punt attempts. (#463)
+- Fixed an issue affecting scores of 2022 games involving a return touchdown (#466)
 
 # nflfastR 4.6.1
 
