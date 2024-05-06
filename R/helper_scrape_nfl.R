@@ -384,7 +384,7 @@ fix_posteams <- function(pbp){
   #
   # We adjust both things here, but only for 2023ff to avoid backwards compatibility problems
   # We need the variable pre_play_by_play which usually looks like "KC  1-10  NYJ 40"
-  if (any(pbp$season >= 2022) && ("pre_play_by_play" %in% names(pbp))){
+  if ("pre_play_by_play" %in% names(pbp)){
     # Let's be as explicit as possible about what we want to extract from the string
     # It's really only the first valid team abbreviation followed by a blank space
     valid_team_abbrs <- paste(nflfastR::teams_colors_logos$team_abbr, collapse = " |")
