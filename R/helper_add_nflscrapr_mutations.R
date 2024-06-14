@@ -666,8 +666,8 @@ make_model_mutations <- function(pbp) {
 
 
 fix_scrambles <- function(pbp) {
-  # skip below code if 2005 is not in the data
-  if (!2005 %in% pbp$season) return(pbp)
+  # skip below code if <= 2005 is not in the data
+  if (min(pbp$season > 2005)) return(pbp)
 
   pbp %>%
     dplyr::mutate(
@@ -677,12 +677,9 @@ fix_scrambles <- function(pbp) {
     dplyr::select(-"scramble_id")
 
   # Some notes on the scramble_fix:
-  # This marks scrambles in the 2005 season using charting data
+  # This marks scrambles in the 1999 - 2005 season using charting data
   # Because NFL did not put scramble in play description during this season
-  # Data from Football Outsiders (thanks to Aaron Schatz!)
-  # 2005 season, Weeks 1-16 are based on charting
-  # 2005 season, Weeks 17-21 are guesses (basically every QB run except those that were a) a loss, b) no gain, or c) on 3/4 down with 1-2 to go).
-  # Plays nullified by penalty are not included.
+  # Data from Aaron Schatz!
 }
 
 translate_play_type_nfl <- function(play_type_nfl){
