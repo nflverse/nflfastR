@@ -50,8 +50,6 @@ dat <- bind_rows(
   select(-date_time) %>%
   mutate_at(vars(home_team, away_team, posteam), nflfastR:::team_name_fn)
 
-# 1999: need to join on yards_gained ?
-
 d <- dat %>%
   dplyr::left_join(
     pbp,
@@ -59,8 +57,6 @@ d <- dat %>%
   ) %>%
   mutate(scramble_id = paste0(game_id, "_", play_id)) %>%
   filter(scramble_id != "2005_09_CIN_BAL_1725")
-
-
 
 # number non-matched by season
   nrow(d)
