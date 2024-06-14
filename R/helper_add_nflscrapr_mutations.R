@@ -667,7 +667,7 @@ make_model_mutations <- function(pbp) {
 
 fix_scrambles <- function(pbp) {
   # skip below code if <= 2005 is not in the data
-  if (min(pbp$season > 2005)) return(pbp)
+  if (min(pbp$season) > 2005) return(pbp)
 
   pbp %>%
     dplyr::mutate(
