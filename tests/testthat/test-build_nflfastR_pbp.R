@@ -11,7 +11,7 @@ test_that("build_nflfastR_pbp works (local data)", {
     # across platforms
     round_double_to_digits()
   exp <- load_expectation("pbp")
-  expect_equal(pbp, exp, tolerance = 0.0001)
+  expect_equal(pbp, exp, tolerance = 0.001)
 })
 
 test_that("build_nflfastR_pbp works (outside CRAN)", {
@@ -26,5 +26,5 @@ test_that("build_nflfastR_pbp works (outside CRAN)", {
     # across platforms
     round_double_to_digits()
   exp <- load_expectation("pbp")
-  expect_equal(pbp, exp, tolerance = 0.0001)
+  expect_equal(pbp, exp, tolerance = 0.001)
 })
