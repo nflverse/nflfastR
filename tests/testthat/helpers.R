@@ -54,6 +54,27 @@ strip_nflverse_attributes <- function(df){
   df
 }
 
-round_double_to_digits <- function(df, digits = 4){
-  dplyr::mutate_if(df, is.double, formatC, digits = digits, format = "fg")
+round_double_to_digits <- function(df, digits = 3){
+  dplyr::mutate(df, dplyr::across(
+    .cols = relevant_variables(),
+    .fns = function(vec){
+      formatC(vec, digits = digits, format = "fg") %>%
+        as.numeric() %>%
+        suppressWarnings()
+    }
+  ))
+}
+
+relevant_variables <- function(){
+  c(
+    tidyselect::any_of(c(
+      "no_score_prob", "opp_fg_prob", "opp_safety_prob", "opp_td_prob", "fg_prob",
+      "safety_prob", "td_prob", "ep", "cp", "cpoe", "pass_oe"
+    )),
+    tidyselect::ends_with("epa"),
+    tidyselect::ends_with("wp"),
+    tidyselect::ends_with("wp_post"),
+    tidyselect::ends_with("wpa"),
+    tidyselect::starts_with("xyac")
+  )
 }
