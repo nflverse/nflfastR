@@ -69,7 +69,7 @@ relevant_variables <- function(){
   c(
     tidyselect::any_of(c(
       "no_score_prob", "opp_fg_prob", "opp_safety_prob", "opp_td_prob", "fg_prob",
-      "safety_prob", "td_prob", "ep", "cp", "cpoe", "pass_oe"
+      "safety_prob", "td_prob", "ep", "cp", "cpoe", "pass_oe", "xpass"
     )),
     tidyselect::ends_with("epa"),
     tidyselect::ends_with("wp"),
