@@ -1,114 +1,40 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://www.nflfastr.com/404.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/articles/beginners_guide.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/articles/field_descriptions.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/articles/nflfastR.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/index.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/add_qb_epa.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/add_xpass.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/add_xyac.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/build_nflfastR_pbp.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/calculate_expected_points.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/calculate_player_stats.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/calculate_player_stats_def.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/calculate_player_stats_kicking.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/calculate_series_conversion_rates.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/calculate_standings.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/calculate_win_probability.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/clean_pbp.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/decode_player_ids.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/fast_scraper.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/fast_scraper_roster.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/fast_scraper_schedules.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/field_descriptions.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/load_pbp.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/load_player_stats.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/missing_raw_pbp.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/nflfastR-package.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/report.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/save_raw_pbp.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/stat_ids.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/teams_colors_logos.html</loc>
-  </url>
-  <url>
-    <loc>https://www.nflfastr.com/reference/update_db.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://www.nflfastr.com/404.html</loc></url>
+<url><loc>https://www.nflfastr.com/LICENSE-text.html</loc></url>
+<url><loc>https://www.nflfastr.com/LICENSE.html</loc></url>
+<url><loc>https://www.nflfastr.com/articles/beginners_guide.html</loc></url>
+<url><loc>https://www.nflfastr.com/articles/field_descriptions.html</loc></url>
+<url><loc>https://www.nflfastr.com/articles/index.html</loc></url>
+<url><loc>https://www.nflfastr.com/articles/nflfastR.html</loc></url>
+<url><loc>https://www.nflfastr.com/authors.html</loc></url>
+<url><loc>https://www.nflfastr.com/index.html</loc></url>
+<url><loc>https://www.nflfastr.com/news/index.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/add_qb_epa.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/add_xpass.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/add_xyac.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/build_nflfastR_pbp.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/calculate_expected_points.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/calculate_player_stats.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/calculate_player_stats_def.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/calculate_player_stats_kicking.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/calculate_series_conversion_rates.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/calculate_standings.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/calculate_win_probability.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/clean_pbp.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/decode_player_ids.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/fast_scraper.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/fast_scraper_roster.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/fast_scraper_schedules.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/field_descriptions.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/index.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/load_pbp.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/load_player_stats.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/missing_raw_pbp.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/nflfastR-package.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/report.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/save_raw_pbp.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/stat_ids.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/teams_colors_logos.html</loc></url>
+<url><loc>https://www.nflfastr.com/reference/update_db.html</loc></url>
 </urlset>
+
