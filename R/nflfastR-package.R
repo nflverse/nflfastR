@@ -106,7 +106,7 @@
 #' @import dplyr
 #' @importFrom cli rule
 #' @importFrom curl curl_fetch_memory
-#' @importFrom data.table setDT
+#' @importFrom data.table setDT %between%
 #' @import fastrmodels
 #' @importFrom furrr future_map_chr future_map_dfr future_map
 #' @importFrom future plan

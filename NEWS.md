@@ -12,6 +12,8 @@
 - `punter_player_id`, and `punter_player_name` are filled for blocked punt attempts. (#463)
 - Fixed an issue affecting scores of 2022 games involving a return touchdown (#466)
 - Added identification of scrambles from 1999 through 2004 with thank to Aaron Schatz (#468)
+- Added new function `calculate_stats()` that combines the output of all `calculate_player_stats*()` functions with a more robust and faster approach. The `calculate_player_stats*()` function will be deprecated.
+- Updated the dataframe `stat_ids` with some IDs that were previously missing.
 
 # nflfastR 4.6.1
 
