@@ -126,7 +126,7 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       # target_share = ,
       # air_yards_share = ,
       # wopr = ,
-      # special_teams_tds = ,
+      special_teams_tds = sum((special == 1) & stat_id %in% td_ids()),
       # fantasy_points = ,
       # fantasy_points_ppr = ,
 
@@ -144,7 +144,7 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       def_interceptions = sum(stat_id %in% 25:26),
       def_interception_yards = sum((stat_id %in% 25:28) * yards),
       def_pass_defended = sum(stat_id == 85),
-      # def_tds = ,
+      def_tds = sum((team_abbr == .data$def) & stat_id %in% td_ids()),
       # def_fumbles = ,
       # def_fumble_recovery_own = ,
       # def_fumble_recovery_yards_own = ,
@@ -253,4 +253,11 @@ fg_list <- function(stat_ids, yards, collapse_id){
 
 has_id <- function(id, all_ids){
   grepl(paste0(id, ";"), all_ids, fixed = TRUE, useBytes = TRUE)
+}
+
+td_ids <- function(){
+  c(
+    11, 13, 16, 18, 22, 24, 26, 28, 34,
+    36, 46, 48, 56, 58, 60, 62, 64, 108
+  )
 }
