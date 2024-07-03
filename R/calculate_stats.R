@@ -15,8 +15,8 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
   playinfo <- pbp %>%
     dplyr::group_by(.data$game_id, .data$play_id) %>%
     dplyr::summarise(
-      off = posteam,
-      def = defteam,
+      off = nflreadr::clean_team_abbrs(posteam),
+      def = nflreadr::clean_team_abbrs(defteam),
       special = as.integer(special == 1)
     ) %>%
     dplyr::ungroup()
