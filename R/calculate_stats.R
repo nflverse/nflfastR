@@ -12,6 +12,15 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
 
   pbp <- nflreadr::load_pbp(seasons = seasons)
 
+  playinfo <- pbp %>%
+    dplyr::group_by(.data$game_id, .data$play_id) %>%
+    dplyr::summarise(
+      off = posteam,
+      def = defteam,
+      special = as.integer(special == 1)
+    ) %>%
+    dplyr::ungroup()
+
   # Function defined below
   # more_stats = all stat IDs of one player in a single play
   # team_stats = all stat IDs of one team in a single play
@@ -30,7 +39,10 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       # including the separator to avoid 1 matching 10
       team_stats = paste0(paste(stat_id, collapse = ";"), ";")
     ) %>%
-    dplyr::ungroup()
+    dplyr::ungroup() %>%
+    dplyr::left_join(
+      playinfo, by = c("game_id", "play_id")
+    )
 
   if (stat_type == "player"){
     # need newer version of nflreadr to use load_players
