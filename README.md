@@ -123,8 +123,8 @@ incorporating the pre-game spread.
   used it for 2001-2010)
 - To Lau Sze Yui for developing a scraping function to access
   JSON-formatted NFL play-by-play beginning in 2001
-- To Aaron Schatz and Football Outsiders for providing charting data to
-  correctly mark scrambles in the 2005 season
+- To Aaron Schatz and [FTN Fantasy](https://ftnfantasy.com/dvoa/nfl) for providing charting data to
+  correctly mark scrambles in the 1999-2005 seasons
 - To Lee Sharpe for curating a resource for game information
 - To Timo Riske, Lau Sze Yui, Sean Clement, and Daniel Houston for many
   helpful discussions regarding the development of the new `nflfastR`
