@@ -397,12 +397,6 @@ add_nflscrapr_mutations <- function(pbp) {
         .data$replay_or_challenge == 1 & .data$timeout == 1 & is.na(.data$timeout_team), .data$tmp_timeout, .data$timeout_team
 
       ),
-      timeout_team = dplyr::if_else(
-        .data$season <= 2015 & (.data$home_team %in% c("JAC", "JAX") | .data$away_team %in% c("JAC", "JAX")) & .data$timeout_team == "JAX",
-        "JAC",
-        .data$timeout_team
-      ),
-
 
       home_timeouts_remaining = dplyr::if_else(
         .data$quarter %in% c(1, 2, 3, 4),
