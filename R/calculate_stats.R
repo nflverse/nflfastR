@@ -37,7 +37,12 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
     dplyr::mutate(
       # we append a collapse separator to the string in order to search for matches
       # including the separator to avoid 1 matching 10
-      team_stats = paste0(paste(stat_id, collapse = ";"), ";")
+      team_stats = paste0(paste(stat_id, collapse = ";"), ";"),
+    ) %>%
+    dplyr::group_by(.data$season, .data$week, .data$team_abbr) %>%
+    dplyr::mutate(
+      team_targets = sum(stat_id == 115),
+      team_air_yards = sum((stat_id %in% 111:112) * yards)
     ) %>%
     dplyr::ungroup() %>%
     dplyr::left_join(
@@ -76,9 +81,12 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
   )
 
   # Silence global vars NOTE
-  # We do this differently here because it's only stat_id and yards it makes
-  # the code more readable
-  utils::globalVariables(c("stat_id", "yards"))
+  # We do this differently here because it's only a bunch of variables
+  # and the code is more readable
+  utils::globalVariables(c(
+    "stat_id", "yards", "more_stats", "team_stats", "team_abbr",
+    "def", "off", "special"
+  ))
 
   stats <- playstats %>%
     dplyr::group_by(!!!grp_vars) %>%
@@ -97,10 +105,10 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       passing_air_yards = sum((stat_id %in% 111:112) * yards),
       # passing_yards_after_catch = 15:16 - 111,
       passing_first_downs = sum((stat_id %in% 15:16) & has_id(4, team_stats)),
-      # passing_epa = ,
+      # passing_epa = requires pbp,
       passing_2pt_conversions = sum(stat_id == 77),
       pacr = .data$passing_yards / .data$passing_air_yards,
-      # dakota = ,
+      # dakota = requires pbp,
 
       carries = sum(stat_id %in% 10:11),
       rushing_yards = sum((stat_id %in% 10:13) * yards),
@@ -108,7 +116,7 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       rushing_fumbles = sum((stat_id %in% 10:11) & any(has_id(52, more_stats), has_id(53, more_stats), has_id(54, more_stats))),
       rushing_fumbles_lost = sum((stat_id %in% 10:11) & has_id(106, more_stats)),
       rushing_first_downs = sum((stat_id %in% 10:11) & has_id(3, team_stats)),
-      # rushing_epa = ,
+      # rushing_epa = requires pbp,
       rushing_2pt_conversions = sum(stat_id == 75),
 
       receptions = sum(stat_id %in% 21:22),
@@ -120,15 +128,24 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       # receiving_air_yards = that's in 111:112 but it is a passer stat not a receiver stat,
       receiving_yards_after_catch = sum((stat_id == 113) * yards),
       receiving_first_downs = sum((stat_id %in% 21:22) & has_id(4, team_stats)),
-      # receiving_epa = ,
+      # receiving_epa = requires pbp,
       receiving_2pt_conversions = sum(stat_id == 104),
-      # racr = ,
-      # target_share = ,
-      # air_yards_share = ,
-      # wopr = ,
+      # racr = .data$receiving_yards / .data$receiving_air_yards,
+      target_share = .data$targets / .data$team_targets,
+      # air_yards_share = .data$receiving_air_yards / .data$team_air_yards,
+      # wopr = 1.5 * .data$target_share + 0.7 * .data$air_yards_share,
       special_teams_tds = sum((special == 1) & stat_id %in% td_ids()),
-      # fantasy_points = ,
-      # fantasy_points_ppr = ,
+
+      # fantasy_points =
+      #   1 / 25 * .data$passing_yards +
+      #   4 * .data$passing_tds +
+      #   -2 * .data$interceptions +
+      #   1 / 10 * (.data$rushing_yards + .data$receiving_yards) +
+      #   6 * (.data$rushing_tds + .data$receiving_tds + .data$special_teams_tds) +
+      #   2 * (.data$passing_2pt_conversions + .data$rushing_2pt_conversions + .data$receiving_2pt_conversions) +
+      #   -2 * (.data$sack_fumbles_lost + .data$rushing_fumbles_lost + .data$receiving_fumbles_lost),
+
+      # fantasy_points_ppr = .data$fantasy_points + .data$receptions,
 
       # Defense #####################
       # def_tackles = ,
@@ -144,15 +161,15 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       def_interceptions = sum(stat_id %in% 25:26),
       def_interception_yards = sum((stat_id %in% 25:28) * yards),
       def_pass_defended = sum(stat_id == 85),
-      def_tds = sum((team_abbr == .data$def) & stat_id %in% td_ids()),
-      def_fumbles = sum((team_abbr == .data$def) & stat_id %in% 52:54),
-      def_fumble_recovery_own = sum((team_abbr == .data$def) & stat_id %in% 55:56),
-      def_fumble_recovery_yards_own = sum((team_abbr == .data$def) & stat_id %in% 55:58),
-      def_fumble_recovery_opp = sum((team_abbr == .data$def) & stat_id %in% 59:60),
-      def_fumble_recovery_yards_opp = sum((team_abbr == .data$def) & stat_id %in% 59:62),
-      # def_safety = ,
-      # def_penalty = ,
-      # def_penalty_yards = ,
+      def_tds = sum((team_abbr == def) & stat_id %in% td_ids()),
+      def_fumbles = sum((team_abbr == def) & stat_id %in% 52:54),
+      def_fumble_recovery_own = sum((team_abbr == def) & stat_id %in% 55:56),
+      def_fumble_recovery_yards_own = sum((team_abbr == def) & stat_id %in% 55:58),
+      def_fumble_recovery_opp = sum((team_abbr == def) & stat_id %in% 59:60),
+      def_fumble_recovery_yards_opp = sum((team_abbr == def) & stat_id %in% 59:62),
+      def_safety = sum(stat_id == 89),
+      def_penalty = sum((team_abbr == def) & stat_id == 93),
+      def_penalty_yards = sum((team_abbr == def & stat_id == 93) * yards),
 
       # Kicking #####################
       fg_made = sum(stat_id == 70),
