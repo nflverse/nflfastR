@@ -104,9 +104,9 @@ clean_pbp <- function(pbp, ...) {
         ),
         # if there's a pass, sack, or scramble, it's a pass play...
         pass = dplyr::if_else(stringr::str_detect(.data$desc, "( pass )|(sacked)|(scramble)") | .data$qb_scramble == 1, 1, 0),
-        # ...unless it says "backwards pass" and there's a rusher
+        # ...unless it says "backward(s) pass" or "lateral pass" and there's a rusher
         pass = dplyr::if_else(
-          stringr::str_detect(.data$desc, "(backward pass)|(Backward pass)") & !is.na(.data$rusher),
+          stringr::str_detect(stringr::str_to_lower(.data$desc), "(backward pass)|(backwards pass)|(lateral pass)") & !is.na(.data$rusher),
           0, .data$pass
         ),
         # and make sure there's no pass on a kickoff (sometimes there's forward pass on kickoff but that's not a pass play)
@@ -281,7 +281,7 @@ clean_pbp <- function(pbp, ...) {
 big_parser <- "(?<=)[A-Z][A-z]*+(\\.|\\s)+[A-Z][A-z]*+\\'*\\-*[A-Z]*+[a-z]*+(\\s((Jr.)|(Sr.)|I{2,3})|(IV))?"
 # maybe some spaces and letters, and then a rush direction unless they fumbled
 rush_finder <- "(?=\\s*[a-z]*+\\s*((FUMBLES) | (left end)|(left tackle)|(left guard)|(up the middle)|(right guard)|(right tackle)|(right end)))"
-# maybe some spaces and leters, and then pass / sack / scramble
+# maybe some spaces and letters, and then pass / sack / scramble
 pass_finder <- "(?=\\s*[a-z]*+\\s*(( pass)|(sack)|(scramble)))"
 # to or for, maybe a jersey number and a dash
 receiver_finder <- "(?<=((to)|(for))\\s[:digit:]{0,2}\\-{0,1})"
