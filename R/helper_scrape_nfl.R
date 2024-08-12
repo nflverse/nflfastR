@@ -152,9 +152,10 @@ get_pbp_nfl <- function(id,
     dplyr::mutate_if(is.factor, as.character) %>%
     # The abbreviations SD <-> LAC and JAC <-> JAX are mixed up in the raw json data
     # to make sure team names match, we normalize the names here
+    # We also remove new line characters esp. from desc
     dplyr::mutate_if(
       .predicate = is.character,
-      .funs = ~ stringr::str_replace_all(.x, "JAC", "JAX") %>% stringr::str_replace_all("SD", "LAC")
+      .funs = ~ team_name_fn(.x) %>% stringr::str_replace_all("[\r\n]", " ") %>% stringr::str_squish()
     ) %>%
     janitor::clean_names() %>%
     dplyr::select(-"drive_play_count", -"drive_time_of_possession", -"next_play_type") %>%
