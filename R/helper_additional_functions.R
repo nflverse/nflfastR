@@ -316,6 +316,7 @@ team_name_fn <- function(var) {
       "JAC" = "JAX",
       "STL" = "LA",
       "SL" = "LA",
+      "LAR" = "LA",
       "ARZ" = "ARI",
       "BLT" = "BAL",
       "CLV" = "CLE",
