@@ -8,7 +8,7 @@
 [![CRAN
 status](https://www.r-pkg.org/badges/version-last-release/nflfastR)](https://CRAN.R-project.org/package=nflfastR)
 [![CRAN
-downloads](http://cranlogs.r-pkg.org/badges/grand-total/nflfastR)](https://CRAN.R-project.org/package=nflfastR)
+downloads](https://cranlogs.r-pkg.org/badges/grand-total/nflfastR)](https://CRAN.R-project.org/package=nflfastR)
 [![Dev
 status](https://img.shields.io/github/r-package/v/nflverse/nflfastR/master?label=dev%20version&style=flat-square&logo=github)](https://www.nflfastr.com/)
 [![R-CMD-check](https://github.com/nflverse/nflfastR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/nflverse/nflfastR/actions/workflows/R-CMD-check.yaml)
@@ -123,8 +123,9 @@ incorporating the pre-game spread.
   used it for 2001-2010)
 - To Lau Sze Yui for developing a scraping function to access
   JSON-formatted NFL play-by-play beginning in 2001
-- To Aaron Schatz and [FTN Fantasy](https://ftnfantasy.com/dvoa/nfl) for providing charting data to
-  correctly mark scrambles in the 1999-2005 seasons
+- To Aaron Schatz and [FTN Fantasy](https://ftnfantasy.com/dvoa/nfl) for
+  providing charting data to correctly mark scrambles in the 1999-2005
+  seasons
 - To Lee Sharpe for curating a resource for game information
 - To Timo Riske, Lau Sze Yui, Sean Clement, and Daniel Houston for many
   helpful discussions regarding the development of the new `nflfastR`
