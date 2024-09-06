@@ -221,6 +221,11 @@ get_pbp_nfl <- function(id,
     dplyr::filter(
       !(is.na(.data$timeout_team) & stringr::str_detect(tolower(.data$play_description), "timeout at|two-minute"))
     ) %>%
+    # Data in 2024 pbp introduced separate "plays" for injury updates
+    # These mess up some of our logic. Since they are useless, we remove them here
+    dplyr::filter(
+      !(is.na(.data$timeout_team) & stringr::str_detect(tolower(.data$play_description), "\\*\\* injury update:"))
+    ) %>%
     fix_posteams()
 
   # fix for games where home_team == away_team and fields are messed up
