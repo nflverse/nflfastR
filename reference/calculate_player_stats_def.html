@@ -9,7 +9,7 @@ either at the game level or at the level of the entire data frame passed."><meta
 
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.6.1.9013</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.6.1.9014</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -108,7 +108,7 @@ on <a href="https://www.nflfastr.com/articles/nflfastR.html#example-11-replicati
 <span class="r-in"><span>  <span class="va">overall</span> <span class="op">&lt;-</span> <span class="fu">calculate_player_stats_def</span><span class="op">(</span><span class="va">pbp</span>, weekly <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">overall</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Rows: 9,311</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Rows: 9,270</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Columns: 32</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ season                        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 2020, 2020, 2020, 2020, 2020, 2020, 2020…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ week                          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 3, 11, 3, 5, 11, 12, 15, 6, 10, 12, 15, …</span>
@@ -142,29 +142,29 @@ on <a href="https://www.nflfastr.com/articles/nflfastR.html#example-11-replicati
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ def_safety                    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ def_penalty                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ def_penalty_yards             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Rows: 1,544</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Rows: 1,413</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Columns: 30</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ player_id                     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "00-0022921", "00-0022924", "00-0023448"…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ player_name                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "L.Fitzgerald", "B.Roethlisberger", "T.D…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ player_display_name           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Larry Fitzgerald", "Ben Roethlisberger"…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ games                         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1, 1, 5, 1, 5, 3, 7, 2, 5, 1, 1, 1, 13, …</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ games                         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1, 1, 5, 1, 5, 3, 7, 6, 1, 1, 13, 1, 5, …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ position                      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "WR", "QB", "OLB", "QB", "CB", "CB", "CB…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ position_group                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "WR", "QB", "LB", "QB", "DB", "DB", "DB"…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ headshot_url                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "https://static.www.nfl.com/image/privat…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ team                          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "DET", "JAX", "WAS", "NYJ", "BAL", "ARI"…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ def_tackles                   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1, 1, 5, 1, 12, 3, 25, 0, 4, 2, 1, 1, 19…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ def_tackles_solo              <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1, 1, 5, 1, 12, 2, 23, 0, 4, 2, 1, 1, 16…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ def_tackles_with_assist       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 3, 0…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ def_tackle_assists            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 0, 1, 0, 4, 0, 4, 0, 10, 0, 0, 0, 13,…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ def_tackles_for_loss          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 5, 0…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ def_tackles_for_loss_yards    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 2, 0…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ def_tackles                   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1, 1, 5, 1, 12, 3, 25, 6, 1, 1, 19, 1, 8…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ def_tackles_solo              <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1, 1, 5, 1, 12, 2, 23, 6, 1, 1, 16, 1, 6…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ def_tackles_with_assist       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 3, 0, 2, 2…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ def_tackle_assists            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 0, 1, 0, 4, 0, 4, 10, 0, 0, 13, 0, 6,…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ def_tackles_for_loss          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 5, 0, 0, 2…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ def_tackles_for_loss_yards    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 2, 0, 0, 4…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ def_fumbles_forced            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ def_sacks                     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ def_sack_yards                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, …</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ def_qb_hits                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 11, …</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ def_qb_hits                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 11, 0, 0, …</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ def_interceptions             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ def_interception_yards        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ def_pass_defended             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 1, 0, 1, 1, 5, 0, 0, 0, 0, 0, 7, 0…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ def_pass_defended             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 1, 0, 1, 1, 5, 0, 0, 0, 7, 0, 0, 0…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ def_tds                       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ def_fumbles                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ def_fumble_recovery_own       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…</span>
@@ -172,8 +172,8 @@ on <a href="https://www.nflfastr.com/articles/nflfastR.html#example-11-replicati
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ def_fumble_recovery_opp       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ def_fumble_recovery_yards_opp <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ def_safety                    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ def_penalty                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 3, 1…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ def_penalty_yards             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 22, 10, 0, 0, 0, 0, 25…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ def_penalty                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 3, 1, 1, 1…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ def_penalty_yards             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0, 0, 0, 0, 0, 0, 22, 0, 0, 0, 25, 14, 1…</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
