@@ -14,6 +14,7 @@
 - Added identification of scrambles from 1999 through 2004 with thank to Aaron Schatz (#468)
 - nflfastR tried to fix bugs in the underlying pbp data of JAX home games prior to the 2016 season. An update of the raw pbp data resolved those bugs so nflfastR needs to remove the hard coded adjustments. This means that nflfastR <= v4.6.1 will return incorrect pbp data for all Jacksonville home games prior to the 2016 season! (#478)
 - Fixed a problem where `clean_pbp()` returned `pass = 1` in actual rush plays in very rare cases. (#479)
+- Removed extra lines for injury timeouts that were breaking `fixed_drive` (#482)
 
 # nflfastR 4.6.1
 
