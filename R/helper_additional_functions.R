@@ -116,7 +116,7 @@ clean_pbp <- function(pbp, ...) {
         ),
         # in very rare cases, the pass logic can fail. We do a hard coded overwrite here because it's not worth the time
         # to overthink the logic to catch weird play descriptions.
-        pass = fix_werid_pass_plays(.data$pass, .data$game_id, .data$play_id),
+        pass = fix_weird_pass_plays(.data$pass, .data$game_id, .data$play_id),
         #if there's a rusher and it wasn't a QB kneel or pass play, it's a run play
         rush = dplyr::if_else(!is.na(.data$rusher) & .data$qb_kneel == 0 & .data$pass == 0, 1, 0),
         #fix some common QBs with inconsistent names
@@ -407,7 +407,7 @@ add_qb_epa <- function(pbp, ...) {
 
 # Function that fixes false "pass" positives in some hard coded plays where
 # the parser logic reached its limit
-fix_werid_pass_plays <- function(pass, game_id, play_id){
+fix_weird_pass_plays <- function(pass, game_id, play_id){
   combined_id <- paste(game_id, play_id, sep = "_")
   false_positives <- c(
     "1999_01_ARI_PHI_1611",
