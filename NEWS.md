@@ -12,7 +12,7 @@
 - `punter_player_id`, and `punter_player_name` are filled for blocked punt attempts. (#463)
 - Fixed an issue affecting scores of 2022 games involving a return touchdown (#466)
 - Added identification of scrambles from 1999 through 2004 with thank to Aaron Schatz (#468)
-- Added new function `calculate_stats()` that combines the output of all `calculate_player_stats*()` functions with a more robust and faster approach. The `calculate_player_stats*()` function will be deprecated.
+- Added new function `calculate_stats()` that combines the output of all `calculate_player_stats*()` functions with a more robust and faster approach. The `calculate_player_stats*()` function will be deprecated. (#470)
 - Updated the dataframe `stat_ids` with some IDs that were previously missing.
 - nflfastR tried to fix bugs in the underlying pbp data of JAX home games prior to the 2016 season. An update of the raw pbp data resolved those bugs so nflfastR needs to remove the hard coded adjustments. This means that nflfastR <= v4.6.1 will return incorrect pbp data for all Jacksonville home games prior to the 2016 season! (#478)
 - Fixed a problem where `clean_pbp()` returned `pass = 1` in actual rush plays in very rare cases. (#479)
