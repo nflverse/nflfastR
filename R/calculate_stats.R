@@ -1,11 +1,24 @@
+#' Calculate NFL Stats
+#'
+#' @param seasons A numeric vector of 4-digit years associated with given NFL
+#'  seasons - defaults to latest season. If set to TRUE, returns all available
+#'  data since 1999.
+#' @param summary_level Summarise stats by `"season"` or `"week"`.
+#' @param stat_type Calculate `"player"` level stats or `"team"` level stats.
+#'
+#' @return A tibble of player/team stats summarised by season/week.
+#' @export
+#'
+#' @examples
+#' \donttest{
+#' try({# to avoid CRAN test problems
+#' stats <- calculate_stats(2023, "season", "player")
+#' dplyr::glimpse(stats)
+#' })
+#' }
 calculate_stats <- function(seasons = nflreadr::most_recent_season(),
                             summary_level = c("season", "week"),
                             stat_type = c("player", "team")){
-
-  # testing
-  # seasons = 2023
-  # summary_level = "week"
-  # stat_type = "player"
 
   summary_level <- rlang::arg_match(summary_level)
   stat_type <- rlang::arg_match(stat_type)
@@ -15,19 +28,24 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
   playinfo <- pbp %>%
     dplyr::group_by(.data$game_id, .data$play_id) %>%
     dplyr::summarise(
-      off = nflreadr::clean_team_abbrs(posteam),
-      def = nflreadr::clean_team_abbrs(defteam),
+      off = posteam,
+      def = defteam,
       special = as.integer(special == 1)
     ) %>%
-    dplyr::ungroup()
+    dplyr::ungroup() %>%
+    dplyr::mutate_at(
+      .vars = dplyr::vars("off", "def"),
+      .funs = team_name_fn
+    )
 
-  # Function defined below
+  # load_playstats defined below
   # more_stats = all stat IDs of one player in a single play
   # team_stats = all stat IDs of one team in a single play
   # we need those to identify things like fumbles depending on playtype or
   # first downs depending on playtype
   playstats <- load_playstats(seasons = seasons) %>%
-    dplyr::group_by(.data$season, .data$week, .data$play_id, .data$gsis_player_id) %>%
+    dplyr::rename("player_id" = "gsis_player_id") %>%
+    dplyr::group_by(.data$season, .data$week, .data$play_id, .data$player_id) %>%
     dplyr::mutate(
       # we append a collapse separator to the string in order to search for matches
       # including the separator to avoid 1 matching 10
@@ -49,21 +67,6 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       playinfo, by = c("game_id", "play_id")
     )
 
-  if (stat_type == "player"){
-    # need newer version of nflreadr to use load_players
-    rlang::check_installed("nflreadr (>= 1.3.0)", "to join player information.")
-
-    player_info <- nflreadr::load_players() %>%
-      dplyr::select(
-        "player_id" = "gsis_id",
-        "player_display_name" = "display_name",
-        "player_name" = "short_name",
-        "position",
-        "position_group",
-        "headshot_url" = "headshot"
-      )
-  }
-
   # Check combination of summary_level and stat_type to set a helper that is
   # used to create the grouping variables
   grp_id <- data.table::fcase(
@@ -72,21 +75,55 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
     summary_level == "week"   && stat_type == "player", "30",
     summary_level == "week"   && stat_type == "team",   "40"
   )
-
-  grp_vars <- switch (grp_id,
-    "10" = rlang::data_syms(c("season", "player_id" = "gsis_player_id")),
-    "20" = rlang::data_syms(c("season", "team_abbr")),
-    "30" = rlang::data_syms(c("season", "week", "player_id" = "gsis_player_id")),
-    "40" = rlang::data_syms(c("season", "week", "team_abbr"))
+  # grp_vctr is used as character vector for joining pbp stats
+  grp_vctr <- switch (grp_id,
+    "10" = c("season", "player_id"),
+    "20" = c("season", "team_abbr"),
+    "30" = c("season", "week", "player_id"),
+    "40" = c("season", "week", "team_abbr")
   )
+  # grp_vars us used as grouping variables
+  grp_vars <- rlang::data_syms(grp_vctr)
 
-  # Silence global vars NOTE
-  # We do this differently here because it's only a bunch of variables
-  # and the code is more readable
-  utils::globalVariables(c(
-    "stat_id", "yards", "more_stats", "team_stats", "team_abbr",
-    "def", "off", "special"
-  ))
+  # Stats from PBP #####################
+  # we want passing epa, rushing epa, and receiving epa
+  # since these depend on different player id variables and filters,
+  # we create separate dfs for these stats
+  passing_stats_from_pbp <- pbp %>%
+    dplyr::filter(.data$play_type %in% c("pass", "qb_spike")) %>%
+    dplyr::select(
+      "season", "week", "team_abbr" = "posteam",
+      "player_id" = "passer_player_id", "qb_epa"
+    ) %>%
+    dplyr::group_by(!!!grp_vars) %>%
+    dplyr::summarise(
+      passing_epa =   sum(.data$qb_epa, na.rm = TRUE)
+    ) %>%
+    dplyr::ungroup()
+
+  rushing_stats_from_pbp <- pbp %>%
+    dplyr::filter(.data$play_type %in% c("run", "qb_kneel")) %>%
+    dplyr::select(
+      "season", "week", "team_abbr" = "posteam",
+      "player_id" = "rusher_player_id", "epa"
+    ) %>%
+    dplyr::group_by(!!!grp_vars) %>%
+    dplyr::summarise(
+      rushing_epa =   sum(.data$epa, na.rm = TRUE)
+    ) %>%
+    dplyr::ungroup()
+
+  receiving_stats_from_pbp <- pbp %>%
+    dplyr::filter(!is.na(.data$receiver_player_id)) %>%
+    dplyr::select(
+      "season", "week", "team_abbr" = "posteam",
+      "player_id" = "receiver_player_id", "epa"
+    ) %>%
+    dplyr::group_by(!!!grp_vars) %>%
+    dplyr::summarise(
+      receiving_epa = sum(.data$epa, na.rm = TRUE)
+    ) %>%
+    dplyr::ungroup()
 
   stats <- playstats %>%
     dplyr::group_by(!!!grp_vars) %>%
@@ -103,11 +140,12 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       sack_fumbles = sum(stat_id == 20 & any(has_id(52, more_stats), has_id(53, more_stats), has_id(54, more_stats))),
       sack_fumbles_lost = sum(stat_id == 20 & has_id(106, more_stats)),
       passing_air_yards = sum((stat_id %in% 111:112) * yards),
-      # passing_yards_after_catch = 15:16 - 111,
+      passing_yards_after_catch = .data$passing_yards - .data$passing_air_yards,
       passing_first_downs = sum((stat_id %in% 15:16) & has_id(4, team_stats)),
       # passing_epa = requires pbp,
       passing_2pt_conversions = sum(stat_id == 77),
-      pacr = .data$passing_yards / .data$passing_air_yards,
+      # this is a player stat and we skip it in team stats
+      pacr = if (.env$stat_type == "player") .data$passing_yards / .data$passing_air_yards else NULL,
       # dakota = requires pbp,
 
       carries = sum(stat_id %in% 10:11),
@@ -125,27 +163,23 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       receiving_tds = sum(stat_id %in% c(22,24)),
       receiving_fumbles = sum((stat_id %in% 21:22) & any(has_id(52, more_stats), has_id(53, more_stats), has_id(54, more_stats))),
       receiving_fumbles_lost = sum((stat_id %in% 21:22) & has_id(106, more_stats)),
-      # receiving_air_yards = that's in 111:112 but it is a passer stat not a receiver stat,
+      # air_yards are counted in 111:112 but it is a passer stat not a receiver stat
+      # so we count team air yards when a player accounted for a reception
+      # team air yards will always equal the correct air yards as 111 and 112
+      # cannot appear more than once per play.
+      # If this ever changes, we can use pbp instead.
+      receiving_air_yards = sum( (stat_id %in% 21:22) * dplyr::first(.data$team_air_yards)),
       receiving_yards_after_catch = sum((stat_id == 113) * yards),
       receiving_first_downs = sum((stat_id %in% 21:22) & has_id(4, team_stats)),
       # receiving_epa = requires pbp,
       receiving_2pt_conversions = sum(stat_id == 104),
-      # racr = .data$receiving_yards / .data$receiving_air_yards,
-      target_share = .data$targets / .data$team_targets,
-      # air_yards_share = .data$receiving_air_yards / .data$team_air_yards,
-      # wopr = 1.5 * .data$target_share + 0.7 * .data$air_yards_share,
+      # this is a player stat and we skip it in team stats
+      racr = if (.env$stat_type == "player") .data$receiving_yards / .data$receiving_air_yards else NULL,
+      target_share = .data$targets / dplyr::first(.data$team_targets),
+      air_yards_share = .data$receiving_air_yards / dplyr::first(.data$team_air_yards),
+      # this is a player stat and we skip it in team stats
+      wopr = if (.env$stat_type == "player") 1.5 * .data$target_share + 0.7 * .data$air_yards_share else NULL,
       special_teams_tds = sum((special == 1) & stat_id %in% td_ids()),
-
-      # fantasy_points =
-      #   1 / 25 * .data$passing_yards +
-      #   4 * .data$passing_tds +
-      #   -2 * .data$interceptions +
-      #   1 / 10 * (.data$rushing_yards + .data$receiving_yards) +
-      #   6 * (.data$rushing_tds + .data$receiving_tds + .data$special_teams_tds) +
-      #   2 * (.data$passing_2pt_conversions + .data$rushing_2pt_conversions + .data$receiving_2pt_conversions) +
-      #   -2 * (.data$sack_fumbles_lost + .data$rushing_fumbles_lost + .data$receiving_fumbles_lost),
-
-      # fantasy_points_ppr = .data$fantasy_points + .data$receptions,
 
       # Defense #####################
       # def_tackles = ,
@@ -177,7 +211,8 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       fg_missed = sum(stat_id == 69),
       fg_blocked = sum(stat_id == 71),
       fg_long = max((stat_id == 70) * yards) %0% NA_integer_,
-      fg_pct = round(.data$fg_made / .data$fg_att, 3L),
+      # avoid 0/0 = NaN
+      fg_pct = if(.data$fg_att > 0) round(.data$fg_made / .data$fg_att, 3L) else NA_real_,
       fg_made_0_19 =  sum((stat_id == 70) * (yards %between% c(0, 19))),
       fg_made_20_29 = sum((stat_id == 70) * (yards %between% c(20, 29))),
       fg_made_30_39 = sum((stat_id == 70) * (yards %between% c(30, 39))),
@@ -200,7 +235,8 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       pat_att = sum(stat_id %in% 72:74),
       pat_missed = sum(stat_id == 73),
       pat_blocked = sum(stat_id == 74),
-      pat_pct = round(.data$pat_made / .data$pat_att, 3L),
+      # avoid 0/0 = NaN
+      pat_pct = if(.data$pat_att > 0) round(.data$pat_made / .data$pat_att, 3L) else NA_real_,
       # gwfg_att = ,
       # gwfg_distance = ,
       # gwfg_made = ,
@@ -208,40 +244,96 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       # gwfg_blocked =
     ) %>%
     dplyr::ungroup() %>%
-    dplyr::mutate(
-      pacr = dplyr::case_when(
-        is.nan(.data$pacr) ~ NA_real_,
-        .data$passing_air_yards <= 0 ~ 0,
-        TRUE ~ .data$pacr
-      )
-    ) %>%
     dplyr::mutate_if(
       .predicate = is.character,
       .funs = ~ dplyr::na_if(.x, "")
     ) %>%
-    dplyr::left_join(player_info, by = "player_id") %>%
+    # Join PBP Stats #####################
+    dplyr::left_join(passing_stats_from_pbp,   by = grp_vctr) %>%
+    dplyr::left_join(rushing_stats_from_pbp,   by = grp_vctr) %>%
+    dplyr::left_join(receiving_stats_from_pbp, by = grp_vctr) %>%
+    # relocate epa variables. This could be done with dplyr::relocate
+    # but we want to be compatible with older dplyr versions
     dplyr::select(
-      "player_id",
-      "player_name",
-      "player_display_name",
-      "position",
-      "position_group",
-      "headshot_url",
+      "season":"passing_first_downs",
+      "passing_epa",
+      "passing_2pt_conversions":"rushing_first_downs",
+      "rushing_epa",
+      "rushing_2pt_conversions":"receiving_first_downs",
+      "receiving_epa",
       dplyr::everything()
-    )
+    ) %>%
+    dplyr::arrange(!!!grp_vars)
 
-    # set grouping variables based off summary_level and stat_type
-    #
-    # sumarise epa stats and dakota using pbp
-    #
-    # summarise all other stats using playstats. That's a big call to summarise
-    # where we create all sorts of stats with the various stat IDs
-    #
-    # load player data if stat_type is player to joing player info
-    #
-    # join everything
+  # Apply Player Modifications #####################
+  if (stat_type == "player"){
+    # need newer version of nflreadr to use load_players
+    rlang::check_installed("nflreadr (>= 1.3.0)", "to join player information.")
 
+    player_info <- nflreadr::load_players() %>%
+      dplyr::select(
+        "player_id" = "gsis_id",
+        "player_display_name" = "display_name",
+        # "player_name" = "short_name",
+        "position",
+        "position_group",
+        "headshot_url" = "headshot"
+      )
+
+    # load gsis_ids of RBs, FBs and HBs for RACR
+    racr_ids <- player_info %>%
+      dplyr::filter(.data$position %in% c("RB", "FB", "HB")) %>%
+      dplyr::pull("player_id")
+
+    stats <- stats %>%
+      dplyr::mutate(
+        pacr = dplyr::case_when(
+          is.nan(.data$pacr) ~ NA_real_,
+          .data$passing_air_yards <= 0 ~ 0,
+          TRUE ~ .data$pacr
+        ),
+        racr = dplyr::case_when(
+          is.nan(.data$racr) ~ NA_real_,
+          .data$receiving_air_yards == 0 ~ 0,
+          # following Josh Hermsmeyer's definition, RACR stays < 0 for RBs (and FBs) and is set to
+          # 0 for Receivers. The list "racr_ids" includes all known RB and FB gsis_ids
+          .data$receiving_air_yards < 0 & !.data$player_id %in% racr_ids ~ 0,
+          TRUE ~ .data$racr
+        ),
+        # Fantasy #####################
+        fantasy_points =
+          1 / 25 * .data$passing_yards +
+          4 *      .data$passing_tds +
+          -2 *     .data$passing_interceptions +
+          1 / 10 * (.data$rushing_yards + .data$receiving_yards) +
+          6 *      (.data$rushing_tds + .data$receiving_tds + .data$special_teams_tds) +
+          2 *      (.data$passing_2pt_conversions + .data$rushing_2pt_conversions + .data$receiving_2pt_conversions) +
+          -2 *     (.data$sack_fumbles_lost + .data$rushing_fumbles_lost + .data$receiving_fumbles_lost),
+
+        fantasy_points_ppr = .data$fantasy_points + .data$receptions
+      ) %>%
+      dplyr::left_join(player_info, by = "player_id") %>%
+      dplyr::select(
+        "player_id",
+        # "player_name",
+        "player_display_name",
+        "position",
+        "position_group",
+        "headshot_url",
+        dplyr::everything()
+      )
+  }
+
+  stats
 }
+
+# Silence global vars NOTE
+# We do this differently here because it's only a bunch of variables
+# and the code is more readable
+utils::globalVariables(c(
+  "stat_id", "yards", "more_stats", "team_stats", "team_abbr",
+  "def", "off", "special"
+))
 
 load_playstats <- function(seasons = nflreadr::most_recent_season()) {
 
