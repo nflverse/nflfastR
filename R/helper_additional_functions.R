@@ -104,9 +104,9 @@ clean_pbp <- function(pbp, ...) {
         ),
         # if there's a pass, sack, or scramble, it's a pass play...
         pass = dplyr::if_else(stringr::str_detect(.data$desc, "( pass )|(sacked)|(scramble)") | .data$qb_scramble == 1, 1, 0),
-        # ...unless it says "backwards pass" and there's a rusher
+        # ...unless it says "backward(s) pass" or "lateral pass" and there's a rusher
         pass = dplyr::if_else(
-          stringr::str_detect(.data$desc, "(backward pass)|(Backward pass)") & !is.na(.data$rusher),
+          stringr::str_detect(stringr::str_to_lower(.data$desc), "(backward pass)|(backwards pass)|(lateral pass)") & !is.na(.data$rusher),
           0, .data$pass
         ),
         # and make sure there's no pass on a kickoff (sometimes there's forward pass on kickoff but that's not a pass play)
@@ -114,6 +114,9 @@ clean_pbp <- function(pbp, ...) {
           .data$kickoff_attempt == 1 ~ 0,
           TRUE ~ .data$pass
         ),
+        # in very rare cases, the pass logic can fail. We do a hard coded overwrite here because it's not worth the time
+        # to overthink the logic to catch weird play descriptions.
+        pass = fix_weird_pass_plays(.data$pass, .data$game_id, .data$play_id),
         #if there's a rusher and it wasn't a QB kneel or pass play, it's a run play
         rush = dplyr::if_else(!is.na(.data$rusher) & .data$qb_kneel == 0 & .data$pass == 0, 1, 0),
         #fix some common QBs with inconsistent names
@@ -281,7 +284,7 @@ clean_pbp <- function(pbp, ...) {
 big_parser <- "(?<=)[A-Z][A-z]*+(\\.|\\s)+[A-Z][A-z]*+\\'*\\-*[A-Z]*+[a-z]*+(\\s((Jr.)|(Sr.)|I{2,3})|(IV))?"
 # maybe some spaces and letters, and then a rush direction unless they fumbled
 rush_finder <- "(?=\\s*[a-z]*+\\s*((FUMBLES) | (left end)|(left tackle)|(left guard)|(up the middle)|(right guard)|(right tackle)|(right end)))"
-# maybe some spaces and leters, and then pass / sack / scramble
+# maybe some spaces and letters, and then pass / sack / scramble
 pass_finder <- "(?=\\s*[a-z]*+\\s*(( pass)|(sack)|(scramble)))"
 # to or for, maybe a jersey number and a dash
 receiver_finder <- "(?<=((to)|(for))\\s[:digit:]{0,2}\\-{0,1})"
@@ -313,6 +316,7 @@ team_name_fn <- function(var) {
       "JAC" = "JAX",
       "STL" = "LA",
       "SL" = "LA",
+      "LAR" = "LA",
       "ARZ" = "ARI",
       "BLT" = "BAL",
       "CLV" = "CLE",
@@ -401,3 +405,26 @@ add_qb_epa <- function(pbp, ...) {
   return(pbp)
 }
 
+# Function that fixes false "pass" positives in some hard coded plays where
+# the parser logic reached its limit
+fix_weird_pass_plays <- function(pass, game_id, play_id){
+  combined_id <- paste(game_id, play_id, sep = "_")
+  false_positives <- c(
+    "1999_01_ARI_PHI_1611",
+    "1999_01_SF_JAX_1788",
+    "1999_01_SF_JAX_2081",
+    "1999_11_ATL_TB_1740",
+    "2001_09_MIN_PHI_1307",
+    "2001_14_NE_BUF_452",
+    "2002_16_PIT_TB_527",
+    "2003_02_HOU_NO_3924",
+    "2003_15_PIT_NYJ_873",
+    "2004_05_BUF_NYJ_2555",
+    "2005_07_SD_PHI_321",
+    "2011_02_STL_NYG_1369",
+    "2016_05_NE_CLE_912",
+    "2016_06_CAR_NO_2690",
+    "2020_10_BAL_NE_2013"
+  )
+  data.table::fifelse(combined_id %chin% false_positives, 0, pass, pass)
+}

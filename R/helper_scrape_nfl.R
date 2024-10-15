@@ -27,11 +27,19 @@ get_pbp_nfl <- function(id,
     TRUE ~ "POST"
   )
 
-  # game_info <- raw_data$data$viewer$gameDetail
-
   game_id <- raw_data$data$viewer$gameDetail$id
   home_team <- raw_data$data$viewer$gameDetail$homeTeam$abbreviation
   away_team <- raw_data$data$viewer$gameDetail$visitorTeam$abbreviation
+  home_team <- data.table::fcase(
+    home_team == "JAC", "JAX",
+    home_team == "SD", "LAC",
+    default = home_team
+  )
+  away_team <- data.table::fcase(
+    away_team == "JAC", "JAX",
+    away_team == "SD", "LAC",
+    default = away_team
+  )
 
   # if home team and away team are the same, the game is messed up and needs fixing
   if (home_team == away_team) {
@@ -95,28 +103,6 @@ get_pbp_nfl <- function(id,
       )
   }
 
-  #fill missing posteam info for this
-  if (
-    ((home_team %in% c("JAC", "JAX") | away_team %in% c("JAC", "JAX")) & season <= 2015) |
-    bad_game == 1
-  ) {
-    plays <- plays %>%
-      dplyr::mutate(
-        possessionTeam.abbreviation = stringr::str_extract(plays$prePlayByPlay, '[A-Z]{2,3}(?=\\s)'),
-        possessionTeam.abbreviation = dplyr::if_else(
-          .data$possessionTeam.abbreviation %in% c('OUT', 'END', 'NA'),
-          NA_character_, .data$possessionTeam.abbreviation
-        ),
-        possessionTeam.abbreviation = dplyr::if_else(
-          .data$possessionTeam.abbreviation == 'JAX', 'JAC', .data$possessionTeam.abbreviation
-        )
-      )
-
-    # for these old games, we're making everything JAC instead of JAX
-    home_team <- dplyr::if_else(home_team == "JAX", "JAC", home_team)
-    away_team <- dplyr::if_else(away_team == "JAX", "JAC", away_team)
-  }
-
   drives <- raw_data$data$viewer$gameDetail$drives %>%
     dplyr::mutate(ydsnet = .data$yards + .data$yardsPenalized) %>%
     # these are already in plays
@@ -164,6 +150,13 @@ get_pbp_nfl <- function(id,
     dplyr::mutate_if(is.logical, as.numeric) %>%
     dplyr::mutate_if(is.integer, as.numeric) %>%
     dplyr::mutate_if(is.factor, as.character) %>%
+    # The abbreviations SD <-> LAC and JAC <-> JAX are mixed up in the raw json data
+    # to make sure team names match, we normalize the names here
+    # We also remove new line characters esp. from desc
+    dplyr::mutate_if(
+      .predicate = is.character,
+      .funs = ~ team_name_fn(.x) %>% stringr::str_replace_all("[\r\n]", " ") %>% stringr::str_squish()
+    ) %>%
     janitor::clean_names() %>%
     dplyr::select(-"drive_play_count", -"drive_time_of_possession", -"next_play_type") %>%
     dplyr::rename(
@@ -194,79 +187,17 @@ get_pbp_nfl <- function(id,
       season_type = season_type,
       play_clock = as.character(.data$play_clock),
       st_play_type = as.character(.data$st_play_type),
-      #if JAC has the ball and scored, make them the scoring team
-      td_team = dplyr::if_else(
-        .data$season <= 2015 & .data$posteam %in% c("JAC", "JAX") &
-          .data$drive_how_ended_description == 'Touchdown' & !is.na(.data$td_team),
-        'JAC', .data$td_team
-      ),
-      #if JAC involved in a game and defensive team score, fill in the right team
-      td_team = dplyr::if_else(
-        #game involving the jags
-        .data$season <= 2015 & (.data$home_team %in% c("JAC", "JAX") | .data$away_team %in% c("JAC", "JAX")) &
-          #defensive TD
-          .data$drive_how_ended_description != 'Touchdown' & !is.na(.data$td_team),
-        #if home team has ball, then away team scored, otherwise home team scored
-        dplyr::if_else(.data$posteam == .data$home_team, .data$away_team, .data$home_team),
-        .data$td_team
-      ),
+
       # fix muffed punt td in JAC game
-      td_team = dplyr::if_else(id == "2011_14_TB_JAX" & .data$play_id == 1343, 'JAC', .data$td_team),
+      td_team = dplyr::if_else(id == "2011_14_TB_JAX" & .data$play_id == 1343 & .data$td_team != "JAX", 'JAX', .data$td_team),
 
       # kickoff return TDs in old JAC games
-      td_team = dplyr::if_else(id == "2006_14_IND_JAX" & .data$play_id == 2078, 'JAC', .data$td_team),
-      td_team = dplyr::if_else(id == "2007_17_JAX_HOU" & .data$play_id %in% c(1907, 2042), 'HOU', .data$td_team),
-      td_team = dplyr::if_else(id == "2008_09_JAX_CIN" & .data$play_id == 3145, 'JAC', .data$td_team),
-      td_team = dplyr::if_else(id == "2009_15_IND_JAX" & .data$play_id == 1088, 'IND', .data$td_team),
-      td_team = dplyr::if_else(id == "2010_15_JAX_IND" & .data$play_id == 3848, 'IND', .data$td_team),
+      td_team = dplyr::if_else(id == "2006_14_IND_JAX" & .data$play_id == 2078 & .data$td_team != "JAX", 'JAX', .data$td_team),
+      td_team = dplyr::if_else(id == "2007_17_JAX_HOU" & .data$play_id %in% c(1907, 2042) & .data$td_team != "JAX", 'HOU', .data$td_team),
+      td_team = dplyr::if_else(id == "2008_09_JAX_CIN" & .data$play_id == 3145 & .data$td_team != "JAX", 'JAX', .data$td_team),
+      td_team = dplyr::if_else(id == "2009_15_IND_JAX" & .data$play_id == 1088 & .data$td_team != "JAX", 'IND', .data$td_team),
+      td_team = dplyr::if_else(id == "2010_15_JAX_IND" & .data$play_id == 3848 & .data$td_team != "JAX", 'IND', .data$td_team),
 
-      # fill in return team for the JAX games
-      return_team = dplyr::if_else(
-        !is.na(.data$return_team) & .data$season <= 2015 & (.data$home_team %in% c("JAC", "JAX") | .data$away_team %in% c("JAC", "JAX")),
-        dplyr::if_else(
-          # if the home team has the ball, return team is away team (this is before we flip posteam for kickoffs)
-          .data$posteam == .data$home_team, .data$away_team, .data$home_team
-        ),
-        .data$return_team
-      ),
-      fumble_recovery_1_team = dplyr::if_else(
-        !is.na(.data$fumble_recovery_1_team) & .data$season <= 2015 & (.data$home_team %in% c("JAC", "JAX") | .data$away_team %in% c("JAC", "JAX")),
-        # assign possession based on fumble_lost
-        dplyr::case_when(
-          .data$fumble_lost == 1 & .data$posteam == .data$home_team ~ .data$away_team,
-          .data$fumble_lost == 1 & .data$posteam == .data$away_team ~ .data$home_team,
-          .data$fumble_lost == 0 & .data$posteam == .data$home_team ~ .data$home_team,
-          .data$fumble_lost == 0 & .data$posteam == .data$away_team ~ .data$away_team
-        ),
-        .data$fumble_recovery_1_team
-      ),
-      timeout_team = dplyr::if_else(
-        # if there's a timeout in the affected seasons
-        !is.na(.data$timeout_team) & .data$season <= 2015 & (.data$home_team %in% c("JAC", "JAX") | .data$away_team %in% c("JAC", "JAX")),
-        # extract from play description
-        # make it JAC instead of JAX to be consistent with everything else
-        dplyr::if_else(
-          stringr::str_extract(.data$play_description, "(?<=Timeout #[1-3] by )[:upper:]+") == "JAX", "JAC", stringr::str_extract(.data$play_description, "(?<=Timeout #[1-3] by )[:upper:]+")
-        ),
-        .data$timeout_team
-      ),
-      # Also fix penalty team for JAC games
-      penalty_team = dplyr::if_else(
-        # if there's a penalty_team in the affected seasons
-        !is.na(.data$penalty_team) & .data$season <= 2015 & (.data$home_team %in% c("JAC", "JAX") | .data$away_team %in% c("JAC", "JAX")),
-        # extract from play description
-        # make it JAC instead of JAX to be consistent with everything else
-        dplyr::if_else(
-          stringr::str_extract(.data$play_description, "(?<=PENALTY on )[:upper:]{2,3}") == "JAX",
-          "JAC",
-          stringr::str_extract(.data$play_description, "(?<=PENALTY on )[:upper:]{2,3}")
-        ),
-        .data$penalty_team
-      ),
-      yardline_side = dplyr::if_else(
-        .data$season <= 2015 & .data$yardline_side == 'JAX',
-        'JAC', .data$yardline_side
-      ),
       time = dplyr::case_when(
         id == '2012_04_NO_GB' & .data$play_id == 1085 ~ '3:34',
         id == '2012_16_BUF_MIA' & .data$play_id == 2571 ~ '8:31',
@@ -276,12 +207,6 @@ get_pbp_nfl <- function(id,
       # get the safety team to ensure the correct team gets the points
       # usage of base ifelse is important here for non-scoring games (i.e. early live games)
       safety_team = ifelse(.data$safety == 1, .data$scoring_team_abbreviation, NA_character_),
-
-      # scoring_team_abbreviation messed up on old Jags games so just assume it's defense team
-      safety_team = ifelse(
-        .data$safety == 1 & .data$season <= 2015 & (.data$home_team %in% c("JAC", "JAX") | .data$away_team %in% c("JAC", "JAX")),
-        ifelse(.data$posteam == .data$home_team, .data$away_team, .data$home_team), .data$safety_team
-      ),
 
       # can't trust the goal_to_go variable so we overwrite it here
       goal_to_go = as.integer(stringr::str_detect(tolower(.data$pre_play_by_play), "goal"))
@@ -295,6 +220,11 @@ get_pbp_nfl <- function(id,
     # These mess up some of our logic. Since they are useless, we remove them here
     dplyr::filter(
       !(is.na(.data$timeout_team) & stringr::str_detect(tolower(.data$play_description), "timeout at|two-minute"))
+    ) %>%
+    # Data in 2024 pbp introduced separate "plays" for injury updates
+    # These mess up some of our logic. Since they are useless, we remove them here
+    dplyr::filter(
+      !(is.na(.data$timeout_team) & stringr::str_starts(tolower(.data$play_description), "\\*\\* injury update:"))
     ) %>%
     fix_posteams()
 
@@ -377,12 +307,12 @@ fix_bad_games <- function(pbp) {
 }
 
 fix_posteams <- function(pbp){
-  # 2023 pbp introduces two new problems
+  # Data source switch in 2023 introduced new problems
   # 1. Definition of posteam on kick offs changed to receiving team. That's our
   #    definition and we swap teams later.
   # 2. Posteam doesn't change on the PAT after defensive TD
   #
-  # We adjust both things here, but only for 2023ff to avoid backwards compatibility problems
+  # We adjust both things here
   # We need the variable pre_play_by_play which usually looks like "KC  1-10  NYJ 40"
   if ("pre_play_by_play" %in% names(pbp)){
     # Let's be as explicit as possible about what we want to extract from the string

@@ -14,6 +14,10 @@
 - Added identification of scrambles from 1999 through 2004 with thank to Aaron Schatz (#468)
 - Added new function `calculate_stats()` that combines the output of all `calculate_player_stats*()` functions with a more robust and faster approach. The `calculate_player_stats*()` function will be deprecated.
 - Updated the dataframe `stat_ids` with some IDs that were previously missing.
+- nflfastR tried to fix bugs in the underlying pbp data of JAX home games prior to the 2016 season. An update of the raw pbp data resolved those bugs so nflfastR needs to remove the hard coded adjustments. This means that nflfastR <= v4.6.1 will return incorrect pbp data for all Jacksonville home games prior to the 2016 season! (#478)
+- Fixed a problem where `clean_pbp()` returned `pass = 1` in actual rush plays in very rare cases. (#479)
+- Removed extra lines for injury timeouts that were breaking `fixed_drive` (#482)
+- The variable `penalty_type` now correctly lists the penalty "Kickoff Short of Landing Zone" introduced in the 2024 season. (#486)
 
 # nflfastR 4.6.1
 

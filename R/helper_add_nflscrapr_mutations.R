@@ -92,6 +92,12 @@ add_nflscrapr_mutations <- function(pbp) {
           stringr::str_remove("\\([0-9]{2}+ Yards\\)") %>%
           stringr::str_squish(), NA_character_
       ),
+      # The new "dynamic Kickoff" in the 2024 season introduces a new penalty type
+      penalty_type = dplyr::if_else(
+        .data$penalty == 1 & stringr::str_detect(tolower(.data$play_description), "kickoff short of landing zone"),
+        "Kickoff Short of Landing Zone",
+        .data$penalty_type
+      ),
       # Make plays marked with down == 0 as NA:
       down = dplyr::if_else(
         .data$down == 0,
@@ -397,12 +403,6 @@ add_nflscrapr_mutations <- function(pbp) {
         .data$replay_or_challenge == 1 & .data$timeout == 1 & is.na(.data$timeout_team), .data$tmp_timeout, .data$timeout_team
 
       ),
-      timeout_team = dplyr::if_else(
-        .data$season <= 2015 & (.data$home_team %in% c("JAC", "JAX") | .data$away_team %in% c("JAC", "JAX")) & .data$timeout_team == "JAX",
-        "JAC",
-        .data$timeout_team
-      ),
-
 
       home_timeouts_remaining = dplyr::if_else(
         .data$quarter %in% c(1, 2, 3, 4),
