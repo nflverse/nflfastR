@@ -147,6 +147,7 @@ reference:
       - teams_colors_logos
       - field_descriptions
       - stat_ids
+      - nfl_stats_variables
   - title: Lower Level Functions
     desc: >
       These functions are wrapped in the above listed main functions and
