@@ -9,12 +9,12 @@
 #' @param seasons A numeric vector of 4-digit years associated with given NFL
 #'  seasons - defaults to latest season. If set to TRUE, returns all available
 #'  data since 1999.
-#' @param summary_level Summarise stats by `"season"` or `"week"`.
+#' @param summary_level Summarize stats by `"season"` or `"week"`.
 #' @param stat_type Calculate `"player"` level stats or `"team"` level stats.
 #' @param season_type One of `"REG"`, `"POST"`, or `"REG+POST"`. Filters
 #'  data to regular season ("REG"), post season ("POST") or keeps all data.
 #'
-#' @return A tibble of player/team stats summarised by season/week.
+#' @return A tibble of player/team stats summarized by season/week.
 #' @export
 #'
 #' @examples
@@ -121,11 +121,13 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
     dplyr::filter(.data$play_type %in% c("pass", "qb_spike")) %>%
     dplyr::select(
       "season", "week", "team_abbr" = "posteam",
-      "player_id" = "passer_player_id", "qb_epa"
+      "player_id" = "passer_player_id", "qb_epa", "cpoe"
     ) %>%
     dplyr::group_by(!!!grp_vars) %>%
     dplyr::summarise(
-      passing_epa =   sum(.data$qb_epa, na.rm = TRUE)
+      passing_epa = sum(.data$qb_epa, na.rm = TRUE),
+      # mean will return NaN if all values are NA, because we remove NA
+      passing_cpoe = if (any(!is.na(.data$cpoe))) mean(.data$cpoe, na.rm = TRUE) else NA_real_
     ) %>%
     dplyr::ungroup()
 
@@ -137,7 +139,7 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
     ) %>%
     dplyr::group_by(!!!grp_vars) %>%
     dplyr::summarise(
-      rushing_epa =   sum(.data$epa, na.rm = TRUE)
+      rushing_epa = sum(.data$epa, na.rm = TRUE)
     ) %>%
     dplyr::ungroup()
 
@@ -179,6 +181,8 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
           dplyr::first(.data$off)
         )
       } else NULL,
+
+      games = dplyr::n_distinct(.data$game_id),
 
       # Offense #####################
       completions = sum(stat_id %in% 15:16),
@@ -264,7 +268,7 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       fg_blocked = sum(stat_id == 71),
       fg_long = max((stat_id == 70) * yards) %0% NA_integer_,
       # avoid 0/0 = NaN
-      fg_pct = if(.data$fg_att > 0) round(.data$fg_made / .data$fg_att, 3L) else NA_real_,
+      fg_pct = if (.data$fg_att > 0) round(.data$fg_made / .data$fg_att, 3L) else NA_real_,
       fg_made_0_19 =  sum((stat_id == 70) * (yards %between% c(0, 19))),
       fg_made_20_29 = sum((stat_id == 70) * (yards %between% c(20, 29))),
       fg_made_30_39 = sum((stat_id == 70) * (yards %between% c(30, 39))),
@@ -288,7 +292,7 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       pat_missed = sum(stat_id == 73),
       pat_blocked = sum(stat_id == 74),
       # avoid 0/0 = NaN
-      pat_pct = if(.data$pat_att > 0) round(.data$pat_made / .data$pat_att, 3L) else NA_real_,
+      pat_pct = if (.data$pat_att > 0) round(.data$pat_made / .data$pat_att, 3L) else NA_real_,
       # gwfg_att = ,
       # gwfg_distance = ,
       # gwfg_made = ,
@@ -308,7 +312,7 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
     # but we want to be compatible with older dplyr versions
     dplyr::select(
       "season":"passing_first_downs",
-      "passing_epa",
+      "passing_epa", "passing_cpoe",
       "passing_2pt_conversions":"rushing_first_downs",
       "rushing_epa",
       "rushing_2pt_conversions":"receiving_first_downs",
