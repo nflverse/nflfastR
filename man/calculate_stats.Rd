@@ -7,7 +7,8 @@
 calculate_stats(
   seasons = nflreadr::most_recent_season(),
   summary_level = c("season", "week"),
-  stat_type = c("player", "team")
+  stat_type = c("player", "team"),
+  season_type = c("REG", "POST", "REG+POST")
 )
 }
 \arguments{
@@ -15,15 +16,18 @@ calculate_stats(
 seasons - defaults to latest season. If set to TRUE, returns all available
 data since 1999.}
 
-\item{summary_level}{Summarise stats by \code{"season"} or \code{"week"}.}
+\item{summary_level}{Summarize stats by \code{"season"} or \code{"week"}.}
 
 \item{stat_type}{Calculate \code{"player"} level stats or \code{"team"} level stats.}
+
+\item{season_type}{One of \code{"REG"}, \code{"POST"}, or \code{"REG+POST"}. Filters
+data to regular season ("REG"), post season ("POST") or keeps all data.}
 }
 \value{
-A tibble of player/team stats summarised by season/week.
+A tibble of player/team stats summarized by season/week.
 }
 \description{
-Calculate NFL Stats
+Compute various NFL stats based off nflverse Play-by-Play data.
 }
 \examples{
 \donttest{
@@ -32,4 +36,10 @@ stats <- calculate_stats(2023, "season", "player")
 dplyr::glimpse(stats)
 })
 }
+}
+\seealso{
+\link{nfl_stats_variables} for a description of all variables.
+
+\url{https://www.nflfastr.com/articles/stats_variables.html} for a searchable
+table of the stats variable descriptions.
 }
