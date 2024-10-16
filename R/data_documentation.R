@@ -62,3 +62,14 @@
 #' stat_ids
 #' }
 "stat_ids"
+
+#' NFL Stats Variables
+#'
+#' @docType data
+#' @format A data frame explaining all variables returned by the function
+#' [calculate_stats()].
+#' @examples
+#' \donttest{
+#' nfl_stats_variables
+#' }
+"nfl_stats_variables"

@@ -1,0 +1,21 @@
+---
+title: "NFL Stats Variables"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  comment = "#>"
+)
+
+with_dt <- requireNamespace("DT")
+
+```
+
+```{r eval = with_dt}
+DT::datatable(nflfastR::nfl_stats_variables,options = list(scrollX = TRUE, pageLength = 25), filter = "top", rownames = FALSE)
+```
+
+```{r eval = !with_dt}
+knitr::kable(nflfastR::nfl_stats_variables)
+```
