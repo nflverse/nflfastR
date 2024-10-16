@@ -1,10 +1,18 @@
+################################################################################
+# Author: Sebastian Carl
+################################################################################
+
 #' Calculate NFL Stats
+#'
+#' Compute various NFL stats based off nflverse Play-by-Play data.
 #'
 #' @param seasons A numeric vector of 4-digit years associated with given NFL
 #'  seasons - defaults to latest season. If set to TRUE, returns all available
 #'  data since 1999.
 #' @param summary_level Summarise stats by `"season"` or `"week"`.
 #' @param stat_type Calculate `"player"` level stats or `"team"` level stats.
+#' @param season_type One of `"REG"`, `"POST"`, or `"REG+POST"`. Filters
+#'  data to regular season ("REG"), post season ("POST") or keeps all data.
 #'
 #' @return A tibble of player/team stats summarised by season/week.
 #' @export
@@ -18,13 +26,20 @@
 #' }
 calculate_stats <- function(seasons = nflreadr::most_recent_season(),
                             summary_level = c("season", "week"),
-                            stat_type = c("player", "team")){
+                            stat_type = c("player", "team"),
+                            season_type = c("REG", "POST", "REG+POST")){
 
   summary_level <- rlang::arg_match(summary_level)
   stat_type <- rlang::arg_match(stat_type)
+  season_type <- rlang::arg_match(season_type)
 
   pbp <- nflreadr::load_pbp(seasons = seasons)
+  if (season_type %in% c("REG", "POST")) {
+    pbp <- dplyr::filter(pbp, .data$season_type == .env$season_type)
+  }
 
+  # defensive stats require knowledge of which team is on defense
+  # special teams stats require knowledge of which plays were special teams plays
   playinfo <- pbp %>%
     dplyr::group_by(.data$game_id, .data$play_id) %>%
     dplyr::summarise(
@@ -38,12 +53,21 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       .funs = team_name_fn
     )
 
+  season_type_from_pbp <- pbp %>%
+    dplyr::select("game_id", "season_type") %>%
+    dplyr::distinct()
+  s_type_vctr <- season_type_from_pbp$season_type %>%
+    rlang::set_names(season_type_from_pbp$game_id)
+
   # load_playstats defined below
   # more_stats = all stat IDs of one player in a single play
   # team_stats = all stat IDs of one team in a single play
   # we need those to identify things like fumbles depending on playtype or
   # first downs depending on playtype
   playstats <- load_playstats(seasons = seasons) %>%
+    # if season_type is REG or POST, we filter pbp.
+    # That's why we have to filter playstats as well
+    dplyr::filter(.data$game_id %in% pbp$game_id) %>%
     dplyr::rename("player_id" = "gsis_player_id") %>%
     dplyr::group_by(.data$season, .data$week, .data$play_id, .data$player_id) %>%
     dplyr::mutate(
@@ -59,12 +83,16 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
     ) %>%
     dplyr::group_by(.data$season, .data$week, .data$team_abbr) %>%
     dplyr::mutate(
+      # for calculation of target share and air yard share
       team_targets = sum(stat_id == 115),
       team_air_yards = sum((stat_id %in% 111:112) * yards)
     ) %>%
     dplyr::ungroup() %>%
     dplyr::left_join(
       playinfo, by = c("game_id", "play_id")
+    ) %>%
+    dplyr::mutate(
+      season_type = unname(s_type_vctr[.data$game_id])
     )
 
   # Check combination of summary_level and stat_type to set a helper that is
@@ -82,7 +110,7 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
     "30" = c("season", "week", "player_id"),
     "40" = c("season", "week", "team_abbr")
   )
-  # grp_vars us used as grouping variables
+  # grp_vars is used as grouping variables
   grp_vars <- rlang::data_syms(grp_vctr)
 
   # Stats from PBP #####################
@@ -129,6 +157,29 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
     dplyr::group_by(!!!grp_vars) %>%
     dplyr::summarise(
 
+      # Season Type #####################
+      # if summary level is week, then we have to use the season type variable
+      # from playstats as it could be REG or POST depending on the value of
+      # the argument season_type
+      # if summary level is season, then we collapse the values of season_type
+      # this will make sure that season_type is only REG+POST if the user asked
+      # for it AND if postseason data is available
+      season_type = if (.env$summary_level == "week") dplyr::first(.data$season_type) else paste(unique(.data$season_type), collapse = "+"),
+
+      # Team Info #####################
+      # recent_team if we do a season summary of player stats
+      # team if we do a week summary of player stats
+      recent_team = if (.env$grp_id == "10") dplyr::last(.data$team_abbr) else NULL,
+      team = if (.env$grp_id == "30") dplyr::first(.data$team_abbr) else NULL,
+      # opponent team if we do week summaries
+      opponent_team = if (.env$summary_level == "week"){
+        data.table::fifelse(
+          dplyr::first(.data$team_abbr) == dplyr::first(.data$off),
+          dplyr::first(.data$def),
+          dplyr::first(.data$off)
+        )
+      } else NULL,
+
       # Offense #####################
       completions = sum(stat_id %in% 15:16),
       attempts = sum(stat_id %in% c(14:16, 19)),
@@ -139,8 +190,10 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       sack_yards_lost = sum((stat_id == 20) * yards),
       sack_fumbles = sum(stat_id == 20 & any(has_id(52, more_stats), has_id(53, more_stats), has_id(54, more_stats))),
       sack_fumbles_lost = sum(stat_id == 20 & has_id(106, more_stats)),
+      # includes incompletions (111 = complete, 112 = incomplete)
       passing_air_yards = sum((stat_id %in% 111:112) * yards),
-      passing_yards_after_catch = .data$passing_yards - .data$passing_air_yards,
+      # passing yac equals passing yards - air yards on completed passes
+      passing_yards_after_catch = .data$passing_yards - sum((stat_id == 111) * yards),
       passing_first_downs = sum((stat_id %in% 15:16) & has_id(4, team_stats)),
       passing_2pt_conversions = sum(stat_id == 77),
       # this is a player stat and we skip it in team stats
@@ -166,16 +219,18 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       # team air yards will always equal the correct air yards as 111 and 112
       # cannot appear more than once per play.
       # If this ever changes, we can use pbp instead.
-      receiving_air_yards = sum( (stat_id %in% 21:22) * dplyr::first(.data$team_air_yards)),
+      receiving_air_yards = if (.env$stat_type == "player"){
+        sum( (stat_id %in% 21:22) * dplyr::first(.data$team_air_yards))
+      } else .data$passing_air_yards,
       receiving_yards_after_catch = sum((stat_id == 113) * yards),
       receiving_first_downs = sum((stat_id %in% 21:22) & has_id(4, team_stats)),
       receiving_2pt_conversions = sum(stat_id == 104),
-      # this is a player stat and we skip it in team stats
+      # these are player stats and we skip them in team stats
       racr = if (.env$stat_type == "player") .data$receiving_yards / .data$receiving_air_yards else NULL,
-      target_share = .data$targets / dplyr::first(.data$team_targets),
-      air_yards_share = .data$receiving_air_yards / dplyr::first(.data$team_air_yards),
-      # this is a player stat and we skip it in team stats
+      target_share = if (.env$stat_type == "player") .data$targets / dplyr::first(.data$team_targets) else NULL,
+      air_yards_share = if (.env$stat_type == "player") .data$receiving_air_yards / dplyr::first(.data$team_air_yards) else NULL,
       wopr = if (.env$stat_type == "player") 1.5 * .data$target_share + 0.7 * .data$air_yards_share else NULL,
+
       special_teams_tds = sum((special == 1) & stat_id %in% td_ids()),
 
       # Defense #####################
