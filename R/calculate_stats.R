@@ -59,6 +59,35 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
   s_type_vctr <- season_type_from_pbp$season_type %>%
     rlang::set_names(season_type_from_pbp$game_id)
 
+  gwfg_attempts_from_pbp <- pbp %>%
+    dplyr::mutate(
+      # final_posteam_score = data.table::fifelse(.data$posteam_type == "home", .data$home_score, .data$away_score),
+      final_defteam_score = data.table::fifelse(.data$posteam_type == "home", .data$away_score, .data$home_score),
+      identifier = paste(.data$game_id, .data$play_id, sep = "_")
+    ) %>%
+    dplyr::group_by(.data$game_id, .data$posteam) %>%
+    dplyr::mutate(
+      # A game winning field goal attempt is
+      # - a field goal attempt,
+      # - in the posteam's final drive,
+      # - where the posteam trailed the defteam by 2 points or less prior to the kick,
+      # - and the defteam did not score afterwards
+      is_gwfg_attempt = dplyr::case_when(
+        .data$field_goal_attempt == 1 &
+          .data$fixed_drive == max(.data$fixed_drive) &
+          dplyr::between(.data$score_differential, -2, 0) &
+          .data$defteam_score == .data$final_defteam_score ~ 1L,
+        TRUE ~ 0L
+      )
+    ) %>%
+    dplyr::ungroup() %>%
+    dplyr::filter(
+      is_gwfg_attempt == 1L
+    ) %>%
+    dplyr::select("identifier", "is_gwfg_attempt")
+  gwfg_vctr <- gwfg_attempts_from_pbp$is_gwfg_attempt %>%
+    rlang::set_names(gwfg_attempts_from_pbp$identifier)
+
   # load_playstats defined below
   # more_stats = all stat IDs of one player in a single play
   # team_stats = all stat IDs of one team in a single play
@@ -92,7 +121,8 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       playinfo, by = c("game_id", "play_id")
     ) %>%
     dplyr::mutate(
-      season_type = unname(s_type_vctr[.data$game_id])
+      season_type = unname(s_type_vctr[.data$game_id]),
+      is_gwfg_attempt = unname(gwfg_vctr[paste(.data$game_id, .data$play_id, sep = "_")]) %ifna% 0L
     )
 
   # Check combination of summary_level and stat_type to set a helper that is
@@ -293,11 +323,12 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       pat_blocked = sum(stat_id == 74),
       # avoid 0/0 = NaN
       pat_pct = if (.data$pat_att > 0) .data$pat_made / .data$pat_att else NA_real_,
-      # gwfg_att = ,
-      # gwfg_distance = ,
-      # gwfg_made = ,
-      # gwfg_missed = ,
-      # gwfg_blocked =
+      gwfg_made = sum((stat_id == 70) * is_gwfg_attempt),
+      gwfg_att = sum((stat_id %in% 69:71) * is_gwfg_attempt),
+      gwfg_missed = sum((stat_id == 69) * is_gwfg_attempt),
+      gwfg_blocked = sum((stat_id == 71) * is_gwfg_attempt),
+      gwfg_distance = if (.env$summary_level == "week") sum((stat_id %in% 69:71) * is_gwfg_attempt * yards) else NULL,
+      gwfg_distance_list = if (.env$summary_level == "season") fg_list(stat_id, yards, collapse_id = 69:71, gwfg = is_gwfg_attempt) else NULL,
     ) %>%
     dplyr::ungroup() %>%
     dplyr::mutate_if(
@@ -388,7 +419,7 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
 # and the code is more readable
 utils::globalVariables(c(
   "stat_id", "yards", "more_stats", "team_stats", "team_abbr",
-  "def", "off", "special"
+  "def", "off", "special", "is_gwfg_attempt"
 ))
 
 load_playstats <- function(seasons = nflreadr::most_recent_season()) {
@@ -407,14 +438,23 @@ load_playstats <- function(seasons = nflreadr::most_recent_season()) {
   out
 }
 
-fg_list <- function(stat_ids, yards, collapse_id){
-  paste(
-    yards[stat_ids == collapse_id],
-    collapse = ";"
-  )
+fg_list <- function(stat_ids, yards, collapse_id, gwfg = NULL){
+  if (is.null(gwfg)) {
+    paste(
+      yards[stat_ids == collapse_id],
+      collapse = ";"
+    )
+  } else {
+    paste(
+      yards[stat_ids %in% collapse_id & gwfg == 1L],
+      collapse = ";"
+    )
+  }
 }
 
 `%0%` <- function(lhs, rhs) if (lhs != 0) lhs else rhs
+
+`%ifna%` <- function(lhs, rhs) data.table::fifelse(is.na(lhs), rhs, lhs)
 
 has_id <- function(id, all_ids){
   grepl(paste0(id, ";"), all_ids, fixed = TRUE, useBytes = TRUE)
