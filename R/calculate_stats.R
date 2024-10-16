@@ -268,7 +268,7 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       fg_blocked = sum(stat_id == 71),
       fg_long = max((stat_id == 70) * yards) %0% NA_integer_,
       # avoid 0/0 = NaN
-      fg_pct = if (.data$fg_att > 0) data$fg_made / .data$fg_att else NA_real_,
+      fg_pct = if (.data$fg_att > 0) .data$fg_made / .data$fg_att else NA_real_,
       fg_made_0_19 =  sum((stat_id == 70) * (yards %between% c(0, 19))),
       fg_made_20_29 = sum((stat_id == 70) * (yards %between% c(20, 29))),
       fg_made_30_39 = sum((stat_id == 70) * (yards %between% c(30, 39))),
