@@ -35,6 +35,28 @@ s2 <- readxl::read_xlsx("data-raw/Scrambles 1999-2004 UPDATE for NFLfastR.xlsx",
   select(
     season = year, week, qtr, away_team = away, home_team = home, posteam = offense, down, ydstogo = togo, date_time = time, yards_gained = yards
   )
+# s3 is a correction. the plays are in s3 should be rushes and therefore excluded from scramble_fix
+# see #475
+s3 <- readxl::read_xlsx("data-raw/Scrambles.1999-2003.FURTHER.UPDATE.for.NFLfastR.xlsx", sheet = 1) |>
+  as_tibble() |>
+  janitor::clean_names() |>
+  select(
+    season = year, week, qtr, away_team = away, home_team = home, posteam = offense, down, ydstogo = togo, date_time = time, yards_gained = yards
+  ) %>%
+  mutate(
+    time = paste0(
+      formatC(lubridate::hour(date_time), width = 2, flag = "0"),
+      ":",
+      formatC(lubridate::minute(date_time), width = 2, flag = "0")
+    )
+  ) %>%
+  select(-date_time) %>%
+  mutate_at(vars(home_team, away_team, posteam), nflfastR:::team_name_fn) %>%
+  dplyr::left_join(
+    pbp,
+    by = c("week", "away_team", "home_team", "posteam", "qtr", "down", "ydstogo", "time", "season")
+  ) %>%
+  mutate(no_scramble_id = paste0(game_id, "_", play_id))
 
 dat <- bind_rows(
   s2,
@@ -56,7 +78,8 @@ d <- dat %>%
     by = c("week", "away_team", "home_team", "posteam", "qtr", "down", "ydstogo", "time", "season")
   ) %>%
   mutate(scramble_id = paste0(game_id, "_", play_id)) %>%
-  filter(scramble_id != "2005_09_CIN_BAL_1725")
+  filter(scramble_id != "2005_09_CIN_BAL_1725") %>%
+  filter(!scramble_id %in% s3$no_scramble_id)
 
 # number non-matched by season
   nrow(d)
