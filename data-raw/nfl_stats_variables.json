@@ -300,6 +300,10 @@
     "description": "Yardage lost through penalties."
   },
   {
+    "variable": "timeouts",
+    "description": "Number of timeouts taken by team. Available if stat_type = 'team'."
+  },
+  {
     "variable": "punt_returns",
     "description": "Number of punts returned."
   },

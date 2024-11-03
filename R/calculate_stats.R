@@ -304,6 +304,7 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       fumble_recovery_tds = sum(stat_id %in% c(56, 58, 60, 62)),
       penalties = sum(stat_id == 93),
       penalty_yards = sum((stat_id == 93) * yards),
+      timeouts = if (.env$stat_type == "team") sum(stat_id == 68) else NULL,
 
       # Returning #####################
       punt_returns = sum(stat_id %in% 33:34),
