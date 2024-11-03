@@ -300,6 +300,22 @@
     "description": "Yardage lost through penalties."
   },
   {
+    "variable": "punt_returns",
+    "description": "Number of punts returned."
+  },
+  {
+    "variable": "punt_return_yards",
+    "description": "Yardage gained/lost by a player during a punt return."
+  },
+  {
+    "variable": "kickoff_returns",
+    "description": "Number of punts returned."
+  },
+  {
+    "variable": "kickoff_return_yards",
+    "description": "Yardage gained/lost by a player during a kickoff return."
+  },
+  {
     "variable": "fg_made",
     "description": "Successful field goal attempts."
   },

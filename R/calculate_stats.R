@@ -305,6 +305,16 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       penalties = sum(stat_id == 93),
       penalty_yards = sum((stat_id == 93) * yards),
 
+      # Returning #####################
+      punt_returns = sum(stat_id %in% 33:34),
+      punt_return_yards = sum((stat_id %in% 33:36) * yards),
+      # punt return tds are counted in special teams tds atm
+      # punt_return_tds = sum(stat_id %in% c(34, 36)),
+      kickoff_returns = sum(stat_id %in% 45:46),
+      kickoff_return_yards = sum((stat_id %in% 45:48) * yards),
+      # kickoff return tds are counted in special teams tds atm
+      # kickoff_return_tds = sum(stat_id %in% c(46, 48)),
+
       # Kicking #####################
       fg_made = sum(stat_id == 70),
       fg_att = sum(stat_id %in% 69:71),
