@@ -112,6 +112,7 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       # we append a collapse separator to the string in order to search for matches
       # including the separator to avoid 1 matching 10
       team_stats = paste0(paste(stat_id, collapse = ";"), ";"),
+      team_play_air_yards = sum((stat_id %in% 111:112) * yards)
     ) %>%
     dplyr::group_by(.data$season, .data$week, .data$team) %>%
     dplyr::mutate(
@@ -258,7 +259,7 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       # cannot appear more than once per play.
       # If this ever changes, we can use pbp instead.
       receiving_air_yards = if (.env$stat_type == "player"){
-        sum( (stat_id %in% 21:22) * dplyr::first(.data$team_air_yards))
+        sum( (stat_id %in% 21:22) * dplyr::first(.data$team_play_air_yards))
       } else .data$passing_air_yards,
       receiving_yards_after_catch = sum((stat_id == 113) * yards),
       receiving_first_downs = sum((stat_id %in% 21:22) & has_id(4, team_stats)),
