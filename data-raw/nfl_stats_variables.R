@@ -22,7 +22,7 @@ setdiff(n3, n1)
 
 nfl_stats_variables <- jsonlite::fromJSON("data-raw/nfl_stats_variables.json")
 
-usethis::use_data(nfl_stats_variables)
+usethis::use_data(nfl_stats_variables, overwrite = TRUE)
 
 s_old_1 <- nflreadr::load_player_stats(2024, "offense")
 s_old_2 <- nflreadr::load_player_stats(2024, "defense")

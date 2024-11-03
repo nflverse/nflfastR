@@ -264,32 +264,40 @@
     "description": "Number of fumbles while playing on defense."
   },
   {
-    "variable": "def_fumble_recovery_own",
-    "description": "Recovered fumbles where the ball was fumbled by own team."
-  },
-  {
-    "variable": "def_fumble_recovery_yards_own",
-    "description": "Yardage gained/lost by a player after he recovered a fumble by his own team."
-  },
-  {
-    "variable": "def_fumble_recovery_opp",
-    "description": "Recovered fumbles where the ball was fumbled by opposing team."
-  },
-  {
-    "variable": "def_fumble_recovery_yards_opp",
-    "description": "Yardage gained/lost by a player after he recovered a fumble by the opposing team."
-  },
-  {
-    "variable": "def_safety",
+    "variable": "def_safeties",
     "description": "Tackles that resulted in a safety."
   },
   {
-    "variable": "def_penalty",
-    "description": "Penalties caused by defense."
+    "variable": "misc_yards",
+    "description": "Yardage gained/lost that doesn't fall into any other category. Examples are blocked field goals or blocked punts."
   },
   {
-    "variable": "def_penalty_yards",
-    "description": "Yrads lost through penalties caused by defense."
+    "variable": "fumble_recovery_own",
+    "description": "Recovered fumbles where the ball was fumbled by own team."
+  },
+  {
+    "variable": "fumble_recovery_yards_own",
+    "description": "Yardage gained/lost by a player after he recovered a fumble by his own team. Includes yardage gained/lost where a team mate recovered a fumble and lateraled the ball to the player."
+  },
+  {
+    "variable": "fumble_recovery_opp",
+    "description": "Recovered fumbles where the ball was fumbled by opposing team."
+  },
+  {
+    "variable": "fumble_recovery_yards_opp",
+    "description": "Yardage gained/lost by a player after he recovered a fumble by the opposing team. Includes yardage gained/lost where a team mate recovered a fumble and lateraled the ball to the player."
+  },
+  {
+    "variable": "fumble_recovery_tds",
+    "description": "Touchdowns scored after a fumble recovery. This can be in any unit. And both the own team and the opposing team can have fumbled the ball initially. Includes touchdowns where a team mate recovered a fumble and lateraled the ball to the player."
+  },
+  {
+    "variable": "penalties",
+    "description": "Penalties caused."
+  },
+  {
+    "variable": "penalty_yards",
+    "description": "Yardage lost through penalties."
   },
   {
     "variable": "fg_made",
