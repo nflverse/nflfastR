@@ -285,15 +285,24 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       def_interceptions = sum(stat_id %in% 25:26),
       def_interception_yards = sum((stat_id %in% 25:28) * yards),
       def_pass_defended = sum(stat_id == 85),
-      def_tds = sum((team == def) & stat_id %in% td_ids()),
+      def_tds = sum(team == def & special != 1 & stat_id %in% td_ids()),
       def_fumbles = sum((team == def) & stat_id %in% 52:54),
-      def_fumble_recovery_own = sum((team == def) & stat_id %in% 55:56),
-      def_fumble_recovery_yards_own = sum((team == def) & stat_id %in% 55:58),
-      def_fumble_recovery_opp = sum((team == def) & stat_id %in% 59:60),
-      def_fumble_recovery_yards_opp = sum((team == def) & stat_id %in% 59:62),
-      def_safety = sum(stat_id == 89),
-      def_penalty = sum((team == def) & stat_id == 93),
-      def_penalty_yards = sum((team == def & stat_id == 93) * yards),
+      def_safeties = sum(stat_id == 89),
+
+      # Misc #####################
+      # mostly yards gained after blocked punts or fgs
+      misc_yards = sum((stat_id %in% 63:64) * yards),
+      fumble_recovery_own = sum(stat_id %in% 55:56),
+      # 57, 58 don't count as recovery because player received a
+      # lateral after recovery by other player
+      fumble_recovery_yards_own = sum(stat_id %in% 55:58),
+      fumble_recovery_opp = sum(stat_id %in% 59:60),
+      # 61, 62 don't count as recovery because player received a
+      # lateral after recovery by other player
+      fumble_recovery_yards_opp = sum(stat_id %in% 59:62),
+      fumble_recovery_tds = sum(stat_id %in% c(56, 58, 60, 62)),
+      penalties = sum(stat_id == 93),
+      penalty_yards = sum((stat_id == 93) * yards),
 
       # Kicking #####################
       fg_made = sum(stat_id == 70),
@@ -467,6 +476,8 @@ has_id <- function(id, all_ids){
 td_ids <- function(){
   c(
     11, 13, 16, 18, 22, 24, 26, 28, 34,
-    36, 46, 48, 56, 58, 60, 62, 64, 108
+    36, 46, 48,
+    # 56, 58, 60, 62, # 56-62 are separately counted in fumble_recovery_tds
+    64, 108
   )
 }
