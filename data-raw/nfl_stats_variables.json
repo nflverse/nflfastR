@@ -4,6 +4,10 @@
     "description": "GSIS player ID. Available if stat_type = 'player'."
   },
   {
+    "variable": "player_name",
+    "description": "Short player name as listed in play-by-play data. Please keep in mind that this name is not always unique for one player and can change from season to season and sometimes even within a season. Do not group by this variable. Available if stat_type = 'player'."
+  },
+  {
     "variable": "player_display_name",
     "description": "Full name of player. Available if stat_type = 'player'."
   },

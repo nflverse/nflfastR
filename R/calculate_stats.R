@@ -192,7 +192,7 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
   stats <- playstats %>%
     dplyr::group_by(!!!grp_vars) %>%
     dplyr::summarise(
-
+      player_name = if (.env$stat_type == "player") custom_mode(.data$player_name, na.rm = TRUE) else NULL,
       # Season Type #####################
       # if summary level is week, then we have to use the season type variable
       # from playstats as it could be REG or POST depending on the value of
@@ -427,7 +427,7 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       dplyr::left_join(player_info, by = "player_id") %>%
       dplyr::select(
         "player_id",
-        # "player_name",
+        "player_name",
         "player_display_name",
         "position",
         "position_group",

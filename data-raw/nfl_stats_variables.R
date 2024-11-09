@@ -34,7 +34,6 @@ n_old_3 <- names(s_old_3)
 
 # Differences to old offense stats ----------------------------------------
 
-# player_name -> player_display_name
 # recent_team -> team (recent team in weekly data never made sense)
 # interceptions -> passing_interceptions (all passing stats have the passing prefix)
 # sacks -> sacks_suffered (to make clear it's not on defensive side)
@@ -45,7 +44,6 @@ setdiff(n2, n_old_1)
 
 # Differences to old defense stats ----------------------------------------
 
-# player_name -> player_display_name
 # def_tackles -> there is def_tackles_solo and def_tackles_with_assist
 # def_fumble_recovery_own -> fumble_recovery_own (it is not exclusive to defense)
 # def_fumble_recovery_yards_own -> fumble_recovery_yards_own (it is not exclusive to defense)
@@ -60,6 +58,6 @@ setdiff(n2, n_old_2)
 
 # Differences to old kicking stats ----------------------------------------
 
-# player_name -> player_display_name
+# No differences
 setdiff(n_old_3, n2)
 setdiff(n2, n_old_3)
