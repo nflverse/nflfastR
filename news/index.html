@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.6.1.9018</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.6.1.9019</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,6 +22,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/beginners_guide.html">A beginner’s guide to nflfastR</a></li>
     <li><a class="dropdown-item" href="../articles/field_descriptions.html">Field Descriptions</a></li>
+    <li><a class="dropdown-item" href="../articles/stats_variables.html">Stats Variable Descriptions</a></li>
     <li><a class="external-link dropdown-item" href="https://www.opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/">nflfastR models</a></li>
     <li><a class="external-link dropdown-item" href="https://www.opensourcefootball.com/">Open Source Football</a></li>
   </ul></li>
@@ -73,6 +74,9 @@
 <code>punter_player_id</code>, and <code>punter_player_name</code> are filled for blocked punt attempts. (<a href="https://github.com/nflverse/nflfastR/issues/463" class="external-link">#463</a>)</li>
 <li>Fixed an issue affecting scores of 2022 games involving a return touchdown (<a href="https://github.com/nflverse/nflfastR/issues/466" class="external-link">#466</a>)</li>
 <li>Added identification of scrambles from 1999 through 2004 with thank to Aaron Schatz (<a href="https://github.com/nflverse/nflfastR/issues/468" class="external-link">#468</a>, <a href="https://github.com/nflverse/nflfastR/issues/489" class="external-link">#489</a>)</li>
+<li>Added new function <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code> that combines the output of all <code>calculate_player_stats*()</code> functions with a more robust and faster approach. The <code>calculate_player_stats*()</code> function will be deprecated in a future release. (<a href="https://github.com/nflverse/nflfastR/issues/470" class="external-link">#470</a>)</li>
+<li>Updated the dataframe <code>stat_ids</code> with some IDs that were previously missing. (<a href="https://github.com/nflverse/nflfastR/issues/470" class="external-link">#470</a>)</li>
+<li>Added new exported dataframe <code>nfl_stats_variables</code>. It lists and explains all variables returned by <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code>. A searchable table is available at <a href="https://www.nflfastr.com/articles/stats_variables.html" class="uri">https://www.nflfastr.com/articles/stats_variables.html</a>. (<a href="https://github.com/nflverse/nflfastR/issues/470" class="external-link">#470</a>)</li>
 <li>nflfastR tried to fix bugs in the underlying pbp data of JAX home games prior to the 2016 season. An update of the raw pbp data resolved those bugs so nflfastR needs to remove the hard coded adjustments. This means that nflfastR &lt;= v4.6.1 will return incorrect pbp data for all Jacksonville home games prior to the 2016 season! (<a href="https://github.com/nflverse/nflfastR/issues/478" class="external-link">#478</a>)</li>
 <li>Fixed a problem where <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> returned <code>pass = 1</code> in actual rush plays in very rare cases. (<a href="https://github.com/nflverse/nflfastR/issues/479" class="external-link">#479</a>)</li>
 <li>Removed extra lines for injury timeouts that were breaking <code>fixed_drive</code> (<a href="https://github.com/nflverse/nflfastR/issues/482" class="external-link">#482</a>)</li>

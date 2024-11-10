@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.6.1.9018</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.6.1.9019</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,6 +46,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/beginners_guide.html">A beginner’s guide to nflfastR</a></li>
     <li><a class="dropdown-item" href="../articles/field_descriptions.html">Field Descriptions</a></li>
+    <li><a class="dropdown-item" href="../articles/stats_variables.html">Stats Variable Descriptions</a></li>
     <li><a class="external-link dropdown-item" href="https://www.opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/">nflfastR models</a></li>
     <li><a class="external-link dropdown-item" href="https://www.opensourcefootball.com/">Open Source Football</a></li>
   </ul>
@@ -124,27 +125,27 @@ seasons.</p>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">game_type</span> <span class="op">==</span> <span class="st">"SB"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">game_id</span><span class="op">)</span></span>
 <span><span class="va">pbp</span> <span class="op">&lt;-</span> <span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/build_nflfastR_pbp.html">build_nflfastR_pbp</a></span><span class="op">(</span><span class="va">ids</span><span class="op">)</span></span>
-<span><span class="co">#&gt; ── <span style="font-weight: bold;">Build nflfastR Play-by-Play Data</span> ───────────── nflfastR version 4.6.1.9018 ──</span></span>
-<span><span class="co">#&gt; • 13:31:00 | Start download of 3 games...</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 13:31:06 | Download finished. Adding variables...</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 13:31:06 | added game variables</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 13:31:06 | added nflscrapR variables</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 13:31:07 | added ep variables</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 13:31:07 | added air_yac_ep variables</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 13:31:07 | added wp variables</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 13:31:07 | added air_yac_wp variables</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 13:31:07 | added cp and cpoe</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 13:31:07 | added fixed drive variables</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 13:31:08 | added series variables</span></span>
-<span><span class="co">#&gt; • 13:31:08 | Cleaning up play-by-play...</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 13:31:08 | Cleaning completed</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 13:31:08 | added qb_epa</span></span>
-<span><span class="co">#&gt; • 13:31:08 | Computing xyac...</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 13:31:10 | added xyac variables</span></span>
-<span><span class="co">#&gt; • 13:31:10 | Computing xpass...</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 13:31:10 | added xpass and pass_oe</span></span>
-<span><span class="co">#&gt; • 13:31:10 | Decode player ids...</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 13:31:11 | Decoding of player ids completed</span></span>
+<span><span class="co">#&gt; ── <span style="font-weight: bold;">Build nflfastR Play-by-Play Data</span> ───────────── nflfastR version 4.6.1.9019 ──</span></span>
+<span><span class="co">#&gt; • 16:19:21 | Start download of 3 games...</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 16:19:27 | Download finished. Adding variables...</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 16:19:27 | added game variables</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 16:19:27 | added nflscrapR variables</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 16:19:28 | added ep variables</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 16:19:28 | added air_yac_ep variables</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 16:19:28 | added wp variables</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 16:19:28 | added air_yac_wp variables</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 16:19:28 | added cp and cpoe</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 16:19:29 | added fixed drive variables</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 16:19:29 | added series variables</span></span>
+<span><span class="co">#&gt; • 16:19:29 | Cleaning up play-by-play...</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 16:19:29 | Cleaning completed</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 16:19:29 | added qb_epa</span></span>
+<span><span class="co">#&gt; • 16:19:29 | Computing xyac...</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 16:19:31 | added xyac variables</span></span>
+<span><span class="co">#&gt; • 16:19:31 | Computing xpass...</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 16:19:31 | added xpass and pass_oe</span></span>
+<span><span class="co">#&gt; • 16:19:31 | Decode player ids...</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 16:19:32 | Decoding of player ids completed</span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">DONE</span> ────────────────────────────────────────────────────────────────────────</span></span></code></pre></div>
 <p>In most cases, however, it is not necessary to use this function for
 individual games, because nflfastR provides both a <a href="https://github.com/nflverse/nflfastR-data" class="external-link">data repository</a> and
@@ -359,7 +360,7 @@ games (but it is automatically updated overnight every day).</p>
 <span><span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"{length(games_2019)} games with nflfastR:"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/fast_scraper.html">fast_scraper</a></span><span class="op">(</span><span class="va">games_2019</span><span class="op">)</span></span>
 <span><span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 10 games with nflfastR:: 8.904 sec elapsed</span></span></code></pre></div>
+<span><span class="co">#&gt; 10 games with nflfastR:: 8.533 sec elapsed</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="example-3-completion-percentage-over-expected-cpoe">Example 3: Completion Percentage Over Expected (CPOE)<a class="anchor" aria-label="anchor" href="#example-3-completion-percentage-over-expected-cpoe"></a>
@@ -375,7 +376,7 @@ repository</a>).</p>
 <code class="sourceCode R"><span><span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="st">"loading all games from 2009"</span><span class="op">)</span></span>
 <span><span class="va">games_2009</span> <span class="op">&lt;-</span> <span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/load_pbp.html">load_pbp</a></span><span class="op">(</span><span class="fl">2009</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">season_type</span> <span class="op">==</span> <span class="st">"REG"</span><span class="op">)</span></span>
 <span><span class="fu">tictoc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; loading all games from 2009: 2.292 sec elapsed</span></span>
+<span><span class="co">#&gt; loading all games from 2009: 2.194 sec elapsed</span></span>
 <span><span class="va">games_2009</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">cpoe</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">passer_player_name</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -864,15 +865,15 @@ write the data table into the database.</li>
 directory. Here we go!</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/update_db.html">update_db</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; ── <span style="font-weight: bold;">Update nflfastR Play-by-Play Database</span> ──────── nflfastR version 4.6.1.9018 ──</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:32:00 | Can't find the data table <span style="color: #0000BB;">"nflfastR_pbp"</span></span></span>
+<span><span class="co">#&gt; ── <span style="font-weight: bold;">Update nflfastR Play-by-Play Database</span> ──────── nflfastR version 4.6.1.9019 ──</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 16:20:14 | Can't find the data table <span style="color: #0000BB;">"nflfastR_pbp"</span></span></span>
 <span><span class="co">#&gt; in your database. Will load the play by play data from</span></span>
 <span><span class="co">#&gt; scratch.</span></span>
-<span><span class="co">#&gt; • 13:32:00 | Starting download of 26 seasons between 1999 and 2024...</span></span>
-<span><span class="co">#&gt; • 13:33:31 | Checking for missing completed games...</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:33:32 | You have 6810 games and are missing 0.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 13:33:33 | Database update completed</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:33:33 | Path to your db: <span style="color: #0000BB;">./pbp_db</span></span></span>
+<span><span class="co">#&gt; • 16:20:14 | Starting download of 26 seasons between 1999 and 2024...</span></span>
+<span><span class="co">#&gt; • 16:21:36 | Checking for missing completed games...</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 16:21:37 | You have 6842 games and are missing 0.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 16:21:38 | Database update completed</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 16:21:38 | Path to your db: <span style="color: #0000BB;">./pbp_db</span></span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">DONE</span> ────────────────────────────────────────────────────────────────────────</span></span></code></pre></div>
 <p>This created a database in the current directory called
 <code>pbp_db</code>.</p>
@@ -883,25 +884,25 @@ directory the database is saved in or you supply the right file
 path)</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/update_db.html">update_db</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; ── <span style="font-weight: bold;">Update nflfastR Play-by-Play Database</span> ──────── nflfastR version 4.6.1.9018 ──</span></span>
-<span><span class="co">#&gt; • 13:33:33 | Checking for missing completed games...</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:33:33 | You have 6810 games and are missing 0.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 13:33:34 | Database update completed</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:33:34 | Path to your db: <span style="color: #0000BB;">/home/runner/work/nflfastR/nflfastR/vignettes/pbp_db</span></span></span>
+<span><span class="co">#&gt; ── <span style="font-weight: bold;">Update nflfastR Play-by-Play Database</span> ──────── nflfastR version 4.6.1.9019 ──</span></span>
+<span><span class="co">#&gt; • 16:21:38 | Checking for missing completed games...</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 16:21:39 | You have 6842 games and are missing 0.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 16:21:39 | Database update completed</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 16:21:39 | Path to your db: <span style="color: #0000BB;">/home/runner/work/nflfastR/nflfastR/vignettes/pbp_db</span></span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">DONE</span> ────────────────────────────────────────────────────────────────────────</span></span></code></pre></div>
 <p>If it’s partway through a season and you want to re-build a season to
 allow for data corrections from the NFL to propagate into your database,
 you can specify one season to be rebuilt:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/update_db.html">update_db</a></span><span class="op">(</span>force_rebuild <span class="op">=</span> <span class="fl">2020</span><span class="op">)</span></span>
-<span><span class="co">#&gt; ── <span style="font-weight: bold;">Update nflfastR Play-by-Play Database</span> ──────── nflfastR version 4.6.1.9018 ──</span></span>
-<span><span class="co">#&gt; • 13:33:34 | Purging season 2020 from the data table <span style="color: #0000BB;">"nflfastR_pbp"</span> in your</span></span>
+<span><span class="co">#&gt; ── <span style="font-weight: bold;">Update nflfastR Play-by-Play Database</span> ──────── nflfastR version 4.6.1.9019 ──</span></span>
+<span><span class="co">#&gt; • 16:21:39 | Purging season 2020 from the data table <span style="color: #0000BB;">"nflfastR_pbp"</span> in your</span></span>
 <span><span class="co">#&gt; connected database...</span></span>
-<span><span class="co">#&gt; • 13:33:35 | Starting download of the 1 season 2020</span></span>
-<span><span class="co">#&gt; • 13:33:39 | Checking for missing completed games...</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:33:40 | You have 6810 games and are missing 0.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 13:33:40 | Database update completed</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 13:33:40 | Path to your db: <span style="color: #0000BB;">/home/runner/work/nflfastR/nflfastR/vignettes/pbp_db</span></span></span>
+<span><span class="co">#&gt; • 16:21:40 | Starting download of the 1 season 2020</span></span>
+<span><span class="co">#&gt; • 16:21:43 | Checking for missing completed games...</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 16:21:44 | You have 6842 games and are missing 0.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 16:21:45 | Database update completed</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 16:21:45 | Path to your db: <span style="color: #0000BB;">/home/runner/work/nflfastR/nflfastR/vignettes/pbp_db</span></span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">DONE</span> ────────────────────────────────────────────────────────────────────────</span></span></code></pre></div>
 </div>
 <div class="section level4">
@@ -970,7 +971,7 @@ even working with a database!</p>
 <span><span class="co">#&gt;    pass mean_epa</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     0  -<span style="color: #BB0000;">0.099</span><span style="color: #BB0000; text-decoration: underline;">8</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     1   0.073<span style="text-decoration: underline;">4</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     1   0.073<span style="text-decoration: underline;">6</span></span></span></code></pre></div>
 <p>So far, everything has stayed in the database. If you want to bring a
 query into memory, just use <code><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect()</a></code> at the end:</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
@@ -1493,7 +1494,12 @@ yards:</p>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="op">-</span><span class="va">passing_yards</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">player_name</span>, <span class="va">recent_team</span>, <span class="va">completions</span>, <span class="va">attempts</span>, <span class="va">passing_yards</span>, <span class="va">passing_tds</span>, <span class="va">interceptions</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span>digits <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span>digits <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: `calculate_player_stats()` was deprecated in nflfastR 5.0.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `calculate_stats()` instead.</span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre></div>
 <table style="width:100%;" class="table">
 <colgroup>
 <col width="14%">
