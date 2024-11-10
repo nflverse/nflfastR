@@ -18,6 +18,11 @@ for the entire Data frame.}
 A data frame of defensive player stats. See dictionary (# TODO)
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+This function was deprecated because we have a new, much better and
+harmonized approach in \code{\link[=calculate_stats]{calculate_stats()}}.
+
 Build columns that aggregate official defense stats
 either at the game level or at the level of the entire data frame passed.
 }
@@ -39,3 +44,4 @@ try({# to avoid CRAN test problems
 The function \code{\link[=load_player_stats]{load_player_stats()}} and the corresponding examples
 on \href{https://www.nflfastr.com/articles/nflfastR.html#example-11-replicating-official-stats}{the nflfastR website}
 }
+\keyword{internal}

@@ -17,6 +17,11 @@ the entire data frame in argument \code{pbp}.}
 a dataframe of kicking stats
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+This function was deprecated because we have a new, much better and
+harmonized approach in \code{\link[=calculate_stats]{calculate_stats()}}.
+
 Build columns that aggregate kicking stats at the game level.
 }
 \examples{
@@ -35,3 +40,4 @@ try({# to avoid CRAN test problems
 \seealso{
 \url{https://nflreadr.nflverse.com/reference/load_player_stats.html} for the nflreadr function to download this from repo (\code{stat_type = "kicking"})
 }
+\keyword{internal}

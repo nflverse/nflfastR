@@ -1,0 +1,37 @@
+---
+title: "NFL Stats Variables"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  comment = "#>"
+)
+
+with_dt <- requireNamespace("DT")
+
+```
+
+Below you will find a table that lists and explains all the variables available in `calculate_stats()`. Compared to the old `calculate_player_stats*()` functions that have been deprecated, practically all variables (and their names) have been preserved. However, there are a few differences. These are
+
+- `recent_team`: renamed to `team` (recent team in weekly data never made sense)
+- `interceptions`: renamed to `passing_interceptions` (all passing stats have the passing prefix)
+- `sacks`: renamed to `sacks_suffered` (to make clear it's not on defensive side)
+- `sack_yards`: renamed to `sack_yards_lost` (to make clear it's not on defensive side)
+- `dakota`: not implemented at the moment
+- `def_tackles`: there is `def_tackles_solo` and `def_tackles_with_assist`
+- `def_fumble_recovery_own`: renamed to `fumble_recovery_own` (it is not exclusive to defense)
+- `def_fumble_recovery_yards_own`: renamed to `fumble_recovery_yards_own` (it is not exclusive to defense)
+- `def_fumble_recovery_opp`: renamed to `fumble_recovery_opp` (it is not exclusive to defense)
+- `def_fumble_recovery_yards_opp`: renamed to `fumble_recovery_yards_opp` (it is not exclusive to defense)
+- `def_safety`: renamed to `def_safeties` (we use plural everywhere)
+- `def_penalty`: renamed to `penalties` (it is not exclusive to defense)
+- `def_penalty_yards`: renamed to `penalty_yards` (it is not exclusive to defense)
+
+```{r eval = with_dt}
+DT::datatable(nflfastR::nfl_stats_variables,options = list(scrollX = TRUE, pageLength = 25), filter = "top", rownames = FALSE)
+```
+
+```{r eval = !with_dt}
+knitr::kable(nflfastR::nfl_stats_variables)
+```

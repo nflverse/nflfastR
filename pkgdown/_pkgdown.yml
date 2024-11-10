@@ -84,6 +84,8 @@ navbar:
         href: articles/beginners_guide.html
       - text: Field Descriptions
         href: articles/field_descriptions.html
+      - text: Stats Variable Descriptions
+        href: articles/stats_variables.html
       - text: nflfastR models
         href: https://www.opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/
       - text: Open Source Football
@@ -130,13 +132,7 @@ reference:
     contents:
       - save_raw_pbp
       - missing_raw_pbp
-      - calculate_expected_points
-      - calculate_win_probability
-      - calculate_player_stats
-      - calculate_player_stats_def
-      - calculate_player_stats_kicking
-      - calculate_standings
-      - calculate_series_conversion_rates
+      - starts_with("calculate_")
       - report
   - title: Documentation
     contents:
@@ -144,6 +140,7 @@ reference:
       - teams_colors_logos
       - field_descriptions
       - stat_ids
+      - nfl_stats_variables
   - title: Lower Level Functions
     desc: >
       These functions are wrapped in the above listed main functions and

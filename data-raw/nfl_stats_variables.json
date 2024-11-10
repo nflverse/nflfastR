@@ -1,0 +1,474 @@
+[
+  {
+    "variable": "player_id",
+    "description": "GSIS player ID. Available if stat_type = 'player'."
+  },
+  {
+    "variable": "player_name",
+    "description": "Short player name as listed in play-by-play data. Please keep in mind that this name is not always unique for one player and can change from season to season and sometimes even within a season. Do not group by this variable. Available if stat_type = 'player'."
+  },
+  {
+    "variable": "player_display_name",
+    "description": "Full name of player. Available if stat_type = 'player'."
+  },
+  {
+    "variable": "position",
+    "description": "Position of player. Available if stat_type = 'player'."
+  },
+  {
+    "variable": "position_group",
+    "description": "Position group of player. Available if stat_type = 'player'."
+  },
+  {
+    "variable": "headshot_url",
+    "description": "URL to a player headshot image. Available if stat_type = 'player'."
+  },
+  {
+    "variable": "season",
+    "description": "The NFL season"
+  },
+  {
+    "variable": "week",
+    "description": "The NFL week. Available if summary_level = 'week'"
+  },
+  {
+    "variable": "season_type",
+    "description": "One of 'REG', 'POST', or 'REG+POST'"
+  },
+  {
+    "variable": "recent_team",
+    "description": "Most recent team player appears in data with. Available if stat_type = 'player' & summary_level = 'season'."
+  },
+  {
+    "variable": "team",
+    "description": "Team stats are counted for."
+  },
+  {
+    "variable": "opponent_team",
+    "description": "The opponent team in that week. Available if summary_level = 'week'."
+  },
+  {
+    "variable": "games",
+    "description": "The number of games where stats were counted. Available if summary_level = 'season'."
+  },
+  {
+    "variable": "completions",
+    "description": "The number of completed passes."
+  },
+  {
+    "variable": "attempts",
+    "description": "The number of pass attempts as defined by the NFL."
+  },
+  {
+    "variable": "passing_yards",
+    "description": "Yards gained on pass plays."
+  },
+  {
+    "variable": "passing_tds",
+    "description": "The number of passing touchdowns."
+  },
+  {
+    "variable": "passing_interceptions",
+    "description": "The number of interceptions thrown."
+  },
+  {
+    "variable": "sacks_suffered",
+    "description": "The Number of times sacked."
+  },
+  {
+    "variable": "sack_yards_lost",
+    "description": "Yards lost on sack plays."
+  },
+  {
+    "variable": "sack_fumbles",
+    "description": "The number of sacks with a fumble."
+  },
+  {
+    "variable": "sack_fumbles_lost",
+    "description": "The number of sacks with a lost fumble."
+  },
+  {
+    "variable": "passing_air_yards",
+    "description": "Passing air yards (includes incomplete passes)."
+  },
+  {
+    "variable": "passing_yards_after_catch",
+    "description": "Yards after the catch gained on plays in which player was the passer (this is an unofficial stat and may differ slightly between different sources)."
+  },
+  {
+    "variable": "passing_first_downs",
+    "description": "First downs on pass attempts."
+  },
+  {
+    "variable": "passing_epa",
+    "description": "Total expected points added on pass attempts and sacks. NOTE: this uses the variable `qb_epa`, which gives QB credit for EPA for up to the point where a receiver lost a fumble after a completed catch and makes EPA work more like passing yards on plays with fumbles."
+  },
+  {
+    "variable": "passing_cpoe",
+    "description": "Completion percentage over expectation"
+  },
+  {
+    "variable": "passing_2pt_conversions",
+    "description": "Two-point conversion passes."
+  },
+  {
+    "variable": "pacr",
+    "description": "Passing Air Conversion Ratio. PACR = `passing_yards` / `passing_air_yards`. Available if stat_type = 'player'."
+  },
+  {
+    "variable": "carries",
+    "description": "The number of official rush attempts (incl. scrambles and kneel downs). Rushes after a lateral reception don't count as carry."
+  },
+  {
+    "variable": "rushing_yards",
+    "description": "Yards gained when rushing with the ball (incl. scrambles and kneel downs). Also includes yards gained after obtaining a lateral on a play that started with a rushing attempt."
+  },
+  {
+    "variable": "rushing_tds",
+    "description": "The number of rushing touchdowns (incl. scrambles). Also includes touchdowns after obtaining a lateral on a play that started with a rushing attempt."
+  },
+  {
+    "variable": "rushing_fumbles",
+    "description": "The number of rushes with a fumble."
+  },
+  {
+    "variable": "rushing_fumbles_lost",
+    "description": "The number of rushes with a lost fumble."
+  },
+  {
+    "variable": "rushing_first_downs",
+    "description": "First downs on rush attempts (incl. scrambles)."
+  },
+  {
+    "variable": "rushing_epa",
+    "description": "Expected points added on rush attempts (incl. scrambles and kneel downs)."
+  },
+  {
+    "variable": "rushing_2pt_conversions",
+    "description": "Two-point conversion rushes."
+  },
+  {
+    "variable": "receptions",
+    "description": "The number of pass receptions. Lateral receptions officially don't count as reception."
+  },
+  {
+    "variable": "targets",
+    "description": "The number of pass plays where the player was the targeted receiver."
+  },
+  {
+    "variable": "receiving_yards",
+    "description": "Yards gained after a pass reception. Includes yards gained after receiving a lateral on a play that started as a pass play."
+  },
+  {
+    "variable": "receiving_tds",
+    "description": "The number of touchdowns following a pass reception. Also includes touchdowns after receiving a lateral on a play that started as a pass play."
+  },
+  {
+    "variable": "receiving_fumbles",
+    "description": "The number of fumbles after a pass reception."
+  },
+  {
+    "variable": "receiving_fumbles_lost",
+    "description": "The number of fumbles lost after a pass reception."
+  },
+  {
+    "variable": "receiving_air_yards",
+    "description": "Receiving air yards (incl. incomplete passes)."
+  },
+  {
+    "variable": "receiving_yards_after_catch",
+    "description": "Yards after the catch gained on plays in which player was receiver (this is an unofficial stat and may differ slightly between different sources)."
+  },
+  {
+    "variable": "receiving_first_downs",
+    "description": "First downs on receptions."
+  },
+  {
+    "variable": "receiving_epa",
+    "description": "Expected points added on receptions."
+  },
+  {
+    "variable": "receiving_2pt_conversions",
+    "description": "Two-point conversion receptions."
+  },
+  {
+    "variable": "racr",
+    "description": "Receiver Air Conversion Ratio. RACR = `receiving_yards` / `receiving_air_yards`. Available if stat_type = 'player'."
+  },
+  {
+    "variable": "target_share",
+    "description": "The share of targets of the player in all targets of his team. Available if stat_type = 'player'."
+  },
+  {
+    "variable": "air_yards_share",
+    "description": "The share of receiving_air_yards of the player in all air_yards of his team. Available if stat_type = 'player'."
+  },
+  {
+    "variable": "wopr",
+    "description": "Weighted Opportunity Rating. WOPR = 1.5 × `target_share` + 0.7 × `air_yards_share`. Available if stat_type = 'player'."
+  },
+  {
+    "variable": "special_teams_tds",
+    "description": "The number of touchdowns scored in special teams plays."
+  },
+  {
+    "variable": "def_tackles_solo",
+    "description": "Solo tackles."
+  },
+  {
+    "variable": "def_tackles_with_assist",
+    "description": "Tackles where another player assisted."
+  },
+  {
+    "variable": "def_tackle_assists",
+    "description": "Assist to another player's tackle."
+  },
+  {
+    "variable": "def_tackles_for_loss",
+    "description": "Tackles for loss."
+  },
+  {
+    "variable": "def_tackles_for_loss_yards",
+    "description": "Yards lost by the opposing team through a tackle."
+  },
+  {
+    "variable": "def_fumbles_forced",
+    "description": "Forced fumbles."
+  },
+  {
+    "variable": "def_sacks",
+    "description": "Number of Sacks."
+  },
+  {
+    "variable": "def_sack_yards",
+    "description": "Yards lost by the opposing team through a sack."
+  },
+  {
+    "variable": "def_qb_hits",
+    "description": "Number of QB hits"
+  },
+  {
+    "variable": "def_interceptions",
+    "description": "Interceptions caught."
+  },
+  {
+    "variable": "def_interception_yards",
+    "description": "Yards gained after interceptions."
+  },
+  {
+    "variable": "def_pass_defended",
+    "description": "Number of defended passes."
+  },
+  {
+    "variable": "def_tds",
+    "description": "Defensive touchdowns."
+  },
+  {
+    "variable": "def_fumbles",
+    "description": "Number of fumbles while playing on defense."
+  },
+  {
+    "variable": "def_safeties",
+    "description": "Tackles that resulted in a safety."
+  },
+  {
+    "variable": "misc_yards",
+    "description": "Yardage gained/lost that doesn't fall into any other category. Examples are blocked field goals or blocked punts."
+  },
+  {
+    "variable": "fumble_recovery_own",
+    "description": "Recovered fumbles where the ball was fumbled by own team."
+  },
+  {
+    "variable": "fumble_recovery_yards_own",
+    "description": "Yardage gained/lost by a player after he recovered a fumble by his own team. Includes yardage gained/lost where a team mate recovered a fumble and lateraled the ball to the player."
+  },
+  {
+    "variable": "fumble_recovery_opp",
+    "description": "Recovered fumbles where the ball was fumbled by opposing team."
+  },
+  {
+    "variable": "fumble_recovery_yards_opp",
+    "description": "Yardage gained/lost by a player after he recovered a fumble by the opposing team. Includes yardage gained/lost where a team mate recovered a fumble and lateraled the ball to the player."
+  },
+  {
+    "variable": "fumble_recovery_tds",
+    "description": "Touchdowns scored after a fumble recovery. This can be in any unit. And both the own team and the opposing team can have fumbled the ball initially. Includes touchdowns where a team mate recovered a fumble and lateraled the ball to the player."
+  },
+  {
+    "variable": "penalties",
+    "description": "Penalties caused."
+  },
+  {
+    "variable": "penalty_yards",
+    "description": "Yardage lost through penalties."
+  },
+  {
+    "variable": "timeouts",
+    "description": "Number of timeouts taken by team. Available if stat_type = 'team'."
+  },
+  {
+    "variable": "punt_returns",
+    "description": "Number of punts returned."
+  },
+  {
+    "variable": "punt_return_yards",
+    "description": "Yardage gained/lost by a player during a punt return."
+  },
+  {
+    "variable": "kickoff_returns",
+    "description": "Number of punts returned."
+  },
+  {
+    "variable": "kickoff_return_yards",
+    "description": "Yardage gained/lost by a player during a kickoff return."
+  },
+  {
+    "variable": "fg_made",
+    "description": "Successful field goal attempts."
+  },
+  {
+    "variable": "fg_att",
+    "description": "Attempted field goals."
+  },
+  {
+    "variable": "fg_missed",
+    "description": "Missed field goals."
+  },
+  {
+    "variable": "fg_blocked",
+    "description": "Attempted field goals that were blocked."
+  },
+  {
+    "variable": "fg_long",
+    "description": "Distance of longest made field goal."
+  },
+  {
+    "variable": "fg_pct",
+    "description": "Percentage of successful field goal attempts."
+  },
+  {
+    "variable": "fg_made_0_19",
+    "description": "Successful field goal attempts where distance was between 0 and 19 yards."
+  },
+  {
+    "variable": "fg_made_20_29",
+    "description": "Successful field goal attempts where distance was between 20 and 29 yards."
+  },
+  {
+    "variable": "fg_made_30_39",
+    "description": "Successful field goal attempts where distance was between 30 and 39 yards."
+  },
+  {
+    "variable": "fg_made_40_49",
+    "description": "Successful field goal attempts where distance was between 40 and 49 yards."
+  },
+  {
+    "variable": "fg_made_50_59",
+    "description": "Successful field goal attempts where distance was between 50 and 59 yards."
+  },
+  {
+    "variable": "fg_made_60_",
+    "description": "Successful field goal attempts where distance was 60+ yards."
+  },
+  {
+    "variable": "fg_missed_0_19",
+    "description": "Missed field goal attempts where distance was between 0 and 19 yards."
+  },
+  {
+    "variable": "fg_missed_20_29",
+    "description": "Missed field goal attempts where distance was between 20 and 29 yards."
+  },
+  {
+    "variable": "fg_missed_30_39",
+    "description": "Missed field goal attempts where distance was between 30 and 39 yards."
+  },
+  {
+    "variable": "fg_missed_40_49",
+    "description": "Missed field goal attempts where distance was between 40 and 49 yards."
+  },
+  {
+    "variable": "fg_missed_50_59",
+    "description": "Missed field goal attempts where distance was between 50 and 59 yards."
+  },
+  {
+    "variable": "fg_missed_60_",
+    "description": "Missed field goal attempts where distance was 60+ yards."
+  },
+  {
+    "variable": "fg_made_list",
+    "description": "Distances of all successful field goal attempts."
+  },
+  {
+    "variable": "fg_missed_list",
+    "description": "Distances of all missed field goal attempts."
+  },
+  {
+    "variable": "fg_blocked_list",
+    "description": "Distances of all blocked field goal attempts."
+  },
+  {
+    "variable": "fg_made_distance",
+    "description": "Sum of distances of all made field goals."
+  },
+  {
+    "variable": "fg_missed_distance",
+    "description": "Sum of distances of all missed field goals."
+  },
+  {
+    "variable": "fg_blocked_distance",
+    "description": "Sum of distances of all blocked field goals."
+  },
+  {
+    "variable": "pat_made",
+    "description": "Successful extra point attempts."
+  },
+  {
+    "variable": "pat_att",
+    "description": "Attempted extra points."
+  },
+  {
+    "variable": "pat_missed",
+    "description": "Missed extra points."
+  },
+  {
+    "variable": "pat_blocked",
+    "description": "Extra points blocked by opponent."
+  },
+  {
+    "variable": "pat_pct",
+    "description": "Percentage of successful extra point attempts."
+  },
+  {
+    "variable": "gwfg_made",
+    "description": "Successful game winning field goal attempts."
+  },
+  {
+    "variable": "gwfg_att",
+    "description": "Attempted game winning field goals."
+  },
+  {
+    "variable": "gwfg_missed",
+    "description": "Missed game winning field goals."
+  },
+  {
+    "variable": "gwfg_blocked",
+    "description": "Game winning field goal attempts blocked by opponent."
+  },
+  {
+    "variable": "gwfg_distance",
+    "description": "Distance of game winning field goal attempt. Available if summary_level = 'week'."
+  },
+  {
+    "variable": "gwfg_distance_list",
+    "description": "Distances of game winning field goal attempts. Available if summary_level = 'season'."
+  },
+  {
+    "variable": "fantasy_points",
+    "description": "Standard fantasy points."
+  },
+  {
+    "variable": "fantasy_points_ppr",
+    "description": "PPR fantasy points."
+  }
+]

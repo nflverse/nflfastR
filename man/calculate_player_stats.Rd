@@ -88,6 +88,11 @@ between different sources).}
 }
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+This function was deprecated because we have a new, much better and
+harmonized approach in \code{\link[=calculate_stats]{calculate_stats()}}.
+
 Build columns that aggregate official passing, rushing, and receiving stats
 either at the game level or at the level of the entire data frame passed.
 }
@@ -108,3 +113,4 @@ dplyr::glimpse(overall)
 The function \code{\link[=load_player_stats]{load_player_stats()}} and the corresponding examples
 on \href{https://www.nflfastr.com/articles/nflfastR.html#example-11-replicating-official-stats}{the nflfastR website}
 }
+\keyword{internal}

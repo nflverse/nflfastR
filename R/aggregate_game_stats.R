@@ -5,6 +5,12 @@
 
 #' Get Official Game Stats
 #'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' This function was deprecated because we have a new, much better and
+#' harmonized approach in [`calculate_stats()`].
+#'
 #' @param pbp A Data frame of NFL play-by-play data typically loaded with
 #' [load_pbp()] or [build_nflfastR_pbp()]. If the data doesn't include the variable
 #' `qb_epa`, the function `add_qb_epa()` will be called to add it.
@@ -84,6 +90,7 @@
 #' \item{fantasy_points_ppr}{PPR fantasy points.}
 #' }
 #' @export
+#' @keywords internal
 #' @seealso The function [load_player_stats()] and the corresponding examples
 #' on [the nflfastR website](https://www.nflfastr.com/articles/nflfastR.html#example-11-replicating-official-stats)
 #' @examples
@@ -99,6 +106,12 @@
 #' })
 #' }
 calculate_player_stats <- function(pbp, weekly = FALSE) {
+
+  lifecycle::deprecate_warn(
+    "5.0",
+    "calculate_player_stats()",
+    "calculate_stats()"
+  )
 
   # need newer version of nflreadr to use load_players
   rlang::check_installed("nflreadr (>= 1.3.0)", "to join player information.")

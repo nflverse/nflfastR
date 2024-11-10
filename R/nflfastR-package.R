@@ -104,18 +104,18 @@
 # roxygen namespace tags. Modify with care!
 ## usethis namespace: start
 #' @import dplyr
+#' @import fastrmodels
 #' @importFrom cli rule
 #' @importFrom curl curl_fetch_memory
-#' @importFrom data.table setDT %chin%
-#' @import fastrmodels
+#' @importFrom data.table setDT %between% %chin%
 #' @importFrom furrr future_map_chr future_map_dfr future_map
 #' @importFrom future plan
 #' @importFrom glue glue glue_sql
 #' @importFrom janitor clean_names
-# @importFrom lifecycle deprecated is_present deprecate_warn
+#' @importFrom lifecycle deprecated
 #' @importFrom mgcv predict.bam
 #' @importFrom progressr progressor
-#' @importFrom rlang .data inform dots_list :=
+#' @importFrom rlang .data inform dots_list := .env
 #' @importFrom stats predict na.omit
 #' @importFrom stringr str_sub str_replace_all str_length str_extract str_detect str_trim str_remove_all str_split str_extract_all
 #' @importFrom tibble as_tibble tibble
