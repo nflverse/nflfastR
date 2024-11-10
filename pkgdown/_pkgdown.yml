@@ -132,14 +132,7 @@ reference:
     contents:
       - save_raw_pbp
       - missing_raw_pbp
-      - calculate_expected_points
-      - calculate_win_probability
-      - calculate_player_stats
-      - calculate_player_stats_def
-      - calculate_player_stats_kicking
-      - calculate_standings
-      - calculate_stats
-      - calculate_series_conversion_rates
+      - starts_with("calculate_")
       - report
   - title: Documentation
     contents:

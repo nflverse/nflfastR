@@ -1,6 +1,12 @@
 #' Summarize Kicking Stats
 #'
-#' @description Build columns that aggregate kicking stats at the game level.
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' This function was deprecated because we have a new, much better and
+#' harmonized approach in [`calculate_stats()`].
+#'
+#' Build columns that aggregate kicking stats at the game level.
 #'
 #' @param pbp A Data frame of NFL play-by-play data typically loaded with
 #' [load_pbp()] or [build_nflfastR_pbp()].
@@ -22,7 +28,14 @@
 #' @return a dataframe of kicking stats
 #' @seealso <https://nflreadr.nflverse.com/reference/load_player_stats.html> for the nflreadr function to download this from repo (`stat_type = "kicking"`)
 #' @export
+#' @keywords internal
 calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
+
+  lifecycle::deprecate_warn(
+    "5.0",
+    "calculate_player_stats_kicking()",
+    "calculate_stats()"
+  )
 
   # need newer version of nflreadr to use load_players
   rlang::check_installed("nflreadr (>= 1.3.0)")
