@@ -317,7 +317,7 @@
   },
   {
     "variable": "kickoff_returns",
-    "description": "Number of punts returned."
+    "description": "Number of kickoffs returned."
   },
   {
     "variable": "kickoff_return_yards",
