@@ -336,8 +336,8 @@ add_ep_variables <- function(pbp_data) {
   #new: special case for PAT or kickoff with penalty
   #for inserting NAs
   st_penalty_i_1 <- which(
-    # pat: prior play was TD or PAT and next play is PAT and this play isn't a td
-    (pbp_data$touchdown == 0 & (dplyr::lag(pbp_data$touchdown == 1) | dplyr::lag(pbp_data$play_type_nfl == "XP_KICK")) &
+    # pat: prior play was TD or PAT or Timeout and next play is PAT and this play isn't a td and it's not a regular down
+    (pbp_data$touchdown == 0 & is.na(pbp_data$down) & (dplyr::lag(pbp_data$touchdown) == 1 | dplyr::lag(pbp_data$play_type_nfl) == "XP_KICK" | dplyr::lag(pbp_data$timeout) == 1) &
           (dplyr::lead(pbp_data$two_point_attempt)==1 | dplyr::lead(pbp_data$extra_point_attempt)==1 | dplyr::lead(pbp_data$play_type_nfl) == "XP_KICK")) |
       #kickoff: prior play was PAT and next play is kickoff
       ((dplyr::lag(pbp_data$two_point_attempt)==1 | dplyr::lag(pbp_data$extra_point_attempt)==1) & dplyr::lead(pbp_data$kickoff_attempt == 1))
