@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.6.1.9019</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.6.1.9020</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,6 +81,7 @@
 <li>Fixed a problem where <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> returned <code>pass = 1</code> in actual rush plays in very rare cases. (<a href="https://github.com/nflverse/nflfastR/issues/479" class="external-link">#479</a>)</li>
 <li>Removed extra lines for injury timeouts that were breaking <code>fixed_drive</code> (<a href="https://github.com/nflverse/nflfastR/issues/482" class="external-link">#482</a>)</li>
 <li>The variable <code>penalty_type</code> now correctly lists the penalty “Kickoff Short of Landing Zone” introduced in the 2024 season. (<a href="https://github.com/nflverse/nflfastR/issues/486" class="external-link">#486</a>)</li>
+<li>Fixed a bug where <code>ep</code> was incorrect on PAT attempts preceded by a timeout and then a penalty (extremely rare). This bug also caused the variables <code>total_home_epa</code> and <code>total_away_epa</code> to be incorrect for all subsequent plays in the same game. (<a href="https://github.com/nflverse/nflfastR/issues/493" class="external-link">#493</a>)</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="4.6.1" id="nflfastr-461">nflfastR 4.6.1<a class="anchor" aria-label="anchor" href="#nflfastr-461"></a></h2><p class="text-muted">CRAN release: 2024-01-09</p>
