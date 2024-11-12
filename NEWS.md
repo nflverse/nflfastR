@@ -19,6 +19,7 @@
 - Fixed a problem where `clean_pbp()` returned `pass = 1` in actual rush plays in very rare cases. (#479)
 - Removed extra lines for injury timeouts that were breaking `fixed_drive` (#482)
 - The variable `penalty_type` now correctly lists the penalty "Kickoff Short of Landing Zone" introduced in the 2024 season. (#486)
+- Fixed a bug where `ep` was incorrect on PAT attempts preceded by a timeout and then a penalty (extremely rare). This bug also caused the variables `total_home_epa` and `total_away_epa` to be incorrect for all subsequent plays in the same game. (#493)
 
 # nflfastR 4.6.1
 
