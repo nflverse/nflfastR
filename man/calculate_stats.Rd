@@ -21,7 +21,8 @@ data since 1999.}
 \item{stat_type}{Calculate \code{"player"} level stats or \code{"team"} level stats.}
 
 \item{season_type}{One of \code{"REG"}, \code{"POST"}, or \code{"REG+POST"}. Filters
-data to regular season ("REG"), post season ("POST") or keeps all data.}
+data to regular season ("REG"), post season ("POST") or keeps all data.
+Only applied if \code{summary_level} == \code{"season"}.}
 }
 \value{
 A tibble of player/team stats summarized by season/week.

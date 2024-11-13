@@ -13,6 +13,7 @@
 #' @param stat_type Calculate `"player"` level stats or `"team"` level stats.
 #' @param season_type One of `"REG"`, `"POST"`, or `"REG+POST"`. Filters
 #'  data to regular season ("REG"), post season ("POST") or keeps all data.
+#'  Only applied if `summary_level` == `"season"`.
 #'
 #' @return A tibble of player/team stats summarized by season/week.
 #' @seealso [nfl_stats_variables] for a description of all variables.
@@ -37,7 +38,7 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
   season_type <- rlang::arg_match(season_type)
 
   pbp <- nflreadr::load_pbp(seasons = seasons)
-  if (season_type %in% c("REG", "POST")) {
+  if (season_type %in% c("REG", "POST") && summary_level == "season") {
     pbp <- dplyr::filter(pbp, .data$season_type == .env$season_type)
   }
 
