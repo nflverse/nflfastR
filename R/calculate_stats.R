@@ -40,6 +40,13 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
   pbp <- nflreadr::load_pbp(seasons = seasons)
   if (season_type %in% c("REG", "POST") && summary_level == "season") {
     pbp <- dplyr::filter(pbp, .data$season_type == .env$season_type)
+    if (nrow(pbp) == 0){
+      cli::cli_alert_warning(
+        "Filtering {.val {seasons}} data to {.arg season_type} == \\
+        {.val {season_type}} resulted in 0 rows. Returning empty tibble."
+      )
+      return(tibble::tibble())
+    }
   }
 
   # defensive stats require knowledge of which team is on defense
