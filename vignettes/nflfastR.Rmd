@@ -409,8 +409,6 @@ Not surprisingly, all 5 of the top 5 WRs in terms of EPA added come in ahead of 
 
 The columns like `name`, `passer`, `fantasy` etc are `nflfastR`-created columns that mimic "real" football: i.e., excluding plays with spikes, counting scrambles and sacks as pass plays, etc. But if you're trying to replicate official statistics -- perhaps for fantasy purposes -- use the `*_player_name` and `*_player_id` columns.
 
-### Leaderboards
-
 [Let's try to replicate this page of passing leaders](https://www.nfl.com/stats/player-stats/).
 
 ``` {r stats1}
@@ -468,4 +466,4 @@ Use `fixed_drive` and `fixed_drive_result` instead. See [Example 2: Using Drive 
 
 ## Need more help?
 
-Please ask [in the Discord channel](https://discord.com/invite/5Er2FBnnQa).
+Please ask [in the nflverse Discord server](https://discord.com/invite/5Er2FBnnQa).
