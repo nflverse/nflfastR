@@ -202,7 +202,7 @@ fetch_raw <- function(game_id,
 release_bullets <- function() {
   c(
     '`devtools::check_mac_release()`',
-    '`rhub::check_for_cran(email = "mrcaseb@gmail.com", show_status = FALSE)`',
+    '`rhub::rhub_check(platforms = rhub::rhub_platforms()$name)`',
     '`pkgdown::check_pkgdown()`',
     '`usethis::use_tidy_thanks()`',
     NULL
