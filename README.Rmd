@@ -72,7 +72,7 @@ Even though `nflfastR` is very fast, **we recommend downloading the data from [h
 
 ## nflfastR models
 
-`nflfastR` uses its own models for Expected Points, Win Probability, Completion Probability, and Expected Yards After the Catch. To read about the models, please see [this post on Open Source Football](https://opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/). For a more detailed description of the motivation for Expected Points models, we highly recommend this paper [from the nflscrapR team located here](https://arxiv.org/pdf/1802.00998.pdf). 
+`nflfastR` uses its own models for Expected Points, Win Probability, Completion Probability, and Expected Yards After the Catch. To read about the models, please see [this post on Open Source Football](https://opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/). For a more detailed description of the motivation for Expected Points models, we highly recommend this paper [from the nflscrapR team located here](http://arxiv.org/pdf/1802.00998). 
 
 Here is a visualization of the Expected Points model by down and yardline.
 

@@ -1,4 +1,11 @@
-# nflfastR (development version)
+# nflfastR 5.0.0
+
+## Major Changes
+
+- Added new function `calculate_stats()` that combines the output of all `calculate_player_stats*()` functions with a more robust and faster approach. The `calculate_player_stats*()` function will be deprecated in a future release. (#470)
+- Added new exported dataframe `nfl_stats_variables`. It lists and explains all variables returned by `calculate_stats()`. A searchable table is available at <https://www.nflfastr.com/articles/stats_variables.html>. (#470)
+
+## Bug Fixes and Minor Changes
 
 - Drop `{crayon}`, `{DT}`, `{httr}`, `{jsonlite}`, `{qs}` dependencies. (#453)
 - The function `calculate_player_stats_def` now returns `season_type` if argument `weekly` is set to `TRUE` for consistency with the other player stats functions. (#455)
@@ -12,14 +19,15 @@
 - `punter_player_id`, and `punter_player_name` are filled for blocked punt attempts. (#463)
 - Fixed an issue affecting scores of 2022 games involving a return touchdown (#466)
 - Added identification of scrambles from 1999 through 2004 with thank to Aaron Schatz (#468, #489)
-- Added new function `calculate_stats()` that combines the output of all `calculate_player_stats*()` functions with a more robust and faster approach. The `calculate_player_stats*()` function will be deprecated in a future release. (#470)
 - Updated the dataframe `stat_ids` with some IDs that were previously missing. (#470)
-- Added new exported dataframe `nfl_stats_variables`. It lists and explains all variables returned by `calculate_stats()`. A searchable table is available at <https://www.nflfastr.com/articles/stats_variables.html>. (#470)
 - nflfastR tried to fix bugs in the underlying pbp data of JAX home games prior to the 2016 season. An update of the raw pbp data resolved those bugs so nflfastR needs to remove the hard coded adjustments. This means that nflfastR <= v4.6.1 will return incorrect pbp data for all Jacksonville home games prior to the 2016 season! (#478)
 - Fixed a problem where `clean_pbp()` returned `pass = 1` in actual rush plays in very rare cases. (#479)
 - Removed extra lines for injury timeouts that were breaking `fixed_drive` (#482)
 - The variable `penalty_type` now correctly lists the penalty "Kickoff Short of Landing Zone" introduced in the 2024 season. (#486)
 - Fixed a bug where `ep` was incorrect on PAT attempts preceded by a timeout and then a penalty (extremely rare). This bug also caused the variables `total_home_epa` and `total_away_epa` to be incorrect for all subsequent plays in the same game. (#493)
+
+Thank you to
+[&#x0040;ahmed-cheema](https://github.com/ahmed-cheema), [&#x0040;andrewtek](https://github.com/andrewtek), [&#x0040;guga31bb](https://github.com/guga31bb), [&#x0040;isaactpetersen](https://github.com/isaactpetersen), [&#x0040;JoeMarino2021](https://github.com/JoeMarino2021), [&#x0040;john-b-edwards](https://github.com/john-b-edwards), [&#x0040;marcusSasser](https://github.com/marcusSasser), [&#x0040;mlounsberry](https://github.com/mlounsberry), [&#x0040;morganandrew](https://github.com/morganandrew), [&#x0040;mrcaseb](https://github.com/mrcaseb), [&#x0040;mscoop16](https://github.com/mscoop16), [&#x0040;parsnipz](https://github.com/parsnipz), [&#x0040;rjthompson2](https://github.com/rjthompson2), and [&#x0040;Useight](https://github.com/Useight) for their questions, feedback, and contributions towards this release.
 
 # nflfastR 4.6.1
 

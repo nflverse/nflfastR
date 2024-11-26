@@ -1,7 +1,7 @@
 ## Release summary
 
-This is a minor release that 
-* adjusts the setup process of unit tests per request
+This is a major release that 
+* adds new functions, deprecates old functions.
 
 ## R CMD check results
 
