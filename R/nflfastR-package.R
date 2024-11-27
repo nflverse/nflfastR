@@ -50,7 +50,7 @@
 #' inherits(future::plan(), "sequential")
 #' ```
 #' For more information on possible plans please see
-#' [the future package Readme](https://github.com/HenrikBengtsson/future/blob/develop/README.md).
+#' [the future package Readme](https://github.com/futureverse/future/blob/develop/README.md).
 #'
 #' For more information on `.Renviron` please see
 #' [this book chapter](https://rstats.wtf/r-startup.html).
