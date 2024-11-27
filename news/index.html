@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">4.6.1.9020</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,7 +60,14 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="nflfastr-development-version">nflfastR (development version)<a class="anchor" aria-label="anchor" href="#nflfastr-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="5.0.0" id="nflfastr-500">nflfastR 5.0.0<a class="anchor" aria-label="anchor" href="#nflfastr-500"></a></h2><p class="text-muted">CRAN release: 2024-11-26</p>
+<div class="section level3">
+<h3 id="major-changes-5-0-0">Major Changes<a class="anchor" aria-label="anchor" href="#major-changes-5-0-0"></a></h3>
+<ul><li>Added new function <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code> that combines the output of all <code>calculate_player_stats*()</code> functions with a more robust and faster approach. The <code>calculate_player_stats*()</code> function will be deprecated in a future release. (<a href="https://github.com/nflverse/nflfastR/issues/470" class="external-link">#470</a>)</li>
+<li>Added new exported dataframe <code>nfl_stats_variables</code>. It lists and explains all variables returned by <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code>. A searchable table is available at <a href="https://www.nflfastr.com/articles/stats_variables.html" class="uri">https://www.nflfastr.com/articles/stats_variables.html</a>. (<a href="https://github.com/nflverse/nflfastR/issues/470" class="external-link">#470</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-and-minor-changes-5-0-0">Bug Fixes and Minor Changes<a class="anchor" aria-label="anchor" href="#bug-fixes-and-minor-changes-5-0-0"></a></h3>
 <ul><li>Drop <a href="https://r-lib.github.io/crayon/" class="external-link">crayon</a>, <a href="https://github.com/rstudio/DT" class="external-link">DT</a>, <a href="https://httr.r-lib.org/" class="external-link">httr</a>, <a href="https://jeroen.r-universe.dev/jsonlite" class="external-link">jsonlite</a>, <a href="https://github.com/qsbase/qs" class="external-link">qs</a> dependencies. (<a href="https://github.com/nflverse/nflfastR/issues/453" class="external-link">#453</a>)</li>
 <li>The function <code>calculate_player_stats_def</code> now returns <code>season_type</code> if argument <code>weekly</code> is set to <code>TRUE</code> for consistency with the other player stats functions. (<a href="https://github.com/nflverse/nflfastR/issues/455" class="external-link">#455</a>)</li>
 <li>The function <code><a href="../reference/missing_raw_pbp.html">missing_raw_pbp()</a></code> now allows filtering by season. (<a href="https://github.com/nflverse/nflfastR/issues/457" class="external-link">#457</a>)</li>
@@ -74,15 +81,15 @@
 <code>punter_player_id</code>, and <code>punter_player_name</code> are filled for blocked punt attempts. (<a href="https://github.com/nflverse/nflfastR/issues/463" class="external-link">#463</a>)</li>
 <li>Fixed an issue affecting scores of 2022 games involving a return touchdown (<a href="https://github.com/nflverse/nflfastR/issues/466" class="external-link">#466</a>)</li>
 <li>Added identification of scrambles from 1999 through 2004 with thank to Aaron Schatz (<a href="https://github.com/nflverse/nflfastR/issues/468" class="external-link">#468</a>, <a href="https://github.com/nflverse/nflfastR/issues/489" class="external-link">#489</a>)</li>
-<li>Added new function <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code> that combines the output of all <code>calculate_player_stats*()</code> functions with a more robust and faster approach. The <code>calculate_player_stats*()</code> function will be deprecated in a future release. (<a href="https://github.com/nflverse/nflfastR/issues/470" class="external-link">#470</a>)</li>
 <li>Updated the dataframe <code>stat_ids</code> with some IDs that were previously missing. (<a href="https://github.com/nflverse/nflfastR/issues/470" class="external-link">#470</a>)</li>
-<li>Added new exported dataframe <code>nfl_stats_variables</code>. It lists and explains all variables returned by <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code>. A searchable table is available at <a href="https://www.nflfastr.com/articles/stats_variables.html" class="uri">https://www.nflfastr.com/articles/stats_variables.html</a>. (<a href="https://github.com/nflverse/nflfastR/issues/470" class="external-link">#470</a>)</li>
 <li>nflfastR tried to fix bugs in the underlying pbp data of JAX home games prior to the 2016 season. An update of the raw pbp data resolved those bugs so nflfastR needs to remove the hard coded adjustments. This means that nflfastR &lt;= v4.6.1 will return incorrect pbp data for all Jacksonville home games prior to the 2016 season! (<a href="https://github.com/nflverse/nflfastR/issues/478" class="external-link">#478</a>)</li>
 <li>Fixed a problem where <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> returned <code>pass = 1</code> in actual rush plays in very rare cases. (<a href="https://github.com/nflverse/nflfastR/issues/479" class="external-link">#479</a>)</li>
 <li>Removed extra lines for injury timeouts that were breaking <code>fixed_drive</code> (<a href="https://github.com/nflverse/nflfastR/issues/482" class="external-link">#482</a>)</li>
 <li>The variable <code>penalty_type</code> now correctly lists the penalty “Kickoff Short of Landing Zone” introduced in the 2024 season. (<a href="https://github.com/nflverse/nflfastR/issues/486" class="external-link">#486</a>)</li>
 <li>Fixed a bug where <code>ep</code> was incorrect on PAT attempts preceded by a timeout and then a penalty (extremely rare). This bug also caused the variables <code>total_home_epa</code> and <code>total_away_epa</code> to be incorrect for all subsequent plays in the same game. (<a href="https://github.com/nflverse/nflfastR/issues/493" class="external-link">#493</a>)</li>
-</ul></div>
+</ul><p>Thank you to <a href="https://github.com/ahmed-cheema" class="external-link">@ahmed-cheema</a>, <a href="https://github.com/andrewtek" class="external-link">@andrewtek</a>, <a href="https://github.com/guga31bb" class="external-link">@guga31bb</a>, <a href="https://github.com/isaactpetersen" class="external-link">@isaactpetersen</a>, <a href="https://github.com/JoeMarino2021" class="external-link">@JoeMarino2021</a>, <a href="https://github.com/john-b-edwards" class="external-link">@john-b-edwards</a>, <a href="https://github.com/marcusSasser" class="external-link">@marcusSasser</a>, <a href="https://github.com/mlounsberry" class="external-link">@mlounsberry</a>, <a href="https://github.com/morganandrew" class="external-link">@morganandrew</a>, <a href="https://github.com/mrcaseb" class="external-link">@mrcaseb</a>, <a href="https://github.com/mscoop16" class="external-link">@mscoop16</a>, <a href="https://github.com/parsnipz" class="external-link">@parsnipz</a>, <a href="https://github.com/rjthompson2" class="external-link">@rjthompson2</a>, and <a href="https://github.com/Useight" class="external-link">@Useight</a> for their questions, feedback, and contributions towards this release.</p>
+</div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="4.6.1" id="nflfastr-461">nflfastR 4.6.1<a class="anchor" aria-label="anchor" href="#nflfastr-461"></a></h2><p class="text-muted">CRAN release: 2024-01-09</p>
 <ul><li>The function <code><a href="../reference/calculate_series_conversion_rates.html">calculate_series_conversion_rates()</a></code> now correctly aggregates season level conversion rates. Performance has also been improved. (<a href="https://github.com/nflverse/nflfastR/issues/440" class="external-link">#440</a>)</li>
