@@ -1,3 +1,7 @@
+# nflfastR (development version)
+
+- Fixed a bug where `calculate_stats()` incorrectly counted `receiving_air_yards`. (#500)
+
 # nflfastR 5.0.0
 
 ## Major Changes
