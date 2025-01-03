@@ -1,6 +1,7 @@
 # nflfastR (development version)
 
 - Fixed a bug where `calculate_stats()` incorrectly counted `receiving_air_yards`. (#500)
+- Fixed a bug where `vegas_wp` variables were broken when `spread_line` data was missing. (#503)
 
 # nflfastR 5.0.0
 

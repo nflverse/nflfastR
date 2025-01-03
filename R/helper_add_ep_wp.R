@@ -196,6 +196,24 @@ wp_spread_model_select <- function(pbp) {
 }
 prepare_wp_data <- function(pbp) {
 
+  if (any(is.na(pbp$spread_line))){
+    broken_games <- pbp %>%
+      dplyr::filter(is.na(.data$spread_line)) %>%
+      dplyr::pull(game_id) %>%
+      unique() %>%
+      sort()
+    cli::cli_alert_danger(
+      "The following game{?s} {?is/are} missing valid spread lines: {.val {broken_games}}."
+    )
+    cli::cli_alert_warning(
+      "nflfastR will manually set the spread for the home team to {.val 1.5} points!"
+    )
+    cli::cli_alert_warning(
+      "If you see this, please reach out to the package maintainers {.url https://github.com/nflverse/nflfastR/issues}"
+    )
+    pbp$spread_line[is.na(pbp$spread_line)] <- 1.5
+  }
+
   pbp <- pbp %>%
     dplyr::group_by(.data$game_id) %>%
     dplyr::mutate(
