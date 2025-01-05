@@ -122,9 +122,13 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       team_stats = paste0(paste(stat_id, collapse = ";"), ";"),
       team_play_air_yards = sum((stat_id %in% 111:112) * yards)
     ) %>%
-    dplyr::group_by(.data$season, .data$week, .data$team) %>%
+    # compute team targets and team air yards for calculation of target share
+    # and air yard share. Since it's relative, we need to be careful with the groups
+    # depending on summary level
+    dplyr::group_by(!!!rlang::data_syms(
+      if (summary_level == "season") c("season", "team") else c("season", "week", "team")
+    )) %>%
     dplyr::mutate(
-      # for calculation of target share and air yard share
       team_targets = sum(stat_id == 115),
       team_air_yards = sum((stat_id %in% 111:112) * yards)
     ) %>%
