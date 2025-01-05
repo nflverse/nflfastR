@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.0.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.0.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -668,7 +668,7 @@ already loaded the package, it’s ready to use.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://nflreadr.nflverse.com/reference/load_teams.html" class="external-link">load_teams</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse team graphics</span> ──────────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-01-03 16:00:00 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-01-05 23:28:28 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 16</span></span></span>
 <span><span class="co">#&gt;    team_abbr team_name      team_id team_nick team_conf team_division team_color</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span></span>
@@ -918,7 +918,7 @@ overwhelming).</p>
 <span><span class="co">#&gt;  $ stadium_id      : chr [1:6978] "ATL00" "CHI98" "CLE00" "GNB00" ...</span></span>
 <span><span class="co">#&gt;  $ stadium         : chr [1:6978] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...</span></span>
 <span><span class="co">#&gt;  - attr(*, "nflverse_type")= chr "games and schedules"</span></span>
-<span><span class="co">#&gt;  - attr(*, "nflverse_timestamp")= chr "2025-01-03 11:00:28 EST"</span></span></code></pre></div>
+<span><span class="co">#&gt;  - attr(*, "nflverse_timestamp")= chr "2025-01-05 18:28:56 EST"</span></span></code></pre></div>
 <p>To start, we want to create a dataframe where each row is a
 team-season observation, listing how many games they won. There are
 multiple ways to do this, but I’m going to just take the home and away
@@ -931,7 +931,7 @@ results and bind together. As an example, here’s what the
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>team <span class="op">=</span> <span class="va">home_team</span><span class="op">)</span></span>
 <span><span class="va">home</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-01-03 16:00:28 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-01-05 23:28:56 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 4</span></span></span>
 <span><span class="co">#&gt;   season  week team  result</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
@@ -950,7 +950,7 @@ results and bind together. As an example, here’s what the
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>result <span class="op">=</span> <span class="op">-</span><span class="va">result</span><span class="op">)</span></span>
 <span><span class="va">away</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-01-03 16:00:28 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-01-05 23:28:56 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 4</span></span></span>
 <span><span class="co">#&gt;   season  week team  result</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
@@ -975,7 +975,7 @@ the perspective of the home team. Now let’s make a columns called
 <span></span>
 <span><span class="va">results</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op">==</span> <span class="fl">2019</span> <span class="op">&amp;</span> <span class="va">team</span> <span class="op">==</span> <span class="st">'SEA'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-01-03 16:00:28 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-01-05 23:28:56 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 16 × 5</span></span></span>
 <span><span class="co">#&gt;    season  week team  result   win</span></span>
 <span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
@@ -1414,19 +1414,19 @@ does this compare to simply using point differential?</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Residuals:</span></span>
 <span><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
-<span><span class="co">#&gt; -7.2007 -1.9624  0.1361  2.1952  7.3562 </span></span>
+<span><span class="co">#&gt; -7.1844 -2.0340  0.1537  2.2024  7.3629 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;                  Estimate Std. Error t value            Pr(&gt;|t|)    </span></span>
-<span><span class="co">#&gt; (Intercept)      8.097917   0.126658   63.94 &lt;0.0000000000000002 ***</span></span>
-<span><span class="co">#&gt; prior_point_diff 0.012974   0.001254   10.35 &lt;0.0000000000000002 ***</span></span>
+<span><span class="co">#&gt; (Intercept)      8.088398   0.125234   64.59 &lt;0.0000000000000002 ***</span></span>
+<span><span class="co">#&gt; prior_point_diff 0.012894   0.001238   10.42 &lt;0.0000000000000002 ***</span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Residual standard error: 2.775 on 478 degrees of freedom</span></span>
-<span><span class="co">#&gt;   (32 observations deleted due to missingness)</span></span>
-<span><span class="co">#&gt; Multiple R-squared:  0.183,  Adjusted R-squared:  0.1813 </span></span>
-<span><span class="co">#&gt; F-statistic: 107.1 on 1 and 478 DF,  p-value: &lt; 0.00000000000000022</span></span></code></pre></div>
+<span><span class="co">#&gt; Residual standard error: 2.8 on 498 degrees of freedom</span></span>
+<span><span class="co">#&gt;   (12 observations deleted due to missingness)</span></span>
+<span><span class="co">#&gt; Multiple R-squared:  0.1789, Adjusted R-squared:  0.1773 </span></span>
+<span><span class="co">#&gt; F-statistic: 108.5 on 1 and 498 DF,  p-value: &lt; 0.00000000000000022</span></span></code></pre></div>
 <p>So R2 is somewhat higher for just point differential. This isn’t
 surprising as we’ve thrown away special teams plays and haven’t
 attempted to make any adjustments for things like fumble luck that we
@@ -1482,8 +1482,8 @@ know can improve EPA’s predictive power.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>       11.3 BAL  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>       10.6 NE   </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>       10.3 SF   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>       10   KC   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>        9.6 DAL</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>        9.9 KC   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>        9.6 NO</span></span></code></pre></div>
 <p>Not surprisingly, this looks pretty similar. These are very basic
 models that don’t incorporate schedule, roster changes, etc. For
 example, a better model would take into account Tom Brady no longer
