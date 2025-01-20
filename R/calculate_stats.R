@@ -31,13 +31,17 @@
 calculate_stats <- function(seasons = nflreadr::most_recent_season(),
                             summary_level = c("season", "week"),
                             stat_type = c("player", "team"),
-                            season_type = c("REG", "POST", "REG+POST")){
+                            season_type = c("REG", "POST", "REG+POST"),
+                            pbp = NULL){
 
   summary_level <- rlang::arg_match(summary_level)
   stat_type <- rlang::arg_match(stat_type)
   season_type <- rlang::arg_match(season_type)
+  custom_pbp <- !is.null(pbp)
+  
+  if (custom_pbp) validate_pbp(pbp)
+  if (!custom_pbp) pbp <- nflreadr::load_pbp(seasons = seasons)
 
-  pbp <- nflreadr::load_pbp(seasons = seasons)
   if (season_type %in% c("REG", "POST") && summary_level == "season") {
     pbp <- dplyr::filter(pbp, .data$season_type == .env$season_type)
     if (nrow(pbp) == 0){
@@ -105,9 +109,10 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
   # we need those to identify things like fumbles depending on playtype or
   # first downs depending on playtype
   playstats <- load_playstats(seasons = seasons) %>%
-    # if season_type is REG or POST, we filter pbp.
-    # That's why we have to filter playstats as well
-    dplyr::filter(.data$game_id %in% pbp$game_id) %>%
+    # apply filtering on play stats so that it matches pbp, e.g.
+    # - game filters for REG/POST
+    # - only plays included in pbp in case it was provided manually
+    dplyr::semi_join(pbp, by = c("game_id", "play_id")) %>%
     dplyr::rename("player_id" = "gsis_player_id", "team" = "team_abbr") %>%
     dplyr::group_by(.data$season, .data$week, .data$play_id, .data$player_id) %>%
     dplyr::mutate(
@@ -448,6 +453,8 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       )
   }
 
+  if (custom_pbp) attr(stats, "custom_pbp") <- TRUE
+      
   stats
 }
 
