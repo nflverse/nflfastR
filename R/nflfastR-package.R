@@ -104,7 +104,7 @@
 # roxygen namespace tags. Modify with care!
 ## usethis namespace: start
 #' @import fastrmodels
-#' @importFrom nflreadr load_pbp load_player_stats nflverse_sitrep
+#' @importFrom nflreadr load_pbp load_player_stats load_schedules load_rosters nflverse_sitrep
 #' @importFrom magrittr %>%
 #' @importFrom data.table setDT %between% %chin%
 #' @importFrom rlang .data inform dots_list := .env %||%
@@ -117,6 +117,10 @@ NULL
 nflreadr::load_pbp
 #' @export
 nflreadr::load_player_stats
+#' @export
+nflreadr::load_schedules
+#' @export
+nflreadr::load_rosters
 #' @export
 nflreadr::nflverse_sitrep
 

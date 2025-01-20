@@ -128,6 +128,8 @@ reference:
     contents:
       - load_pbp
       - load_player_stats
+      - load_rosters
+      - load_schedules
   - title: Utility Functions
     contents:
       - save_raw_pbp
