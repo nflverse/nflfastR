@@ -103,25 +103,30 @@
 # The following block is used by usethis to automatically manage
 # roxygen namespace tags. Modify with care!
 ## usethis namespace: start
-#' @import dplyr
 #' @import fastrmodels
-#' @importFrom cli rule
-#' @importFrom curl curl_fetch_memory
+#' @importFrom nflreadr load_pbp load_player_stats
+#' @export load_pbp
+#' @export load_player_stats
+#' @importFrom magrittr %>%
 #' @importFrom data.table setDT %between% %chin%
-#' @importFrom furrr future_map_chr future_map_dfr future_map
-#' @importFrom future plan
-#' @importFrom glue glue glue_sql
-#' @importFrom janitor clean_names
-#' @importFrom lifecycle deprecated
-#' @importFrom mgcv predict.bam
-#' @importFrom progressr progressor
-#' @importFrom rlang .data inform dots_list := .env
+#' @importFrom rlang .data inform dots_list := .env %||%
 #' @importFrom stats predict na.omit
-#' @importFrom stringr str_sub str_replace_all str_length str_extract str_detect str_trim str_remove_all str_split str_extract_all
-#' @importFrom tibble as_tibble tibble
-#' @importFrom tidyr unnest_wider unnest
-#' @importFrom tidyselect any_of ends_with
 #' @importFrom utils packageVersion
-#' @importFrom xgboost getinfo
 ## usethis namespace: end
 NULL
+
+# @import dplyr
+# @importFrom cli rule
+# @importFrom curl curl_fetch_memory
+# @importFrom furrr future_map_chr future_map_dfr future_map
+# @importFrom future plan
+# @importFrom glue glue glue_sql
+# @importFrom janitor clean_names
+# @importFrom lifecycle deprecated
+# @importFrom mgcv predict.bam
+# @importFrom progressr progressor
+# @importFrom stringr str_sub str_replace_all str_length str_extract str_detect str_trim str_remove_all str_split str_extract_all
+# @importFrom tibble as_tibble tibble
+# @importFrom tidyr unnest_wider unnest
+# @importFrom tidyselect any_of ends_with
+# @importFrom xgboost getinfo
