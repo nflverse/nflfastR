@@ -52,6 +52,7 @@ Imports:
     glue,
     janitor,
     lifecycle,
+    magrittr,
     mgcv,
     nflreadr (>= 1.2.0),
     progressr (>= 0.6.0),
