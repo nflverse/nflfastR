@@ -37,7 +37,7 @@ authors:
   Samuel Ventura:
     href: https://twitter.com/stat_sam
   Tan Ho:
-    href: https://twitter.com/_TanHo
+    href: https://tanho.ca
   John Edwards:
     href: https://twitter.com/John_B_Edwards
 home:
@@ -135,7 +135,7 @@ reference:
       - save_raw_pbp
       - missing_raw_pbp
       - starts_with("calculate_")
-      - report
+      - nflverse_sitrep
   - title: Documentation
     contents:
       - nflfastR-package
