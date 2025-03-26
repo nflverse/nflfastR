@@ -14,6 +14,11 @@ for Responsive Web Design - Media Queries
   }
 }
 
+h4.author,h4.date {
+  padding-top:0px;
+  margin-top:0px;
+}
+
 .navbar-brand {
   font-weight: 300;
   font-size: 1.5rem;
@@ -21,5 +26,26 @@ for Responsive Web Design - Media Queries
 }
 
 .me-auto {
-    color: yellow !important;
+    color: #009E8D !important;
+}
+
+/*
+from gt custom css
+draws lines between function names on reference page
+*/
+
+dt {
+  text-decoration: underline;
+  text-decoration-style: solid;
+  text-underline-offset: 4px;
+  font-family: monospace;
+  border-top-style: dotted;
+  border-top-width: 1px;
+  border-top-color: gray;
+  margin-bottom: 5px;
+  padding-top: 5px;
+}
+
+.active .nav-link {
+  color: #F85714 !important;
 }
