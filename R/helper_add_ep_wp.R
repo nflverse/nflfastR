@@ -199,7 +199,7 @@ prepare_wp_data <- function(pbp) {
   if (any(is.na(pbp$spread_line))){
     broken_games <- pbp |>
       dplyr::filter(is.na(.data$spread_line)) |>
-      dplyr::pull(game_id) |>
+      dplyr::pull(.data$game_id) |>
       unique() |>
       sort()
     cli::cli_alert_danger(
