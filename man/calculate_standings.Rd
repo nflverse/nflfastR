@@ -35,6 +35,10 @@ for all seasons in \code{nflverse_object}!}
 A tibble with NFL regular season standings
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+This function was deprecated and replaced by \code{\link[nflseedR:nfl_standings]{nflseedR::nfl_standings()}}.
+
 This function calculates division standings as well as playoff
 seeds per conference based on either nflverse play-by-play data or nflverse
 schedule data.
@@ -54,3 +58,4 @@ try({# to avoid CRAN test problems
 })
 }
 }
+\keyword{internal}

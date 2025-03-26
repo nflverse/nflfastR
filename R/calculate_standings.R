@@ -1,6 +1,11 @@
 #' Compute Division Standings and Conference Seeds from Play by Play
 #'
-#' @description This function calculates division standings as well as playoff
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' This function was deprecated and replaced by [nflseedR::nfl_standings()].
+#'
+#' This function calculates division standings as well as playoff
 #'   seeds per conference based on either nflverse play-by-play data or nflverse
 #'   schedule data.
 #'
@@ -14,6 +19,7 @@
 #'   for all seasons in `nflverse_object`!
 #' @inheritParams nflseedR::compute_conference_seeds
 #'
+#' @keywords internal
 #' @return A tibble with NFL regular season standings
 #' @export
 #'
@@ -34,6 +40,11 @@
 calculate_standings <- function(nflverse_object,
                                 tiebreaker_depth = 3,
                                 playoff_seeds = NULL){
+  lifecycle::deprecate_warn(
+    "5.1.0",
+    "calculate_standings()",
+    "nflseedR::nfl_standings()"
+  )
 
   if(!inherits(nflverse_object, "nflverse_data")){
     cli::cli_abort("The function argument {.arg nflverse_object} has to be
