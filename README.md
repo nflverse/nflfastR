@@ -11,7 +11,8 @@ status](https://www.r-pkg.org/badges/version-last-release/nflfastR)](https://CRA
 downloads](https://cranlogs.r-pkg.org/badges/grand-total/nflfastR)](https://CRAN.R-project.org/package=nflfastR)
 [![Dev
 status](https://img.shields.io/github/r-package/v/nflverse/nflfastR/master?label=dev%20version&style=flat-square&logo=github)](https://www.nflfastr.com/)
-[![R-CMD-check](https://github.com/nflverse/nflfastR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/nflverse/nflfastR/actions/workflows/R-CMD-check.yaml)
+[![R build
+status](https://img.shields.io/github/actions/workflow/status/nflverse/nflfastR/R-CMD-check.yaml?label=R%20check&style=flat-square&logo=github)](https://github.com/nflverse/nflfastR/actions)
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![nflverse
