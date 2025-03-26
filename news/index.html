@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.0.9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.0.9004</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,6 +65,7 @@
 <li>Fixed a bug where <code>vegas_wp</code> variables were broken when <code>spread_line</code> data was missing. (<a href="https://github.com/nflverse/nflfastR/issues/503" class="external-link">#503</a>)</li>
 <li>Fixed a bug where <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code> incorrectly calculated <code>target_share</code> and <code>air_yards_share</code> when <code>summary_level = "season"</code>. (<a href="https://github.com/nflverse/nflfastR/issues/505" class="external-link">#505</a>)</li>
 <li>The function <code><a href="../reference/calculate_standings.html">calculate_standings()</a></code> has been deprecated. Please use <code><a href="https://nflseedr.com/reference/nfl_standings.html" class="external-link">nflseedR::nfl_standings()</a></code> in nflseedR v2.0 instead. (<a href="https://github.com/nflverse/nflfastR/issues/510" class="external-link">#510</a>)</li>
+<li>nflfastR now requires R 4.1 to allow the package to use R’s native pipe <code>|&gt;</code> operator. This follows the <a href="https://www.tidyverse.org/blog/2019/04/r-version-support/" class="external-link">Tidyverse R version support rules</a>. (<a href="https://github.com/nflverse/nflfastR/issues/511" class="external-link">#511</a>)</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="5.0.0" id="nflfastr-500">nflfastR 5.0.0<a class="anchor" aria-label="anchor" href="#nflfastr-500"></a></h2><p class="text-muted">CRAN release: 2024-11-26</p>
