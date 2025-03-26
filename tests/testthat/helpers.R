@@ -39,7 +39,7 @@ load_expectation <- function(type = c("pbp", "sc", "sc_weekly", "ep", "wp"),
     "ep" = "expected_ep.rds",
     "wp" = "expected_wp.rds",
   )
-  strip_nflverse_attributes(readRDS(file.path(dir, file_name))) %>%
+  strip_nflverse_attributes(readRDS(file.path(dir, file_name))) |>
     # we gotta round floating point numbers because of different model output
     # across platforms
     round_double_to_digits()
@@ -58,8 +58,8 @@ round_double_to_digits <- function(df, digits = 3){
   dplyr::mutate(df, dplyr::across(
     .cols = relevant_variables(),
     .fns = function(vec){
-      formatC(vec, digits = digits, format = "fg") %>%
-        as.numeric() %>%
+      formatC(vec, digits = digits, format = "fg") |>
+        as.numeric() |>
         suppressWarnings()
     }
   ))

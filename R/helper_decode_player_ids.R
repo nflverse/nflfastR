@@ -71,7 +71,7 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
   id_vector <- players$gsis_id
   names(id_vector) <- players$esb_id
 
-  ret <- pbp %>%
+  ret <- pbp |>
     dplyr::mutate_at(
       dplyr::vars(
         tidyselect::any_of(c("passer_id", "rusher_id", "receiver_id", "id", "fantasy_id")),
@@ -103,8 +103,8 @@ convert_to_gsis_id <- function(new_id) {
   if (is.na(new_id) | stringr::str_length(new_id) != 36) {
     ret <- new_id
   } else {
-    to_decode <- new_id %>%
-      stringr::str_sub(5, -9) %>%
+    to_decode <- new_id |>
+      stringr::str_sub(5, -9) |>
       stringr::str_replace_all("-", "")
     hex_raw <- sapply(seq(1, nchar(to_decode), by = 2), function(x) substr(to_decode, x, x + 1))
     ret <- rawToChar(as.raw(strtoi(hex_raw, 16L)))
@@ -113,8 +113,8 @@ convert_to_gsis_id <- function(new_id) {
 }
 
 extract_elias <- function(smart_id, decoder){
-  name_abbr <- decoder(smart_id) %>% substr(1,3)
-  id_no <- stringr::str_remove_all(smart_id, "-") %>%
+  name_abbr <- decoder(smart_id) |> substr(1,3)
+  id_no <- stringr::str_remove_all(smart_id, "-") |>
     stringr::str_sub(11, 16)
   elias_id <- paste0(name_abbr, id_no)
   elias_id

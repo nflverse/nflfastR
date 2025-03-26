@@ -15,9 +15,9 @@ setdiff(n1, n3)
 setdiff(n3, n1)
 
 # tibble::tibble(
-#   variable = c(n1, n2, n3, n4) %>% unique(),
+#   variable = c(n1, n2, n3, n4) |> unique(),
 #   description = ""
-# ) %>%
+# ) |>
 #   jsonlite::write_json("data-raw/nfl_stats_variables.json", pretty = TRUE)
 
 nfl_stats_variables <- jsonlite::fromJSON("data-raw/nfl_stats_variables.json")

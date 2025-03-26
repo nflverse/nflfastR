@@ -73,9 +73,9 @@ calculate_standings <- function(nflverse_object,
 }
 
 .standings_from_pbp <- function(pbp, tiebreaker_depth, playoff_seeds){
-  g <- pbp %>%
-    dplyr::filter(.data$season_type == "REG") %>%
-    dplyr::group_by(.data$game_id) %>%
+  g <- pbp |>
+    dplyr::filter(.data$season_type == "REG") |>
+    dplyr::group_by(.data$game_id) |>
     dplyr::summarise(
       sim = dplyr::first(.data$season),
       game_type = dplyr::first(.data$season_type),
@@ -83,14 +83,14 @@ calculate_standings <- function(nflverse_object,
       away_team = dplyr::first(.data$away_team),
       home_team = dplyr::first(.data$home_team),
       result = dplyr::last(.data$home_score) - dplyr::last(.data$away_score)
-    ) %>%
-    dplyr::ungroup() %>%
+    ) |>
+    dplyr::ungroup() |>
     dplyr::select(-"game_id")
 
   if(is.null(playoff_seeds)){
-    g6 <- g %>%
+    g6 <- g |>
       dplyr::filter(.data$sim %in% 1999:2019)
-    g7 <- g %>%
+    g7 <- g |>
       dplyr::filter(.data$sim >= 2020)
     dplyr::bind_rows(
       .compute_standings(g6, tiebreaker_depth = tiebreaker_depth, playoff_seeds = 6),
@@ -104,16 +104,16 @@ calculate_standings <- function(nflverse_object,
 }
 
 .standings_from_games <- function(games, tiebreaker_depth, playoff_seeds){
-  g <- games %>%
-    dplyr::filter(.data$game_type == "REG", !is.na(.data$result)) %>%
+  g <- games |>
+    dplyr::filter(.data$game_type == "REG", !is.na(.data$result)) |>
     dplyr::select(
       "sim" = "season", "game_type", "week", "away_team", "home_team", "result"
     )
 
   if(is.null(playoff_seeds)){
-    g6 <- g %>%
+    g6 <- g |>
       dplyr::filter(.data$sim %in% 1999:2019)
-    g7 <- g %>%
+    g7 <- g |>
       dplyr::filter(.data$sim >= 2020)
     dplyr::bind_rows(
       .compute_standings(g6, tiebreaker_depth = tiebreaker_depth, playoff_seeds = 6),
@@ -136,10 +136,10 @@ calculate_standings <- function(nflverse_object,
                                                tiebreaker_depth = tiebreaker_depth,
                                                playoff_seeds = playoff_seeds)
   })
-  conf$standings %>%
-    dplyr::select(-"exit", -"wins") %>%
-    dplyr::select("sim":"division", "div_rank", "seed", dplyr::everything()) %>%
-    dplyr::rename("season" = "sim", "wins" = "true_wins") %>%
-    dplyr::arrange(.data$season, .data$division, .data$div_rank, .data$seed) %>%
+  conf$standings |>
+    dplyr::select(-"exit", -"wins") |>
+    dplyr::select("sim":"division", "div_rank", "seed", dplyr::everything()) |>
+    dplyr::rename("season" = "sim", "wins" = "true_wins") |>
+    dplyr::arrange(.data$season, .data$division, .data$div_rank, .data$seed) |>
     tibble::as_tibble()
 }

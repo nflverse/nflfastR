@@ -84,7 +84,7 @@ progress updates globally (for the current session) with
 
 or by piping the function call into \code{\link[progressr:with_progress]{progressr::with_progress()}}:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{load_pbp(2018:2020) \%>\%
+\if{html}{\out{<div class="sourceCode">}}\preformatted{load_pbp(2018:2020) |>
   progressr::with_progress()
 }\if{html}{\out{</div>}}
 

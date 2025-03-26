@@ -1,7 +1,7 @@
 Type: Package
 Package: nflfastR
 Title: Functions to Efficiently Access NFL Play by Play Data
-Version: 5.0.0.9003
+Version: 5.0.0.9004
 Authors@R: 
     c(person(given = "Sebastian",
              family = "Carl",
@@ -40,7 +40,7 @@ URL: https://www.nflfastr.com/,
     https://github.com/nflverse/nflfastR
 BugReports: https://github.com/nflverse/nflfastR/issues
 Depends: 
-    R (>= 3.6.0)
+    R (>= 4.1.0)
 Imports: 
     cli (>= 3.0.0),
     curl,

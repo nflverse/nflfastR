@@ -49,15 +49,15 @@ calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
   grp_vars <- lapply(grp_vars, as.symbol)
 
   # Filtering down / creating a base dataset
-  df_fg_or_pat <- pbp %>%
-    dplyr::group_by(.data$game_id, .data$posteam) %>%
+  df_fg_or_pat <- pbp |>
+    dplyr::group_by(.data$game_id, .data$posteam) |>
     dplyr::filter(
       .data$field_goal_attempt == 1 |
         .data$extra_point_attempt == 1 |
         .data$fixed_drive == max(.data$fixed_drive, na.rm = TRUE)
-    ) %>%
-    dplyr::ungroup() %>%
-    dplyr::filter(!is.na(.data$kicker_player_id)) %>%
+    ) |>
+    dplyr::ungroup() |>
+    dplyr::filter(!is.na(.data$kicker_player_id)) |>
     dplyr::select(
       "game_id",
       "season",
@@ -76,14 +76,14 @@ calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
     )
 
   # Field-goal relevant columns
-  df_field_goals <- df_fg_or_pat %>%
-    dplyr::filter(.data$field_goal_attempt == 1) %>%
-    dplyr::group_by(!!!grp_vars) %>%
+  df_field_goals <- df_fg_or_pat |>
+    dplyr::filter(.data$field_goal_attempt == 1) |>
+    dplyr::group_by(!!!grp_vars) |>
     dplyr::mutate(
       temp_made_idx = .data$fg_res == "made",
       temp_miss_idx = .data$fg_res == "missed",
       temp_block_idx = .data$fg_res == "blocked"
-    ) %>%
+    ) |>
     dplyr::summarise(
       games_fg = list(unique(.data$game_id)),
       fg_made = sum(.data$temp_made_idx, na.rm = TRUE),
@@ -115,9 +115,9 @@ calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
 
 
   # Extra points
-  df_pat <- df_fg_or_pat %>%
-    dplyr::filter(.data$extra_point_attempt == 1) %>%
-    dplyr::group_by(!!!grp_vars) %>%
+  df_pat <- df_fg_or_pat |>
+    dplyr::filter(.data$extra_point_attempt == 1) |>
+    dplyr::group_by(!!!grp_vars) |>
     dplyr::summarise(
       games_pat = list(unique(.data$game_id)),
       pat_made = sum(.data$pat_res == "good", na.rm = TRUE),
@@ -144,12 +144,12 @@ calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
   # that is was previously. If you do include field goals that send the game into OT,
   # then you'll probably need to include the gwfg_distance AND gwfg_distance_list columns
   # in the weekly data
-  game_winners <- df_fg_or_pat %>%
-    dplyr::group_by(.data$game_id, .data$team) %>%
-    dplyr::filter(.data$fixed_drive == max(.data$fixed_drive, na.rm = TRUE)) %>%
-    dplyr::ungroup() %>%
-    dplyr::filter(.data$field_goal_attempt == 1, dplyr::between(.data$score_differential, -2, 0)) %>%
-    dplyr::group_by(!!!grp_vars) %>%
+  game_winners <- df_fg_or_pat |>
+    dplyr::group_by(.data$game_id, .data$team) |>
+    dplyr::filter(.data$fixed_drive == max(.data$fixed_drive, na.rm = TRUE)) |>
+    dplyr::ungroup() |>
+    dplyr::filter(.data$field_goal_attempt == 1, dplyr::between(.data$score_differential, -2, 0)) |>
+    dplyr::group_by(!!!grp_vars) |>
     dplyr::summarise(
       games_gwfg = list(unique(.data$game_id)),
       gwfg_att = dplyr::n(),
@@ -161,7 +161,7 @@ calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
     )
 
   # Prepping data to merge-in player names
-  df_player_names <- nflreadr::load_players() %>%
+  df_player_names <- nflreadr::load_players() |>
     dplyr::select(
       "player_id" = "gsis_id",
       "player_display_name" = "display_name",
@@ -172,31 +172,31 @@ calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
     )
 
   # Joining all the data together and organizing the first few columns.
-  full_kicks <- df_field_goals %>%
-    dplyr::full_join(df_pat, as.character(grp_vars)) %>%
-    dplyr::full_join(game_winners, as.character(grp_vars)) %>%
-    dplyr::left_join(df_player_names, "player_id") %>%
-    dplyr::group_by(!!!grp_vars) %>%
-    dplyr::mutate(games = length(unique(unlist(c(.data$games_fg, .data$games_pat, .data$games_gwfg))))) %>%
-    dplyr::ungroup() %>%
+  full_kicks <- df_field_goals |>
+    dplyr::full_join(df_pat, as.character(grp_vars)) |>
+    dplyr::full_join(game_winners, as.character(grp_vars)) |>
+    dplyr::left_join(df_player_names, "player_id") |>
+    dplyr::group_by(!!!grp_vars) |>
+    dplyr::mutate(games = length(unique(unlist(c(.data$games_fg, .data$games_pat, .data$games_gwfg))))) |>
+    dplyr::ungroup() |>
     dplyr::select(
       dplyr::any_of(c("season", "week", "season_type")), "player_id",
       "team", "player_name", "player_display_name", "games", "position",
       "position_group", "headshot_url", dplyr::everything(),
       -c("games_fg", "games_pat", "games_gwfg")
-    ) %>%
+    ) |>
     # replace "" with NA
-    dplyr::mutate_all(~replace(.x, nchar(.x) == 0 | is.nan(.x), NA)) %>%
+    dplyr::mutate_all(~replace(.x, nchar(.x) == 0 | is.nan(.x), NA)) |>
     # replace NA in attempt columns with 0
     dplyr::mutate_at(c("fg_att", "pat_att", "gwfg_att"), ~tidyr::replace_na(.x, 0))
 
 
   if (weekly) {
-    full_kicks %>%
-      dplyr::select(-"games") %>%
+    full_kicks |>
+      dplyr::select(-"games") |>
       dplyr::arrange(.data$player_id, .data$season, .data$week)
   } else {
-    full_kicks %>%
+    full_kicks |>
       dplyr::arrange(.data$player_id)
   }
 }

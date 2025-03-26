@@ -7,14 +7,14 @@ tidy_play_stats_row <-
   as_tibble_row(
     matrix(NA, ncol = length(pbp_stat_columns)),
     .name_repair = "minimal"
-  ) %>%
-  set_names(pbp_stat_columns) %>%
+  ) |>
+  set_names(pbp_stat_columns) |>
   modify_at(indicator_stats, function(x) {
     x <- 0
-  }) %>%
+  }) |>
   modify_if(is.na, function(x) {
     x <- NA_character_
-  }) %>%
+  }) |>
   modify_at(c(
     "air_yards",
     "yards_after_catch",

@@ -12,26 +12,26 @@ add_cp <- function(pbp) {
 
   passes <- prepare_cp_data(pbp)
 
-  if (!nrow(passes %>% dplyr::filter(.data$valid_pass == 1)) == 0) {
-    pred <- stats::predict(fastrmodels::cp_model, as.matrix(passes %>% dplyr::select(-"complete_pass", -"valid_pass"))) %>%
-      tibble::as_tibble() %>%
-      dplyr::rename(cp = "value") %>%
-      dplyr::bind_cols(passes) %>%
+  if (!nrow(passes |> dplyr::filter(.data$valid_pass == 1)) == 0) {
+    pred <- stats::predict(fastrmodels::cp_model, as.matrix(passes |> dplyr::select(-"complete_pass", -"valid_pass"))) |>
+      tibble::as_tibble() |>
+      dplyr::rename(cp = "value") |>
+      dplyr::bind_cols(passes) |>
       dplyr::select("cp", "valid_pass")
 
-    pbp <- pbp %>%
-      dplyr::bind_cols(pred) %>%
+    pbp <- pbp |>
+      dplyr::bind_cols(pred) |>
       dplyr::mutate(
         cp = dplyr::if_else(
           .data$valid_pass == 1, .data$cp, NA_real_
         ),
         cpoe = dplyr::if_else(!is.na(.data$cp), 100 * (.data$complete_pass - .data$cp), NA_real_)
-      ) %>%
+      ) |>
       dplyr::select(-"valid_pass")
 
     user_message("added cp and cpoe", "done")
   } else {
-    pbp <- pbp %>%
+    pbp <- pbp |>
       dplyr::mutate(
         cp = NA_real_,
         cpoe = NA_real_
@@ -47,7 +47,7 @@ add_cp <- function(pbp) {
 prepare_cp_data <- function(pbp) {
 
   # valid pass play: at least -15 air yards, less than 70 air yards, has intended receiver, has pass location
-  passes <- pbp %>%
+  passes <- pbp |>
     dplyr::mutate(
       receiver_player_name =
         stringr::str_extract(.data$desc, "(?<=((to)|(for))\\s[:digit:]{0,2}\\-{0,1})[A-Z][A-z]*\\.\\s?[A-Z][A-z]+(\\s(I{2,3})|(IV))?"),
@@ -60,7 +60,7 @@ prepare_cp_data <- function(pbp) {
           (!is.na(.data$receiver_player_name) | !is.na(.data$receiver_player_id)) & !is.na(.data$pass_location),
         1, 0
       )
-    ) %>%
+    ) |>
     dplyr::select(
       "complete_pass", "air_yards", "yardline_100", "ydstogo",
       "down1", "down2", "down3", "down4", "air_is_zero", "pass_middle",

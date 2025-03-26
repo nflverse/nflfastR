@@ -44,8 +44,8 @@
 #' # output of `fast_scraper_schedules` as input
 #' try({# to avoid CRAN test problems
 #' library(dplyr, warn.conflicts = FALSE)
-#' fast_scraper_schedules(2020) %>%
-#'   slice_tail(n = 3) %>%
+#' fast_scraper_schedules(2020) |>
+#'   slice_tail(n = 3) |>
 #'   build_nflfastR_pbp()
 #'  })
 #'
@@ -75,10 +75,10 @@ build_nflfastR_pbp <- function(game_ids,
 
   cli::cli_ul("{my_time()} | Start download of {game_count} game{?s}...")
 
-  ret <- fast_scraper(game_ids = game_ids, dir = dir, ..., in_builder = builder) %>%
-    clean_pbp(in_builder = builder) %>%
-    add_qb_epa(in_builder = builder) %>%
-    add_xyac(in_builder = builder) %>%
+  ret <- fast_scraper(game_ids = game_ids, dir = dir, ..., in_builder = builder) |>
+    clean_pbp(in_builder = builder) |>
+    add_qb_epa(in_builder = builder) |>
+    add_xyac(in_builder = builder) |>
     add_xpass(in_builder = builder)
 
   if (isTRUE(decode)) {
