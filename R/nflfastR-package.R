@@ -66,7 +66,7 @@
 #' ```
 #' or by piping the function call into [progressr::with_progress()]:
 #' ```
-#' load_pbp(2018:2020) %>%
+#' load_pbp(2018:2020) |>
 #'   progressr::with_progress()
 #' ```
 #'

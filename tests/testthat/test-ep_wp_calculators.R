@@ -15,7 +15,7 @@ test_that("calculate_expected_points works", {
     "posteam_timeouts_remaining" = 3,
     "defteam_timeouts_remaining" = 3
   )
-  ep <- calculate_expected_points(data) %>% round_double_to_digits()
+  ep <- calculate_expected_points(data) |> round_double_to_digits()
   exp <- load_expectation("ep")
   expect_equal(ep, exp)
 })
@@ -39,7 +39,7 @@ test_that("calculate_expected_points works", {
     "posteam_timeouts_remaining" = 3,
     "defteam_timeouts_remaining" = 3
   )
-  wp <- calculate_win_probability(data) %>% round_double_to_digits()
+  wp <- calculate_win_probability(data) |> round_double_to_digits()
   exp <- load_expectation("wp")
   expect_equal(wp, exp)
 })

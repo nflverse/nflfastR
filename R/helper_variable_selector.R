@@ -8,7 +8,7 @@ select_variables <- function(pbp) {
 
     suppressWarnings(
       out <-
-        pbp %>%
+        pbp |>
         dplyr::select(
           tidyselect::any_of(
             c(nflscrapr_cols, new_cols, api_cols)

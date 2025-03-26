@@ -84,11 +84,11 @@ Here is a visualization of the Expected Points model by down and yardline.
 
 library(tidyverse)
 
-df <- nflreadr::load_pbp(2014:2019) %>%
-        filter(!is.na(posteam) & !is.na(ep), !is.na(down)) %>%
+df <- nflreadr::load_pbp(2014:2019) |>
+        filter(!is.na(posteam) & !is.na(ep), !is.na(down)) |>
         select(ep, down, yardline_100, air_yards, pass_location, cp)
 
-df %>%
+df |>
   ggplot(aes(x = yardline_100, y = ep, color = as.factor(down))) + 
   geom_smooth(size = 2) + 
   labs(x = "Yards from opponent's end zone",
@@ -121,9 +121,9 @@ Here is a visualization of the Completion Probability model by air yards and pas
 # the resulting png file in the package for file size reasons it was uploaded to
 # the nflfastR repo and embedded remotely with the next chunk
 
-df %>%
-  filter(!is.na(cp), between(air_yards, -5, 45)) %>%
-  mutate(pass_middle = if_else(pass_location == "middle", "Yes", "No")) %>%
+df |>
+  filter(!is.na(cp), between(air_yards, -5, 45)) |>
+  mutate(pass_middle = if_else(pass_location == "middle", "Yes", "No")) |>
   ggplot(aes(x = air_yards, y = cp, color = as.factor(pass_middle))) + 
   geom_smooth(size = 2) + 
   labs(x = "Air yards",

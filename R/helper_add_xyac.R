@@ -24,45 +24,45 @@ add_xyac <- function(pbp, ...) {
     # testing only
     # pbp <- g
 
-    pbp <- pbp %>% dplyr::select(-tidyselect::any_of(drop.cols.xyac))
+    pbp <- pbp |> dplyr::select(-tidyselect::any_of(drop.cols.xyac))
 
     # for joining at the end
-    pbp <- pbp %>%
+    pbp <- pbp |>
       dplyr::mutate(index = 1:dplyr::n())
 
     # prepare_xyac_data helper function shown below
-    passes <- prepare_xyac_data(pbp) %>%
+    passes <- prepare_xyac_data(pbp) |>
       dplyr::filter(.data$valid_pass == 1, .data$distance_to_goal != 0)
 
     if (!nrow(passes) == 0) {
       user_message("Computing xyac...", "todo")
-      join_data <- passes %>%
+      join_data <- passes |>
         dplyr::select(
           "index", "distance_to_goal", "season", "week", "home_team", "posteam", "roof",
           "half_seconds_remaining", "down", "ydstogo",
           "posteam_timeouts_remaining", "defteam_timeouts_remaining",
           "original_spot" = "yardline_100", "original_ep" = "ep", "air_epa", "air_yards"
-        ) %>%
+        ) |>
         dplyr::mutate(
           down = as.integer(.data$down),
           ydstogo = as.integer(.data$ydstogo),
           original_ydstogo = .data$ydstogo
-        ) %>%
+        ) |>
         dplyr::select("index":"ydstogo", "original_ydstogo", dplyr::everything())
 
       xyac_vars <-
         stats::predict(
           fastrmodels::xyac_model,
-          as.matrix(passes %>% xyac_model_select())
-        ) %>%
-        tibble::as_tibble() %>%
-        dplyr::rename(prob = "value") %>%
+          as.matrix(passes |> xyac_model_select())
+        ) |>
+        tibble::as_tibble() |>
+        dplyr::rename(prob = "value") |>
         dplyr::bind_cols(
           tibble::tibble(
             "yac" = rep_len(-5:70, length.out = nrow(passes) * 76),
             "index" = rep(passes$index, times = rep_len(76, length.out = nrow(passes)))
-          ) %>%
-            dplyr::left_join(join_data, by = "index") %>%
+          ) |>
+            dplyr::left_join(join_data, by = "index") |>
             dplyr::mutate(
               half_seconds_remaining = dplyr::if_else(
                 .data$half_seconds_remaining <= 6,
@@ -70,8 +70,8 @@ add_xyac <- function(pbp, ...) {
                 .data$half_seconds_remaining - 6
               )
             )
-        ) %>%
-        dplyr::group_by(.data$index) %>%
+        ) |>
+        dplyr::group_by(.data$index) |>
         dplyr::mutate(
           max_loss = dplyr::if_else(.data$distance_to_goal < 95, -5, .data$distance_to_goal - 99),
           max_gain = dplyr::if_else(.data$distance_to_goal > 70, 70, .data$distance_to_goal),
@@ -85,9 +85,9 @@ add_xyac <- function(pbp, ...) {
           ),
           # get updated end result for each possibility
           yardline_100 = .data$distance_to_goal - .data$yac
-        ) %>%
-        dplyr::filter(.data$yac >= .data$max_loss, .data$yac <= .data$max_gain) %>%
-        dplyr::select(-"cum_prob") %>%
+        ) |>
+        dplyr::filter(.data$yac >= .data$max_loss, .data$yac <= .data$max_gain) |>
+        dplyr::select(-"cum_prob") |>
         dplyr::mutate(
           posteam_timeouts_pre = .data$posteam_timeouts_remaining,
           defeam_timeouts_pre = .data$defteam_timeouts_remaining,
@@ -114,10 +114,10 @@ add_xyac <- function(pbp, ...) {
           ),
           # ydstogo can't be bigger than yardline
           ydstogo = dplyr::if_else(.data$ydstogo >= .data$yardline_100, as.integer(.data$yardline_100), as.integer(.data$ydstogo))
-        ) %>%
-        dplyr::ungroup() %>%
-        nflfastR::calculate_expected_points() %>%
-        dplyr::group_by(.data$index) %>%
+        ) |>
+        dplyr::ungroup() |>
+        nflfastR::calculate_expected_points() |>
+        dplyr::group_by(.data$index) |>
         dplyr::mutate(
           ep = dplyr::case_when(
             .data$yardline_100 == 0 ~ 7,
@@ -130,30 +130,30 @@ add_xyac <- function(pbp, ...) {
           med = dplyr::if_else(
             cumsum(.data$prob) > .5 & dplyr::lag(cumsum(.data$prob) < .5), .data$yac, as.integer(0)
           )
-        ) %>%
+        ) |>
         dplyr::summarise(
           xyac_epa = sum(.data$wt_epa) - dplyr::first(.data$air_epa),
           xyac_mean_yardage = (dplyr::first(.data$original_spot) - dplyr::first(.data$air_yards)) - sum(.data$wt_yardln),
           xyac_median_yardage = max(.data$med),
           xyac_success = sum((.data$ep > .data$original_ep) * .data$prob),
           xyac_fd = sum((.data$gain >= .data$original_ydstogo) * .data$prob)
-        ) %>%
+        ) |>
         dplyr::ungroup()
 
-      pbp <- pbp %>%
-        dplyr::left_join(xyac_vars, by = "index") %>%
+      pbp <- pbp |>
+        dplyr::left_join(xyac_vars, by = "index") |>
         dplyr::select(-"index")
 
       message_completed("added xyac variables", ...)
     } else { # means no valid pass plays in the pbp
-      pbp <- pbp %>%
+      pbp <- pbp |>
         dplyr::mutate(
           xyac_epa = NA_real_,
           xyac_mean_yardage = NA_real_,
           xyac_median_yardage = NA_real_,
           xyac_success = NA_real_,
           xyac_fd = NA_real_
-        ) %>%
+        ) |>
         dplyr::select(-"index")
       user_message("No non-NA values for xyac calculation detected. xyac variables set to NA", "info")
     }
@@ -167,8 +167,8 @@ add_xyac <- function(pbp, ...) {
 prepare_xyac_data <- function(pbp) {
 
   # valid pass play: at least -15 air yards, less than 70 air yards, has intended receiver, has pass location
-  passes <- pbp %>%
-    make_model_mutations() %>%
+  passes <- pbp |>
+    make_model_mutations() |>
     dplyr::mutate(
       receiver_player_name =
         stringr::str_extract(.data$desc, glue::glue('{receiver_finder}{big_parser}')),
@@ -188,7 +188,7 @@ prepare_xyac_data <- function(pbp) {
 
 ### another helper function for getting the data ready
 xyac_model_select <- function(pbp) {
-  pbp %>%
+  pbp |>
     dplyr::select(
       "air_yards", "yardline_100", "ydstogo", "distance_to_goal",
       "down1", "down2", "down3", "down4", "air_is_zero", "pass_middle",

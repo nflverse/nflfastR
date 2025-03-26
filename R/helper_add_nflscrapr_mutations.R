@@ -10,13 +10,13 @@ add_nflscrapr_mutations <- function(pbp) {
   #pbp <- combined
 
   out <-
-    pbp %>%
-    dplyr::mutate(index = 1 : dplyr::n()) %>%
+    pbp |>
+    dplyr::mutate(index = 1 : dplyr::n()) |>
     # remove duplicate plays. can't do this with play_id because duplicate plays
     # sometimes have different play_ids
-    dplyr::group_by(.data$game_id, .data$quarter, .data$time, .data$play_description, .data$down) %>%
-    dplyr::slice(1) %>%
-    dplyr::ungroup() %>%
+    dplyr::group_by(.data$game_id, .data$quarter, .data$time, .data$play_description, .data$down) |>
+    dplyr::slice(1) |>
+    dplyr::ungroup() |>
     dplyr::mutate(
       # Modify the time column for the quarter end:
       time = dplyr::if_else(.data$quarter_end == 1 |
@@ -29,12 +29,12 @@ add_nflscrapr_mutations <- function(pbp) {
           stringr::str_replace(.data$play_description, "(?<=kicks )[:alpha:]{1,}.[:alpha:]{1,}(?= yards)", as.character(.data$kick_distance)),
         TRUE ~ .data$play_description
       )
-    ) %>%
+    ) |>
     #put plays in the right order
-    dplyr::group_by(.data$game_id) %>%
+    dplyr::group_by(.data$game_id) |>
     # the !is.na(drive), drive part is to make the initial GAME line show up first
     # https://stackoverflow.com/questions/43343590/how-to-sort-putting-nas-first-in-dplyr
-    dplyr::arrange(.data$order_sequence, .data$quarter, !is.na(.data$quarter_seconds_remaining), -.data$quarter_seconds_remaining, !is.na(.data$drive), .data$drive, .data$index, .by_group = TRUE) %>%
+    dplyr::arrange(.data$order_sequence, .data$quarter, !is.na(.data$quarter_seconds_remaining), -.data$quarter_seconds_remaining, !is.na(.data$drive), .data$drive, .data$index, .by_group = TRUE) |>
     dplyr::mutate(
 
       # Using the various two point indicators, create a column denoting the result
@@ -84,12 +84,12 @@ add_nflscrapr_mutations <- function(pbp) {
       # Extract the penalty type:
       penalty_type = dplyr::if_else(
         .data$penalty == 1,
-        .data$play_description %>%
-          stringr::str_extract("(?<=PENALTY on .{1,50}, ).{1,50}(?=, [0-9]{1,2} yard)") %>%
+        .data$play_description |>
+          stringr::str_extract("(?<=PENALTY on .{1,50}, ).{1,50}(?=, [0-9]{1,2} yard)") |>
           # Face Mask penalties include the yardage as string (either 5 Yards or 15 Yards)
           # We remove the 15 Yards part and just keep the additional info if it's a
           # 5 yard Face Mask penalty
-          stringr::str_remove("\\([0-9]{2}+ Yards\\)") %>%
+          stringr::str_remove("\\([0-9]{2}+ Yards\\)") |>
           stringr::str_squish(), NA_character_
       ),
       # The new "dynamic Kickoff" in the 2024 season introduces a new penalty type
@@ -238,7 +238,7 @@ add_nflscrapr_mutations <- function(pbp) {
       ),
       # Add column for replay or challenge:
       replay_or_challenge = stringr::str_detect(
-        .data$play_description, "(Replay Official reviewed)|( challenge(d)? )|(Challenged)") %>%
+        .data$play_description, "(Replay Official reviewed)|( challenge(d)? )|(Challenged)") |>
         as.numeric(),
       # Result of replay or challenge:
       replay_or_challenge_result = dplyr::if_else(
@@ -251,7 +251,7 @@ add_nflscrapr_mutations <- function(pbp) {
           stringr::str_extract(
             tolower(.data$play_description),
             "( upheld)|( reversed)|( confirmed)"
-          ) %>%
+          ) |>
             stringr::str_trim(), "denied"
         ),
         NA_character_
@@ -262,7 +262,7 @@ add_nflscrapr_mutations <- function(pbp) {
         .data$two_point_attempt == 0 &
           .data$sack == 0 &
           .data$pass_attempt == 1,
-        .data$play_description %>% stringr::str_extract("pass (incomplete )?(short|deep)") %>%
+        .data$play_description |> stringr::str_extract("pass (incomplete )?(short|deep)") |>
           stringr::str_extract("short|deep"), NA_character_
       ),
       # Create the column denoting the categorical location of the pass:
@@ -270,16 +270,16 @@ add_nflscrapr_mutations <- function(pbp) {
         .data$two_point_attempt == 0 &
           .data$sack == 0 &
           .data$pass_attempt == 1,
-        .data$play_description %>% stringr::str_extract("(short|deep) (left|middle|right)") %>%
+        .data$play_description |> stringr::str_extract("(short|deep) (left|middle|right)") |>
           stringr::str_extract("left|middle|right"), NA_character_
       ),
       # Indicator columns for both QB kneels, spikes, scrambles,
       # no huddle, shotgun plays:
       qb_kneel = dplyr::if_else(stringr::str_detect(.data$play_description, " kneels ") & .data$kickoff_attempt != 1, 1, 0),
-      qb_spike = stringr::str_detect(.data$play_description, " spiked ") %>% as.numeric(),
-      qb_scramble = stringr::str_detect(.data$play_description, " scrambles ") %>% as.numeric(),
-      shotgun = stringr::str_detect(.data$play_description, "Shotgun") %>% as.numeric(),
-      no_huddle = stringr::str_detect(.data$play_description, "No Huddle") %>% as.numeric(),
+      qb_spike = stringr::str_detect(.data$play_description, " spiked ") |> as.numeric(),
+      qb_scramble = stringr::str_detect(.data$play_description, " scrambles ") |> as.numeric(),
+      shotgun = stringr::str_detect(.data$play_description, "Shotgun") |> as.numeric(),
+      no_huddle = stringr::str_detect(.data$play_description, "No Huddle") |> as.numeric(),
 
       # Create a play type column: either pass, run, field_goal, extra_point,
       # kickoff, punt, qb_kneel, qb_spike, or no_play (which includes timeouts and
@@ -376,13 +376,13 @@ add_nflscrapr_mutations <- function(pbp) {
       run_location = dplyr::if_else(
         .data$two_point_attempt == 0 &
           .data$rush_attempt == 1,
-        .data$play_description %>% stringr::str_extract(" (left|middle|right) ") %>%
+        .data$play_description |> stringr::str_extract(" (left|middle|right) ") |>
           stringr::str_trim(), NA_character_
       ),
       run_gap = dplyr::if_else(
         .data$two_point_attempt == 0 &
           .data$rush_attempt == 1,
-        .data$play_description %>% stringr::str_extract(" (guard|tackle|end) ") %>%
+        .data$play_description |> stringr::str_extract(" (guard|tackle|end) ") |>
           stringr::str_trim(), NA_character_
       ),
       game_half = dplyr::case_when(
@@ -430,12 +430,12 @@ add_nflscrapr_mutations <- function(pbp) {
         is.na(.data$away_timeout_used),
         0, .data$away_timeout_used
       )
-    ) %>%
+    ) |>
     # replace empty strings in yard line variables
     dplyr::mutate_at(
       .vars = c("yardline", "drive_start_yard_line" ,"drive_end_yard_line"),
       .funs = ~ dplyr::na_if(.x, "")
-    ) %>%
+    ) |>
     # fix cases where a yardline variable misses the blank space between team name
     # and yard number. At the point of adding this, the only spot where this happened
     # was in the variable drive_start_yard_line in the games
@@ -447,16 +447,16 @@ add_nflscrapr_mutations <- function(pbp) {
           stringr::str_c(stringr::str_extract(.x, "[:upper:]{2,3}"), stringr::str_extract(.x, "[:digit:]{1,2}"), sep = " "),
         TRUE ~ .x
       )
-    ) %>%
+    ) |>
     # Group by the game_half to then create cumulative timeouts used for both
     # the home and away teams:
-    dplyr::group_by(.data$game_id, .data$game_half) %>%
+    dplyr::group_by(.data$game_id, .data$game_half) |>
     dplyr::mutate(
       total_home_timeouts_used = dplyr::if_else(cumsum(.data$home_timeout_used) > 3, 3, cumsum(.data$home_timeout_used)),
       total_away_timeouts_used = dplyr::if_else(cumsum(.data$away_timeout_used) > 3, 3, cumsum(.data$away_timeout_used))
-    ) %>%
-    dplyr::ungroup() %>%
-    dplyr::group_by(.data$game_id) %>%
+    ) |>
+    dplyr::ungroup() |>
+    dplyr::group_by(.data$game_id) |>
     # Now just take the difference between the timeouts remaining
     # columns and the total timeouts used, and create the columns for both
     # the pos and def team timeouts remaining:
@@ -588,20 +588,20 @@ add_nflscrapr_mutations <- function(pbp) {
       # There are a few plays with air_yards prior 2006 (most likely accidently)
       # To not crash the air_yac ep and wp calculation they are being set to NA
       air_yards = dplyr::if_else(.data$season < 2006, NA_real_, .data$air_yards)
-    ) %>%
+    ) |>
     dplyr::rename(
       ydstogo = "yards_to_go",
       desc = "play_description",
       yrdln = "yardline",
       side_of_field = "yardline_side",
       qtr = "quarter"
-    ) %>%
+    ) |>
     dplyr::filter(
       !is.na(.data$desc),
       .data$desc != "",
       !is.na(.data$qtr)
-    ) %>%
-    dplyr::ungroup() %>%
+    ) |>
+    dplyr::ungroup() |>
     dplyr::mutate(
       game_id = as.character(.data$game_id),
       # kick distance is NA on kickoffs and punts that result in touchbacks
@@ -616,8 +616,8 @@ add_nflscrapr_mutations <- function(pbp) {
       ),
       # drop helper variable
       is_relevant_touchback = NULL
-    ) %>%
-    fix_scrambles() %>%
+    ) |>
+    fix_scrambles() |>
     make_model_mutations()
 
 
@@ -633,7 +633,7 @@ kickoff_finder <- "(Offside on Free Kick)|(Delay of Kickoff)|(Onside Kick format
 ##some steps to prepare the data for the EP/WP/CP/FG models
 make_model_mutations <- function(pbp) {
 
-  pbp <- pbp %>%
+  pbp <- pbp |>
     dplyr::mutate(
       #for EP, CP, and WP model, xgb needs 0/1 for eras
       era0 = dplyr::if_else(.data$season <= 2001, 1, 0),
@@ -669,11 +669,11 @@ fix_scrambles <- function(pbp) {
   # skip below code if <= 2005 is not in the data
   if (min(pbp$season) > 2005) return(pbp)
 
-  pbp %>%
+  pbp |>
     dplyr::mutate(
       scramble_id = paste0(.data$game_id, "_", .data$play_id),
       qb_scramble = dplyr::if_else(.data$scramble_id %in% scramble_fix, 1, .data$qb_scramble)
-    ) %>%
+    ) |>
     dplyr::select(-"scramble_id")
 
   # Some notes on the scramble_fix:

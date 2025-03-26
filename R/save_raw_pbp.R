@@ -54,7 +54,7 @@ save_raw_pbp <- function(game_ids,
                    doesn't exist. Please create it.")
   }
   seasons <- substr(game_ids, 1, 4)
-  season_folders <- file.path(dir, unique(seasons)) %>% sort()
+  season_folders <- file.path(dir, unique(seasons)) |> sort()
   missing_season_folders <- season_folders[!dir.exists(season_folders)]
   created_folders <- vapply(missing_season_folders, dir.create, FUN.VALUE = logical(1L))
   to_load <- file.path(
@@ -102,12 +102,12 @@ missing_raw_pbp <- function(dir = getOption("nflfastR.raw_directory", default = 
     cli::cli_abort("You've asked to check raw pbp in {.path {dir}} which \\
                    doesn't exist. Please create it.")
   }
-  local_games <- sapply(list.files(dir, full.names = TRUE), list.files) %>%
-    unlist(use.names = FALSE) %>%
+  local_games <- sapply(list.files(dir, full.names = TRUE), list.files) |>
+    unlist(use.names = FALSE) |>
     tools::file_path_sans_ext()
 
-  finished_games <- nflreadr::load_schedules(seasons = seasons) %>%
-    dplyr::filter(!is.na(.data$result)) %>%
+  finished_games <- nflreadr::load_schedules(seasons = seasons) |>
+    dplyr::filter(!is.na(.data$result)) |>
     dplyr::pull(.data$game_id)
 
   local_missing_games <- finished_games[!finished_games %in% local_games]
