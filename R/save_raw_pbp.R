@@ -142,7 +142,7 @@ verify_game_ids <- function(game_ids){
   week_check <- as.integer(substr(game_ids, 6, 7)) %in% seq_len(22)
   team_name_check <-
     vapply(
-      str_extract_all(game_ids, "(?<=_)[:upper:]{2,3}"),
+      stringr::str_extract_all(game_ids, "(?<=_)[:upper:]{2,3}"),
       function(t) all(t %in% nflfastR::teams_colors_logos$team_abbr),
       FUN.VALUE = logical(1L)
     )
