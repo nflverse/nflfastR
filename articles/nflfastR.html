@@ -11,9 +11,10 @@
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Roboto-0.4.9/font.css" rel="stylesheet">
+<link href="../deps/Fira_Code-0.4.9/font.css" rel="stylesheet">
 <link href="../deps/Kanit-0.4.9/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -24,7 +25,7 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-dark" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
@@ -52,11 +53,20 @@
 </li>
       </ul>
 <ul class="navbar-nav">
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/nflverse/nflfastR-data"><span class="fa fas fa-database fa-lg"></span></a></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://rbsdm.com/stats/"><span class="fa fas fa-chart-line fa-lg"></span></a></li>
-<li class="nav-item"><a class="external-link nav-link" href="http://nflgamedata.com/"><span class="fa fas fa-football-ball fa-lg"></span></a></li>
-<li class="nav-item"><a class="external-link nav-link" href="http://twitter.com/nflfastR"><span class="fa fab fa-twitter fa-lg"></span></a></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://discord.com/invite/5Er2FBnnQa"><span class="fa fab fa-discord fa-lg"></span></a></li>
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
+<li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="dark"><span class="fa fa-moon"></span> Dark</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
+  </ul>
+</li>
+<li class="nav-item"><a class="external-link nav-link" href="https://rbsdm.com/stats/" aria-label="Stats"><span class="fa fas fa-chart-line fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="http://nflgamedata.com/" aria-label="Games"><span class="fa fas fa-football-ball fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://discord.com/invite/5Er2FBnnQa" aria-label="Discord"><span class="fa fab fa-discord fa-lg"></span></a></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/nflverse/nflfastR/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-packages-more" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Packages &amp; More</button>
@@ -125,26 +135,26 @@ seasons.</p>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">game_id</span><span class="op">)</span></span>
 <span><span class="va">pbp</span> <span class="op">&lt;-</span> <span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/build_nflfastR_pbp.html">build_nflfastR_pbp</a></span><span class="op">(</span><span class="va">ids</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">Build nflfastR Play-by-Play Data</span> ───────────── nflfastR version 5.0.0.9004 ──</span></span>
-<span><span class="co">#&gt; • 15:56:25 | Start download of 3 games...</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:56:30 | Download finished. Adding variables...</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:56:30 | added game variables</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:56:31 | added nflscrapR variables</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:56:31 | added ep variables</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:56:31 | added air_yac_ep variables</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:56:32 | added wp variables</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:56:32 | added air_yac_wp variables</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:56:32 | added cp and cpoe</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:56:32 | added fixed drive variables</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:56:32 | added series variables</span></span>
-<span><span class="co">#&gt; • 15:56:32 | Cleaning up play-by-play...</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:56:32 | Cleaning completed</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:56:32 | added qb_epa</span></span>
-<span><span class="co">#&gt; • 15:56:32 | Computing xyac...</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:56:35 | added xyac variables</span></span>
-<span><span class="co">#&gt; • 15:56:35 | Computing xpass...</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:56:35 | added xpass and pass_oe</span></span>
-<span><span class="co">#&gt; • 15:56:35 | Decode player ids...</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:56:36 | Decoding of player ids completed</span></span>
+<span><span class="co">#&gt; • 17:10:28 | Start download of 3 games...</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 17:10:34 | Download finished. Adding variables...</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 17:10:34 | added game variables</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 17:10:34 | added nflscrapR variables</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 17:10:35 | added ep variables</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 17:10:35 | added air_yac_ep variables</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 17:10:35 | added wp variables</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 17:10:35 | added air_yac_wp variables</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 17:10:35 | added cp and cpoe</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 17:10:35 | added fixed drive variables</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 17:10:35 | added series variables</span></span>
+<span><span class="co">#&gt; • 17:10:35 | Cleaning up play-by-play...</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 17:10:36 | Cleaning completed</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 17:10:36 | added qb_epa</span></span>
+<span><span class="co">#&gt; • 17:10:36 | Computing xyac...</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 17:10:38 | added xyac variables</span></span>
+<span><span class="co">#&gt; • 17:10:38 | Computing xpass...</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 17:10:38 | added xpass and pass_oe</span></span>
+<span><span class="co">#&gt; • 17:10:38 | Decode player ids...</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 17:10:39 | Decoding of player ids completed</span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">DONE</span> ────────────────────────────────────────────────────────────────────────</span></span></code></pre></div>
 <p>In most cases, however, it is not necessary to use this function for
 individual games, because nflfastR provides both a <a href="https://github.com/nflverse/nflverse-data/releases/tag/pbp" class="external-link">data
@@ -680,14 +690,14 @@ directory. Here we go!</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/update_db.html">update_db</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">Update nflfastR Play-by-Play Database</span> ──────── nflfastR version 5.0.0.9004 ──</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 15:57:03 | Can't find the data table <span style="color: #0000BB;">"nflfastR_pbp"</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 17:11:10 | Can't find the data table <span style="color: #0000BB;">"nflfastR_pbp"</span></span></span>
 <span><span class="co">#&gt; in your database. Will load the play by play data from</span></span>
 <span><span class="co">#&gt; scratch.</span></span>
-<span><span class="co">#&gt; • 15:57:03 | Starting download of 26 seasons between 1999 and 2024...</span></span>
-<span><span class="co">#&gt; • 15:58:21 | Checking for missing completed games...</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 15:58:23 | You have 6988 games and are missing 0.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:58:23 | Database update completed</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 15:58:23 | Path to your db: <span style="color: #0000BB;">./pbp_db</span></span></span>
+<span><span class="co">#&gt; • 17:11:10 | Starting download of 26 seasons between 1999 and 2024...</span></span>
+<span><span class="co">#&gt; • 17:12:33 | Checking for missing completed games...</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 17:12:34 | You have 6988 games and are missing 0.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 17:12:35 | Database update completed</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 17:12:35 | Path to your db: <span style="color: #0000BB;">./pbp_db</span></span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">DONE</span> ────────────────────────────────────────────────────────────────────────</span></span></code></pre></div>
 <p>This created a database in the current directory called
 <code>pbp_db</code>.</p>
@@ -699,10 +709,10 @@ path)</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/update_db.html">update_db</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">Update nflfastR Play-by-Play Database</span> ──────── nflfastR version 5.0.0.9004 ──</span></span>
-<span><span class="co">#&gt; • 15:58:23 | Checking for missing completed games...</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 15:58:24 | You have 6988 games and are missing 0.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:58:25 | Database update completed</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 15:58:25 | Path to your db: <span style="color: #0000BB;">/home/runner/work/nflfastR/nflfastR/vignettes/pbp_db</span></span></span>
+<span><span class="co">#&gt; • 17:12:35 | Checking for missing completed games...</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 17:12:36 | You have 6988 games and are missing 0.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 17:12:36 | Database update completed</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 17:12:36 | Path to your db: <span style="color: #0000BB;">/home/runner/work/nflfastR/nflfastR/vignettes/pbp_db</span></span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">DONE</span> ────────────────────────────────────────────────────────────────────────</span></span></code></pre></div>
 <p>If it’s partway through a season and you want to re-build a season to
 allow for data corrections from the NFL to propagate into your database,
@@ -710,13 +720,13 @@ you can specify one season to be rebuilt:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="../reference/update_db.html">update_db</a></span><span class="op">(</span>force_rebuild <span class="op">=</span> <span class="fl">2020</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">Update nflfastR Play-by-Play Database</span> ──────── nflfastR version 5.0.0.9004 ──</span></span>
-<span><span class="co">#&gt; • 15:58:25 | Purging season 2020 from the data table <span style="color: #0000BB;">"nflfastR_pbp"</span> in your</span></span>
+<span><span class="co">#&gt; • 17:12:36 | Purging season 2020 from the data table <span style="color: #0000BB;">"nflfastR_pbp"</span> in your</span></span>
 <span><span class="co">#&gt; connected database...</span></span>
-<span><span class="co">#&gt; • 15:58:26 | Starting download of the 1 season 2020</span></span>
-<span><span class="co">#&gt; • 15:58:28 | Checking for missing completed games...</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 15:58:29 | You have 6988 games and are missing 0.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 15:58:30 | Database update completed</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 15:58:30 | Path to your db: <span style="color: #0000BB;">/home/runner/work/nflfastR/nflfastR/vignettes/pbp_db</span></span></span>
+<span><span class="co">#&gt; • 17:12:37 | Starting download of the 1 season 2020</span></span>
+<span><span class="co">#&gt; • 17:12:40 | Checking for missing completed games...</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 17:12:41 | You have 6988 games and are missing 0.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 17:12:42 | Database update completed</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> 17:12:42 | Path to your db: <span style="color: #0000BB;">/home/runner/work/nflfastR/nflfastR/vignettes/pbp_db</span></span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">DONE</span> ────────────────────────────────────────────────────────────────────────</span></span></code></pre></div>
 </div>
 <div class="section level4">
@@ -1469,7 +1479,7 @@ nflverse Discord server</a>.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by <a href="https://twitter.com/mrcaseb" class="external-link">Sebastian Carl</a>, <a href="https://twitter.com/benbbaldwin" class="external-link">Ben Baldwin</a>.</p>
+  <p>Developed by <a href="https://bsky.app/profile/mrcaseb.nflverse.com" class="external-link">Sebastian Carl</a>, <a href="https://bsky.app/profile/rbsdm.com" class="external-link">Ben Baldwin</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
