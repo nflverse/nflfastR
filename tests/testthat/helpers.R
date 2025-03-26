@@ -67,14 +67,14 @@ round_double_to_digits <- function(df, digits = 3){
 
 relevant_variables <- function(){
   c(
-    tidyselect::any_of(c(
+    dplyr::any_of(c(
       "no_score_prob", "opp_fg_prob", "opp_safety_prob", "opp_td_prob", "fg_prob",
       "safety_prob", "td_prob", "ep", "cp", "cpoe", "pass_oe", "xpass"
     )),
-    tidyselect::ends_with("epa"),
-    tidyselect::ends_with("wp"),
-    tidyselect::ends_with("wp_post"),
-    tidyselect::ends_with("wpa"),
-    tidyselect::starts_with("xyac")
+    dplyr::ends_with("epa"),
+    dplyr::ends_with("wp"),
+    dplyr::ends_with("wp_post"),
+    dplyr::ends_with("wpa"),
+    dplyr::starts_with("xyac")
   )
 }
