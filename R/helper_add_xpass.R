@@ -23,7 +23,7 @@ add_xpass <- function(pbp, ...) {
     user_message("Nothing to do. Return passed data frame.", "info")
     return(pbp)
   }
-  pbp <- pbp |> dplyr::select(-tidyselect::any_of(c("xpass", "pass_oe")))
+  pbp <- pbp |> dplyr::select(-dplyr::any_of(c("xpass", "pass_oe")))
   plays <- prepare_xpass_data(pbp)
 
   if (!nrow(plays |> dplyr::filter(.data$valid_play == 1)) == 0) {

@@ -74,8 +74,8 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
   ret <- pbp |>
     dplyr::mutate_at(
       dplyr::vars(
-        tidyselect::any_of(c("passer_id", "rusher_id", "receiver_id", "id", "fantasy_id")),
-        tidyselect::ends_with("player_id")
+        dplyr::any_of(c("passer_id", "rusher_id", "receiver_id", "id", "fantasy_id")),
+        dplyr::ends_with("player_id")
       ),
       function(id, id_vec = id_vector){
         chars <- nchar(id)

@@ -24,7 +24,7 @@ add_xyac <- function(pbp, ...) {
     # testing only
     # pbp <- g
 
-    pbp <- pbp |> dplyr::select(-tidyselect::any_of(drop.cols.xyac))
+    pbp <- pbp |> dplyr::select(-dplyr::any_of(drop.cols.xyac))
 
     # for joining at the end
     pbp <- pbp |>

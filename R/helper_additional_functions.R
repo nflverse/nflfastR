@@ -56,7 +56,7 @@ clean_pbp <- function(pbp, ...) {
     user_message("Cleaning up play-by-play...", "todo")
 
     # drop existing values of clean_pbp
-    pbp <- pbp |> dplyr::select(-tidyselect::any_of(drop.cols))
+    pbp <- pbp |> dplyr::select(-dplyr::any_of(drop.cols))
 
     r <- pbp |>
       dplyr::mutate(
@@ -340,7 +340,7 @@ add_qb_epa <- function(pbp, ...) {
     user_message("Nothing to do. Return passed data frame.", "info")
   } else {
     # drop existing values of clean_pbp
-    pbp <- pbp |> dplyr::select(-tidyselect::any_of("qb_epa"))
+    pbp <- pbp |> dplyr::select(-dplyr::any_of("qb_epa"))
 
     fumbles_df <- pbp |>
       dplyr::filter(.data$complete_pass == 1 & .data$fumble_lost == 1 & !is.na(.data$epa) & !is.na(.data$down)) |>

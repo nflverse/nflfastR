@@ -529,7 +529,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         TRUE ~ .data$opp_st
       )
     ) |>
-    dplyr::select(tidyselect::any_of(c(
+    dplyr::select(dplyr::any_of(c(
 
       # id information
       "player_id", "player_name", "recent_team", "season", "week", "season_type", "opponent_team",
@@ -661,7 +661,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       add_dakota(pbp = pbp, weekly = weekly) |>
       dplyr::select(
         "player_id":"pacr",
-        tidyselect::any_of("dakota"),
+        dplyr::any_of("dakota"),
         dplyr::everything()
       )
   }

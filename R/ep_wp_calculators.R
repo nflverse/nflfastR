@@ -58,7 +58,7 @@
 calculate_expected_points <- function(pbp_data) {
 
    # drop existing values of ep and the probs before making new ones
-  pbp_data <- pbp_data |> dplyr::select(-tidyselect::any_of(drop.cols))
+  pbp_data <- pbp_data |> dplyr::select(-dplyr::any_of(drop.cols))
 
   suppressWarnings(
     model_data <- pbp_data |>
@@ -157,7 +157,7 @@ drop.cols <- c(
 calculate_win_probability <- function(pbp_data) {
 
   # drop existing values of ep and the probs before making new ones
-  pbp_data <- pbp_data |> dplyr::select(-tidyselect::any_of(drop.cols.wp))
+  pbp_data <- pbp_data |> dplyr::select(-dplyr::any_of(drop.cols.wp))
 
   suppressWarnings(
     model_data <- pbp_data |>

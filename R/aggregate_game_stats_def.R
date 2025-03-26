@@ -113,9 +113,9 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
 
   # get tackling stats
   tackle_df <- data |>
-    dplyr::select("season", "week", "defteam", tidyselect::any_of(tackle_vars)) |>
+    dplyr::select("season", "week", "defteam", dplyr::any_of(tackle_vars)) |>
     tidyr::pivot_longer(
-      cols = tidyselect::any_of(tackle_vars),
+      cols = dplyr::any_of(tackle_vars),
       names_to = "desc",
       values_to = "tackle_player_id",
       values_drop_na = TRUE
@@ -187,14 +187,14 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       "season",
       "week",
       "team"="defteam",
-      tidyselect::contains("sack_"),
+      dplyr::contains("sack_"),
       "yards_gained",
-      tidyselect::starts_with("qb_hit_"),
-      -tidyselect::contains("_name")) |>
+      dplyr::starts_with("qb_hit_"),
+      -dplyr::contains("_name")) |>
     tidyr::pivot_longer(
       cols = c(
-        tidyselect::contains("sack_"),
-        tidyselect::starts_with("qb_hit_")
+        dplyr::contains("sack_"),
+        dplyr::starts_with("qb_hit_")
       ),
       names_to = "desc",
       names_prefix = "sk_",
@@ -243,13 +243,13 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
   int_df <- data |>
     dplyr::select(
       "season", "week","return_yards","team"="defteam",
-      tidyselect::starts_with("interception_"),
-      tidyselect::starts_with("pass_defense_"),
-      -tidyselect::contains("_name")) |>
+      dplyr::starts_with("interception_"),
+      dplyr::starts_with("pass_defense_"),
+      -dplyr::contains("_name")) |>
     tidyr::pivot_longer(
       cols = c(
-        tidyselect::starts_with("interception_"),
-        tidyselect::starts_with("pass_defense_")
+        dplyr::starts_with("interception_"),
+        dplyr::starts_with("pass_defense_")
       ),
       names_to = "desc",
       names_prefix = "int_",
@@ -314,11 +314,11 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     ) |>
     dplyr::select(
       "season", "week",
-      tidyselect::matches("^fumble.+team"),
-      tidyselect::matches("^fumble.+player_id")
+      dplyr::matches("^fumble.+team"),
+      dplyr::matches("^fumble.+player_id")
     ) |>
     tidyr::pivot_longer(
-      cols = tidyselect::contains("fumble"),
+      cols = dplyr::contains("fumble"),
       names_pattern = "(.+)_(team|player_id)",
       names_to = c("desc",".value")
     ) |>
@@ -368,11 +368,11 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     ) |>
     dplyr::select(
       "season", "week",
-      tidyselect::matches("^fumble_recovery.+team"),
-      tidyselect::matches("^fumble_recovery.+player_id")
+      dplyr::matches("^fumble_recovery.+team"),
+      dplyr::matches("^fumble_recovery.+player_id")
     ) |>
     tidyr::pivot_longer(
-      cols = tidyselect::contains("fumble"),
+      cols = dplyr::contains("fumble"),
       names_pattern = "(.+)_(team|player_id)",
       names_to = c("desc",".value")
     ) |>
@@ -463,7 +463,7 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       "season", "week", "penalty_yards", "penalty_team", "penalty_player_id"
     ) |>
     tidyr::pivot_longer(
-      cols = tidyselect::contains("penalty"),
+      cols = dplyr::contains("penalty"),
       names_pattern = "(.+)_(team|player_id|yards)",
       names_to = c("desc",".value"),
       values_drop_na = TRUE
@@ -530,7 +530,7 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       by = "player_id"
     ) |>
     dplyr::left_join(stype, by = c("season", "week")) |>
-    dplyr::select(tidyselect::any_of(c(
+    dplyr::select(dplyr::any_of(c(
 
       # game information
       "season",
