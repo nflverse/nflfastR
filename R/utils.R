@@ -66,7 +66,7 @@ maybe_valid <- function(id) {
     is.character(id),
     substr(id, 1, 4) %in% seq.int(1999, as.integer(format(Sys.Date(), "%Y")) + 1, 1),
     as.integer(substr(id, 6, 7)) %in% seq_len(22),
-    str_extract_all(id, "(?<=_)[:upper:]{2,3}")[[1]] %in% nflfastR::teams_colors_logos$team_abbr
+    stringr::str_extract_all(id, "(?<=_)[:upper:]{2,3}")[[1]] %in% nflfastR::teams_colors_logos$team_abbr
   )
 }
 
@@ -130,7 +130,7 @@ write_pbp <- function(seasons, dbConnection, tablename){
 make_nflverse_data <- function(data, type = c("play by play")){
   attr(data, "nflverse_timestamp") <- Sys.time()
   attr(data, "nflverse_type") <- type
-  attr(data, "nflfastR_version") <- packageVersion("nflfastR")
+  attr(data, "nflfastR_version") <- utils::packageVersion("nflfastR")
   class(data) <- c("nflverse_data", "tbl_df", "tbl", "data.table", "data.frame")
   data
 }

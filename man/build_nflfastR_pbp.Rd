@@ -59,8 +59,8 @@ build_nflfastR_pbp(c("2018_21_NE_LA", "2019_21_SF_KC"))
 # output of `fast_scraper_schedules` as input
 try({# to avoid CRAN test problems
 library(dplyr, warn.conflicts = FALSE)
-fast_scraper_schedules(2020) \%>\%
-  slice_tail(n = 3) \%>\%
+fast_scraper_schedules(2020) |>
+  slice_tail(n = 3) |>
   build_nflfastR_pbp()
  })
 

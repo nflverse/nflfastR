@@ -3,6 +3,8 @@
 - Fixed a bug where `calculate_stats()` incorrectly counted `receiving_air_yards`. (#500)
 - Fixed a bug where `vegas_wp` variables were broken when `spread_line` data was missing. (#503)
 - Fixed a bug where `calculate_stats()` incorrectly calculated `target_share` and `air_yards_share` when `summary_level = "season"`. (#505)
+- The function `calculate_standings()` has been deprecated. Please use `nflseedR::nfl_standings()` in nflseedR v2.0 instead. (#510)
+- nflfastR now requires R 4.1 to allow the package to use R's native pipe `|>` operator. This follows the [Tidyverse R version support rules](https://www.tidyverse.org/blog/2019/04/r-version-support/). (#511)
 
 # nflfastR 5.0.0
 

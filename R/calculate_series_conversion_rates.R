@@ -93,13 +93,13 @@ calculate_series_conversion_rates <- function(pbp,
 
 # Offense -----------------------------------------------------------------
 
-  off_series <- pbp %>%
+  off_series <- pbp |>
     dplyr::filter(
       !is.na(.data$down),
       .data$series_result != "QB kneel"
       # .data$rush == 1 | .data$pass == 1
-    ) %>%
-    dplyr::group_by(.data$season, .data$week, team = .data$posteam, .data$series) %>%
+    ) |>
+    dplyr::group_by(.data$season, .data$week, team = .data$posteam, .data$series) |>
     dplyr::summarise(
       conversion = dplyr::first(.data$series_success),
       result = dplyr::first(.data$series_result),
@@ -107,8 +107,8 @@ calculate_series_conversion_rates <- function(pbp,
       .groups = "drop"
     )
 
-  offense <- off_series %>%
-    dplyr::group_by(!!!grp_vars) %>%
+  offense <- off_series |>
+    dplyr::group_by(!!!grp_vars) |>
     dplyr::summarise(
       off_n = dplyr::n(),
       off_scr = mean(.data$conversion),
@@ -128,13 +128,13 @@ calculate_series_conversion_rates <- function(pbp,
 
 # Defense -----------------------------------------------------------------
 
-  def_series <- pbp %>%
+  def_series <- pbp |>
     dplyr::filter(
       !is.na(.data$down),
       .data$series_result != "QB kneel"
       # .data$rush == 1 | .data$pass == 1
-    ) %>%
-    dplyr::group_by(.data$season, .data$week, team = .data$defteam, .data$series) %>%
+    ) |>
+    dplyr::group_by(.data$season, .data$week, team = .data$defteam, .data$series) |>
     dplyr::summarise(
       conversion = dplyr::first(.data$series_success),
       result = dplyr::first(.data$series_result),
@@ -142,8 +142,8 @@ calculate_series_conversion_rates <- function(pbp,
       .groups = "drop"
     )
 
-  defense <- def_series %>%
-    dplyr::group_by(!!!grp_vars) %>%
+  defense <- def_series |>
+    dplyr::group_by(!!!grp_vars) |>
     dplyr::summarise(
       def_n = dplyr::n(),
       def_scr = mean(.data$conversion),

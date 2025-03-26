@@ -9,7 +9,7 @@
 ## fixed_drive_result =
 ##  result of  given drive
 add_drive_results <- function(d) {
-  drive_df <- d %>%
+  drive_df <- d |>
     dplyr::mutate(
       old_posteam = .data$posteam,
       posteam = dplyr::case_when(
@@ -23,8 +23,8 @@ add_drive_results <- function(d) {
           dplyr::lead(.data$own_kickoff_recovery == 1) ~ .data$defteam,
         TRUE ~ .data$posteam
       )
-    ) %>%
-    dplyr::group_by(.data$game_id, .data$game_half) %>%
+    ) |>
+    dplyr::group_by(.data$game_id, .data$game_half) |>
     dplyr::mutate(
       row = 1:dplyr::n(),
       new_drive = dplyr::if_else(
@@ -107,8 +107,8 @@ add_drive_results <- function(d) {
 
       # if there's a missing, make it not a new drive (0)
       new_drive = dplyr::if_else(is.na(.data$new_drive), 0, .data$new_drive)
-    ) %>%
-    dplyr::group_by(.data$game_id) %>%
+    ) |>
+    dplyr::group_by(.data$game_id) |>
     dplyr::mutate(
       fixed_drive = cumsum(.data$new_drive),
       tmp_result = dplyr::case_when(
@@ -122,8 +122,8 @@ add_drive_results <- function(d) {
         .data$down == 4 & .data$yards_gained < .data$ydstogo & .data$play_type != "no_play" ~ "Turnover on downs",
         stringr::str_detect(.data$desc, "(END QUARTER 2)|(END QUARTER 4)|(END GAME)") ~ "End of half"
       )
-    ) %>%
-    dplyr::group_by(.data$game_id, .data$fixed_drive) %>%
+    ) |>
+    dplyr::group_by(.data$game_id, .data$fixed_drive) |>
     dplyr::mutate(
       fixed_drive_result =
         dplyr::if_else(
@@ -133,9 +133,9 @@ add_drive_results <- function(d) {
           # otherwise take the last
           dplyr::last(stats::na.omit(.data$tmp_result))
         )
-    ) %>%
-    dplyr::ungroup() %>%
-    dplyr::mutate(posteam = .data$old_posteam) %>%
+    ) |>
+    dplyr::ungroup() |>
+    dplyr::mutate(posteam = .data$old_posteam) |>
     dplyr::select(-"row", -"new_drive", -"tmp_result", -"old_posteam")
 
   user_message("added fixed drive variables", "done")

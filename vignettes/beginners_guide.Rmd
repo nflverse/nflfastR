@@ -99,26 +99,26 @@ View(data)
 This will open the viewer in RStudio in a new panel. Try it out yourself! Since there are so many columns, the Viewer won't show them all. To pick which columns to view, you can **select** some:
 
 ``` {r eval = FALSE}
-data %>%
-  select(home_team, away_team, posteam, desc) %>%
+data |>
+  select(home_team, away_team, posteam, desc) |>
   View()
 ```
 
-The `%>%` thing lets you pipe together a bunch of different commands. So we're taking our data, "`select`"ing a few variables we want to look at, and then Viewing. Again, I can't display the results of that here, but try it out yourself!
+The `|>` thing lets you pipe together a bunch of different commands. So we're taking our data, "`select`"ing a few variables we want to look at, and then Viewing. Again, I can't display the results of that here, but try it out yourself!
 
 ### Head + manipulation
 
 To start, let's just look at the first few rows (the "head") of the data.
 
 ``` {r}
-data %>% 
-  select(posteam, defteam, desc, rush, pass) %>% 
+data |> 
+  select(posteam, defteam, desc, rush, pass) |> 
   head()
 ```
 A couple things. "`desc`" is the important variable that lists the description of what happened on the play, and `head` says to show the first few rows (the "head" of the data). Since this is already sorted by game, these are the first 6 rows from a week 1 game, ATL @ MIN. To make code easier to read, people often put each part of a pipe on a new line, which is useful when working with more complicated functions. We could run:
 
 ``` {r eval = FALSE}
-data %>% select(posteam, defteam, desc, rush, pass) %>% head()
+data |> select(posteam, defteam, desc, rush, pass) |> head()
 ```
 
 And it would return the exact same output as the one written out in multiple lines, but the code isn't as easy to read.
@@ -126,9 +126,9 @@ And it would return the exact same output as the one written out in multiple lin
 We've covered `select`, and the next important function to learn is `filter`, which lets you filter the data to what you want. The following returns only plays that are run plays and pass plays; i.e., no punts, kickoffs, field goals, or dead ball penalties (e.g. false starts) where we don't know what the attempted play was.
 
 ``` {r}
-data %>% 
-  filter(rush == 1 | pass == 1) %>%
-  select(posteam, desc, rush, pass, name, passer, rusher, receiver) %>% 
+data |> 
+  filter(rush == 1 | pass == 1) |>
+  select(posteam, desc, rush, pass, name, passer, rusher, receiver) |> 
   head()
 ```
 
@@ -139,34 +139,34 @@ Note that the `rush`, `pass`, `name`, `passer`, `rusher`, and `receiver` columns
 What if we wanted to view special teams plays? Again, we can use `filter`:
 
 ``` {r}
-data %>% 
-  filter(special == 1) %>%
-  select(down, ydstogo, desc) %>% 
+data |> 
+  filter(special == 1) |>
+  select(down, ydstogo, desc) |> 
   head()
 ```
 
 Fourth down plays?
 
 ``` {r}
-data %>% 
-  filter(down == 4) %>%
-  select(down, ydstogo, desc) %>% 
+data |> 
+  filter(down == 4) |>
+  select(down, ydstogo, desc) |> 
   head()
 ```
 
 Fourth down plays that aren't special teams plays?
 
 ``` {r}
-data %>% 
-  filter(down == 4 & special == 0) %>%
-  select(down, ydstogo, desc) %>% 
+data |> 
+  filter(down == 4 & special == 0) |>
+  select(down, ydstogo, desc) |> 
   head()
 ```
 
 So far, we've just been taking a look at the initial dataset we downloaded, but none of our results are preserved. To save a new dataframe of just the plays we want, we need to use `<-` to assign a new dataframe. Let's save a new dataframe that's just run plays and pass plays with non-missing EPA, called `pbp_rp`.
 
 ``` {r}
-pbp_rp <- data %>%
+pbp_rp <- data |>
   filter(rush == 1 | pass == 1, !is.na(epa))
 ```
 
@@ -181,13 +181,13 @@ Okay, we have a big dataset where we call dropbacks pass plays and non-dropbacks
 Let's take a look at how various Cowboys' running backs fared on run plays in 2019:
 
 ``` {r}
-pbp_rp %>%
-	filter(posteam == "DAL", rush == 1) %>%
-	group_by(rusher) %>%
+pbp_rp |>
+	filter(posteam == "DAL", rush == 1) |>
+	group_by(rusher) |>
 	summarize(
 	  mean_epa = mean(epa), success_rate = mean(success), ypc = mean(yards_gained), plays = n()
-	  ) %>%
-	arrange(-mean_epa) %>%
+	  ) |>
+	arrange(-mean_epa) |>
 	filter(plays > 20)
 ```
 
@@ -196,12 +196,12 @@ There's a lot going on here. We've covered `filter` already. The `group_by` func
 If you check the [PFR team stats page](https://www.pro-football-reference.com/teams/dal/2019.htm), you'll notice that the above doesn't match up with the official stats. This is because `nflfastR` computes EPA and provides player names on plays with penalties and on two-point conversions. So if wanting to match the official stats, we need to restrict to `down <= 4` (to excluded two-point conversions, which have down listed as `NA`) and `play_type = run` (to exclude penalties, which are `play_type = no_play`):
 
 ``` {r}
-pbp_rp %>%
-	filter(posteam == "DAL", down <= 4, play_type == 'run') %>%
-	group_by(rusher) %>%
+pbp_rp |>
+	filter(posteam == "DAL", down <= 4, play_type == 'run') |>
+	group_by(rusher) |>
 	summarize(
 	  mean_epa = mean(epa), success_rate = mean(success), ypc=mean(yards_gained), plays=n()
-	  ) %>%
+	  ) |>
 	filter(plays > 20)
 ```
 
@@ -212,22 +212,22 @@ Now we exactly match PFR: Zeke has 301 carries at 4.5 yards/carry, and Pollard h
 Let's say we want to make a new column, named `home`, which is equal to 1 if the team with the ball is the home team. Let's introduce another extremely useful function, `if_else`:
 
 ``` {r}
-pbp_rp %>%
+pbp_rp |>
   mutate(
     home = if_else(posteam == home_team, 1, 0)
-  ) %>%
-  select(posteam, home_team, home) %>%
+  ) |>
+  select(posteam, home_team, home) |>
   head(10)
 ```
 
 `mutate` is R's word for creating a new column (or overwriting an existing one); in this case, we've created a new column called `home`. The above uses `if_else`, which uses the following pattern: condition (in this case, `posteam == home_team`), value if condition is true (in this case, if `posteam == home_team`, it is 1), and value if the condition is false (0). So we could use this to, for example, look at average EPA/play by home and road teams:
 
 ``` {r}
-pbp_rp %>%
+pbp_rp |>
   mutate(
     home = if_else(posteam == home_team, 1, 0)
-  ) %>%
-  group_by(home) %>%
+  ) |>
+  group_by(home) |>
   summarize(epa = mean(epa))
 ```
 Note that EPA/play is similar for home teams and away teams because `home` is already built into the `nflfastR` EPA model, so this result is expected. Actually, away EPA/play is actually somewhat higher, presumably because away teams out-performed their usual in 2019 as homefield advantage continues to decline generally.
@@ -235,8 +235,8 @@ Note that EPA/play is similar for home teams and away teams because `home` is al
 `if_else` is nice if you're creating a new column based on a simple condition. But what if you need to do something more complicated? `case_when` is a good option. Here's how it works:
 
 ``` {r}
-pbp_rp %>%
-  filter(!is.na(cp)) %>%
+pbp_rp |>
+  filter(!is.na(cp)) |>
   mutate(
     depth = case_when(
       air_yards < 0 ~ "Negative",
@@ -244,8 +244,8 @@ pbp_rp %>%
       air_yards >= 10 & air_yards < 20 ~ "Medium",
       air_yards >= 20 ~ "Deep"
     )
-  ) %>%
-  group_by(depth) %>%
+  ) |>
+  group_by(depth) |>
   summarize(cp = mean(cp))
 ```
 Note the new syntax for `case_when`: we have condition (for the first one, air yards less than 0), followed by `~`, followed by assignment (for the first one, "Negative"). In the above, we created 4 bins based on air yards and got average completion probability (`cp`) based on the `nflfastR` model. Unsurprisingly, `cp` is lower the longer downfield a throw goes.
@@ -255,10 +255,10 @@ Note the new syntax for `case_when`: we have condition (for the first one, air y
 Now that we've gained some skills at manipulating data, let's put it to use by making things. Which teams were the most pass-heavy in the first half on early downs with win probability between 20 and 80, excluding the final 2 minutes of the half when everyone is pass-happy?
 
 ``` {r}
-schotty <- pbp_rp %>%
-	filter(wp > .20 & wp < .80 & down <= 2 & qtr <= 2 & half_seconds_remaining > 120) %>%
-	group_by(posteam) %>%
-	summarize(mean_pass = mean(pass), plays = n()) %>%
+schotty <- pbp_rp |>
+	filter(wp > .20 & wp < .80 & down <= 2 & qtr <= 2 & half_seconds_remaining > 120) |>
+	group_by(posteam) |>
+	summarize(mean_pass = mean(pass), plays = n()) |>
 	arrange(-mean_pass)
 schotty
 ```
@@ -289,16 +289,16 @@ This loads play-by-play data from the 2015 through 2019 seasons.
 Let's make sure we got it all. By now, you should understand what this is doing:
 
 ``` {r}
-pbp %>%
-  group_by(season) %>%
+pbp |>
+  group_by(season) |>
   summarize(n = n())
 ```
 
 So each season has about 48,000 plays. Just for fun, let's look at the various play types:
 
 ``` {r}
-pbp %>%
-  group_by(play_type) %>%
+pbp |>
+  group_by(play_type) |>
   summarize(n = n())
 ```
 
@@ -307,17 +307,17 @@ pbp %>%
 Let's do some stuff with quarterbacks:
 
 ``` {r}
-qbs <- pbp %>%
-  filter(season_type == "REG", !is.na(epa)) %>%
-  group_by(id, name) %>%
+qbs <- pbp |>
+  filter(season_type == "REG", !is.na(epa)) |>
+  group_by(id, name) |>
   summarize(
     epa = mean(qb_epa),
     cpoe = mean(cpoe, na.rm = T),
     n_dropbacks = sum(pass),
     n_plays = n(),
     team = last(posteam)
-  ) %>%
-  ungroup() %>%
+  ) |>
+  ungroup() |>
   filter(n_dropbacks > 100 & n_plays > 1000)
 ```
 
@@ -334,7 +334,7 @@ load_teams()
 Let's join this to the `qbs` dataframe we created:
 
 ``` {r}
-qbs <- qbs %>%
+qbs <- qbs |>
   left_join(load_teams(), by = c('team' = 'team_abbr'))
 ```
 
@@ -345,7 +345,7 @@ qbs <- qbs %>%
 Now we can make a figure!
 
 ```{r fig2, warning = FALSE, message = FALSE, results = 'hide', fig.keep = 'all', dpi = 600}
-qbs %>%
+qbs |>
   ggplot(aes(x = cpoe, y = epa)) +
   #horizontal line with mean EPA
   geom_hline(yintercept = mean(qbs$epa), color = "red", linetype = "dashed", alpha=0.5) +
@@ -383,7 +383,7 @@ This looks complicated, but is just a way of getting a bunch of different stuff 
 We could also make the same plot with team logos:
 
 ```{r fig3, warning = FALSE, message = FALSE, results = 'hide', fig.keep = 'all', dpi = 600}
-qbs %>%
+qbs |>
   ggplot(aes(x = cpoe, y = epa)) +
   #horizontal line with mean EPA
   geom_hline(yintercept = mean(qbs$epa), color = "red", linetype = "dashed", alpha=0.5) +
@@ -422,20 +422,20 @@ If it's helpful, here are a few notes about the [chart originally shown here](ht
 ```{r ex5, warning = FALSE, message = FALSE, results = 'hide', fig.keep = 'all', dpi = 600}
 library(nflplotR)
 # get pbp and filter to regular season rush and pass plays
-pbp <- nflreadr::load_pbp(2005) %>%
-  dplyr::filter(season_type == "REG") %>%
+pbp <- nflreadr::load_pbp(2005) |>
+  dplyr::filter(season_type == "REG") |>
   dplyr::filter(!is.na(posteam) & (rush == 1 | pass == 1))
 # offense epa
-offense <- pbp %>%
-  dplyr::group_by(team = posteam) %>%
+offense <- pbp |>
+  dplyr::group_by(team = posteam) |>
   dplyr::summarise(off_epa = mean(epa, na.rm = TRUE))
 # defense epa
-defense <- pbp %>%
-  dplyr::group_by(team = defteam) %>%
+defense <- pbp |>
+  dplyr::group_by(team = defteam) |>
   dplyr::summarise(def_epa = mean(epa, na.rm = TRUE))
 # make figure
-offense %>%
-  dplyr::inner_join(defense, by = "team") %>%
+offense |>
+  dplyr::inner_join(defense, by = "team") |>
   ggplot2::ggplot(aes(x = off_epa, y = def_epa)) +
   # tier lines
   ggplot2::geom_abline(slope = -1.5, intercept = (4:-3)/10, alpha = .2) +
@@ -486,27 +486,27 @@ str(games)
 To start, we want to create a dataframe where each row is a team-season observation, listing how many games they won. There are multiple ways to do this, but I'm going to just take the home and away results and bind together. As an example, here's what the `home` results look like:
 
 ``` {r}
-home <- games %>%
-  filter(game_type == 'REG') %>%
-  select(season, week, home_team, result) %>%
+home <- games |>
+  filter(game_type == 'REG') |>
+  select(season, week, home_team, result) |>
   rename(team = home_team)
-home %>% head(5)
+home |> head(5)
 ```
 Note that we used `rename` to change `home_team` to `team`.
 
 ``` {r}
-away <- games %>%
-  filter(game_type == 'REG') %>%
-  select(season, week, away_team, result) %>%
-  rename(team = away_team) %>%
+away <- games |>
+  filter(game_type == 'REG') |>
+  select(season, week, away_team, result) |>
+  rename(team = away_team) |>
   mutate(result = -result)
-away %>% head(5)
+away |> head(5)
 ```
 For away teams, we need to flip the result since result is given from the perspective of the home team. Now let's make a columns called `win` based on the result.
 
 ``` {r}
-results <- bind_rows(home, away) %>%
-  arrange(week) %>%
+results <- bind_rows(home, away) |>
+  arrange(week) |>
   mutate(
     win = case_when(
       result > 0 ~ 1,
@@ -515,23 +515,23 @@ results <- bind_rows(home, away) %>%
     )
   )
 
-results %>% filter(season == 2019 & team == 'SEA')
+results |> filter(season == 2019 & team == 'SEA')
 ```
 
-Doing the `results %>% filter(season == 2019 & team == 'SEA')` part at the end isn't actually for saving the data in a new form, but just making sure the previous step did what I wanted. This is a good habit to get into: frequently inspect your data and make sure it looks like you think it should.
+Doing the `results |> filter(season == 2019 & team == 'SEA')` part at the end isn't actually for saving the data in a new form, but just making sure the previous step did what I wanted. This is a good habit to get into: frequently inspect your data and make sure it looks like you think it should.
 
 Now that we have the dataframe we wanted, we can get team wins by season easily:
 
 ``` {r}
-team_wins <- results %>%
-  group_by(team, season) %>%
+team_wins <- results |>
+  group_by(team, season) |>
   summarize(
     wins = sum(win),
-    point_diff = sum(result)) %>%
+    point_diff = sum(result)) |>
   ungroup()
 
-team_wins %>%
-  arrange(-wins) %>%
+team_wins |>
+  arrange(-wins) |>
   head(5)
 ```
 
@@ -544,8 +544,8 @@ Now that the team-season win and point differential data is ready, we need to go
 Let's start by getting data from every season from the `nflfastR` data repository:
 
 ``` {r}
-pbp <- load_pbp(1999:2019) %>%
-    filter(rush == 1 | pass == 1, season_type == "REG", !is.na(epa), !is.na(posteam), posteam != "") %>%
+pbp <- load_pbp(1999:2019) |>
+    filter(rush == 1 | pass == 1, season_type == "REG", !is.na(epa), !is.na(posteam), posteam != "") |>
     select(season, posteam, pass, defteam, epa)
 ```
 
@@ -554,18 +554,18 @@ I'm being pretty aggressive with dropping rows and columns (`filter` and `select
 Now we can get EPA/play on offense and defense. Let's break it out by pass and rush too. I don't remember how to do some of this so let's do it in steps. We know we need to group by team, season, and pass, so there's the beginning:
 
 ``` {r}
-pbp %>%
-  group_by(posteam, season, pass) %>% 
-  summarize(epa = mean(epa)) %>%
+pbp |>
+  group_by(posteam, season, pass) |> 
+  summarize(epa = mean(epa)) |>
   head(4)
 ```
 
 But this makes two rows per team-season. How to get each team-season on the same row? `pivot_wider` is what we need:
 ``` {r}
-pbp %>%
-  group_by(posteam, season, pass) %>% 
-  summarize(epa = mean(epa)) %>%
-  pivot_wider(names_from = pass, values_from = epa) %>%
+pbp |>
+  group_by(posteam, season, pass) |> 
+  summarize(epa = mean(epa)) |>
+  pivot_wider(names_from = pass, values_from = epa) |>
   head(4)
 ```
 
@@ -574,10 +574,10 @@ This one is hard to wrap my head around so I usually open up the [reference page
 Now let's rename to something more sensible and save:
 
 ``` {r}
-offense <- pbp %>%
-  group_by(posteam, season, pass) %>% 
-  summarize(epa = mean(epa)) %>%
-  pivot_wider(names_from = pass, values_from = epa) %>%
+offense <- pbp |>
+  group_by(posteam, season, pass) |> 
+  summarize(epa = mean(epa)) |>
+  pivot_wider(names_from = pass, values_from = epa) |>
   rename(off_pass_epa = `1`, off_rush_epa = `0`)
 ```
 
@@ -586,23 +586,23 @@ Note that variable names that are numbers need to be surrounded in tick marks fo
 Now we can repeat the same process for defense:
 
 ``` {r}
-defense <- pbp %>%
-  group_by(defteam, season, pass) %>% 
-  summarize(epa = mean(epa)) %>%
-  pivot_wider(names_from = pass, values_from = epa) %>%
+defense <- pbp |>
+  group_by(defteam, season, pass) |> 
+  summarize(epa = mean(epa)) |>
+  pivot_wider(names_from = pass, values_from = epa) |>
   rename(def_pass_epa = `1`, def_rush_epa = `0`)
 ```
 
 Let's do another sanity check looking at the top 5 pass offenses and defenses:
 ``` {r}
 #top 5 offenses
-offense %>%
-  arrange(-off_pass_epa) %>%
+offense |>
+  arrange(-off_pass_epa) |>
   head(5)
 
 #top 5 defenses
-defense %>%
-  arrange(def_pass_epa) %>%
+defense |>
+  arrange(def_pass_epa) |>
   head(5)
 ```
 
@@ -613,16 +613,16 @@ The top pass defenses (2002 TB, 2017 JAX, 2019 NE) and offenses (2007 Pats, 2004
 Now we're ready to bind it all together. Actually, let's make sure all the team names are ready too.
 
 ``` {r}
-team_wins %>%
-  group_by(team) %>%
-  summarize(n=n()) %>%
+team_wins |>
+  group_by(team) |>
+  summarize(n=n()) |>
   arrange(n)
 ```
 
 Nope, not yet, we need to fix the Raiders, Rams, and Chargers, which are LV, LA, and LAC in `nflfastR`.
 
 ``` {r}
-team_wins <- team_wins %>%
+team_wins <- team_wins |>
   mutate(
     team = case_when(
       team == 'OAK' ~ 'LV',
@@ -636,39 +636,39 @@ team_wins <- team_wins %>%
 The `TRUE` statement at the bottom says that if none of the above cases are found, keep team the same. Let's make sure this worked:
 
 ``` {r}
-team_wins %>%
-  group_by(team) %>%
-  summarize(n=n()) %>%
+team_wins |>
+  group_by(team) |>
+  summarize(n=n()) |>
   arrange(n)
 ```
 
 HOU has 3 fewer seasons because it didn't exist from 1999 through 2001, which is fine, and all the other team names have number of seasons that they should. Okay NOW we can join:
 
 ``` {r}
-data <- team_wins %>%
-  left_join(offense, by = c('team' = 'posteam', 'season')) %>%
+data <- team_wins |>
+  left_join(offense, by = c('team' = 'posteam', 'season')) |>
   left_join(defense, by = c('team' = 'defteam', 'season'))
 
-data %>%
+data |>
   filter(team == 'SEA' & season >= 2012)
 ```
 
 Now we're getting really close to doing what we want! Next we need to create new columns for prior year EPA, and let's do point differential too.
 
 ``` {r}
-data <- data %>% 
-  arrange(team, season) %>%
-  group_by(team) %>% 
+data <- data |> 
+  arrange(team, season) |>
+  group_by(team) |> 
   mutate(
     prior_off_rush_epa = lag(off_rush_epa),
     prior_off_pass_epa = lag(off_pass_epa),
     prior_def_rush_epa = lag(def_rush_epa),
     prior_def_pass_epa = lag(def_pass_epa),
     prior_point_diff = lag(point_diff)
-  ) %>% 
+  ) |> 
   ungroup()
 
-data %>%
+data |>
   head(5)
 ```
 Finally! Now we have the data in place and can start doing things with it.
@@ -676,20 +676,20 @@ Finally! Now we have the data in place and can start doing things with it.
 ### Correlations and regressions
 
 ``` {r}
-data %>% 
-  select(-team, -season) %>%
-  cor(use="complete.obs") %>%
+data |> 
+  select(-team, -season) |>
+  cor(use="complete.obs") |>
   round(2)
 ```
 
 ```{r echo=FALSE}
-pp = cor(data$off_pass_epa, data$prior_off_pass_epa, use="complete.obs") %>%
+pp = cor(data$off_pass_epa, data$prior_off_pass_epa, use="complete.obs") |>
   round(2)
-rr = cor(data$off_rush_epa, data$prior_off_rush_epa, use="complete.obs") %>%
+rr = cor(data$off_rush_epa, data$prior_off_rush_epa, use="complete.obs") |>
   round(2)
-pd = cor(data$def_pass_epa, data$prior_def_pass_epa, use="complete.obs") %>%
+pd = cor(data$def_pass_epa, data$prior_def_pass_epa, use="complete.obs") |>
   round(2)
-rd = cor(data$def_rush_epa, data$prior_def_rush_epa, use="complete.obs") %>%
+rd = cor(data$def_rush_epa, data$prior_def_rush_epa, use="complete.obs") |>
   round(2)
 ```
 
@@ -699,19 +699,19 @@ I'm actually surprised that the values for passing offense aren't higher relativ
 
 ``` {r}
 message("2009 through 2019")
-data %>% 
-  filter(season >= 2009) %>%
-  select(wins, point_diff, off_pass_epa, off_rush_epa, prior_point_diff, prior_off_pass_epa, prior_off_rush_epa) %>%
-  cor(use="complete.obs") %>%
+data |> 
+  filter(season >= 2009) |>
+  select(wins, point_diff, off_pass_epa, off_rush_epa, prior_point_diff, prior_off_pass_epa, prior_off_rush_epa) |>
+  cor(use="complete.obs") |>
   round(2)
 ```
 
 ``` {r}
 message("1999 through 2008")
-data %>% 
-  filter(season < 2009) %>%
-  select(wins, point_diff, off_pass_epa, off_rush_epa, prior_point_diff, prior_off_pass_epa, prior_off_rush_epa) %>%
-  cor(use="complete.obs") %>%
+data |> 
+  filter(season < 2009) |>
+  select(wins, point_diff, off_pass_epa, off_rush_epa, prior_point_diff, prior_off_pass_epa, prior_off_rush_epa) |>
+  cor(use="complete.obs") |>
   round(2)
 ```
 
@@ -720,7 +720,7 @@ Yep, that seems to be the case. So in the more recent period, passing offense ha
 Now let's do a basic regression of wins on prior offense and defense EPA/play. Maybe we should only look at this more recent period to fit our model since it's more relevant for 2020. In the real world, we would be more rigorous about making decisions like this, but let's proceed anyway.
 
 ``` {r}
-data <- data %>% filter(season >= 2009)
+data <- data |> filter(season >= 2009)
 
 fit <- lm(wins ~ prior_off_pass_epa  + prior_off_rush_epa + prior_def_pass_epa + prior_def_rush_epa, data = data)
 
@@ -742,19 +742,19 @@ So R2 is somewhat higher for just point differential. This isn't surprising as w
 Now let's get the predictions from the EPA model:
 
 ``` {r}
-preds <- predict(fit, data %>% filter(season == 2020)) %>%
+preds <- predict(fit, data |> filter(season == 2020)) |>
   #was just a vector, need a tibble to bind
-  as_tibble() %>%
+  as_tibble() |>
   #make the column name make sense
-  rename(prediction = value) %>%
-  round(1) %>%
+  rename(prediction = value) |>
+  round(1) |>
   #get names
   bind_cols(
-    data %>% filter(season == 2020) %>% select(team)
+    data |> filter(season == 2020) |> select(team)
   )
 
-preds %>%
-  arrange(-prediction) %>%
+preds |>
+  arrange(-prediction) |>
   head(5)
 ```
 
@@ -763,7 +763,7 @@ This mostly checks out.
 What if we just used simple point differential to predict?
 
 ``` {r}
-preds2 <- predict(fit2, data %>% filter(season == 2020)) %>%
+preds2 <- predict(fit2, data |> filter(season == 2020)) |>
   #was just a vector, need a tibble to bind
   as_tibble() %>%
   #make the column name make sense

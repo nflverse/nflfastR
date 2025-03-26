@@ -10,8 +10,8 @@ build_playstats <- function(seasons = nflreadr::most_recent_season(),
         Will go on sequentially...", wrap = TRUE)
   }
 
-  games <- nflreadr::load_schedules(seasons = seasons) %>%
-    dplyr::filter(!is.na(.data$result)) %>%
+  games <- nflreadr::load_schedules(seasons = seasons) |>
+    dplyr::filter(!is.na(.data$result)) |>
     dplyr::pull(.data$game_id)
 
   p <- progressr::progressor(along = games)
@@ -26,27 +26,27 @@ build_playstats <- function(seasons = nflreadr::most_recent_season(),
       season <- substr(id, 1, 4)
       raw_data <- load_raw_game(id, dir = dir, skip_local = skip_local)
       if (season <= 2000){
-        drives <- raw_data[[1]][["drives"]] %>%
+        drives <- raw_data[[1]][["drives"]] |>
           purrr::keep(is.list)
-        out <- tibble::tibble(d = drives) %>%
-          tidyr::unnest_wider(.data$d) %>%
-          tidyr::unnest_longer(.data$plays) %>%
-          tidyr::unnest_wider(.data$plays, names_sep = "_") %>%
-          dplyr::select("playId" = "plays_id", "playStats" = "plays_players") %>%
-          tidyr::unnest_longer(.data$playStats) %>%
-          tidyr::unnest_longer(.data$playStats) %>%
-          tidyr::unnest_wider(.data$playStats) %>%
+        out <- tibble::tibble(d = drives) |>
+          tidyr::unnest_wider(.data$d) |>
+          tidyr::unnest_longer(.data$plays) |>
+          tidyr::unnest_wider(.data$plays, names_sep = "_") |>
+          dplyr::select("playId" = "plays_id", "playStats" = "plays_players") |>
+          tidyr::unnest_longer(.data$playStats) |>
+          tidyr::unnest_longer(.data$playStats) |>
+          tidyr::unnest_wider(.data$playStats) |>
           dplyr::mutate(
             playId = as.integer(.data$playId),
             statId = as.integer(.data$statId),
             yards = as.integer(.data$yards),
             team.id = NA_character_
-          ) %>%
-          dplyr::select(-"sequence") %>%
+          ) |>
+          dplyr::select(-"sequence") |>
           dplyr::rename(
             team.abbreviation = "clubcode",
             gsis.Player.id = "playStats_id"
-          ) %>%
+          ) |>
           tidyr::nest(
             playStats = c(
               .data$statId,
@@ -69,15 +69,15 @@ build_playstats <- function(seasons = nflreadr::most_recent_season(),
     skip_local = skip_local
   )
 
-  out <- data.table::rbindlist(l) %>%
-    tidyr::unnest(cols = c("playStats")) %>%
-    janitor::clean_names() %>%
-    dplyr::filter(.data$stat_id %in% stat_ids) %>%
+  out <- data.table::rbindlist(l) |>
+    tidyr::unnest(cols = c("playStats")) |>
+    janitor::clean_names() |>
+    dplyr::filter(.data$stat_id %in% stat_ids) |>
     dplyr::mutate(
       season = as.integer(substr(.data$game_id, 1, 4)),
       week = as.integer(substr(.data$game_id, 6, 7))
-    ) %>%
-    decode_player_ids() %>%
+    ) |>
+    decode_player_ids() |>
     dplyr::select(
       "game_id",
       "season",
@@ -88,7 +88,7 @@ build_playstats <- function(seasons = nflreadr::most_recent_season(),
       "team_abbr" = "team_abbreviation",
       "player_name",
       "gsis_player_id",
-    ) %>%
+    ) |>
     dplyr::mutate_if(
       .predicate = is.character,
       .funs = ~dplyr::na_if(.x, "")

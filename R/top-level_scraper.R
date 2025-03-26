@@ -397,8 +397,8 @@
 #' # output of `fast_scraper_schedules` as input
 #' try({# to avoid CRAN test problems
 #' library(dplyr, warn.conflicts = FALSE)
-#' fast_scraper_schedules(2020) %>%
-#'   slice_tail(n = 3) %>%
+#' fast_scraper_schedules(2020) |>
+#'   slice_tail(n = 3) |>
 #'   fast_scraper()
 #' })
 #'
@@ -440,16 +440,16 @@ fast_scraper <- function(game_ids,
 
     if (length(pbp) != 0) {
       user_message("Download finished. Adding variables...", "done")
-      pbp <- pbp %>%
-        add_game_data(...) %>%
-        add_nflscrapr_mutations() %>%
-        add_ep() %>%
-        add_air_yac_ep() %>%
-        add_wp() %>%
-        add_air_yac_wp() %>%
-        add_cp() %>%
-        add_drive_results() %>%
-        add_series_data() %>%
+      pbp <- pbp |>
+        add_game_data(...) |>
+        add_nflscrapr_mutations() |>
+        add_ep() |>
+        add_air_yac_ep() |>
+        add_wp() |>
+        add_air_yac_wp() |>
+        add_cp() |>
+        add_drive_results() |>
+        add_series_data() |>
         select_variables()
     }
   })

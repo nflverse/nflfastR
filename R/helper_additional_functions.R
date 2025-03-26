@@ -56,9 +56,9 @@ clean_pbp <- function(pbp, ...) {
     user_message("Cleaning up play-by-play...", "todo")
 
     # drop existing values of clean_pbp
-    pbp <- pbp %>% dplyr::select(-tidyselect::any_of(drop.cols))
+    pbp <- pbp |> dplyr::select(-dplyr::any_of(drop.cols))
 
-    r <- pbp %>%
+    r <- pbp |>
       dplyr::mutate(
         aborted_play = dplyr::if_else(stringr::str_detect(.data$desc, 'Aborted'), 1, 0),
         #get rid of extraneous spaces that mess with player name finding
@@ -66,16 +66,16 @@ clean_pbp <- function(pbp, ...) {
         desc = stringr::str_replace_all(.data$desc, "(((\\s)|(\\-))[A-Z]\\.)\\s+", "\\1"),
         success = dplyr::if_else(is.na(.data$epa), NA_real_, dplyr::if_else(.data$epa > 0, 1, 0)),
         passer = stringr::str_extract(.data$desc, glue::glue('{big_parser}{pass_finder}')),
-        passer_jersey_number = stringr::str_extract(stringr::str_extract(.data$desc, glue::glue('{number_parser}{big_parser}{pass_finder}')), "[:digit:]*") %>% as.integer(),
+        passer_jersey_number = stringr::str_extract(stringr::str_extract(.data$desc, glue::glue('{number_parser}{big_parser}{pass_finder}')), "[:digit:]*") |> as.integer(),
         rusher = stringr::str_extract(.data$desc, glue::glue('{big_parser}{rush_finder}')),
-        rusher_jersey_number = stringr::str_extract(stringr::str_extract(.data$desc, glue::glue('{number_parser}{big_parser}{rush_finder}')), "[:digit:]*") %>% as.integer(),
+        rusher_jersey_number = stringr::str_extract(stringr::str_extract(.data$desc, glue::glue('{number_parser}{big_parser}{rush_finder}')), "[:digit:]*") |> as.integer(),
         #get rusher_player_name as a measure of last resort
         #finds things like aborted snaps and "F.Last to NYG 44."
         rusher = dplyr::if_else(
           is.na(.data$rusher) & is.na(.data$passer) & !is.na(.data$rusher_player_name), .data$rusher_player_name, .data$rusher
         ),
         receiver = stringr::str_extract(.data$desc, glue::glue('{receiver_finder}{big_parser}')),
-        receiver_jersey_number = stringr::str_extract(stringr::str_extract(.data$desc, glue::glue('{receiver_number}{big_parser}')), "[:digit:]*") %>% as.integer(),
+        receiver_jersey_number = stringr::str_extract(stringr::str_extract(.data$desc, glue::glue('{receiver_number}{big_parser}')), "[:digit:]*") |> as.integer(),
         #overwrite all these weird plays messing with the parser
         receiver = dplyr::case_when(
           stringr::str_detect(.data$desc, glue::glue('{abnormal_play}')) & !is.na(.data$receiver_player_name) ~ .data$receiver_player_name,
@@ -178,7 +178,7 @@ clean_pbp <- function(pbp, ...) {
                                 .data$desc != "*** play under review ***" &
                                 substr(.data$desc,1,8) != "Timeout " &
                                 .data$play_type %in% c("no_play","pass","run"),1,0)
-      ) %>%
+      ) |>
       #standardize team names (eg Chargers are always LAC even when they were playing in SD)
       dplyr::mutate_at(dplyr::vars(
         "posteam", "defteam", "home_team", "away_team", "timeout_team", "td_team", "return_team", "penalty_team",
@@ -188,36 +188,36 @@ clean_pbp <- function(pbp, ...) {
         "tackle_with_assist_1_team", "tackle_with_assist_2_team",
         "fumbled_1_team", "fumbled_2_team", "fumble_recovery_1_team", "fumble_recovery_2_team",
         "yrdln", "end_yard_line", "drive_start_yard_line", "drive_end_yard_line"
-      ), team_name_fn) %>%
+      ), team_name_fn) |>
 
       #Seb's stuff for fixing player ids
-      dplyr::mutate(index = 1 : dplyr::n()) %>% # to re-sort after all the group_bys
+      dplyr::mutate(index = 1 : dplyr::n()) |> # to re-sort after all the group_bys
 
-      dplyr::group_by(.data$passer, .data$posteam, .data$season) %>%
+      dplyr::group_by(.data$passer, .data$posteam, .data$season) |>
       dplyr::mutate(
         passer_id = dplyr::if_else(is.na(.data$passer), NA_character_, custom_mode(.data$passer_player_id))
-      ) %>%
+      ) |>
 
-      dplyr::group_by(.data$passer_id) %>%
-      dplyr::mutate(passer = dplyr::if_else(is.na(.data$passer_id), NA_character_, custom_mode(.data$passer))) %>%
+      dplyr::group_by(.data$passer_id) |>
+      dplyr::mutate(passer = dplyr::if_else(is.na(.data$passer_id), NA_character_, custom_mode(.data$passer))) |>
 
-      dplyr::group_by(.data$rusher, .data$posteam, .data$season) %>%
+      dplyr::group_by(.data$rusher, .data$posteam, .data$season) |>
       dplyr::mutate(
         rusher_id = dplyr::if_else(is.na(.data$rusher), NA_character_, custom_mode(.data$rusher_player_id))
-      ) %>%
+      ) |>
 
-      dplyr::group_by(.data$rusher_id) %>%
-      dplyr::mutate(rusher = dplyr::if_else(is.na(.data$rusher_id), NA_character_, custom_mode(.data$rusher))) %>%
+      dplyr::group_by(.data$rusher_id) |>
+      dplyr::mutate(rusher = dplyr::if_else(is.na(.data$rusher_id), NA_character_, custom_mode(.data$rusher))) |>
 
-      dplyr::group_by(.data$receiver, .data$posteam, .data$season) %>%
+      dplyr::group_by(.data$receiver, .data$posteam, .data$season) |>
       dplyr::mutate(
         receiver_id = dplyr::if_else(is.na(.data$receiver), NA_character_, custom_mode(.data$receiver_player_id))
-      ) %>%
+      ) |>
 
-      dplyr::group_by(.data$receiver_id) %>%
-      dplyr::mutate(receiver = dplyr::if_else(is.na(.data$receiver_id), NA_character_, custom_mode(.data$receiver))) %>%
+      dplyr::group_by(.data$receiver_id) |>
+      dplyr::mutate(receiver = dplyr::if_else(is.na(.data$receiver_id), NA_character_, custom_mode(.data$receiver))) |>
 
-      dplyr::ungroup() %>%
+      dplyr::ungroup() |>
       dplyr::mutate(
         # if there's an aborted snap and qb didn't get a pass off,
         # then charge it to whoever charged with the fumble
@@ -234,9 +234,9 @@ clean_pbp <- function(pbp, ...) {
         name = dplyr::if_else(!is.na(.data$passer), .data$passer, .data$rusher),
         jersey_number = dplyr::if_else(!is.na(.data$passer_jersey_number), .data$passer_jersey_number, .data$rusher_jersey_number),
         id = dplyr::if_else(!is.na(.data$passer_id), .data$passer_id, .data$rusher_id)
-      ) %>%
-      dplyr::arrange(.data$index) %>%
-      dplyr::select(-"index") %>%
+      ) |>
+      dplyr::arrange(.data$index) |>
+      dplyr::select(-"index") |>
       # add action player
       dplyr::mutate(
         fantasy_player_name = case_when(
@@ -264,11 +264,11 @@ clean_pbp <- function(pbp, ...) {
         out_of_bounds = dplyr::if_else(
           stringr::str_detect(.data$desc, "(ran ob)|(pushed ob)|(sacked ob)"), 1, 0
         )
-      ) %>%
-      dplyr::group_by(.data$game_id) %>%
+      ) |>
+      dplyr::group_by(.data$game_id) |>
       dplyr::mutate(
         home_opening_kickoff = dplyr::if_else(.data$home_team == dplyr::first(stats::na.omit(.data$posteam)), 1, 0)
-      ) %>%
+      ) |>
       dplyr::ungroup()
 
   }
@@ -340,10 +340,10 @@ add_qb_epa <- function(pbp, ...) {
     user_message("Nothing to do. Return passed data frame.", "info")
   } else {
     # drop existing values of clean_pbp
-    pbp <- pbp %>% dplyr::select(-tidyselect::any_of("qb_epa"))
+    pbp <- pbp |> dplyr::select(-dplyr::any_of("qb_epa"))
 
-    fumbles_df <- pbp %>%
-      dplyr::filter(.data$complete_pass == 1 & .data$fumble_lost == 1 & !is.na(.data$epa) & !is.na(.data$down)) %>%
+    fumbles_df <- pbp |>
+      dplyr::filter(.data$complete_pass == 1 & .data$fumble_lost == 1 & !is.na(.data$epa) & !is.na(.data$down)) |>
       dplyr::mutate(
         half_seconds_remaining = dplyr::if_else(
           .data$half_seconds_remaining <= 6,
@@ -377,7 +377,7 @@ add_qb_epa <- function(pbp, ...) {
         # fix yards to go for goal line (eg can't have 1st & 10 inside opponent 10 yard line)
         ydstogo = dplyr::if_else(.data$yardline_100 < .data$ydstogo, .data$yardline_100, .data$ydstogo),
         ep_old = .data$ep
-      ) %>%
+      ) |>
       dplyr::select(
         "game_id", "play_id",
         "season", "home_team", "posteam", "roof", "half_seconds_remaining",
@@ -387,16 +387,16 @@ add_qb_epa <- function(pbp, ...) {
       )
 
     if (nrow(fumbles_df) > 0) {
-      new_ep_df <- calculate_expected_points(fumbles_df) %>%
-        dplyr::mutate(ep = dplyr::if_else(.data$change == 1, -.data$ep, .data$ep), fixed_epa = .data$ep - .data$ep_old) %>%
+      new_ep_df <- calculate_expected_points(fumbles_df) |>
+        dplyr::mutate(ep = dplyr::if_else(.data$change == 1, -.data$ep, .data$ep), fixed_epa = .data$ep - .data$ep_old) |>
         dplyr::select("game_id", "play_id", "fixed_epa")
 
-      pbp <- pbp %>%
-        dplyr::left_join(new_ep_df, by = c("game_id", "play_id")) %>%
-        dplyr::mutate(qb_epa = dplyr::if_else(!is.na(.data$fixed_epa), .data$fixed_epa, .data$epa)) %>%
+      pbp <- pbp |>
+        dplyr::left_join(new_ep_df, by = c("game_id", "play_id")) |>
+        dplyr::mutate(qb_epa = dplyr::if_else(!is.na(.data$fixed_epa), .data$fixed_epa, .data$epa)) |>
         dplyr::select(-"fixed_epa")
     } else {
-      pbp <- pbp %>% dplyr::mutate(qb_epa = .data$epa)
+      pbp <- pbp |> dplyr::mutate(qb_epa = .data$epa)
     }
   }
 

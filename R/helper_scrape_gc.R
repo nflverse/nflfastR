@@ -29,7 +29,7 @@ get_pbp_gc <- function(gameId,
 
   game_json <- raw[[1]]
 
-  date_parse <- names(raw)[1] %>% stringr::str_extract(pattern = "[0-9]{8}")
+  date_parse <- names(raw)[1] |> stringr::str_extract(pattern = "[0-9]{8}")
   date_year <- stringr::str_sub(date_parse, 1, 4)
   date_month <- stringr::str_sub(date_parse, 5, 6)
   date_day <- stringr::str_sub(
@@ -60,7 +60,7 @@ get_pbp_gc <- function(gameId,
         rbind,
         drives[[x]]$plays
       ))[, c(1:11)]
-    ) %>% dplyr::mutate(play_id = names(drives[[x]]$plays), play_id = as.integer(.data$play_id))
+    ) |> dplyr::mutate(play_id = names(drives[[x]]$plays), play_id = as.integer(.data$play_id))
   }
   ))
 
@@ -72,17 +72,17 @@ get_pbp_gc <- function(gameId,
 
   # get df with 1 line per statId
   stats <- furrr::future_map_dfr(seq_along(plays$play_id), function(x) {
-    dplyr::bind_rows(plays[x, ]$players[[1]], .id = "player_id") %>%
+    dplyr::bind_rows(plays[x, ]$players[[1]], .id = "player_id") |>
       dplyr::mutate(play_id = plays[x, ]$play_id)
   }
-  ) %>%
+  ) |>
     dplyr::mutate(
       sequence = as.numeric(.data$sequence),
       statId = as.numeric(.data$statId),
       play_id = as.character(.data$play_id),
       yards = as.integer(.data$yards)
-    ) %>%
-    dplyr::arrange(.data$play_id, .data$sequence) %>%
+    ) |>
+    dplyr::arrange(.data$play_id, .data$sequence) |>
     dplyr::rename(
       playId = "play_id",
       teamAbbr = "clubcode",
@@ -92,15 +92,15 @@ get_pbp_gc <- function(gameId,
     )
 
   pbp_stats <- lapply(unique(stats$playId), sum_play_stats, stats)
-  pbp_stats <- data.table::rbindlist(pbp_stats) %>% tibble::as_tibble()
+  pbp_stats <- data.table::rbindlist(pbp_stats) |> tibble::as_tibble()
 
   # drive info
-  d <- tibble::tibble(drives) %>%
-    tidyr::unnest_wider(drives) %>%
-    # dplyr::select(-plays) %>%
-    tidyr::unnest_wider("start", names_sep = "_") %>%
-    tidyr::unnest_wider("end", names_sep = "_") %>%
-    dplyr::mutate(drive = 1:dplyr::n()) %>%
+  d <- tibble::tibble(drives) |>
+    tidyr::unnest_wider(drives) |>
+    # dplyr::select(-plays) |>
+    tidyr::unnest_wider("start", names_sep = "_") |>
+    tidyr::unnest_wider("end", names_sep = "_") |>
+    dplyr::mutate(drive = 1:dplyr::n()) |>
     dplyr::rename(
       drive_play_count = "numplays",
       drive_time_of_possession = "postime",
@@ -113,14 +113,14 @@ get_pbp_gc <- function(gameId,
       drive_game_clock_end = "end_time",
       drive_start_yard_line = "start_yrdln",
       drive_end_yard_line = "end_yrdln"
-    ) %>%
+    ) |>
     dplyr::mutate(
       drive_inside20 = dplyr::if_else(.data$drive_inside20, 1, 0),
       drive_how_ended_description = .data$drive_end_transition,
       drive_ended_with_score = dplyr::if_else(.data$drive_how_ended_description == "Touchdown" | .data$drive_how_ended_description == "Field Goal", 1, 0),
       drive_start_transition = dplyr::lag(.data$drive_how_ended_description, 1),
       drive_how_started_description = .data$drive_start_transition
-    ) %>%
+    ) |>
     dplyr::select(
       "drive", "drive_play_count", "drive_time_of_possession",
       "drive_first_downs", "drive_inside20", "drive_ended_with_score",
@@ -131,16 +131,16 @@ get_pbp_gc <- function(gameId,
       "drive_start_transition", "drive_how_started_description"
     )
 
-  combined <- plays %>%
-    dplyr::left_join(pbp_stats, by = "play_id") %>%
-    dplyr::mutate_if(is.logical, as.numeric) %>%
-    dplyr::mutate_if(is.integer, as.numeric) %>%
-    dplyr::select(-"players", -"note") %>%
+  combined <- plays |>
+    dplyr::left_join(pbp_stats, by = "play_id") |>
+    dplyr::mutate_if(is.logical, as.numeric) |>
+    dplyr::mutate_if(is.integer, as.numeric) |>
+    dplyr::select(-"players", -"note") |>
     #Weirdly formatted and missing anyway
-    dplyr::mutate(note = NA_character_) %>%
-    dplyr::rename(yardline = "yrdln", quarter = "qtr", play_description = "desc", yards_to_go = "ydstogo")  %>%
-    tidyr::unnest(cols = c("sp", "quarter", "down", "time", "yardline", "yards_to_go", "ydsnet", "posteam", "play_description", "note")) %>%
-    dplyr::left_join(d, by = "drive") %>%
+    dplyr::mutate(note = NA_character_) |>
+    dplyr::rename(yardline = "yrdln", quarter = "qtr", play_description = "desc", yards_to_go = "ydstogo")  |>
+    tidyr::unnest(cols = c("sp", "quarter", "down", "time", "yardline", "yards_to_go", "ydsnet", "posteam", "play_description", "note")) |>
+    dplyr::left_join(d, by = "drive") |>
     dplyr::mutate(
       posteam_id = .data$posteam,
       game_id = gameId,
@@ -211,19 +211,19 @@ get_pbp_gc <- function(gameId,
         .data$safety == 1 & .data$posteam == .data$away_team ~ .data$home_team,
         TRUE ~ NA_character_
       )
-    ) %>%
-    dplyr::group_by(.data$drive) %>%
+    ) |>
+    dplyr::group_by(.data$drive) |>
     dplyr::mutate(
       drive_play_id_started = min(.data$play_id, na.rm = TRUE),
       drive_play_seq_started = min(.data$play_id, na.rm = TRUE),
       drive_play_id_ended = max(.data$play_id, na.rm = TRUE),
       drive_play_seq_ended = max(.data$play_id, na.rm = TRUE)
-    ) %>%
+    ) |>
     dplyr::ungroup()
 
   # missing space in side of field breaks parser
   if (gameId %in% c('2000_01_CAR_WAS', '2000_02_NE_NYJ', '2000_03_ATL_CAR')) {
-    combined <- combined %>%
+    combined <- combined |>
       dplyr::mutate(
         yardline_number = case_when(
           .data$yardline %in% c("WAS20", "NYJ20", "ATL20") ~ 20,

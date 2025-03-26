@@ -12,7 +12,7 @@
 ##  0: everything else
 add_series_data <- function(pbp) {
   out <-
-    pbp %>%
+    pbp |>
     dplyr::mutate(
       old_posteam = .data$posteam,
       posteam = dplyr::case_when(
@@ -26,8 +26,8 @@ add_series_data <- function(pbp) {
           dplyr::lead(.data$own_kickoff_recovery == 1) ~ .data$defteam,
         TRUE ~ .data$posteam
       )
-    ) %>%
-    dplyr::group_by(.data$game_id, .data$game_half) %>%
+    ) |>
+    dplyr::group_by(.data$game_id, .data$game_half) |>
     dplyr::mutate(
       row = 1:dplyr::n(),
       new_series = dplyr::if_else(
@@ -43,9 +43,9 @@ add_series_data <- function(pbp) {
         1, 0
       ),
       new_series = dplyr::if_else(is.na(.data$new_series), 0, .data$new_series)
-    ) %>%
+    ) |>
     # now compute series number with cumsum (for the calculation NA are being relaced with 0)
-    dplyr::group_by(.data$game_id) %>%
+    dplyr::group_by(.data$game_id) |>
     dplyr::mutate(
       series = cumsum(.data$new_series),
       tmp_result = dplyr::case_when(
@@ -61,8 +61,8 @@ add_series_data <- function(pbp) {
         .data$qb_kneel == 1 ~ "QB kneel",
         stringr::str_detect(.data$desc, "(END QUARTER 2)|(END QUARTER 4)|(END GAME)") ~ "End of half"
       )
-    ) %>%
-    dplyr::group_by(.data$game_id, .data$series) %>%
+    ) |>
+    dplyr::group_by(.data$game_id, .data$series) |>
     dplyr::mutate(
       series_result =
         dplyr::if_else(
@@ -75,9 +75,9 @@ add_series_data <- function(pbp) {
       series_success = dplyr::if_else(
         .data$series_result %in% c("Touchdown", "First down"), 1, 0
       )
-    ) %>%
-    dplyr::ungroup() %>%
-    dplyr::mutate(posteam = .data$old_posteam) %>%
+    ) |>
+    dplyr::ungroup() |>
+    dplyr::mutate(posteam = .data$old_posteam) |>
     dplyr::select(-"row", -"tmp_result", -"new_series", -"old_posteam")
 
   user_message("added series variables", "done")
