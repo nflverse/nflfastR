@@ -13,7 +13,13 @@ with_dt <- requireNamespace("DT")
 ```
 
 ```{r eval = with_dt}
-DT::datatable(nflfastR::field_descriptions,options = list(scrollX = TRUE, pageLength = 25), filter = "top", rownames = FALSE)
+DT::datatable(
+  nflfastR::field_descriptions,
+  options = list(scrollX = TRUE, pageLength = 25),
+  filter = "top",
+  rownames = FALSE,
+  style = "bootstrap4"
+)
 ```
 
 ```{r eval = !with_dt}
