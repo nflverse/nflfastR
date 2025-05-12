@@ -96,7 +96,7 @@ get_preds <- function(pbp) {
   }
 
   preds <- as.data.frame(
-    matrix(stats::predict(fastrmodels::ep_model, as.matrix(pbp |> ep_model_select())), ncol=7, byrow=TRUE)
+    matrix(stats::predict(load_model("ep"), as.matrix(pbp |> ep_model_select())), ncol=7, byrow=TRUE)
   )
 
   colnames(preds) <- c("Touchdown","Opp_Touchdown","Field_Goal","Opp_Field_Goal",
@@ -109,7 +109,7 @@ get_preds <- function(pbp) {
 #for predict stage
 get_preds_wp <- function(pbp) {
 
-  preds <- stats::predict(fastrmodels::wp_model, as.matrix(pbp |> wp_model_select()))
+  preds <- stats::predict(load_model("wp"), as.matrix(pbp |> wp_model_select()))
 
   return(preds)
 }
@@ -118,7 +118,7 @@ get_preds_wp <- function(pbp) {
 #for predict stage
 get_preds_wp_spread <- function(pbp) {
 
-  preds <- stats::predict(fastrmodels::wp_model_spread, as.matrix(pbp |> wp_spread_model_select()))
+  preds <- stats::predict(load_model("wp_spread"), as.matrix(pbp |> wp_spread_model_select()))
 
   return(preds)
 }

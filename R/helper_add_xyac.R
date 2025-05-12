@@ -52,7 +52,7 @@ add_xyac <- function(pbp, ...) {
 
       xyac_vars <-
         stats::predict(
-          fastrmodels::xyac_model,
+          load_model("xyac"),
           as.matrix(passes |> xyac_model_select())
         ) |>
         tibble::as_tibble() |>
