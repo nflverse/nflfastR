@@ -13,9 +13,9 @@
 <link rel="manifest" href="../site.webmanifest">
 <script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Roboto-0.4.9/font.css" rel="stylesheet">
-<link href="../deps/Fira_Code-0.4.9/font.css" rel="stylesheet">
-<link href="../deps/Kanit-0.4.9/font.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Roboto-0.4.10/font.css" rel="stylesheet">
+<link href="../deps/Fira_Code-0.4.10/font.css" rel="stylesheet">
+<link href="../deps/Kanit-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.0.9005</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.0.9006</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -217,16 +217,16 @@ Normally, you would just type <code>str(data)</code>.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">data</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Rows: 47,258</span></span>
 <span><span class="co">#&gt; Columns: 10</span></span>
-<span><span class="co">#&gt; $ play_id      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 1, 36, 51, 79, 100, 121, 148, 185, 214, 239, 255, 277, 29…</span></span>
-<span><span class="co">#&gt; $ game_id      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "2019_01_ATL_MIN", "2019_01_ATL_MIN", "2019_01_ATL_MIN", …</span></span>
-<span><span class="co">#&gt; $ old_game_id  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "2019090804", "2019090804", "2019090804", "2019090804", "…</span></span>
-<span><span class="co">#&gt; $ home_team    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "MIN", "MIN", "MIN", "MIN", "MIN", "MIN", "MIN", "MIN", "…</span></span>
-<span><span class="co">#&gt; $ away_team    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "ATL", "ATL", "ATL", "ATL", "ATL", "ATL", "ATL", "ATL", "…</span></span>
-<span><span class="co">#&gt; $ season_type  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "REG", "REG", "REG", "REG", "REG", "REG", "REG", "REG", "…</span></span>
-<span><span class="co">#&gt; $ week         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …</span></span>
-<span><span class="co">#&gt; $ posteam      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #BB0000;">NA</span>, "ATL", "ATL", "ATL", "ATL", "ATL", "MIN", "MIN", "MIN…</span></span>
-<span><span class="co">#&gt; $ posteam_type <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #BB0000;">NA</span>, "away", "away", "away", "away", "away", "home", "home…</span></span>
-<span><span class="co">#&gt; $ defteam      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #BB0000;">NA</span>, "MIN", "MIN", "MIN", "MIN", "MIN", "ATL", "ATL", "ATL…</span></span></code></pre></div>
+<span><span class="co">#&gt; $ play_id      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 1<span style="color: #949494;">, </span>36<span style="color: #949494;">, </span>51<span style="color: #949494;">, </span>79<span style="color: #949494;">, </span>100<span style="color: #949494;">, </span>121<span style="color: #949494;">, </span>148<span style="color: #949494;">, </span>185<span style="color: #949494;">, </span>214<span style="color: #949494;">, </span>239<span style="color: #949494;">, </span>255<span style="color: #949494;">, </span>277<span style="color: #949494;">, </span>29…</span></span>
+<span><span class="co">#&gt; $ game_id      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "2019_01_ATL_MIN"<span style="color: #949494;">, </span>"2019_01_ATL_MIN"<span style="color: #949494;">, </span>"2019_01_ATL_MIN"<span style="color: #949494;">, </span>…</span></span>
+<span><span class="co">#&gt; $ old_game_id  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "2019090804"<span style="color: #949494;">, </span>"2019090804"<span style="color: #949494;">, </span>"2019090804"<span style="color: #949494;">, </span>"2019090804"<span style="color: #949494;">, </span>"…</span></span>
+<span><span class="co">#&gt; $ home_team    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "MIN"<span style="color: #949494;">, </span>"MIN"<span style="color: #949494;">, </span>"MIN"<span style="color: #949494;">, </span>"MIN"<span style="color: #949494;">, </span>"MIN"<span style="color: #949494;">, </span>"MIN"<span style="color: #949494;">, </span>"MIN"<span style="color: #949494;">, </span>"MIN"<span style="color: #949494;">, </span>"…</span></span>
+<span><span class="co">#&gt; $ away_team    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "ATL"<span style="color: #949494;">, </span>"ATL"<span style="color: #949494;">, </span>"ATL"<span style="color: #949494;">, </span>"ATL"<span style="color: #949494;">, </span>"ATL"<span style="color: #949494;">, </span>"ATL"<span style="color: #949494;">, </span>"ATL"<span style="color: #949494;">, </span>"ATL"<span style="color: #949494;">, </span>"…</span></span>
+<span><span class="co">#&gt; $ season_type  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "REG"<span style="color: #949494;">, </span>"REG"<span style="color: #949494;">, </span>"REG"<span style="color: #949494;">, </span>"REG"<span style="color: #949494;">, </span>"REG"<span style="color: #949494;">, </span>"REG"<span style="color: #949494;">, </span>"REG"<span style="color: #949494;">, </span>"REG"<span style="color: #949494;">, </span>"…</span></span>
+<span><span class="co">#&gt; $ week         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>…</span></span>
+<span><span class="co">#&gt; $ posteam      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #BB0000;">NA</span><span style="color: #949494;">, </span>"ATL"<span style="color: #949494;">, </span>"ATL"<span style="color: #949494;">, </span>"ATL"<span style="color: #949494;">, </span>"ATL"<span style="color: #949494;">, </span>"ATL"<span style="color: #949494;">, </span>"MIN"<span style="color: #949494;">, </span>"MIN"<span style="color: #949494;">, </span>"MIN…</span></span>
+<span><span class="co">#&gt; $ posteam_type <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #BB0000;">NA</span><span style="color: #949494;">, </span>"away"<span style="color: #949494;">, </span>"away"<span style="color: #949494;">, </span>"away"<span style="color: #949494;">, </span>"away"<span style="color: #949494;">, </span>"away"<span style="color: #949494;">, </span>"home"<span style="color: #949494;">, </span>"home…</span></span>
+<span><span class="co">#&gt; $ defteam      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #BB0000;">NA</span><span style="color: #949494;">, </span>"MIN"<span style="color: #949494;">, </span>"MIN"<span style="color: #949494;">, </span>"MIN"<span style="color: #949494;">, </span>"MIN"<span style="color: #949494;">, </span>"MIN"<span style="color: #949494;">, </span>"ATL"<span style="color: #949494;">, </span>"ATL"<span style="color: #949494;">, </span>"ATL…</span></span></code></pre></div>
 <p>Where again I’m only showing the first 10 columns. The usual command
 would be <code>glimpse(data)</code>.</p>
 </div>
@@ -678,7 +678,7 @@ already loaded the package, it’s ready to use.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://nflreadr.nflverse.com/reference/load_teams.html" class="external-link">load_teams</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse team graphics</span> ──────────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-03-31 15:09:04 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-05-12 13:52:32 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 16</span></span></span>
 <span><span class="co">#&gt;    team_abbr team_name      team_id team_nick team_conf team_division team_color</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span></span>
@@ -928,7 +928,7 @@ overwhelming).</p>
 <span><span class="co">#&gt;  $ stadium_id      : chr [1:6991] "ATL00" "CHI98" "CLE00" "GNB00" ...</span></span>
 <span><span class="co">#&gt;  $ stadium         : chr [1:6991] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...</span></span>
 <span><span class="co">#&gt;  - attr(*, "nflverse_type")= chr "games and schedules"</span></span>
-<span><span class="co">#&gt;  - attr(*, "nflverse_timestamp")= chr "2025-03-31 11:09:33 EDT"</span></span></code></pre></div>
+<span><span class="co">#&gt;  - attr(*, "nflverse_timestamp")= chr "2025-05-12 09:53:01 EDT"</span></span></code></pre></div>
 <p>To start, we want to create a dataframe where each row is a
 team-season observation, listing how many games they won. There are
 multiple ways to do this, but I’m going to just take the home and away
@@ -941,7 +941,7 @@ results and bind together. As an example, here’s what the
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>team <span class="op">=</span> <span class="va">home_team</span><span class="op">)</span></span>
 <span><span class="va">home</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-03-31 15:09:33 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-05-12 13:53:01 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 4</span></span></span>
 <span><span class="co">#&gt;   season  week team  result</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
@@ -960,7 +960,7 @@ results and bind together. As an example, here’s what the
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>result <span class="op">=</span> <span class="op">-</span><span class="va">result</span><span class="op">)</span></span>
 <span><span class="va">away</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-03-31 15:09:33 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-05-12 13:53:01 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 4</span></span></span>
 <span><span class="co">#&gt;   season  week team  result</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
@@ -985,7 +985,7 @@ the perspective of the home team. Now let’s make a columns called
 <span></span>
 <span><span class="va">results</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op">==</span> <span class="fl">2019</span> <span class="op">&amp;</span> <span class="va">team</span> <span class="op">==</span> <span class="st">'SEA'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-03-31 15:09:33 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-05-12 13:53:01 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 16 × 5</span></span></span>
 <span><span class="co">#&gt;    season  week team  result   win</span></span>
 <span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
@@ -1257,9 +1257,9 @@ too.</p>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> ARI     <span style="text-decoration: underline;">1</span>999     6       -<span style="color: #BB0000;">137</span>       -<span style="color: #BB0000;">0.226</span>      -<span style="color: #BB0000;">0.150</span>       -<span style="color: #BB0000;">0.033</span><span style="color: #BB0000; text-decoration: underline;">5</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ARI     <span style="text-decoration: underline;">2</span>000     3       -<span style="color: #BB0000;">233</span>       -<span style="color: #BB0000;">0.247</span>      -<span style="color: #BB0000;">0.069</span><span style="color: #BB0000; text-decoration: underline;">6</span>       0.015<span style="text-decoration: underline;">7</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> ARI     <span style="text-decoration: underline;">2</span>001     7        -<span style="color: #BB0000;">48</span>       -<span style="color: #BB0000;">0.179</span>       0.072<span style="text-decoration: underline;">7</span>      -<span style="color: #BB0000;">0.078</span><span style="color: #BB0000; text-decoration: underline;">3</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> ARI     <span style="text-decoration: underline;">2</span>001     7        -<span style="color: #BB0000;">48</span>       -<span style="color: #BB0000;">0.179</span>       0.072<span style="text-decoration: underline;">7</span>      -<span style="color: #BB0000;">0.077</span><span style="color: #BB0000; text-decoration: underline;">1</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> ARI     <span style="text-decoration: underline;">2</span>002     5       -<span style="color: #BB0000;">155</span>       -<span style="color: #BB0000;">0.160</span>      -<span style="color: #BB0000;">0.051</span><span style="color: #BB0000; text-decoration: underline;">7</span>      -<span style="color: #BB0000;">0.017</span><span style="color: #BB0000; text-decoration: underline;">5</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> ARI     <span style="text-decoration: underline;">2</span>003     4       -<span style="color: #BB0000;">227</span>       -<span style="color: #BB0000;">0.233</span>      -<span style="color: #BB0000;">0.113</span>       -<span style="color: #BB0000;">0.089</span><span style="color: #BB0000; text-decoration: underline;">0</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> ARI     <span style="text-decoration: underline;">2</span>003     4       -<span style="color: #BB0000;">227</span>       -<span style="color: #BB0000;">0.234</span>      -<span style="color: #BB0000;">0.112</span>       -<span style="color: #BB0000;">0.089</span><span style="color: #BB0000; text-decoration: underline;">0</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 6 more variables: def_pass_epa &lt;dbl&gt;, prior_off_rush_epa &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   prior_off_pass_epa &lt;dbl&gt;, prior_def_rush_epa &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   prior_def_pass_epa &lt;dbl&gt;, prior_point_diff &lt;int&gt;</span></span></span></code></pre></div>
@@ -1276,8 +1276,8 @@ with it.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                     wins point_diff off_rush_epa off_pass_epa def_rush_epa</span></span>
 <span><span class="co">#&gt; wins                1.00       0.92         0.43         0.70        -0.29</span></span>
-<span><span class="co">#&gt; point_diff          0.92       1.00         0.47         0.75        -0.34</span></span>
-<span><span class="co">#&gt; off_rush_epa        0.43       0.47         1.00         0.42         0.04</span></span>
+<span><span class="co">#&gt; point_diff          0.92       1.00         0.48         0.75        -0.34</span></span>
+<span><span class="co">#&gt; off_rush_epa        0.43       0.48         1.00         0.42         0.04</span></span>
 <span><span class="co">#&gt; off_pass_epa        0.70       0.75         0.42         1.00        -0.01</span></span>
 <span><span class="co">#&gt; def_rush_epa       -0.29      -0.34         0.04        -0.01         1.00</span></span>
 <span><span class="co">#&gt; def_pass_epa       -0.57      -0.62        -0.05        -0.10         0.31</span></span>
@@ -1616,7 +1616,7 @@ code</a>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.9000.</p>
 </div>
 
     </footer>
