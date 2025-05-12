@@ -30,7 +30,7 @@ add_xpass <- function(pbp, ...) {
     user_message("Computing xpass...", "todo")
 
     pred <- stats::predict(
-      fastrmodels::xpass_model,
+      load_model("xpass"),
       as.matrix(plays |> dplyr::select(-"valid_play"))
       ) |>
       tibble::as_tibble() |>

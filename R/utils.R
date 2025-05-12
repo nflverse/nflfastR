@@ -208,3 +208,24 @@ release_bullets <- function() {
     NULL
   )
 }
+
+load_model <- function(name){
+  model <- switch(name,
+    "ep" = fastrmodels::ep_model,
+    "cp" = fastrmodels::cp_model,
+    "wp" = fastrmodels::wp_model,
+    "wp_spread" = fastrmodels::wp_model_spread,
+    "fg" = fastrmodels::fg_model,
+    "xpass" = fastrmodels::xpass_model,
+    "xyac" = fastrmodels::xyac_model
+  )
+
+  # fastrmodels v1.0.3 introduced raw model vectors to make sure the models
+  # are compatible with future xgboost versions
+  out <- if (is.raw(model)) {
+    xgboost::xgb.load.raw(model)
+  } else {
+    model
+  }
+  out
+}

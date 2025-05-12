@@ -6,6 +6,7 @@
 - The function `calculate_standings()` has been deprecated. Please use `nflseedR::nfl_standings()` in nflseedR v2.0 instead. (#510)
 - nflfastR now requires R 4.1 to allow the package to use R's native pipe `|>` operator. This follows the [Tidyverse R version support rules](https://www.tidyverse.org/blog/2019/04/r-version-support/). (#511)
 - Fixed a bug where `calculate_stats()` incorrectly counted `fumbles`. (#514)
+- Compatibility improvements with xgboost.
 
 # nflfastR 5.0.0
 
