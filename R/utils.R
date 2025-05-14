@@ -204,7 +204,7 @@ release_bullets <- function() {
     '`devtools::check_mac_release()`',
     '`nflfastR:::my_rhub_check()`',
     '`pkgdown::check_pkgdown()`',
-    '`usethis::use_tidy_thanks()`',
+    '`nflfastR:::nflverse_thanks()`',
     NULL
   )
 }
@@ -278,4 +278,20 @@ rhub_check_platforms <- function(){
   )
   exclude <- c("rchk", "nosuggests", "valgrind")
   plts[!plts %in% exclude]
+}
+
+nflverse_thanks <- function(){
+  cli::cli_text("Run the following code and copy/paste its output to NEWS.md")
+
+  cli::cli_code(
+    '
+    contributors <- usethis::use_tidy_thanks()
+    paste(
+      "Thank you to",
+      glue::glue_collapse(
+        paste0("&#x0040;", contributors), sep = ", ", last = ", and "
+      ),
+      "for their questions, feedback, and contributions towards this release."
+    )'
+  )
 }
