@@ -105,6 +105,7 @@
 ## usethis namespace: start
 #' @import dplyr
 #' @import fastrmodels
+#' @importFrom nflreadr load_pbp load_player_stats load_schedules load_rosters nflverse_sitrep
 #' @importFrom data.table %between% %chin%
 #' @importFrom rlang .data := .env %||%
 # We have to import something from xgboost because it is listed as dependency to
@@ -112,3 +113,14 @@
 #' @importFrom xgboost getinfo
 ## usethis namespace: end
 NULL
+
+#' @export
+nflreadr::load_pbp
+#' @export
+nflreadr::load_player_stats
+#' @export
+nflreadr::load_schedules
+#' @export
+nflreadr::load_rosters
+#' @export
+nflreadr::nflverse_sitrep
