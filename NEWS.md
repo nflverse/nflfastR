@@ -8,6 +8,8 @@
 - Fixed a bug where `calculate_stats()` incorrectly counted `fumbles`. (#514)
 - Compatibility improvements with xgboost. (#517)
 
+Thank you to &#x0040;ak47twq, &#x0040;isaactpetersen, &#x0040;jacobakaye, &#x0040;johnpholden, &#x0040;marvin3FF, &#x0040;mrcaseb, and &#x0040;tanho63 for their questions, feedback, and contributions towards this release.
+
 # nflfastR 5.0.0
 
 ## Major Changes
@@ -36,8 +38,7 @@
 - The variable `penalty_type` now correctly lists the penalty "Kickoff Short of Landing Zone" introduced in the 2024 season. (#486)
 - Fixed a bug where `ep` was incorrect on PAT attempts preceded by a timeout and then a penalty (extremely rare). This bug also caused the variables `total_home_epa` and `total_away_epa` to be incorrect for all subsequent plays in the same game. (#493)
 
-Thank you to
-[&#x0040;ahmed-cheema](https://github.com/ahmed-cheema), [&#x0040;andrewtek](https://github.com/andrewtek), [&#x0040;guga31bb](https://github.com/guga31bb), [&#x0040;isaactpetersen](https://github.com/isaactpetersen), [&#x0040;JoeMarino2021](https://github.com/JoeMarino2021), [&#x0040;john-b-edwards](https://github.com/john-b-edwards), [&#x0040;marcusSasser](https://github.com/marcusSasser), [&#x0040;mlounsberry](https://github.com/mlounsberry), [&#x0040;morganandrew](https://github.com/morganandrew), [&#x0040;mrcaseb](https://github.com/mrcaseb), [&#x0040;mscoop16](https://github.com/mscoop16), [&#x0040;parsnipz](https://github.com/parsnipz), [&#x0040;rjthompson2](https://github.com/rjthompson2), and [&#x0040;Useight](https://github.com/Useight) for their questions, feedback, and contributions towards this release.
+Thank you to &#x0040;ahmed-cheema, &#x0040;andrewtek, &#x0040;guga31bb, &#x0040;isaactpetersen, &#x0040;JoeMarino2021, &#x0040;john-b-edwards, &#x0040;marcusSasser, &#x0040;mlounsberry, &#x0040;morganandrew, &#x0040;mrcaseb, &#x0040;mscoop16, &#x0040;parsnipz, &#x0040;rjthompson2, and &#x0040;Useight for their questions, feedback, and contributions towards this release.
 
 # nflfastR 4.6.1
 
@@ -45,7 +46,7 @@ Thank you to
 - Adjusted test behavior at CRAN's request. 
 
 Thank you to
-[&#x0040;andrewtek](https://github.com/andrewtek), [&#x0040;gregalvi86](https://github.com/gregalvi86), [&#x0040;Ic4ru5Wing](https://github.com/Ic4ru5Wing), [&#x0040;JoeMarino2021](https://github.com/JoeMarino2021), [&#x0040;jreddy1990](https://github.com/jreddy1990), [&#x0040;marvin3FF](https://github.com/marvin3FF), [&#x0040;mrcaseb](https://github.com/mrcaseb), [&#x0040;RicShern](https://github.com/RicShern), [&#x0040;SPNE](https://github.com/SPNE), and [&#x0040;trivialfis](https://github.com/trivialfis) for their questions, feedback, and contributions towards this release.
+&#x0040;andrewtek, &#x0040;gregalvi86, &#x0040;Ic4ru5Wing, &#x0040;JoeMarino2021, &#x0040;jreddy1990, &#x0040;marvin3FF, &#x0040;mrcaseb, &#x0040;RicShern, &#x0040;SPNE, and &#x0040;trivialfis for their questions, feedback, and contributions towards this release.
 
 # nflfastR 4.6.0
 
@@ -72,7 +73,7 @@ Thank you to
 - The variables `passer`, `receiver`, and `rusher` no more return `NA` on "abnormal" plays - like direct snaps, aborted snaps, laterals etc. - that resulted in a penalty. (#435) 
 
 Thank you to
-[&#x0040;903124](https://github.com/903124), [&#x0040;ak47twq](https://github.com/ak47twq), [&#x0040;andrewtek](https://github.com/andrewtek), [&#x0040;darkhark](https://github.com/darkhark), [&#x0040;dennisbrookner](https://github.com/dennisbrookner), [&#x0040;marvin3FF](https://github.com/marvin3FF), [&#x0040;mistakia](https://github.com/mistakia), [&#x0040;mrcaseb](https://github.com/mrcaseb), [&#x0040;nicholasmendoza22](https://github.com/nicholasmendoza22), [&#x0040;rickstarblazer](https://github.com/rickstarblazer), [&#x0040;RileyJohnson22](https://github.com/RileyJohnson22), and [&#x0040;tanho63](https://github.com/tanho63) for their questions, feedback, and contributions towards this release.
+&#x0040;903124, &#x0040;ak47twq, &#x0040;andrewtek, &#x0040;darkhark, &#x0040;dennisbrookner, &#x0040;marvin3FF, &#x0040;mistakia, &#x0040;mrcaseb, &#x0040;nicholasmendoza22, &#x0040;rickstarblazer, &#x0040;RileyJohnson22, and &#x0040;tanho63 for their questions, feedback, and contributions towards this release.
 
 # nflfastR 4.5.1
 
