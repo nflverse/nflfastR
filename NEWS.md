@@ -1,3 +1,7 @@
+# nflfastR (development version)
+
+- Bump required fastrmodels version to 2.0 for better compatibility with xgboost.
+
 # nflfastR 5.1.0
 
 - The function `calculate_standings()` has been deprecated. Please use `nflseedR::nfl_standings()` in nflseedR v2.0 instead. (#510)
