@@ -1,6 +1,7 @@
 # nflfastR (development version)
 
 - Bump required fastrmodels version to 2.0 for better compatibility with xgboost.
+- Fixed an issue with duplicated play IDs in some 2000 games. (#521)
 
 # nflfastR 5.1.0
 
