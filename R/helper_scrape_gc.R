@@ -18,6 +18,7 @@ get_pbp_gc <- function(gameId,
   # gameId = '2009_18_NYJ_CIN'
   # gameId = '2007_01_ARI_SF'
   # gameId = '1999_01_BAL_STL'
+  # gameId <- "2000_03_PIT_CLE"
 
   if (gameId %in% c("2000_03_SD_KC", "2000_06_BUF_MIA", "1999_01_BAL_STL")) {
     cli::cli_abort("You asked for GameID {.val {gameId}} is broken. Skipping.")
@@ -60,9 +61,17 @@ get_pbp_gc <- function(gameId,
         rbind,
         drives[[x]]$plays
       ))[, c(1:11)]
-    ) |> dplyr::mutate(play_id = names(drives[[x]]$plays), play_id = as.integer(.data$play_id))
+    ) |> dplyr::mutate(play_id = names(drives[[x]]$plays), play_id = as.numeric(.data$play_id))
   }
   ))
+
+  # some 2000 games have play_ids like 2767.375 and 2767.703 which results in
+  # duplicates that can be fixed. We save play IDs as numeric first and then
+  # check whether or not there are duplicates when we convert them to integer
+  # If there are duplicates, we multiply all play IDs by 10 and check again
+  # If there are still duplicates, we multiply all play IDs by 100 and so on
+  # As soon as play IDs are unique, we save them as integer and go on
+  plays$play_id <- uniquify_ids(plays$play_id)
 
   plays$quarter_end <- dplyr::if_else(
     stringr::str_detect(plays$desc, "(END QUARTER)|(END GAME)|(End of quarter)"), 1, 0

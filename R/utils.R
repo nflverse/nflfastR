@@ -70,6 +70,23 @@ maybe_valid <- function(id) {
   )
 }
 
+# some 2000 games have play_ids like 2767.375 and 2767.703 which results in
+# duplicates that can be fixed. We save play IDs as numeric first and then
+# check whether or not there are duplicates when we convert them to integer
+# If there are duplicates, we multiply all play IDs by 10 and check again
+# If there are still duplicates, we multiply all play IDs by 100 and so on
+# As soon as play IDs are unique, we save them as integer and go on
+uniquify_ids <- function(ids){
+  ids <- as.numeric(ids)
+  int_ids <- as.integer(ids)
+  mult <- 10
+  while (anyDuplicated(int_ids) > 0) {
+    int_ids <- as.integer(ids * mult)
+    mult <- mult * 10
+  }
+  int_ids
+}
+
 # check if a package is installed
 is_installed <- function(pkg) requireNamespace(pkg, quietly = TRUE)
 

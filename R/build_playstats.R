@@ -29,13 +29,16 @@ build_playstats <- function(seasons = nflreadr::most_recent_season(),
         drives <- raw_data[[1]][["drives"]] |>
           purrr::keep(is.list)
         out <- tibble::tibble(d = drives) |>
-          tidyr::unnest_wider(.data$d) |>
-          tidyr::unnest_longer(.data$plays) |>
-          tidyr::unnest_wider(.data$plays, names_sep = "_") |>
+          tidyr::unnest_wider("d") |>
+          tidyr::unnest_longer("plays") |>
+          tidyr::unnest_wider("plays", names_sep = "_") |>
           dplyr::select("playId" = "plays_id", "playStats" = "plays_players") |>
-          tidyr::unnest_longer(.data$playStats) |>
-          tidyr::unnest_longer(.data$playStats) |>
-          tidyr::unnest_wider(.data$playStats) |>
+          dplyr::mutate(
+            playId = uniquify_ids(.data$playId)
+          ) |>
+          tidyr::unnest_longer("playStats") |>
+          tidyr::unnest_longer("playStats") |>
+          tidyr::unnest_wider("playStats") |>
           dplyr::mutate(
             playId = as.integer(.data$playId),
             statId = as.integer(.data$statId),
@@ -49,12 +52,12 @@ build_playstats <- function(seasons = nflreadr::most_recent_season(),
           ) |>
           tidyr::nest(
             playStats = c(
-              .data$statId,
-              .data$yards,
-              .data$playerName,
-              .data$team.id,
-              .data$team.abbreviation,
-              .data$gsis.Player.id
+              "statId",
+              "yards",
+              "playerName",
+              "team.id",
+              "team.abbreviation",
+              "gsis.Player.id"
             )
           )
       } else {
