@@ -8,13 +8,14 @@ calculate_stats(
   seasons = nflreadr::most_recent_season(),
   summary_level = c("season", "week"),
   stat_type = c("player", "team"),
-  season_type = c("REG", "POST", "REG+POST")
+  season_type = c("REG", "POST", "REG+POST"),
+  pbp = NULL
 )
 }
 \arguments{
 \item{seasons}{A numeric vector of 4-digit years associated with given NFL
 seasons - defaults to latest season. If set to TRUE, returns all available
-data since 1999.}
+data since 1999. Ignored if argument \code{pbp} is not \code{NULL}.}
 
 \item{summary_level}{Summarize stats by \code{"season"} or \code{"week"}.}
 
@@ -23,6 +24,20 @@ data since 1999.}
 \item{season_type}{One of \code{"REG"}, \code{"POST"}, or \code{"REG+POST"}. Filters
 data to regular season ("REG"), post season ("POST") or keeps all data.
 Only applied if \code{summary_level} == \code{"season"}.}
+
+\item{pbp}{This argument allows passing a subset of nflverse play-by-play
+data, created with \code{\link[=build_nflfastR_pbp]{build_nflfastR_pbp()}} or loaded with \code{\link[=load_pbp]{load_pbp()}}.
+Stats are then calculated based on the \code{game_id}s and \code{play_id}s in this
+subset of play-by-play data, rather then using the seasons specified in the
+\code{seasons} argument. The function will error if required variables are
+missing from the subset, but lists which variables are missing.
+If \code{pbp = NULL} (the default), all available games and plays from the
+\code{seasons} argument are used to calculate stats.
+Please use this responsibly, because the output is structurally identical
+to full seasons, even if plays have been filtered out. It may then appear
+as if the stats are incorrect. If \code{pbp} is not \code{NULL}, the function will add
+the attribute \code{"custom_pbp" = TRUE} to the function output to help identify
+stats that are possibly based on play-by-play subsets.}
 }
 \value{
 A tibble of player/team stats summarized by season/week.

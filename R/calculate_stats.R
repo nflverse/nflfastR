@@ -8,12 +8,25 @@
 #'
 #' @param seasons A numeric vector of 4-digit years associated with given NFL
 #'  seasons - defaults to latest season. If set to TRUE, returns all available
-#'  data since 1999.
+#'  data since 1999. Ignored if argument `pbp` is not `NULL`.
 #' @param summary_level Summarize stats by `"season"` or `"week"`.
 #' @param stat_type Calculate `"player"` level stats or `"team"` level stats.
 #' @param season_type One of `"REG"`, `"POST"`, or `"REG+POST"`. Filters
 #'  data to regular season ("REG"), post season ("POST") or keeps all data.
 #'  Only applied if `summary_level` == `"season"`.
+#' @param pbp This argument allows passing a subset of nflverse play-by-play
+#'  data, created with [build_nflfastR_pbp()] or loaded with [load_pbp()].
+#'  Stats are then calculated based on the `game_id`s and `play_id`s in this
+#'  subset of play-by-play data, rather then using the seasons specified in the
+#'  `seasons` argument. The function will error if required variables are
+#'  missing from the subset, but lists which variables are missing.
+#'  If `pbp = NULL` (the default), all available games and plays from the
+#'  `seasons` argument are used to calculate stats.
+#'  Please use this responsibly, because the output is structurally identical
+#'  to full seasons, even if plays have been filtered out. It may then appear
+#'  as if the stats are incorrect. If `pbp` is not `NULL`, the function will add
+#'  the attribute `"custom_pbp" = TRUE` to the function output to help identify
+#'  stats that are possibly based on play-by-play subsets.
 #'
 #' @return A tibble of player/team stats summarized by season/week.
 #' @seealso [nfl_stats_variables] for a description of all variables.
@@ -31,13 +44,21 @@
 calculate_stats <- function(seasons = nflreadr::most_recent_season(),
                             summary_level = c("season", "week"),
                             stat_type = c("player", "team"),
-                            season_type = c("REG", "POST", "REG+POST")){
+                            season_type = c("REG", "POST", "REG+POST"),
+                            pbp = NULL){
 
   summary_level <- rlang::arg_match(summary_level)
   stat_type <- rlang::arg_match(stat_type)
   season_type <- rlang::arg_match(season_type)
+  custom_pbp <- !is.null(pbp)
 
-  pbp <- nflreadr::load_pbp(seasons = seasons)
+  if (!custom_pbp) pbp <- nflreadr::load_pbp(seasons = seasons)
+
+  # make sure (custom) pbp includes all required variables.
+  # stats_validate_pbp will return all unique seasons in pbp.
+  # We'll use this to download playstats for all seasons listed in pbp.
+  seasons_in_pbp <- stats_validate_pbp(pbp)
+
   if (season_type %in% c("REG", "POST") && summary_level == "season") {
     pbp <- dplyr::filter(pbp, .data$season_type == .env$season_type)
     if (nrow(pbp) == 0){
@@ -104,10 +125,10 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
   # team_stats = all stat IDs of one team in a single play
   # we need those to identify things like fumbles depending on playtype or
   # first downs depending on playtype
-  playstats <- load_playstats(seasons = seasons) |>
-    # if season_type is REG or POST, we filter pbp.
-    # That's why we have to filter playstats as well
-    dplyr::filter(.data$game_id %in% pbp$game_id) |>
+  playstats <- load_playstats(seasons = seasons_in_pbp) |>
+    # apply filtering on play stats so that it matches only plays included
+    # in pbp in case it was provided manually
+    dplyr::semi_join(pbp, by = c("game_id", "play_id")) |>
     dplyr::rename("player_id" = "gsis_player_id", "team" = "team_abbr") |>
     dplyr::group_by(.data$season, .data$week, .data$play_id, .data$player_id) |>
     dplyr::mutate(
@@ -448,6 +469,8 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       )
   }
 
+  if (custom_pbp) attr(stats, "custom_pbp") <- TRUE
+
   stats
 }
 
@@ -504,4 +527,25 @@ td_ids <- function(){
     # 56, 58, 60, 62, # 56-62 are separately counted in fumble_recovery_tds
     64, 108
   )
+}
+
+stats_validate_pbp <- function(pbp) {
+  required_names <- c(
+    "season", "game_id", "play_id", "posteam", "defteam", "special",
+    "season_type", "away_score", "home_score", "field_goal_attempt",
+    "fixed_drive", "score_differential", "play_type", "week",
+    "passer_player_id", "qb_epa", "cpoe", "rusher_player_id", "epa",
+    "receiver_player_id"
+  )
+  available_names <- names(pbp)
+  missing <- required_names[!required_names %in% available_names]
+  if (length(missing) > 0) {
+    cli::cli_abort(
+      "You have passed custom pbp to the argument {.arg pbp} but \\
+      it is missing the following required variable{?s}: {.val {missing}}"
+    )
+  }
+  unique(pbp$season) |>
+    stats::na.omit() |>
+    as.vector()
 }
