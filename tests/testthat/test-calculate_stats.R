@@ -37,3 +37,25 @@ test_that("calculate_stats works", {
   expect_snapshot_value(names_and_types_s4, style = "json2", variant = "stats")
   expect_snapshot_value(names_and_types_s5, style = "json2", variant = "stats")
 })
+
+test_that("calculate_stats works with pbp subsets", {
+  skip_on_cran()
+  skip_if_offline("github.com")
+
+  pbp <- load_pbp(2024) |>
+    dplyr::filter(week <= 2, grepl("LAC", game_id))
+  s <- calculate_stats(summary_level = "week", stat_type = "player", pbp = pbp)
+
+  # Weak row number test
+  expect_lt(nrow(s), 130)
+
+  # week is filtered to <= 2 so stats should return only those weeks
+  expect_in(unique(s$week), 1:2)
+
+  # drop some required columns
+  pbp_wrong <- pbp |> dplyr::mutate(qb_epa = NULL, play_type = NULL)
+  expect_error(
+    calculate_stats(pbp = pbp_wrong),
+    regexp = 'missing the following required variables: "play_type" and "qb_epa"'
+  )
+})
