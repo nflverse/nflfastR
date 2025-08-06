@@ -59,6 +59,10 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
   # We'll use this to download playstats for all seasons listed in pbp.
   seasons_in_pbp <- stats_validate_pbp(pbp)
 
+  # we don't want groups to mess up something or slow us down.
+  # this is only relevant if a user supplies grouped pbp data
+  pbp <- dplyr::ungroup(pbp)
+
   if (season_type %in% c("REG", "POST") && summary_level == "season") {
     pbp <- dplyr::filter(pbp, .data$season_type == .env$season_type)
     if (nrow(pbp) == 0){
