@@ -51,18 +51,18 @@
 #' "defteam_timeouts_remaining" = 3
 #' )
 #'
-#' nflfastR::calculate_expected_points(data) %>%
+#' nflfastR::calculate_expected_points(data) |>
 #'   dplyr::select(season, yardline_100, td_prob, ep)
 #' })
 #' }
 calculate_expected_points <- function(pbp_data) {
 
    # drop existing values of ep and the probs before making new ones
-  pbp_data <- pbp_data %>% dplyr::select(-tidyselect::any_of(drop.cols))
+  pbp_data <- pbp_data |> dplyr::select(-dplyr::any_of(drop.cols))
 
   suppressWarnings(
-    model_data <- pbp_data %>%
-      make_model_mutations() %>%
+    model_data <- pbp_data |>
+      make_model_mutations() |>
       ep_model_select()
   )
 
@@ -75,7 +75,7 @@ calculate_expected_points <- function(pbp_data) {
     "safety_prob", "opp_safety_prob", "no_score_prob"
   )
 
-  preds <- preds %>%
+  preds <- preds |>
     dplyr::mutate(
       ep =
         (-3 * .data$opp_fg_prob) +
@@ -84,7 +84,7 @@ calculate_expected_points <- function(pbp_data) {
         (3 * .data$fg_prob) +
         (2 * .data$safety_prob) +
         (7 * .data$td_prob)
-    ) %>%
+    ) |>
     dplyr::bind_cols(pbp_data)
 
   return(preds)
@@ -150,17 +150,17 @@ drop.cols <- c(
 #' "defteam_timeouts_remaining" = 3
 #' )
 #'
-#' nflfastR::calculate_win_probability(data) %>%
+#' nflfastR::calculate_win_probability(data) |>
 #'   dplyr::select(spread_line, wp, vegas_wp)
 #' })
 #' }
 calculate_win_probability <- function(pbp_data) {
 
   # drop existing values of ep and the probs before making new ones
-  pbp_data <- pbp_data %>% dplyr::select(-tidyselect::any_of(drop.cols.wp))
+  pbp_data <- pbp_data |> dplyr::select(-dplyr::any_of(drop.cols.wp))
 
   suppressWarnings(
-    model_data <- pbp_data %>%
+    model_data <- pbp_data |>
       dplyr::mutate(
         home = dplyr::if_else(.data$posteam == .data$home_team, 1, 0),
         posteam_spread = dplyr::if_else(.data$home == 1, .data$spread_line, -1 * .data$spread_line),
@@ -170,11 +170,11 @@ calculate_win_probability <- function(pbp_data) {
       )
   )
 
-  wp <- get_preds_wp(model_data) %>%
-    tibble::as_tibble() %>%
+  wp <- get_preds_wp(model_data) |>
+    tibble::as_tibble() |>
     dplyr::rename(wp = "value")
-  wp_spread <- get_preds_wp_spread(model_data) %>%
-    tibble::as_tibble() %>%
+  wp_spread <- get_preds_wp_spread(model_data) |>
+    tibble::as_tibble() |>
     dplyr::rename(vegas_wp = "value")
 
   preds <- dplyr::bind_cols(

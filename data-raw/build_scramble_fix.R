@@ -1,6 +1,6 @@
 library(tidyverse)
 
-pbp <- nflfastR::load_pbp(1999 : 2005) %>%
+pbp <- nflfastR::load_pbp(1999 : 2005) |>
   # plays that could plausibly be scramble
   filter(
     !is.na(rusher_player_id) | penalty == 1,
@@ -19,9 +19,9 @@ pbp <- nflfastR::load_pbp(1999 : 2005) %>%
 
 # Thank you to Aaron Schatz and Football Outsiders
 # For the charting data to fix scrambles in 2005
-s <- readxl::read_xlsx("data-raw/scrambles_2005.xlsx") %>%
+s <- readxl::read_xlsx("data-raw/scrambles_2005.xlsx") |>
   as_tibble() |>
-  janitor::clean_names() %>%
+  janitor::clean_names() |>
   select(
     season = year, week, qtr, away_team = away, home_team = home, posteam = offense, down, ydstogo = togo, date_time = time
   )
@@ -31,7 +31,7 @@ s <- readxl::read_xlsx("data-raw/scrambles_2005.xlsx") %>%
 s2 <- readxl::read_xlsx("data-raw/Scrambles 1999-2004 UPDATE for NFLfastR.xlsx", sheet = 1) |>
   as_tibble() |>
   janitor::clean_names() |>
-  filter(type %in% c("scramble", "assume scramble")) %>%
+  filter(type %in% c("scramble", "assume scramble")) |>
   select(
     season = year, week, qtr, away_team = away, home_team = home, posteam = offense, down, ydstogo = togo, date_time = time, yards_gained = yards
   )
@@ -42,43 +42,43 @@ s3 <- readxl::read_xlsx("data-raw/Scrambles.1999-2003.FURTHER.UPDATE.for.NFLfast
   janitor::clean_names() |>
   select(
     season = year, week, qtr, away_team = away, home_team = home, posteam = offense, down, ydstogo = togo, date_time = time, yards_gained = yards
-  ) %>%
+  ) |>
   mutate(
     time = paste0(
       formatC(lubridate::hour(date_time), width = 2, flag = "0"),
       ":",
       formatC(lubridate::minute(date_time), width = 2, flag = "0")
     )
-  ) %>%
-  select(-date_time) %>%
-  mutate_at(vars(home_team, away_team, posteam), nflfastR:::team_name_fn) %>%
+  ) |>
+  select(-date_time) |>
+  mutate_at(vars(home_team, away_team, posteam), nflfastR:::team_name_fn) |>
   dplyr::left_join(
     pbp,
     by = c("week", "away_team", "home_team", "posteam", "qtr", "down", "ydstogo", "time", "season")
-  ) %>%
+  ) |>
   mutate(no_scramble_id = paste0(game_id, "_", play_id))
 
 dat <- bind_rows(
   s2,
   s
-) %>%
+) |>
   mutate(
     time = paste0(
       formatC(lubridate::hour(date_time), width = 2, flag = "0"),
       ":",
       formatC(lubridate::minute(date_time), width = 2, flag = "0")
     )
-  ) %>%
-  select(-date_time) %>%
+  ) |>
+  select(-date_time) |>
   mutate_at(vars(home_team, away_team, posteam), nflfastR:::team_name_fn)
 
-d <- dat %>%
+d <- dat |>
   dplyr::left_join(
     pbp,
     by = c("week", "away_team", "home_team", "posteam", "qtr", "down", "ydstogo", "time", "season")
-  ) %>%
-  mutate(scramble_id = paste0(game_id, "_", play_id)) %>%
-  filter(scramble_id != "2005_09_CIN_BAL_1725") %>%
+  ) |>
+  mutate(scramble_id = paste0(game_id, "_", play_id)) |>
+  filter(scramble_id != "2005_09_CIN_BAL_1725") |>
   filter(!scramble_id %in% s3$no_scramble_id)
 
 # number non-matched by season

@@ -55,32 +55,32 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
 
   # defensive stats require knowledge of which team is on defense
   # special teams stats require knowledge of which plays were special teams plays
-  playinfo <- pbp %>%
-    dplyr::group_by(.data$game_id, .data$play_id) %>%
+  playinfo <- pbp |>
+    dplyr::group_by(.data$game_id, .data$play_id) |>
     dplyr::summarise(
       off = .data$posteam,
       def = .data$defteam,
       special = as.integer(.data$special == 1)
-    ) %>%
-    dplyr::ungroup() %>%
+    ) |>
+    dplyr::ungroup() |>
     dplyr::mutate_at(
       .vars = dplyr::vars("off", "def"),
       .funs = team_name_fn
     )
 
-  season_type_from_pbp <- pbp %>%
-    dplyr::select("game_id", "season_type") %>%
+  season_type_from_pbp <- pbp |>
+    dplyr::select("game_id", "season_type") |>
     dplyr::distinct()
-  s_type_vctr <- season_type_from_pbp$season_type %>%
+  s_type_vctr <- season_type_from_pbp$season_type |>
     rlang::set_names(season_type_from_pbp$game_id)
 
-  gwfg_attempts_from_pbp <- pbp %>%
+  gwfg_attempts_from_pbp <- pbp |>
     dplyr::mutate(
       # final_posteam_score = data.table::fifelse(.data$posteam_type == "home", .data$home_score, .data$away_score),
       final_defteam_score = data.table::fifelse(.data$posteam_type == "home", .data$away_score, .data$home_score),
       identifier = paste(.data$game_id, .data$play_id, sep = "_")
-    ) %>%
-    dplyr::group_by(.data$game_id, .data$posteam) %>%
+    ) |>
+    dplyr::group_by(.data$game_id, .data$posteam) |>
     dplyr::mutate(
       # A game winning field goal attempt is
       # - a field goal attempt,
@@ -94,13 +94,13 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
           .data$defteam_score == .data$final_defteam_score ~ 1L,
         TRUE ~ 0L
       )
-    ) %>%
-    dplyr::ungroup() %>%
+    ) |>
+    dplyr::ungroup() |>
     dplyr::filter(
       is_gwfg_attempt == 1L
-    ) %>%
+    ) |>
     dplyr::select("identifier", "is_gwfg_attempt")
-  gwfg_vctr <- gwfg_attempts_from_pbp$is_gwfg_attempt %>%
+  gwfg_vctr <- gwfg_attempts_from_pbp$is_gwfg_attempt |>
     rlang::set_names(gwfg_attempts_from_pbp$identifier)
 
   # load_playstats defined below
@@ -108,39 +108,39 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
   # team_stats = all stat IDs of one team in a single play
   # we need those to identify things like fumbles depending on playtype or
   # first downs depending on playtype
-  playstats <- load_playstats(seasons = seasons) %>%
+  playstats <- load_playstats(seasons = seasons) |>
     # apply filtering on play stats so that it matches pbp, e.g.
     # - game filters for REG/POST
     # - only plays included in pbp in case it was provided manually
-    dplyr::semi_join(pbp, by = c("game_id", "play_id")) %>%
-    dplyr::rename("player_id" = "gsis_player_id", "team" = "team_abbr") %>%
-    dplyr::group_by(.data$season, .data$week, .data$play_id, .data$player_id) %>%
+    dplyr::semi_join(pbp, by = c("game_id", "play_id")) |>
+    dplyr::rename("player_id" = "gsis_player_id", "team" = "team_abbr") |>
+    dplyr::group_by(.data$season, .data$week, .data$play_id, .data$player_id) |>
     dplyr::mutate(
       # we append a collapse separator to the string in order to search for matches
       # including the separator to avoid 1 matching 10
       more_stats = paste0(paste(stat_id, collapse = ";"), ";")
-    ) %>%
-    dplyr::group_by(.data$season, .data$week, .data$play_id, .data$team) %>%
+    ) |>
+    dplyr::group_by(.data$season, .data$week, .data$play_id, .data$team) |>
     dplyr::mutate(
       # we append a collapse separator to the string in order to search for matches
       # including the separator to avoid 1 matching 10
       team_stats = paste0(paste(stat_id, collapse = ";"), ";"),
       team_play_air_yards = sum((stat_id %in% 111:112) * yards)
-    ) %>%
+    ) |>
     # compute team targets and team air yards for calculation of target share
     # and air yard share. Since it's relative, we need to be careful with the groups
     # depending on summary level
     dplyr::group_by(!!!rlang::data_syms(
       if (summary_level == "season") c("season", "team") else c("season", "week", "team")
-    )) %>%
+    )) |>
     dplyr::mutate(
       team_targets = sum(stat_id == 115),
       team_air_yards = sum((stat_id %in% 111:112) * yards)
-    ) %>%
-    dplyr::ungroup() %>%
+    ) |>
+    dplyr::ungroup() |>
     dplyr::left_join(
       playinfo, by = c("game_id", "play_id")
-    ) %>%
+    ) |>
     dplyr::mutate(
       season_type = unname(s_type_vctr[.data$game_id]),
       is_gwfg_attempt = unname(gwfg_vctr[paste(.data$game_id, .data$play_id, sep = "_")]) %ifna% 0L
@@ -168,46 +168,46 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
   # we want passing epa, rushing epa, and receiving epa
   # since these depend on different player id variables and filters,
   # we create separate dfs for these stats
-  passing_stats_from_pbp <- pbp %>%
-    dplyr::filter(.data$play_type %in% c("pass", "qb_spike")) %>%
+  passing_stats_from_pbp <- pbp |>
+    dplyr::filter(.data$play_type %in% c("pass", "qb_spike")) |>
     dplyr::select(
       "season", "week", "team" = "posteam",
       "player_id" = "passer_player_id", "qb_epa", "cpoe"
-    ) %>%
-    dplyr::group_by(!!!grp_vars) %>%
+    ) |>
+    dplyr::group_by(!!!grp_vars) |>
     dplyr::summarise(
       passing_epa = sum(.data$qb_epa, na.rm = TRUE),
       # mean will return NaN if all values are NA, because we remove NA
       passing_cpoe = if (any(!is.na(.data$cpoe))) mean(.data$cpoe, na.rm = TRUE) else NA_real_
-    ) %>%
+    ) |>
     dplyr::ungroup()
 
-  rushing_stats_from_pbp <- pbp %>%
-    dplyr::filter(.data$play_type %in% c("run", "qb_kneel")) %>%
+  rushing_stats_from_pbp <- pbp |>
+    dplyr::filter(.data$play_type %in% c("run", "qb_kneel")) |>
     dplyr::select(
       "season", "week", "team" = "posteam",
       "player_id" = "rusher_player_id", "epa"
-    ) %>%
-    dplyr::group_by(!!!grp_vars) %>%
+    ) |>
+    dplyr::group_by(!!!grp_vars) |>
     dplyr::summarise(
       rushing_epa = sum(.data$epa, na.rm = TRUE)
-    ) %>%
+    ) |>
     dplyr::ungroup()
 
-  receiving_stats_from_pbp <- pbp %>%
-    dplyr::filter(!is.na(.data$receiver_player_id)) %>%
+  receiving_stats_from_pbp <- pbp |>
+    dplyr::filter(!is.na(.data$receiver_player_id)) |>
     dplyr::select(
       "season", "week", "team" = "posteam",
       "player_id" = "receiver_player_id", "epa"
-    ) %>%
-    dplyr::group_by(!!!grp_vars) %>%
+    ) |>
+    dplyr::group_by(!!!grp_vars) |>
     dplyr::summarise(
       receiving_epa = sum(.data$epa, na.rm = TRUE)
-    ) %>%
+    ) |>
     dplyr::ungroup()
 
-  stats <- playstats %>%
-    dplyr::group_by(!!!grp_vars) %>%
+  stats <- playstats |>
+    dplyr::group_by(!!!grp_vars) |>
     dplyr::summarise(
       player_name = if (.env$stat_type == "player") custom_mode(.data$player_name, na.rm = TRUE) else NULL,
       # Season Type #####################
@@ -371,16 +371,16 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       gwfg_blocked = sum((stat_id == 71) * is_gwfg_attempt),
       gwfg_distance = if (.env$summary_level == "week") sum((stat_id %in% 69:71) * is_gwfg_attempt * yards) else NULL,
       gwfg_distance_list = if (.env$summary_level == "season") fg_list(stat_id, yards, collapse_id = 69:71, gwfg = is_gwfg_attempt) else NULL,
-    ) %>%
-    dplyr::ungroup() %>%
+    ) |>
+    dplyr::ungroup() |>
     dplyr::mutate_if(
       .predicate = is.character,
       .funs = ~ dplyr::na_if(.x, "")
-    ) %>%
+    ) |>
     # Join PBP Stats #####################
-    dplyr::left_join(passing_stats_from_pbp,   by = grp_vctr) %>%
-    dplyr::left_join(rushing_stats_from_pbp,   by = grp_vctr) %>%
-    dplyr::left_join(receiving_stats_from_pbp, by = grp_vctr) %>%
+    dplyr::left_join(passing_stats_from_pbp,   by = grp_vctr) |>
+    dplyr::left_join(rushing_stats_from_pbp,   by = grp_vctr) |>
+    dplyr::left_join(receiving_stats_from_pbp, by = grp_vctr) |>
     # relocate epa variables. This could be done with dplyr::relocate
     # but we want to be compatible with older dplyr versions
     dplyr::select(
@@ -391,7 +391,7 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       "rushing_2pt_conversions":"receiving_first_downs",
       "receiving_epa",
       dplyr::everything()
-    ) %>%
+    ) |>
     dplyr::arrange(!!!grp_vars)
 
   # Apply Player Modifications #####################
@@ -399,7 +399,7 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
     # need newer version of nflreadr to use load_players
     rlang::check_installed("nflreadr (>= 1.3.0)", "to join player information.")
 
-    player_info <- nflreadr::load_players() %>%
+    player_info <- nflreadr::load_players() |>
       dplyr::select(
         "player_id" = "gsis_id",
         "player_display_name" = "display_name",
@@ -410,11 +410,11 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       )
 
     # load gsis_ids of RBs, FBs and HBs for RACR
-    racr_ids <- player_info %>%
-      dplyr::filter(.data$position %in% c("RB", "FB", "HB")) %>%
+    racr_ids <- player_info |>
+      dplyr::filter(.data$position %in% c("RB", "FB", "HB")) |>
       dplyr::pull("player_id")
 
-    stats <- stats %>%
+    stats <- stats |>
       dplyr::mutate(
         pacr = dplyr::case_when(
           is.nan(.data$pacr) ~ NA_real_,
@@ -440,8 +440,8 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
           -2 *     (.data$sack_fumbles_lost + .data$rushing_fumbles_lost + .data$receiving_fumbles_lost),
 
         fantasy_points_ppr = .data$fantasy_points + .data$receptions
-      ) %>%
-      dplyr::left_join(player_info, by = "player_id") %>%
+      ) |>
+      dplyr::left_join(player_info, by = "player_id") |>
       dplyr::select(
         "player_id",
         "player_name",

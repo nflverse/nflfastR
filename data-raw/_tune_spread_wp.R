@@ -6,13 +6,13 @@ source('R/helper_add_nflscrapr_mutations.R')
 set.seed(2013)
 
 model_data <-
-  # readRDS('data-raw/cal_data.rds') %>%
-  readRDS(url('https://github.com/nflverse/nflfastR-data/blob/master/models/cal_data.rds?raw=true')) %>%
-  filter(Winner != "TIE") %>%
-  make_model_mutations() %>%
-  prepare_wp_data() %>%
-  mutate(label = ifelse(posteam == Winner, 1, 0)) %>%
-  filter(!is.na(ep) & !is.na(score_differential) & !is.na(play_type) & !is.na(label) & !is.na(yardline_100), qtr <= 4) %>%
+  # readRDS('data-raw/cal_data.rds') |>
+  readRDS(url('https://github.com/nflverse/nflfastR-data/blob/master/models/cal_data.rds?raw=true')) |>
+  filter(Winner != "TIE") |>
+  make_model_mutations() |>
+  prepare_wp_data() |>
+  mutate(label = ifelse(posteam == Winner, 1, 0)) |>
+  filter(!is.na(ep) & !is.na(score_differential) & !is.na(play_type) & !is.na(label) & !is.na(yardline_100), qtr <= 4) |>
   select(
     label,
     receive_2h_ko,
@@ -38,7 +38,7 @@ folds <- map(0:9, function(x) {
 })
 
 
-full_train = xgboost::xgb.DMatrix(model.matrix(~.+0, data = model_data %>% select(-label, -season)),
+full_train = xgboost::xgb.DMatrix(model.matrix(~.+0, data = model_data |> select(-label, -season)),
                                   label = model_data$label)
 
 #params
@@ -58,7 +58,7 @@ grid <- grid_latin_hypercube(
   size = 20
 )
 
-grid <- grid %>%
+grid <- grid |>
   mutate(
     # it was making dumb learn rates
     learn_rate = .1 * ((1 : nrow(grid)) / nrow(grid)),
@@ -67,8 +67,8 @@ grid <- grid %>%
   )
 
 # bonus round at the end: do more searching after finding good ones
-grid <- grid %>%
-  head(6) %>%
+grid <- grid |>
+  head(6) |>
   mutate(
     learn_rate = c(0.01, 0.02, .03, .04, .05, .06),
     min_n = 14,
@@ -84,7 +84,7 @@ grid
 get_metrics <- function(df, row = 1) {
 
   # testing only
-  # df <- grid %>% dplyr::slice(1)
+  # df <- grid |> dplyr::slice(1)
 
   params <-
     list(
@@ -127,17 +127,17 @@ get_metrics <- function(df, row = 1) {
 results <- map_df(1 : nrow(grid), function(x) {
 
   message(glue::glue("Row {x}"))
-  get_metrics(grid %>% dplyr::slice(x), row = x)
+  get_metrics(grid |> dplyr::slice(x), row = x)
 
 })
 
 # plot
-results %>%
-  select(logloss, eta, gamma, subsample, colsample_bytree, max_depth, min_child_weight) %>%
+results |>
+  select(logloss, eta, gamma, subsample, colsample_bytree, max_depth, min_child_weight) |>
   pivot_longer(eta:min_child_weight,
                values_to = "value",
                names_to = "parameter"
-  ) %>%
+  ) |>
   ggplot(aes(value, logloss, color = parameter)) +
   geom_point(alpha = 0.8, show.legend = FALSE, size = 3) +
   facet_wrap(~parameter, scales = "free_x") +

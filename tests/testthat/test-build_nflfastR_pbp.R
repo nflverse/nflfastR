@@ -6,7 +6,7 @@ test_that("build_nflfastR_pbp works (local data)", {
 
   pbp <- load_test_pbp(dir = test_dir)
   expect_s3_class(pbp, "nflverse_data")
-  pbp <- strip_nflverse_attributes(pbp) %>%
+  pbp <- strip_nflverse_attributes(pbp) |>
     # we gotta round floating point numbers because of different model output
     # across platforms
     round_double_to_digits()
@@ -21,7 +21,7 @@ test_that("build_nflfastR_pbp works (outside CRAN)", {
 
   skip_if_offline("github.com")
   pbp <- load_test_pbp(dir = NULL)
-  pbp <- strip_nflverse_attributes(pbp) %>%
+  pbp <- strip_nflverse_attributes(pbp) |>
     # we gotta round floating point numbers because of different model output
     # across platforms
     round_double_to_digits()

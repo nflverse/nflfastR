@@ -63,7 +63,7 @@ data <- tibble::tibble(
 "defteam_timeouts_remaining" = 3
 )
 
-nflfastR::calculate_expected_points(data) \%>\%
+nflfastR::calculate_expected_points(data) |>
   dplyr::select(season, yardline_100, td_prob, ep)
 })
 }

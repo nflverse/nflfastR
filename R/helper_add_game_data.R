@@ -22,17 +22,17 @@ add_game_data <- function(pbp, games = NULL, ...) {
          )
       }
 
-      out <- out %>%
+      out <- out |>
         dplyr::left_join(
-          games %>%
+          games |>
             dplyr::select(
               "game_id", "old_game_id", "away_score", "home_score", "location", "result", "total",
               "spread_line", "total_line", "div_game", "roof", "surface", "temp", "wind",
               "home_coach", "away_coach", "stadium", "stadium_id", "gameday"
-            ) %>%
+            ) |>
             dplyr::rename(game_stadium = "stadium"),
           by = c("game_id")
-        ) %>%
+        ) |>
         dplyr::mutate(
           game_date = .data$gameday
         )

@@ -5,9 +5,9 @@ test_that("calculate_series_conversion_rates works", {
 
   pbp <- load_test_pbp()
 
-  sc <- calculate_series_conversion_rates(pbp = pbp, weekly = FALSE) %>%
+  sc <- calculate_series_conversion_rates(pbp = pbp, weekly = FALSE) |>
     round_double_to_digits()
-  sc_weekly <- calculate_series_conversion_rates(pbp = pbp, weekly = TRUE) %>%
+  sc_weekly <- calculate_series_conversion_rates(pbp = pbp, weekly = TRUE) |>
     round_double_to_digits()
 
   exp_sc <- load_expectation("sc")

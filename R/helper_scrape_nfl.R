@@ -75,7 +75,7 @@ get_pbp_nfl <- function(id,
     start_time
   )
 
-  plays <- raw_data$data$viewer$gameDetail$plays %>% dplyr::mutate(game_id = as.character(game_id))
+  plays <- raw_data$data$viewer$gameDetail$plays |> dplyr::mutate(game_id = as.character(game_id))
 
   # We have this issue https://github.com/nflverse/nflfastR/issues/309 with 2013 postseason games
   # where the driveSequenceNumber in the plays df is NA for all plays. That prevents drive information
@@ -84,7 +84,7 @@ get_pbp_nfl <- function(id,
   # value of driveTimeOfPossession.
   # driveTimeOfPossession will be a constant value during a drive so this should actually be accurate
   if (all(is.na(plays$driveSequenceNumber))){
-    plays <- plays %>%
+    plays <- plays |>
       dplyr::mutate(
         # First, create a trigger for cumsum
         drive_trigger = dplyr::case_when(
@@ -103,28 +103,28 @@ get_pbp_nfl <- function(id,
       )
   }
 
-  drives <- raw_data$data$viewer$gameDetail$drives %>%
-    dplyr::mutate(ydsnet = .data$yards + .data$yardsPenalized) %>%
+  drives <- raw_data$data$viewer$gameDetail$drives |>
+    dplyr::mutate(ydsnet = .data$yards + .data$yardsPenalized) |>
     # these are already in plays
     dplyr::select(
       -"possessionTeam.abbreviation",
       -"possessionTeam.nickName",
       -"possessionTeam.franchise.currentLogo.url"
-    ) %>%
+    ) |>
     janitor::clean_names()
   colnames(drives) <- paste0("drive_", colnames(drives))
 
-  stats <- tidyr::unnest(plays %>% dplyr::select(-"yards"), cols = c("playStats")) %>%
+  stats <- tidyr::unnest(plays |> dplyr::select(-"yards"), cols = c("playStats")) |>
     dplyr::mutate(
       yards = as.integer(.data$yards),
       statId = as.numeric(.data$statId),
       team.abbreviation = as.character(.data$team.abbreviation)
-    ) %>%
+    ) |>
     dplyr::rename(
       player.esbId = "gsisPlayer.id",
       player.displayName = "playerName",
       teamAbbr = "team.abbreviation"
-    ) %>%
+    ) |>
     dplyr::select(
       "playId",
       "statId",
@@ -136,29 +136,29 @@ get_pbp_nfl <- function(id,
 
   # there was a penalty on this play so these stat IDs shouldn't exist
   if (id == "2020_10_DEN_LV") {
-    stats <- stats %>%
+    stats <- stats |>
       dplyr::filter(!(.data$playId == 979 & .data$statId %in% c(8, 10, 79)))
   }
 
   pbp_stats <- lapply(unique(stats$playId), sum_play_stats, stats)
-  pbp_stats <- data.table::rbindlist(pbp_stats) %>% tibble::as_tibble()
+  pbp_stats <- data.table::rbindlist(pbp_stats) |> tibble::as_tibble()
 
-  combined <- game_info %>%
-    dplyr::bind_cols(plays %>% dplyr::select(-"playStats", -"game_id")) %>%
-    dplyr::left_join(drives, by = c("driveSequenceNumber" = "drive_order_sequence")) %>%
-    dplyr::left_join(pbp_stats, by = c("playId" = "play_id")) %>%
-    dplyr::mutate_if(is.logical, as.numeric) %>%
-    dplyr::mutate_if(is.integer, as.numeric) %>%
-    dplyr::mutate_if(is.factor, as.character) %>%
+  combined <- game_info |>
+    dplyr::bind_cols(plays |> dplyr::select(-"playStats", -"game_id")) |>
+    dplyr::left_join(drives, by = c("driveSequenceNumber" = "drive_order_sequence")) |>
+    dplyr::left_join(pbp_stats, by = c("playId" = "play_id")) |>
+    dplyr::mutate_if(is.logical, as.numeric) |>
+    dplyr::mutate_if(is.integer, as.numeric) |>
+    dplyr::mutate_if(is.factor, as.character) |>
     # The abbreviations SD <-> LAC and JAC <-> JAX are mixed up in the raw json data
     # to make sure team names match, we normalize the names here
     # We also remove new line characters esp. from desc
     dplyr::mutate_if(
       .predicate = is.character,
-      .funs = ~ team_name_fn(.x) %>% stringr::str_replace_all("[\r\n]", " ") %>% stringr::str_squish()
-    ) %>%
-    janitor::clean_names() %>%
-    dplyr::select(-"drive_play_count", -"drive_time_of_possession", -"next_play_type") %>%
+      .funs = ~ team_name_fn(.x) |> stringr::str_replace_all("[\r\n]", " ") |> stringr::str_squish()
+    ) |>
+    janitor::clean_names() |>
+    dplyr::select(-"drive_play_count", -"drive_time_of_possession", -"next_play_type") |>
     dplyr::rename(
       time = "clock_time",
       play_type_nfl = "play_type",
@@ -170,7 +170,7 @@ get_pbp_nfl <- function(id,
       drive_play_count = "drive_play_count_2",
       drive_time_of_possession = "drive_time_of_possession_2",
       ydsnet = "drive_ydsnet"
-    ) %>%
+    ) |>
     dplyr::mutate(
       posteam_id = .data$posteam,
       # have to do all this nonsense to make goal_to_go and yardline_side for compatibility with later functions
@@ -211,32 +211,32 @@ get_pbp_nfl <- function(id,
       # can't trust the goal_to_go variable so we overwrite it here
       goal_to_go = as.integer(stringr::str_detect(tolower(.data$pre_play_by_play), "goal"))
 
-    ) %>%
+    ) |>
     dplyr::mutate_if(
       .predicate = is.character,
       .funs = ~dplyr::na_if(.x, "")
-    ) %>%
+    ) |>
     # Data in 2023 pbp introduced separate "plays" for TV timeouts and two minute warnings
     # These mess up some of our logic. Since they are useless, we remove them here
     dplyr::filter(
       !(is.na(.data$timeout_team) & stringr::str_detect(tolower(.data$play_description), "timeout at|two-minute"))
-    ) %>%
+    ) |>
     # Data in 2024 pbp introduced separate "plays" for injury updates
     # These mess up some of our logic. Since they are useless, we remove them here
     dplyr::filter(
       !(is.na(.data$timeout_team) & stringr::str_starts(tolower(.data$play_description), "\\*\\* injury update:"))
-    ) %>%
+    ) |>
     fix_posteams()
 
   # fix for games where home_team == away_team and fields are messed up
   if (bad_game == 1) {
-    combined <- combined %>%
+    combined <- combined |>
       fix_bad_games()
   }
 
   # nfl didn't fill in first downs on this game
   if (id == '2018_01_ATL_PHI') {
-    combined <- combined %>%
+    combined <- combined |>
       dplyr::mutate(
         first_down_pass = dplyr::if_else(.data$pass_attempt == 1 & .data$first_down == 1, 1, .data$first_down_pass),
         first_down_rush = dplyr::if_else(.data$rush_attempt == 1 & .data$first_down == 1, 1, .data$first_down_rush),
@@ -257,7 +257,7 @@ get_pbp_nfl <- function(id,
 # helper function to manually fill in fields for problematic games
 fix_bad_games <- function(pbp) {
 
-  fixed <- pbp %>%
+  fixed <- pbp |>
     dplyr::mutate(
       #if team has the ball and scored, make them the scoring team
       td_team = dplyr::if_else(
@@ -320,9 +320,9 @@ fix_posteams <- function(pbp){
     valid_team_abbrs <- paste(nflfastR::teams_colors_logos$team_abbr, collapse = " |")
     posteam_regex <- paste0("^", valid_team_abbrs, "(?=[:space:])")
 
-    pbp <- pbp %>%
+    pbp <- pbp |>
       dplyr::mutate(
-        parsed_posteam = stringr::str_extract(.data$pre_play_by_play, posteam_regex) %>% stringr::str_trim(),
+        parsed_posteam = stringr::str_extract(.data$pre_play_by_play, posteam_regex) |> stringr::str_trim(),
         posteam = dplyr::case_when(
           stringr::str_detect(.data$play_description, "^Timeout ") ~ NA_character_,
           is.na(.data$parsed_posteam) ~ .data$posteam,
