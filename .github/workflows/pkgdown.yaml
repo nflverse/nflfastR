@@ -42,7 +42,6 @@ jobs:
             nflverse/nflreadr
             any::tidyverse
             any::ggrepel
-            any::ggimage
             any::knitr
             any::tictoc
             any::ragg

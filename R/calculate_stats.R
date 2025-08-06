@@ -244,7 +244,7 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       passing_interceptions = sum(stat_id == 19),
       sacks_suffered = sum(stat_id == 20),
       sack_yards_lost = sum((stat_id == 20) * yards),
-      sack_fumbles = sum(stat_id == 20 & any(has_id(52, more_stats), has_id(53, more_stats), has_id(54, more_stats))),
+      sack_fumbles = sum(stat_id == 20 & has_id(52:54, more_stats)),
       sack_fumbles_lost = sum(stat_id == 20 & has_id(106, more_stats)),
       # includes incompletions (111 = complete, 112 = incomplete)
       passing_air_yards = sum((stat_id %in% 111:112) * yards),
@@ -259,7 +259,7 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       carries = sum(stat_id %in% 10:11),
       rushing_yards = sum((stat_id %in% 10:13) * yards),
       rushing_tds = sum(stat_id %in% c(11,13)),
-      rushing_fumbles = sum((stat_id %in% 10:11) & any(has_id(52, more_stats), has_id(53, more_stats), has_id(54, more_stats))),
+      rushing_fumbles = sum((stat_id %in% 10:11) & has_id(52:54, more_stats)),
       rushing_fumbles_lost = sum((stat_id %in% 10:11) & has_id(106, more_stats)),
       rushing_first_downs = sum((stat_id %in% 10:11) & has_id(3, team_stats)),
       rushing_2pt_conversions = sum(stat_id == 75),
@@ -268,7 +268,7 @@ calculate_stats <- function(seasons = nflreadr::most_recent_season(),
       targets = sum(stat_id == 115),
       receiving_yards = sum((stat_id %in% 21:24) * yards),
       receiving_tds = sum(stat_id %in% c(22,24)),
-      receiving_fumbles = sum((stat_id %in% 21:22) & any(has_id(52, more_stats), has_id(53, more_stats), has_id(54, more_stats))),
+      receiving_fumbles = sum((stat_id %in% 21:22) & has_id(52:54, more_stats)),
       receiving_fumbles_lost = sum((stat_id %in% 21:22) & has_id(106, more_stats)),
       # air_yards are counted in 111:112 but it is a passer stat not a receiver stat
       # so we count team air yards when a player accounted for a reception
@@ -501,7 +501,7 @@ fg_list <- function(stat_ids, yards, collapse_id, gwfg = NULL){
 `%ifna%` <- function(lhs, rhs) data.table::fifelse(is.na(lhs), rhs, lhs)
 
 has_id <- function(id, all_ids){
-  grepl(paste0(id, ";"), all_ids, fixed = TRUE, useBytes = TRUE)
+  stringr::str_detect(all_ids, paste0(id, ";", collapse = "|"))
 }
 
 td_ids <- function(){

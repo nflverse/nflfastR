@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 [![CRAN status](https://www.r-pkg.org/badges/version-last-release/nflfastR)](https://CRAN.R-project.org/package=nflfastR)
 [![CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/nflfastR)](https://CRAN.R-project.org/package=nflfastR)
 [![Dev status](https://img.shields.io/github/r-package/v/nflverse/nflfastR/master?label=dev%20version&style=flat-square&logo=github)](https://www.nflfastr.com/)
-[![R-CMD-check](https://github.com/nflverse/nflfastR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/nflverse/nflfastR/actions/workflows/R-CMD-check.yaml)
+[![R build status](https://img.shields.io/github/actions/workflow/status/nflverse/nflfastR/R-CMD-check.yaml?label=R%20check&style=flat-square&logo=github)](https://github.com/nflverse/nflfastR/actions)
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![nflverse support](https://img.shields.io/discord/789805604076126219?color=7289da&label=nflverse%20support&logo=discord&logoColor=fff&style=flat-square)](https://discord.com/invite/5Er2FBnnQa)
 <!-- [![Twitter Follow](https://img.shields.io/twitter/follow/nflfastR.svg?style=social)](https://twitter.com/nflfastR) -->
@@ -32,7 +32,7 @@ knitr::opts_chunk$set(
 * Includes completion probability (`cp`), completion percentage over expected (`cpoe`), and expected yards after the catch (`xyac_epa` and `xyac_mean_yardage`) in play-by-play going back to 2006
 * Includes drive information, including drive starting position and drive result
 * Includes series information, including series number and series success
-* Hosts [a repository of play-by-play data going back to 1999](https://github.com/nflverse/nflverse-pbp) for very quick access
+* Hosts [a release of play-by-play data going back to 1999](https://github.com/nflverse/nflverse-data/releases/tag/pbp) for very quick access
 * Features models for Expected Points, Win Probability, Completion Probability, and Yards After the Catch (see section below)
 * Includes a function `update_db()` that creates and updates a database
 

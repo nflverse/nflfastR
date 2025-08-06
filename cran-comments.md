@@ -1,7 +1,8 @@
 ## Release summary
 
-This is a major release that 
-* adds new functions, deprecates old functions.
+This is a minor release that 
+* deprecates old functions, and
+* fixes bugs.
 
 ## R CMD check results
 

@@ -70,6 +70,23 @@ maybe_valid <- function(id) {
   )
 }
 
+# some 2000 games have play_ids like 2767.375 and 2767.703 which results in
+# duplicates that can be fixed. We save play IDs as numeric first and then
+# check whether or not there are duplicates when we convert them to integer
+# If there are duplicates, we multiply all play IDs by 10 and check again
+# If there are still duplicates, we multiply all play IDs by 100 and so on
+# As soon as play IDs are unique, we save them as integer and go on
+uniquify_ids <- function(ids){
+  ids <- as.numeric(ids)
+  int_ids <- as.integer(ids)
+  mult <- 10
+  while (anyDuplicated(int_ids) > 0) {
+    int_ids <- as.integer(ids * mult)
+    mult <- mult * 10
+  }
+  int_ids
+}
+
 # check if a package is installed
 is_installed <- function(pkg) requireNamespace(pkg, quietly = TRUE)
 
@@ -202,9 +219,96 @@ fetch_raw <- function(game_id,
 release_bullets <- function() {
   c(
     '`devtools::check_mac_release()`',
-    '`rhub::rhub_check(platforms = rhub::rhub_platforms()$name[rhub::rhub_platforms()$name != "rchk"])`',
+    '`nflfastR:::my_rhub_check()`',
     '`pkgdown::check_pkgdown()`',
-    '`usethis::use_tidy_thanks()`',
+    '`nflfastR:::nflverse_thanks()`',
     NULL
+  )
+}
+
+load_model <- function(name){
+  model <- switch(name,
+    "ep" = fastrmodels::ep_model,
+    "cp" = fastrmodels::cp_model,
+    "wp" = fastrmodels::wp_model,
+    "wp_spread" = fastrmodels::wp_model_spread,
+    "fg" = fastrmodels::fg_model,
+    "xpass" = fastrmodels::xpass_model,
+    "xyac" = fastrmodels::xyac_model
+  )
+
+  # fastrmodels v2 introduced raw model vectors to make sure the models
+  # are compatible with future xgboost versions
+  out <- if (is.raw(model)) {
+    xgboost::xgb.load.raw(model)
+  } else {
+    model
+  }
+  out
+}
+
+my_rhub_check <- function() {
+  cli::cli_text("Please run the following code")
+  cli::cli_text(
+    "{.run rhub::rhub_check(platforms = nflfastR:::rhub_check_platforms())}"
+  )
+}
+
+rhub_check_platforms <- function(){
+  # plts created with
+  # out <- paste0('"', rhub::rhub_platforms()$name, '"', collapse = ",\n")
+  # cli::cli_code(paste0(
+  #   "plts <- c(\n", out, "\n)"
+  # ))
+
+  plts <- c(
+    "linux",
+    "m1-san",
+    "macos",
+    "macos-arm64",
+    "windows",
+    "atlas",
+    "c23",
+    "clang-asan",
+    "clang-ubsan",
+    "clang16",
+    "clang17",
+    "clang18",
+    "clang19",
+    "clang20",
+    "donttest",
+    "gcc-asan",
+    "gcc13",
+    "gcc14",
+    "gcc15",
+    "intel",
+    "mkl",
+    "nold",
+    "noremap",
+    "nosuggests",
+    "rchk",
+    "ubuntu-clang",
+    "ubuntu-gcc12",
+    "ubuntu-next",
+    "ubuntu-release",
+    "valgrind"
+  )
+  exclude <- c("rchk", "nosuggests", "valgrind")
+  plts[!plts %in% exclude]
+}
+
+nflverse_thanks <- function(){
+  cli::cli_text("Run the following code and copy/paste its output to NEWS.md")
+
+  cli::cli_code(
+    '
+    contributors <- usethis::use_tidy_thanks()
+    paste(
+      "Thank you to",
+      glue::glue_collapse(
+        paste0("&#x0040;", contributors), sep = ", ", last = ", and "
+      ),
+      "for their questions, feedback, and contributions towards this release."
+    )'
   )
 }

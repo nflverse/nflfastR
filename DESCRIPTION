@@ -1,7 +1,7 @@
 Type: Package
 Package: nflfastR
 Title: Functions to Efficiently Access NFL Play by Play Data
-Version: 5.0.0.9004
+Version: 5.1.0.9001
 Authors@R: 
     c(person(given = "Sebastian",
              family = "Carl",
@@ -46,7 +46,7 @@ Imports:
     curl,
     data.table (>= 1.15.0),
     dplyr (>= 1.0.0),
-    fastrmodels (>= 1.0.1),
+    fastrmodels (>= 2.0.0),
     furrr,
     future,
     glue,

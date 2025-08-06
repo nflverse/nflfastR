@@ -29,7 +29,13 @@ Below you will find a table that lists and explains all the variables available 
 - `def_penalty_yards`: renamed to `penalty_yards` (it is not exclusive to defense)
 
 ```{r eval = with_dt}
-DT::datatable(nflfastR::nfl_stats_variables,options = list(scrollX = TRUE, pageLength = 25), filter = "top", rownames = FALSE)
+DT::datatable(
+  nflfastR::nfl_stats_variables,
+  options = list(scrollX = TRUE, pageLength = 25),
+  filter = "top",
+  rownames = FALSE,
+  style = "bootstrap4"
+)
 ```
 
 ```{r eval = !with_dt}
