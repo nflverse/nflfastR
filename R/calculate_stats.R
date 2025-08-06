@@ -542,7 +542,8 @@ stats_validate_pbp <- function(pbp) {
   if (length(missing) > 0) {
     cli::cli_abort(
       "You have passed custom pbp to the argument {.arg pbp} but \\
-      it is missing the following required variable{?s}: {.val {missing}}"
+      it is missing the following required variable{?s}: {.val {missing}}",
+      call = rlang::caller_env()
     )
   }
   unique(pbp$season) |>
