@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.0.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.0.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,7 +76,8 @@
 <span>  seasons <span class="op">=</span> <span class="fu">nflreadr</span><span class="fu">::</span><span class="fu"><a href="https://nflreadr.nflverse.com/reference/latest_season.html" class="external-link">most_recent_season</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  summary_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"season"</span>, <span class="st">"week"</span><span class="op">)</span>,</span>
 <span>  stat_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"player"</span>, <span class="st">"team"</span><span class="op">)</span>,</span>
-<span>  season_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"REG"</span>, <span class="st">"POST"</span>, <span class="st">"REG+POST"</span><span class="op">)</span></span>
+<span>  season_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"REG"</span>, <span class="st">"POST"</span>, <span class="st">"REG+POST"</span><span class="op">)</span>,</span>
+<span>  pbp <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -87,7 +88,7 @@
 <dl><dt id="arg-seasons">seasons<a class="anchor" aria-label="anchor" href="#arg-seasons"></a></dt>
 <dd><p>A numeric vector of 4-digit years associated with given NFL
 seasons - defaults to latest season. If set to TRUE, returns all available
-data since 1999.</p></dd>
+data since 1999. Ignored if argument <code>pbp</code> is not <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-summary-level">summary_level<a class="anchor" aria-label="anchor" href="#arg-summary-level"></a></dt>
@@ -102,6 +103,22 @@ data since 1999.</p></dd>
 <dd><p>One of <code>"REG"</code>, <code>"POST"</code>, or <code>"REG+POST"</code>. Filters
 data to regular season ("REG"), post season ("POST") or keeps all data.
 Only applied if <code>summary_level</code> == <code>"season"</code>.</p></dd>
+
+
+<dt id="arg-pbp">pbp<a class="anchor" aria-label="anchor" href="#arg-pbp"></a></dt>
+<dd><p>This argument allows passing a subset of nflverse play-by-play
+data, created with <code><a href="build_nflfastR_pbp.html">build_nflfastR_pbp()</a></code> or loaded with <code><a href="load_pbp.html">load_pbp()</a></code>.
+Stats are then calculated based on the <code>game_id</code>s and <code>play_id</code>s in this
+subset of play-by-play data, rather then using the seasons specified in the
+<code>seasons</code> argument. The function will error if required variables are
+missing from the subset, but lists which variables are missing.
+If <code>pbp = NULL</code> (the default), all available games and plays from the
+<code>seasons</code> argument are used to calculate stats.
+Please use this responsibly, because the output is structurally identical
+to full seasons, even if plays have been filtered out. It may then appear
+as if the stats are incorrect. If <code>pbp</code> is not <code>NULL</code>, the function will add
+the attribute <code>"custom_pbp" = TRUE</code> to the function output to help identify
+stats that are possibly based on play-by-play subsets.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -127,9 +144,9 @@ table of the stats variable descriptions.</p></div>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ player_id                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "00-0022531"<span style="color: #949494;">, </span>"00-0023459"<span style="color: #949494;">, </span>"00-0023853"<span style="color: #949494;">, </span>…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ player_name                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "J.Peters"<span style="color: #949494;">, </span>"A.Rodgers"<span style="color: #949494;">, </span>"M.Prater"<span style="color: #949494;">, </span>"M.Le…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ player_display_name         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Jason Peters"<span style="color: #949494;">, </span>"Aaron Rodgers"<span style="color: #949494;">, </span>"Matt Pra…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ position                    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "T"<span style="color: #949494;">, </span>"QB"<span style="color: #949494;">, </span>"K"<span style="color: #949494;">, </span>"TE"<span style="color: #949494;">, </span>"K"<span style="color: #949494;">, </span>"K"<span style="color: #949494;">, </span>"LS"<span style="color: #949494;">, </span>"QB"…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ position                    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "OT"<span style="color: #949494;">, </span>"QB"<span style="color: #949494;">, </span>"K"<span style="color: #949494;">, </span>"TE"<span style="color: #949494;">, </span>"K"<span style="color: #949494;">, </span>"K"<span style="color: #949494;">, </span>"LS"<span style="color: #949494;">, </span>"QB…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ position_group              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "OL"<span style="color: #949494;">, </span>"QB"<span style="color: #949494;">, </span>"SPEC"<span style="color: #949494;">, </span>"TE"<span style="color: #949494;">, </span>"SPEC"<span style="color: #949494;">, </span>"SPEC"<span style="color: #949494;">, </span>…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ headshot_url                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "https://static.www.nfl.com/image/upload/f…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ headshot_url                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "https://static.www.nfl.com/image/upload/{…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ season                      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 2023<span style="color: #949494;">, </span>2023<span style="color: #949494;">, </span>2023<span style="color: #949494;">, </span>2023<span style="color: #949494;">, </span>2023<span style="color: #949494;">, </span>2023<span style="color: #949494;">, </span>2023<span style="color: #949494;">, </span>…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ season_type                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "REG"<span style="color: #949494;">, </span>"REG"<span style="color: #949494;">, </span>"REG"<span style="color: #949494;">, </span>"REG"<span style="color: #949494;">, </span>"REG"<span style="color: #949494;">, </span>"REG"<span style="color: #949494;">, </span>…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ recent_team                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "SEA"<span style="color: #949494;">, </span>"NYJ"<span style="color: #949494;">, </span>"ARI"<span style="color: #949494;">, </span>"CHI"<span style="color: #949494;">, </span>"TEN"<span style="color: #949494;">, </span>"NYG"<span style="color: #949494;">, </span>…</span>

@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.0.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.0.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -184,30 +184,29 @@ which is much faster than building pbp from scratch.</p>
 </h3>
 <p>Before moving forward, here are a few ways to get a sense of what’s
 in a dataframe. We can check the <strong>dim</strong>ensions of the
-data, and this tells us that there are <code>47258</code> rows (i.e.,
+data, and this tells us that there are <code>47260</code> rows (i.e.,
 plays) in the data and <code>372</code> columns (variables):</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 47258   372</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 47260   372</span></span></code></pre></div>
 <p><code>str</code> displays the <strong>str</strong>ucture of the
 dataframe:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">data</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt; nflvrs_d [47,258 × 10] (S3: nflverse_data/tbl_df/tbl/data.table/data.frame)</span></span>
-<span><span class="co">#&gt;  $ play_id     : num [1:47258] 1 36 51 79 100 121 148 185 214 239 ...</span></span>
-<span><span class="co">#&gt;  $ game_id     : chr [1:47258] "2019_01_ATL_MIN" "2019_01_ATL_MIN" "2019_01_ATL_MIN" "2019_01_ATL_MIN" ...</span></span>
-<span><span class="co">#&gt;  $ old_game_id : chr [1:47258] "2019090804" "2019090804" "2019090804" "2019090804" ...</span></span>
-<span><span class="co">#&gt;  $ home_team   : chr [1:47258] "MIN" "MIN" "MIN" "MIN" ...</span></span>
-<span><span class="co">#&gt;  $ away_team   : chr [1:47258] "ATL" "ATL" "ATL" "ATL" ...</span></span>
-<span><span class="co">#&gt;  $ season_type : chr [1:47258] "REG" "REG" "REG" "REG" ...</span></span>
-<span><span class="co">#&gt;  $ week        : int [1:47258] 1 1 1 1 1 1 1 1 1 1 ...</span></span>
-<span><span class="co">#&gt;  $ posteam     : chr [1:47258] NA "ATL" "ATL" "ATL" ...</span></span>
-<span><span class="co">#&gt;  $ posteam_type: chr [1:47258] NA "away" "away" "away" ...</span></span>
-<span><span class="co">#&gt;  $ defteam     : chr [1:47258] NA "MIN" "MIN" "MIN" ...</span></span>
-<span><span class="co">#&gt;  - attr(*, "nflverse_timestamp")= POSIXct[1:1], format: "2024-08-13 15:38:55"</span></span>
+<span><span class="co">#&gt; nflvrs_d [47,260 × 10] (S3: nflverse_data/tbl_df/tbl/data.table/data.frame)</span></span>
+<span><span class="co">#&gt;  $ play_id     : num [1:47260] 1 36 51 79 100 121 148 185 214 239 ...</span></span>
+<span><span class="co">#&gt;  $ game_id     : chr [1:47260] "2019_01_ATL_MIN" "2019_01_ATL_MIN" "2019_01_ATL_MIN" "2019_01_ATL_MIN" ...</span></span>
+<span><span class="co">#&gt;  $ old_game_id : chr [1:47260] "2019090804" "2019090804" "2019090804" "2019090804" ...</span></span>
+<span><span class="co">#&gt;  $ home_team   : chr [1:47260] "MIN" "MIN" "MIN" "MIN" ...</span></span>
+<span><span class="co">#&gt;  $ away_team   : chr [1:47260] "ATL" "ATL" "ATL" "ATL" ...</span></span>
+<span><span class="co">#&gt;  $ season_type : chr [1:47260] "REG" "REG" "REG" "REG" ...</span></span>
+<span><span class="co">#&gt;  $ week        : int [1:47260] 1 1 1 1 1 1 1 1 1 1 ...</span></span>
+<span><span class="co">#&gt;  $ posteam     : chr [1:47260] NA "ATL" "ATL" "ATL" ...</span></span>
+<span><span class="co">#&gt;  $ posteam_type: chr [1:47260] NA "away" "away" "away" ...</span></span>
+<span><span class="co">#&gt;  $ defteam     : chr [1:47260] NA "MIN" "MIN" "MIN" ...</span></span>
+<span><span class="co">#&gt;  - attr(*, "nflverse_timestamp")= chr "2025-07-31 14:16:40 EDT"</span></span>
 <span><span class="co">#&gt;  - attr(*, "nflverse_type")= chr "play by play data"</span></span>
-<span><span class="co">#&gt;  - attr(*, "nflfastR_version")=Classes 'package_version', 'numeric_version'  hidden list of 1</span></span>
-<span><span class="co">#&gt;   ..$ : int [1:4] 4 6 1 9013</span></span></code></pre></div>
+<span><span class="co">#&gt;  - attr(*, "nflfastR_version")= chr "5.1.0.9001"</span></span></code></pre></div>
 <p>In the above, I’ve added in the <code>[1:10]</code>, which selects
 only the first 10 columns, otherwise the list is extremely long
 (remember from above that there are <code>372</code> columns!).
@@ -215,7 +214,7 @@ Normally, you would just type <code>str(data)</code>.</p>
 <p>You can similarly take a glimpse at your data:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">data</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Rows: 47,258</span></span>
+<span><span class="co">#&gt; Rows: 47,260</span></span>
 <span><span class="co">#&gt; Columns: 10</span></span>
 <span><span class="co">#&gt; $ play_id      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 1<span style="color: #949494;">, </span>36<span style="color: #949494;">, </span>51<span style="color: #949494;">, </span>79<span style="color: #949494;">, </span>100<span style="color: #949494;">, </span>121<span style="color: #949494;">, </span>148<span style="color: #949494;">, </span>185<span style="color: #949494;">, </span>214<span style="color: #949494;">, </span>239<span style="color: #949494;">, </span>255<span style="color: #949494;">, </span>277<span style="color: #949494;">, </span>29…</span></span>
 <span><span class="co">#&gt; $ game_id      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "2019_01_ATL_MIN"<span style="color: #949494;">, </span>"2019_01_ATL_MIN"<span style="color: #949494;">, </span>"2019_01_ATL_MIN"<span style="color: #949494;">, </span>…</span></span>
@@ -270,7 +269,7 @@ data.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">posteam</span>, <span class="va">defteam</span>, <span class="va">desc</span>, <span class="va">rush</span>, <span class="va">pass</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse play by play data</span> ──────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2024-08-13 15:38:55 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-07-31 18:16:40 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 5</span></span></span>
 <span><span class="co">#&gt;   posteam defteam desc                                                rush  pass</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
@@ -302,7 +301,7 @@ plays; i.e., no punts, kickoffs, field goals, or dead ball penalties
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">posteam</span>, <span class="va">desc</span>, <span class="va">rush</span>, <span class="va">pass</span>, <span class="va">name</span>, <span class="va">passer</span>, <span class="va">rusher</span>, <span class="va">receiver</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse play by play data</span> ──────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2024-08-13 15:38:55 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-07-31 18:16:40 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 8</span></span></span>
 <span><span class="co">#&gt;   posteam desc                           rush  pass name  passer rusher receiver</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   </span></span>
@@ -336,7 +335,7 @@ play.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">down</span>, <span class="va">ydstogo</span>, <span class="va">desc</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse play by play data</span> ──────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2024-08-13 15:38:55 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-07-31 18:16:40 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 3</span></span></span>
 <span><span class="co">#&gt;    down ydstogo desc                                                            </span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                           </span></span>
@@ -353,7 +352,7 @@ play.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">down</span>, <span class="va">ydstogo</span>, <span class="va">desc</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse play by play data</span> ──────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2024-08-13 15:38:55 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-07-31 18:16:40 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 3</span></span></span>
 <span><span class="co">#&gt;    down ydstogo desc                                                            </span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                           </span></span>
@@ -370,7 +369,7 @@ play.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">down</span>, <span class="va">ydstogo</span>, <span class="va">desc</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse play by play data</span> ──────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2024-08-13 15:38:55 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-07-31 18:16:40 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 3</span></span></span>
 <span><span class="co">#&gt;    down ydstogo desc                                                            </span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                           </span></span>
@@ -474,7 +473,7 @@ introduce another extremely useful function, <code>if_else</code>:</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">posteam</span>, <span class="va">home_team</span>, <span class="va">home</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse play by play data</span> ──────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2024-08-13 15:38:55 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-07-31 18:16:40 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 10 × 3</span></span></span>
 <span><span class="co">#&gt;    posteam home_team  home</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
@@ -506,8 +505,8 @@ average EPA/play by home and road teams:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 2</span></span></span>
 <span><span class="co">#&gt;    home     epa</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     0  0.021<span style="text-decoration: underline;">3</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     1 -<span style="color: #BB0000;">0.015</span><span style="color: #BB0000; text-decoration: underline;">6</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     0  0.021<span style="text-decoration: underline;">4</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     1 -<span style="color: #BB0000;">0.015</span><span style="color: #BB0000; text-decoration: underline;">4</span></span></span></code></pre></div>
 <p>Note that EPA/play is similar for home teams and away teams because
 <code>home</code> is already built into the <code>nflfastR</code> EPA
 model, so this result is expected. Actually, away EPA/play is actually
@@ -568,11 +567,11 @@ pass-happy?</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> NO          0.585   325</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> LA          0.584   329</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> CHI         0.558   310</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> CAR         0.554   271</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> CLE         0.553   275</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> CLE         0.555   272</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> CAR         0.554   271</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> TB          0.551   321</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> ARI         0.551   316</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> GB          0.550   291</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> GB          0.550   291</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> ARI         0.548   325</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 22 more rows</span></span></span></code></pre></div>
 <p>Again, we’ve already used <code>filter</code>, <code>group_by</code>,
 and <code>summarize</code>. The new function we are using here is
@@ -616,7 +615,7 @@ this is doing:</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>   <span style="text-decoration: underline;">2</span>016 <span style="text-decoration: underline;">47</span>651</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   <span style="text-decoration: underline;">2</span>017 <span style="text-decoration: underline;">47</span>245</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>   <span style="text-decoration: underline;">2</span>018 <span style="text-decoration: underline;">47</span>109</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>   <span style="text-decoration: underline;">2</span>019 <span style="text-decoration: underline;">47</span>258</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>   <span style="text-decoration: underline;">2</span>019 <span style="text-decoration: underline;">47</span>260</span></span></code></pre></div>
 <p>So each season has about 48,000 plays. Just for fun, let’s look at
 the various play types:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
@@ -626,15 +625,15 @@ the various play types:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 10 × 2</span></span></span>
 <span><span class="co">#&gt;    play_type       n</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> extra_point  <span style="text-decoration: underline;">6</span>241</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> extra_point  <span style="text-decoration: underline;">6</span>240</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> field_goal   <span style="text-decoration: underline;">5</span>155</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> kickoff     <span style="text-decoration: underline;">13</span>615</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> kickoff     <span style="text-decoration: underline;">13</span>613</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> no_play     <span style="text-decoration: underline;">22</span>752</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> pass        <span style="text-decoration: underline;">99</span>985</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> pass        <span style="text-decoration: underline;">99</span>987</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> punt        <span style="text-decoration: underline;">12</span>083</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> qb_kneel     <span style="text-decoration: underline;">2</span>090</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> qb_spike      340</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> run         <span style="text-decoration: underline;">68</span>125</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> run         <span style="text-decoration: underline;">68</span>128</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> <span style="color: #BB0000;">NA</span>           <span style="text-decoration: underline;">6</span>999</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -678,7 +677,7 @@ already loaded the package, it’s ready to use.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://nflreadr.nflverse.com/reference/load_teams.html" class="external-link">load_teams</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse team graphics</span> ──────────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-07-16 15:13:12 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-08-06 12:38:39 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 32 × 16</span></span></span>
 <span><span class="co">#&gt;    team_abbr team_name      team_id team_nick team_conf team_division team_color</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span></span>
@@ -928,7 +927,7 @@ overwhelming).</p>
 <span><span class="co">#&gt;  $ stadium_id      : chr [1:7263] "ATL00" "CHI98" "CLE00" "GNB00" ...</span></span>
 <span><span class="co">#&gt;  $ stadium         : chr [1:7263] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...</span></span>
 <span><span class="co">#&gt;  - attr(*, "nflverse_type")= chr "games and schedules"</span></span>
-<span><span class="co">#&gt;  - attr(*, "nflverse_timestamp")= chr "2025-07-16 11:13:41 EDT"</span></span></code></pre></div>
+<span><span class="co">#&gt;  - attr(*, "nflverse_timestamp")= chr "2025-08-06 08:39:09 EDT"</span></span></code></pre></div>
 <p>To start, we want to create a dataframe where each row is a
 team-season observation, listing how many games they won. There are
 multiple ways to do this, but I’m going to just take the home and away
@@ -941,7 +940,7 @@ results and bind together. As an example, here’s what the
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>team <span class="op">=</span> <span class="va">home_team</span><span class="op">)</span></span>
 <span><span class="va">home</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-07-16 15:13:41 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-08-06 12:39:09 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 4</span></span></span>
 <span><span class="co">#&gt;   season  week team  result</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
@@ -960,7 +959,7 @@ results and bind together. As an example, here’s what the
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>result <span class="op">=</span> <span class="op">-</span><span class="va">result</span><span class="op">)</span></span>
 <span><span class="va">away</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-07-16 15:13:41 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-08-06 12:39:09 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 4</span></span></span>
 <span><span class="co">#&gt;   season  week team  result</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
@@ -985,7 +984,7 @@ the perspective of the home team. Now let’s make a columns called
 <span></span>
 <span><span class="va">results</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op">==</span> <span class="fl">2019</span> <span class="op">&amp;</span> <span class="va">team</span> <span class="op">==</span> <span class="st">'SEA'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-07-16 15:13:41 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-08-06 12:39:09 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 16 × 5</span></span></span>
 <span><span class="co">#&gt;    season  week team  result   win</span></span>
 <span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
@@ -1396,23 +1395,23 @@ anyway.</p>
 <span><span class="co">#&gt;     prior_def_pass_epa + prior_def_rush_epa, data = data)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Residuals:</span></span>
-<span><span class="co">#&gt;    Min     1Q Median     3Q    Max </span></span>
-<span><span class="co">#&gt; -7.702 -1.889  0.065  2.265  7.085 </span></span>
+<span><span class="co">#&gt;     Min      1Q  Median      3Q     Max </span></span>
+<span><span class="co">#&gt; -7.7025 -1.8874  0.0603  2.2697  7.0855 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;                    Estimate Std. Error t value             Pr(&gt;|t|)    </span></span>
-<span><span class="co">#&gt; (Intercept)          7.9757     0.3882  20.548 &lt; 0.0000000000000002 ***</span></span>
-<span><span class="co">#&gt; prior_off_pass_epa   6.5886     1.2807   5.145          0.000000431 ***</span></span>
-<span><span class="co">#&gt; prior_off_rush_epa   6.0061     2.2742   2.641              0.00861 ** </span></span>
-<span><span class="co">#&gt; prior_def_pass_epa  -4.0940     1.6445  -2.489              0.01322 *  </span></span>
-<span><span class="co">#&gt; prior_def_rush_epa  -5.0540     2.3335  -2.166              0.03095 *  </span></span>
+<span><span class="co">#&gt; (Intercept)           7.981      0.388  20.573 &lt; 0.0000000000000002 ***</span></span>
+<span><span class="co">#&gt; prior_off_pass_epa    6.574      1.281   5.134          0.000000455 ***</span></span>
+<span><span class="co">#&gt; prior_off_rush_epa    6.053      2.274   2.661              0.00812 ** </span></span>
+<span><span class="co">#&gt; prior_def_pass_epa   -4.094      1.646  -2.487              0.01330 *  </span></span>
+<span><span class="co">#&gt; prior_def_rush_epa   -5.048      2.336  -2.161              0.03129 *  </span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Residual standard error: 2.861 on 379 degrees of freedom</span></span>
 <span><span class="co">#&gt;   (160 observations deleted due to missingness)</span></span>
-<span><span class="co">#&gt; Multiple R-squared:  0.1632, Adjusted R-squared:  0.1544 </span></span>
-<span><span class="co">#&gt; F-statistic: 18.49 on 4 and 379 DF,  p-value: 0.00000000000006863</span></span></code></pre></div>
+<span><span class="co">#&gt; Multiple R-squared:  0.1633, Adjusted R-squared:  0.1545 </span></span>
+<span><span class="co">#&gt; F-statistic: 18.49 on 4 and 379 DF,  p-value: 0.00000000000006782</span></span></code></pre></div>
 <p>I’m actually pretty surprised passing offense isn’t higher here. How
 does this compare to simply using point differential?</p>
 <div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
