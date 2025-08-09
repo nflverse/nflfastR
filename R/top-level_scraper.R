@@ -466,7 +466,6 @@ fast_scraper <- function(game_ids,
 
 #' Load Team Rosters for Multiple Seasons
 #' @details See [`nflreadr::load_rosters`] for details.
-#' @inheritDotParams nflreadr::load_rosters
 #' @inherit nflreadr::load_rosters
 #' @seealso For information on parallel processing and progress updates please
 #' see [nflfastR].
@@ -484,7 +483,6 @@ fast_scraper_roster <- function(...) nflreadr::load_rosters(...)
 
 #' Load NFL Season Schedules
 #' @details See [`nflreadr::load_schedules`] for details.
-#' @inheritDotParams nflreadr::load_schedules
 #' @inherit nflreadr::load_schedules
 #' @seealso For information on parallel processing and progress updates please
 #' see [nflfastR].
