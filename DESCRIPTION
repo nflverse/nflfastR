@@ -1,7 +1,7 @@
 Type: Package
 Package: nflfastR
 Title: Functions to Efficiently Access NFL Play by Play Data
-Version: 5.1.0.9002
+Version: 5.1.0.9003
 Authors@R: 
     c(person(given = "Sebastian",
              family = "Carl",
@@ -70,6 +70,6 @@ Suggests:
     testthat (>= 3.0.0)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3

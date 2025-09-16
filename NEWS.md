@@ -3,6 +3,7 @@
 - Bump required fastrmodels version to 2.0 for better compatibility with xgboost.
 - Fixed an issue with duplicated play IDs in some 2000 games. (#521)
 - Added the argument `pbp` to `calculate_stats()` to allow stats calculation based on subsets of nflverse play-by-play data. (#524)
+- Fixed a bug where `calculate_stats()` didn't count 60 yard field goal attempts in `"fg_made_60_"` and `"fg_missed_60_"`. (#531)
 
 # nflfastR 5.1.0
 
