@@ -150,11 +150,15 @@ add_nflscrapr_mutations <- function(pbp) {
       # find kickoffs with penalty: a play where the next play is a kickoff
       # and the prior play wasn't a safety or PAT
       lead_ko = case_when(
+        # 2025_01_CAR_JAX, 1303: Game resumed after weather delay
+        # AND it was delayed right after a PAT (smh)
+        .data$game_id == "2025_01_CAR_JAX" & .data$play_id == 1303 ~ 0,
         dplyr::lead(.data$kickoff_attempt) == 1 &
           .data$game_id == dplyr::lead(.data$game_id) &
           !stringr::str_detect(tolower(.data$play_description), "(injured sf )|(tonight's attendance )|(injury update )|(end quarter)|(timeout)|( captains:)|( captains )|( captians:)|( humidity:)|(note - )|( deferred)|(game start )|( game has been suspended)") &
           !stringr::str_detect(.data$play_description, "GAME ") &
           !.data$play_description %in% c("GAME", "Two-Minute Warning", "The game has resumed.") &
+          !stringr::str_detect(.data$play_description, "The game has resumed") &
           is.na(.data$two_point_conv_result) &
           is.na(.data$extra_point_result) &
           is.na(.data$field_goal_result) &
