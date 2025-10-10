@@ -89,9 +89,9 @@ clean_pbp <- function(pbp, ...) {
           stringr::str_detect(.data$desc, glue::glue('{abnormal_play}')) & !is.na(.data$passer_player_name) ~ .data$passer_player_name,
           TRUE ~ .data$passer
         ),
-        # fix the plays where scramble was fixed using charting data in 2005
+        # fix the plays where scramble was fixed using charting data from 1999 to 2005
         passer = dplyr::case_when(
-          is.na(.data$passer) & .data$qb_scramble == 1 & !is.na(.data$rusher) & .data$season == 2005 ~ .data$rusher,
+          is.na(.data$passer) & .data$qb_scramble == 1 & !is.na(.data$rusher) & .data$season <= 2005 ~ .data$rusher,
           TRUE ~ .data$passer
         ),
         # finally, for rusher, if there was already a passer (eg from scramble), set rusher to NA
