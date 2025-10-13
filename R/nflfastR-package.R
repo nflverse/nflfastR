@@ -112,3 +112,18 @@
 #' @importFrom xgboost getinfo
 ## usethis namespace: end
 NULL
+
+
+# Re-Exports --------------------------------------------------------------
+
+#' @importFrom nflreadr load_pbp
+#' @export
+nflreadr::load_pbp
+
+#' @importFrom nflreadr load_player_stats
+#' @export
+nflreadr::load_player_stats
+
+#' @importFrom nflreadr load_team_stats
+#' @export
+nflreadr::load_team_stats
