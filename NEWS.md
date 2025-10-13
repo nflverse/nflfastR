@@ -5,7 +5,7 @@
 - Added the argument `pbp` to `calculate_stats()` to allow stats calculation based on subsets of nflverse play-by-play data. (#524)
 - Fixed a bug where `calculate_stats()` didn't count 60 yard field goal attempts in `"fg_made_60_"` and `"fg_missed_60_"`. (#531)
 - Fixed a bug where `clean_pbp()` did not provide a passer on plays where scrambles where manually adjusted based on data from Aaron Schatz. (#536)
-- nflfastR now directly reexports nflreadr's `load_pbp()`, `load_player_stats()`, and `load_team_stats()`. This means that the functions can be called normally via nflfastR, but are no longer available in the documentation (whether in the R Help or on the pkgdown website). Instead, only links to nflreadr are included. This ensures that the documentation is always up to date. (#537)
+- nflfastR now directly reexports nflreadr's `load_pbp()`, `load_player_stats()`, and `load_team_stats()`. This means that the functions can be called normally via nflfastR, but are no longer available in the documentation (whether in the R Help or on the pkgdown website). Instead, only links to nflreadr are included. This ensures that the documentation is always up to date. (#538)
 
 # nflfastR 5.1.0
 
