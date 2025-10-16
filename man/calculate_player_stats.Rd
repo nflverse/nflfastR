@@ -110,7 +110,7 @@ dplyr::glimpse(overall)
 }
 }
 \seealso{
-The function \code{\link[=load_player_stats]{load_player_stats()}} and the corresponding examples
+The function \code{\link[nflreadr:load_player_stats]{nflreadr::load_player_stats()}} and the corresponding examples
 on \href{https://www.nflfastr.com/articles/nflfastR.html#example-11-replicating-official-stats}{the nflfastR website}
 }
 \keyword{internal}
