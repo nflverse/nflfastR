@@ -15,7 +15,7 @@ either at the game level or at the level of the entire data frame passed."><meta
 
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.0.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.0.9005</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -93,7 +93,7 @@ either at the game level or at the level of the entire data frame passed.</p>
 
 <dl><dt id="arg-pbp">pbp<a class="anchor" aria-label="anchor" href="#arg-pbp"></a></dt>
 <dd><p>A Data frame of NFL play-by-play data typically loaded with
-<code><a href="load_pbp.html">load_pbp()</a></code> or <code><a href="build_nflfastR_pbp.html">build_nflfastR_pbp()</a></code>. If the data doesn't include the variable
+<code><a href="https://nflreadr.nflverse.com/reference/load_pbp.html" class="external-link">load_pbp()</a></code> or <code><a href="build_nflfastR_pbp.html">build_nflfastR_pbp()</a></code>. If the data doesn't include the variable
 <code>qb_epa</code>, the function <code><a href="add_qb_epa.html">add_qb_epa()</a></code> will be called to add it.</p></dd>
 
 
@@ -278,7 +278,7 @@ between different sources).</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p>The function <code><a href="load_player_stats.html">load_player_stats()</a></code> and the corresponding examples
+    <div class="dont-index"><p>The function <code><a href="https://nflreadr.nflverse.com/reference/load_player_stats.html" class="external-link">nflreadr::load_player_stats()</a></code> and the corresponding examples
 on <a href="https://www.nflfastr.com/articles/nflfastR.html#example-11-replicating-official-stats">the nflfastR website</a></p></div>
     </div>
 
@@ -286,7 +286,7 @@ on <a href="https://www.nflfastr.com/articles/nflfastR.html#example-11-replicati
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="op">{</span><span class="co"># to avoid CRAN test problems</span></span></span>
-<span class="r-in"><span><span class="va">pbp</span> <span class="op">&lt;-</span> <span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="load_pbp.html">load_pbp</a></span><span class="op">(</span><span class="fl">2020</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pbp</span> <span class="op">&lt;-</span> <span class="fu">nflfastR</span><span class="fu">::</span><span class="fu"><a href="https://nflreadr.nflverse.com/reference/load_pbp.html" class="external-link">load_pbp</a></span><span class="op">(</span><span class="fl">2020</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">weekly</span> <span class="op">&lt;-</span> <span class="fu">calculate_player_stats</span><span class="op">(</span><span class="va">pbp</span>, weekly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">weekly</span><span class="op">)</span></span></span>

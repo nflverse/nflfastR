@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.0.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.0.9005</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,6 +72,7 @@
 <li>Added the argument <code>pbp</code> to <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code> to allow stats calculation based on subsets of nflverse play-by-play data. (<a href="https://github.com/nflverse/nflfastR/issues/524" class="external-link">#524</a>)</li>
 <li>Fixed a bug where <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code> didn’t count 60 yard field goal attempts in <code>"fg_made_60_"</code> and <code>"fg_missed_60_"</code>. (<a href="https://github.com/nflverse/nflfastR/issues/531" class="external-link">#531</a>)</li>
 <li>Fixed a bug where <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> did not provide a passer on plays where scrambles where manually adjusted based on data from Aaron Schatz. (<a href="https://github.com/nflverse/nflfastR/issues/536" class="external-link">#536</a>)</li>
+<li>nflfastR now directly reexports nflreadr’s <code><a href="https://nflreadr.nflverse.com/reference/load_pbp.html" class="external-link">load_pbp()</a></code>, <code><a href="https://nflreadr.nflverse.com/reference/load_player_stats.html" class="external-link">load_player_stats()</a></code>, and <code><a href="https://nflreadr.nflverse.com/reference/load_team_stats.html" class="external-link">load_team_stats()</a></code>. This means that the functions can be called normally via nflfastR, but are no longer available in the documentation (whether in the R Help or on the pkgdown website). Instead, only links to nflreadr are included. This ensures that the documentation is always up to date. (<a href="https://github.com/nflverse/nflfastR/issues/538" class="external-link">#538</a>)</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="5.1.0" id="nflfastr-510">nflfastR 5.1.0<a class="anchor" aria-label="anchor" href="#nflfastr-510"></a></h2><p class="text-muted">CRAN release: 2025-05-14</p>
@@ -202,7 +203,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="deprecation-4-4-0">Deprecation<a class="anchor" aria-label="anchor" href="#deprecation-4-4-0"></a></h3>
-<ul><li>The argument <code>qs</code> in the functions <code><a href="../reference/load_pbp.html">load_pbp()</a></code> and <code><a href="../reference/load_player_stats.html">load_player_stats()</a></code> has been deprecated as of nflfastR 4.3.0. This release removes the argument entirely.</li>
+<ul><li>The argument <code>qs</code> in the functions <code><a href="https://nflreadr.nflverse.com/reference/load_pbp.html" class="external-link">load_pbp()</a></code> and <code><a href="https://nflreadr.nflverse.com/reference/load_player_stats.html" class="external-link">load_player_stats()</a></code> has been deprecated as of nflfastR 4.3.0. This release removes the argument entirely.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bugfixes-and-minor-improvements-4-4-0">Bugfixes and Minor Improvements<a class="anchor" aria-label="anchor" href="#bugfixes-and-minor-improvements-4-4-0"></a></h3>
@@ -230,7 +231,7 @@
 <div class="section level3">
 <h3 id="minor-changes-4-3-0">Minor Changes<a class="anchor" aria-label="anchor" href="#minor-changes-4-3-0"></a></h3>
 <ul><li>Add <a href="https://nflreadr.nflverse.com/" class="external-link">nflreadr</a> to dependecies and drop lubridate and magrittr dependency</li>
-<li>The functions <code><a href="../reference/load_pbp.html">load_pbp()</a></code> and <code><a href="../reference/load_player_stats.html">load_player_stats()</a></code> now call <code><a href="https://nflreadr.nflverse.com/reference/load_pbp.html" class="external-link">nflreadr::load_pbp()</a></code> and <code><a href="https://nflreadr.nflverse.com/reference/load_player_stats.html" class="external-link">nflreadr::load_player_stats()</a></code> respectively. Therefore the argument <code>qs</code> has been deprecated in both functions. It will be removed in a future release. Running <code><a href="../reference/load_player_stats.html">load_player_stats()</a></code> without any argument will now return player stats of the current season only (the default in <code>nflreadr</code>).</li>
+<li>The functions <code><a href="https://nflreadr.nflverse.com/reference/load_pbp.html" class="external-link">load_pbp()</a></code> and <code><a href="https://nflreadr.nflverse.com/reference/load_player_stats.html" class="external-link">load_player_stats()</a></code> now call <code><a href="https://nflreadr.nflverse.com/reference/load_pbp.html" class="external-link">nflreadr::load_pbp()</a></code> and <code><a href="https://nflreadr.nflverse.com/reference/load_player_stats.html" class="external-link">nflreadr::load_player_stats()</a></code> respectively. Therefore the argument <code>qs</code> has been deprecated in both functions. It will be removed in a future release. Running <code><a href="https://nflreadr.nflverse.com/reference/load_player_stats.html" class="external-link">load_player_stats()</a></code> without any argument will now return player stats of the current season only (the default in <code>nflreadr</code>).</li>
 <li>The deprecated arguments <code>source</code> and <code>pp</code> in the functions <code>fast_scraper_*()</code> and <code><a href="../reference/build_nflfastR_pbp.html">build_nflfastR_pbp()</a></code> have been removed</li>
 <li>Added the variables <code>racr</code> (“Receiver Air Conversion Ratio”), <code>target_share</code>, <code>air_yards_share</code>, <code>wopr</code> (“Weighted Opportunity Rating”) and <code>pacr</code> (“Passing Air Conversion Ratio”) to the output of <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code>
 </li>
@@ -255,7 +256,7 @@
 <li>Edited GitHub references to point to nflverse</li>
 <li>Added the variables <code>sack_yards</code>, <code>sack_fumbles</code>, <code>rushing_fumbles</code> and <code>receiving_fumbles</code> to the output of the function <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code>, thanks to Mike Filicicchia (<a href="https://github.com/TheMathNinja" class="external-link">@TheMathNinja</a>). (<a href="https://github.com/nflverse/nflfastR/issues/239" class="external-link">#239</a>)</li>
 <li>Fixed a bug where <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> falsely counted lost fumbles on aborted snaps (<a href="https://github.com/nflverse/nflfastR/issues/238" class="external-link">#238</a>)</li>
-<li>Added the variable <code>season_type</code> to the output of <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> and <code><a href="../reference/load_player_stats.html">load_player_stats()</a></code> in preparation of the extended Regular Season starting in 2021 (<a href="https://github.com/nflverse/nflfastR/issues/240" class="external-link">#240</a>)</li>
+<li>Added the variable <code>season_type</code> to the output of <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> and <code><a href="https://nflreadr.nflverse.com/reference/load_player_stats.html" class="external-link">load_player_stats()</a></code> in preparation of the extended Regular Season starting in 2021 (<a href="https://github.com/nflverse/nflfastR/issues/240" class="external-link">#240</a>)</li>
 <li>Updated <code>season_type</code> definitions in preparation of the extended Regular Season starting in 2021 (<a href="https://github.com/nflverse/nflfastR/issues/242" class="external-link">#242</a>)</li>
 <li>Fix for <code>fixed_drive</code> where it wasn’t incrementing when there was a muffed punt followed by timeout (<a href="https://github.com/nflverse/nflfastR/issues/244" class="external-link">#244</a>)</li>
 <li>Fix for <code>fixed_drive</code> where it wasn’t incrementing following an interception with the intercepting player then losing a fumble (<a href="https://github.com/nflverse/nflfastR/issues/247" class="external-link">#247</a>)</li>
@@ -271,7 +272,7 @@
 <div class="section level4">
 <h4 id="functions-4-1-0">Functions<a class="anchor" aria-label="anchor" href="#functions-4-1-0"></a></h4>
 <ul><li>Added the function <code><a href="../reference/calculate_player_stats.html">calculate_player_stats()</a></code> that aggregates official passing, rushing, and receiving stats either at game level or overall</li>
-<li>Added the function <code><a href="../reference/load_player_stats.html">load_player_stats()</a></code> that loads weekly player stats from 1999 to the most recent season</li>
+<li>Added the function <code><a href="https://nflreadr.nflverse.com/reference/load_player_stats.html" class="external-link">load_player_stats()</a></code> that loads weekly player stats from 1999 to the most recent season</li>
 <li>The performance of the functions <code><a href="../reference/add_xyac.html">add_xyac()</a></code> and <code><a href="../reference/clean_pbp.html">clean_pbp()</a></code> has been significantly improved</li>
 </ul></div>
 <div class="section level4">
@@ -326,7 +327,7 @@
 </ul></div>
 <div class="section level4">
 <h4 id="new-functions-and-variables-4-0-0">New Functions and Variables<a class="anchor" aria-label="anchor" href="#new-functions-and-variables-4-0-0"></a></h4>
-<ul><li>Added the new function <code><a href="../reference/load_pbp.html">load_pbp()</a></code> that loads complete seasons into memory for fast access of the play-by-play data.</li>
+<ul><li>Added the new function <code><a href="https://nflreadr.nflverse.com/reference/load_pbp.html" class="external-link">load_pbp()</a></code> that loads complete seasons into memory for fast access of the play-by-play data.</li>
 <li>Added the new variables <code>rushing_yards</code>, <code>lateral_rushing_yards</code>, <code>passing_yards</code>, <code>receiving_yards</code>, <code>lateral_receiving_yards</code> to fix an old bug where <code>yards_gained</code> gets overwritten on plays with laterals (<a href="https://github.com/nflverse/nflfastR/issues/115" class="external-link">#115</a>).</li>
 <li>Added columns <code>vegas_wpa</code> and <code>vegas_home_wpa</code> which contain Win Probability Added from the spread-adjusted WP model</li>
 <li>Added column <code>out_of_bounds</code>

@@ -15,7 +15,7 @@ schedule data."><meta property="og:image" content="https://www.nflfastr.com/refe
 
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.0.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.0.9005</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -98,7 +98,7 @@ schedule data.</p>
 <dl><dt id="arg-nflverse-object">nflverse_object<a class="anchor" aria-label="anchor" href="#arg-nflverse-object"></a></dt>
 <dd><p>Data object of class <code>nflverse_data</code>. Either schedules
 as returned by <code><a href="fast_scraper_schedules.html">fast_scraper_schedules()</a></code> or <code><a href="https://nflreadr.nflverse.com/reference/load_schedules.html" class="external-link">nflreadr::load_schedules()</a></code>.
-Or play-by-play data as returned by <code><a href="load_pbp.html">load_pbp()</a></code>, <code><a href="build_nflfastR_pbp.html">build_nflfastR_pbp()</a></code>, or
+Or play-by-play data as returned by <code><a href="https://nflreadr.nflverse.com/reference/load_pbp.html" class="external-link">load_pbp()</a></code>, <code><a href="build_nflfastR_pbp.html">build_nflfastR_pbp()</a></code>, or
 <code><a href="fast_scraper.html">fast_scraper()</a></code>.</p></dd>
 
 
@@ -137,7 +137,7 @@ for all seasons in <code>nflverse_object</code>!</p></dd>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="op">{</span><span class="co"># to avoid CRAN test problems</span></span></span>
 <span class="r-in"><span>  <span class="co"># load nflverse data both schedules and pbp</span></span></span>
 <span class="r-in"><span>  <span class="va">scheds</span> <span class="op">&lt;-</span> <span class="fu"><a href="fast_scraper_schedules.html">fast_scraper_schedules</a></span><span class="op">(</span><span class="fl">2014</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">pbp</span> <span class="op">&lt;-</span> <span class="fu"><a href="load_pbp.html">load_pbp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2018</span>, <span class="fl">2021</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">pbp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://nflreadr.nflverse.com/reference/load_pbp.html" class="external-link">load_pbp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2018</span>, <span class="fl">2021</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="co"># calculate standings based on pbp</span></span></span>
 <span class="r-in"><span>  <span class="fu">calculate_standings</span><span class="op">(</span><span class="va">pbp</span><span class="op">)</span></span></span>
