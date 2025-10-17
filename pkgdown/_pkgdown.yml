@@ -1,4 +1,4 @@
-url: https://www.nflfastr.com/
+url: https://nflfastr.com/
 
 template:
   bootstrap: 5
@@ -46,7 +46,7 @@ home:
   - text: nflfastR stats landing page
     href: https://rbsdm.com/stats/
   - text: Lee Sharpe's nfl game data
-    href: http://nflgamedata.com
+    href: https://nflgamedata.com
 
 navbar:
   bg: dark
@@ -88,7 +88,7 @@ navbar:
       menu:
         - text: "nflverse Packages"
         - text: nflfastR
-          href: https://www.nflfastr.com
+          href: https://nflfastr.com
         - text: nflseedR
           href: https://nflseedr.com
         - text: nfl4th
@@ -104,8 +104,6 @@ navbar:
         - text: "nflverse Data"
         - text: nflverse GitHub
           href: https://github.com/nflverse
-        - text: espnscrapeR Package
-          href: https://jthomasmock.github.io/espnscrapeR/
         - text: ffverse
         - text: "ffverse.com"
           href: https://www.ffverse.com
@@ -119,14 +117,13 @@ reference:
       These functions access precomputed data using the nflreadr package.
       See <https://nflreadr.nflverse.com> for info and more data load functions.
     contents:
-      - load_pbp
-      - load_player_stats
+      - starts_with("load_")
   - title: Utility Functions
     contents:
       - save_raw_pbp
       - missing_raw_pbp
       - starts_with("calculate_")
-      - report
+      - nflverse_sitrep
   - title: Documentation
     contents:
       - nflfastR-package
@@ -150,3 +147,4 @@ reference:
     contents:
       - fast_scraper_roster
       - fast_scraper_schedules
+      - report
