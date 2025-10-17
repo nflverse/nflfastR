@@ -21,7 +21,9 @@ Data available back to 1920.}
 A tibble of season-level roster data.
 }
 \description{
-Load Rosters
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+This function was deprecated. Please use \code{\link[nflreadr:load_rosters]{nflreadr::load_rosters}}.
 }
 \details{
 See \code{\link[nflreadr:load_rosters]{nflreadr::load_rosters}} for details.
@@ -38,3 +40,4 @@ fast_scraper_roster(2019:2020)
 For information on parallel processing and progress updates please
 see \link{nflfastR}.
 }
+\keyword{internal}

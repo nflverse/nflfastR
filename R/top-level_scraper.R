@@ -465,11 +465,18 @@ fast_scraper <- function(game_ids,
 # roster ------------------------------------------------------------------
 
 #' Load Team Rosters for Multiple Seasons
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' This function was deprecated. Please use [`nflreadr::load_rosters`].
+#'
 #' @details See [`nflreadr::load_rosters`] for details.
 #' @inheritDotParams nflreadr::load_rosters
 #' @inherit nflreadr::load_rosters
 #' @seealso For information on parallel processing and progress updates please
 #' see [nflfastR].
+#' @keywords internal
 #' @examples
 #' \donttest{
 #' # Roster of the 2019 and 2020 seasons
@@ -478,16 +485,30 @@ fast_scraper <- function(game_ids,
 #' })
 #' }
 #' @export
-fast_scraper_roster <- function(...) nflreadr::load_rosters(...)
+fast_scraper_roster <- function(...) {
+  lifecycle::deprecate_warn(
+    "5.2.0",
+    "fast_scraper_roster()",
+    "nflreadr::load_rosters()"
+  )
+  nflreadr::load_rosters(...)
+}
 
 # schedules ---------------------------------------------------------------
 
 #' Load NFL Season Schedules
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' This function was deprecated. Please use [`nflreadr::load_schedules`].
+#'
 #' @details See [`nflreadr::load_schedules`] for details.
 #' @inheritDotParams nflreadr::load_schedules
 #' @inherit nflreadr::load_schedules
 #' @seealso For information on parallel processing and progress updates please
 #' see [nflfastR].
+#' @keywords internal
 #' @examples
 #'\donttest{
 #' # Get schedules for the whole 2015 - 2018 seasons
@@ -496,4 +517,11 @@ fast_scraper_roster <- function(...) nflreadr::load_rosters(...)
 #' })
 #' }
 #' @export
-fast_scraper_schedules <- function(...) nflreadr::load_schedules(...)
+fast_scraper_schedules <- function(...){
+  lifecycle::deprecate_warn(
+    "5.2.0",
+    "fast_scraper_schedules()",
+    "nflreadr::load_schedules()"
+  )
+  nflreadr::load_schedules(...)
+}
