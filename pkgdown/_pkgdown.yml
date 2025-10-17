@@ -123,7 +123,6 @@ reference:
       - save_raw_pbp
       - missing_raw_pbp
       - starts_with("calculate_")
-      - nflverse_sitrep
   - title: Documentation
     contents:
       - nflfastR-package
