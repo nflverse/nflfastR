@@ -127,3 +127,11 @@ nflreadr::load_player_stats
 #' @importFrom nflreadr load_team_stats
 #' @export
 nflreadr::load_team_stats
+
+#' @importFrom nflreadr load_schedules
+#' @export
+nflreadr::load_schedules
+
+#' @importFrom nflreadr load_rosters
+#' @export
+nflreadr::load_rosters
