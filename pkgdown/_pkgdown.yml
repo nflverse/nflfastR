@@ -117,7 +117,7 @@ reference:
       These functions access precomputed data using the nflreadr package.
       See <https://nflreadr.nflverse.com> for info and more data load functions.
     contents:
-      - starts_with("load_")
+      - reexports
   - title: Utility Functions
     contents:
       - save_raw_pbp
