@@ -2,7 +2,6 @@
 % Please edit documentation in R/report.R
 \name{report}
 \alias{report}
-\alias{nflverse_sitrep}
 \title{Get a Situation Report on System, nflverse Package Versions and Dependencies}
 \usage{
 report(...)
@@ -26,6 +25,10 @@ in the name should be redacted, default = TRUE}
   }}
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+This function was deprecated. Please use \code{\link[nflreadr:sitrep]{nflreadr::nflverse_sitrep}}.
+
 This function gives a quick overview of the versions of R and
 the operating system as well as the versions of nflverse packages, options,
 and their dependencies. It's primarily designed to help you get a quick
@@ -50,3 +53,4 @@ options(old_ops)
 }
 }
 }
+\keyword{internal}

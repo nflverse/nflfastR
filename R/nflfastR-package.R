@@ -135,3 +135,7 @@ nflreadr::load_schedules
 #' @importFrom nflreadr load_rosters
 #' @export
 nflreadr::load_rosters
+
+#' @importFrom nflreadr nflverse_sitrep
+#' @export
+nflreadr::nflverse_sitrep
