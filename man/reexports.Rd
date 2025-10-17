@@ -8,6 +8,7 @@
 \alias{load_team_stats}
 \alias{load_schedules}
 \alias{load_rosters}
+\alias{nflverse_sitrep}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -15,6 +16,6 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{nflreadr}{\code{\link[nflreadr]{load_pbp}}, \code{\link[nflreadr]{load_player_stats}}, \code{\link[nflreadr]{load_rosters}}, \code{\link[nflreadr]{load_schedules}}, \code{\link[nflreadr]{load_team_stats}}}
+  \item{nflreadr}{\code{\link[nflreadr]{load_pbp}}, \code{\link[nflreadr]{load_player_stats}}, \code{\link[nflreadr]{load_rosters}}, \code{\link[nflreadr]{load_schedules}}, \code{\link[nflreadr]{load_team_stats}}, \code{\link[nflreadr:sitrep]{nflverse_sitrep}}}
 }}
 
