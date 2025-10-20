@@ -44,9 +44,9 @@ and, if necessary, supplemented with the latest games using
 \link{build_nflfastR_pbp}.
 }
 \details{
-\subsection{The \code{season} argument}{
+\subsection{The \code{seasons} argument}{
 
-The season argument controls how the table in the connected database is
+The \code{seasons} argument controls how the table in the connected database is
 handled.
 
 With \code{seasons = TRUE}, the table in argument \code{name} will be removed completely
@@ -70,7 +70,7 @@ data of the nflfastR era, set
 \if{html}{\out{<div class="sourceCode">}}\preformatted{seasons = seq(1999, most_recent_season())
 }\if{html}{\out{</div>}}
 
-If seasons contains multiple seasons, it is possible to control whether the
+If \code{seasons} contains multiple seasons, it is possible to control whether the
 seasons are loaded individually and written to the database, or whether
 multiple seasons should be processed in chunks. The latter is more efficient
 because fewer write operations are required, but at the same time, the data

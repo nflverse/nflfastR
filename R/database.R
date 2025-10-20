@@ -23,9 +23,9 @@
 #' Defaults to [most_recent_season]. Please see details for further information.
 #'
 #' @details
-#' ## The `season` argument
+#' ## The `seasons` argument
 #'
-#' The season argument controls how the table in the connected database is
+#' The `seasons` argument controls how the table in the connected database is
 #' handled.
 #'
 #' With `seasons = TRUE`, the table in argument `name` will be removed completely
@@ -49,7 +49,7 @@
 #' seasons = seq(1999, most_recent_season())
 #' ```
 #'
-#' If seasons contains multiple seasons, it is possible to control whether the
+#' If `seasons` contains multiple seasons, it is possible to control whether the
 #' seasons are loaded individually and written to the database, or whether
 #' multiple seasons should be processed in chunks. The latter is more efficient
 #' because fewer write operations are required, but at the same time, the data
