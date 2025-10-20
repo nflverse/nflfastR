@@ -70,6 +70,18 @@ data of the nflfastR era, set
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{seasons = seq(1999, most_recent_season())
 }\if{html}{\out{</div>}}
+
+If seasons contains multiple seasons, it is possible to control whether the
+seasons are loaded individually and written to the database, or whether
+multiple seasons should be processed in chunks. The latter is more efficient
+because fewer write operations are required, but at the same time, the data
+must first be stored in memory. The option \verb{“nflfastR.db_chunk_size”} can
+be used to control how many seasons are loaded together in a chunk and
+written to the database. With the following option, for example, 5 seasons
+are always loaded together and written to the database.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{options("nflfastR.db_chunk_size" = 5L)
+}\if{html}{\out{</div>}}
 }
 }
 \examples{
