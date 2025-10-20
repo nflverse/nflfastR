@@ -7,8 +7,7 @@
 update_pbp_db(conn, ..., name = "nflverse_pbp", seasons = most_recent_season())
 }
 \arguments{
-\item{conn}{A \linkS4class{DBIConnection} object, as returned by
-\code{\link[DBI:dbConnect]{dbConnect()}}.}
+\item{conn}{A \code{DBIConnection} object, as returned by \code{\link[DBI:dbConnect]{DBI::dbConnect()}}}
 
 \item{...}{These dots are for future extensions and must be empty.}
 

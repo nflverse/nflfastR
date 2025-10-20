@@ -10,6 +10,7 @@
 #' and, if necessary, supplemented with the latest games using
 #' [build_nflfastR_pbp].
 #'
+#' @param conn A `DBIConnection` object, as returned by [DBI::dbConnect()]
 #' @inheritParams rlang::args_dots_empty
 #' @inheritParams DBI::dbExistsTable
 #' @param seasons Hybrid argument (logical or numeric) to update parts
