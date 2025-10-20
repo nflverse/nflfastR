@@ -139,3 +139,7 @@ nflreadr::load_rosters
 #' @importFrom nflreadr nflverse_sitrep
 #' @export
 nflreadr::nflverse_sitrep
+
+#' @importFrom nflreadr most_recent_season
+#' @export
+nflreadr::most_recent_season
