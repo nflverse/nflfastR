@@ -49,7 +49,7 @@ and, if necessary, supplemented with the latest games using
 The season argument controls how the table in the connected database is
 handled.
 
-With \code{season = TRUE}, the table in argument \code{name} will be removed completely
+With \code{seasons = TRUE}, the table in argument \code{name} will be removed completely
 (by calling \link[DBI:dbRemoveTable]{DBI::dbRemoveTable}) and all seasons of the nflfastR era will be
 added to a fresh table. This is helpful when new columns are added during the
 offseason.

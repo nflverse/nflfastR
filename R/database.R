@@ -28,7 +28,7 @@
 #' The season argument controls how the table in the connected database is
 #' handled.
 #'
-#' With `season = TRUE`, the table in argument `name` will be removed completely
+#' With `seasons = TRUE`, the table in argument `name` will be removed completely
 #' (by calling [DBI::dbRemoveTable]) and all seasons of the nflfastR era will be
 #' added to a fresh table. This is helpful when new columns are added during the
 #' offseason.
@@ -119,7 +119,7 @@ update_pbp_db <- function(
   } else if (isTRUE(seasons)) {
     # We need this block inside if (isTRUE(seasons)) to make sure we run
     # the else block in the right conditions
-    if (isFALSE(initiated)){
+    if (isFALSE(initiated)) {
       do_it <- confirm(
         "Purge table {.val {name}} in your connected database? (Y/n)"
       )
