@@ -279,6 +279,7 @@ completed_game_ids <- function(seasons) {
     game_id
   ]
 }
+utils::globalVariables(c("result", "game_id"), add = TRUE)
 
 missing_raw_games <- c("1999_01_BAL_STL", "2000_06_BUF_MIA", "2000_03_SD_KC")
 
