@@ -91,14 +91,25 @@ update_pbp_db <- function(
 
   rule_header("Update nflverse Play-by-Play Data in Connected Database")
 
+  # msg_name is the table name used in cli messages. We need it because `name`
+  # could be a call to DBI::SQL() or DBI::Id()
+  # I don't want to evaluate name in every subsequent function call, so I do it
+  # here once and pass it around
+  msg_name <- DBI::dbQuoteIdentifier(conn = conn, x = name) |>
+    as.character()
+
   initiated <- FALSE
   if (!DBI::dbExistsTable(conn = conn, name = name)) {
     do_it <- confirm(
-      "Table {.val {name}} does not yet exist in your connected database.
+      "Table {.val {msg_name}} does not yet exist in your connected database.
       Do you wish to create it? (Y/n)"
     )
     if (do_it) {
-      initiated <- db_initiate_pbp(conn = conn, name = name)
+      initiated <- db_initiate_pbp(
+        conn = conn,
+        name = name,
+        msg_name = msg_name
+      )
     } else {
       rule_footer("ABORTED")
       return(invisible(conn))
@@ -115,18 +126,27 @@ update_pbp_db <- function(
         invalid: {.val {invalid}}"
       )
     }
-    ret <- db_drop_seasons(conn = conn, name = name, seasons = seasons)
+    ret <- db_drop_seasons(
+      conn = conn,
+      name = name,
+      seasons = seasons,
+      msg_name = msg_name
+    )
   } else if (isTRUE(seasons)) {
     # We need this block inside if (isTRUE(seasons)) to make sure we run
     # the else block in the right conditions
     if (isFALSE(initiated)) {
       do_it <- confirm(
-        "Purge table {.val {name}} in your connected database? (Y/n)"
+        "Purge table {.val {msg_name}} in your connected database? (Y/n)"
       )
       if (do_it) {
         ret <- DBI::dbRemoveTable(conn = conn, name = name)
-        cli_message("Removed {.val {name}}")
-        initiated <- db_initiate_pbp(conn = conn, name = name)
+        cli_message("Removed {.val {msg_name}}")
+        initiated <- db_initiate_pbp(
+          conn = conn,
+          name = name,
+          msg_name = msg_name
+        )
       } else {
         rule_footer("ABORTED")
         return(invisible(conn))
@@ -142,7 +162,12 @@ update_pbp_db <- function(
   seasons <- if (isTRUE(seasons)) valid_seasons() else seasons
 
   # Append seasons ----------------------------------------------------------
-  ret <- db_write_pbp_seasons(conn = conn, name = name, seasons = seasons)
+  ret <- db_write_pbp_seasons(
+    conn = conn,
+    name = name,
+    seasons = seasons,
+    msg_name = msg_name
+  )
 
   # Process missing games ---------------------------------------------------
   db_games <- db_query_game_ids(conn = conn, name = name, seasons = seasons)
@@ -157,7 +182,7 @@ update_pbp_db <- function(
     cli_message(
       "The following {cli::no(length(missing_games))} game{?s} {?is/are} not \\
       yet available via {.fun load_pbp} and {?is/are} therefore parsed directly \\
-      with {.fun build_nflfastR_pbp} and appended to table {.val {name}}: \\
+      with {.fun build_nflfastR_pbp} and appended to table {.val {msg_name}}: \\
       {.val {vec}}"
     )
     # build pbp of missing games. If raw pbp isn't ready, the function will
@@ -171,7 +196,7 @@ update_pbp_db <- function(
     # Check how many new games have been added
     new_ids <- unique(new_pbp[["game_id"]])
     cli_message(
-      "Appended {cli::no(length(new_ids))} game{?s} to table {.val {name}}",
+      "Appended {cli::no(length(new_ids))} game{?s} to table {.val {msg_name}}",
       .cli_fct = cli::cli_alert_success
     )
     # Let user know that some games are still missing
@@ -220,11 +245,11 @@ db_remove_dummy <- function(conn, name) {
   invisible(TRUE)
 }
 
-db_write_pbp_seasons <- function(conn, name, seasons) {
+db_write_pbp_seasons <- function(conn, name, seasons, msg_name) {
   vec <- cli::cli_vec(seasons, list("vec-trunc" = 5L))
   cli_message(
     "Append {.val {vec}} {cli::qty(length(seasons))}\\
-    season{?s} to table {.val {name}}"
+    season{?s} to table {.val {msg_name}}"
   )
   chunks <- compute_chunks(
     seasons,
@@ -242,11 +267,11 @@ db_write_pbp_seasons <- function(conn, name, seasons) {
   invisible(TRUE)
 }
 
-db_drop_seasons <- function(conn, name, seasons) {
+db_drop_seasons <- function(conn, name, seasons, msg_name) {
   vec <- cli::cli_vec(seasons, list("vec-trunc" = 5L))
   cli_message(
     "Drop {.val {vec}} {cli::qty(length(seasons))}\\
-    season{?s} from table {.val {name}}"
+    season{?s} from table {.val {msg_name}}"
   )
   n_drops <- DBI::dbExecute(
     conn = conn,
@@ -259,9 +284,9 @@ db_drop_seasons <- function(conn, name, seasons) {
   invisible(TRUE)
 }
 
-db_initiate_pbp <- function(conn, name) {
+db_initiate_pbp <- function(conn, name, msg_name) {
   cli_message(
-    "Initiate table {.val {name}} with nflverse pbp schema"
+    "Initiate table {.val {msg_name}} with nflverse pbp schema"
   )
   ret <- DBI::dbCreateTable(
     conn = conn,
