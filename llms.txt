@@ -1,0 +1,222 @@
+# **nflfastR**
+
+`nflfastR` is a set of functions to efficiently scrape NFL play-by-play
+data. `nflfastR` expands upon the features of nflscrapR:
+
+- The package contains NFL play-by-play data back to 1999
+- As suggested by the package name, it obtains games **much** faster
+- Includes completion probability (`cp`), completion percentage over
+  expected (`cpoe`), and expected yards after the catch (`xyac_epa` and
+  `xyac_mean_yardage`) in play-by-play going back to 2006
+- Includes drive information, including drive starting position and
+  drive result
+- Includes series information, including series number and series
+  success
+- Hosts [a release of play-by-play data going back to
+  1999](https://github.com/nflverse/nflverse-data/releases/tag/pbp) for
+  very quick access
+- Features models for Expected Points, Win Probability, Completion
+  Probability, and Yards After the Catch (see section below)
+- Includes a function
+  [`update_db()`](https://nflfastr.com/reference/update_db.md) that
+  creates and updates a database
+
+We owe a debt of gratitude to the original
+[`nflscrapR`](https://github.com/maksimhorowitz/nflscrapR) team, Maksim
+Horowitz, Ronald Yurko, and Samuel Ventura, without whose contributions
+and inspiration this package would not exist.
+
+## Installation
+
+The easiest way to get nflfastR is to install it from
+[CRAN](https://cran.r-project.org/package=nflfastR) with:
+
+``` r
+install.packages("nflfastR")
+```
+
+To get a bug fix or to use a feature from the development version, you
+can install the development version of nflfastR either from
+[GitHub](https://github.com/nflverse/nflfastR/) with:
+
+``` r
+if (!require("pak")) install.packages("pak")
+pak::pak("nflverse/nflfastR")
+```
+
+or prebuilt from the [development repo](https://nflverse.r-universe.dev)
+with:
+
+``` r
+install.packages("nflfastR", repos = c("https://nflverse.r-universe.dev", getOption("repos")))
+```
+
+## Usage
+
+We have provided some application examples in the **[Getting
+Started](https://www.nflfastr.com/articles/nflfastR.html)** article.
+However, these require a basic knowledge of R. For this reason we have
+the **[nflfastR beginner’s
+guide](https://www.nflfastr.com/articles/beginners_guide.html)**, which
+we recommend to all those who are looking for an introduction to
+nflfastR with R.
+
+You can find column names and descriptions in the **[Field
+Descriptions](https://www.nflfastr.com/articles/field_descriptions.html)**
+article, or by accessing the `field_descriptions` dataframe from the
+package.
+
+## Data access
+
+Even though `nflfastR` is very fast, **we recommend downloading the data
+from [here](https://github.com/nflverse/nflverse-data/releases/tag/pbp)
+or using the `nflreadr` package**. These data sets include play-by-play
+data of complete seasons going back to 1999 and are updated nightly
+during the season. The files contain both regular season and postseason
+data, and one can use game_type or week to figure out which games
+occurred in the postseason.
+
+## nflfastR models
+
+`nflfastR` uses its own models for Expected Points, Win Probability,
+Completion Probability, and Expected Yards After the Catch. To read
+about the models, please see [this post on Open Source
+Football](https://opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/).
+For a more detailed description of the motivation for Expected Points
+models, we highly recommend this paper [from the nflscrapR team located
+here](http://arxiv.org/pdf/1802.00998).
+
+Here is a visualization of the Expected Points model by down and
+yardline.
+
+![](reference/figures/readme-epa-model-1.png)
+
+Here is a visualization of the Completion Probability model by air yards
+and pass direction.
+
+![](reference/figures/readme-cp-model-1.png)
+
+`nflfastR` includes two win probability models: one with and one without
+incorporating the pre-game spread.
+
+## Special thanks
+
+- To Nick Shoemaker for [finding and making available JSON-formatted NFL
+  play-by-play back to 1999](https://github.com/CroppedClamp/nfl_pbps)
+  (`nflfastR` uses this source for 1999 and 2000 and previously also
+  used it for 2001-2010)
+- To Lau Sze Yui for developing a scraping function to access
+  JSON-formatted NFL play-by-play beginning in 2001
+- To Aaron Schatz and [FTN Fantasy](https://ftnfantasy.com/dvoa/nfl) for
+  providing charting data to correctly mark scrambles in the 1999-2005
+  seasons
+- To Lee Sharpe for curating a resource for game information
+- To Timo Riske, Lau Sze Yui, Sean Clement, and Daniel Houston for many
+  helpful discussions regarding the development of the new `nflfastR`
+  models
+- To Zach Feldman and Josh Hermsmeyer for many helpful discussions about
+  CPOE models as well as Peter Owen for many helpful suggestions for the
+  CP model
+- To Florian Schmitt for the logo design
+- The many users who found and reported bugs in `nflfastR` 1.0
+- And of course, the original
+  [`nflscrapR`](https://github.com/maksimhorowitz/nflscrapR) team,
+  Maksim Horowitz, Ronald Yurko, and Samuel Ventura, whose work
+  represented a dramatic step forward for the state of public NFL
+  research
+
+# Package index
+
+## Main Functions
+
+- [`build_nflfastR_pbp()`](https://nflfastr.com/reference/build_nflfastR_pbp.md)
+  : Build a Complete nflfastR Data Set
+- [`update_db()`](https://nflfastr.com/reference/update_db.md) : Update
+  or Create a nflfastR Play-by-Play Database
+
+## Load Functions
+
+These functions access precomputed data using the nflreadr package. See
+<https://nflreadr.nflverse.com> for info and more data load functions.
+
+- [`reexports`](https://nflfastr.com/reference/reexports.md)
+  [`load_pbp`](https://nflfastr.com/reference/reexports.md)
+  [`load_player_stats`](https://nflfastr.com/reference/reexports.md)
+  [`load_team_stats`](https://nflfastr.com/reference/reexports.md)
+  [`load_schedules`](https://nflfastr.com/reference/reexports.md)
+  [`load_rosters`](https://nflfastr.com/reference/reexports.md)
+  [`nflverse_sitrep`](https://nflfastr.com/reference/reexports.md) :
+  Objects exported from other packages
+
+## Utility Functions
+
+- [`save_raw_pbp()`](https://nflfastr.com/reference/save_raw_pbp.md) :
+  Download Raw PBP Data to Local Filesystem
+- [`missing_raw_pbp()`](https://nflfastr.com/reference/missing_raw_pbp.md)
+  : Compute Missing Raw PBP Data on Local Filesystem
+- [`calculate_expected_points()`](https://nflfastr.com/reference/calculate_expected_points.md)
+  : Compute expected points
+- [`calculate_series_conversion_rates()`](https://nflfastr.com/reference/calculate_series_conversion_rates.md)
+  : Compute Series Conversion Information from Play by Play
+- [`calculate_stats()`](https://nflfastr.com/reference/calculate_stats.md)
+  : Calculate NFL Stats
+- [`calculate_win_probability()`](https://nflfastr.com/reference/calculate_win_probability.md)
+  : Compute win probability
+
+## Documentation
+
+- [`nflfastR`](https://nflfastr.com/reference/nflfastR-package.md)
+  [`nflfastR-package`](https://nflfastr.com/reference/nflfastR-package.md)
+  : nflfastR: Functions to Efficiently Access NFL Play by Play Data
+- [`teams_colors_logos`](https://nflfastr.com/reference/teams_colors_logos.md)
+  : NFL Team names, colors and logo urls.
+- [`field_descriptions`](https://nflfastr.com/reference/field_descriptions.md)
+  : nflfastR Field Descriptions
+- [`stat_ids`](https://nflfastr.com/reference/stat_ids.md) : NFL Stat
+  IDs and their Meanings
+- [`nfl_stats_variables`](https://nflfastr.com/reference/nfl_stats_variables.md)
+  : NFL Stats Variables
+
+## Lower Level Functions
+
+These functions are wrapped in the above listed main functions and
+typically not used by the enduser.
+
+- [`fast_scraper()`](https://nflfastr.com/reference/fast_scraper.md) :
+  Get NFL Play by Play Data
+- [`add_qb_epa()`](https://nflfastr.com/reference/add_qb_epa.md) :
+  Compute QB epa
+- [`add_xpass()`](https://nflfastr.com/reference/add_xpass.md) : Add
+  expected pass columns
+- [`add_xyac()`](https://nflfastr.com/reference/add_xyac.md) : Add
+  expected yards after completion (xyac) variables
+- [`clean_pbp()`](https://nflfastr.com/reference/clean_pbp.md) : Clean
+  Play by Play Data
+- [`decode_player_ids()`](https://nflfastr.com/reference/decode_player_ids.md)
+  : Decode the player IDs in nflfastR play-by-play data
+
+## Deprecated
+
+These functions are no longer recommended for use, see nflreadr for
+latest versions.
+
+- [`fast_scraper_roster()`](https://nflfastr.com/reference/fast_scraper_roster.md)
+  **\[deprecated\]** : Load Team Rosters for Multiple Seasons
+- [`fast_scraper_schedules()`](https://nflfastr.com/reference/fast_scraper_schedules.md)
+  **\[deprecated\]** : Load NFL Season Schedules
+- [`report()`](https://nflfastr.com/reference/report.md)
+  **\[deprecated\]** : Get a Situation Report on System, nflverse
+  Package Versions and Dependencies
+
+# Articles
+
+### All vignettes
+
+- [A beginner's guide to
+  nflfastR](https://nflfastr.com/articles/beginners_guide.md):
+- [Field
+  Descriptions](https://nflfastr.com/articles/field_descriptions.md):
+- [Get started with
+  nflfastR](https://nflfastr.com/articles/nflfastR.md):
+- [NFL Stats
+  Variables](https://nflfastr.com/articles/stats_variables.md):
