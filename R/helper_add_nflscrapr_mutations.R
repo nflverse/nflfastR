@@ -201,6 +201,18 @@ add_nflscrapr_mutations <- function(pbp) {
       # Denote whether the home or away team has possession:
       posteam_type = dplyr::if_else(.data$posteam == .data$home_team, "home", "away"),
 
+      # manual posteam adjustments for rare plays with issues related to game
+      # delays.
+      posteam = dplyr::case_when(
+        # 2025_01_CAR_JAX, 1317: Game resumed after weather delay
+        # AND it was delayed right after a PAT.
+        # Prior two plays were delay info that shouldn't have posteam in order
+        # to get correct fixed drive results #529
+        # https://github.com/nflverse/nflfastR/issues/529
+        .data$game_id == "2025_01_CAR_JAX" & .data$play_id %in% c(1282, 1303) ~ NA_character_,
+        TRUE ~ .data$posteam
+      ),
+
       # Column denoting which team is on defense:
       defteam = dplyr::if_else(
         .data$posteam == .data$home_team,
