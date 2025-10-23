@@ -94,7 +94,7 @@ update_pbp_db <- function(
   initiated <- FALSE
   if (!DBI::dbExistsTable(conn = conn, name = name)) {
     do_it <- confirm(
-      "The data table {.val {name}} does not yet exist in your connected database.
+      "Table {.val {name}} does not yet exist in your connected database.
       Do you wish to create it? (Y/n)"
     )
     if (do_it) {
