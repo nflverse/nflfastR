@@ -112,3 +112,30 @@
 #' @importFrom xgboost getinfo
 ## usethis namespace: end
 NULL
+
+
+# Re-Exports --------------------------------------------------------------
+
+#' @importFrom nflreadr load_pbp
+#' @export
+nflreadr::load_pbp
+
+#' @importFrom nflreadr load_player_stats
+#' @export
+nflreadr::load_player_stats
+
+#' @importFrom nflreadr load_team_stats
+#' @export
+nflreadr::load_team_stats
+
+#' @importFrom nflreadr load_schedules
+#' @export
+nflreadr::load_schedules
+
+#' @importFrom nflreadr load_rosters
+#' @export
+nflreadr::load_rosters
+
+#' @importFrom nflreadr nflverse_sitrep
+#' @export
+nflreadr::nflverse_sitrep

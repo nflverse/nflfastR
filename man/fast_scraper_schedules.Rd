@@ -17,7 +17,9 @@ fast_scraper_schedules(...)
 A tibble of game information for past and/or future games.
 }
 \description{
-This returns game/schedule information as maintained by Lee Sharpe.
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+This function was deprecated. Please use \code{\link[nflreadr:load_schedules]{nflreadr::load_schedules}}.
 }
 \details{
 See \code{\link[nflreadr:load_schedules]{nflreadr::load_schedules}} for details.
@@ -34,3 +36,4 @@ fast_scraper_schedules(2015:2018)
 For information on parallel processing and progress updates please
 see \link{nflfastR}.
 }
+\keyword{internal}
