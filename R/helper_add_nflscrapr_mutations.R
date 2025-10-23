@@ -150,9 +150,6 @@ add_nflscrapr_mutations <- function(pbp) {
       # find kickoffs with penalty: a play where the next play is a kickoff
       # and the prior play wasn't a safety or PAT
       lead_ko = case_when(
-        # 2025_01_CAR_JAX, 1303: Game resumed after weather delay
-        # AND it was delayed right after a PAT (smh)
-        .data$game_id == "2025_01_CAR_JAX" & .data$play_id == 1303 ~ 0,
         dplyr::lead(.data$kickoff_attempt) == 1 &
           .data$game_id == dplyr::lead(.data$game_id) &
           !stringr::str_detect(tolower(.data$play_description), "(injured sf )|(tonight's attendance )|(injury update )|(end quarter)|(timeout)|( captains:)|( captains )|( captians:)|( humidity:)|(note - )|( deferred)|(game start )|( game has been suspended)") &
@@ -204,6 +201,18 @@ add_nflscrapr_mutations <- function(pbp) {
 
       # Denote whether the home or away team has possession:
       posteam_type = dplyr::if_else(.data$posteam == .data$home_team, "home", "away"),
+
+      # manual posteam adjustments for rare plays with issues related to game
+      # delays.
+      posteam = dplyr::case_when(
+        # 2025_01_CAR_JAX, 1317: Game resumed after weather delay
+        # AND it was delayed right after a PAT.
+        # Prior two plays were delay info that shouldn't have posteam in order
+        # to get correct fixed drive results #529
+        # https://github.com/nflverse/nflfastR/issues/529
+        .data$game_id == "2025_01_CAR_JAX" & .data$play_id %in% c(1282, 1303) ~ NA_character_,
+        TRUE ~ .data$posteam
+      ),
 
       # Column denoting which team is on defense:
       defteam = dplyr::if_else(
