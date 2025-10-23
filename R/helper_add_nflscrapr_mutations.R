@@ -155,7 +155,6 @@ add_nflscrapr_mutations <- function(pbp) {
           !stringr::str_detect(tolower(.data$play_description), "(injured sf )|(tonight's attendance )|(injury update )|(end quarter)|(timeout)|( captains:)|( captains )|( captians:)|( humidity:)|(note - )|( deferred)|(game start )|( game has been suspended)") &
           !stringr::str_detect(.data$play_description, "GAME ") &
           !.data$play_description %in% c("GAME", "Two-Minute Warning", "The game has resumed.") &
-          !stringr::str_detect(.data$play_description, "The game has resumed") &
           is.na(.data$two_point_conv_result) &
           is.na(.data$extra_point_result) &
           is.na(.data$field_goal_result) &
