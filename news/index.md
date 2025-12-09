@@ -43,6 +43,8 @@
   and will be removed in a future update. Please use
   [`nflverse_sitrep()`](https://nflreadr.nflverse.com/reference/sitrep.html).
   ([\#540](https://github.com/nflverse/nflfastR/issues/540))
+- Fixed incompatibility with xgboost v3 model outputs.
+  ([\#553](https://github.com/nflverse/nflfastR/issues/553))
 
 ## nflfastR 5.1.0
 
