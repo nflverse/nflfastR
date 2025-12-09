@@ -66,9 +66,17 @@ calculate_expected_points <- function(pbp_data) {
       ep_model_select()
   )
 
-  preds <- as.data.frame(
-    matrix(stats::predict(load_model("ep"), as.matrix(model_data)), ncol = 7, byrow = TRUE)
-  )
+  preds <- stats::predict(load_model("ep"), as.matrix(model_data))
+
+  # xgboost v3 returns a matrix of predictions instead of a vector as returned
+  # by xgboost v1.
+  if (is.vector(preds)) {
+    preds <- preds |>
+      matrix(ncol = 7, byrow = TRUE) |>
+      as.data.frame()
+  } else if (is.matrix(preds)) {
+    preds <- as.data.frame(preds)
+  }
 
   colnames(preds) <- c(
     "td_prob", "opp_td_prob", "fg_prob", "opp_fg_prob",
