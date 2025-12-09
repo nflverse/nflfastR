@@ -95,9 +95,20 @@ get_preds <- function(pbp) {
 
   }
 
-  preds <- as.data.frame(
-    matrix(stats::predict(load_model("ep"), as.matrix(pbp |> ep_model_select())), ncol=7, byrow=TRUE)
+  preds <- stats::predict(
+    load_model("ep"),
+    pbp |> ep_model_select() |> as.matrix()
   )
+
+  # xgboost v3 returns a matrix of predictions instead of a vector as returned
+  # by xgboost v1.
+  if (is.vector(preds)) {
+    preds <- preds |>
+      matrix(ncol = 7, byrow = TRUE) |>
+      as.data.frame()
+  } else if (is.matrix(preds)) {
+    preds <- as.data.frame(preds)
+  }
 
   colnames(preds) <- c("Touchdown","Opp_Touchdown","Field_Goal","Opp_Field_Goal",
                        "Safety","Opp_Safety","No_Score")

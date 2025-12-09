@@ -50,11 +50,22 @@ add_xyac <- function(pbp, ...) {
         ) |>
         dplyr::select("index":"ydstogo", "original_ydstogo", dplyr::everything())
 
-      xyac_vars <-
-        stats::predict(
-          load_model("xyac"),
-          as.matrix(passes |> xyac_model_select())
-        ) |>
+      preds <- stats::predict(
+        load_model("xyac"),
+        as.matrix(passes |> xyac_model_select())
+      )
+
+      # xgboost v3 returns a matrix of predictions but the below code is designed
+      # to work with a vector as returned by xgboost v1.
+      # We switch back to the vector (transposing might be expensive) in order
+      # to keep the rest of the code (for now).
+      if (is.matrix(preds)) {
+        preds <- preds |>
+          t() |>
+          as.vector("numeric")
+      }
+
+      xyac_vars <- preds |>
         tibble::as_tibble() |>
         dplyr::rename(prob = "value") |>
         dplyr::bind_cols(
