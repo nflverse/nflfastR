@@ -92,10 +92,15 @@ add_nflscrapr_mutations <- function(pbp) {
           stringr::str_remove("\\([0-9]{2}+ Yards\\)") |>
           stringr::str_squish(), NA_character_
       ),
-      # The new "dynamic Kickoff" in the 2024 season introduces a new penalty type
+      # The new "dynamic Kickoff" in the 2024 season introduces new penalty types
       penalty_type = dplyr::if_else(
         .data$penalty == 1 & stringr::str_detect(tolower(.data$play_description), "kickoff short of landing zone"),
         "Kickoff Short of Landing Zone",
+        .data$penalty_type
+      ),
+      penalty_type = dplyr::if_else(
+        .data$penalty == 1 & stringr::str_detect(tolower(.data$play_description), "kickoff out of bounds"),
+        "Kickoff Out of Bounds",
         .data$penalty_type
       ),
       # Make plays marked with down == 0 as NA:
