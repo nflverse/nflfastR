@@ -65,9 +65,9 @@ report(recursive = FALSE)
 #> • R version 4.5.2 (2025-10-31) • Running under: Ubuntu 24.04.3 LTS
 #> ── Package Status ──────────────────────────────────────────────────────────────
 #>    package  installed  cran        dev behind
-#> 1 nflfastR 5.1.0.9008 5.1.0 5.1.0.9007       
+#> 1 nflfastR 5.1.0.9009 5.1.0 5.1.0.9008       
 #> 2 nflplotR      1.6.0 1.6.0      1.6.0       
-#> 3 nflreadr 1.5.0.9000 1.5.0 1.5.0.9000       
+#> 3 nflreadr 1.5.0.9001 1.5.0 1.5.0.9001       
 #> 4 nflseedR      2.0.2 2.0.2      2.0.2       
 #> ── Package Options ─────────────────────────────────────────────────────────────
 #> • No options set for above packages
@@ -80,14 +80,14 @@ nflverse_sitrep(pkg = "nflreadr", recursive = TRUE)
 #> • R version 4.5.2 (2025-10-31) • Running under: Ubuntu 24.04.3 LTS
 #> ── Package Status ──────────────────────────────────────────────────────────────
 #>    package  installed  cran        dev behind
-#> 1 nflreadr 1.5.0.9000 1.5.0 1.5.0.9000       
+#> 1 nflreadr 1.5.0.9001 1.5.0 1.5.0.9001       
 #> ── Package Options ─────────────────────────────────────────────────────────────
 #> • No options set for above packages
 #> ── Package Dependencies ────────────────────────────────────────────────────────
-#> • cachem     (1.1.0)   • lifecycle (1.0.4)  • methods (4.5.2)  
+#> • cachem     (1.1.0)   • lifecycle (1.0.5)  • methods (4.5.2)  
 #> • cli        (3.6.5)   • memoise   (2.0.1)  • stats   (4.5.2)  
-#> • curl       (7.0.0)   • rappdirs  (0.3.3)  • tools   (4.5.2)  
-#> • data.table (1.17.8)  • rlang     (1.1.6)  • utils   (4.5.2)  
+#> • curl       (7.0.0)   • rappdirs  (0.3.4)  • tools   (4.5.2)  
+#> • data.table (1.18.0)  • rlang     (1.1.7)  • utils   (4.5.2)  
 #> • fastmap    (1.2.0)   • grDevices (4.5.2)    
 #> • glue       (1.8.0)   • graphics  (4.5.2)    
 #> ────────────────────────────────────────────────────────────────────────────────

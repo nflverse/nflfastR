@@ -24,14 +24,14 @@
 Source:
 [`DESCRIPTION`](https://github.com/nflverse/nflfastR/blob/master/DESCRIPTION)
 
-Carl S, Baldwin B (2025). *nflfastR: Functions to Efficiently Access NFL
-Play by Play Data*. R package version 5.1.0.9008,
+Carl S, Baldwin B (2026). *nflfastR: Functions to Efficiently Access NFL
+Play by Play Data*. R package version 5.1.0.9009,
 <https://www.nflfastr.com/>.
 
     @Manual{,
       title = {nflfastR: Functions to Efficiently Access NFL Play by Play Data},
       author = {Sebastian Carl and Ben Baldwin},
-      year = {2025},
-      note = {R package version 5.1.0.9008},
+      year = {2026},
+      note = {R package version 5.1.0.9009},
       url = {https://www.nflfastr.com/},
     }

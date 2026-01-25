@@ -45,6 +45,9 @@
   ([\#540](https://github.com/nflverse/nflfastR/issues/540))
 - Fixed incompatibility with xgboost v3 model outputs.
   ([\#553](https://github.com/nflverse/nflfastR/issues/553))
+- Added `"Kickoff Out of Bounds"` (introduced in the 2024 season) to the
+  `penalty_type` variable in play-by-play.
+  ([\#560](https://github.com/nflverse/nflfastR/issues/560))
 
 ## nflfastR 5.1.0
 

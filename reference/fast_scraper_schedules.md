@@ -47,7 +47,7 @@ try({# to avoid CRAN test problems
 fast_scraper_schedules(2015:2018)
 })
 #> ── nflverse games and schedules ────────────────────────────────────────────────
-#> ℹ Data updated: 2025-12-09 15:01:01 UTC
+#> ℹ Data updated: 2026-01-25 01:29:46 UTC
 #> # A tibble: 1,068 × 46
 #>    game_id  season game_type  week gameday weekday gametime away_team away_score
 #>    <chr>     <int> <chr>     <int> <chr>   <chr>   <chr>    <chr>          <int>

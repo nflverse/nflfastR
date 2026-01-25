@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.0.9008</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.0.9009</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -581,7 +581,7 @@ descending order.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">schotty</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/reorder.factor.html" class="external-link">reorder</a></span><span class="op">(</span><span class="va">posteam</span>,<span class="op">-</span><span class="va">mean_pass</span><span class="op">)</span>, y<span class="op">=</span><span class="va">mean_pass</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>label<span class="op">=</span><span class="va">posteam</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="beginners_guide_files/figure-html/fig1-1.png" class="r-plt" width="100%"></p>
+<p><img src="beginners_guide_files/figure-html/fig1-1.png" class="r-plt" alt="" width="100%"></p>
 <p>This image is kind of a mess – we still need a title, axis labels,
 etc – but gets the point across. We’ll get to that other stuff later.
 But more importantly, we made something interesting using
@@ -738,7 +738,7 @@ type <code>by = c('team' = 'team_abbr')</code>? Who knows, but it’s what
 <span>  <span class="co">#if this doesn't work, `install.packages('scales')`</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/pretty_breaks.html" class="external-link">pretty_breaks</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/pretty_breaks.html" class="external-link">pretty_breaks</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="beginners_guide_files/figure-html/fig2-1.png" class="r-plt" width="100%"></p>
+<p><img src="beginners_guide_files/figure-html/fig2-1.png" class="r-plt" alt="" width="100%"></p>
 <p>This looks complicated, but is just a way of getting a bunch of
 different stuff on the same plot: we have lines for averages, dots,
 names, etc. I added comments above to explain what is going on, but in
@@ -775,7 +775,7 @@ google what I need.</p>
 <span>  <span class="co">#make ticks look nice</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/pretty_breaks.html" class="external-link">pretty_breaks</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/pretty_breaks.html" class="external-link">pretty_breaks</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="beginners_guide_files/figure-html/fig3-1.png" class="r-plt" width="100%"></p>
+<p><img src="beginners_guide_files/figure-html/fig3-1.png" class="r-plt" alt="" width="100%"></p>
 <p>The only changes we’ve made are to use <code>geom_nfl_logos</code>
 instead of <code>geom_point</code> (how to figure out the right size for
 the images in the <code>width</code> part? Trial and error).</p>
@@ -823,7 +823,7 @@ logos.</p>
 <span>    plot.title <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">12</span>, hjust <span class="op">=</span> <span class="fl">0.5</span>, face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_reverse</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="beginners_guide_files/figure-html/ex5-1.png" class="r-plt" width="100%"></p>
+<p><img src="beginners_guide_files/figure-html/ex5-1.png" class="r-plt" alt="" width="100%"></p>
 <ul>
 <li>The <code><a href="https://nflplotr.nflverse.com/reference/geom_lines.html" class="external-link">geom_mean_lines()</a></code> function adds mean lines for
 offensive and defensive EPA per play</li>
@@ -878,55 +878,55 @@ overwhelming).</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">games</span> <span class="op">&lt;-</span> <span class="fu">nflreadr</span><span class="fu">::</span><span class="fu"><a href="https://nflreadr.nflverse.com/reference/load_schedules.html" class="external-link">load_schedules</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">games</span><span class="op">)</span></span>
-<span><span class="co">#&gt; nflvrs_d [7,263 × 46] (S3: nflverse_data/tbl_df/tbl/data.table/data.frame)</span></span>
-<span><span class="co">#&gt;  $ game_id         : chr [1:7263] "1999_01_MIN_ATL" "1999_01_KC_CHI" "1999_01_PIT_CLE" "1999_01_OAK_GB" ...</span></span>
-<span><span class="co">#&gt;  $ season          : int [1:7263] 1999 1999 1999 1999 1999 1999 1999 1999 1999 1999 ...</span></span>
-<span><span class="co">#&gt;  $ game_type       : chr [1:7263] "REG" "REG" "REG" "REG" ...</span></span>
-<span><span class="co">#&gt;  $ week            : int [1:7263] 1 1 1 1 1 1 1 1 1 1 ...</span></span>
-<span><span class="co">#&gt;  $ gameday         : chr [1:7263] "1999-09-12" "1999-09-12" "1999-09-12" "1999-09-12" ...</span></span>
-<span><span class="co">#&gt;  $ weekday         : chr [1:7263] "Sunday" "Sunday" "Sunday" "Sunday" ...</span></span>
-<span><span class="co">#&gt;  $ gametime        : chr [1:7263] NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ away_team       : chr [1:7263] "MIN" "KC" "PIT" "OAK" ...</span></span>
-<span><span class="co">#&gt;  $ away_score      : int [1:7263] 17 17 43 24 14 3 10 30 25 28 ...</span></span>
-<span><span class="co">#&gt;  $ home_team       : chr [1:7263] "ATL" "CHI" "CLE" "GB" ...</span></span>
-<span><span class="co">#&gt;  $ home_score      : int [1:7263] 14 20 0 28 31 41 19 28 24 20 ...</span></span>
-<span><span class="co">#&gt;  $ location        : chr [1:7263] "Home" "Home" "Home" "Home" ...</span></span>
-<span><span class="co">#&gt;  $ result          : int [1:7263] -3 3 -43 4 17 38 9 -2 -1 -8 ...</span></span>
-<span><span class="co">#&gt;  $ total           : int [1:7263] 31 37 43 52 45 44 29 58 49 48 ...</span></span>
-<span><span class="co">#&gt;  $ overtime        : int [1:7263] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
-<span><span class="co">#&gt;  $ old_game_id     : chr [1:7263] "1999091210" "1999091206" "1999091213" "1999091208" ...</span></span>
-<span><span class="co">#&gt;  $ gsis            : int [1:7263] 598 597 604 602 591 603 592 600 588 596 ...</span></span>
-<span><span class="co">#&gt;  $ nfl_detail_id   : chr [1:7263] NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ pfr             : chr [1:7263] "199909120atl" "199909120chi" "199909120cle" "199909120gnb" ...</span></span>
-<span><span class="co">#&gt;  $ pff             : int [1:7263] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ espn            : chr [1:7263] "190912001" "190912003" "190912005" "190912009" ...</span></span>
-<span><span class="co">#&gt;  $ ftn             : int [1:7263] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ away_rest       : int [1:7263] 7 7 7 7 7 7 7 7 7 7 ...</span></span>
-<span><span class="co">#&gt;  $ home_rest       : int [1:7263] 7 7 7 7 7 7 7 7 7 7 ...</span></span>
-<span><span class="co">#&gt;  $ away_moneyline  : int [1:7263] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ home_moneyline  : int [1:7263] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ spread_line     : num [1:7263] -4 -3 -6 9 -3 5.5 3.5 7 -3 9.5 ...</span></span>
-<span><span class="co">#&gt;  $ away_spread_odds: int [1:7263] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ home_spread_odds: int [1:7263] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ total_line      : num [1:7263] 49 38 37 43 45.5 49 38 44.5 37 42 ...</span></span>
-<span><span class="co">#&gt;  $ under_odds      : int [1:7263] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ over_odds       : int [1:7263] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ div_game        : int [1:7263] 0 0 1 0 1 0 1 1 1 0 ...</span></span>
-<span><span class="co">#&gt;  $ roof            : chr [1:7263] "dome" "outdoors" "outdoors" "outdoors" ...</span></span>
-<span><span class="co">#&gt;  $ surface         : chr [1:7263] "astroturf" "grass" "grass" "grass" ...</span></span>
-<span><span class="co">#&gt;  $ temp            : int [1:7263] NA 80 78 67 NA 76 NA 73 75 NA ...</span></span>
-<span><span class="co">#&gt;  $ wind            : int [1:7263] NA 12 12 10 NA 8 NA 5 3 NA ...</span></span>
-<span><span class="co">#&gt;  $ away_qb_id      : chr [1:7263] "00-0003761" "00-0006300" "00-0015700" "00-0005741" ...</span></span>
-<span><span class="co">#&gt;  $ home_qb_id      : chr [1:7263] "00-0002876" "00-0010560" "00-0004230" "00-0005106" ...</span></span>
-<span><span class="co">#&gt;  $ away_qb_name    : chr [1:7263] "Randall Cunningham" "Elvis Grbac" "Kordell Stewart" "Rich Gannon" ...</span></span>
-<span><span class="co">#&gt;  $ home_qb_name    : chr [1:7263] "Chris Chandler" "Shane Matthews" "Ty Detmer" "Brett Favre" ...</span></span>
-<span><span class="co">#&gt;  $ away_coach      : chr [1:7263] "Dennis Green" "Gunther Cunningham" "Bill Cowher" "Jon Gruden" ...</span></span>
-<span><span class="co">#&gt;  $ home_coach      : chr [1:7263] "Dan Reeves" "Dick Jauron" "Chris Palmer" "Ray Rhodes" ...</span></span>
-<span><span class="co">#&gt;  $ referee         : chr [1:7263] "Gerry Austin" "Phil Luckett" "Bob McElwee" "Tony Corrente" ...</span></span>
-<span><span class="co">#&gt;  $ stadium_id      : chr [1:7263] "ATL00" "CHI98" "CLE00" "GNB00" ...</span></span>
-<span><span class="co">#&gt;  $ stadium         : chr [1:7263] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...</span></span>
+<span><span class="co">#&gt; nflvrs_d [7,275 × 46] (S3: nflverse_data/tbl_df/tbl/data.table/data.frame)</span></span>
+<span><span class="co">#&gt;  $ game_id         : chr [1:7275] "1999_01_MIN_ATL" "1999_01_KC_CHI" "1999_01_PIT_CLE" "1999_01_OAK_GB" ...</span></span>
+<span><span class="co">#&gt;  $ season          : int [1:7275] 1999 1999 1999 1999 1999 1999 1999 1999 1999 1999 ...</span></span>
+<span><span class="co">#&gt;  $ game_type       : chr [1:7275] "REG" "REG" "REG" "REG" ...</span></span>
+<span><span class="co">#&gt;  $ week            : int [1:7275] 1 1 1 1 1 1 1 1 1 1 ...</span></span>
+<span><span class="co">#&gt;  $ gameday         : chr [1:7275] "1999-09-12" "1999-09-12" "1999-09-12" "1999-09-12" ...</span></span>
+<span><span class="co">#&gt;  $ weekday         : chr [1:7275] "Sunday" "Sunday" "Sunday" "Sunday" ...</span></span>
+<span><span class="co">#&gt;  $ gametime        : chr [1:7275] NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ away_team       : chr [1:7275] "MIN" "KC" "PIT" "OAK" ...</span></span>
+<span><span class="co">#&gt;  $ away_score      : int [1:7275] 17 17 43 24 14 3 10 30 25 28 ...</span></span>
+<span><span class="co">#&gt;  $ home_team       : chr [1:7275] "ATL" "CHI" "CLE" "GB" ...</span></span>
+<span><span class="co">#&gt;  $ home_score      : int [1:7275] 14 20 0 28 31 41 19 28 24 20 ...</span></span>
+<span><span class="co">#&gt;  $ location        : chr [1:7275] "Home" "Home" "Home" "Home" ...</span></span>
+<span><span class="co">#&gt;  $ result          : int [1:7275] -3 3 -43 4 17 38 9 -2 -1 -8 ...</span></span>
+<span><span class="co">#&gt;  $ total           : int [1:7275] 31 37 43 52 45 44 29 58 49 48 ...</span></span>
+<span><span class="co">#&gt;  $ overtime        : int [1:7275] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;  $ old_game_id     : chr [1:7275] "1999091210" "1999091206" "1999091213" "1999091208" ...</span></span>
+<span><span class="co">#&gt;  $ gsis            : int [1:7275] 598 597 604 602 591 603 592 600 588 596 ...</span></span>
+<span><span class="co">#&gt;  $ nfl_detail_id   : chr [1:7275] NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ pfr             : chr [1:7275] "199909120atl" "199909120chi" "199909120cle" "199909120gnb" ...</span></span>
+<span><span class="co">#&gt;  $ pff             : int [1:7275] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ espn            : chr [1:7275] "190912001" "190912003" "190912005" "190912009" ...</span></span>
+<span><span class="co">#&gt;  $ ftn             : int [1:7275] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ away_rest       : int [1:7275] 7 7 7 7 7 7 7 7 7 7 ...</span></span>
+<span><span class="co">#&gt;  $ home_rest       : int [1:7275] 7 7 7 7 7 7 7 7 7 7 ...</span></span>
+<span><span class="co">#&gt;  $ away_moneyline  : int [1:7275] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ home_moneyline  : int [1:7275] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ spread_line     : num [1:7275] -4 -3 -6 9 -3 5.5 3.5 7 -3 9.5 ...</span></span>
+<span><span class="co">#&gt;  $ away_spread_odds: int [1:7275] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ home_spread_odds: int [1:7275] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ total_line      : num [1:7275] 49 38 37 43 45.5 49 38 44.5 37 42 ...</span></span>
+<span><span class="co">#&gt;  $ under_odds      : int [1:7275] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ over_odds       : int [1:7275] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ div_game        : int [1:7275] 0 0 1 0 1 0 1 1 1 0 ...</span></span>
+<span><span class="co">#&gt;  $ roof            : chr [1:7275] "dome" "outdoors" "outdoors" "outdoors" ...</span></span>
+<span><span class="co">#&gt;  $ surface         : chr [1:7275] "astroturf" "grass" "grass" "grass" ...</span></span>
+<span><span class="co">#&gt;  $ temp            : int [1:7275] NA 80 78 67 NA 76 NA 73 75 NA ...</span></span>
+<span><span class="co">#&gt;  $ wind            : int [1:7275] NA 12 12 10 NA 8 NA 5 3 NA ...</span></span>
+<span><span class="co">#&gt;  $ away_qb_id      : chr [1:7275] "00-0003761" "00-0006300" "00-0015700" "00-0005741" ...</span></span>
+<span><span class="co">#&gt;  $ home_qb_id      : chr [1:7275] "00-0002876" "00-0010560" "00-0004230" "00-0005106" ...</span></span>
+<span><span class="co">#&gt;  $ away_qb_name    : chr [1:7275] "Randall Cunningham" "Elvis Grbac" "Kordell Stewart" "Rich Gannon" ...</span></span>
+<span><span class="co">#&gt;  $ home_qb_name    : chr [1:7275] "Chris Chandler" "Shane Matthews" "Ty Detmer" "Brett Favre" ...</span></span>
+<span><span class="co">#&gt;  $ away_coach      : chr [1:7275] "Dennis Green" "Gunther Cunningham" "Bill Cowher" "Jon Gruden" ...</span></span>
+<span><span class="co">#&gt;  $ home_coach      : chr [1:7275] "Dan Reeves" "Dick Jauron" "Chris Palmer" "Ray Rhodes" ...</span></span>
+<span><span class="co">#&gt;  $ referee         : chr [1:7275] "Gerry Austin" "Phil Luckett" "Bob McElwee" "Tony Corrente" ...</span></span>
+<span><span class="co">#&gt;  $ stadium_id      : chr [1:7275] "ATL00" "CHI98" "CLE00" "GNB00" ...</span></span>
+<span><span class="co">#&gt;  $ stadium         : chr [1:7275] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...</span></span>
 <span><span class="co">#&gt;  - attr(*, "nflverse_type")= chr "games and schedules"</span></span>
-<span><span class="co">#&gt;  - attr(*, "nflverse_timestamp")= chr "2025-12-09 10:02:03 EST"</span></span></code></pre></div>
+<span><span class="co">#&gt;  - attr(*, "nflverse_timestamp")= chr "2026-01-24 20:30:49 EST"</span></span></code></pre></div>
 <p>To start, we want to create a dataframe where each row is a
 team-season observation, listing how many games they won. There are
 multiple ways to do this, but I’m going to just take the home and away
@@ -939,7 +939,7 @@ results and bind together. As an example, here’s what the
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>team <span class="op">=</span> <span class="va">home_team</span><span class="op">)</span></span>
 <span><span class="va">home</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-12-09 15:02:03 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2026-01-25 01:30:49 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 4</span></span></span>
 <span><span class="co">#&gt;   season  week team  result</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
@@ -958,7 +958,7 @@ results and bind together. As an example, here’s what the
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>result <span class="op">=</span> <span class="op">-</span><span class="va">result</span><span class="op">)</span></span>
 <span><span class="va">away</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-12-09 15:02:03 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2026-01-25 01:30:49 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 4</span></span></span>
 <span><span class="co">#&gt;   season  week team  result</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
@@ -983,7 +983,7 @@ the perspective of the home team. Now let’s make a columns called
 <span></span>
 <span><span class="va">results</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op">==</span> <span class="fl">2019</span> <span class="op">&amp;</span> <span class="va">team</span> <span class="op">==</span> <span class="st">'SEA'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2025-12-09 15:02:03 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2026-01-25 01:30:49 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 16 × 5</span></span></span>
 <span><span class="co">#&gt;    season  week team  result   win</span></span>
 <span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
@@ -1231,7 +1231,7 @@ that they should. Okay NOW we can join:</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> SEA     <span style="text-decoration: underline;">2</span>022   9            6     <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span>     </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> SEA     <span style="text-decoration: underline;">2</span>023   9          -<span style="color: #BB0000;">38</span>     <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span>     </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> SEA     <span style="text-decoration: underline;">2</span>024  10            7     <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span>     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> SEA     <span style="text-decoration: underline;">2</span>025  <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span>     <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span>     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> SEA     <span style="text-decoration: underline;">2</span>025  14          191     <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span>     </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1 more variable: def_pass_epa &lt;dbl&gt;</span></span></span></code></pre></div>
 <p>Now we’re getting really close to doing what we want! Next we need to
 create new columns for prior year EPA, and let’s do point differential
@@ -1423,19 +1423,18 @@ does this compare to simply using point differential?</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Residuals:</span></span>
 <span><span class="co">#&gt;    Min     1Q Median     3Q    Max </span></span>
-<span><span class="co">#&gt; -7.208 -2.052  0.127  2.201  7.324 </span></span>
+<span><span class="co">#&gt; -7.205 -2.079  0.126  2.175  7.451 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;                  Estimate Std. Error t value            Pr(&gt;|t|)    </span></span>
-<span><span class="co">#&gt; (Intercept)       8.12305    0.12512   64.92 &lt;0.0000000000000002 ***</span></span>
-<span><span class="co">#&gt; prior_point_diff  0.01276    0.00124   10.29 &lt;0.0000000000000002 ***</span></span>
+<span><span class="co">#&gt; (Intercept)       8.14522    0.12273   66.36 &lt;0.0000000000000002 ***</span></span>
+<span><span class="co">#&gt; prior_point_diff  0.01247    0.00121   10.31 &lt;0.0000000000000002 ***</span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Residual standard error: 2.831 on 510 degrees of freedom</span></span>
-<span><span class="co">#&gt;   (32 observations deleted due to missingness)</span></span>
-<span><span class="co">#&gt; Multiple R-squared:  0.1718, Adjusted R-squared:  0.1702 </span></span>
-<span><span class="co">#&gt; F-statistic: 105.8 on 1 and 510 DF,  p-value: &lt; 0.00000000000000022</span></span></code></pre></div>
+<span><span class="co">#&gt; Residual standard error: 2.863 on 542 degrees of freedom</span></span>
+<span><span class="co">#&gt; Multiple R-squared:  0.1639, Adjusted R-squared:  0.1623 </span></span>
+<span><span class="co">#&gt; F-statistic: 106.2 on 1 and 542 DF,  p-value: &lt; 0.00000000000000022</span></span></code></pre></div>
 <p>So R2 is somewhat higher for just point differential. This isn’t
 surprising as we’ve thrown away special teams plays and haven’t
 attempted to make any adjustments for things like fumble luck that we
@@ -1488,7 +1487,7 @@ know can improve EPA’s predictive power.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 2</span></span></span>
 <span><span class="co">#&gt;   prediction team </span></span>
 <span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>       11.3 BAL  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>       11.2 BAL  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>       10.6 NE   </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>       10.3 SF   </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>        9.9 KC   </span></span>

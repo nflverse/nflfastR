@@ -30,31 +30,31 @@ ids <- nflfastR::fast_scraper_schedules(2017:2019) |>
   dplyr::pull(game_id)
 #> Warning: `fast_scraper_schedules()` was deprecated in nflfastR 5.2.0.
 #> ℹ Please use `nflreadr::load_schedules()` instead.
-#> This warning is displayed once every 8 hours.
+#> This warning is displayed once per session.
 #> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 #> generated.
 pbp <- nflfastR::build_nflfastR_pbp(ids)
-#> ── Build nflfastR Play-by-Play Data ───────────── nflfastR version 5.1.0.9008 ──
-#> • 15:03:00 | Start download of 3 games...
-#> ✔ 15:03:04 | Download finished. Adding variables...
-#> ✔ 15:03:04 | added game variables
-#> ✔ 15:03:04 | added nflscrapR variables
-#> ✔ 15:03:05 | added ep variables
-#> ✔ 15:03:05 | added air_yac_ep variables
-#> ✔ 15:03:05 | added wp variables
-#> ✔ 15:03:06 | added air_yac_wp variables
-#> ✔ 15:03:06 | added cp and cpoe
-#> ✔ 15:03:06 | added fixed drive variables
-#> ✔ 15:03:06 | added series variables
-#> • 15:03:06 | Cleaning up play-by-play...
-#> ✔ 15:03:06 | Cleaning completed
-#> ✔ 15:03:06 | added qb_epa
-#> • 15:03:06 | Computing xyac...
-#> ✔ 15:03:08 | added xyac variables
-#> • 15:03:08 | Computing xpass...
-#> ✔ 15:03:09 | added xpass and pass_oe
-#> • 15:03:09 | Decode player ids...
-#> ✔ 15:03:10 | Decoding of player ids completed
+#> ── Build nflfastR Play-by-Play Data ───────────── nflfastR version 5.1.0.9009 ──
+#> • 01:31:46 | Start download of 3 games...
+#> ✔ 01:31:49 | Download finished. Adding variables...
+#> ✔ 01:31:49 | added game variables
+#> ✔ 01:31:50 | added nflscrapR variables
+#> ✔ 01:31:50 | added ep variables
+#> ✔ 01:31:51 | added air_yac_ep variables
+#> ✔ 01:31:51 | added wp variables
+#> ✔ 01:31:51 | added air_yac_wp variables
+#> ✔ 01:31:51 | added cp and cpoe
+#> ✔ 01:31:51 | added fixed drive variables
+#> ✔ 01:31:51 | added series variables
+#> • 01:31:51 | Cleaning up play-by-play...
+#> ✔ 01:31:51 | Cleaning completed
+#> ✔ 01:31:51 | added qb_epa
+#> • 01:31:51 | Computing xyac...
+#> ✔ 01:31:54 | added xyac variables
+#> • 01:31:54 | Computing xpass...
+#> ✔ 01:31:54 | added xpass and pass_oe
+#> • 01:31:54 | Decode player ids...
+#> ✔ 01:31:55 | Decoding of player ids completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
@@ -412,15 +412,15 @@ directory. Here we go!
 
 ``` r
 nflfastR::update_db()
-#> ── Update nflfastR Play-by-Play Database ──────── nflfastR version 5.1.0.9008 ──
-#> ℹ 15:03:37 | Can't find the data table "nflfastR_pbp"
+#> ── Update nflfastR Play-by-Play Database ──────── nflfastR version 5.1.0.9009 ──
+#> ℹ 01:32:23 | Can't find the data table "nflfastR_pbp"
 #> in your database. Will load the play by play data from
 #> scratch.
-#> • 15:03:37 | Starting download of 27 seasons between 1999 and 2025...
-#> • 15:04:54 | Checking for missing completed games...
-#> ℹ 15:04:56 | You have 7196 games and are missing 0.
-#> ✔ 15:04:56 | Database update completed
-#> ℹ 15:04:56 | Path to your db: ./pbp_db
+#> • 01:32:23 | Starting download of 27 seasons between 1999 and 2025...
+#> • 01:33:42 | Checking for missing completed games...
+#> ℹ 01:33:43 | You have 7270 games and are missing 0.
+#> ✔ 01:33:44 | Database update completed
+#> ℹ 01:33:44 | Path to your db: ./pbp_db
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
@@ -435,11 +435,11 @@ right file path)
 
 ``` r
 nflfastR::update_db()
-#> ── Update nflfastR Play-by-Play Database ──────── nflfastR version 5.1.0.9008 ──
-#> • 15:04:56 | Checking for missing completed games...
-#> ℹ 15:04:57 | You have 7196 games and are missing 0.
-#> ✔ 15:04:58 | Database update completed
-#> ℹ 15:04:58 | Path to your db: /home/runner/work/nflfastR/nflfastR/vignettes/pbp_db
+#> ── Update nflfastR Play-by-Play Database ──────── nflfastR version 5.1.0.9009 ──
+#> • 01:33:44 | Checking for missing completed games...
+#> ℹ 01:33:45 | You have 7270 games and are missing 0.
+#> ✔ 01:33:45 | Database update completed
+#> ℹ 01:33:45 | Path to your db: /home/runner/work/nflfastR/nflfastR/vignettes/pbp_db
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
@@ -449,14 +449,14 @@ you can specify one season to be rebuilt:
 
 ``` r
 nflfastR::update_db(force_rebuild = 2020)
-#> ── Update nflfastR Play-by-Play Database ──────── nflfastR version 5.1.0.9008 ──
-#> • 15:04:58 | Purging season 2020 from the data table "nflfastR_pbp" in your
+#> ── Update nflfastR Play-by-Play Database ──────── nflfastR version 5.1.0.9009 ──
+#> • 01:33:45 | Purging season 2020 from the data table "nflfastR_pbp" in your
 #> connected database...
-#> • 15:04:59 | Starting download of the 1 season 2020
-#> • 15:05:01 | Checking for missing completed games...
-#> ℹ 15:05:02 | You have 7196 games and are missing 0.
-#> ✔ 15:05:03 | Database update completed
-#> ℹ 15:05:03 | Path to your db: /home/runner/work/nflfastR/nflfastR/vignettes/pbp_db
+#> • 01:33:46 | Starting download of the 1 season 2020
+#> • 01:33:49 | Checking for missing completed games...
+#> ℹ 01:33:50 | You have 7270 games and are missing 0.
+#> ✔ 01:33:50 | Database update completed
+#> ℹ 01:33:50 | Path to your db: /home/runner/work/nflfastR/nflfastR/vignettes/pbp_db
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
@@ -536,8 +536,8 @@ pbp_db |>
 #> # Database: sqlite 3.51.1 [/home/runner/work/nflfastR/nflfastR/vignettes/pbp_db]
 #>    pass mean_epa
 #>   <dbl>    <dbl>
-#> 1     0  -0.0991
-#> 2     1   0.0743
+#> 1     0  -0.0988
+#> 2     1   0.0742
 ```
 
 So far, everything has stayed in the database. If you want to bring a
@@ -664,7 +664,7 @@ roster information. Use the function to get the rosters:
 roster <- nflfastR::fast_scraper_roster(2019)
 #> Warning: `fast_scraper_roster()` was deprecated in nflfastR 5.2.0.
 #> ℹ Please use `nflreadr::load_rosters()` instead.
-#> This warning is displayed once every 8 hours.
+#> This warning is displayed once per session.
 #> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 #> generated.
 ```
