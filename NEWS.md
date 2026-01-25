@@ -9,6 +9,7 @@
 - `fast_scraper_roster()` and `fast_scraper_schedules()` are officially deprecated and will be removed in a future update. Please use `load_rosters()` and `load_schedules()`. (#539)
 - `report()` is deprecated and will be removed in a future update. Please use `nflverse_sitrep()`. (#540)
 - Fixed incompatibility with xgboost v3 model outputs. (#553)
+- Added `"Kickoff Out of Bounds"` (introduced in the 2024 season) to the `penalty_type` variable in play-by-play. (#560)
 
 # nflfastR 5.1.0
 
