@@ -348,7 +348,7 @@ Please see the description of \code{lateral_rusher_player_name} for further info
 \item{drive_real_start_time}{Local day time when the drive started (currently not used by the NFL and therefore mostly 'NA').}
 \item{drive_play_count}{Numeric value of how many regular plays happened in a given drive.}
 \item{drive_time_of_possession}{Time of possession in a given drive.}
-\item{drive_first_downs}{Number of forst downs in a given drive.}
+\item{drive_first_downs}{Number of first downs in a given drive.}
 \item{drive_inside20}{Binary indicator if the offense was able to get inside the opponents 20 yard line.}
 \item{drive_ended_with_score}{Binary indicator the drive ended with a score.}
 \item{drive_quarter_start}{Numeric value indicating in which quarter the given drive has started.}
