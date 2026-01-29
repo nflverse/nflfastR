@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.0.9009</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.0.9010</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -878,55 +878,55 @@ overwhelming).</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">games</span> <span class="op">&lt;-</span> <span class="fu">nflreadr</span><span class="fu">::</span><span class="fu"><a href="https://nflreadr.nflverse.com/reference/load_schedules.html" class="external-link">load_schedules</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">games</span><span class="op">)</span></span>
-<span><span class="co">#&gt; nflvrs_d [7,275 × 46] (S3: nflverse_data/tbl_df/tbl/data.table/data.frame)</span></span>
-<span><span class="co">#&gt;  $ game_id         : chr [1:7275] "1999_01_MIN_ATL" "1999_01_KC_CHI" "1999_01_PIT_CLE" "1999_01_OAK_GB" ...</span></span>
-<span><span class="co">#&gt;  $ season          : int [1:7275] 1999 1999 1999 1999 1999 1999 1999 1999 1999 1999 ...</span></span>
-<span><span class="co">#&gt;  $ game_type       : chr [1:7275] "REG" "REG" "REG" "REG" ...</span></span>
-<span><span class="co">#&gt;  $ week            : int [1:7275] 1 1 1 1 1 1 1 1 1 1 ...</span></span>
-<span><span class="co">#&gt;  $ gameday         : chr [1:7275] "1999-09-12" "1999-09-12" "1999-09-12" "1999-09-12" ...</span></span>
-<span><span class="co">#&gt;  $ weekday         : chr [1:7275] "Sunday" "Sunday" "Sunday" "Sunday" ...</span></span>
-<span><span class="co">#&gt;  $ gametime        : chr [1:7275] NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ away_team       : chr [1:7275] "MIN" "KC" "PIT" "OAK" ...</span></span>
-<span><span class="co">#&gt;  $ away_score      : int [1:7275] 17 17 43 24 14 3 10 30 25 28 ...</span></span>
-<span><span class="co">#&gt;  $ home_team       : chr [1:7275] "ATL" "CHI" "CLE" "GB" ...</span></span>
-<span><span class="co">#&gt;  $ home_score      : int [1:7275] 14 20 0 28 31 41 19 28 24 20 ...</span></span>
-<span><span class="co">#&gt;  $ location        : chr [1:7275] "Home" "Home" "Home" "Home" ...</span></span>
-<span><span class="co">#&gt;  $ result          : int [1:7275] -3 3 -43 4 17 38 9 -2 -1 -8 ...</span></span>
-<span><span class="co">#&gt;  $ total           : int [1:7275] 31 37 43 52 45 44 29 58 49 48 ...</span></span>
-<span><span class="co">#&gt;  $ overtime        : int [1:7275] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
-<span><span class="co">#&gt;  $ old_game_id     : chr [1:7275] "1999091210" "1999091206" "1999091213" "1999091208" ...</span></span>
-<span><span class="co">#&gt;  $ gsis            : int [1:7275] 598 597 604 602 591 603 592 600 588 596 ...</span></span>
-<span><span class="co">#&gt;  $ nfl_detail_id   : chr [1:7275] NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ pfr             : chr [1:7275] "199909120atl" "199909120chi" "199909120cle" "199909120gnb" ...</span></span>
-<span><span class="co">#&gt;  $ pff             : int [1:7275] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ espn            : chr [1:7275] "190912001" "190912003" "190912005" "190912009" ...</span></span>
-<span><span class="co">#&gt;  $ ftn             : int [1:7275] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ away_rest       : int [1:7275] 7 7 7 7 7 7 7 7 7 7 ...</span></span>
-<span><span class="co">#&gt;  $ home_rest       : int [1:7275] 7 7 7 7 7 7 7 7 7 7 ...</span></span>
-<span><span class="co">#&gt;  $ away_moneyline  : int [1:7275] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ home_moneyline  : int [1:7275] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ spread_line     : num [1:7275] -4 -3 -6 9 -3 5.5 3.5 7 -3 9.5 ...</span></span>
-<span><span class="co">#&gt;  $ away_spread_odds: int [1:7275] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ home_spread_odds: int [1:7275] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ total_line      : num [1:7275] 49 38 37 43 45.5 49 38 44.5 37 42 ...</span></span>
-<span><span class="co">#&gt;  $ under_odds      : int [1:7275] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ over_odds       : int [1:7275] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">#&gt;  $ div_game        : int [1:7275] 0 0 1 0 1 0 1 1 1 0 ...</span></span>
-<span><span class="co">#&gt;  $ roof            : chr [1:7275] "dome" "outdoors" "outdoors" "outdoors" ...</span></span>
-<span><span class="co">#&gt;  $ surface         : chr [1:7275] "astroturf" "grass" "grass" "grass" ...</span></span>
-<span><span class="co">#&gt;  $ temp            : int [1:7275] NA 80 78 67 NA 76 NA 73 75 NA ...</span></span>
-<span><span class="co">#&gt;  $ wind            : int [1:7275] NA 12 12 10 NA 8 NA 5 3 NA ...</span></span>
-<span><span class="co">#&gt;  $ away_qb_id      : chr [1:7275] "00-0003761" "00-0006300" "00-0015700" "00-0005741" ...</span></span>
-<span><span class="co">#&gt;  $ home_qb_id      : chr [1:7275] "00-0002876" "00-0010560" "00-0004230" "00-0005106" ...</span></span>
-<span><span class="co">#&gt;  $ away_qb_name    : chr [1:7275] "Randall Cunningham" "Elvis Grbac" "Kordell Stewart" "Rich Gannon" ...</span></span>
-<span><span class="co">#&gt;  $ home_qb_name    : chr [1:7275] "Chris Chandler" "Shane Matthews" "Ty Detmer" "Brett Favre" ...</span></span>
-<span><span class="co">#&gt;  $ away_coach      : chr [1:7275] "Dennis Green" "Gunther Cunningham" "Bill Cowher" "Jon Gruden" ...</span></span>
-<span><span class="co">#&gt;  $ home_coach      : chr [1:7275] "Dan Reeves" "Dick Jauron" "Chris Palmer" "Ray Rhodes" ...</span></span>
-<span><span class="co">#&gt;  $ referee         : chr [1:7275] "Gerry Austin" "Phil Luckett" "Bob McElwee" "Tony Corrente" ...</span></span>
-<span><span class="co">#&gt;  $ stadium_id      : chr [1:7275] "ATL00" "CHI98" "CLE00" "GNB00" ...</span></span>
-<span><span class="co">#&gt;  $ stadium         : chr [1:7275] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...</span></span>
+<span><span class="co">#&gt; nflvrs_d [7,276 × 46] (S3: nflverse_data/tbl_df/tbl/data.table/data.frame)</span></span>
+<span><span class="co">#&gt;  $ game_id         : chr [1:7276] "1999_01_MIN_ATL" "1999_01_KC_CHI" "1999_01_PIT_CLE" "1999_01_OAK_GB" ...</span></span>
+<span><span class="co">#&gt;  $ season          : int [1:7276] 1999 1999 1999 1999 1999 1999 1999 1999 1999 1999 ...</span></span>
+<span><span class="co">#&gt;  $ game_type       : chr [1:7276] "REG" "REG" "REG" "REG" ...</span></span>
+<span><span class="co">#&gt;  $ week            : int [1:7276] 1 1 1 1 1 1 1 1 1 1 ...</span></span>
+<span><span class="co">#&gt;  $ gameday         : chr [1:7276] "1999-09-12" "1999-09-12" "1999-09-12" "1999-09-12" ...</span></span>
+<span><span class="co">#&gt;  $ weekday         : chr [1:7276] "Sunday" "Sunday" "Sunday" "Sunday" ...</span></span>
+<span><span class="co">#&gt;  $ gametime        : chr [1:7276] NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ away_team       : chr [1:7276] "MIN" "KC" "PIT" "OAK" ...</span></span>
+<span><span class="co">#&gt;  $ away_score      : int [1:7276] 17 17 43 24 14 3 10 30 25 28 ...</span></span>
+<span><span class="co">#&gt;  $ home_team       : chr [1:7276] "ATL" "CHI" "CLE" "GB" ...</span></span>
+<span><span class="co">#&gt;  $ home_score      : int [1:7276] 14 20 0 28 31 41 19 28 24 20 ...</span></span>
+<span><span class="co">#&gt;  $ location        : chr [1:7276] "Home" "Home" "Home" "Home" ...</span></span>
+<span><span class="co">#&gt;  $ result          : int [1:7276] -3 3 -43 4 17 38 9 -2 -1 -8 ...</span></span>
+<span><span class="co">#&gt;  $ total           : int [1:7276] 31 37 43 52 45 44 29 58 49 48 ...</span></span>
+<span><span class="co">#&gt;  $ overtime        : int [1:7276] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;  $ old_game_id     : chr [1:7276] "1999091210" "1999091206" "1999091213" "1999091208" ...</span></span>
+<span><span class="co">#&gt;  $ gsis            : int [1:7276] 598 597 604 602 591 603 592 600 588 596 ...</span></span>
+<span><span class="co">#&gt;  $ nfl_detail_id   : chr [1:7276] NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ pfr             : chr [1:7276] "199909120atl" "199909120chi" "199909120cle" "199909120gnb" ...</span></span>
+<span><span class="co">#&gt;  $ pff             : int [1:7276] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ espn            : chr [1:7276] "190912001" "190912003" "190912005" "190912009" ...</span></span>
+<span><span class="co">#&gt;  $ ftn             : int [1:7276] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ away_rest       : int [1:7276] 7 7 7 7 7 7 7 7 7 7 ...</span></span>
+<span><span class="co">#&gt;  $ home_rest       : int [1:7276] 7 7 7 7 7 7 7 7 7 7 ...</span></span>
+<span><span class="co">#&gt;  $ away_moneyline  : int [1:7276] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ home_moneyline  : int [1:7276] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ spread_line     : num [1:7276] -4 -3 -6 9 -3 5.5 3.5 7 -3 9.5 ...</span></span>
+<span><span class="co">#&gt;  $ away_spread_odds: int [1:7276] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ home_spread_odds: int [1:7276] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ total_line      : num [1:7276] 49 38 37 43 45.5 49 38 44.5 37 42 ...</span></span>
+<span><span class="co">#&gt;  $ under_odds      : int [1:7276] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ over_odds       : int [1:7276] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">#&gt;  $ div_game        : int [1:7276] 0 0 1 0 1 0 1 1 1 0 ...</span></span>
+<span><span class="co">#&gt;  $ roof            : chr [1:7276] "dome" "outdoors" "outdoors" "outdoors" ...</span></span>
+<span><span class="co">#&gt;  $ surface         : chr [1:7276] "astroturf" "grass" "grass" "grass" ...</span></span>
+<span><span class="co">#&gt;  $ temp            : int [1:7276] NA 80 78 67 NA 76 NA 73 75 NA ...</span></span>
+<span><span class="co">#&gt;  $ wind            : int [1:7276] NA 12 12 10 NA 8 NA 5 3 NA ...</span></span>
+<span><span class="co">#&gt;  $ away_qb_id      : chr [1:7276] "00-0003761" "00-0006300" "00-0015700" "00-0005741" ...</span></span>
+<span><span class="co">#&gt;  $ home_qb_id      : chr [1:7276] "00-0002876" "00-0010560" "00-0004230" "00-0005106" ...</span></span>
+<span><span class="co">#&gt;  $ away_qb_name    : chr [1:7276] "Randall Cunningham" "Elvis Grbac" "Kordell Stewart" "Rich Gannon" ...</span></span>
+<span><span class="co">#&gt;  $ home_qb_name    : chr [1:7276] "Chris Chandler" "Shane Matthews" "Ty Detmer" "Brett Favre" ...</span></span>
+<span><span class="co">#&gt;  $ away_coach      : chr [1:7276] "Dennis Green" "Gunther Cunningham" "Bill Cowher" "Jon Gruden" ...</span></span>
+<span><span class="co">#&gt;  $ home_coach      : chr [1:7276] "Dan Reeves" "Dick Jauron" "Chris Palmer" "Ray Rhodes" ...</span></span>
+<span><span class="co">#&gt;  $ referee         : chr [1:7276] "Gerry Austin" "Phil Luckett" "Bob McElwee" "Tony Corrente" ...</span></span>
+<span><span class="co">#&gt;  $ stadium_id      : chr [1:7276] "ATL00" "CHI98" "CLE00" "GNB00" ...</span></span>
+<span><span class="co">#&gt;  $ stadium         : chr [1:7276] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...</span></span>
 <span><span class="co">#&gt;  - attr(*, "nflverse_type")= chr "games and schedules"</span></span>
-<span><span class="co">#&gt;  - attr(*, "nflverse_timestamp")= chr "2026-01-24 20:30:49 EST"</span></span></code></pre></div>
+<span><span class="co">#&gt;  - attr(*, "nflverse_timestamp")= chr "2026-01-29 11:30:55 EST"</span></span></code></pre></div>
 <p>To start, we want to create a dataframe where each row is a
 team-season observation, listing how many games they won. There are
 multiple ways to do this, but I’m going to just take the home and away
@@ -939,7 +939,7 @@ results and bind together. As an example, here’s what the
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>team <span class="op">=</span> <span class="va">home_team</span><span class="op">)</span></span>
 <span><span class="va">home</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2026-01-25 01:30:49 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2026-01-29 16:30:55 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 4</span></span></span>
 <span><span class="co">#&gt;   season  week team  result</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
@@ -958,7 +958,7 @@ results and bind together. As an example, here’s what the
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>result <span class="op">=</span> <span class="op">-</span><span class="va">result</span><span class="op">)</span></span>
 <span><span class="va">away</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2026-01-25 01:30:49 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2026-01-29 16:30:55 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 4</span></span></span>
 <span><span class="co">#&gt;   season  week team  result</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
@@ -983,7 +983,7 @@ the perspective of the home team. Now let’s make a columns called
 <span></span>
 <span><span class="va">results</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">season</span> <span class="op">==</span> <span class="fl">2019</span> <span class="op">&amp;</span> <span class="va">team</span> <span class="op">==</span> <span class="st">'SEA'</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ── <span style="font-style: italic;">nflverse games and schedules</span> ────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2026-01-25 01:30:49 UTC</span></span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Data updated: <span style="color: #00BB00;">2026-01-29 16:30:55 UTC</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 16 × 5</span></span></span>
 <span><span class="co">#&gt;    season  week team  result   win</span></span>
 <span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
