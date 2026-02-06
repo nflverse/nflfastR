@@ -44,7 +44,7 @@
 #' @format A data frame including names and descriptions of all variables in
 #' an nflfastR dataset.
 #' @seealso The searchable table on the
-#' [nflfastR website](https://www.nflfastr.com/articles/field_descriptions.html)
+#' [nflfastR website](https://nflfastr.com/articles/field_descriptions.html)
 #' @examples
 #' \donttest{
 #' field_descriptions

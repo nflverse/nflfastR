@@ -22,7 +22,7 @@
 #' @export
 #' @keywords internal
 #' @seealso The function [load_player_stats()] and the corresponding examples
-#' on [the nflfastR website](https://www.nflfastr.com/articles/nflfastR.html#example-11-replicating-official-stats)
+#' on [the nflfastR website](https://nflfastr.com/articles/nflfastR.html#example-11-replicating-official-stats)
 #' @examples
 #' \donttest{
 #' try({# to avoid CRAN test problems

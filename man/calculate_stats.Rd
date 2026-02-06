@@ -56,6 +56,6 @@ dplyr::glimpse(stats)
 \seealso{
 \link{nfl_stats_variables} for a description of all variables.
 
-\url{https://www.nflfastr.com/articles/stats_variables.html} for a searchable
+\url{https://nflfastr.com/articles/stats_variables.html} for a searchable
 table of the stats variable descriptions.
 }

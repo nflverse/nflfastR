@@ -42,7 +42,7 @@ An nflfastR play-by-play data frame like it can be loaded from \url{https://gith
 }
 
 Please see either the documentation of each function or
-\href{https://www.nflfastr.com/articles/field_descriptions.html}{the nflfastR Field Descriptions website}
+\href{https://nflfastr.com/articles/field_descriptions.html}{the nflfastR Field Descriptions website}
 to learn about the output.
 }
 \details{

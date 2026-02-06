@@ -22,7 +22,7 @@
 #' }
 #'
 #' Please see either the documentation of each function or
-#' [the nflfastR Field Descriptions website](https://www.nflfastr.com/articles/field_descriptions.html)
+#' [the nflfastR Field Descriptions website](https://nflfastr.com/articles/field_descriptions.html)
 #' to learn about the output.
 #'
 #' @inheritParams fast_scraper
