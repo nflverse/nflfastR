@@ -1,4 +1,4 @@
-# nflfastR (development version)
+# nflfastR 5.2.0
 
 - Bump required fastrmodels version to 2.0 for better compatibility with xgboost.
 - Fixed an issue with duplicated play IDs in some 2000 games. (#521)
@@ -11,10 +11,12 @@
 - Fixed incompatibility with xgboost v3 model outputs. (#553)
 - Added `"Kickoff Out of Bounds"` (introduced in the 2024 season) to the `penalty_type` variable in play-by-play. (#560)
 
+Thank you to &#x0040;Doug-Analytics, &#x0040;isaactpetersen, &#x0040;jeleff1000, &#x0040;JoeMarino2021, &#x0040;kbannon77, &#x0040;lancejames35, &#x0040;LinkedInMindset, &#x0040;manbradcalf, &#x0040;mrcaseb, &#x0040;thedfszone, &#x0040;TheMathNinja, and &#x0040;zaynpatel for their questions, feedback, and contributions towards this release.
+
 # nflfastR 5.1.0
 
 - The function `calculate_standings()` has been deprecated. Please use `nflseedR::nfl_standings()` in nflseedR v2.0 instead. (#510)
-- nflfastR now requires R 4.1 to allow the package to use R's native pipe `|>` operator. This follows the [Tidyverse R version support rules](https://www.tidyverse.org/blog/2019/04/r-version-support/). (#511)
+- nflfastR now requires R 4.1 to allow the package to use R's native pipe `|>` operator. This follows the [Tidyverse R version support rules](https://tidyverse.org/blog/2019/04/r-version-support/). (#511)
 - Fixed a bug where `calculate_stats()` incorrectly counted `receiving_air_yards`. (#500)
 - Fixed a bug where `vegas_wp` variables were broken when `spread_line` data was missing. (#503)
 - Fixed a bug where `calculate_stats()` incorrectly calculated `target_share` and `air_yards_share` when `summary_level = "season"`. (#505)
@@ -28,7 +30,7 @@ Thank you to &#x0040;ak47twq, &#x0040;isaactpetersen, &#x0040;jacobakaye, &#x004
 ## Major Changes
 
 - Added new function `calculate_stats()` that combines the output of all `calculate_player_stats*()` functions with a more robust and faster approach. The `calculate_player_stats*()` function will be deprecated in a future release. (#470)
-- Added new exported dataframe `nfl_stats_variables`. It lists and explains all variables returned by `calculate_stats()`. A searchable table is available at <https://www.nflfastr.com/articles/stats_variables.html>. (#470)
+- Added new exported dataframe `nfl_stats_variables`. It lists and explains all variables returned by `calculate_stats()`. A searchable table is available at <https://nflfastr.com/articles/stats_variables.html>. (#470)
 
 ## Bug Fixes and Minor Changes
 
@@ -233,7 +235,7 @@ Thank you to
 
 * Deprecated the arguments `source` and `pp` all across the package. Using them will cause a 
 warning. Parallel processing has to be activated by choosing an appropriate `future::plan()` before
-calling the relevant functions. For more information please see [the package documentation](https://www.nflfastr.com/reference/nflfastR-package.html).
+calling the relevant functions. For more information please see [the package documentation](https://nflfastr.com/reference/nflfastR-package.html).
 * The function `build_nflfastR_pbp()` will now run `decode_player_ids()` by default (can be deactivated with the argument `decode = FALSE`). 
 * The function `build_nflfastR_pbp()` will now run `add_xpass()` by default and add the new variables `xpass` and `pass_oe`.
 * The functions `fast_scraper()` and `build_nflfastR_pbp()` now allow the output of `fast_scraper_schedules()` directly as input so it's not necessary anymore to pull the `game_id` first.

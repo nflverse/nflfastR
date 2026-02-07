@@ -28,7 +28,7 @@ See \code{\link[nflreadr:load_schedules]{nflreadr::load_schedules}} for details.
 \donttest{
 # Get schedules for the whole 2015 - 2018 seasons
 try({# to avoid CRAN test problems
-fast_scraper_schedules(2015:2018)
+# fast_scraper_schedules(2015:2018)
 })
 }
 }

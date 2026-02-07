@@ -16,12 +16,12 @@
 #' @examples
 #' \donttest{
 #' try({# to avoid CRAN test problems
-#'     pbp <- nflreadr::load_pbp(2021)
-#'     weekly <- calculate_player_stats_kicking(pbp, weekly = TRUE)
-#'     dplyr::glimpse(weekly)
+#'     # pbp <- nflreadr::load_pbp(2021)
+#'     # weekly <- calculate_player_stats_kicking(pbp, weekly = TRUE)
+#'     # dplyr::glimpse(weekly)
 #'
-#'     overall <- calculate_player_stats_kicking(pbp, weekly = FALSE)
-#'     dplyr::glimpse(overall)
+#'     # overall <- calculate_player_stats_kicking(pbp, weekly = FALSE)
+#'     # dplyr::glimpse(overall)
 #' })
 #' }
 #'

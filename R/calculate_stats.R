@@ -30,7 +30,7 @@
 #'
 #' @return A tibble of player/team stats summarized by season/week.
 #' @seealso [nfl_stats_variables] for a description of all variables.
-#' @seealso <https://www.nflfastr.com/articles/stats_variables.html> for a searchable
+#' @seealso <https://nflfastr.com/articles/stats_variables.html> for a searchable
 #' table of the stats variable descriptions.
 #' @export
 #'

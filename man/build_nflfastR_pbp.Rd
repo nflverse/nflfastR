@@ -42,7 +42,7 @@ An nflfastR play-by-play data frame like it can be loaded from \url{https://gith
 }
 
 Please see either the documentation of each function or
-\href{https://www.nflfastr.com/articles/field_descriptions.html}{the nflfastR Field Descriptions website}
+\href{https://nflfastr.com/articles/field_descriptions.html}{the nflfastR Field Descriptions website}
 to learn about the output.
 }
 \details{
@@ -56,13 +56,12 @@ build_nflfastR_pbp(c("2018_21_NE_LA", "2019_21_SF_KC"))
 })
 
 # It is also possible to directly use the
-# output of `fast_scraper_schedules` as input
+# output of `load_schedules` as input
 try({# to avoid CRAN test problems
-library(dplyr, warn.conflicts = FALSE)
-fast_scraper_schedules(2020) |>
-  slice_tail(n = 3) |>
+nflreadr::load_schedules(2025) |>
+  dplyr::slice_tail(n = 3) |>
   build_nflfastR_pbp()
- })
+})
 
 \dontshow{
 # Close open connections for R CMD Check

@@ -44,7 +44,7 @@ See \code{\link[nflreadr:sitrep]{nflreadr::nflverse_sitrep}} for details.
 old_ops <- options(repos = c("CRAN" = "https://cran.rstudio.com/"))
 }
 
-report(recursive = FALSE)
+# report(recursive = FALSE)
 nflverse_sitrep(pkg = "nflreadr", recursive = TRUE)
 
 \dontshow{

@@ -481,7 +481,7 @@ fast_scraper <- function(game_ids,
 #' \donttest{
 #' # Roster of the 2019 and 2020 seasons
 #' try({# to avoid CRAN test problems
-#' fast_scraper_roster(2019:2020)
+#' # fast_scraper_roster(2019:2020)
 #' })
 #' }
 #' @export
@@ -513,7 +513,7 @@ fast_scraper_roster <- function(...) {
 #'\donttest{
 #' # Get schedules for the whole 2015 - 2018 seasons
 #' try({# to avoid CRAN test problems
-#' fast_scraper_schedules(2015:2018)
+#' # fast_scraper_schedules(2015:2018)
 #' })
 #' }
 #' @export
