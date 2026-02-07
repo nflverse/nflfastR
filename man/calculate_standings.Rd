@@ -47,14 +47,14 @@ schedule data.
 \donttest{
 try({# to avoid CRAN test problems
   # load nflverse data both schedules and pbp
-  scheds <- fast_scraper_schedules(2014)
-  pbp <- load_pbp(c(2018, 2021))
+  # scheds <- fast_scraper_schedules(2014)
+  # pbp <- load_pbp(c(2018, 2021))
 
   # calculate standings based on pbp
-  calculate_standings(pbp)
+  # calculate_standings(pbp)
 
   # calculate standings based on schedules
-  calculate_standings(scheds)
+  # calculate_standings(scheds)
 })
 }
 }

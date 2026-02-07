@@ -99,13 +99,13 @@ either at the game level or at the level of the entire data frame passed.
 \examples{
 \donttest{
 try({# to avoid CRAN test problems
-pbp <- nflfastR::load_pbp(2020)
+# pbp <- nflfastR::load_pbp(2020)
 
-weekly <- calculate_player_stats(pbp, weekly = TRUE)
-dplyr::glimpse(weekly)
+# weekly <- calculate_player_stats(pbp, weekly = TRUE)
+# dplyr::glimpse(weekly)
 
-overall <- calculate_player_stats(pbp, weekly = FALSE)
-dplyr::glimpse(overall)
+# overall <- calculate_player_stats(pbp, weekly = FALSE)
+# dplyr::glimpse(overall)
 })
 }
 }
