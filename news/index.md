@@ -1,6 +1,8 @@
 # Changelog
 
-## nflfastR (development version)
+## nflfastR 5.2.0
+
+CRAN release: 2026-02-07
 
 - Bump required fastrmodels version to 2.0 for better compatibility with
   xgboost.
@@ -49,6 +51,20 @@
   `penalty_type` variable in play-by-play.
   ([\#560](https://github.com/nflverse/nflfastR/issues/560))
 
+Thank you to [@Doug-Analytics](https://github.com/Doug-Analytics),
+[@isaactpetersen](https://github.com/isaactpetersen),
+[@jeleff1000](https://github.com/jeleff1000),
+[@JoeMarino2021](https://github.com/JoeMarino2021),
+[@kbannon77](https://github.com/kbannon77),
+[@lancejames35](https://github.com/lancejames35),
+[@LinkedInMindset](https://github.com/LinkedInMindset),
+[@manbradcalf](https://github.com/manbradcalf),
+[@mrcaseb](https://github.com/mrcaseb),
+[@thedfszone](https://github.com/thedfszone),
+[@TheMathNinja](https://github.com/TheMathNinja), and
+[@zaynpatel](https://github.com/zaynpatel) for their questions,
+feedback, and contributions towards this release.
+
 ## nflfastR 5.1.0
 
 CRAN release: 2025-05-14
@@ -61,7 +77,7 @@ CRAN release: 2025-05-14
   ([\#510](https://github.com/nflverse/nflfastR/issues/510))
 - nflfastR now requires R 4.1 to allow the package to use R’s native
   pipe `|>` operator. This follows the [Tidyverse R version support
-  rules](https://www.tidyverse.org/blog/2019/04/r-version-support/).
+  rules](https://tidyverse.org/blog/2019/04/r-version-support/).
   ([\#511](https://github.com/nflverse/nflfastR/issues/511))
 - Fixed a bug where
   [`calculate_stats()`](https://nflfastr.com/reference/calculate_stats.md)
@@ -107,7 +123,7 @@ CRAN release: 2024-11-26
   explains all variables returned by
   [`calculate_stats()`](https://nflfastr.com/reference/calculate_stats.md).
   A searchable table is available at
-  <https://www.nflfastr.com/articles/stats_variables.html>.
+  <https://nflfastr.com/articles/stats_variables.html>.
   ([\#470](https://github.com/nflverse/nflfastR/issues/470))
 
 ### Bug Fixes and Minor Changes
@@ -672,7 +688,7 @@ CRAN release: 2021-02-15
   [`future::plan()`](https://future.futureverse.org/reference/plan.html)
   before calling the relevant functions. For more information please see
   [the package
-  documentation](https://www.nflfastr.com/reference/nflfastR-package.html).
+  documentation](https://nflfastr.com/reference/nflfastR-package.html).
 - The function
   [`build_nflfastR_pbp()`](https://nflfastr.com/reference/build_nflfastR_pbp.md)
   will now run

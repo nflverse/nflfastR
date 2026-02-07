@@ -70,31 +70,15 @@ A tibble with NFL regular season standings
 # \donttest{
 try({# to avoid CRAN test problems
   # load nflverse data both schedules and pbp
-  scheds <- fast_scraper_schedules(2014)
-  pbp <- load_pbp(c(2018, 2021))
+  # scheds <- fast_scraper_schedules(2014)
+  # pbp <- load_pbp(c(2018, 2021))
 
   # calculate standings based on pbp
-  calculate_standings(pbp)
+  # calculate_standings(pbp)
 
   # calculate standings based on schedules
-  calculate_standings(scheds)
+  # calculate_standings(scheds)
 })
-#> Warning: `calculate_standings()` was deprecated in nflfastR 5.1.0.
-#> ℹ Please use `nflseedR::nfl_standings()` instead.
-#> # A tibble: 32 × 15
-#>    season conf  division  div_rank  seed team  games  wins losses  ties win_pct
-#>     <int> <chr> <chr>        <dbl> <dbl> <chr> <int> <int>  <int> <int>   <dbl>
-#>  1   2014 AFC   AFC East         1     1 NE       16    12      4     0   0.75 
-#>  2   2014 AFC   AFC East         2    NA BUF      16     9      7     0   0.562
-#>  3   2014 AFC   AFC East         3    NA MIA      16     8      8     0   0.5  
-#>  4   2014 AFC   AFC East         4    NA NYJ      16     4     12     0   0.25 
-#>  5   2014 AFC   AFC North        1     3 PIT      16    11      5     0   0.688
-#>  6   2014 AFC   AFC North        2     5 CIN      16    10      5     1   0.656
-#>  7   2014 AFC   AFC North        3     6 BAL      16    10      6     0   0.625
-#>  8   2014 AFC   AFC North        4    NA CLE      16     7      9     0   0.438
-#>  9   2014 AFC   AFC South        1     4 IND      16    11      5     0   0.688
-#> 10   2014 AFC   AFC South        2    NA HOU      16     9      7     0   0.562
-#> # ℹ 22 more rows
-#> # ℹ 4 more variables: div_pct <dbl>, conf_pct <dbl>, sov <dbl>, sos <dbl>
+#> NULL
 # }
 ```

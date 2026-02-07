@@ -36,7 +36,7 @@
 
     <a class="navbar-brand me-2" href="index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.0.9010</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -136,8 +136,8 @@
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
-<p>We have provided some application examples in the <strong><a href="https://www.nflfastr.com/articles/nflfastR.html" class="external-link">Getting Started</a></strong> article. However, these require a basic knowledge of R. For this reason we have the <strong><a href="https://www.nflfastr.com/articles/beginners_guide.html" class="external-link">nflfastR beginner’s guide</a></strong>, which we recommend to all those who are looking for an introduction to nflfastR with R.</p>
-<p>You can find column names and descriptions in the <strong><a href="https://www.nflfastr.com/articles/field_descriptions.html" class="external-link">Field Descriptions</a></strong> article, or by accessing the <code>field_descriptions</code> dataframe from the package.</p>
+<p>We have provided some application examples in the <strong><a href="https://nflfastr.com/articles/nflfastR.html">Getting Started</a></strong> article. However, these require a basic knowledge of R. For this reason we have the <strong><a href="https://nflfastr.com/articles/beginners_guide.html">nflfastR beginner’s guide</a></strong>, which we recommend to all those who are looking for an introduction to nflfastR with R.</p>
+<p>You can find column names and descriptions in the <strong><a href="https://nflfastr.com/articles/field_descriptions.html">Field Descriptions</a></strong> article, or by accessing the <code>field_descriptions</code> dataframe from the package.</p>
 </div>
 <div class="section level2">
 <h2 id="data-access">Data access<a class="anchor" aria-label="anchor" href="#data-access"></a>
@@ -147,11 +147,11 @@
 <div class="section level2">
 <h2 id="nflfastr-models">nflfastR models<a class="anchor" aria-label="anchor" href="#nflfastr-models"></a>
 </h2>
-<p><code>nflfastR</code> uses its own models for Expected Points, Win Probability, Completion Probability, and Expected Yards After the Catch. To read about the models, please see <a href="https://opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/" class="external-link">this post on Open Source Football</a>. For a more detailed description of the motivation for Expected Points models, we highly recommend this paper <a href="http://arxiv.org/pdf/1802.00998" class="external-link">from the nflscrapR team located here</a>.</p>
+<p><code>nflfastR</code> uses its own models for Expected Points, Win Probability, Completion Probability, and Expected Yards After the Catch. To read about the models, please see <a href="https://opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/" class="external-link">this post on Open Source Football</a>. For a more detailed description of the motivation for Expected Points models, we highly recommend this paper <a href="https://arxiv.org/pdf/1802.00998" class="external-link">from the nflscrapR team located here</a>.</p>
 <p>Here is a visualization of the Expected Points model by down and yardline.</p>
-<p><img src="reference/figures/readme-epa-model-1.png" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="reference/figures/readme-epa-model-1.png" alt="" width="100%" style="display: block; margin: auto;"></p>
 <p>Here is a visualization of the Completion Probability model by air yards and pass direction.</p>
-<p><img src="reference/figures/readme-cp-model-1.png" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="reference/figures/readme-cp-model-1.png" alt="" width="100%" style="display: block; margin: auto;"></p>
 <p><code>nflfastR</code> includes two win probability models: one with and one without incorporating the pre-game spread.</p>
 </div>
 <div class="section level2">
@@ -160,7 +160,7 @@
 <ul>
 <li>To Nick Shoemaker for <a href="https://github.com/CroppedClamp/nfl_pbps" class="external-link">finding and making available JSON-formatted NFL play-by-play back to 1999</a> (<code>nflfastR</code> uses this source for 1999 and 2000 and previously also used it for 2001-2010)</li>
 <li>To Lau Sze Yui for developing a scraping function to access JSON-formatted NFL play-by-play beginning in 2001</li>
-<li>To Aaron Schatz and <a href="https://ftnfantasy.com/dvoa/nfl" class="external-link">FTN Fantasy</a> for providing charting data to correctly mark scrambles in the 1999-2005 seasons</li>
+<li>To Aaron Schatz and FTN Fantasy for providing charting data to correctly mark scrambles in the 1999-2005 seasons</li>
 <li>To Lee Sharpe for curating a resource for game information</li>
 <li>To Timo Riske, Lau Sze Yui, Sean Clement, and Daniel Houston for many helpful discussions regarding the development of the new <code>nflfastR</code> models</li>
 <li>To Zach Feldman and Josh Hermsmeyer for many helpful discussions about CPOE models as well as Peter Owen for many helpful suggestions for the CP model</li>
@@ -215,7 +215,7 @@
 <ul class="list-unstyled">
 <li><a href="https://CRAN.R-project.org/package=nflfastR" class="external-link"><img src="https://www.r-pkg.org/badges/version-last-release/nflfastR" alt="CRAN status"></a></li>
 <li><a href="https://CRAN.R-project.org/package=nflfastR" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/grand-total/nflfastR" alt="CRAN downloads"></a></li>
-<li><a href="https://www.nflfastr.com/" class="external-link"><img src="https://img.shields.io/github/r-package/v/nflverse/nflfastR/master?label=dev%20version&amp;style=flat-square&amp;logo=github" alt="Dev status"></a></li>
+<li><a href="https://nflfastr.com/"><img src="https://img.shields.io/github/r-package/v/nflverse/nflfastR/master?label=dev%20version&amp;style=flat-square&amp;logo=github" alt="Dev status"></a></li>
 <li><a href="https://github.com/nflverse/nflfastR/actions" class="external-link"><img src="https://img.shields.io/github/actions/workflow/status/nflverse/nflfastR/R-CMD-check.yaml?label=R%20check&amp;style=flat-square&amp;logo=github" alt="R build status"></a></li>
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html#stable" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="Lifecycle: stable"></a></li>
 <li><a href="https://discord.com/invite/5Er2FBnnQa" class="external-link"><img src="https://img.shields.io/discord/789805604076126219?color=7289da&amp;label=nflverse%20support&amp;logo=discord&amp;logoColor=fff&amp;style=flat-square" alt="nflverse support"></a></li>

@@ -602,8 +602,12 @@ qbs <- pbp |>
   ) |>
   ungroup() |>
   filter(n_dropbacks > 100 & n_plays > 1000)
-#> `summarise()` has grouped output by 'id'. You can override using the `.groups`
-#> argument.
+#> `summarise()` has regrouped the output.
+#> ℹ Summaries were computed grouped by id and name.
+#> ℹ Output is grouped by id.
+#> ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+#> ℹ Use `summarise(.by = c(id, name))` for per-operation grouping
+#>   (`?dplyr::dplyr_by`) instead.
 ```
 
 Lots of new stuff here. First, we’re grouping by `id` and `name` to make
@@ -896,7 +900,7 @@ str(games)
 #>  $ stadium_id      : chr [1:7276] "ATL00" "CHI98" "CLE00" "GNB00" ...
 #>  $ stadium         : chr [1:7276] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...
 #>  - attr(*, "nflverse_type")= chr "games and schedules"
-#>  - attr(*, "nflverse_timestamp")= chr "2026-01-29 11:30:55 EST"
+#>  - attr(*, "nflverse_timestamp")= chr "2026-02-07 13:02:59 EST"
 ```
 
 To start, we want to create a dataframe where each row is a team-season
@@ -911,7 +915,7 @@ home <- games |>
   rename(team = home_team)
 home |> head(5)
 #> ── nflverse games and schedules ────────────────────────────────────────────────
-#> ℹ Data updated: 2026-01-29 16:30:55 UTC
+#> ℹ Data updated: 2026-02-07 18:02:59 UTC
 #> # A tibble: 5 × 4
 #>   season  week team  result
 #>    <int> <int> <chr>  <int>
@@ -932,7 +936,7 @@ away <- games |>
   mutate(result = -result)
 away |> head(5)
 #> ── nflverse games and schedules ────────────────────────────────────────────────
-#> ℹ Data updated: 2026-01-29 16:30:55 UTC
+#> ℹ Data updated: 2026-02-07 18:02:59 UTC
 #> # A tibble: 5 × 4
 #>   season  week team  result
 #>    <int> <int> <chr>  <int>
@@ -960,7 +964,7 @@ results <- bind_rows(home, away) |>
 
 results |> filter(season == 2019 & team == 'SEA')
 #> ── nflverse games and schedules ────────────────────────────────────────────────
-#> ℹ Data updated: 2026-01-29 16:30:55 UTC
+#> ℹ Data updated: 2026-02-07 18:02:59 UTC
 #> # A tibble: 16 × 5
 #>    season  week team  result   win
 #>     <int> <int> <chr>  <int> <dbl>
@@ -998,8 +1002,12 @@ team_wins <- results |>
     wins = sum(win),
     point_diff = sum(result)) |>
   ungroup()
-#> `summarise()` has grouped output by 'team'. You can override using the
-#> `.groups` argument.
+#> `summarise()` has regrouped the output.
+#> ℹ Summaries were computed grouped by team and season.
+#> ℹ Output is grouped by team.
+#> ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+#> ℹ Use `summarise(.by = c(team, season))` for per-operation grouping
+#>   (`?dplyr::dplyr_by`) instead.
 
 team_wins |>
   arrange(-wins) |>
@@ -1047,8 +1055,12 @@ pbp |>
   group_by(posteam, season, pass) |> 
   summarize(epa = mean(epa)) |>
   head(4)
-#> `summarise()` has grouped output by 'posteam', 'season'. You can override using
-#> the `.groups` argument.
+#> `summarise()` has regrouped the output.
+#> ℹ Summaries were computed grouped by posteam, season, and pass.
+#> ℹ Output is grouped by posteam and season.
+#> ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+#> ℹ Use `summarise(.by = c(posteam, season, pass))` for per-operation grouping
+#>   (`?dplyr::dplyr_by`) instead.
 #> # A tibble: 4 × 4
 #> # Groups:   posteam, season [2]
 #>   posteam season  pass     epa
@@ -1068,8 +1080,12 @@ pbp |>
   summarize(epa = mean(epa)) |>
   pivot_wider(names_from = pass, values_from = epa) |>
   head(4)
-#> `summarise()` has grouped output by 'posteam', 'season'. You can override using
-#> the `.groups` argument.
+#> `summarise()` has regrouped the output.
+#> ℹ Summaries were computed grouped by posteam, season, and pass.
+#> ℹ Output is grouped by posteam and season.
+#> ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+#> ℹ Use `summarise(.by = c(posteam, season, pass))` for per-operation grouping
+#>   (`?dplyr::dplyr_by`) instead.
 #> # A tibble: 4 × 4
 #> # Groups:   posteam, season [4]
 #>   posteam season    `0`     `1`
@@ -1095,8 +1111,12 @@ offense <- pbp |>
   summarize(epa = mean(epa)) |>
   pivot_wider(names_from = pass, values_from = epa) |>
   rename(off_pass_epa = `1`, off_rush_epa = `0`)
-#> `summarise()` has grouped output by 'posteam', 'season'. You can override using
-#> the `.groups` argument.
+#> `summarise()` has regrouped the output.
+#> ℹ Summaries were computed grouped by posteam, season, and pass.
+#> ℹ Output is grouped by posteam and season.
+#> ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+#> ℹ Use `summarise(.by = c(posteam, season, pass))` for per-operation grouping
+#>   (`?dplyr::dplyr_by`) instead.
 ```
 
 Note that variable names that are numbers need to be surrounded in tick
@@ -1110,8 +1130,12 @@ defense <- pbp |>
   summarize(epa = mean(epa)) |>
   pivot_wider(names_from = pass, values_from = epa) |>
   rename(def_pass_epa = `1`, def_rush_epa = `0`)
-#> `summarise()` has grouped output by 'defteam', 'season'. You can override using
-#> the `.groups` argument.
+#> `summarise()` has regrouped the output.
+#> ℹ Summaries were computed grouped by defteam, season, and pass.
+#> ℹ Output is grouped by defteam and season.
+#> ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+#> ℹ Use `summarise(.by = c(defteam, season, pass))` for per-operation grouping
+#>   (`?dplyr::dplyr_by`) instead.
 ```
 
 Let’s do another sanity check looking at the top 5 pass offenses and

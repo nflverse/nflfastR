@@ -15,7 +15,7 @@ schedule data."><meta property="og:image" content="https://nflfastr.com/referenc
 
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.0.9010</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -135,32 +135,16 @@ for all seasons in <code>nflverse_object</code>!</p></dd>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="op">{</span><span class="co"># to avoid CRAN test problems</span></span></span>
 <span class="r-in"><span>  <span class="co"># load nflverse data both schedules and pbp</span></span></span>
-<span class="r-in"><span>  <span class="va">scheds</span> <span class="op">&lt;-</span> <span class="fu"><a href="fast_scraper_schedules.html">fast_scraper_schedules</a></span><span class="op">(</span><span class="fl">2014</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">pbp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://nflreadr.nflverse.com/reference/load_pbp.html" class="external-link">load_pbp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2018</span>, <span class="fl">2021</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># scheds &lt;- fast_scraper_schedules(2014)</span></span></span>
+<span class="r-in"><span>  <span class="co"># pbp &lt;- load_pbp(c(2018, 2021))</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="co"># calculate standings based on pbp</span></span></span>
-<span class="r-in"><span>  <span class="fu">calculate_standings</span><span class="op">(</span><span class="va">pbp</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># calculate_standings(pbp)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="co"># calculate standings based on schedules</span></span></span>
-<span class="r-in"><span>  <span class="fu">calculate_standings</span><span class="op">(</span><span class="va">scheds</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># calculate_standings(scheds)</span></span></span>
 <span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`calculate_standings()` was deprecated in nflfastR 5.1.0.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Please use `nflseedR::nfl_standings()` instead.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 32 × 15</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    season conf  division  div_rank  seed team  games  wins losses  ties win_pct</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>   <span style="text-decoration: underline;">2</span>014 AFC   AFC East         1     1 NE       16    12      4     0   0.75 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>   <span style="text-decoration: underline;">2</span>014 AFC   AFC East         2    <span style="color: #BB0000;">NA</span> BUF      16     9      7     0   0.562</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>   <span style="text-decoration: underline;">2</span>014 AFC   AFC East         3    <span style="color: #BB0000;">NA</span> MIA      16     8      8     0   0.5  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>   <span style="text-decoration: underline;">2</span>014 AFC   AFC East         4    <span style="color: #BB0000;">NA</span> NYJ      16     4     12     0   0.25 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>   <span style="text-decoration: underline;">2</span>014 AFC   AFC North        1     3 PIT      16    11      5     0   0.688</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>   <span style="text-decoration: underline;">2</span>014 AFC   AFC North        2     5 CIN      16    10      5     1   0.656</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>   <span style="text-decoration: underline;">2</span>014 AFC   AFC North        3     6 BAL      16    10      6     0   0.625</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>   <span style="text-decoration: underline;">2</span>014 AFC   AFC North        4    <span style="color: #BB0000;">NA</span> CLE      16     7      9     0   0.438</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>   <span style="text-decoration: underline;">2</span>014 AFC   AFC South        1     4 IND      16    11      5     0   0.688</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>   <span style="text-decoration: underline;">2</span>014 AFC   AFC South        2    <span style="color: #BB0000;">NA</span> HOU      16     9      7     0   0.562</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 22 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more variables: div_pct &lt;dbl&gt;, conf_pct &lt;dbl&gt;, sov &lt;dbl&gt;, sos &lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

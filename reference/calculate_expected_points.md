@@ -103,6 +103,14 @@ data <- tibble::tibble(
 nflfastR::calculate_expected_points(data) |>
   dplyr::select(season, yardline_100, td_prob, ep)
 })
+#> 
+#> Attaching package: ‘dplyr’
+#> The following objects are masked from ‘package:stats’:
+#> 
+#>     filter, lag
+#> The following objects are masked from ‘package:base’:
+#> 
+#>     intersect, setdiff, setequal, union
 #>    season yardline_100   td_prob        ep
 #> 1    1999           80 0.3342112 0.6378878
 #> 2    2000           80 0.3342112 0.6378878

@@ -58,23 +58,7 @@ for details.
 ``` r
 # \donttest{
 
-report(recursive = FALSE)
-#> Warning: `report()` was deprecated in nflfastR 5.2.0.
-#> ℹ Please use `nflreadr::nflverse_sitrep()` instead.
-#> ── System Info ─────────────────────────────────────────────────────────────────
-#> • R version 4.5.2 (2025-10-31) • Running under: Ubuntu 24.04.3 LTS
-#> ── Package Status ──────────────────────────────────────────────────────────────
-#>    package  installed  cran        dev behind
-#> 1 nflfastR 5.1.0.9010 5.1.0 5.1.0.9009       
-#> 2 nflplotR      1.6.0 1.6.0      1.6.0       
-#> 3 nflreadr 1.5.0.9001 1.5.0 1.5.0.9001       
-#> 4 nflseedR      2.0.2 2.0.2      2.0.2       
-#> ── Package Options ─────────────────────────────────────────────────────────────
-#> • No options set for above packages
-#> ── Not Installed ───────────────────────────────────────────────────────────────
-#> • nfl4th   ()
-#> • nflverse ()
-#> ────────────────────────────────────────────────────────────────────────────────
+# report(recursive = FALSE)
 nflverse_sitrep(pkg = "nflreadr", recursive = TRUE)
 #> ── System Info ─────────────────────────────────────────────────────────────────
 #> • R version 4.5.2 (2025-10-31) • Running under: Ubuntu 24.04.3 LTS

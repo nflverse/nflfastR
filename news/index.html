@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.0.9010</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,7 +65,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="nflfastr-development-version">nflfastR (development version)<a class="anchor" aria-label="anchor" href="#nflfastr-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="5.2.0" id="nflfastr-520">nflfastR 5.2.0<a class="anchor" aria-label="anchor" href="#nflfastr-520"></a></h2><p class="text-muted">CRAN release: 2026-02-07</p>
 <ul><li>Bump required fastrmodels version to 2.0 for better compatibility with xgboost.</li>
 <li>Fixed an issue with duplicated play IDs in some 2000 games. (<a href="https://github.com/nflverse/nflfastR/issues/521" class="external-link">#521</a>)</li>
 <li>Added the argument <code>pbp</code> to <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code> to allow stats calculation based on subsets of nflverse play-by-play data. (<a href="https://github.com/nflverse/nflfastR/issues/524" class="external-link">#524</a>)</li>
@@ -78,11 +78,12 @@
 <code><a href="../reference/report.html">report()</a></code> is deprecated and will be removed in a future update. Please use <code><a href="https://nflreadr.nflverse.com/reference/sitrep.html" class="external-link">nflverse_sitrep()</a></code>. (<a href="https://github.com/nflverse/nflfastR/issues/540" class="external-link">#540</a>)</li>
 <li>Fixed incompatibility with xgboost v3 model outputs. (<a href="https://github.com/nflverse/nflfastR/issues/553" class="external-link">#553</a>)</li>
 <li>Added <code>"Kickoff Out of Bounds"</code> (introduced in the 2024 season) to the <code>penalty_type</code> variable in play-by-play. (<a href="https://github.com/nflverse/nflfastR/issues/560" class="external-link">#560</a>)</li>
-</ul></div>
+</ul><p>Thank you to <a href="https://github.com/Doug-Analytics" class="external-link">@Doug-Analytics</a>, <a href="https://github.com/isaactpetersen" class="external-link">@isaactpetersen</a>, <a href="https://github.com/jeleff1000" class="external-link">@jeleff1000</a>, <a href="https://github.com/JoeMarino2021" class="external-link">@JoeMarino2021</a>, <a href="https://github.com/kbannon77" class="external-link">@kbannon77</a>, <a href="https://github.com/lancejames35" class="external-link">@lancejames35</a>, <a href="https://github.com/LinkedInMindset" class="external-link">@LinkedInMindset</a>, <a href="https://github.com/manbradcalf" class="external-link">@manbradcalf</a>, <a href="https://github.com/mrcaseb" class="external-link">@mrcaseb</a>, <a href="https://github.com/thedfszone" class="external-link">@thedfszone</a>, <a href="https://github.com/TheMathNinja" class="external-link">@TheMathNinja</a>, and <a href="https://github.com/zaynpatel" class="external-link">@zaynpatel</a> for their questions, feedback, and contributions towards this release.</p>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="5.1.0" id="nflfastr-510">nflfastR 5.1.0<a class="anchor" aria-label="anchor" href="#nflfastr-510"></a></h2><p class="text-muted">CRAN release: 2025-05-14</p>
 <ul><li>The function <code><a href="../reference/calculate_standings.html">calculate_standings()</a></code> has been deprecated. Please use <code><a href="https://nflseedr.com/reference/nfl_standings.html" class="external-link">nflseedR::nfl_standings()</a></code> in nflseedR v2.0 instead. (<a href="https://github.com/nflverse/nflfastR/issues/510" class="external-link">#510</a>)</li>
-<li>nflfastR now requires R 4.1 to allow the package to use R’s native pipe <code>|&gt;</code> operator. This follows the <a href="https://www.tidyverse.org/blog/2019/04/r-version-support/" class="external-link">Tidyverse R version support rules</a>. (<a href="https://github.com/nflverse/nflfastR/issues/511" class="external-link">#511</a>)</li>
+<li>nflfastR now requires R 4.1 to allow the package to use R’s native pipe <code>|&gt;</code> operator. This follows the <a href="https://tidyverse.org/blog/2019/04/r-version-support/" class="external-link">Tidyverse R version support rules</a>. (<a href="https://github.com/nflverse/nflfastR/issues/511" class="external-link">#511</a>)</li>
 <li>Fixed a bug where <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code> incorrectly counted <code>receiving_air_yards</code>. (<a href="https://github.com/nflverse/nflfastR/issues/500" class="external-link">#500</a>)</li>
 <li>Fixed a bug where <code>vegas_wp</code> variables were broken when <code>spread_line</code> data was missing. (<a href="https://github.com/nflverse/nflfastR/issues/503" class="external-link">#503</a>)</li>
 <li>Fixed a bug where <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code> incorrectly calculated <code>target_share</code> and <code>air_yards_share</code> when <code>summary_level = "season"</code>. (<a href="https://github.com/nflverse/nflfastR/issues/505" class="external-link">#505</a>)</li>
@@ -95,7 +96,7 @@
 <div class="section level3">
 <h3 id="major-changes-5-0-0">Major Changes<a class="anchor" aria-label="anchor" href="#major-changes-5-0-0"></a></h3>
 <ul><li>Added new function <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code> that combines the output of all <code>calculate_player_stats*()</code> functions with a more robust and faster approach. The <code>calculate_player_stats*()</code> function will be deprecated in a future release. (<a href="https://github.com/nflverse/nflfastR/issues/470" class="external-link">#470</a>)</li>
-<li>Added new exported dataframe <code>nfl_stats_variables</code>. It lists and explains all variables returned by <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code>. A searchable table is available at <a href="https://www.nflfastr.com/articles/stats_variables.html" class="external-link uri">https://www.nflfastr.com/articles/stats_variables.html</a>. (<a href="https://github.com/nflverse/nflfastR/issues/470" class="external-link">#470</a>)</li>
+<li>Added new exported dataframe <code>nfl_stats_variables</code>. It lists and explains all variables returned by <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code>. A searchable table is available at <a href="https://nflfastr.com/articles/stats_variables.html" class="uri">https://nflfastr.com/articles/stats_variables.html</a>. (<a href="https://github.com/nflverse/nflfastR/issues/470" class="external-link">#470</a>)</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-and-minor-changes-5-0-0">Bug Fixes and Minor Changes<a class="anchor" aria-label="anchor" href="#bug-fixes-and-minor-changes-5-0-0"></a></h3>
@@ -325,7 +326,7 @@
 <h3 id="breaking-changes-4-0-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-4-0-0"></a></h3>
 <div class="section level4">
 <h4 id="changed-functions-4-0-0">Changed Functions<a class="anchor" aria-label="anchor" href="#changed-functions-4-0-0"></a></h4>
-<ul><li>Deprecated the arguments <code>source</code> and <code>pp</code> all across the package. Using them will cause a warning. Parallel processing has to be activated by choosing an appropriate <code><a href="https://future.futureverse.org/reference/plan.html" class="external-link">future::plan()</a></code> before calling the relevant functions. For more information please see <a href="https://www.nflfastr.com/reference/nflfastR-package.html" class="external-link">the package documentation</a>.</li>
+<ul><li>Deprecated the arguments <code>source</code> and <code>pp</code> all across the package. Using them will cause a warning. Parallel processing has to be activated by choosing an appropriate <code><a href="https://future.futureverse.org/reference/plan.html" class="external-link">future::plan()</a></code> before calling the relevant functions. For more information please see <a href="https://nflfastr.com/reference/nflfastR-package.html">the package documentation</a>.</li>
 <li>The function <code><a href="../reference/build_nflfastR_pbp.html">build_nflfastR_pbp()</a></code> will now run <code><a href="../reference/decode_player_ids.html">decode_player_ids()</a></code> by default (can be deactivated with the argument <code>decode = FALSE</code>).</li>
 <li>The function <code><a href="../reference/build_nflfastR_pbp.html">build_nflfastR_pbp()</a></code> will now run <code><a href="../reference/add_xpass.html">add_xpass()</a></code> by default and add the new variables <code>xpass</code> and <code>pass_oe</code>.</li>
 <li>The functions <code><a href="../reference/fast_scraper.html">fast_scraper()</a></code> and <code><a href="../reference/build_nflfastR_pbp.html">build_nflfastR_pbp()</a></code> now allow the output of <code><a href="../reference/fast_scraper_schedules.html">fast_scraper_schedules()</a></code> directly as input so it’s not necessary anymore to pull the <code>game_id</code> first.</li>

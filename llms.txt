@@ -54,15 +54,15 @@ install.packages("nflfastR", repos = c("https://nflverse.r-universe.dev", getOpt
 ## Usage
 
 We have provided some application examples in the **[Getting
-Started](https://www.nflfastr.com/articles/nflfastR.html)** article.
+Started](https://nflfastr.com/articles/nflfastR.html)** article.
 However, these require a basic knowledge of R. For this reason we have
 the **[nflfastR beginner’s
-guide](https://www.nflfastr.com/articles/beginners_guide.html)**, which
-we recommend to all those who are looking for an introduction to
-nflfastR with R.
+guide](https://nflfastr.com/articles/beginners_guide.html)**, which we
+recommend to all those who are looking for an introduction to nflfastR
+with R.
 
 You can find column names and descriptions in the **[Field
-Descriptions](https://www.nflfastr.com/articles/field_descriptions.html)**
+Descriptions](https://nflfastr.com/articles/field_descriptions.html)**
 article, or by accessing the `field_descriptions` dataframe from the
 package.
 
@@ -84,7 +84,7 @@ about the models, please see [this post on Open Source
 Football](https://opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/).
 For a more detailed description of the motivation for Expected Points
 models, we highly recommend this paper [from the nflscrapR team located
-here](http://arxiv.org/pdf/1802.00998).
+here](https://arxiv.org/pdf/1802.00998).
 
 Here is a visualization of the Expected Points model by down and
 yardline.
@@ -107,9 +107,8 @@ incorporating the pre-game spread.
   used it for 2001-2010)
 - To Lau Sze Yui for developing a scraping function to access
   JSON-formatted NFL play-by-play beginning in 2001
-- To Aaron Schatz and [FTN Fantasy](https://ftnfantasy.com/dvoa/nfl) for
-  providing charting data to correctly mark scrambles in the 1999-2005
-  seasons
+- To Aaron Schatz and FTN Fantasy for providing charting data to
+  correctly mark scrambles in the 1999-2005 seasons
 - To Lee Sharpe for curating a resource for game information
 - To Timo Riske, Lau Sze Yui, Sean Clement, and Daniel Houston for many
   helpful discussions regarding the development of the new `nflfastR`

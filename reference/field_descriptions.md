@@ -16,7 +16,7 @@ nflfastR dataset.
 ## See also
 
 The searchable table on the [nflfastR
-website](https://www.nflfastr.com/articles/field_descriptions.html)
+website](https://nflfastr.com/articles/field_descriptions.html)
 
 ## Examples
 

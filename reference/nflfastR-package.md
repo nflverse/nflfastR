@@ -117,7 +117,7 @@ chapter](https://rstats.wtf/r-startup.html).
 
 Useful links:
 
-- <https://www.nflfastr.com/>
+- <https://nflfastr.com/>
 
 - <https://github.com/nflverse/nflfastR>
 

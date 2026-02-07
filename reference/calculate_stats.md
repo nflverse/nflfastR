@@ -65,8 +65,8 @@ A tibble of player/team stats summarized by season/week.
 [nfl_stats_variables](https://nflfastr.com/reference/nfl_stats_variables.md)
 for a description of all variables.
 
-<https://www.nflfastr.com/articles/stats_variables.html> for a
-searchable table of the stats variable descriptions.
+<https://nflfastr.com/articles/stats_variables.html> for a searchable
+table of the stats variable descriptions.
 
 ## Examples
 
