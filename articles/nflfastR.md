@@ -35,26 +35,26 @@ ids <- nflfastR::fast_scraper_schedules(2017:2019) |>
 #> generated.
 pbp <- nflfastR::build_nflfastR_pbp(ids)
 #> ── Build nflfastR Play-by-Play Data ────────────────── nflfastR version 5.2.0 ──
-#> • 18:03:54 | Start download of 3 games...
-#> ✔ 18:03:58 | Download finished. Adding variables...
-#> ✔ 18:03:58 | added game variables
-#> ✔ 18:03:58 | added nflscrapR variables
-#> ✔ 18:03:59 | added ep variables
-#> ✔ 18:03:59 | added air_yac_ep variables
-#> ✔ 18:03:59 | added wp variables
-#> ✔ 18:03:59 | added air_yac_wp variables
-#> ✔ 18:04:00 | added cp and cpoe
-#> ✔ 18:04:00 | added fixed drive variables
-#> ✔ 18:04:00 | added series variables
-#> • 18:04:00 | Cleaning up play-by-play...
-#> ✔ 18:04:00 | Cleaning completed
-#> ✔ 18:04:00 | added qb_epa
-#> • 18:04:00 | Computing xyac...
-#> ✔ 18:04:02 | added xyac variables
-#> • 18:04:02 | Computing xpass...
-#> ✔ 18:04:02 | added xpass and pass_oe
-#> • 18:04:02 | Decode player ids...
-#> ✔ 18:04:03 | Decoding of player ids completed
+#> • 18:13:49 | Start download of 3 games...
+#> ✔ 18:13:52 | Download finished. Adding variables...
+#> ✔ 18:13:52 | added game variables
+#> ✔ 18:13:52 | added nflscrapR variables
+#> ✔ 18:13:53 | added ep variables
+#> ✔ 18:13:53 | added air_yac_ep variables
+#> ✔ 18:13:53 | added wp variables
+#> ✔ 18:13:53 | added air_yac_wp variables
+#> ✔ 18:13:54 | added cp and cpoe
+#> ✔ 18:13:54 | added fixed drive variables
+#> ✔ 18:13:54 | added series variables
+#> • 18:13:54 | Cleaning up play-by-play...
+#> ✔ 18:13:54 | Cleaning completed
+#> ✔ 18:13:54 | added qb_epa
+#> • 18:13:54 | Computing xyac...
+#> ✔ 18:13:56 | added xyac variables
+#> • 18:13:56 | Computing xpass...
+#> ✔ 18:13:56 | added xpass and pass_oe
+#> • 18:13:56 | Decode player ids...
+#> ✔ 18:13:57 | Decoding of player ids completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
@@ -413,14 +413,14 @@ directory. Here we go!
 ``` r
 nflfastR::update_db()
 #> ── Update nflfastR Play-by-Play Database ───────────── nflfastR version 5.2.0 ──
-#> ℹ 18:04:30 | Can't find the data table "nflfastR_pbp"
+#> ℹ 18:14:25 | Can't find the data table "nflfastR_pbp"
 #> in your database. Will load the play by play data from
 #> scratch.
-#> • 18:04:30 | Starting download of 27 seasons between 1999 and 2025...
-#> • 18:05:49 | Checking for missing completed games...
-#> ℹ 18:05:51 | You have 7272 games and are missing 0.
-#> ✔ 18:05:51 | Database update completed
-#> ℹ 18:05:51 | Path to your db: ./pbp_db
+#> • 18:14:25 | Starting download of 27 seasons between 1999 and 2025...
+#> • 18:15:46 | Checking for missing completed games...
+#> ℹ 18:15:47 | You have 7272 games and are missing 0.
+#> ✔ 18:15:48 | Database update completed
+#> ℹ 18:15:48 | Path to your db: ./pbp_db
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
@@ -436,10 +436,10 @@ right file path)
 ``` r
 nflfastR::update_db()
 #> ── Update nflfastR Play-by-Play Database ───────────── nflfastR version 5.2.0 ──
-#> • 18:05:51 | Checking for missing completed games...
-#> ℹ 18:05:52 | You have 7272 games and are missing 0.
-#> ✔ 18:05:52 | Database update completed
-#> ℹ 18:05:52 | Path to your db: /home/runner/work/nflfastR/nflfastR/vignettes/pbp_db
+#> • 18:15:48 | Checking for missing completed games...
+#> ℹ 18:15:49 | You have 7272 games and are missing 0.
+#> ✔ 18:15:49 | Database update completed
+#> ℹ 18:15:49 | Path to your db: /home/runner/work/nflfastR/nflfastR/vignettes/pbp_db
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
@@ -450,13 +450,13 @@ you can specify one season to be rebuilt:
 ``` r
 nflfastR::update_db(force_rebuild = 2020)
 #> ── Update nflfastR Play-by-Play Database ───────────── nflfastR version 5.2.0 ──
-#> • 18:05:53 | Purging season 2020 from the data table "nflfastR_pbp" in your
+#> • 18:15:49 | Purging season 2020 from the data table "nflfastR_pbp" in your
 #> connected database...
-#> • 18:05:54 | Starting download of the 1 season 2020
-#> • 18:05:56 | Checking for missing completed games...
-#> ℹ 18:05:57 | You have 7272 games and are missing 0.
-#> ✔ 18:05:57 | Database update completed
-#> ℹ 18:05:57 | Path to your db: /home/runner/work/nflfastR/nflfastR/vignettes/pbp_db
+#> • 18:15:50 | Starting download of the 1 season 2020
+#> • 18:15:53 | Checking for missing completed games...
+#> ℹ 18:15:54 | You have 7272 games and are missing 0.
+#> ✔ 18:15:54 | Database update completed
+#> ℹ 18:15:54 | Path to your db: /home/runner/work/nflfastR/nflfastR/vignettes/pbp_db
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
