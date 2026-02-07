@@ -24,7 +24,7 @@ Imports:
     curl,
     data.table (>= 1.15.0),
     dplyr (>= 1.0.0),
-    fastrmodels (>= 2.0.0.9000),
+    fastrmodels (>= 2.1.0),
     furrr,
     future,
     glue,
