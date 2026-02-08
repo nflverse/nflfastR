@@ -53,28 +53,42 @@
 #' future::plan("sequential")
 #' }
 #' }
-build_nflfastR_pbp <- function(game_ids,
-                               dir = getOption("nflfastR.raw_directory", default = NULL),
-                               ...,
-                               decode = TRUE,
-                               rules = TRUE) {
-
-  if (!is.vector(game_ids) && is.data.frame(game_ids)) game_ids <- game_ids$game_id
-
-  if (!is.vector(game_ids)) cli::cli_abort("Param {.arg game_ids} is not a valid vector!")
-
-  if (isTRUE(decode) && !is_installed("gsisdecoder")) {
-    cli::cli_abort("Package {.pkg gsisdecoder} required for decoding. Please install it with {.code install.packages(\"gsisdecoder\")}.")
+build_nflfastR_pbp <- function(
+  game_ids,
+  dir = getOption("nflfastR.raw_directory", default = NULL),
+  ...,
+  decode = TRUE,
+  rules = TRUE
+) {
+  if (!is.vector(game_ids) && is.data.frame(game_ids)) {
+    game_ids <- game_ids$game_id
   }
 
-  if (isTRUE(rules)) rule_header("Build nflfastR Play-by-Play Data")
+  if (!is.vector(game_ids)) {
+    cli::cli_abort("Param {.arg game_ids} is not a valid vector!")
+  }
+
+  if (isTRUE(decode) && !is_installed("gsisdecoder")) {
+    cli::cli_abort(
+      "Package {.pkg gsisdecoder} required for decoding. Please install it with {.code install.packages(\"gsisdecoder\")}."
+    )
+  }
+
+  if (isTRUE(rules)) {
+    rule_header("Build nflfastR Play-by-Play Data")
+  }
 
   game_count <- ifelse(is.vector(game_ids), length(game_ids), nrow(game_ids))
   builder <- TRUE
 
   cli::cli_ul("{my_time()} | Start download of {game_count} game{?s}...")
 
-  ret <- fast_scraper(game_ids = game_ids, dir = dir, ..., in_builder = builder) |>
+  ret <- fast_scraper(
+    game_ids = game_ids,
+    dir = dir,
+    ...,
+    in_builder = builder
+  ) |>
     clean_pbp(in_builder = builder) |>
     add_qb_epa(in_builder = builder) |>
     add_xyac(in_builder = builder) |>
@@ -84,7 +98,9 @@ build_nflfastR_pbp <- function(game_ids,
     ret <- decode_player_ids(ret, in_builder = builder)
   }
 
-  if (isTRUE(rules)) rule_footer("DONE")
+  if (isTRUE(rules)) {
+    rule_footer("DONE")
+  }
 
   make_nflverse_data(ret)
 }

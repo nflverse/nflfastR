@@ -4,7 +4,6 @@
 # Code Style Guide: styler::tidyverse_style()
 ################################################################################
 
-
 # pbp ---------------------------------------------------------------------
 
 #' Get NFL Play by Play Data
@@ -407,14 +406,19 @@
 #' future::plan("sequential")
 #' }
 #' }
-fast_scraper <- function(game_ids,
-                         dir = getOption("nflfastR.raw_directory", default = NULL),
-                         ...,
-                         in_builder = FALSE) {
+fast_scraper <- function(
+  game_ids,
+  dir = getOption("nflfastR.raw_directory", default = NULL),
+  ...,
+  in_builder = FALSE
+) {
+  if (!is.vector(game_ids) && is.data.frame(game_ids)) {
+    game_ids <- game_ids$game_id
+  }
 
-  if (!is.vector(game_ids) && is.data.frame(game_ids)) game_ids <- game_ids$game_id
-
-  if (!is.vector(game_ids)) cli::cli_abort("Param {.code game_ids} is not a valid vector!")
+  if (!is.vector(game_ids)) {
+    cli::cli_abort("Param {.code game_ids} is not a valid vector!")
+  }
 
   if (length(game_ids) > 1 && is_sequential()) {
     cli::cli_alert_info(
@@ -428,15 +432,21 @@ fast_scraper <- function(game_ids,
 
   suppressWarnings({
     p <- progressr::progressor(along = game_ids)
-    pbp <- furrr::future_map_dfr(game_ids, function(x, p, dir, ...) {
-      if (substr(x, 1, 4) < 2001) {
-        plays <- please_work(get_pbp_gc)(x, dir = dir, ...)
-      } else {
-        plays <- please_work(get_pbp_nfl)(x, dir = dir, ...)
-      }
-      p(sprintf("ID=%s", as.character(x)))
-      return(plays)
-    }, p, dir = dir, ...)
+    pbp <- furrr::future_map_dfr(
+      game_ids,
+      function(x, p, dir, ...) {
+        if (substr(x, 1, 4) < 2001) {
+          plays <- please_work(get_pbp_gc)(x, dir = dir, ...)
+        } else {
+          plays <- please_work(get_pbp_nfl)(x, dir = dir, ...)
+        }
+        p(sprintf("ID=%s", as.character(x)))
+        return(plays)
+      },
+      p,
+      dir = dir,
+      ...
+    )
 
     if (length(pbp) != 0) {
       user_message("Download finished. Adding variables...", "done")
@@ -517,7 +527,7 @@ fast_scraper_roster <- function(...) {
 #' })
 #' }
 #' @export
-fast_scraper_schedules <- function(...){
+fast_scraper_schedules <- function(...) {
   lifecycle::deprecate_warn(
     "5.2.0",
     "fast_scraper_schedules()",

@@ -43,20 +43,30 @@
 #' # REMOVE THE DIRECTORY
 #' unlink(file.path(local_dir, 2021))
 #' }
-save_raw_pbp <- function(game_ids,
-                         dir = getOption("nflfastR.raw_directory", default = NULL)){
+save_raw_pbp <- function(
+  game_ids,
+  dir = getOption("nflfastR.raw_directory", default = NULL)
+) {
   verify_game_ids(game_ids = game_ids)
-  if(is.null(dir)){
-    cli::cli_abort("Invalid argument {.arg dir}. Do you need to set \\
-                   {.code options(nflfastR.raw_directory)}?")
-  } else if (!dir.exists(dir)){
-    cli::cli_abort("You've asked to save raw pbp to {.path {dir}} which \\
-                   doesn't exist. Please create it.")
+  if (is.null(dir)) {
+    cli::cli_abort(
+      "Invalid argument {.arg dir}. Do you need to set \\
+                   {.code options(nflfastR.raw_directory)}?"
+    )
+  } else if (!dir.exists(dir)) {
+    cli::cli_abort(
+      "You've asked to save raw pbp to {.path {dir}} which \\
+                   doesn't exist. Please create it."
+    )
   }
   seasons <- substr(game_ids, 1, 4)
   season_folders <- file.path(dir, unique(seasons)) |> sort()
   missing_season_folders <- season_folders[!dir.exists(season_folders)]
-  created_folders <- vapply(missing_season_folders, dir.create, FUN.VALUE = logical(1L))
+  created_folders <- vapply(
+    missing_season_folders,
+    dir.create,
+    FUN.VALUE = logical(1L)
+  )
   to_load <- file.path(
     "https://raw.githubusercontent.com/nflverse/nflfastR-raw/master/raw",
     seasons,
@@ -64,7 +74,9 @@ save_raw_pbp <- function(game_ids,
     fsep = "/"
   )
   save_to <- file.path(
-    dir, seasons, paste0(game_ids, ".rds")
+    dir,
+    seasons,
+    paste0(game_ids, ".rds")
   )
   curl::multi_download(to_load, save_to)
 }
@@ -92,15 +104,21 @@ save_raw_pbp <- function(game_ids,
 #' missing <- missing_raw_pbp(tempdir())
 #' )
 #' }
-missing_raw_pbp <- function(dir = getOption("nflfastR.raw_directory", default = NULL),
-                            seasons = TRUE,
-                            verbose = TRUE){
-  if(is.null(dir)){
-    cli::cli_abort("Invalid argument {.arg dir}. Do you need to set \\
-                   {.code options(nflfastR.raw_directory)}?")
-  } else if (!dir.exists(dir)){
-    cli::cli_abort("You've asked to check raw pbp in {.path {dir}} which \\
-                   doesn't exist. Please create it.")
+missing_raw_pbp <- function(
+  dir = getOption("nflfastR.raw_directory", default = NULL),
+  seasons = TRUE,
+  verbose = TRUE
+) {
+  if (is.null(dir)) {
+    cli::cli_abort(
+      "Invalid argument {.arg dir}. Do you need to set \\
+                   {.code options(nflfastR.raw_directory)}?"
+    )
+  } else if (!dir.exists(dir)) {
+    cli::cli_abort(
+      "You've asked to check raw pbp in {.path {dir}} which \\
+                   doesn't exist. Please create it."
+    )
   }
   local_games <- sapply(list.files(dir, full.names = TRUE), list.files) |>
     unlist(use.names = FALSE) |>
@@ -112,12 +130,12 @@ missing_raw_pbp <- function(dir = getOption("nflfastR.raw_directory", default = 
 
   local_missing_games <- finished_games[!finished_games %in% local_games]
 
-  if (length(local_missing_games) == 0){
+  if (length(local_missing_games) == 0) {
     cli::cli_alert_success("No missing games!")
     return(invisible(NULL))
   }
 
-  if (isTRUE(verbose)){
+  if (isTRUE(verbose)) {
     cli::cli_alert_info(
       "You are missing {length(local_missing_games)} game file{?s}. \\
        The oldest missing game is {.val {local_missing_games[[1]]}}. \\
@@ -130,7 +148,7 @@ missing_raw_pbp <- function(dir = getOption("nflfastR.raw_directory", default = 
 }
 
 
-verify_game_ids <- function(game_ids){
+verify_game_ids <- function(game_ids) {
   # game_ids <- c(
   #   "2021_02_LAC_KC",
   #   "Hello World",
@@ -138,7 +156,8 @@ verify_game_ids <- function(game_ids){
   #   "2022_27_LAC_BUF",
   #   "2021_02_LAC_KAC"
   # )
-  season_check <- substr(game_ids, 1, 4) %in% seq.int(1999, as.integer(format(Sys.Date(), "%Y")) + 1, 1)
+  season_check <- substr(game_ids, 1, 4) %in%
+    seq.int(1999, as.integer(format(Sys.Date(), "%Y")) + 1, 1)
   week_check <- as.integer(substr(game_ids, 6, 7)) %in% seq_len(22)
   team_name_check <-
     vapply(
@@ -148,8 +167,10 @@ verify_game_ids <- function(game_ids){
     )
   combined_check <- season_check & week_check & team_name_check
 
-  if (any(combined_check == FALSE)){
-    cli::cli_abort("The game IDs {.val {game_ids[!combined_check]}} seem to be invalid!")
+  if (any(combined_check == FALSE)) {
+    cli::cli_abort(
+      "The game IDs {.val {game_ids[!combined_check]}} seem to be invalid!"
+    )
   }
 
   invisible(NULL)

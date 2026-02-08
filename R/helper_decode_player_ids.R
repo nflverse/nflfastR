@@ -47,7 +47,6 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
   rlang::check_installed("nflreadr (>= 1.3.0)", "to decode player IDs.")
 
   if (isFALSE(fast)) {
-
     if (nrow(pbp) > 1000 && is_sequential()) {
       cli::cli_alert_info(c(
         "It is recommended to use parallel processing when trying to to decode big data frames.",
@@ -56,12 +55,9 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
       ))
     }
     decode_gsis <- decode_ids
-
   } else if (isTRUE(fast)) {
-
     rlang::check_installed("gsisdecoder", "to run fast decoding of player IDs.")
     decode_gsis <- gsisdecoder::decode_ids
-
   }
 
   user_message("Decode player ids...", "todo")
@@ -74,17 +70,26 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
   ret <- pbp |>
     dplyr::mutate_at(
       dplyr::vars(
-        dplyr::any_of(c("passer_id", "rusher_id", "receiver_id", "id", "fantasy_id")),
+        dplyr::any_of(c(
+          "passer_id",
+          "rusher_id",
+          "receiver_id",
+          "id",
+          "fantasy_id"
+        )),
         dplyr::ends_with("player_id")
       ),
-      function(id, id_vec = id_vector){
+      function(id, id_vec = id_vector) {
         chars <- nchar(id)
         dplyr::case_when(
           is.na(chars) ~ NA_character_,
           # this means it's gsis ID. 30 30 2d 30 30 translates to 00-00
           stringr::str_sub(id, 5, 16) == "3030-2d30-30" ~ decode_gsis(id),
           # if it's not gsis, it is likely elias. We drop names to avoid confusion
-          nchar(id) == 36 ~ unname(id_vec[extract_elias(id, decoder = decode_gsis)]),
+          nchar(id) == 36 ~ unname(id_vec[extract_elias(
+            id,
+            decoder = decode_gsis
+          )]),
           TRUE ~ id
         )
       }
@@ -106,14 +111,16 @@ convert_to_gsis_id <- function(new_id) {
     to_decode <- new_id |>
       stringr::str_sub(5, -9) |>
       stringr::str_replace_all("-", "")
-    hex_raw <- sapply(seq(1, nchar(to_decode), by = 2), function(x) substr(to_decode, x, x + 1))
+    hex_raw <- sapply(seq(1, nchar(to_decode), by = 2), function(x) {
+      substr(to_decode, x, x + 1)
+    })
     ret <- rawToChar(as.raw(strtoi(hex_raw, 16L)))
   }
   return(ret)
 }
 
-extract_elias <- function(smart_id, decoder){
-  name_abbr <- decoder(smart_id) |> substr(1,3)
+extract_elias <- function(smart_id, decoder) {
+  name_abbr <- decoder(smart_id) |> substr(1, 3)
   id_no <- stringr::str_remove_all(smart_id, "-") |>
     stringr::str_sub(11, 16)
   elias_id <- paste0(name_abbr, id_no)

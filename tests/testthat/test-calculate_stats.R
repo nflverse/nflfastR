@@ -2,11 +2,32 @@ test_that("calculate_stats works", {
   skip_on_cran()
   skip_if_offline("github.com")
 
-  s1 <- calculate_stats(seasons = 2023, summary_level = "season", stat_type = "player")
-  s2 <- calculate_stats(seasons = 2023, summary_level = "week",   stat_type = "player")
-  s3 <- calculate_stats(seasons = 2023, summary_level = "season", stat_type = "team")
-  s4 <- calculate_stats(seasons = 2023, summary_level = "week",   stat_type = "team")
-  s5 <- calculate_stats(seasons = 2023, summary_level = "week",   stat_type = "player", season_type = "POST")
+  s1 <- calculate_stats(
+    seasons = 2023,
+    summary_level = "season",
+    stat_type = "player"
+  )
+  s2 <- calculate_stats(
+    seasons = 2023,
+    summary_level = "week",
+    stat_type = "player"
+  )
+  s3 <- calculate_stats(
+    seasons = 2023,
+    summary_level = "season",
+    stat_type = "team"
+  )
+  s4 <- calculate_stats(
+    seasons = 2023,
+    summary_level = "week",
+    stat_type = "team"
+  )
+  s5 <- calculate_stats(
+    seasons = 2023,
+    summary_level = "week",
+    stat_type = "player",
+    season_type = "POST"
+  )
 
   names_and_types_s1 <- vapply(s1, class, FUN.VALUE = character(1L))
   names_and_types_s2 <- vapply(s2, class, FUN.VALUE = character(1L))

@@ -81,17 +81,15 @@
 #'   dplyr::glimpse(overall)
 #' })
 #' }
-calculate_series_conversion_rates <- function(pbp,
-                                              weekly = FALSE){
-
-  if (isTRUE(weekly)){
+calculate_series_conversion_rates <- function(pbp, weekly = FALSE) {
+  if (isTRUE(weekly)) {
     grp <- c("season", "team", "week")
-  } else if (isFALSE(weekly)){
+  } else if (isFALSE(weekly)) {
     grp <- c("season", "team")
   }
   grp_vars <- lapply(grp, as.symbol)
 
-# Offense -----------------------------------------------------------------
+  # Offense -----------------------------------------------------------------
 
   off_series <- pbp |>
     dplyr::filter(
@@ -99,7 +97,12 @@ calculate_series_conversion_rates <- function(pbp,
       .data$series_result != "QB kneel"
       # .data$rush == 1 | .data$pass == 1
     ) |>
-    dplyr::group_by(.data$season, .data$week, team = .data$posteam, .data$series) |>
+    dplyr::group_by(
+      .data$season,
+      .data$week,
+      team = .data$posteam,
+      .data$series
+    ) |>
     dplyr::summarise(
       conversion = dplyr::first(.data$series_success),
       result = dplyr::first(.data$series_result),
@@ -121,12 +124,19 @@ calculate_series_conversion_rates <- function(pbp,
       off_fg = mean(.data$result %in% c("Field goal", "Missed field goal")),
       off_punt = mean(.data$result == "Punt"),
       off_to = mean(
-        .data$result %in% c("Turnover on downs", "Turnover", "Opp touchdown", "Safety", "End of half")
+        .data$result %in%
+          c(
+            "Turnover on downs",
+            "Turnover",
+            "Opp touchdown",
+            "Safety",
+            "End of half"
+          )
       ),
       .groups = "drop"
     )
 
-# Defense -----------------------------------------------------------------
+  # Defense -----------------------------------------------------------------
 
   def_series <- pbp |>
     dplyr::filter(
@@ -134,7 +144,12 @@ calculate_series_conversion_rates <- function(pbp,
       .data$series_result != "QB kneel"
       # .data$rush == 1 | .data$pass == 1
     ) |>
-    dplyr::group_by(.data$season, .data$week, team = .data$defteam, .data$series) |>
+    dplyr::group_by(
+      .data$season,
+      .data$week,
+      team = .data$defteam,
+      .data$series
+    ) |>
     dplyr::summarise(
       conversion = dplyr::first(.data$series_success),
       result = dplyr::first(.data$series_result),
@@ -156,13 +171,19 @@ calculate_series_conversion_rates <- function(pbp,
       def_fg = mean(.data$result %in% c("Field goal", "Missed field goal")),
       def_punt = mean(.data$result == "Punt"),
       def_to = mean(
-        .data$result %in% c("Turnover on downs", "Turnover", "Opp touchdown", "Safety", "End of half")
+        .data$result %in%
+          c(
+            "Turnover on downs",
+            "Turnover",
+            "Opp touchdown",
+            "Safety",
+            "End of half"
+          )
       ),
       .groups = "drop"
     )
 
-
-# Offense + Defense -------------------------------------------------------
+  # Offense + Defense -------------------------------------------------------
 
   combined <- dplyr::full_join(offense, defense, by = grp)
 

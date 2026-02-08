@@ -37,42 +37,54 @@
 #'   # calculate_standings(scheds)
 #' })
 #' }
-calculate_standings <- function(nflverse_object,
-                                tiebreaker_depth = 3,
-                                playoff_seeds = NULL){
+calculate_standings <- function(
+  nflverse_object,
+  tiebreaker_depth = 3,
+  playoff_seeds = NULL
+) {
   lifecycle::deprecate_warn(
     "5.1.0",
     "calculate_standings()",
     "nflseedR::nfl_standings()"
   )
 
-  if(!inherits(nflverse_object, "nflverse_data")){
-    cli::cli_abort("The function argument {.arg nflverse_object} has to be
-                   of class {.cls nflverse_data}")
+  if (!inherits(nflverse_object, "nflverse_data")) {
+    cli::cli_abort(
+      "The function argument {.arg nflverse_object} has to be
+                   of class {.cls nflverse_data}"
+    )
   }
 
-  rlang::check_installed("nflseedR", "to compute standings.",
-                         compare = ">=",
-                         version = "1.0.2"
-                         )
+  rlang::check_installed(
+    "nflseedR",
+    "to compute standings.",
+    compare = ">=",
+    version = "1.0.2"
+  )
 
   type <- attr(nflverse_object, "nflverse_type")
 
-  if (type == "play by play data"){
-    .standings_from_pbp(nflverse_object,
-                        tiebreaker_depth = tiebreaker_depth,
-                        playoff_seeds = playoff_seeds)
-  } else if (type == "games and schedules"){
-    .standings_from_games(nflverse_object,
-                          tiebreaker_depth = tiebreaker_depth,
-                          playoff_seeds = playoff_seeds)
+  if (type == "play by play data") {
+    .standings_from_pbp(
+      nflverse_object,
+      tiebreaker_depth = tiebreaker_depth,
+      playoff_seeds = playoff_seeds
+    )
+  } else if (type == "games and schedules") {
+    .standings_from_games(
+      nflverse_object,
+      tiebreaker_depth = tiebreaker_depth,
+      playoff_seeds = playoff_seeds
+    )
   } else {
-    cli::cli_abort("Can only handle nflverse_type {.val play by play data} or
-                   {.val games and schedules} and not {.val {type}}")
+    cli::cli_abort(
+      "Can only handle nflverse_type {.val play by play data} or
+                   {.val games and schedules} and not {.val {type}}"
+    )
   }
 }
 
-.standings_from_pbp <- function(pbp, tiebreaker_depth, playoff_seeds){
+.standings_from_pbp <- function(pbp, tiebreaker_depth, playoff_seeds) {
   g <- pbp |>
     dplyr::filter(.data$season_type == "REG") |>
     dplyr::group_by(.data$game_id) |>
@@ -87,54 +99,85 @@ calculate_standings <- function(nflverse_object,
     dplyr::ungroup() |>
     dplyr::select(-"game_id")
 
-  if(is.null(playoff_seeds)){
+  if (is.null(playoff_seeds)) {
     g6 <- g |>
       dplyr::filter(.data$sim %in% 1999:2019)
     g7 <- g |>
       dplyr::filter(.data$sim >= 2020)
     dplyr::bind_rows(
-      .compute_standings(g6, tiebreaker_depth = tiebreaker_depth, playoff_seeds = 6),
-      .compute_standings(g7, tiebreaker_depth = tiebreaker_depth, playoff_seeds = 7)
+      .compute_standings(
+        g6,
+        tiebreaker_depth = tiebreaker_depth,
+        playoff_seeds = 6
+      ),
+      .compute_standings(
+        g7,
+        tiebreaker_depth = tiebreaker_depth,
+        playoff_seeds = 7
+      )
     )
   } else {
-    .compute_standings(g,
-                       tiebreaker_depth = tiebreaker_depth,
-                       playoff_seeds = playoff_seeds)
+    .compute_standings(
+      g,
+      tiebreaker_depth = tiebreaker_depth,
+      playoff_seeds = playoff_seeds
+    )
   }
 }
 
-.standings_from_games <- function(games, tiebreaker_depth, playoff_seeds){
+.standings_from_games <- function(games, tiebreaker_depth, playoff_seeds) {
   g <- games |>
     dplyr::filter(.data$game_type == "REG", !is.na(.data$result)) |>
     dplyr::select(
-      "sim" = "season", "game_type", "week", "away_team", "home_team", "result"
+      "sim" = "season",
+      "game_type",
+      "week",
+      "away_team",
+      "home_team",
+      "result"
     )
 
-  if(is.null(playoff_seeds)){
+  if (is.null(playoff_seeds)) {
     g6 <- g |>
       dplyr::filter(.data$sim %in% 1999:2019)
     g7 <- g |>
       dplyr::filter(.data$sim >= 2020)
     dplyr::bind_rows(
-      .compute_standings(g6, tiebreaker_depth = tiebreaker_depth, playoff_seeds = 6),
-      .compute_standings(g7, tiebreaker_depth = tiebreaker_depth, playoff_seeds = 7)
+      .compute_standings(
+        g6,
+        tiebreaker_depth = tiebreaker_depth,
+        playoff_seeds = 6
+      ),
+      .compute_standings(
+        g7,
+        tiebreaker_depth = tiebreaker_depth,
+        playoff_seeds = 7
+      )
     )
   } else {
-    .compute_standings(g,
-                       tiebreaker_depth = tiebreaker_depth,
-                       playoff_seeds = playoff_seeds)
+    .compute_standings(
+      g,
+      tiebreaker_depth = tiebreaker_depth,
+      playoff_seeds = playoff_seeds
+    )
   }
 }
 
-.compute_standings <- function(games, tiebreaker_depth, playoff_seeds){
-  if(nrow(games) == 0) return(data.frame())
+.compute_standings <- function(games, tiebreaker_depth, playoff_seeds) {
+  if (nrow(games) == 0) {
+    return(data.frame())
+  }
   suppressMessages({
-    div <- nflseedR::compute_division_ranks(games,
-                                            tiebreaker_depth = tiebreaker_depth)
-    conf <- nflseedR::compute_conference_seeds(div,
-                                               h2h = div$h2h,
-                                               tiebreaker_depth = tiebreaker_depth,
-                                               playoff_seeds = playoff_seeds)
+    div <- nflseedR::compute_division_ranks(
+      games,
+      tiebreaker_depth = tiebreaker_depth
+    )
+    conf <- nflseedR::compute_conference_seeds(
+      div,
+      h2h = div$h2h,
+      tiebreaker_depth = tiebreaker_depth,
+      playoff_seeds = playoff_seeds
+    )
   })
   conf$standings |>
     dplyr::select(-"exit", -"wins") |>
