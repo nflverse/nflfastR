@@ -60,8 +60,8 @@ decode_player_ids(data.frame(
     "32013030-2d30-3032-3739-3434d4d3846d"
   )
 ))
-#> • 18:11:40 | Decode player ids...
-#> ✔ 18:11:40 | Decoding of player ids completed
+#> • 12:07:30 | Decode player ids...
+#> ✔ 12:07:30 | Decoding of player ids completed
 #>        name         id
 #> 1 P.Mahomes 00-0033873
 #> 2 B.Baldwin       <NA>
