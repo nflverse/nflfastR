@@ -17,7 +17,11 @@ purrr::walk(teams$team_abbr, function(x) {
 
   image <- magick::image_border(load, "transparent", glue::glue("{rl}x{tb}"))
 
-  magick::image_write(image, path = glue::glue("wordmarks/{x}.png"), format = "png")
+  magick::image_write(
+    image,
+    path = glue::glue("wordmarks/{x}.png"),
+    format = "png"
+  )
 
   if (x == "LA") {
     magick::image_write(image, path = "wordmarks/LAR.png", format = "png")

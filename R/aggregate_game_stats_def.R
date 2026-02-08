@@ -65,7 +65,6 @@
 # Own Fumble Recovery TDs ///// --> only "TD" for defense
 
 calculate_player_stats_def <- function(pbp, weekly = FALSE) {
-
   lifecycle::deprecate_warn(
     "5.0",
     "calculate_player_stats_def()",
@@ -91,7 +90,6 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     penalty_data <- pbp |>
       dplyr::filter(.data$penalty == 1) |>
       nflfastR::decode_player_ids()
-
   })
 
   stype <- data |>
@@ -120,9 +118,15 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       values_to = "tackle_player_id",
       values_drop_na = TRUE
     ) |>
-    dplyr::count(.data$tackle_player_id, .data$defteam, .data$season, .data$week, .data$desc) |>
+    dplyr::count(
+      .data$tackle_player_id,
+      .data$defteam,
+      .data$season,
+      .data$week,
+      .data$desc
+    ) |>
     dplyr::mutate(
-      desc = stringr::str_remove_all(.data$desc,"_player_id") |>
+      desc = stringr::str_remove_all(.data$desc, "_player_id") |>
         stringr::str_remove_all("_[0-9]")
     ) |>
     tidyr::pivot_wider(
@@ -132,7 +136,10 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       values_fn = sum
     ) |>
     add_column_if_missing(
-      "solo_tackle", "tackle_with_assist", "tackle_for_loss", "assist_tackle",
+      "solo_tackle",
+      "tackle_with_assist",
+      "tackle_for_loss",
+      "assist_tackle",
       "forced_fumble_player"
     ) |>
     dplyr::mutate(
@@ -153,22 +160,31 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     dplyr::group_by(.data$season, .data$week, .data$team, .data$player_id) |>
     dplyr::summarise(
       tackles = sum(.data$tackles, na.rm = TRUE),
-      tackles_solo = sum(.data$tackles_solo,na.rm = TRUE),
-      tackles_with_assist = sum(.data$tackles_with_assist, na.rm=TRUE),
+      tackles_solo = sum(.data$tackles_solo, na.rm = TRUE),
+      tackles_with_assist = sum(.data$tackles_with_assist, na.rm = TRUE),
       tackle_assists = sum(.data$tackle_assists, na.rm = TRUE),
-      forced_fumbles = sum(.data$forced_fumbles, na.rm=  TRUE),
+      forced_fumbles = sum(.data$forced_fumbles, na.rm = TRUE),
       tackles_for_loss = sum(.data$tackles_for_loss, na.rm = TRUE)
     ) |>
     dplyr::ungroup()
 
   # get tackle for loss yards
   tackle_yards_df <- data |>
-    dplyr::filter(.data$tackled_for_loss == 1, .data$fumble == 0, .data$sack == 0) |>
-    dplyr::select("season","week","team" = "defteam",
-                  "tackle_for_loss_1_player_id", "tackle_for_loss_2_player_id",
-                  "yards_gained") |>
+    dplyr::filter(
+      .data$tackled_for_loss == 1,
+      .data$fumble == 0,
+      .data$sack == 0
+    ) |>
+    dplyr::select(
+      "season",
+      "week",
+      "team" = "defteam",
+      "tackle_for_loss_1_player_id",
+      "tackle_for_loss_2_player_id",
+      "yards_gained"
+    ) |>
     tidyr::pivot_longer(
-      cols = c("tackle_for_loss_1_player_id","tackle_for_loss_2_player_id"),
+      cols = c("tackle_for_loss_1_player_id", "tackle_for_loss_2_player_id"),
       names_to = "desc",
       values_to = "player_id",
       values_drop_na = TRUE
@@ -186,11 +202,12 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     dplyr::select(
       "season",
       "week",
-      "team"="defteam",
+      "team" = "defteam",
       dplyr::contains("sack_"),
       "yards_gained",
       dplyr::starts_with("qb_hit_"),
-      -dplyr::contains("_name")) |>
+      -dplyr::contains("_name")
+    ) |>
     tidyr::pivot_longer(
       cols = c(
         dplyr::contains("sack_"),
@@ -203,10 +220,11 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     ) |>
     dplyr::mutate(
       n = dplyr::case_when(
-        .data$desc %in% c("half_sack_1_player_id", "half_sack_2_player_id") ~ 0.5,
+        .data$desc %in%
+          c("half_sack_1_player_id", "half_sack_2_player_id") ~ 0.5,
         TRUE ~ 1
       ),
-      desc = stringr::str_remove_all(.data$desc,"_player_id") |>
+      desc = stringr::str_remove_all(.data$desc, "_player_id") |>
         stringr::str_remove_all("_[0-9]") |>
         stringr::str_remove("half_")
     ) |>
@@ -242,10 +260,14 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
   # get int and def stats
   int_df <- data |>
     dplyr::select(
-      "season", "week","return_yards","team"="defteam",
+      "season",
+      "week",
+      "return_yards",
+      "team" = "defteam",
       dplyr::starts_with("interception_"),
       dplyr::starts_with("pass_defense_"),
-      -dplyr::contains("_name")) |>
+      -dplyr::contains("_name")
+    ) |>
     tidyr::pivot_longer(
       cols = c(
         dplyr::starts_with("interception_"),
@@ -258,17 +280,19 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     ) |>
     dplyr::mutate(
       n = 1,
-      desc = stringr::str_remove_all(.data$desc,"_player_id") |>
+      desc = stringr::str_remove_all(.data$desc, "_player_id") |>
         stringr::str_remove_all("_[0-9]")
     ) |>
     tidyr::pivot_wider(
       names_from = "desc",
-      values_from = c("n","return_yards"),
+      values_from = c("n", "return_yards"),
       values_fn = sum,
       values_fill = 0L
     ) |>
     add_column_if_missing(
-      "n_interception", "n_pass_defense", "return_yards_interception"
+      "n_interception",
+      "n_pass_defense",
+      "return_yards_interception"
     ) |>
     dplyr::select(
       "season",
@@ -291,11 +315,22 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
 
   safety_df <- data |>
     dplyr::filter(.data$safety == 1, !is.na(.data$safety_player_id)) |>
-    dplyr::select("season","week","team" = "defteam","player_id" = "safety_player_id") |>
-    dplyr::count(.data$season, .data$week, .data$team, .data$player_id, name = "safety") |>
+    dplyr::select(
+      "season",
+      "week",
+      "team" = "defteam",
+      "player_id" = "safety_player_id"
+    ) |>
+    dplyr::count(
+      .data$season,
+      .data$week,
+      .data$team,
+      .data$player_id,
+      name = "safety"
+    ) |>
     dplyr::group_by(.data$season, .data$week, .data$team, .data$player_id) |>
     dplyr::summarise(
-      safety = sum(.data$safety,na.rm = TRUE)
+      safety = sum(.data$safety, na.rm = TRUE)
     ) |>
     dplyr::ungroup()
 
@@ -309,18 +344,23 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
         .data$defteam == .data$fumbled_2_team
     ) |>
     dplyr::mutate(
-      fumbled_1_player_id =
-        dplyr::if_else(.data$defteam == .data$fumbled_1_team, .data$fumbled_1_player_id, NA_character_, NA_character_)
+      fumbled_1_player_id = dplyr::if_else(
+        .data$defteam == .data$fumbled_1_team,
+        .data$fumbled_1_player_id,
+        NA_character_,
+        NA_character_
+      )
     ) |>
     dplyr::select(
-      "season", "week",
+      "season",
+      "week",
       dplyr::matches("^fumble.+team"),
       dplyr::matches("^fumble.+player_id")
     ) |>
     tidyr::pivot_longer(
       cols = dplyr::contains("fumble"),
       names_pattern = "(.+)_(team|player_id)",
-      names_to = c("desc",".value")
+      names_to = c("desc", ".value")
     ) |>
     dplyr::mutate(
       n = 1,
@@ -336,7 +376,9 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     # including the relevant columns. The row will be filtered after renaming
     dplyr::bind_rows(
       tibble::tibble(
-        player_id = NA_character_, fumbled = numeric(), fumble_recovery = numeric()
+        player_id = NA_character_,
+        fumbled = numeric(),
+        fumble_recovery = numeric()
       )
     ) |>
     dplyr::rename(
@@ -361,20 +403,27 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     dplyr::mutate(
       # use data.table fifelse because base ifelse changed data type to logical
       # if there are 0 rows
-      fumble_recovery_1_player_id =
-        data.table::fifelse(.data$defteam != .data$fumbled_1_team, .data$fumble_recovery_1_player_id, NA_character_),
-      fumble_recovery_2_player_id =
-        data.table::fifelse(.data$defteam != .data$fumbled_2_team, .data$fumble_recovery_2_player_id, NA_character_)
+      fumble_recovery_1_player_id = data.table::fifelse(
+        .data$defteam != .data$fumbled_1_team,
+        .data$fumble_recovery_1_player_id,
+        NA_character_
+      ),
+      fumble_recovery_2_player_id = data.table::fifelse(
+        .data$defteam != .data$fumbled_2_team,
+        .data$fumble_recovery_2_player_id,
+        NA_character_
+      )
     ) |>
     dplyr::select(
-      "season", "week",
+      "season",
+      "week",
       dplyr::matches("^fumble_recovery.+team"),
       dplyr::matches("^fumble_recovery.+player_id")
     ) |>
     tidyr::pivot_longer(
       cols = dplyr::contains("fumble"),
       names_pattern = "(.+)_(team|player_id)",
-      names_to = c("desc",".value")
+      names_to = c("desc", ".value")
     ) |>
     dplyr::mutate(
       n = 1,
@@ -391,7 +440,7 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     dplyr::rename("fumble_recovery_opp" = "fumble_recovery") |>
     dplyr::group_by(.data$season, .data$week, .data$team, .data$player_id) |>
     dplyr::summarise(
-      fumble_recovery_opp = sum(.data$fumble_recovery_opp,na.rm = TRUE)
+      fumble_recovery_opp = sum(.data$fumble_recovery_opp, na.rm = TRUE)
     ) |>
     dplyr::ungroup()
 
@@ -405,7 +454,9 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
 
   fumble_yds_own_df <- fumble_yds_own_data |>
     dplyr::group_by(
-      .data$season, .data$week, "team" = .data$fumble_recovery_1_team,
+      .data$season,
+      .data$week,
+      "team" = .data$fumble_recovery_1_team,
       "player_id" = .data$fumble_recovery_1_player_id
     ) |>
     dplyr::summarise(recovery_yards = sum(.data$fumble_recovery_1_yards)) |>
@@ -413,7 +464,9 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     dplyr::bind_rows(
       fumble_yds_own_data |>
         dplyr::group_by(
-          .data$season, .data$week, "team" = .data$fumble_recovery_2_team,
+          .data$season,
+          .data$week,
+          "team" = .data$fumble_recovery_2_team,
           "player_id" = .data$fumble_recovery_2_player_id
         ) |>
         dplyr::summarise(recovery_yards = sum(.data$fumble_recovery_2_yards)) |>
@@ -433,7 +486,9 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
 
   fumble_yds_opp_df <- fumble_yds_opp_data |>
     dplyr::group_by(
-      .data$season, .data$week, "team" = .data$fumble_recovery_1_team,
+      .data$season,
+      .data$week,
+      "team" = .data$fumble_recovery_1_team,
       "player_id" = .data$fumble_recovery_1_player_id
     ) |>
     dplyr::summarise(recovery_yards = sum(.data$fumble_recovery_1_yards)) |>
@@ -441,7 +496,9 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     dplyr::bind_rows(
       fumble_yds_opp_data |>
         dplyr::group_by(
-          .data$season, .data$week, "team" = .data$fumble_recovery_2_team,
+          .data$season,
+          .data$week,
+          "team" = .data$fumble_recovery_2_team,
           "player_id" = .data$fumble_recovery_2_player_id
         ) |>
         dplyr::summarise(recovery_yards = sum(.data$fumble_recovery_2_yards)) |>
@@ -460,12 +517,16 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       .data$defteam == .data$penalty_team
     ) |>
     dplyr::select(
-      "season", "week", "penalty_yards", "penalty_team", "penalty_player_id"
+      "season",
+      "week",
+      "penalty_yards",
+      "penalty_team",
+      "penalty_player_id"
     ) |>
     tidyr::pivot_longer(
       cols = dplyr::contains("penalty"),
       names_pattern = "(.+)_(team|player_id|yards)",
-      names_to = c("desc",".value"),
+      names_to = c("desc", ".value"),
       values_drop_na = TRUE
     ) |>
     dplyr::mutate(n = 1) |>
@@ -477,14 +538,17 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     ) |>
     add_column_if_missing("n_penalty", "yards_penalty") |>
     dplyr::select(
-      "season", "week", "team", "player_id",
+      "season",
+      "week",
+      "team",
+      "player_id",
       "penalty" = "n_penalty",
       "penalty_yards" = "yards_penalty"
     ) |>
     dplyr::group_by(.data$season, .data$week, .data$team, .data$player_id) |>
     dplyr::summarise(
-      penalty = sum(.data$penalty,na.rm = TRUE),
-      penalty_yards = sum(.data$penalty_yards,na.rm = TRUE)
+      penalty = sum(.data$penalty, na.rm = TRUE),
+      penalty_yards = sum(.data$penalty_yards, na.rm = TRUE)
     ) |>
     dplyr::ungroup()
 
@@ -495,7 +559,9 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     dplyr::filter(.data$touchdown == 1) |>
     dplyr::filter(.data$defteam == .data$td_team) |>
     dplyr::group_by(
-      .data$season, .data$week, "team" = .data$td_team,
+      .data$season,
+      .data$week,
+      "team" = .data$td_team,
       "player_id" = .data$td_player_id
     ) |>
     dplyr::summarise(td = sum(.data$touchdown)) |>
@@ -506,16 +572,43 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
   # combine all the stats together
 
   player_df <- tackle_df |>
-    dplyr::full_join(tackle_yards_df, by = c("season","week","player_id", "team")) |>
-    dplyr::full_join(pressure_df, by = c("season","week","player_id", "team")) |>
-    dplyr::full_join(int_df, by = c("season","week","player_id", "team")) |>
-    dplyr::full_join(safety_df, by = c("season","week","player_id", "team")) |>
-    dplyr::full_join(fumble_df_own, by = c("season","week","player_id", "team")) |>
-    dplyr::full_join(fumble_df_opp, by = c("season","week","player_id", "team")) |>
-    dplyr::full_join(fumble_yds_own_df, by = c("season","week","player_id", "team")) |>
-    dplyr::full_join(fumble_yds_opp_df, by = c("season","week","player_id", "team")) |>
-    dplyr::full_join(penalty_df, by = c("season","week","player_id", "team")) |>
-    dplyr::full_join(touchdown_df, by = c("season","week","player_id", "team")) |>
+    dplyr::full_join(
+      tackle_yards_df,
+      by = c("season", "week", "player_id", "team")
+    ) |>
+    dplyr::full_join(
+      pressure_df,
+      by = c("season", "week", "player_id", "team")
+    ) |>
+    dplyr::full_join(int_df, by = c("season", "week", "player_id", "team")) |>
+    dplyr::full_join(
+      safety_df,
+      by = c("season", "week", "player_id", "team")
+    ) |>
+    dplyr::full_join(
+      fumble_df_own,
+      by = c("season", "week", "player_id", "team")
+    ) |>
+    dplyr::full_join(
+      fumble_df_opp,
+      by = c("season", "week", "player_id", "team")
+    ) |>
+    dplyr::full_join(
+      fumble_yds_own_df,
+      by = c("season", "week", "player_id", "team")
+    ) |>
+    dplyr::full_join(
+      fumble_yds_opp_df,
+      by = c("season", "week", "player_id", "team")
+    ) |>
+    dplyr::full_join(
+      penalty_df,
+      by = c("season", "week", "player_id", "team")
+    ) |>
+    dplyr::full_join(
+      touchdown_df,
+      by = c("season", "week", "player_id", "team")
+    ) |>
     dplyr::mutate_if(is.numeric, tidyr::replace_na, 0) |>
     dplyr::left_join(
       nflreadr::load_players() |>
@@ -531,7 +624,6 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
     ) |>
     dplyr::left_join(stype, by = c("season", "week")) |>
     dplyr::select(dplyr::any_of(c(
-
       # game information
       "season",
       "week",
@@ -556,25 +648,25 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
       "def_fumbles_forced" = "forced_fumbles",
 
       # pressure stats
-      "def_sacks"="sacks",
-      "def_sack_yards"="sack_yards",
-      "def_qb_hits"="qb_hit",
+      "def_sacks" = "sacks",
+      "def_sack_yards" = "sack_yards",
+      "def_qb_hits" = "qb_hit",
 
       # coverage stats
-      "def_interceptions"="int",
-      "def_interception_yards"="int_yards",
-      "def_pass_defended"="pass_defended",
+      "def_interceptions" = "int",
+      "def_interception_yards" = "int_yards",
+      "def_pass_defended" = "pass_defended",
 
       # misc stats
-      "def_tds"="td",
-      "def_fumbles"="fumble",
-      "def_fumble_recovery_own"="fumble_recovery_own",
-      "def_fumble_recovery_yards_own"="fumble_recovery_yards_own",
-      "def_fumble_recovery_opp"="fumble_recovery_opp",
-      "def_fumble_recovery_yards_opp"="fumble_recovery_yards_opp",
-      "def_safety"="safety",
-      "def_penalty"="penalty",
-      "def_penalty_yards"="penalty_yards"
+      "def_tds" = "td",
+      "def_fumbles" = "fumble",
+      "def_fumble_recovery_own" = "fumble_recovery_own",
+      "def_fumble_recovery_yards_own" = "fumble_recovery_yards_own",
+      "def_fumble_recovery_opp" = "fumble_recovery_opp",
+      "def_fumble_recovery_yards_opp" = "fumble_recovery_yards_opp",
+      "def_safety" = "safety",
+      "def_penalty" = "penalty",
+      "def_penalty_yards" = "penalty_yards"
     ))) |>
     dplyr::filter(!is.na(.data$player_id)) |>
     dplyr::arrange(.data$player_id, .data$season, .data$week)
@@ -606,9 +698,13 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
         def_tds = sum(.data$def_tds),
         def_fumbles = sum(.data$def_fumbles),
         def_fumble_recovery_own = sum(.data$def_fumble_recovery_own),
-        def_fumble_recovery_yards_own = sum(.data$def_fumble_recovery_yards_own),
+        def_fumble_recovery_yards_own = sum(
+          .data$def_fumble_recovery_yards_own
+        ),
         def_fumble_recovery_opp = sum(.data$def_fumble_recovery_opp),
-        def_fumble_recovery_yards_opp = sum(.data$def_fumble_recovery_yards_opp),
+        def_fumble_recovery_yards_opp = sum(
+          .data$def_fumble_recovery_yards_opp
+        ),
         def_safety = sum(.data$def_safety),
         def_penalty = sum(.data$def_penalty),
         def_penalty_yards = sum(.data$def_penalty_yards)
@@ -633,10 +729,9 @@ calculate_player_stats_def <- function(pbp, weekly = FALSE) {
 # This function checks if the variables in ... exists as column
 # names in the argument .data. If not, it adds those columns and assigns
 # them the value in the argument value
-add_column_if_missing <- function(.data, ..., value = 0L){
+add_column_if_missing <- function(.data, ..., value = 0L) {
   dots <- rlang::list2(...)
   new_cols <- dots[!dots %in% names(.data)]
-  .data[,unlist(new_cols)] <- value
+  .data[, unlist(new_cols)] <- value
   .data
 }
-

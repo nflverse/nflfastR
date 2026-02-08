@@ -106,7 +106,6 @@
 #' })
 #' }
 calculate_player_stats <- function(pbp, weekly = FALSE) {
-
   lifecycle::deprecate_warn(
     "5.0",
     "calculate_player_stats()",
@@ -116,10 +115,12 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
   # need newer version of nflreadr to use load_players
   rlang::check_installed("nflreadr (>= 1.3.0)", "to join player information.")
 
-# Prepare data ------------------------------------------------------------
+  # Prepare data ------------------------------------------------------------
 
   # load plays with multiple laterals
-  mult_lats <- nflreadr::rds_from_url("https://github.com/nflverse/nflverse-data/releases/download/misc/multiple_lateral_yards.rds") |>
+  mult_lats <- nflreadr::rds_from_url(
+    "https://github.com/nflverse/nflverse-data/releases/download/misc/multiple_lateral_yards.rds"
+  ) |>
     dplyr::mutate(
       season = substr(.data$game_id, 1, 4) |> as.integer(),
       week = substr(.data$game_id, 6, 7) |> as.integer()
@@ -134,7 +135,12 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     # there are some very rare cases where a player collects lateral yards
     # multiple times in the same play. We need to aggregate here to make sure
     # this don't messes up joins (#289)
-    dplyr::group_by(.data$season, .data$week, .data$type, .data$gsis_player_id) |>
+    dplyr::group_by(
+      .data$season,
+      .data$week,
+      .data$type,
+      .data$gsis_player_id
+    ) |>
     dplyr::summarise(yards = sum(.data$yards)) |>
     dplyr::ungroup()
 
@@ -148,29 +154,43 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       ) |>
       decode_player_ids()
 
-    if (!"qb_epa" %in% names(data)) data <- add_qb_epa(data)
+    if (!"qb_epa" %in% names(data)) {
+      data <- add_qb_epa(data)
+    }
 
     # 2. for 2pt conversions only, get those plays
     two_points <- pbp |>
       dplyr::filter(.data$two_point_conv_result == "success") |>
       dplyr::select(
-        "week", "season", "posteam", "defteam",
-        "pass_attempt", "rush_attempt",
-        "passer_player_name", "passer_player_id",
-        "rusher_player_name", "rusher_player_id",
-        "lateral_rusher_player_name", "lateral_rusher_player_id",
-        "receiver_player_name", "receiver_player_id",
-        "lateral_receiver_player_name", "lateral_receiver_player_id"
+        "week",
+        "season",
+        "posteam",
+        "defteam",
+        "pass_attempt",
+        "rush_attempt",
+        "passer_player_name",
+        "passer_player_id",
+        "rusher_player_name",
+        "rusher_player_id",
+        "lateral_rusher_player_name",
+        "lateral_rusher_player_id",
+        "receiver_player_name",
+        "receiver_player_id",
+        "lateral_receiver_player_name",
+        "lateral_receiver_player_id"
       ) |>
       decode_player_ids()
   })
 
-  if (!"special" %in% names(pbp)) {# we need this column for the special teams tds
+  if (!"special" %in% names(pbp)) {
+    # we need this column for the special teams tds
     pbp <- pbp |>
       dplyr::mutate(
         special = dplyr::if_else(
-          .data$play_type %in% c("extra_point","field_goal","kickoff","punt"),
-          1, 0
+          .data$play_type %in%
+            c("extra_point", "field_goal", "kickoff", "punt"),
+          1,
+          0
         )
       )
   }
@@ -196,27 +216,44 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     dplyr::filter(.data$position %in% c("RB", "FB", "HB")) |>
     dplyr::select("gsis_id" = "player_id")
 
-# Passing stats -----------------------------------------------------------
+  # Passing stats -----------------------------------------------------------
 
   # get passing stats
   pass_df <- data |>
     dplyr::filter(.data$play_type %in% c("pass", "qb_spike")) |>
     dplyr::group_by(.data$passer_player_id, .data$week, .data$season) |>
     dplyr::summarize(
-      passing_yards_after_catch = sum((.data$passing_yards - .data$air_yards) * .data$complete_pass, na.rm = TRUE),
+      passing_yards_after_catch = sum(
+        (.data$passing_yards - .data$air_yards) * .data$complete_pass,
+        na.rm = TRUE
+      ),
       name_pass = dplyr::first(.data$passer_player_name),
       team_pass = dplyr::first(.data$posteam),
       opp_pass = dplyr::first(.data$defteam),
       passing_yards = sum(.data$passing_yards, na.rm = TRUE),
-      passing_tds = sum(.data$touchdown == 1 & .data$td_team == .data$posteam & .data$complete_pass == 1),
+      passing_tds = sum(
+        .data$touchdown == 1 &
+          .data$td_team == .data$posteam &
+          .data$complete_pass == 1
+      ),
       interceptions = sum(.data$interception),
-      attempts = sum(.data$complete_pass == 1 | .data$incomplete_pass == 1 | .data$interception == 1),
+      attempts = sum(
+        .data$complete_pass == 1 |
+          .data$incomplete_pass == 1 |
+          .data$interception == 1
+      ),
       completions = sum(.data$complete_pass == 1),
-      sack_fumbles = sum(.data$fumble == 1 & .data$fumbled_1_player_id == .data$passer_player_id),
-      sack_fumbles_lost = sum(.data$fumble_lost == 1 & .data$fumbled_1_player_id == .data$passer_player_id & .data$fumble_recovery_1_team != .data$posteam),
+      sack_fumbles = sum(
+        .data$fumble == 1 & .data$fumbled_1_player_id == .data$passer_player_id
+      ),
+      sack_fumbles_lost = sum(
+        .data$fumble_lost == 1 &
+          .data$fumbled_1_player_id == .data$passer_player_id &
+          .data$fumble_recovery_1_team != .data$posteam
+      ),
       passing_air_yards = sum(.data$air_yards, na.rm = TRUE),
       sacks = sum(.data$sack),
-      sack_yards = -1*sum(.data$yards_gained * .data$sack),
+      sack_yards = -1 * sum(.data$yards_gained * .data$sack),
       passing_first_downs = sum(.data$first_down_pass),
       passing_epa = sum(.data$qb_epa, na.rm = TRUE),
       pacr = .data$passing_yards / .data$passing_air_yards,
@@ -229,7 +266,9 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     dplyr::rename("player_id" = "passer_player_id") |>
     dplyr::ungroup()
 
-  if (isTRUE(weekly)) pass_df <- add_dakota(pass_df, pbp = pbp, weekly = weekly)
+  if (isTRUE(weekly)) {
+    pass_df <- add_dakota(pass_df, pbp = pbp, weekly = weekly)
+  }
 
   pass_two_points <- two_points |>
     dplyr::filter(.data$pass_attempt == 1) |>
@@ -247,17 +286,35 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
   pass_df <- pass_df |>
     # need a full join because players without passing stats that recorded
     # a passing two point (e.g. WRs) are dropped in any other join
-    dplyr::full_join(pass_two_points, by = c("player_id", "week", "season", "name_pass", "team_pass", "opp_pass")) |>
-    dplyr::mutate(passing_2pt_conversions = dplyr::if_else(is.na(.data$passing_2pt_conversions), 0L, .data$passing_2pt_conversions)) |>
+    dplyr::full_join(
+      pass_two_points,
+      by = c(
+        "player_id",
+        "week",
+        "season",
+        "name_pass",
+        "team_pass",
+        "opp_pass"
+      )
+    ) |>
+    dplyr::mutate(
+      passing_2pt_conversions = dplyr::if_else(
+        is.na(.data$passing_2pt_conversions),
+        0L,
+        .data$passing_2pt_conversions
+      )
+    ) |>
     dplyr::filter(!is.na(.data$player_id))
 
   pass_df_nas <- is.na(pass_df)
-  epa_index <- which(dimnames(pass_df_nas)[[2]] %in% c("passing_epa", "dakota", "pacr"))
-  pass_df_nas[,epa_index] <- c(FALSE)
+  epa_index <- which(
+    dimnames(pass_df_nas)[[2]] %in% c("passing_epa", "dakota", "pacr")
+  )
+  pass_df_nas[, epa_index] <- c(FALSE)
 
   pass_df[pass_df_nas] <- 0
 
-# Rushing stats -----------------------------------------------------------
+  # Rushing stats -----------------------------------------------------------
 
   # rush df 1: primary rusher
   rushes <- data |>
@@ -270,9 +327,20 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       yards = sum(.data$rushing_yards, na.rm = TRUE),
       tds = sum(.data$td_player_id == .data$rusher_player_id, na.rm = TRUE),
       carries = dplyr::n(),
-      rushing_fumbles = sum(.data$fumble == 1 & .data$fumbled_1_player_id == .data$rusher_player_id & is.na(.data$lateral_rusher_player_id)),
-      rushing_fumbles_lost = sum(.data$fumble_lost == 1 & .data$fumbled_1_player_id == .data$rusher_player_id & is.na(.data$lateral_rusher_player_id) & .data$fumble_recovery_1_team != .data$posteam),
-      rushing_first_downs = sum(.data$first_down_rush & is.na(.data$lateral_rusher_player_id)),
+      rushing_fumbles = sum(
+        .data$fumble == 1 &
+          .data$fumbled_1_player_id == .data$rusher_player_id &
+          is.na(.data$lateral_rusher_player_id)
+      ),
+      rushing_fumbles_lost = sum(
+        .data$fumble_lost == 1 &
+          .data$fumbled_1_player_id == .data$rusher_player_id &
+          is.na(.data$lateral_rusher_player_id) &
+          .data$fumble_recovery_1_team != .data$posteam
+      ),
+      rushing_first_downs = sum(
+        .data$first_down_rush & is.na(.data$lateral_rusher_player_id)
+      ),
       rushing_epa = sum(.data$epa, na.rm = TRUE)
     ) |>
     dplyr::ungroup()
@@ -284,9 +352,12 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     dplyr::summarize(
       lateral_yards = sum(.data$lateral_rushing_yards, na.rm = TRUE),
       lateral_fds = sum(.data$first_down_rush, na.rm = TRUE),
-      lateral_tds = sum(.data$td_player_id == .data$lateral_rusher_player_id, na.rm = TRUE),
+      lateral_tds = sum(
+        .data$td_player_id == .data$lateral_rusher_player_id,
+        na.rm = TRUE
+      ),
       lateral_att = dplyr::n(),
-      lateral_fumbles =  sum(.data$fumble, na.rm = TRUE),
+      lateral_fumbles = sum(.data$fumble, na.rm = TRUE),
       lateral_fumbles_lost = sum(.data$fumble_lost, na.rm = TRUE)
     ) |>
     dplyr::ungroup() |>
@@ -294,9 +365,16 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     dplyr::bind_rows(
       mult_lats |>
         dplyr::filter(
-          .data$type == "lateral_rushing" & .data$season %in% data$season & .data$week %in% data$week
+          .data$type == "lateral_rushing" &
+            .data$season %in% data$season &
+            .data$week %in% data$week
         ) |>
-        dplyr::select("season", "week", "rusher_player_id" = "gsis_player_id", "lateral_yards" = "yards") |>
+        dplyr::select(
+          "season",
+          "week",
+          "rusher_player_id" = "gsis_player_id",
+          "lateral_yards" = "yards"
+        ) |>
         dplyr::mutate(lateral_tds = 0L, lateral_att = 1L)
     ) |>
     # at this stage it is possible that a player is duplicated because he
@@ -313,23 +391,56 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
   rush_df <- rushes |>
     dplyr::left_join(laterals, by = c("rusher_player_id", "week", "season")) |>
     dplyr::mutate(
-      lateral_yards = dplyr::if_else(is.na(.data$lateral_yards), 0, .data$lateral_yards),
-      lateral_tds = dplyr::if_else(is.na(.data$lateral_tds), 0L, .data$lateral_tds),
-      lateral_fumbles = dplyr::if_else(is.na(.data$lateral_fumbles), 0, .data$lateral_fumbles),
-      lateral_fumbles_lost = dplyr::if_else(is.na(.data$lateral_fumbles_lost), 0, .data$lateral_fumbles_lost),
-      lateral_fds = dplyr::if_else(is.na(.data$lateral_fds), 0, .data$lateral_fds)
+      lateral_yards = dplyr::if_else(
+        is.na(.data$lateral_yards),
+        0,
+        .data$lateral_yards
+      ),
+      lateral_tds = dplyr::if_else(
+        is.na(.data$lateral_tds),
+        0L,
+        .data$lateral_tds
+      ),
+      lateral_fumbles = dplyr::if_else(
+        is.na(.data$lateral_fumbles),
+        0,
+        .data$lateral_fumbles
+      ),
+      lateral_fumbles_lost = dplyr::if_else(
+        is.na(.data$lateral_fumbles_lost),
+        0,
+        .data$lateral_fumbles_lost
+      ),
+      lateral_fds = dplyr::if_else(
+        is.na(.data$lateral_fds),
+        0,
+        .data$lateral_fds
+      )
     ) |>
     dplyr::mutate(
       rushing_yards = .data$yards + .data$lateral_yards,
       rushing_tds = .data$tds + .data$lateral_tds,
       rushing_first_downs = .data$rushing_first_downs + .data$lateral_fds,
       rushing_fumbles = .data$rushing_fumbles + .data$lateral_fumbles,
-      rushing_fumbles_lost = .data$rushing_fumbles_lost + .data$lateral_fumbles_lost
-      ) |>
+      rushing_fumbles_lost = .data$rushing_fumbles_lost +
+        .data$lateral_fumbles_lost
+    ) |>
     dplyr::rename("player_id" = "rusher_player_id") |>
-    dplyr::select("player_id", "week", "season", "name_rush", "team_rush", "opp_rush",
-                  "rushing_yards", "carries", "rushing_tds", "rushing_fumbles",
-                  "rushing_fumbles_lost", "rushing_first_downs", "rushing_epa") |>
+    dplyr::select(
+      "player_id",
+      "week",
+      "season",
+      "name_rush",
+      "team_rush",
+      "opp_rush",
+      "rushing_yards",
+      "carries",
+      "rushing_tds",
+      "rushing_fumbles",
+      "rushing_fumbles_lost",
+      "rushing_first_downs",
+      "rushing_epa"
+    ) |>
     dplyr::ungroup()
 
   rush_two_points <- two_points |>
@@ -348,17 +459,33 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
   rush_df <- rush_df |>
     # need a full join because players without rushing stats that recorded
     # a rushing two point (mostly QBs) are dropped in any other join
-    dplyr::full_join(rush_two_points, by = c("player_id", "week", "season", "name_rush", "team_rush", "opp_rush")) |>
-    dplyr::mutate(rushing_2pt_conversions = dplyr::if_else(is.na(.data$rushing_2pt_conversions), 0L, .data$rushing_2pt_conversions)) |>
+    dplyr::full_join(
+      rush_two_points,
+      by = c(
+        "player_id",
+        "week",
+        "season",
+        "name_rush",
+        "team_rush",
+        "opp_rush"
+      )
+    ) |>
+    dplyr::mutate(
+      rushing_2pt_conversions = dplyr::if_else(
+        is.na(.data$rushing_2pt_conversions),
+        0L,
+        .data$rushing_2pt_conversions
+      )
+    ) |>
     dplyr::filter(!is.na(.data$player_id))
 
   rush_df_nas <- is.na(rush_df)
   epa_index <- which(dimnames(rush_df_nas)[[2]] == "rushing_epa")
-  rush_df_nas[,epa_index] <- c(FALSE)
+  rush_df_nas[, epa_index] <- c(FALSE)
 
   rush_df[rush_df_nas] <- 0
 
-# Receiving stats ---------------------------------------------------------
+  # Receiving stats ---------------------------------------------------------
 
   # receiver df 1: primary receiver
   rec <- data |>
@@ -372,11 +499,22 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       receptions = sum(.data$complete_pass == 1),
       targets = dplyr::n(),
       tds = sum(.data$td_player_id == .data$receiver_player_id, na.rm = TRUE),
-      receiving_fumbles = sum(.data$fumble == 1 & .data$fumbled_1_player_id == .data$receiver_player_id & is.na(.data$lateral_receiver_player_id)),
-      receiving_fumbles_lost = sum(.data$fumble_lost == 1 & .data$fumbled_1_player_id == .data$receiver_player_id & is.na(.data$lateral_receiver_player_id) & .data$fumble_recovery_1_team != .data$posteam),
+      receiving_fumbles = sum(
+        .data$fumble == 1 &
+          .data$fumbled_1_player_id == .data$receiver_player_id &
+          is.na(.data$lateral_receiver_player_id)
+      ),
+      receiving_fumbles_lost = sum(
+        .data$fumble_lost == 1 &
+          .data$fumbled_1_player_id == .data$receiver_player_id &
+          is.na(.data$lateral_receiver_player_id) &
+          .data$fumble_recovery_1_team != .data$posteam
+      ),
       receiving_air_yards = sum(.data$air_yards, na.rm = TRUE),
       receiving_yards_after_catch = sum(.data$yards_after_catch, na.rm = TRUE),
-      receiving_first_downs = sum(.data$first_down_pass & is.na(.data$lateral_receiver_player_id)),
+      receiving_first_downs = sum(
+        .data$first_down_pass & is.na(.data$lateral_receiver_player_id)
+      ),
       receiving_epa = sum(.data$epa, na.rm = TRUE)
     ) |>
     dplyr::ungroup()
@@ -384,10 +522,17 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
   # receiver df 2: lateral
   laterals <- data |>
     dplyr::filter(!is.na(.data$lateral_receiver_player_id)) |>
-    dplyr::group_by(.data$lateral_receiver_player_id, .data$week, .data$season) |>
+    dplyr::group_by(
+      .data$lateral_receiver_player_id,
+      .data$week,
+      .data$season
+    ) |>
     dplyr::summarize(
       lateral_yards = sum(.data$lateral_receiving_yards, na.rm = TRUE),
-      lateral_tds = sum(.data$td_player_id == .data$lateral_receiver_player_id, na.rm = TRUE),
+      lateral_tds = sum(
+        .data$td_player_id == .data$lateral_receiver_player_id,
+        na.rm = TRUE
+      ),
       lateral_att = dplyr::n(),
       lateral_fds = sum(.data$first_down_pass, na.rm = T),
       lateral_fumbles = sum(.data$fumble, na.rm = T),
@@ -398,9 +543,16 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     dplyr::bind_rows(
       mult_lats |>
         dplyr::filter(
-          .data$type == "lateral_receiving" & .data$season %in% data$season & .data$week %in% data$week
+          .data$type == "lateral_receiving" &
+            .data$season %in% data$season &
+            .data$week %in% data$week
         ) |>
-        dplyr::select("season", "week", "receiver_player_id" = "gsis_player_id", "lateral_yards" = "yards") |>
+        dplyr::select(
+          "season",
+          "week",
+          "receiver_player_id" = "gsis_player_id",
+          "lateral_yards" = "yards"
+        ) |>
         dplyr::mutate(lateral_tds = 0L, lateral_att = 1L)
     ) |>
     # at this stage it is possible that a player is duplicated because he
@@ -425,41 +577,87 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
 
   # rec df: join
   rec_df <- rec |>
-    dplyr::left_join(laterals, by = c("receiver_player_id", "week", "season")) |>
-    dplyr::left_join(rec_team, by = c("team_receiver" = "posteam", "week", "season")) |>
+    dplyr::left_join(
+      laterals,
+      by = c("receiver_player_id", "week", "season")
+    ) |>
+    dplyr::left_join(
+      rec_team,
+      by = c("team_receiver" = "posteam", "week", "season")
+    ) |>
     dplyr::mutate(
-      lateral_yards = dplyr::if_else(is.na(.data$lateral_yards), 0, .data$lateral_yards),
-      lateral_tds = dplyr::if_else(is.na(.data$lateral_tds), 0L, .data$lateral_tds),
-      lateral_fumbles = dplyr::if_else(is.na(.data$lateral_fumbles), 0, .data$lateral_fumbles),
-      lateral_fumbles_lost = dplyr::if_else(is.na(.data$lateral_fumbles_lost), 0, .data$lateral_fumbles_lost),
-      lateral_fds = dplyr::if_else(is.na(.data$lateral_fds), 0, .data$lateral_fds)
+      lateral_yards = dplyr::if_else(
+        is.na(.data$lateral_yards),
+        0,
+        .data$lateral_yards
+      ),
+      lateral_tds = dplyr::if_else(
+        is.na(.data$lateral_tds),
+        0L,
+        .data$lateral_tds
+      ),
+      lateral_fumbles = dplyr::if_else(
+        is.na(.data$lateral_fumbles),
+        0,
+        .data$lateral_fumbles
+      ),
+      lateral_fumbles_lost = dplyr::if_else(
+        is.na(.data$lateral_fumbles_lost),
+        0,
+        .data$lateral_fumbles_lost
+      ),
+      lateral_fds = dplyr::if_else(
+        is.na(.data$lateral_fds),
+        0,
+        .data$lateral_fds
+      )
     ) |>
     dplyr::mutate(
       receiving_yards = .data$yards + .data$lateral_yards,
       receiving_tds = .data$tds + .data$lateral_tds,
-      receiving_yards_after_catch = .data$receiving_yards_after_catch + .data$lateral_yards,
+      receiving_yards_after_catch = .data$receiving_yards_after_catch +
+        .data$lateral_yards,
       receiving_first_downs = .data$receiving_first_downs + .data$lateral_fds,
       receiving_fumbles = .data$receiving_fumbles + .data$lateral_fumbles,
-      receiving_fumbles_lost = .data$receiving_fumbles_lost + .data$lateral_fumbles_lost,
+      receiving_fumbles_lost = .data$receiving_fumbles_lost +
+        .data$lateral_fumbles_lost,
       racr = .data$receiving_yards / .data$receiving_air_yards,
       racr = dplyr::case_when(
         is.nan(.data$racr) ~ NA_real_,
         .data$receiving_air_yards == 0 ~ 0,
         # following Josh Hermsmeyer's definition, RACR stays < 0 for RBs (and FBs) and is set to
         # 0 for Receivers. The list "racr_ids" includes all known RB and FB gsis_ids
-        .data$receiving_air_yards < 0 & !.data$receiver_player_id %in% racr_ids$gsis_id ~ 0,
+        .data$receiving_air_yards < 0 &
+          !.data$receiver_player_id %in% racr_ids$gsis_id ~ 0,
         TRUE ~ .data$racr
       ),
       target_share = .data$targets / .data$team_targets,
       air_yards_share = .data$receiving_air_yards / .data$team_air_yards,
       wopr = 1.5 * .data$target_share + 0.7 * .data$air_yards_share
-      ) |>
+    ) |>
     dplyr::rename("player_id" = "receiver_player_id") |>
-    dplyr::select("player_id", "week", "season", "name_receiver", "team_receiver", "opp_receiver",
-                  "receiving_yards", "receiving_air_yards", "receiving_yards_after_catch",
-                  "receptions", "targets", "receiving_tds", "receiving_fumbles",
-                  "receiving_fumbles_lost", "receiving_first_downs", "receiving_epa",
-                  "racr", "target_share", "air_yards_share", "wopr")
+    dplyr::select(
+      "player_id",
+      "week",
+      "season",
+      "name_receiver",
+      "team_receiver",
+      "opp_receiver",
+      "receiving_yards",
+      "receiving_air_yards",
+      "receiving_yards_after_catch",
+      "receptions",
+      "targets",
+      "receiving_tds",
+      "receiving_fumbles",
+      "receiving_fumbles_lost",
+      "receiving_first_downs",
+      "receiving_epa",
+      "racr",
+      "target_share",
+      "air_yards_share",
+      "wopr"
+    )
 
   rec_two_points <- two_points |>
     dplyr::filter(.data$pass_attempt == 1) |>
@@ -477,18 +675,36 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
   rec_df <- rec_df |>
     # need a full join because players without receiving stats that recorded
     # a receiving two point are dropped in any other join
-    dplyr::full_join(rec_two_points, by = c("player_id", "week", "season", "name_receiver", "team_receiver", "opp_receiver")) |>
-    dplyr::mutate(receiving_2pt_conversions = dplyr::if_else(is.na(.data$receiving_2pt_conversions), 0L, .data$receiving_2pt_conversions)) |>
+    dplyr::full_join(
+      rec_two_points,
+      by = c(
+        "player_id",
+        "week",
+        "season",
+        "name_receiver",
+        "team_receiver",
+        "opp_receiver"
+      )
+    ) |>
+    dplyr::mutate(
+      receiving_2pt_conversions = dplyr::if_else(
+        is.na(.data$receiving_2pt_conversions),
+        0L,
+        .data$receiving_2pt_conversions
+      )
+    ) |>
     dplyr::filter(!is.na(.data$player_id), !is.na(.data$name_receiver))
 
   rec_df_nas <- is.na(rec_df)
-  epa_index <- which(dimnames(rec_df_nas)[[2]] %in% c("receiving_epa", "racr", "target_share", "air_yards_share", "wopr"))
-  rec_df_nas[,epa_index] <- c(FALSE)
+  epa_index <- which(
+    dimnames(rec_df_nas)[[2]] %in%
+      c("receiving_epa", "racr", "target_share", "air_yards_share", "wopr")
+  )
+  rec_df_nas[, epa_index] <- c(FALSE)
 
   rec_df[rec_df_nas] <- 0
 
-
-# Special Teams -----------------------------------------------------------
+  # Special Teams -----------------------------------------------------------
 
   st_tds <- pbp |>
     dplyr::filter(.data$special == 1 & !is.na(.data$td_player_id)) |>
@@ -501,7 +717,7 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
     ) |>
     dplyr::rename("player_id" = "td_player_id")
 
-# Combine all stats -------------------------------------------------------
+  # Combine all stats -------------------------------------------------------
 
   # combine all the stats together
   player_df <- pass_df |>
@@ -530,52 +746,106 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
       )
     ) |>
     dplyr::select(dplyr::any_of(c(
-
       # id information
-      "player_id", "player_name", "recent_team", "season", "week", "season_type", "opponent_team",
+      "player_id",
+      "player_name",
+      "recent_team",
+      "season",
+      "week",
+      "season_type",
+      "opponent_team",
 
       # passing stats
-      "completions", "attempts", "passing_yards", "passing_tds", "interceptions",
-      "sacks", "sack_yards", "sack_fumbles", "sack_fumbles_lost", "passing_air_yards", "passing_yards_after_catch",
-      "passing_first_downs", "passing_epa", "passing_2pt_conversions", "pacr", "dakota",
+      "completions",
+      "attempts",
+      "passing_yards",
+      "passing_tds",
+      "interceptions",
+      "sacks",
+      "sack_yards",
+      "sack_fumbles",
+      "sack_fumbles_lost",
+      "passing_air_yards",
+      "passing_yards_after_catch",
+      "passing_first_downs",
+      "passing_epa",
+      "passing_2pt_conversions",
+      "pacr",
+      "dakota",
 
       # rushing stats
-      "carries", "rushing_yards", "rushing_tds", "rushing_fumbles", "rushing_fumbles_lost",
-      "rushing_first_downs", "rushing_epa", "rushing_2pt_conversions",
+      "carries",
+      "rushing_yards",
+      "rushing_tds",
+      "rushing_fumbles",
+      "rushing_fumbles_lost",
+      "rushing_first_downs",
+      "rushing_epa",
+      "rushing_2pt_conversions",
 
       # receiving stats
-      "receptions", "targets", "receiving_yards", "receiving_tds", "receiving_fumbles",
-      "receiving_fumbles_lost", "receiving_air_yards", "receiving_yards_after_catch",
-      "receiving_first_downs", "receiving_epa", "receiving_2pt_conversions", "racr",
-      "target_share", "air_yards_share", "wopr",
+      "receptions",
+      "targets",
+      "receiving_yards",
+      "receiving_tds",
+      "receiving_fumbles",
+      "receiving_fumbles_lost",
+      "receiving_air_yards",
+      "receiving_yards_after_catch",
+      "receiving_first_downs",
+      "receiving_epa",
+      "receiving_2pt_conversions",
+      "racr",
+      "target_share",
+      "air_yards_share",
+      "wopr",
 
       # special teams
       "special_teams_tds"
-
     ))) |>
     dplyr::filter(!is.na(.data$player_id), !is.na(.data$player_name))
 
   player_df_nas <- is.na(player_df)
-  epa_index <- which(dimnames(player_df_nas)[[2]] %in% c("passing_epa", "rushing_epa", "receiving_epa", "dakota", "racr", "target_share", "air_yards_share", "wopr", "pacr"))
-  player_df_nas[,epa_index] <- c(FALSE)
+  epa_index <- which(
+    dimnames(player_df_nas)[[2]] %in%
+      c(
+        "passing_epa",
+        "rushing_epa",
+        "receiving_epa",
+        "dakota",
+        "racr",
+        "target_share",
+        "air_yards_share",
+        "wopr",
+        "pacr"
+      )
+  )
+  player_df_nas[, epa_index] <- c(FALSE)
 
   player_df[player_df_nas] <- 0
 
   player_df <- player_df |>
     dplyr::mutate(
-      fantasy_points =
-        1 / 25 * .data$passing_yards +
+      fantasy_points = 1 /
+        25 *
+        .data$passing_yards +
         4 * .data$passing_tds +
         -2 * .data$interceptions +
         1 / 10 * (.data$rushing_yards + .data$receiving_yards) +
-        6 * (.data$rushing_tds + .data$receiving_tds + .data$special_teams_tds) +
-        2 * (.data$passing_2pt_conversions + .data$rushing_2pt_conversions + .data$receiving_2pt_conversions) +
-        -2 * (.data$sack_fumbles_lost + .data$rushing_fumbles_lost + .data$receiving_fumbles_lost),
+        6 *
+          (.data$rushing_tds + .data$receiving_tds + .data$special_teams_tds) +
+        2 *
+          (.data$passing_2pt_conversions +
+            .data$rushing_2pt_conversions +
+            .data$receiving_2pt_conversions) +
+        -2 *
+          (.data$sack_fumbles_lost +
+            .data$rushing_fumbles_lost +
+            .data$receiving_fumbles_lost),
 
       fantasy_points_ppr = .data$fantasy_points + .data$receptions
     ) |>
     dplyr::arrange(.data$player_id, .data$season, .data$week)
-
 
   # if user doesn't want week-by-week input, aggregate the whole df
   if (isFALSE(weekly)) {
@@ -604,7 +874,11 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         passing_air_yards = sum(.data$passing_air_yards),
         passing_yards_after_catch = sum(.data$passing_yards_after_catch),
         passing_first_downs = sum(.data$passing_first_downs),
-        passing_epa = dplyr::if_else(all(is.na(.data$passing_epa)), NA_real_, sum(.data$passing_epa, na.rm = TRUE)),
+        passing_epa = dplyr::if_else(
+          all(is.na(.data$passing_epa)),
+          NA_real_,
+          sum(.data$passing_epa, na.rm = TRUE)
+        ),
         passing_2pt_conversions = sum(.data$passing_2pt_conversions),
         pacr = .data$passing_yards / .data$passing_air_yards,
 
@@ -615,7 +889,11 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         rushing_fumbles = sum(.data$rushing_fumbles),
         rushing_fumbles_lost = sum(.data$rushing_fumbles_lost),
         rushing_first_downs = sum(.data$rushing_first_downs),
-        rushing_epa = dplyr::if_else(all(is.na(.data$rushing_epa)), NA_real_, sum(.data$rushing_epa, na.rm = TRUE)),
+        rushing_epa = dplyr::if_else(
+          all(is.na(.data$rushing_epa)),
+          NA_real_,
+          sum(.data$rushing_epa, na.rm = TRUE)
+        ),
         rushing_2pt_conversions = sum(.data$rushing_2pt_conversions),
 
         # receiving
@@ -628,11 +906,25 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
         receiving_air_yards = sum(.data$receiving_air_yards),
         receiving_yards_after_catch = sum(.data$receiving_yards_after_catch),
         receiving_first_downs = sum(.data$receiving_first_downs),
-        receiving_epa = dplyr::if_else(all(is.na(.data$receiving_epa)), NA_real_, sum(.data$receiving_epa, na.rm = TRUE)),
+        receiving_epa = dplyr::if_else(
+          all(is.na(.data$receiving_epa)),
+          NA_real_,
+          sum(.data$receiving_epa, na.rm = TRUE)
+        ),
         receiving_2pt_conversions = sum(.data$receiving_2pt_conversions),
         racr = .data$receiving_yards / .data$receiving_air_yards,
-        target_share = dplyr::if_else(all(is.na(.data$target_share)), NA_real_, sum(.data$tgts, na.rm = TRUE) / sum(.data$tgts / .data$target_share, na.rm = TRUE)),
-        air_yards_share = dplyr::if_else(all(is.na(.data$air_yards_share)), NA_real_, sum(.data$rec_air_yds, na.rm = TRUE) / sum(.data$rec_air_yds / .data$air_yards_share, na.rm = TRUE)),
+        target_share = dplyr::if_else(
+          all(is.na(.data$target_share)),
+          NA_real_,
+          sum(.data$tgts, na.rm = TRUE) /
+            sum(.data$tgts / .data$target_share, na.rm = TRUE)
+        ),
+        air_yards_share = dplyr::if_else(
+          all(is.na(.data$air_yards_share)),
+          NA_real_,
+          sum(.data$rec_air_yds, na.rm = TRUE) /
+            sum(.data$rec_air_yds / .data$air_yards_share, na.rm = TRUE)
+        ),
         wopr = 1.5 * .data$target_share + 0.7 * .data$air_yards_share,
 
         # special teams
@@ -649,7 +941,8 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
           .data$receiving_air_yards == 0 ~ 0,
           # following Josh Hermsmeyer's definition, RACR stays < 0 for RBs (and FBs) and is set to
           # 0 for Receivers. The list "racr_ids" includes all known RB and FB gsis_ids
-          .data$receiving_air_yards < 0 & !.data$player_id %in% racr_ids$gsis_id ~ 0,
+          .data$receiving_air_yards < 0 &
+            !.data$player_id %in% racr_ids$gsis_id ~ 0,
           TRUE ~ .data$racr
         ),
         pacr = dplyr::case_when(
@@ -686,30 +979,48 @@ calculate_player_stats <- function(pbp, weekly = FALSE) {
 
 add_dakota <- function(add_to_this, pbp, weekly) {
   dakota_model <- NULL
-  con <- url("https://github.com/nflverse/nflfastR-data/blob/master/models/dakota_model.Rdata?raw=true")
+  con <- url(
+    "https://github.com/nflverse/nflfastR-data/blob/master/models/dakota_model.Rdata?raw=true"
+  )
   try(load(con), silent = TRUE)
   close(con)
 
   if (is.null(dakota_model)) {
-    user_message("This function needs to download the model data from GitHub. Please check your Internet connection and try again!", "oops")
+    user_message(
+      "This function needs to download the model data from GitHub. Please check your Internet connection and try again!",
+      "oops"
+    )
     return(add_to_this)
   }
 
-  if (!"id" %in% names(pbp)) pbp <- clean_pbp(pbp)
-  if (!"qb_epa" %in% names(pbp)) pbp <- add_qb_epa(pbp)
+  if (!"id" %in% names(pbp)) {
+    pbp <- clean_pbp(pbp)
+  }
+  if (!"qb_epa" %in% names(pbp)) {
+    pbp <- add_qb_epa(pbp)
+  }
 
   suppressMessages({
     df <- pbp |>
       dplyr::filter(.data$pass == 1 | .data$rush == 1) |>
-      dplyr::filter(!is.na(.data$posteam) & !is.na(.data$qb_epa) & !is.na(.data$id) & !is.na(.data$down)) |>
-      dplyr::mutate(epa = dplyr::if_else(.data$qb_epa < -4.5, -4.5, .data$qb_epa)) |>
+      dplyr::filter(
+        !is.na(.data$posteam) &
+          !is.na(.data$qb_epa) &
+          !is.na(.data$id) &
+          !is.na(.data$down)
+      ) |>
+      dplyr::mutate(
+        epa = dplyr::if_else(.data$qb_epa < -4.5, -4.5, .data$qb_epa)
+      ) |>
       decode_player_ids()
   })
 
   if (isTRUE(weekly)) {
     relevant_players <- add_to_this |>
       dplyr::filter(.data$attempts >= 5) |>
-      dplyr::mutate(filter_id = paste(.data$player_id, .data$season, .data$week, sep = "_")) |>
+      dplyr::mutate(
+        filter_id = paste(.data$player_id, .data$season, .data$week, sep = "_")
+      ) |>
       dplyr::pull(.data$filter_id)
 
     model_data <- df |>
@@ -722,10 +1033,13 @@ add_dakota <- function(add_to_this, pbp, weekly) {
       dplyr::ungroup() |>
       dplyr::mutate(cpoe = dplyr::if_else(is.na(.data$cpoe), 0, .data$cpoe)) |>
       dplyr::rename("player_id" = "id") |>
-      dplyr::mutate(filter_id = paste(.data$player_id, .data$season, .data$week, sep = "_")) |>
+      dplyr::mutate(
+        filter_id = paste(.data$player_id, .data$season, .data$week, sep = "_")
+      ) |>
       dplyr::filter(.data$filter_id %in% relevant_players)
 
-    model_data$dakota <- mgcv::predict.gam(dakota_model, model_data) |> as.vector()
+    model_data$dakota <- mgcv::predict.gam(dakota_model, model_data) |>
+      as.vector()
 
     out <- add_to_this |>
       dplyr::left_join(
@@ -750,7 +1064,8 @@ add_dakota <- function(add_to_this, pbp, weekly) {
       dplyr::rename("player_id" = "id") |>
       dplyr::filter(.data$player_id %in% relevant_players)
 
-    model_data$dakota <- mgcv::predict.gam(dakota_model, model_data) |> as.vector()
+    model_data$dakota <- mgcv::predict.gam(dakota_model, model_data) |>
+      as.vector()
 
     out <- add_to_this |>
       dplyr::left_join(

@@ -15,25 +15,30 @@ tidy_play_stats_row <-
   modify_if(is.na, function(x) {
     x <- NA_character_
   }) |>
-  modify_at(c(
-    "air_yards",
-    "yards_after_catch",
-    "penalty_yards",
-    "kick_distance",
-    "fumble_recovery_1_yards",
-    "fumble_recovery_2_yards",
-    "rushing_yards",
-    "lateral_rushing_yards",
-    "passing_yards",
-    "receiving_yards",
-    "lateral_receiving_yards"
-  ), as.integer)
+  modify_at(
+    c(
+      "air_yards",
+      "yards_after_catch",
+      "penalty_yards",
+      "kick_distance",
+      "fumble_recovery_1_yards",
+      "fumble_recovery_2_yards",
+      "rushing_yards",
+      "lateral_rushing_yards",
+      "passing_yards",
+      "receiving_yards",
+      "lateral_receiving_yards"
+    ),
+    as.integer
+  )
 
 tidy_play_stats_row <- nflfastR:::tidy_play_stats_row
 scramble_fix <- readRDS("data-raw/scramble_fix.rds")
 default_play <- readRDS("data-raw/pbp_defaultplay.rds")
 usethis::use_data(
-  tidy_play_stats_row, scramble_fix, default_play,
+  tidy_play_stats_row,
+  scramble_fix,
+  default_play,
   internal = TRUE,
   overwrite = TRUE
 )
@@ -321,4 +326,3 @@ indicator_stats <- c(
   "return_yards",
   "return_penalty_fix"
 )
-

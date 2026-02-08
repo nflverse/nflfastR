@@ -32,7 +32,7 @@ add_xpass <- function(pbp, ...) {
     pred <- stats::predict(
       load_model("xpass"),
       as.matrix(plays |> dplyr::select(-"valid_play"))
-      ) |>
+    ) |>
       tibble::as_tibble() |>
       dplyr::rename(xpass = "value") |>
       dplyr::bind_cols(plays) |>
@@ -42,10 +42,20 @@ add_xpass <- function(pbp, ...) {
       dplyr::bind_cols(pred) |>
       dplyr::mutate(
         xpass = dplyr::if_else(
-          .data$valid_play == 1, .data$xpass, NA_real_
+          .data$valid_play == 1,
+          .data$xpass,
+          NA_real_
         ),
-        pass_oe = dplyr::if_else(!is.na(.data$xpass), 100 * (.data$pass - .data$xpass), NA_real_),
-        pass_oe = dplyr::if_else(.data$rush == 0 & .data$pass == 0, NA_real_, .data$pass_oe)
+        pass_oe = dplyr::if_else(
+          !is.na(.data$xpass),
+          100 * (.data$pass - .data$xpass),
+          NA_real_
+        ),
+        pass_oe = dplyr::if_else(
+          .data$rush == 0 & .data$pass == 0,
+          NA_real_,
+          .data$pass_oe
+        )
       ) |>
       dplyr::select(-"valid_play")
 
@@ -56,13 +66,15 @@ add_xpass <- function(pbp, ...) {
         xpass = NA_real_,
         pass_oe = NA_real_
       )
-    user_message("No non-NA values for xpass calculation detected. xpass and pass_oe set to NA", "info")
+    user_message(
+      "No non-NA values for xpass calculation detected. xpass and pass_oe set to NA",
+      "info"
+    )
   }
   return(pbp)
 }
 
 prepare_xpass_data <- function(pbp) {
-
   plays <- pbp |>
     dplyr::mutate(
       valid_play = dplyr::if_else(
@@ -74,7 +86,8 @@ prepare_xpass_data <- function(pbp) {
           !is.na(.data$posteam_timeouts_remaining) &
           !is.na(.data$yardline_100) &
           !is.na(.data$score_differential),
-        1, 0
+        1,
+        0
       )
     ) |>
     make_model_mutations() |>
@@ -86,13 +99,17 @@ prepare_xpass_data <- function(pbp) {
       "qtr",
       "wp",
       "vegas_wp",
-      "era2", "era3", "era4",
+      "era2",
+      "era3",
+      "era4",
       "score_differential",
       "home",
       "half_seconds_remaining",
       "posteam_timeouts_remaining",
       "defteam_timeouts_remaining",
-      "outdoors", "retractable", "dome"
+      "outdoors",
+      "retractable",
+      "dome"
     )
 
   return(plays)

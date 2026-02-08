@@ -13,7 +13,7 @@
 # @param stats A dataframe including multiple rows for each play_Id holding
 # gsis stat ids and stats
 sum_play_stats <- function(play_Id, stats) {
-  play_stats <- stats[stats$playId == play_Id,]
+  play_stats <- stats[stats$playId == play_Id, ]
 
   row <- c("play_id" = as.integer(play_Id), tidy_play_stats_row)
 
@@ -187,7 +187,9 @@ sum_play_stats <- function(play_Id, stats) {
       row$pass_attempt <- 1
       row$lateral_return <- 1
       row$lateral_interception_player_id <- play_stats$player.esbId[index]
-      row$lateral_interception_player_name <- play_stats$player.displayName[index]
+      row$lateral_interception_player_name <- play_stats$player.displayName[
+        index
+      ]
       row$return_yards <- play_stats$yards[index]
       row$return_penalty_fix <- 1
     } else if (stat_id == 28) {
@@ -196,7 +198,9 @@ sum_play_stats <- function(play_Id, stats) {
       row$return_touchdown <- 1
       row$lateral_return <- 1
       row$lateral_interception_player_id <- play_stats$player.esbId[index]
-      row$lateral_interception_player_name <- play_stats$player.displayName[index]
+      row$lateral_interception_player_name <- play_stats$player.displayName[
+        index
+      ]
       row$td_team <- play_stats$teamAbbr[index]
       row$td_player_id <- play_stats$player.esbId[index]
       row$td_player_name <- play_stats$player.displayName[index]
@@ -247,7 +251,9 @@ sum_play_stats <- function(play_Id, stats) {
       row$punt_attempt <- 1
       row$lateral_return <- 1
       row$lateral_punt_returner_player_id <- play_stats$player.esbId[index]
-      row$lateral_punt_returner_player_name <- play_stats$player.displayName[index]
+      row$lateral_punt_returner_player_name <- play_stats$player.displayName[
+        index
+      ]
       row$return_yards <- play_stats$yards[index]
       row$return_penalty_fix <- 1
     } else if (stat_id == 36) {
@@ -256,7 +262,9 @@ sum_play_stats <- function(play_Id, stats) {
       row$punt_attempt <- 1
       row$lateral_return <- 1
       row$lateral_punt_returner_player_id <- play_stats$player.esbId[index]
-      row$lateral_punt_returner_player_name <- play_stats$player.displayName[index]
+      row$lateral_punt_returner_player_name <- play_stats$player.displayName[
+        index
+      ]
       row$td_team <- play_stats$teamAbbr[index]
       row$td_player_id <- play_stats$player.esbId[index]
       row$td_player_name <- play_stats$player.displayName[index]
@@ -326,7 +334,9 @@ sum_play_stats <- function(play_Id, stats) {
       row$kickoff_attempt <- 1
       row$lateral_return <- 1
       row$lateral_kickoff_returner_player_id <- play_stats$player.esbId[index]
-      row$lateral_kickoff_returner_player_name <- play_stats$player.displayName[index]
+      row$lateral_kickoff_returner_player_name <- play_stats$player.displayName[
+        index
+      ]
       row$return_yards <- play_stats$yards[index]
       row$return_team <- play_stats$teamAbbr[index]
       row$return_penalty_fix <- 1
@@ -336,7 +346,9 @@ sum_play_stats <- function(play_Id, stats) {
       row$kickoff_attempt <- 1
       row$lateral_return <- 1
       row$lateral_kickoff_returner_player_id <- play_stats$player.esbId[index]
-      row$lateral_kickoff_returner_player_name <- play_stats$player.displayName[index]
+      row$lateral_kickoff_returner_player_name <- play_stats$player.displayName[
+        index
+      ]
       row$td_team <- play_stats$teamAbbr[index]
       row$td_player_id <- play_stats$player.esbId[index]
       row$td_player_name <- play_stats$player.displayName[index]
@@ -395,7 +407,7 @@ sum_play_stats <- function(play_Id, stats) {
         if_else(
           is.na(row$fumbled_2_team) &
             row$fumbled_1_player_name != play_stats$player.displayName[index],
-            # row$fumbled_1_team != play_stats$teamAbbr[index], # can't use team here because multiple players of the same team are possible
+          # row$fumbled_1_team != play_stats$teamAbbr[index], # can't use team here because multiple players of the same team are possible
           play_stats$teamAbbr[index],
           row$fumbled_2_team
         )
@@ -438,7 +450,7 @@ sum_play_stats <- function(play_Id, stats) {
         if_else(
           is.na(row$fumbled_2_team) &
             row$fumbled_1_player_name != play_stats$player.displayName[index],
-            # row$fumbled_1_team != play_stats$teamAbbr[index],
+          # row$fumbled_1_team != play_stats$teamAbbr[index],
           play_stats$teamAbbr[index],
           row$fumbled_2_team
         )
@@ -481,7 +493,7 @@ sum_play_stats <- function(play_Id, stats) {
         if_else(
           is.na(row$fumbled_2_team) &
             row$fumbled_1_player_name != play_stats$player.displayName[index],
-            # row$fumbled_1_team != play_stats$teamAbbr[index],
+          # row$fumbled_1_team != play_stats$teamAbbr[index],
           play_stats$teamAbbr[index],
           row$fumbled_2_team
         )
@@ -521,23 +533,26 @@ sum_play_stats <- function(play_Id, stats) {
       row$fumble_recovery_2_player_name <-
         if_else(
           is.na(row$fumble_recovery_2_player_name) &
-            row$fumble_recovery_1_player_name != play_stats$player.displayName[index],
+            row$fumble_recovery_1_player_name !=
+              play_stats$player.displayName[index],
           play_stats$player.displayName[index],
           row$fumble_recovery_2_player_name
         )
       row$fumble_recovery_2_team <-
         if_else(
           is.na(row$fumble_recovery_2_team) &
-            row$fumble_recovery_1_player_name != play_stats$player.displayName[index],
-            # row$fumble_recovery_1_team != play_stats$teamAbbr[index],
+            row$fumble_recovery_1_player_name !=
+              play_stats$player.displayName[index],
+          # row$fumble_recovery_1_team != play_stats$teamAbbr[index],
           play_stats$teamAbbr[index],
           row$fumble_recovery_2_team
         )
       row$fumble_recovery_2_yards <-
         if_else(
           is.na(row$fumble_recovery_2_yards) &
-            row$fumble_recovery_1_player_name != play_stats$player.displayName[index],
-            # row$fumble_recovery_1_yards != play_stats$yards[index],
+            row$fumble_recovery_1_player_name !=
+              play_stats$player.displayName[index],
+          # row$fumble_recovery_1_yards != play_stats$yards[index],
           play_stats$yards[index],
           row$fumble_recovery_2_yards
         )
@@ -581,23 +596,26 @@ sum_play_stats <- function(play_Id, stats) {
       row$fumble_recovery_2_player_name <-
         if_else(
           is.na(row$fumble_recovery_2_player_name) &
-            row$fumble_recovery_1_player_name != play_stats$player.displayName[index],
+            row$fumble_recovery_1_player_name !=
+              play_stats$player.displayName[index],
           play_stats$player.displayName[index],
           row$fumble_recovery_2_player_name
         )
       row$fumble_recovery_2_team <-
         if_else(
           is.na(row$fumble_recovery_2_team) &
-            row$fumble_recovery_1_player_name != play_stats$player.displayName[index],
-            # row$fumble_recovery_1_team != play_stats$teamAbbr[index],
+            row$fumble_recovery_1_player_name !=
+              play_stats$player.displayName[index],
+          # row$fumble_recovery_1_team != play_stats$teamAbbr[index],
           play_stats$teamAbbr[index],
           row$fumble_recovery_2_team
         )
       row$fumble_recovery_2_yards <-
         if_else(
           is.na(row$fumble_recovery_2_yards) &
-            row$fumble_recovery_1_player_name != play_stats$player.displayName[index],
-            # row$fumble_recovery_1_yards != play_stats$yards[index],
+            row$fumble_recovery_1_player_name !=
+              play_stats$player.displayName[index],
+          # row$fumble_recovery_1_yards != play_stats$yards[index],
           play_stats$yards[index],
           row$fumble_recovery_2_yards
         )
@@ -647,23 +665,26 @@ sum_play_stats <- function(play_Id, stats) {
       row$fumble_recovery_2_player_name <-
         if_else(
           is.na(row$fumble_recovery_2_player_name) &
-            row$fumble_recovery_1_player_name != play_stats$player.displayName[index],
+            row$fumble_recovery_1_player_name !=
+              play_stats$player.displayName[index],
           play_stats$player.displayName[index],
           row$fumble_recovery_2_player_name
         )
       row$fumble_recovery_2_team <-
         if_else(
           is.na(row$fumble_recovery_2_team) &
-            row$fumble_recovery_1_player_name != play_stats$player.displayName[index],
-            # row$fumble_recovery_1_team != play_stats$teamAbbr[index],
+            row$fumble_recovery_1_player_name !=
+              play_stats$player.displayName[index],
+          # row$fumble_recovery_1_team != play_stats$teamAbbr[index],
           play_stats$teamAbbr[index],
           row$fumble_recovery_2_team
         )
       row$fumble_recovery_2_yards <-
         if_else(
           is.na(row$fumble_recovery_2_yards) &
-            row$fumble_recovery_1_player_name != play_stats$player.displayName[index],
-            # row$fumble_recovery_1_yards != play_stats$yards[index],
+            row$fumble_recovery_1_player_name !=
+              play_stats$player.displayName[index],
+          # row$fumble_recovery_1_yards != play_stats$yards[index],
           play_stats$yards[index],
           row$fumble_recovery_2_yards
         )
@@ -708,23 +729,26 @@ sum_play_stats <- function(play_Id, stats) {
       row$fumble_recovery_2_player_name <-
         if_else(
           is.na(row$fumble_recovery_2_player_name) &
-            row$fumble_recovery_1_player_name != play_stats$player.displayName[index],
+            row$fumble_recovery_1_player_name !=
+              play_stats$player.displayName[index],
           play_stats$player.displayName[index],
           row$fumble_recovery_2_player_name
         )
       row$fumble_recovery_2_team <-
         if_else(
           is.na(row$fumble_recovery_2_team) &
-            row$fumble_recovery_1_player_name != play_stats$player.displayName[index],
-            # row$fumble_recovery_1_team != play_stats$teamAbbr[index],
+            row$fumble_recovery_1_player_name !=
+              play_stats$player.displayName[index],
+          # row$fumble_recovery_1_team != play_stats$teamAbbr[index],
           play_stats$teamAbbr[index],
           row$fumble_recovery_2_team
         )
       row$fumble_recovery_2_yards <-
         if_else(
           is.na(row$fumble_recovery_2_yards) &
-            row$fumble_recovery_1_player_name != play_stats$player.displayName[index],
-            # row$fumble_recovery_1_yards != play_stats$yards[index],
+            row$fumble_recovery_1_player_name !=
+              play_stats$player.displayName[index],
+          # row$fumble_recovery_1_yards != play_stats$yards[index],
           play_stats$yards[index],
           row$fumble_recovery_2_yards
         )
@@ -836,15 +860,17 @@ sum_play_stats <- function(play_Id, stats) {
       row$solo_tackle_2_player_name <-
         if_else(
           is.na(row$solo_tackle_2_player_name) &
-            row$solo_tackle_1_player_name != play_stats$player.displayName[index],
+            row$solo_tackle_1_player_name !=
+              play_stats$player.displayName[index],
           play_stats$player.displayName[index],
           row$solo_tackle_2_player_name
         )
       row$solo_tackle_2_team <-
         if_else(
           is.na(row$solo_tackle_2_team) &
-            row$solo_tackle_1_player_name != play_stats$player.displayName[index],
-            # row$solo_tackle_1_team != play_stats$teamAbbr[index],
+            row$solo_tackle_1_player_name !=
+              play_stats$player.displayName[index],
+          # row$solo_tackle_1_team != play_stats$teamAbbr[index],
           play_stats$teamAbbr[index],
           row$solo_tackle_2_team
         )
@@ -871,26 +897,30 @@ sum_play_stats <- function(play_Id, stats) {
       row$tackle_with_assist_2_player_id <-
         if_else(
           is.na(row$tackle_with_assist_2_player_id) &
-            row$tackle_with_assist_1_player_id != play_stats$player.esbId[index],
+            row$tackle_with_assist_1_player_id !=
+              play_stats$player.esbId[index],
           play_stats$player.esbId[index],
           row$tackle_with_assist_2_player_id
         )
       row$tackle_with_assist_2_player_name <-
         if_else(
           is.na(row$tackle_with_assist_2_player_name) &
-            row$tackle_with_assist_1_player_name != play_stats$player.displayName[index],
+            row$tackle_with_assist_1_player_name !=
+              play_stats$player.displayName[index],
           play_stats$player.displayName[index],
           row$tackle_with_assist_2_player_name
         )
       row$tackle_with_assist_2_team <-
         if_else(
           is.na(row$tackle_with_assist_2_team) &
-            row$tackle_with_assist_1_player_name != play_stats$player.displayName[index],
-            # row$tackle_with_assist_1_team != play_stats$teamAbbr[index],
+            row$tackle_with_assist_1_player_name !=
+              play_stats$player.displayName[index],
+          # row$tackle_with_assist_1_team != play_stats$teamAbbr[index],
           play_stats$teamAbbr[index],
           row$tackle_with_assist_2_team
         )
-    } else if (stat_id == 82) { # =81
+    } else if (stat_id == 82) {
+      # =81
       row$assist_tackle <- 1
       row$assist_tackle_1_player_id <-
         if_else(
@@ -920,15 +950,17 @@ sum_play_stats <- function(play_Id, stats) {
       row$assist_tackle_2_player_name <-
         if_else(
           is.na(row$assist_tackle_2_player_name) &
-            row$assist_tackle_1_player_name != play_stats$player.displayName[index],
+            row$assist_tackle_1_player_name !=
+              play_stats$player.displayName[index],
           play_stats$player.displayName[index],
           row$assist_tackle_2_player_name
         )
       row$assist_tackle_2_team <-
         if_else(
           is.na(row$assist_tackle_2_team) &
-            row$assist_tackle_1_player_name != play_stats$player.displayName[index],
-            # row$assist_tackle_1_team != play_stats$teamAbbr[index],
+            row$assist_tackle_1_player_name !=
+              play_stats$player.displayName[index],
+          # row$assist_tackle_1_team != play_stats$teamAbbr[index],
           play_stats$teamAbbr[index],
           row$assist_tackle_2_team
         )
@@ -936,25 +968,29 @@ sum_play_stats <- function(play_Id, stats) {
         if_else(
           (is.na(row$assist_tackle_3_player_id) &
             row$assist_tackle_1_player_id != play_stats$player.esbId[index] &
-             row$assist_tackle_2_player_id != play_stats$player.esbId[index]),
+            row$assist_tackle_2_player_id != play_stats$player.esbId[index]),
           play_stats$player.esbId[index],
           row$assist_tackle_3_player_id
         )
       row$assist_tackle_3_player_name <-
         if_else(
           (is.na(row$assist_tackle_3_player_name) &
-            row$assist_tackle_1_player_name != play_stats$player.displayName[index] &
-             row$assist_tackle_2_player_name != play_stats$player.displayName[index]),
+            row$assist_tackle_1_player_name !=
+              play_stats$player.displayName[index] &
+            row$assist_tackle_2_player_name !=
+              play_stats$player.displayName[index]),
           play_stats$player.displayName[index],
           row$assist_tackle_3_player_name
         )
       row$assist_tackle_3_team <-
         if_else(
           (is.na(row$assist_tackle_3_team) &
-             row$assist_tackle_1_player_name != play_stats$player.displayName[index] &
-             row$assist_tackle_2_player_name != play_stats$player.displayName[index]),
-            # row$assist_tackle_1_team != play_stats$teamAbbr[index] &
-            #  row$assist_tackle_2_team != play_stats$teamAbbr[index]),
+            row$assist_tackle_1_player_name !=
+              play_stats$player.displayName[index] &
+            row$assist_tackle_2_player_name !=
+              play_stats$player.displayName[index]),
+          # row$assist_tackle_1_team != play_stats$teamAbbr[index] &
+          #  row$assist_tackle_2_team != play_stats$teamAbbr[index]),
           play_stats$teamAbbr[index],
           row$assist_tackle_3_team
         )
@@ -962,29 +998,35 @@ sum_play_stats <- function(play_Id, stats) {
         if_else(
           (is.na(row$assist_tackle_4_player_id) &
             row$assist_tackle_1_player_id != play_stats$player.esbId[index] &
-             row$assist_tackle_2_player_id != play_stats$player.esbId[index] &
-             row$assist_tackle_3_player_id != play_stats$player.esbId[index]),
+            row$assist_tackle_2_player_id != play_stats$player.esbId[index] &
+            row$assist_tackle_3_player_id != play_stats$player.esbId[index]),
           play_stats$player.esbId[index],
           row$assist_tackle_4_player_id
         )
       row$assist_tackle_4_player_name <-
         if_else(
           (is.na(row$assist_tackle_4_player_name) &
-            row$assist_tackle_1_player_name != play_stats$player.displayName[index] &
-             row$assist_tackle_2_player_name != play_stats$player.displayName[index] &
-             row$assist_tackle_3_player_name != play_stats$player.displayName[index]),
+            row$assist_tackle_1_player_name !=
+              play_stats$player.displayName[index] &
+            row$assist_tackle_2_player_name !=
+              play_stats$player.displayName[index] &
+            row$assist_tackle_3_player_name !=
+              play_stats$player.displayName[index]),
           play_stats$player.displayName[index],
           row$assist_tackle_4_player_name
         )
       row$assist_tackle_4_team <-
         if_else(
           (is.na(row$assist_tackle_4_team) &
-             row$assist_tackle_1_player_name != play_stats$player.displayName[index] &
-             row$assist_tackle_2_player_name != play_stats$player.displayName[index] &
-             row$assist_tackle_3_player_name != play_stats$player.displayName[index]),
-            # row$assist_tackle_1_team != play_stats$teamAbbr[index] &
-            #  row$assist_tackle_2_team != play_stats$teamAbbr[index] &
-            #  row$assist_tackle_3_team != play_stats$teamAbbr[index]),
+            row$assist_tackle_1_player_name !=
+              play_stats$player.displayName[index] &
+            row$assist_tackle_2_player_name !=
+              play_stats$player.displayName[index] &
+            row$assist_tackle_3_player_name !=
+              play_stats$player.displayName[index]),
+          # row$assist_tackle_1_team != play_stats$teamAbbr[index] &
+          #  row$assist_tackle_2_team != play_stats$teamAbbr[index] &
+          #  row$assist_tackle_3_team != play_stats$teamAbbr[index]),
           play_stats$teamAbbr[index],
           row$assist_tackle_4_team
         )
@@ -1044,7 +1086,8 @@ sum_play_stats <- function(play_Id, stats) {
       row$pass_defense_2_player_name <-
         if_else(
           is.na(row$pass_defense_2_player_name) &
-            row$pass_defense_1_player_name != play_stats$player.displayName[index],
+            row$pass_defense_1_player_name !=
+              play_stats$player.displayName[index],
           play_stats$player.displayName[index],
           row$pass_defense_2_player_name
         )
@@ -1086,22 +1129,25 @@ sum_play_stats <- function(play_Id, stats) {
       row$forced_fumble_player_2_player_id <-
         if_else(
           is.na(row$forced_fumble_player_2_player_id) &
-            row$forced_fumble_player_1_player_id != play_stats$player.esbId[index],
+            row$forced_fumble_player_1_player_id !=
+              play_stats$player.esbId[index],
           play_stats$player.esbId[index],
           row$forced_fumble_player_2_player_id
         )
       row$forced_fumble_player_2_player_name <-
         if_else(
           is.na(row$forced_fumble_player_2_player_name) &
-            row$forced_fumble_player_1_player_name != play_stats$player.displayName[index],
+            row$forced_fumble_player_1_player_name !=
+              play_stats$player.displayName[index],
           play_stats$player.displayName[index],
           row$forced_fumble_player_2_player_name
         )
       row$forced_fumble_player_2_team <-
         if_else(
           is.na(row$forced_fumble_player_2_team) &
-            row$forced_fumble_player_1_player_name != play_stats$player.displayName[index],
-            # row$forced_fumble_player_1_team != play_stats$teamAbbr[index],
+            row$forced_fumble_player_1_player_name !=
+              play_stats$player.displayName[index],
+          # row$forced_fumble_player_1_team != play_stats$teamAbbr[index],
           play_stats$teamAbbr[index],
           row$forced_fumble_player_2_team
         )
@@ -1185,7 +1231,7 @@ sum_play_stats <- function(play_Id, stats) {
         if_else(
           is.na(row$fumbled_2_team) &
             row$fumbled_1_player_name != play_stats$player.displayName[index],
-            # row$fumbled_1_team != play_stats$teamAbbr[index],
+          # row$fumbled_1_team != play_stats$teamAbbr[index],
           play_stats$teamAbbr[index],
           row$fumbled_2_team
         )
@@ -1193,7 +1239,9 @@ sum_play_stats <- function(play_Id, stats) {
       row$own_kickoff_recovery <- 1
       row$kickoff_attempt <- 1
       row$own_kickoff_recovery_player_id <- play_stats$player.esbId[index]
-      row$own_kickoff_recovery_player_name <- play_stats$player.displayName[index]
+      row$own_kickoff_recovery_player_name <- play_stats$player.displayName[
+        index
+      ]
     } else if (stat_id == 108) {
       row$own_kickoff_recovery_td <- 1
       row$touchdown <- 1
@@ -1202,7 +1250,9 @@ sum_play_stats <- function(play_Id, stats) {
       row$td_player_name <- play_stats$player.displayName[index]
       row$kickoff_attempt <- 1
       row$own_kickoff_recovery_player_id <- play_stats$player.esbId[index]
-      row$own_kickoff_recovery_player_name <- play_stats$player.displayName[index]
+      row$own_kickoff_recovery_player_name <- play_stats$player.displayName[
+        index
+      ]
     } else if (stat_id == 110) {
       row$qb_hit <- 1
       row$qb_hit_1_player_id <-
@@ -1279,7 +1329,8 @@ sum_play_stats <- function(play_Id, stats) {
       row$tackle_for_loss_2_player_name <-
         if_else(
           is.na(row$tackle_for_loss_2_player_name) &
-            row$tackle_for_loss_1_player_name != play_stats$player.displayName[index],
+            row$tackle_for_loss_1_player_name !=
+              play_stats$player.displayName[index],
           play_stats$player.displayName[index],
           row$tackle_for_loss_2_player_name
         )

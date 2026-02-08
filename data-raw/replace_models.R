@@ -10,7 +10,7 @@ models <- c(
   "xpass_model,"
 )
 
-purrr::walk(models, function(model){
+purrr::walk(models, function(model) {
   xfun::gsub_dir(
     # paste0(model,"(?![:alpha:]+)"),
     model,

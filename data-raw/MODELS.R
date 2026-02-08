@@ -41,15 +41,18 @@ model_data <- pbp_data |>
     Drive_Score_Dist_W = (max(Drive_Score_Dist) - Drive_Score_Dist) /
       (max(Drive_Score_Dist) - min(Drive_Score_Dist)),
     # Create a weight column based on score differential:
-    ScoreDiff_W = (max(abs(score_differential), na.rm=T) - abs(score_differential)) /
-      (max(abs(score_differential), na.rm=T) - min(abs(score_differential), na.rm=T)),
+    ScoreDiff_W = (max(abs(score_differential), na.rm = T) -
+      abs(score_differential)) /
+      (max(abs(score_differential), na.rm = T) -
+        min(abs(score_differential), na.rm = T)),
     # Add these weights together and scale again:
     Total_W = Drive_Score_Dist_W + ScoreDiff_W,
-    Total_W_Scaled = (Total_W - min(Total_W, na.rm=T)) /
-      (max(Total_W, na.rm=T) - min(Total_W, na.rm=T))
+    Total_W_Scaled = (Total_W - min(Total_W, na.rm = T)) /
+      (max(Total_W, na.rm = T) - min(Total_W, na.rm = T))
   ) |>
   filter(
-    !is.na(defteam_timeouts_remaining), !is.na(posteam_timeouts_remaining),
+    !is.na(defteam_timeouts_remaining),
+    !is.na(posteam_timeouts_remaining),
     !is.na(yardline_100)
   ) |>
   select(
@@ -61,8 +64,15 @@ model_data <- pbp_data |>
     dome,
     outdoors,
     ydstogo,
-    era0, era1, era2, era3, era4,
-    down1, down2, down3, down4,
+    era0,
+    era1,
+    era2,
+    era3,
+    era4,
+    down1,
+    down2,
+    down3,
+    down4,
     posteam_timeouts_remaining,
     defteam_timeouts_remaining,
     Total_W_Scaled
@@ -84,27 +94,40 @@ params <-
   )
 
 model_data <- model_data |>
-  mutate(label = as.numeric(label),
-         label = label - 1)
+  mutate(label = as.numeric(label), label = label - 1)
 
-full_train = xgboost::xgb.DMatrix(model.matrix(~.+0, data = model_data |> select(-label, -Total_W_Scaled)),
-                                  label = model_data$label, weight = model_data$Total_W_Scaled)
+full_train = xgboost::xgb.DMatrix(
+  model.matrix(~ . + 0, data = model_data |> select(-label, -Total_W_Scaled)),
+  label = model_data$label,
+  weight = model_data$Total_W_Scaled
+)
 
 set.seed(2013) #GoHawks
-ep_model <- xgboost::xgboost(params = params, data = full_train, nrounds = nrounds, verbose = 2)
+ep_model <- xgboost::xgboost(
+  params = params,
+  data = full_train,
+  nrounds = nrounds,
+  verbose = 2
+)
 
 ################################################################################
 # Estimate FG model
 ################################################################################
 
-fg_model_data <-  pbp_data |>
-  filter(play_type %in% c("field_goal","extra_point","run") &
-           (!is.na(extra_point_result) | !is.na(field_goal_result))) |>
+fg_model_data <- pbp_data |>
+  filter(
+    play_type %in%
+      c("field_goal", "extra_point", "run") &
+      (!is.na(extra_point_result) | !is.na(field_goal_result))
+  ) |>
   make_model_mutations()
 
 #estimate model
-fg_model <- mgcv::bam(sp ~ s(yardline_100, by = interaction(era, model_roof)) + model_roof + era,
-                      data = fg_model_data, family = "binomial")
+fg_model <- mgcv::bam(
+  sp ~ s(yardline_100, by = interaction(era, model_roof)) + model_roof + era,
+  data = fg_model_data,
+  family = "binomial"
+)
 
 ################################################################################
 # Estimate CP model
@@ -132,10 +155,17 @@ params <-
     base_score = mean(model_vars$complete_pass)
   )
 
-full_train = xgboost::xgb.DMatrix(model.matrix(~.+0, data = model_vars |> dplyr::select(-complete_pass)),
-                                  label = model_vars$complete_pass)
+full_train = xgboost::xgb.DMatrix(
+  model.matrix(~ . + 0, data = model_vars |> dplyr::select(-complete_pass)),
+  label = model_vars$complete_pass
+)
 set.seed(2013) #GoHawks
-cp_model <- xgboost::xgboost(params = params, data = full_train, nrounds = nrounds, verbose = 2)
+cp_model <- xgboost::xgboost(
+  params = params,
+  data = full_train,
+  nrounds = nrounds,
+  verbose = 2
+)
 
 
 ################################################################################
@@ -143,12 +173,21 @@ cp_model <- xgboost::xgboost(params = params, data = full_train, nrounds = nroun
 ################################################################################
 
 model_data <-
-  readRDS(url('https://github.com/guga31bb/metrics/blob/master/wp_tuning/cal_data.rds?raw=true')) |>
+  readRDS(url(
+    'https://github.com/guga31bb/metrics/blob/master/wp_tuning/cal_data.rds?raw=true'
+  )) |>
   filter(Winner != "TIE") |>
   make_model_mutations() |>
   prepare_wp_data() |>
   mutate(label = ifelse(posteam == Winner, 1, 0)) |>
-  filter(qtr <= 4 & !is.na(ep) & !is.na(score_differential) & !is.na(play_type) & !is.na(label), !is.na(yardline_100)) |>
+  filter(
+    qtr <= 4 &
+      !is.na(ep) &
+      !is.na(score_differential) &
+      !is.na(play_type) &
+      !is.na(label),
+    !is.na(yardline_100)
+  ) |>
   select(
     label,
     receive_2h_ko,
@@ -174,25 +213,33 @@ params <-
     eval_metric = c("logloss"),
     eta = 0.05,
     gamma = .79012017,
-    subsample= 0.9224245,
-    colsample_bytree= 5/12,
+    subsample = 0.9224245,
+    colsample_bytree = 5 / 12,
     max_depth = 5,
     min_child_weight = 7,
-    monotone_constraints =
-      "(0, 0, 0, 0, 0, 1, 1, -1, -1, -1, 1, -1)"
+    monotone_constraints = "(0, 0, 0, 0, 0, 1, 1, -1, -1, -1, 1, -1)"
   )
 
 
-full_train = xgboost::xgb.DMatrix(model.matrix(~.+0, data = model_data |> select(-label)),
-                                  label = model_data$label)
+full_train = xgboost::xgb.DMatrix(
+  model.matrix(~ . + 0, data = model_data |> select(-label)),
+  label = model_data$label
+)
 set.seed(2013) #GoHawks
-wp_model_spread <- xgboost::xgboost(params = params, data = full_train, nrounds = nrounds, verbose = 2)
+wp_model_spread <- xgboost::xgboost(
+  params = params,
+  data = full_train,
+  nrounds = nrounds,
+  verbose = 2
+)
 
-importance <- xgboost::xgb.importance(feature_names = colnames(wp_model_spread), model = wp_model_spread)
+importance <- xgboost::xgb.importance(
+  feature_names = colnames(wp_model_spread),
+  model = wp_model_spread
+)
 xgboost::xgb.ggplot.importance(importance_matrix = importance)
 
 #xgboost::xgb.plot.tree(model = wp_model_spread, trees = 1, show_node_id = TRUE)
-
 
 ################################################################################
 # Estimate WP model: no spread
@@ -211,26 +258,36 @@ params <-
     eval_metric = c("logloss"),
     eta = 0.2,
     gamma = 0,
-    subsample=0.8,
-    colsample_bytree=0.8,
+    subsample = 0.8,
+    colsample_bytree = 0.8,
     max_depth = 4,
     min_child_weight = 1
   )
 
 
-full_train = xgboost::xgb.DMatrix(model.matrix(~.+0, data = model_data |> select(-label)),
-                                  label = model_data$label)
+full_train = xgboost::xgb.DMatrix(
+  model.matrix(~ . + 0, data = model_data |> select(-label)),
+  label = model_data$label
+)
 set.seed(2013) #GoHawks
-wp_model <- xgboost::xgboost(params = params, data = full_train, nrounds = nrounds, verbose = 2)
-
-
+wp_model <- xgboost::xgboost(
+  params = params,
+  data = full_train,
+  nrounds = nrounds,
+  verbose = 2
+)
 
 
 ################################################################################
 # save models to use in package
 ################################################################################
 
-usethis::use_data(ep_model, wp_model, wp_model_spread, fg_model, cp_model, internal = TRUE, overwrite = TRUE)
-
-
-
+usethis::use_data(
+  ep_model,
+  wp_model,
+  wp_model_spread,
+  fg_model,
+  cp_model,
+  internal = TRUE,
+  overwrite = TRUE
+)

@@ -30,7 +30,7 @@
 #' }
 #' }
 #' @export
-report <- function(...){
+report <- function(...) {
   lifecycle::deprecate_warn(
     "5.2.0",
     "report()",
