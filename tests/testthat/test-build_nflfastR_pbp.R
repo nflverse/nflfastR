@@ -29,3 +29,18 @@ test_that("build_nflfastR_pbp works (outside CRAN)", {
   exp <- load_expectation("pbp")
   expect_equal(pbp, exp)
 })
+
+test_that("default_play is synced with build_nflfastR_pbp", {
+  # `default_play` is a table of 1 row that is supposed to match the
+  # output structure of build_nflfastR_pbp. It is used to initialize the
+  # data table in pbp DBs.
+  # This test makes sure that it is synced with build_nflfastR_pbp
+
+  exp <- load_expectation("pbp")
+
+  names_and_types_exp <- vapply(exp, class, FUN.VALUE = character(1L))
+  names_and_types_def <- vapply(default_play, class, FUN.VALUE = character(1L))
+
+  expect_identical(names_and_types_def, names_and_types_exp)
+  expect_snapshot_value(names_and_types_def, style = "json2")
+})

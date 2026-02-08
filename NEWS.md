@@ -1,3 +1,7 @@
+# nflfastR (development version)
+
+- Added new function `update_pbp_db()`, a fresh approach to the database helper. (#544)
+
 # nflfastR 5.2.0
 
 - Bump required fastrmodels version to 2.0 for better compatibility with xgboost.

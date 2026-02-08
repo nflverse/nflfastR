@@ -1,7 +1,7 @@
 Type: Package
 Package: nflfastR
 Title: Functions to Efficiently Access NFL Play by Play Data
-Version: 5.2.0
+Version: 5.2.0.9001
 Authors@R: c(
     person("Sebastian", "Carl", , "mrcaseb@gmail.com", role = "aut"),
     person("Ben", "Baldwin", , "bbaldwin206@gmail.com", role = c("cre", "aut")),
@@ -40,6 +40,7 @@ Imports:
     xgboost (>= 1.1)
 Suggests: 
     DBI,
+    duckdb,
     gsisdecoder,
     nflseedR (>= 2.0.0),
     purrr (>= 0.3.0),
