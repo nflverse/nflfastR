@@ -86,30 +86,30 @@ try({# to avoid CRAN test problems
 build_nflfastR_pbp(c("2018_21_NE_LA", "2019_21_SF_KC"))
 })
 #> ── Build nflfastR Play-by-Play Data ────────────────── nflfastR version 5.2.0 ──
-#> • 12:15:00 | Start download of 2 games...
+#> • 12:23:11 | Start download of 2 games...
 #> ℹ It is recommended to use parallel processing when trying to load multiple games.Please consider running `future::plan("multisession")`! Will go on sequentially...
-#> ✔ 12:15:02 | Download finished. Adding variables...
-#> ✔ 12:15:03 | added game variables
-#> ✔ 12:15:03 | added nflscrapR variables
-#> ✔ 12:15:03 | added ep variables
-#> ✔ 12:15:04 | added air_yac_ep variables
-#> ✔ 12:15:04 | added wp variables
-#> ✔ 12:15:04 | added air_yac_wp variables
-#> ✔ 12:15:04 | added cp and cpoe
-#> ✔ 12:15:04 | added fixed drive variables
-#> ✔ 12:15:04 | added series variables
-#> • 12:15:04 | Cleaning up play-by-play...
-#> ✔ 12:15:04 | Cleaning completed
-#> ✔ 12:15:04 | added qb_epa
-#> • 12:15:04 | Computing xyac...
-#> ✔ 12:15:06 | added xyac variables
-#> • 12:15:06 | Computing xpass...
-#> ✔ 12:15:06 | added xpass and pass_oe
-#> • 12:15:06 | Decode player ids...
-#> ✔ 12:15:07 | Decoding of player ids completed
+#> ✔ 12:23:14 | Download finished. Adding variables...
+#> ✔ 12:23:15 | added game variables
+#> ✔ 12:23:15 | added nflscrapR variables
+#> ✔ 12:23:16 | added ep variables
+#> ✔ 12:23:16 | added air_yac_ep variables
+#> ✔ 12:23:16 | added wp variables
+#> ✔ 12:23:16 | added air_yac_wp variables
+#> ✔ 12:23:16 | added cp and cpoe
+#> ✔ 12:23:16 | added fixed drive variables
+#> ✔ 12:23:17 | added series variables
+#> • 12:23:17 | Cleaning up play-by-play...
+#> ✔ 12:23:17 | Cleaning completed
+#> ✔ 12:23:17 | added qb_epa
+#> • 12:23:17 | Computing xyac...
+#> ✔ 12:23:19 | added xyac variables
+#> • 12:23:19 | Computing xpass...
+#> ✔ 12:23:19 | added xpass and pass_oe
+#> • 12:23:19 | Decode player ids...
+#> ✔ 12:23:20 | Decoding of player ids completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 #> ── nflverse play by play ───────────────────────────────────────────────────────
-#> ℹ Data updated: 2026-02-08 12:15:07 UTC
+#> ℹ Data updated: 2026-02-08 12:23:20 UTC
 #> # A tibble: 349 × 372
 #>    play_id game_id     old_game_id home_team away_team season_type  week posteam
 #>      <dbl> <chr>       <chr>       <chr>     <chr>     <chr>       <int> <chr>  
@@ -139,32 +139,32 @@ nflreadr::load_schedules(2025) |>
   build_nflfastR_pbp()
 })
 #> ── Build nflfastR Play-by-Play Data ────────────────── nflfastR version 5.2.0 ──
-#> • 12:15:07 | Start download of 3 games...
+#> • 12:23:20 | Start download of 3 games...
 #> ℹ It is recommended to use parallel processing when trying to load multiple games.Please consider running `future::plan("multisession")`! Will go on sequentially...
 #> ! The requested GameID "2025_22_SEA_NE" is not loaded yet, please try
 #> again later!
-#> ✔ 12:15:09 | Download finished. Adding variables...
-#> ✔ 12:15:09 | added game variables
-#> ✔ 12:15:10 | added nflscrapR variables
-#> ✔ 12:15:10 | added ep variables
-#> ✔ 12:15:10 | added air_yac_ep variables
-#> ✔ 12:15:10 | added wp variables
-#> ✔ 12:15:10 | added air_yac_wp variables
-#> ✔ 12:15:10 | added cp and cpoe
-#> ✔ 12:15:10 | added fixed drive variables
-#> ✔ 12:15:11 | added series variables
-#> • 12:15:11 | Cleaning up play-by-play...
-#> ✔ 12:15:11 | Cleaning completed
-#> ✔ 12:15:11 | added qb_epa
-#> • 12:15:11 | Computing xyac...
-#> ✔ 12:15:12 | added xyac variables
-#> • 12:15:12 | Computing xpass...
-#> ✔ 12:15:12 | added xpass and pass_oe
-#> • 12:15:12 | Decode player ids...
-#> ✔ 12:15:12 | Decoding of player ids completed
+#> ✔ 12:23:22 | Download finished. Adding variables...
+#> ✔ 12:23:22 | added game variables
+#> ✔ 12:23:22 | added nflscrapR variables
+#> ✔ 12:23:23 | added ep variables
+#> ✔ 12:23:23 | added air_yac_ep variables
+#> ✔ 12:23:23 | added wp variables
+#> ✔ 12:23:23 | added air_yac_wp variables
+#> ✔ 12:23:23 | added cp and cpoe
+#> ✔ 12:23:23 | added fixed drive variables
+#> ✔ 12:23:23 | added series variables
+#> • 12:23:23 | Cleaning up play-by-play...
+#> ✔ 12:23:23 | Cleaning completed
+#> ✔ 12:23:23 | added qb_epa
+#> • 12:23:23 | Computing xyac...
+#> ✔ 12:23:24 | added xyac variables
+#> • 12:23:24 | Computing xpass...
+#> ✔ 12:23:24 | added xpass and pass_oe
+#> • 12:23:24 | Decode player ids...
+#> ✔ 12:23:24 | Decoding of player ids completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 #> ── nflverse play by play ───────────────────────────────────────────────────────
-#> ℹ Data updated: 2026-02-08 12:15:12 UTC
+#> ℹ Data updated: 2026-02-08 12:23:24 UTC
 #> # A tibble: 340 × 372
 #>    play_id game_id     old_game_id home_team away_team season_type  week posteam
 #>      <dbl> <chr>       <chr>       <chr>     <chr>     <chr>       <int> <chr>  
