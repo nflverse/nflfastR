@@ -1558,19 +1558,19 @@ try({# to avoid CRAN test problems
 fast_scraper(c("2019_01_GB_CHI", "2013_21_SEA_DEN"))
 })
 #> ℹ It is recommended to use parallel processing when trying to load multiple games.Please consider running `future::plan("multisession")`! Will go on sequentially...
-#> ✔ 19:41:49 | Download finished. Adding variables...
-#> ✔ 19:41:49 | added game variables
-#> ✔ 19:41:49 | added nflscrapR variables
-#> ✔ 19:41:50 | added ep variables
-#> ✔ 19:41:50 | added air_yac_ep variables
-#> ✔ 19:41:50 | added wp variables
-#> ✔ 19:41:50 | added air_yac_wp variables
-#> ✔ 19:41:50 | added cp and cpoe
-#> ✔ 19:41:50 | added fixed drive variables
-#> ✔ 19:41:50 | added series variables
-#> ✔ 19:41:50 | Procedure completed.
+#> ✔ 20:02:16 | Download finished. Adding variables...
+#> ✔ 20:02:16 | added game variables
+#> ✔ 20:02:16 | added nflscrapR variables
+#> ✔ 20:02:16 | added ep variables
+#> ✔ 20:02:17 | added air_yac_ep variables
+#> ✔ 20:02:17 | added wp variables
+#> ✔ 20:02:17 | added air_yac_wp variables
+#> ✔ 20:02:17 | added cp and cpoe
+#> ✔ 20:02:17 | added fixed drive variables
+#> ✔ 20:02:17 | added series variables
+#> ✔ 20:02:17 | Procedure completed.
 #> ── nflverse play by play ───────────────────────────────────────────────────────
-#> ℹ Data updated: 2026-02-08 19:41:50 UTC
+#> ℹ Data updated: 2026-02-08 20:02:17 UTC
 #> # A tibble: 337 × 339
 #>    play_id game_id     old_game_id home_team away_team season_type  week posteam
 #>      <dbl> <chr>       <chr>       <chr>     <chr>     <chr>       <int> <chr>  
@@ -1604,19 +1604,19 @@ fast_scraper_schedules(2020) |>
 #> Warning: `fast_scraper_schedules()` was deprecated in nflfastR 5.2.0.
 #> ℹ Please use `nflreadr::load_schedules()` instead.
 #> ℹ It is recommended to use parallel processing when trying to load multiple games.Please consider running `future::plan("multisession")`! Will go on sequentially...
-#> ✔ 19:41:53 | Download finished. Adding variables...
-#> ✔ 19:41:53 | added game variables
-#> ✔ 19:41:54 | added nflscrapR variables
-#> ✔ 19:41:54 | added ep variables
-#> ✔ 19:41:54 | added air_yac_ep variables
-#> ✔ 19:41:54 | added wp variables
-#> ✔ 19:41:54 | added air_yac_wp variables
-#> ✔ 19:41:55 | added cp and cpoe
-#> ✔ 19:41:55 | added fixed drive variables
-#> ✔ 19:41:55 | added series variables
-#> ✔ 19:41:55 | Procedure completed.
+#> ✔ 20:02:20 | Download finished. Adding variables...
+#> ✔ 20:02:20 | added game variables
+#> ✔ 20:02:21 | added nflscrapR variables
+#> ✔ 20:02:21 | added ep variables
+#> ✔ 20:02:21 | added air_yac_ep variables
+#> ✔ 20:02:21 | added wp variables
+#> ✔ 20:02:21 | added air_yac_wp variables
+#> ✔ 20:02:21 | added cp and cpoe
+#> ✔ 20:02:22 | added fixed drive variables
+#> ✔ 20:02:22 | added series variables
+#> ✔ 20:02:22 | Procedure completed.
 #> ── nflverse play by play ───────────────────────────────────────────────────────
-#> ℹ Data updated: 2026-02-08 19:41:55 UTC
+#> ℹ Data updated: 2026-02-08 20:02:22 UTC
 #> # A tibble: 539 × 339
 #>    play_id game_id     old_game_id home_team away_team season_type  week posteam
 #>      <dbl> <chr>       <chr>       <chr>     <chr>     <chr>       <int> <chr>  

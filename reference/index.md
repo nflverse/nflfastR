@@ -6,6 +6,9 @@
   : Build a Complete nflfastR Data Set
 - [`update_db()`](https://nflfastr.com/reference/update_db.md) : Update
   or Create a nflfastR Play-by-Play Database
+- [`update_pbp_db()`](https://nflfastr.com/reference/update_pbp_db.md) :
+  Update or Create a nflverse Play-by-Play Data Table in a Connected
+  Database
 
 ## Load Functions
 
@@ -18,7 +21,8 @@ These functions access precomputed data using the nflreadr package. See
   [`load_team_stats`](https://nflfastr.com/reference/reexports.md)
   [`load_schedules`](https://nflfastr.com/reference/reexports.md)
   [`load_rosters`](https://nflfastr.com/reference/reexports.md)
-  [`nflverse_sitrep`](https://nflfastr.com/reference/reexports.md) :
+  [`nflverse_sitrep`](https://nflfastr.com/reference/reexports.md)
+  [`most_recent_season`](https://nflfastr.com/reference/reexports.md) :
   Objects exported from other packages
 
 ## Utility Functions

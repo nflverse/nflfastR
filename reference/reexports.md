@@ -10,4 +10,4 @@ to see their documentation.
   [`load_rosters`](https://nflreadr.nflverse.com/reference/load_rosters.html),
   [`load_schedules`](https://nflreadr.nflverse.com/reference/load_schedules.html),
   [`load_team_stats`](https://nflreadr.nflverse.com/reference/load_team_stats.html),
-  `nflverse_sitrep`
+  `most_recent_season`, `nflverse_sitrep`
