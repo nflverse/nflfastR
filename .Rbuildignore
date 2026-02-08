@@ -25,3 +25,4 @@
 ^CRAN-SUBMISSION$
 ^[.]?air[.]toml$
 ^\.vscode$
+^\.git-blame-ignore-revs$
