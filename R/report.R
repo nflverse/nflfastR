@@ -21,7 +21,7 @@
 #' old_ops <- options(repos = c("CRAN" = "https://cran.rstudio.com/"))
 #' }
 #'
-#' report(recursive = FALSE)
+#' # report(recursive = FALSE)
 #' nflverse_sitrep(pkg = "nflreadr", recursive = TRUE)
 #'
 #' \dontshow{
@@ -30,7 +30,7 @@
 #' }
 #' }
 #' @export
-report <- function(...){
+report <- function(...) {
   lifecycle::deprecate_warn(
     "5.2.0",
     "report()",

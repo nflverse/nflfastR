@@ -8,10 +8,11 @@
 #
 # @param gameId Specifies the game
 
-get_pbp_gc <- function(gameId,
-                       dir = getOption("nflfastR.raw_directory", default = NULL),
-                       ...) {
-
+get_pbp_gc <- function(
+  gameId,
+  dir = getOption("nflfastR.raw_directory", default = NULL),
+  ...
+) {
   # testing only
   # gameId = '2013120812'
   # gameId = '2019_01_GB_CHI'
@@ -34,7 +35,8 @@ get_pbp_gc <- function(gameId,
   date_year <- stringr::str_sub(date_parse, 1, 4)
   date_month <- stringr::str_sub(date_parse, 5, 6)
   date_day <- stringr::str_sub(
-    date_parse, nchar(date_parse) - 1,
+    date_parse,
+    nchar(date_parse) - 1,
     nchar(date_parse)
   )
 
@@ -46,7 +48,9 @@ get_pbp_gc <- function(gameId,
   }
 
   if (date_year < 1999) {
-    cli::cli_abort("You asked a game from {date_year}, but data only goes back to 1999.")
+    cli::cli_abort(
+      "You asked a game from {date_year}, but data only goes back to 1999."
+    )
   }
 
   # excluding last element since it's "crntdrv" and not an actual
@@ -54,15 +58,21 @@ get_pbp_gc <- function(gameId,
 
   # list of plays
   # each play has "players" column which is a list of player stats from the play
-  plays <- suppressWarnings(furrr::future_map_dfr(seq_along(drives), function(x) {
-    cbind(
-      "drive" = x,
-      data.frame(do.call(
-        rbind,
-        drives[[x]]$plays
-      ))[, c(1:11)]
-    ) |> dplyr::mutate(play_id = names(drives[[x]]$plays), play_id = as.numeric(.data$play_id))
-  }
+  plays <- suppressWarnings(furrr::future_map_dfr(
+    seq_along(drives),
+    function(x) {
+      cbind(
+        "drive" = x,
+        data.frame(do.call(
+          rbind,
+          drives[[x]]$plays
+        ))[, c(1:11)]
+      ) |>
+        dplyr::mutate(
+          play_id = names(drives[[x]]$plays),
+          play_id = as.numeric(.data$play_id)
+        )
+    }
   ))
 
   # some 2000 games have play_ids like 2767.375 and 2767.703 which results in
@@ -74,7 +84,12 @@ get_pbp_gc <- function(gameId,
   plays$play_id <- uniquify_ids(plays$play_id)
 
   plays$quarter_end <- dplyr::if_else(
-    stringr::str_detect(plays$desc, "(END QUARTER)|(END GAME)|(End of quarter)"), 1, 0
+    stringr::str_detect(
+      plays$desc,
+      "(END QUARTER)|(END GAME)|(End of quarter)"
+    ),
+    1,
+    0
   )
   plays$home_team <- game_json$home$abbr
   plays$away_team <- game_json$away$abbr
@@ -83,8 +98,7 @@ get_pbp_gc <- function(gameId,
   stats <- furrr::future_map_dfr(seq_along(plays$play_id), function(x) {
     dplyr::bind_rows(plays[x, ]$players[[1]], .id = "player_id") |>
       dplyr::mutate(play_id = plays[x, ]$play_id)
-  }
-  ) |>
+  }) |>
     dplyr::mutate(
       sequence = as.numeric(.data$sequence),
       statId = as.numeric(.data$statId),
@@ -126,18 +140,32 @@ get_pbp_gc <- function(gameId,
     dplyr::mutate(
       drive_inside20 = dplyr::if_else(.data$drive_inside20, 1, 0),
       drive_how_ended_description = .data$drive_end_transition,
-      drive_ended_with_score = dplyr::if_else(.data$drive_how_ended_description == "Touchdown" | .data$drive_how_ended_description == "Field Goal", 1, 0),
+      drive_ended_with_score = dplyr::if_else(
+        .data$drive_how_ended_description == "Touchdown" |
+          .data$drive_how_ended_description == "Field Goal",
+        1,
+        0
+      ),
       drive_start_transition = dplyr::lag(.data$drive_how_ended_description, 1),
       drive_how_started_description = .data$drive_start_transition
     ) |>
     dplyr::select(
-      "drive", "drive_play_count", "drive_time_of_possession",
-      "drive_first_downs", "drive_inside20", "drive_ended_with_score",
-      "drive_quarter_start", "drive_quarter_end",
-      "drive_end_transition", "drive_how_ended_description",
-      "drive_game_clock_start", "drive_game_clock_end",
-      "drive_start_yard_line", "drive_end_yard_line",
-      "drive_start_transition", "drive_how_started_description"
+      "drive",
+      "drive_play_count",
+      "drive_time_of_possession",
+      "drive_first_downs",
+      "drive_inside20",
+      "drive_ended_with_score",
+      "drive_quarter_start",
+      "drive_quarter_end",
+      "drive_end_transition",
+      "drive_how_ended_description",
+      "drive_game_clock_start",
+      "drive_game_clock_end",
+      "drive_start_yard_line",
+      "drive_end_yard_line",
+      "drive_start_transition",
+      "drive_how_started_description"
     )
 
   combined <- plays |>
@@ -147,29 +175,50 @@ get_pbp_gc <- function(gameId,
     dplyr::select(-"players", -"note") |>
     #Weirdly formatted and missing anyway
     dplyr::mutate(note = NA_character_) |>
-    dplyr::rename(yardline = "yrdln", quarter = "qtr", play_description = "desc", yards_to_go = "ydstogo")  |>
-    tidyr::unnest(cols = c("sp", "quarter", "down", "time", "yardline", "yards_to_go", "ydsnet", "posteam", "play_description", "note")) |>
+    dplyr::rename(
+      yardline = "yrdln",
+      quarter = "qtr",
+      play_description = "desc",
+      yards_to_go = "ydstogo"
+    ) |>
+    tidyr::unnest(
+      cols = c(
+        "sp",
+        "quarter",
+        "down",
+        "time",
+        "yardline",
+        "yards_to_go",
+        "ydsnet",
+        "posteam",
+        "play_description",
+        "note"
+      )
+    ) |>
     dplyr::left_join(d, by = "drive") |>
     dplyr::mutate(
       posteam_id = .data$posteam,
       game_id = gameId,
       game_year = as.integer(date_year),
       game_month = as.integer(date_month),
-      game_date = as.Date(paste(date_month,
-                                date_day,
-                                date_year,
-                                sep = "/"
-      ),
-      format = "%m/%d/%Y"
+      game_date = as.Date(
+        paste(date_month, date_day, date_year, sep = "/"),
+        format = "%m/%d/%Y"
       ),
       season = season,
 
       # fix up yardline before doing stuff. from nflscrapr
-      yardline = dplyr::if_else(.data$yardline == "50", "MID 50", .data$yardline),
       yardline = dplyr::if_else(
-        nchar(.data$yardline) == 0 | is.null(.data$yardline) |
+        .data$yardline == "50",
+        "MID 50",
+        .data$yardline
+      ),
+      yardline = dplyr::if_else(
+        nchar(.data$yardline) == 0 |
+          is.null(.data$yardline) |
           .data$yardline == "NULL",
-        dplyr::lag(.data$yardline), .data$yardline
+        dplyr::lag(.data$yardline),
+        .data$yardline
       ),
 
       # have to do all this nonsense to make goal_to_go and yardline_side for compatibility with later functions
@@ -184,8 +233,9 @@ get_pbp_gc <- function(gameId,
       goal_to_go = dplyr::if_else(
         .data$yardline_side != .data$posteam &
           ((.data$yards_to_go == .data$yardline_number) |
-             (.data$yards_to_go <= 1 & .data$yardline_number == 1)),
-        1, 0
+            (.data$yards_to_go <= 1 & .data$yardline_number == 1)),
+        1,
+        0
       ),
       down = as.double(.data$down),
       quarter = as.double(.data$quarter),
@@ -210,12 +260,24 @@ get_pbp_gc <- function(gameId,
       # there seems to be no easy way to find the safety scoring team. Will hard code the plays
       # as there are only 6 of them in the game center data
       safety_team = dplyr::case_when(
-        .data$safety == 1 & .data$game_id == "1999_04_PHI_NYG" & .data$play_id == 827  ~ .data$posteam,
-        .data$safety == 1 & .data$game_id == "2000_03_ATL_CAR" & .data$play_id == 3423 ~ .data$posteam,
-        .data$safety == 1 & .data$game_id == "2000_16_OAK_SEA" & .data$play_id == 3590 ~ .data$posteam,
-        .data$safety == 1 & .data$game_id == "2001_14_DAL_SEA" & .data$play_id == 2552 ~ .data$posteam,
-        .data$safety == 1 & .data$game_id == "2003_03_NO_TEN"  & .data$play_id == 416  ~ .data$posteam,
-        .data$safety == 1 & .data$game_id == "2009_08_STL_DET" & .data$play_id == 987  ~ .data$posteam,
+        .data$safety == 1 &
+          .data$game_id == "1999_04_PHI_NYG" &
+          .data$play_id == 827 ~ .data$posteam,
+        .data$safety == 1 &
+          .data$game_id == "2000_03_ATL_CAR" &
+          .data$play_id == 3423 ~ .data$posteam,
+        .data$safety == 1 &
+          .data$game_id == "2000_16_OAK_SEA" &
+          .data$play_id == 3590 ~ .data$posteam,
+        .data$safety == 1 &
+          .data$game_id == "2001_14_DAL_SEA" &
+          .data$play_id == 2552 ~ .data$posteam,
+        .data$safety == 1 &
+          .data$game_id == "2003_03_NO_TEN" &
+          .data$play_id == 416 ~ .data$posteam,
+        .data$safety == 1 &
+          .data$game_id == "2009_08_STL_DET" &
+          .data$play_id == 987 ~ .data$posteam,
         .data$safety == 1 & .data$posteam == .data$home_team ~ .data$away_team,
         .data$safety == 1 & .data$posteam == .data$away_team ~ .data$home_team,
         TRUE ~ NA_character_

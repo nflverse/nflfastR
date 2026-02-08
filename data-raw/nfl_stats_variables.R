@@ -1,7 +1,7 @@
 s1 <- calculate_stats(2023, "season", "player")
-s2 <- calculate_stats(2023, "week",   "player")
+s2 <- calculate_stats(2023, "week", "player")
 s3 <- calculate_stats(2023, "season", "team")
-s4 <- calculate_stats(2023, "week",   "team")
+s4 <- calculate_stats(2023, "week", "team")
 
 n1 <- names(s1)
 n2 <- names(s2)

@@ -122,7 +122,7 @@ For more information on \code{.Rprofile} please see
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://www.nflfastr.com/}
+  \item \url{https://nflfastr.com/}
   \item \url{https://github.com/nflverse/nflfastR}
   \item Report bugs at \url{https://github.com/nflverse/nflfastR/issues}
 }

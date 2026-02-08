@@ -4,7 +4,6 @@
 # Code Style Guide: styler::tidyverse_style()
 ################################################################################
 
-
 # pbp ---------------------------------------------------------------------
 
 #' Get NFL Play by Play Data
@@ -351,7 +350,7 @@
 #' \item{drive_real_start_time}{Local day time when the drive started (currently not used by the NFL and therefore mostly 'NA').}
 #' \item{drive_play_count}{Numeric value of how many regular plays happened in a given drive.}
 #' \item{drive_time_of_possession}{Time of possession in a given drive.}
-#' \item{drive_first_downs}{Number of forst downs in a given drive.}
+#' \item{drive_first_downs}{Number of first downs in a given drive.}
 #' \item{drive_inside20}{Binary indicator if the offense was able to get inside the opponents 20 yard line.}
 #' \item{drive_ended_with_score}{Binary indicator the drive ended with a score.}
 #' \item{drive_quarter_start}{Numeric value indicating in which quarter the given drive has started.}
@@ -407,14 +406,19 @@
 #' future::plan("sequential")
 #' }
 #' }
-fast_scraper <- function(game_ids,
-                         dir = getOption("nflfastR.raw_directory", default = NULL),
-                         ...,
-                         in_builder = FALSE) {
+fast_scraper <- function(
+  game_ids,
+  dir = getOption("nflfastR.raw_directory", default = NULL),
+  ...,
+  in_builder = FALSE
+) {
+  if (!is.vector(game_ids) && is.data.frame(game_ids)) {
+    game_ids <- game_ids$game_id
+  }
 
-  if (!is.vector(game_ids) && is.data.frame(game_ids)) game_ids <- game_ids$game_id
-
-  if (!is.vector(game_ids)) cli::cli_abort("Param {.code game_ids} is not a valid vector!")
+  if (!is.vector(game_ids)) {
+    cli::cli_abort("Param {.code game_ids} is not a valid vector!")
+  }
 
   if (length(game_ids) > 1 && is_sequential()) {
     cli::cli_alert_info(
@@ -428,15 +432,21 @@ fast_scraper <- function(game_ids,
 
   suppressWarnings({
     p <- progressr::progressor(along = game_ids)
-    pbp <- furrr::future_map_dfr(game_ids, function(x, p, dir, ...) {
-      if (substr(x, 1, 4) < 2001) {
-        plays <- please_work(get_pbp_gc)(x, dir = dir, ...)
-      } else {
-        plays <- please_work(get_pbp_nfl)(x, dir = dir, ...)
-      }
-      p(sprintf("ID=%s", as.character(x)))
-      return(plays)
-    }, p, dir = dir, ...)
+    pbp <- furrr::future_map_dfr(
+      game_ids,
+      function(x, p, dir, ...) {
+        if (substr(x, 1, 4) < 2001) {
+          plays <- please_work(get_pbp_gc)(x, dir = dir, ...)
+        } else {
+          plays <- please_work(get_pbp_nfl)(x, dir = dir, ...)
+        }
+        p(sprintf("ID=%s", as.character(x)))
+        return(plays)
+      },
+      p,
+      dir = dir,
+      ...
+    )
 
     if (length(pbp) != 0) {
       user_message("Download finished. Adding variables...", "done")
@@ -481,7 +491,7 @@ fast_scraper <- function(game_ids,
 #' \donttest{
 #' # Roster of the 2019 and 2020 seasons
 #' try({# to avoid CRAN test problems
-#' fast_scraper_roster(2019:2020)
+#' # fast_scraper_roster(2019:2020)
 #' })
 #' }
 #' @export
@@ -513,11 +523,11 @@ fast_scraper_roster <- function(...) {
 #'\donttest{
 #' # Get schedules for the whole 2015 - 2018 seasons
 #' try({# to avoid CRAN test problems
-#' fast_scraper_schedules(2015:2018)
+#' # fast_scraper_schedules(2015:2018)
 #' })
 #' }
 #' @export
-fast_scraper_schedules <- function(...){
+fast_scraper_schedules <- function(...) {
   lifecycle::deprecate_warn(
     "5.2.0",
     "fast_scraper_schedules()",

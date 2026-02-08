@@ -21,6 +21,6 @@ field_descriptions
 }
 \seealso{
 The searchable table on the
-\href{https://www.nflfastr.com/articles/field_descriptions.html}{nflfastR website}
+\href{https://nflfastr.com/articles/field_descriptions.html}{nflfastR website}
 }
 \keyword{datasets}

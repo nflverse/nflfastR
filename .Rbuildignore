@@ -23,3 +23,6 @@
 ^man/figures/readme-epa-model-1\.png$
 ^revdep$
 ^CRAN-SUBMISSION$
+^[.]?air[.]toml$
+^\.vscode$
+^\.git-blame-ignore-revs$

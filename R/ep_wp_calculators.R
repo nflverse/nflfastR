@@ -56,8 +56,7 @@
 #' })
 #' }
 calculate_expected_points <- function(pbp_data) {
-
-   # drop existing values of ep and the probs before making new ones
+  # drop existing values of ep and the probs before making new ones
   pbp_data <- pbp_data |> dplyr::select(-dplyr::any_of(drop.cols))
 
   suppressWarnings(
@@ -66,19 +65,31 @@ calculate_expected_points <- function(pbp_data) {
       ep_model_select()
   )
 
-  preds <- as.data.frame(
-    matrix(stats::predict(load_model("ep"), as.matrix(model_data)), ncol = 7, byrow = TRUE)
-  )
+  preds <- stats::predict(load_model("ep"), as.matrix(model_data))
+
+  # xgboost v3 returns a matrix of predictions instead of a vector as returned
+  # by xgboost v1.
+  if (is.vector(preds)) {
+    preds <- preds |>
+      matrix(ncol = 7, byrow = TRUE) |>
+      as.data.frame()
+  } else if (is.matrix(preds)) {
+    preds <- as.data.frame(preds)
+  }
 
   colnames(preds) <- c(
-    "td_prob", "opp_td_prob", "fg_prob", "opp_fg_prob",
-    "safety_prob", "opp_safety_prob", "no_score_prob"
+    "td_prob",
+    "opp_td_prob",
+    "fg_prob",
+    "opp_fg_prob",
+    "safety_prob",
+    "opp_safety_prob",
+    "no_score_prob"
   )
 
   preds <- preds |>
     dplyr::mutate(
-      ep =
-        (-3 * .data$opp_fg_prob) +
+      ep = (-3 * .data$opp_fg_prob) +
         (-2 * .data$opp_safety_prob) +
         (-7 * .data$opp_td_prob) +
         (3 * .data$fg_prob) +
@@ -92,8 +103,14 @@ calculate_expected_points <- function(pbp_data) {
 
 # helper column for ep calculator
 drop.cols <- c(
-  "ep", "td_prob", "opp_td_prob", "fg_prob", "opp_fg_prob",
-  "safety_prob", "opp_safety_prob", "no_score_prob"
+  "ep",
+  "td_prob",
+  "opp_td_prob",
+  "fg_prob",
+  "opp_fg_prob",
+  "safety_prob",
+  "opp_safety_prob",
+  "no_score_prob"
 )
 
 
@@ -155,7 +172,6 @@ drop.cols <- c(
 #' })
 #' }
 calculate_win_probability <- function(pbp_data) {
-
   # drop existing values of ep and the probs before making new ones
   pbp_data <- pbp_data |> dplyr::select(-dplyr::any_of(drop.cols.wp))
 
@@ -163,10 +179,15 @@ calculate_win_probability <- function(pbp_data) {
     model_data <- pbp_data |>
       dplyr::mutate(
         home = dplyr::if_else(.data$posteam == .data$home_team, 1, 0),
-        posteam_spread = dplyr::if_else(.data$home == 1, .data$spread_line, -1 * .data$spread_line),
+        posteam_spread = dplyr::if_else(
+          .data$home == 1,
+          .data$spread_line,
+          -1 * .data$spread_line
+        ),
         elapsed_share = (3600 - .data$game_seconds_remaining) / 3600,
         spread_time = .data$posteam_spread * exp(-4 * .data$elapsed_share),
-        Diff_Time_Ratio = .data$score_differential / (exp(-4 * .data$elapsed_share))
+        Diff_Time_Ratio = .data$score_differential /
+          (exp(-4 * .data$elapsed_share))
       )
   )
 
@@ -188,5 +209,6 @@ calculate_win_probability <- function(pbp_data) {
 
 # helper column for wp calculator
 drop.cols.wp <- c(
-  "wp", "vegas_wp"
+  "wp",
+  "vegas_wp"
 )

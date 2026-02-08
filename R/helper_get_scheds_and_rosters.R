@@ -5,10 +5,11 @@
 ################################################################################
 
 get_scheds_and_rosters <- function(season, type) {
+  type <- match.arg(type, choices = c("schedule", "roster"))
 
-  type <- match.arg(type,choices = c("schedule","roster"))
-
-  switch(type,
-         "schedule" = nflreadr::load_schedules(season),
-         "roster" = nflreadr::load_rosters(season))
+  switch(
+    type,
+    "schedule" = nflreadr::load_schedules(season),
+    "roster" = nflreadr::load_rosters(season)
+  )
 }

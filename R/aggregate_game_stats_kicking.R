@@ -16,12 +16,12 @@
 #' @examples
 #' \donttest{
 #' try({# to avoid CRAN test problems
-#'     pbp <- nflreadr::load_pbp(2021)
-#'     weekly <- calculate_player_stats_kicking(pbp, weekly = TRUE)
-#'     dplyr::glimpse(weekly)
+#'     # pbp <- nflreadr::load_pbp(2021)
+#'     # weekly <- calculate_player_stats_kicking(pbp, weekly = TRUE)
+#'     # dplyr::glimpse(weekly)
 #'
-#'     overall <- calculate_player_stats_kicking(pbp, weekly = FALSE)
-#'     dplyr::glimpse(overall)
+#'     # overall <- calculate_player_stats_kicking(pbp, weekly = FALSE)
+#'     # dplyr::glimpse(overall)
 #' })
 #' }
 #'
@@ -30,7 +30,6 @@
 #' @export
 #' @keywords internal
 calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
-
   lifecycle::deprecate_warn(
     "5.0",
     "calculate_player_stats_kicking()",
@@ -41,9 +40,9 @@ calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
   rlang::check_installed("nflreadr (>= 1.3.0)")
 
   # First, creating a grouping variable object to toggle the weekly argument w/
-  grp_vars <- if (isTRUE(weekly)){
+  grp_vars <- if (isTRUE(weekly)) {
     list("season", "week", "season_type", "player_id", "team")
-  } else if (isFALSE(weekly)){
+  } else if (isFALSE(weekly)) {
     list("player_id", "team")
   }
   grp_vars <- lapply(grp_vars, as.symbol)
@@ -90,29 +89,71 @@ calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
       fg_att = sum(.data$field_goal_attempt, na.rm = TRUE),
       fg_missed = sum(.data$temp_miss_idx, na.rm = TRUE),
       fg_blocked = sum(.data$temp_block_idx, na.rm = TRUE),
-      fg_long = if (any(.data$temp_made_idx, na.rm = TRUE)) max(.data$dist[.data$temp_made_idx], na.rm = TRUE) else NA_real_,
+      fg_long = if (any(.data$temp_made_idx, na.rm = TRUE)) {
+        max(.data$dist[.data$temp_made_idx], na.rm = TRUE)
+      } else {
+        NA_real_
+      },
       fg_pct = round(.data$fg_made / .data$fg_att, 3L),
-      fg_made_0_19 = sum(dplyr::between(.data$dist[.data$temp_made_idx], 0, 19), na.rm = TRUE),
-      fg_made_20_29 = sum(dplyr::between(.data$dist[.data$temp_made_idx], 20, 29), na.rm = TRUE),
-      fg_made_30_39 = sum(dplyr::between(.data$dist[.data$temp_made_idx], 30, 39), na.rm = TRUE),
-      fg_made_40_49 = sum(dplyr::between(.data$dist[.data$temp_made_idx], 40, 49), na.rm = TRUE),
-      fg_made_50_59 = sum(dplyr::between(.data$dist[.data$temp_made_idx], 50, 59), na.rm = TRUE),
+      fg_made_0_19 = sum(
+        dplyr::between(.data$dist[.data$temp_made_idx], 0, 19),
+        na.rm = TRUE
+      ),
+      fg_made_20_29 = sum(
+        dplyr::between(.data$dist[.data$temp_made_idx], 20, 29),
+        na.rm = TRUE
+      ),
+      fg_made_30_39 = sum(
+        dplyr::between(.data$dist[.data$temp_made_idx], 30, 39),
+        na.rm = TRUE
+      ),
+      fg_made_40_49 = sum(
+        dplyr::between(.data$dist[.data$temp_made_idx], 40, 49),
+        na.rm = TRUE
+      ),
+      fg_made_50_59 = sum(
+        dplyr::between(.data$dist[.data$temp_made_idx], 50, 59),
+        na.rm = TRUE
+      ),
       fg_made_60_ = sum(.data$dist[.data$temp_made_idx] >= 60, na.rm = TRUE),
-      fg_missed_0_19 = sum(dplyr::between(.data$dist[.data$temp_miss_idx], 0, 19), na.rm = TRUE),
-      fg_missed_20_29 = sum(dplyr::between(.data$dist[.data$temp_miss_idx], 20, 29), na.rm = TRUE),
-      fg_missed_30_39 = sum(dplyr::between(.data$dist[.data$temp_miss_idx], 30, 39), na.rm = TRUE),
-      fg_missed_40_49 = sum(dplyr::between(.data$dist[.data$temp_miss_idx], 40, 49), na.rm = TRUE),
-      fg_missed_50_59 = sum(dplyr::between(.data$dist[.data$temp_miss_idx], 50, 59), na.rm = TRUE),
+      fg_missed_0_19 = sum(
+        dplyr::between(.data$dist[.data$temp_miss_idx], 0, 19),
+        na.rm = TRUE
+      ),
+      fg_missed_20_29 = sum(
+        dplyr::between(.data$dist[.data$temp_miss_idx], 20, 29),
+        na.rm = TRUE
+      ),
+      fg_missed_30_39 = sum(
+        dplyr::between(.data$dist[.data$temp_miss_idx], 30, 39),
+        na.rm = TRUE
+      ),
+      fg_missed_40_49 = sum(
+        dplyr::between(.data$dist[.data$temp_miss_idx], 40, 49),
+        na.rm = TRUE
+      ),
+      fg_missed_50_59 = sum(
+        dplyr::between(.data$dist[.data$temp_miss_idx], 50, 59),
+        na.rm = TRUE
+      ),
       fg_missed_60_ = sum(.data$dist[.data$temp_miss_idx] >= 60, na.rm = TRUE),
-      fg_made_list = paste(stats::na.omit(.data$dist[.data$temp_made_idx]), collapse = ";"),
-      fg_missed_list = paste(stats::na.omit(.data$dist[.data$temp_miss_idx]), collapse = ";"),
-      fg_blocked_list = paste(stats::na.omit(.data$dist[.data$temp_block_idx]), collapse = ";"),
+      fg_made_list = paste(
+        stats::na.omit(.data$dist[.data$temp_made_idx]),
+        collapse = ";"
+      ),
+      fg_missed_list = paste(
+        stats::na.omit(.data$dist[.data$temp_miss_idx]),
+        collapse = ";"
+      ),
+      fg_blocked_list = paste(
+        stats::na.omit(.data$dist[.data$temp_block_idx]),
+        collapse = ";"
+      ),
       fg_made_distance = sum(.data$dist[.data$temp_made_idx], na.rm = TRUE),
       fg_missed_distance = sum(.data$dist[.data$temp_miss_idx], na.rm = TRUE),
       fg_blocked_distance = sum(.data$dist[.data$temp_block_idx], na.rm = TRUE),
       .groups = "drop"
     )
-
 
   # Extra points
   df_pat <- df_fg_or_pat |>
@@ -127,7 +168,6 @@ calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
       pat_pct = round(.data$pat_made / .data$pat_att, 3L),
       .groups = "drop"
     )
-
 
   # The Game Winning kicks distance include up to one value at the weekly level
   # but can include multiple across the season. This is one way to account for that.
@@ -148,12 +188,19 @@ calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
     dplyr::group_by(.data$game_id, .data$team) |>
     dplyr::filter(.data$fixed_drive == max(.data$fixed_drive, na.rm = TRUE)) |>
     dplyr::ungroup() |>
-    dplyr::filter(.data$field_goal_attempt == 1, dplyr::between(.data$score_differential, -2, 0)) |>
+    dplyr::filter(
+      .data$field_goal_attempt == 1,
+      dplyr::between(.data$score_differential, -2, 0)
+    ) |>
     dplyr::group_by(!!!grp_vars) |>
     dplyr::summarise(
       games_gwfg = list(unique(.data$game_id)),
       gwfg_att = dplyr::n(),
-      !!gw_dist_name := if (weekly) .data$dist else paste(stats::na.omit(.data$dist), collapse = ";"),
+      !!gw_dist_name := if (weekly) {
+        .data$dist
+      } else {
+        paste(stats::na.omit(.data$dist), collapse = ";")
+      },
       gwfg_made = sum(.data$fg_res == "made", na.rm = TRUE),
       gwfg_missed = sum(.data$fg_res == "missed", na.rm = TRUE),
       gwfg_blocked = sum(.data$fg_res == "blocked", na.rm = TRUE),
@@ -177,19 +224,34 @@ calculate_player_stats_kicking <- function(pbp, weekly = FALSE) {
     dplyr::full_join(game_winners, as.character(grp_vars)) |>
     dplyr::left_join(df_player_names, "player_id") |>
     dplyr::group_by(!!!grp_vars) |>
-    dplyr::mutate(games = length(unique(unlist(c(.data$games_fg, .data$games_pat, .data$games_gwfg))))) |>
+    dplyr::mutate(
+      games = length(unique(unlist(c(
+        .data$games_fg,
+        .data$games_pat,
+        .data$games_gwfg
+      ))))
+    ) |>
     dplyr::ungroup() |>
     dplyr::select(
-      dplyr::any_of(c("season", "week", "season_type")), "player_id",
-      "team", "player_name", "player_display_name", "games", "position",
-      "position_group", "headshot_url", dplyr::everything(),
+      dplyr::any_of(c("season", "week", "season_type")),
+      "player_id",
+      "team",
+      "player_name",
+      "player_display_name",
+      "games",
+      "position",
+      "position_group",
+      "headshot_url",
+      dplyr::everything(),
       -c("games_fg", "games_pat", "games_gwfg")
     ) |>
     # replace "" with NA
-    dplyr::mutate_all(~replace(.x, nchar(.x) == 0 | is.nan(.x), NA)) |>
+    dplyr::mutate_all(~ replace(.x, nchar(.x) == 0 | is.nan(.x), NA)) |>
     # replace NA in attempt columns with 0
-    dplyr::mutate_at(c("fg_att", "pat_att", "gwfg_att"), ~tidyr::replace_na(.x, 0))
-
+    dplyr::mutate_at(
+      c("fg_att", "pat_att", "gwfg_att"),
+      ~ tidyr::replace_na(.x, 0)
+    )
 
   if (weekly) {
     full_kicks |>

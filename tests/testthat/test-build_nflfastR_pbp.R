@@ -2,7 +2,8 @@ test_that("build_nflfastR_pbp works (local data)", {
   # This test used to run on CRAN but their changes to env vars which cause
   # check NOTES for multi-threading forced us to skip on cran. It uses locally
   # available data so it can't break because of failed downloads
-  skip_on_cran()
+  # UPDATE Feb 2026: we'll try testing on CRAN again
+  # skip_on_cran()
 
   pbp <- load_test_pbp(dir = test_dir)
   expect_s3_class(pbp, "nflverse_data")
