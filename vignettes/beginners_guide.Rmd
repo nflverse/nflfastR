@@ -268,8 +268,8 @@ Again, we've already used `filter`, `group_by`, and `summarize`. The new functio
 Let's make our first figure:
 
 ```{r fig1, warning = FALSE, message = FALSE, results = 'hide', fig.keep = 'all', dpi = 600}
-ggplot(schotty, aes(x=reorder(posteam,-mean_pass), y=mean_pass)) +
-	    geom_text(aes(label=posteam))
+ggplot(schotty, aes(x = reorder(posteam, -mean_pass), y = mean_pass)) +
+  geom_text(aes(label = posteam))
 ```
 
 This image is kind of a mess -- we still need a title, axis labels, etc -- but gets the point across. We'll get to that other stuff later. But more importantly, we made something interesting using `nflfastR` data! The "reorder" sorts the teams according to pass rate, with the "-" again saying to do it in descending order. "aes" is short for "aesthetic", which is R's weird way of asking which variables should go on the x and y axes.
@@ -423,36 +423,36 @@ If it's helpful, here are a few notes about the [chart originally shown here](ht
 library(nflplotR)
 # get pbp and filter to regular season rush and pass plays
 pbp <- nflreadr::load_pbp(2005) |>
-  dplyr::filter(season_type == "REG") |>
-  dplyr::filter(!is.na(posteam) & (rush == 1 | pass == 1))
+  filter(season_type == "REG") |>
+  filter(!is.na(posteam) & (rush == 1 | pass == 1))
 # offense epa
 offense <- pbp |>
-  dplyr::group_by(team = posteam) |>
-  dplyr::summarise(off_epa = mean(epa, na.rm = TRUE))
+  group_by(team = posteam) |>
+  summarise(off_epa = mean(epa, na.rm = TRUE))
 # defense epa
 defense <- pbp |>
-  dplyr::group_by(team = defteam) |>
-  dplyr::summarise(def_epa = mean(epa, na.rm = TRUE))
+  group_by(team = defteam) |>
+  summarise(def_epa = mean(epa, na.rm = TRUE))
 # make figure
 offense |>
-  dplyr::inner_join(defense, by = "team") |>
-  ggplot2::ggplot(aes(x = off_epa, y = def_epa)) +
+  inner_join(defense, by = "team") |>
+  ggplot(aes(x = off_epa, y = def_epa)) +
   # tier lines
-  ggplot2::geom_abline(slope = -1.5, intercept = (4:-3)/10, alpha = .2) +
+  geom_abline(slope = -1.5, intercept = (4:-3)/10, alpha = .2) +
   # nflplotR magic
   nflplotR::geom_mean_lines(aes(y0 = off_epa, x0 = def_epa)) +
   nflplotR::geom_nfl_logos(aes(team_abbr = team), width = 0.07, alpha = 0.7) +
-  ggplot2::labs(
+  labs(
     x = "Offense EPA/play",
     y = "Defense EPA/play",
     caption = "Data: @nflfastR",
     title = "2005 NFL Offensive and Defensive EPA per Play"
   ) +
-  ggplot2::theme_bw() +
-  ggplot2::theme(
-    plot.title = ggplot2::element_text(size = 12, hjust = 0.5, face = "bold")
+  theme_bw() +
+  theme(
+    plot.title = element_text(size = 12, hjust = 0.5, face = "bold")
   ) +
-  ggplot2::scale_y_reverse()
+  scale_y_reverse()
 ```
 
 
@@ -545,8 +545,14 @@ Let's start by getting data from every season from the `nflfastR` data repositor
 
 ``` {r}
 pbp <- load_pbp(1999:2019) |>
-    filter(rush == 1 | pass == 1, season_type == "REG", !is.na(epa), !is.na(posteam), posteam != "") |>
-    select(season, posteam, pass, defteam, epa)
+  filter(
+    rush == 1 | pass == 1,
+    season_type == "REG",
+    !is.na(epa),
+    !is.na(posteam),
+    posteam != ""
+  ) |>
+  select(season, posteam, pass, defteam, epa)
 ```
 
 I'm being pretty aggressive with dropping rows and columns (`filter` and `select`) because otherwise loading this all into memory can be painful on the computer. But this is all we need for what we're doing. Note that I'm only keeping regular season games here (`season_type == "REG"`) since this is how this analysis is usually done.
@@ -765,17 +771,17 @@ What if we just used simple point differential to predict?
 ``` {r}
 preds2 <- predict(fit2, data |> filter(season == 2020)) |>
   #was just a vector, need a tibble to bind
-  as_tibble() %>%
+  as_tibble() |>
   #make the column name make sense
-  rename(prediction = value) %>%
-  round(1) %>%
+  rename(prediction = value) |>
+  round(1) |>
   #get names
   bind_cols(
-    data %>% filter(season == 2020) %>% select(team)
+    data |> filter(season == 2020) |> select(team)
   )
 
-preds2 %>%
-  arrange(-prediction) %>%
+preds2 |>
+  arrange(-prediction) |>
   head(5)
 ```
 
