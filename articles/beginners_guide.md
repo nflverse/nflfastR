@@ -518,8 +518,8 @@ in descending order.
 Let’s make our first figure:
 
 ``` r
-ggplot(schotty, aes(x=reorder(posteam,-mean_pass), y=mean_pass)) +
-        geom_text(aes(label=posteam))
+ggplot(schotty, aes(x = reorder(posteam, -mean_pass), y = mean_pass)) +
+  geom_text(aes(label = posteam))
 ```
 
 ![](beginners_guide_files/figure-html/fig1-1.png)
@@ -765,36 +765,36 @@ which like the above uses nflplotR for team logos.
 library(nflplotR)
 # get pbp and filter to regular season rush and pass plays
 pbp <- nflreadr::load_pbp(2005) |>
-  dplyr::filter(season_type == "REG") |>
-  dplyr::filter(!is.na(posteam) & (rush == 1 | pass == 1))
+  filter(season_type == "REG") |>
+  filter(!is.na(posteam) & (rush == 1 | pass == 1))
 # offense epa
 offense <- pbp |>
-  dplyr::group_by(team = posteam) |>
-  dplyr::summarise(off_epa = mean(epa, na.rm = TRUE))
+  group_by(team = posteam) |>
+  summarise(off_epa = mean(epa, na.rm = TRUE))
 # defense epa
 defense <- pbp |>
-  dplyr::group_by(team = defteam) |>
-  dplyr::summarise(def_epa = mean(epa, na.rm = TRUE))
+  group_by(team = defteam) |>
+  summarise(def_epa = mean(epa, na.rm = TRUE))
 # make figure
 offense |>
-  dplyr::inner_join(defense, by = "team") |>
-  ggplot2::ggplot(aes(x = off_epa, y = def_epa)) +
+  inner_join(defense, by = "team") |>
+  ggplot(aes(x = off_epa, y = def_epa)) +
   # tier lines
-  ggplot2::geom_abline(slope = -1.5, intercept = (4:-3)/10, alpha = .2) +
+  geom_abline(slope = -1.5, intercept = (4:-3)/10, alpha = .2) +
   # nflplotR magic
   nflplotR::geom_mean_lines(aes(y0 = off_epa, x0 = def_epa)) +
   nflplotR::geom_nfl_logos(aes(team_abbr = team), width = 0.07, alpha = 0.7) +
-  ggplot2::labs(
+  labs(
     x = "Offense EPA/play",
     y = "Defense EPA/play",
     caption = "Data: @nflfastR",
     title = "2005 NFL Offensive and Defensive EPA per Play"
   ) +
-  ggplot2::theme_bw() +
-  ggplot2::theme(
-    plot.title = ggplot2::element_text(size = 12, hjust = 0.5, face = "bold")
+  theme_bw() +
+  theme(
+    plot.title = element_text(size = 12, hjust = 0.5, face = "bold")
   ) +
-  ggplot2::scale_y_reverse()
+  scale_y_reverse()
 ```
 
 ![](beginners_guide_files/figure-html/ex5-1.png)
@@ -900,7 +900,7 @@ str(games)
 #>  $ stadium_id      : chr [1:7276] "ATL00" "CHI98" "CLE00" "GNB00" ...
 #>  $ stadium         : chr [1:7276] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...
 #>  - attr(*, "nflverse_type")= chr "games and schedules"
-#>  - attr(*, "nflverse_timestamp")= chr "2026-02-08 15:03:31 EST"
+#>  - attr(*, "nflverse_timestamp")= chr "2026-02-09 09:42:46 EST"
 ```
 
 To start, we want to create a dataframe where each row is a team-season
@@ -915,7 +915,7 @@ home <- games |>
   rename(team = home_team)
 home |> head(5)
 #> ── nflverse games and schedules ────────────────────────────────────────────────
-#> ℹ Data updated: 2026-02-08 20:03:31 UTC
+#> ℹ Data updated: 2026-02-09 14:42:46 UTC
 #> # A tibble: 5 × 4
 #>   season  week team  result
 #>    <int> <int> <chr>  <int>
@@ -936,7 +936,7 @@ away <- games |>
   mutate(result = -result)
 away |> head(5)
 #> ── nflverse games and schedules ────────────────────────────────────────────────
-#> ℹ Data updated: 2026-02-08 20:03:31 UTC
+#> ℹ Data updated: 2026-02-09 14:42:46 UTC
 #> # A tibble: 5 × 4
 #>   season  week team  result
 #>    <int> <int> <chr>  <int>
@@ -964,7 +964,7 @@ results <- bind_rows(home, away) |>
 
 results |> filter(season == 2019 & team == 'SEA')
 #> ── nflverse games and schedules ────────────────────────────────────────────────
-#> ℹ Data updated: 2026-02-08 20:03:31 UTC
+#> ℹ Data updated: 2026-02-09 14:42:46 UTC
 #> # A tibble: 16 × 5
 #>    season  week team  result   win
 #>     <int> <int> <chr>  <int> <dbl>
@@ -1035,8 +1035,14 @@ repository:
 
 ``` r
 pbp <- load_pbp(1999:2019) |>
-    filter(rush == 1 | pass == 1, season_type == "REG", !is.na(epa), !is.na(posteam), posteam != "") |>
-    select(season, posteam, pass, defteam, epa)
+  filter(
+    rush == 1 | pass == 1,
+    season_type == "REG",
+    !is.na(epa),
+    !is.na(posteam),
+    posteam != ""
+  ) |>
+  select(season, posteam, pass, defteam, epa)
 ```
 
 I’m being pretty aggressive with dropping rows and columns (`filter` and
@@ -1529,17 +1535,17 @@ What if we just used simple point differential to predict?
 ``` r
 preds2 <- predict(fit2, data |> filter(season == 2020)) |>
   #was just a vector, need a tibble to bind
-  as_tibble() %>%
+  as_tibble() |>
   #make the column name make sense
-  rename(prediction = value) %>%
-  round(1) %>%
+  rename(prediction = value) |>
+  round(1) |>
   #get names
   bind_cols(
-    data %>% filter(season == 2020) %>% select(team)
+    data |> filter(season == 2020) |> select(team)
   )
 
-preds2 %>%
-  arrange(-prediction) %>%
+preds2 |>
+  arrange(-prediction) |>
   head(5)
 #> # A tibble: 5 × 2
 #>   prediction team 
