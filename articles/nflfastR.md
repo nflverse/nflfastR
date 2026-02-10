@@ -27,26 +27,26 @@ ids <- nflreadr::load_schedules(2017:2019) |>
   dplyr::pull(game_id)
 pbp <- nflfastR::build_nflfastR_pbp(ids)
 #> ── Build nflfastR Play-by-Play Data ───────────── nflfastR version 5.2.0.9001 ──
-#> • 11:01:01 | Start download of 3 games...
-#> ✔ 11:01:05 | Download finished. Adding variables...
-#> ✔ 11:01:05 | added game variables
-#> ✔ 11:01:05 | added nflscrapR variables
-#> ✔ 11:01:06 | added ep variables
-#> ✔ 11:01:06 | added air_yac_ep variables
-#> ✔ 11:01:07 | added wp variables
-#> ✔ 11:01:07 | added air_yac_wp variables
-#> ✔ 11:01:07 | added cp and cpoe
-#> ✔ 11:01:07 | added fixed drive variables
-#> ✔ 11:01:07 | added series variables
-#> • 11:01:07 | Cleaning up play-by-play...
-#> ✔ 11:01:07 | Cleaning completed
-#> ✔ 11:01:07 | added qb_epa
-#> • 11:01:07 | Computing xyac...
-#> ✔ 11:01:09 | added xyac variables
-#> • 11:01:09 | Computing xpass...
-#> ✔ 11:01:09 | added xpass and pass_oe
-#> • 11:01:09 | Decode player ids...
-#> ✔ 11:01:11 | Decoding of player ids completed
+#> • 11:50:04 | Start download of 3 games...
+#> ✔ 11:50:08 | Download finished. Adding variables...
+#> ✔ 11:50:08 | added game variables
+#> ✔ 11:50:08 | added nflscrapR variables
+#> ✔ 11:50:09 | added ep variables
+#> ✔ 11:50:09 | added air_yac_ep variables
+#> ✔ 11:50:09 | added wp variables
+#> ✔ 11:50:09 | added air_yac_wp variables
+#> ✔ 11:50:09 | added cp and cpoe
+#> ✔ 11:50:09 | added fixed drive variables
+#> ✔ 11:50:09 | added series variables
+#> • 11:50:09 | Cleaning up play-by-play...
+#> ✔ 11:50:10 | Cleaning completed
+#> ✔ 11:50:10 | added qb_epa
+#> • 11:50:10 | Computing xyac...
+#> ✔ 11:50:12 | added xyac variables
+#> • 11:50:12 | Computing xpass...
+#> ✔ 11:50:12 | added xpass and pass_oe
+#> • 11:50:12 | Decode player ids...
+#> ✔ 11:50:13 | Decoding of player ids completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
@@ -411,23 +411,23 @@ So let’s connect to an in-memory duckdb database:
 ``` r
 connection <- DBI::dbConnect(duckdb::duckdb())
 connection
-#> <duckdb_connection 85d20 driver=<duckdb_driver dbdir=':memory:' read_only=FALSE bigint=numeric>>
+#> <duckdb_connection 4ca30 driver=<duckdb_driver dbdir=':memory:' read_only=FALSE bigint=numeric>>
 ```
 
 #### Write data to the database
 
-Let’s say I just want to dump play-by-play data of the 2024 season in my
-database. Here we go!
+Let’s say I just want to dump play-by-play data of the 2021 - 2024
+seasons in my database. Here we go!
 
 ``` r
-nflfastR::update_pbp_db(connection, seasons = 2024)
+nflfastR::update_pbp_db(connection, seasons = 2021:2024)
 #> ── Update nflverse Play-by-Play Data in Connected Database ─────────────────────
 #> ℹ Table "nflverse_pbp" does not yet exist in your connected database.
 #> Do you wish to create it? (Y/n)
-#> ℹ 11:01:40 | Initiate table "nflverse_pbp" with nflverse pbp schema
-#> ℹ 11:01:40 | Drop 2024 season from table "nflverse_pbp"
-#> ℹ 11:01:40 | Append 2024 season to table "nflverse_pbp"
-#> ✔ 11:01:43 | Database update completed
+#> ℹ 11:50:42 | Initiate table "nflverse_pbp" with nflverse pbp schema
+#> ℹ 11:50:42 | Drop 2021, 2022, 2023, and 2024 seasons from table "nflverse_pbp"
+#> ℹ 11:50:42 | Append 2021, 2022, 2023, and 2024 seasons to table "nflverse_pbp"
+#> ✔ 11:50:57 | Database update completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
@@ -443,9 +443,9 @@ What do you run?
 ``` r
 nflfastR::update_pbp_db(connection)
 #> ── Update nflverse Play-by-Play Data in Connected Database ─────────────────────
-#> ℹ 11:01:43 | Drop 2025 season from table "nflverse_pbp"
-#> ℹ 11:01:43 | Append 2025 season to table "nflverse_pbp"
-#> ✔ 11:01:47 | Database update completed
+#> ℹ 11:50:57 | Drop 2025 season from table "nflverse_pbp"
+#> ℹ 11:50:57 | Append 2025 season to table "nflverse_pbp"
+#> ✔ 11:51:05 | Database update completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
@@ -492,8 +492,11 @@ pbp_db |>
 #> # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
 #>   season     n
 #>    <int> <dbl>
-#> 1   2024 49492
-#> 2   2025 48771
+#> 1   2021 49922
+#> 2   2022 49434
+#> 3   2023 49665
+#> 4   2024 49492
+#> 5   2025 48771
 pbp_db |>
   dplyr::filter(
     rush == 1 | pass == 1,
@@ -507,8 +510,8 @@ pbp_db |>
 #> # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
 #>    pass mean_epa
 #>   <dbl>    <dbl>
-#> 1     0  -0.0838
-#> 2     1   0.0819
+#> 1     0  -0.0865
+#> 2     1   0.0717
 ```
 
 So far, everything has stayed in the database. If you want to bring a
@@ -522,16 +525,27 @@ russ <- pbp_db |>
   dplyr::select(desc, epa) |>
   dplyr::collect()
 russ
-#> # A tibble: 0 × 2
-#> # ℹ 2 variables: desc <chr>, epa <dbl>
+#> # A tibble: 502 × 2
+#>    desc                                                                      epa
+#>    <chr>                                                                   <dbl>
+#>  1 (4:54) 3-R.Wilson scrambles right end pushed ob at SEA 25 for 2 yards… -0.275
+#>  2 (4:11) (Shotgun) 3-R.Wilson scrambles right tackle to SEA 31 for 11 y…  2.05 
+#>  3 (1:37) (No Huddle, Shotgun) 3-R.Wilson pass incomplete deep right.     -0.591
+#>  4 (1:31) (Shotgun) 3-R.Wilson pass deep middle to 16-T.Lockett for 23 y…  3.41 
+#>  5 (14:50) 3-R.Wilson pass short right to 81-G.Everett to 50 for 11 yard…  0.751
+#>  6 (13:48) (No Huddle, Shotgun) 3-R.Wilson pass short left to 89-W.Dissl…  0.663
+#>  7 (12:51) 3-R.Wilson pass deep right to 89-W.Dissly to IND 13 for 22 ya…  1.89 
+#>  8 (11:27) (Shotgun) 3-R.Wilson pass short middle to 81-G.Everett for 9 …  2.18 
+#>  9 (7:04) 3-R.Wilson pass short right to 32-C.Carson pushed ob at SEA 41…  0.961
+#> 10 (6:04) 3-R.Wilson pass short right to 16-T.Lockett to SEA 47 for 4 ya… -0.195
+#> # ℹ 492 more rows
 ```
 
-So we’ve searched through about 1 million rows of data across 300+
-columns and only brought about 0 rows and two columns into memory.
-Pretty neat! This is how I supply the data to the shiny apps on
-rbsdm.com without running out of memory on the server. Now there’s only
-one more thing to remember. When you’re finished doing what you need
-with the database:
+So we’ve searched through 247,284 rows of data across 300+ columns and
+only brought about 500 rows and two columns into memory. Pretty neat!
+This is how we supply the data to the shiny apps on rbsdm.com without
+running out of memory on the server. Now there’s only one more thing to
+remember. When you’re finished doing what you need with the database:
 
 ``` r
 DBI::dbDisconnect(connection)
