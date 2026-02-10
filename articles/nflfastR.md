@@ -6,9 +6,8 @@ below sections we highly recommend the **nflfastR beginner’s guide** in
 
 ## The Main Functions
 
-nflfastR comes with a set of functions to access NFL play-by-play data
-and team rosters. This section provides a brief introduction to the
-essential functions.
+nflfastR comes with a set of functions to access NFL play-by-play data.
+This section provides a brief introduction to the essential functions.
 
 nflfastR processes and cleans up play-by-play data and adds variables
 through [it’s
@@ -18,57 +17,51 @@ easiest way to compute the complete nflfastR dataset is
 [`build_nflfastR_pbp()`](https://nflfastr.com/reference/build_nflfastR_pbp.md).
 The main input for that function is a set of game ids which can be
 accessed with
-[`fast_scraper_schedules()`](https://nflfastr.com/reference/fast_scraper_schedules.md).
+[`load_schedules()`](https://nflreadr.nflverse.com/reference/load_schedules.html).
 The following code demonstrates how to build the nflfastR dataset for
 the Super Bowls of the 2017 - 2019 seasons.
 
 ``` r
-library(nflfastR)
-library(dplyr, warn.conflicts = FALSE)
-ids <- nflfastR::fast_scraper_schedules(2017:2019) |>
+ids <- nflreadr::load_schedules(2017:2019) |>
   dplyr::filter(game_type == "SB") |>
   dplyr::pull(game_id)
-#> Warning: `fast_scraper_schedules()` was deprecated in nflfastR 5.2.0.
-#> ℹ Please use `nflreadr::load_schedules()` instead.
-#> This warning is displayed once per session.
-#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-#> generated.
 pbp <- nflfastR::build_nflfastR_pbp(ids)
 #> ── Build nflfastR Play-by-Play Data ───────────── nflfastR version 5.2.0.9001 ──
-#> • 14:43:49 | Start download of 3 games...
-#> ✔ 14:43:52 | Download finished. Adding variables...
-#> ✔ 14:43:52 | added game variables
-#> ✔ 14:43:53 | added nflscrapR variables
-#> ✔ 14:43:53 | added ep variables
-#> ✔ 14:43:54 | added air_yac_ep variables
-#> ✔ 14:43:54 | added wp variables
-#> ✔ 14:43:54 | added air_yac_wp variables
-#> ✔ 14:43:54 | added cp and cpoe
-#> ✔ 14:43:54 | added fixed drive variables
-#> ✔ 14:43:54 | added series variables
-#> • 14:43:54 | Cleaning up play-by-play...
-#> ✔ 14:43:54 | Cleaning completed
-#> ✔ 14:43:54 | added qb_epa
-#> • 14:43:54 | Computing xyac...
-#> ✔ 14:43:56 | added xyac variables
-#> • 14:43:56 | Computing xpass...
-#> ✔ 14:43:57 | added xpass and pass_oe
-#> • 14:43:57 | Decode player ids...
-#> ✔ 14:43:58 | Decoding of player ids completed
+#> • 11:01:01 | Start download of 3 games...
+#> ✔ 11:01:05 | Download finished. Adding variables...
+#> ✔ 11:01:05 | added game variables
+#> ✔ 11:01:05 | added nflscrapR variables
+#> ✔ 11:01:06 | added ep variables
+#> ✔ 11:01:06 | added air_yac_ep variables
+#> ✔ 11:01:07 | added wp variables
+#> ✔ 11:01:07 | added air_yac_wp variables
+#> ✔ 11:01:07 | added cp and cpoe
+#> ✔ 11:01:07 | added fixed drive variables
+#> ✔ 11:01:07 | added series variables
+#> • 11:01:07 | Cleaning up play-by-play...
+#> ✔ 11:01:07 | Cleaning completed
+#> ✔ 11:01:07 | added qb_epa
+#> • 11:01:07 | Computing xyac...
+#> ✔ 11:01:09 | added xyac variables
+#> • 11:01:09 | Computing xpass...
+#> ✔ 11:01:09 | added xpass and pass_oe
+#> • 11:01:09 | Decode player ids...
+#> ✔ 11:01:11 | Decoding of player ids completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
 In most cases, however, it is not necessary to use this function for
-individual games, because nflfastR provides both a [data
+individual games, because nflverse provides both a [data
 release](https://github.com/nflverse/nflverse-data/releases/tag/pbp) and
 two main play-by-play functions:
 [`load_pbp()`](https://nflreadr.nflverse.com/reference/load_pbp.html)
-and [`update_db()`](https://nflfastr.com/reference/update_db.md). We
+and
+[`update_pbp_db()`](https://nflfastr.com/reference/update_pbp_db.md). We
 cover
 [`load_pbp()`](https://nflreadr.nflverse.com/reference/load_pbp.html)
 below, and please see \[Example 8: Using the built-in database
 function\] for how to work with the database function
-[`update_db()`](https://nflfastr.com/reference/update_db.md).
+[`update_pbp_db()`](https://nflfastr.com/reference/update_pbp_db.md).
 
 The easiest way to access the data from the release is the function
 [`load_pbp()`](https://nflreadr.nflverse.com/reference/load_pbp.html).
@@ -82,18 +75,20 @@ pbp <- nflfastR::load_pbp(2022:2024)
 
 Joining roster data to the play-by-play data set is possible as well.
 The data can be accessed with the function
-[`fast_scraper_roster()`](https://nflfastr.com/reference/fast_scraper_roster.md)
+[`load_rosters()`](https://nflreadr.nflverse.com/reference/load_rosters.html)
 and its application is demonstrated in \[Example 10: Working with roster
 and position data\].
 
 ## Application Examples
 
-All examples listed below assume that the following two libraries are
-installed and loaded.
+All examples listed below assume that the following libraries are
+installed (and loaded).
 
 ``` r
 library(nflfastR)
-library(tidyverse)
+library(nflplotR)
+library(dplyr)
+library(ggplot2)
 ```
 
 ### Example 1: Completion Percentage Over Expected (CPOE)
@@ -101,7 +96,7 @@ library(tidyverse)
 Let’s look at CPOE leaders from the 2009 regular season.
 
 As discussed above, `nflfastR` has a data release for all available
-seasons, so there’s no need to actually scrape them. Let’s use that here
+seasons, so there’s no need to actually build them. Let’s use that here
 with the convenience function
 [`load_pbp()`](https://nflreadr.nflverse.com/reference/load_pbp.html)
 which fetches data from the release (for non-R users, .csv and .parquet
@@ -111,11 +106,11 @@ release](https://github.com/nflverse/nflverse-data/releases/tag/pbp)).
 ``` r
 games_2009 <- nflfastR::load_pbp(2009) |> dplyr::filter(season_type == "REG")
 games_2009 |>
-  dplyr::filter(!is.na(cpoe)) |>
+  dplyr::filter_out(is.na(cpoe)) |>
   dplyr::summarize(
     passer = nflreadr::stat_mode(passer_player_name),
-    cpoe = mean(cpoe), 
-    Atts = n(), 
+    cpoe = mean(cpoe),
+    Atts = n(),
     .by = passer_player_id
   ) |>
   dplyr::filter(Atts > 200) |>
@@ -144,11 +139,18 @@ were to score starting from 1st & 10 at their own 20 yard line in 2015
 pbp <- nflfastR::load_pbp(c(2003, 2015))
 
 out <- pbp |>
-  dplyr::filter(season_type == "REG" & down == 1 & ydstogo == 10 & yardline_100 == 80) |>
-  dplyr::mutate(drive_score = dplyr::if_else(fixed_drive_result %in% c("Touchdown", "Field goal"), 1, 0)) |>
+  dplyr::filter(
+    season_type == "REG" & down == 1 & ydstogo == 10 & yardline_100 == 80
+  ) |>
+  dplyr::mutate(
+    drive_score = dplyr::case_when(
+      fixed_drive_result %in% c("Touchdown", "Field goal") ~ 1L,
+      TRUE ~ 0L
+    )
+  ) |>
   dplyr::summarize(drive_score = mean(drive_score), .by = season)
 
-out |> 
+out |>
   knitr::kable(digits = 3)
 ```
 
@@ -179,7 +181,6 @@ count sacks and scrambles as pass plays and (b) properly include plays
 with penalties. Using this, we can keep only rush or pass plays.
 
 ``` r
-library(nflplotR)
 pbp <- nflfastR::load_pbp(2005) |>
   dplyr::filter(season_type == "REG") |>
   dplyr::filter(!is.na(posteam) & (rush == 1 | pass == 1))
@@ -191,21 +192,25 @@ defense <- pbp |>
   dplyr::summarise(def_epa = mean(epa, na.rm = TRUE))
 offense |>
   dplyr::inner_join(defense, by = "team") |>
-  ggplot2::ggplot(aes(x = off_epa, y = def_epa)) +
-  ggplot2::geom_abline(slope = -1.5, intercept = c(.4, .3, .2, .1, 0, -.1, -.2, -.3), alpha = .2) +
+  ggplot(aes(x = off_epa, y = def_epa)) +
+  geom_abline(
+    slope = -1.5,
+    intercept = c(.4, .3, .2, .1, 0, -.1, -.2, -.3),
+    alpha = .2
+  ) +
   nflplotR::geom_mean_lines(aes(y0 = off_epa, x0 = def_epa)) +
   nflplotR::geom_nfl_logos(aes(team_abbr = team), width = 0.07, alpha = 0.7) +
-  ggplot2::labs(
+  labs(
     x = "Offense EPA/play",
     y = "Defense EPA/play",
     caption = "Data: @nflfastR",
     title = "2005 NFL Offensive and Defensive EPA per Play"
   ) +
-  ggplot2::theme_bw() +
-  ggplot2::theme(
-    plot.title = ggplot2::element_text(size = 12, hjust = 0.5, face = "bold")
+  theme_bw() +
+  theme(
+    plot.title = element_text(size = 12, hjust = 0.5, face = "bold")
   ) +
-  ggplot2::scale_y_reverse()
+  scale_y_reverse()
 ```
 
 ![](nflfastR_files/figure-html/ex5-1.png)
@@ -353,7 +358,7 @@ data, you’re ready to use a database. Why should you use a database?
 
 - The provided function in `nflfastR` makes it extremely easy to build a
   database and keep it updated
-- Play-by-play data over 20+ seasons takes up a lot of memory: working
+- Play-by-play data over 25+ seasons takes up a lot of memory: working
   with a database allows you to only bring into memory what you actually
   need
 - R makes it *extremely* easy to work with databases.
@@ -362,148 +367,118 @@ data, you’re ready to use a database. Why should you use a database?
 
 To start, we need to install the two packages required for this that
 aren’t installed automatically when `nflfastR` installs: `DBI` and
-`RSQLite` (advanced users can use other types of databases, but this
-example will use SQLite). The `if` statements make sure the packages
+`duckdb` (advanced users can use other types of databases, but this
+example will use duckdb). The `if` statements make sure the packages
 won’t be updated if they are already installed:
 
 ``` r
 if (!require("DBI")) install.packages("DBI")
-if (!require("RSQLite")) install.packages("RSQLite")
+if (!require("duckdb")) install.packages("duckdb")
 ```
 
-As with always, you only need to install these once. They don’t need to
-be loaded to build the database because `nflfastR` knows how to use
-them, but we do need them later on when working with the database.
-
-``` r
-library(DBI)
-library(RSQLite)
-```
-
-#### Build database
+#### Overview
 
 There’s exactly one function in `nflfastR` that works with databases:
-[`update_db()`](https://nflfastr.com/reference/update_db.md). Some
-notes:
+[`update_pbp_db()`](https://nflfastr.com/reference/update_pbp_db.md).
+Some notes:
 
-- If you use
-  [`update_db()`](https://nflfastr.com/reference/update_db.md) with no
-  arguments, it will build a SQLite database called `pbp_db` in your
-  current working directory, with play-by-play data in a table called
-  `nflfastR_pbp`.
-- You can specify a different directory with `dbdir`.
-- You can specify a different filename with `dbname`.
-- You can specify a different table name with `tblname`.
-- If you want to rebuild the database from scratch for whatever reason,
-  supply `force_rebuild = TRUE`. This is primarily intended for the case
-  when we update the play-by-play data in the data repo due to fixing a
-  bug and you want to force the database to be wiped and updated.
-- If you want to rebuild specified seasons, this can also be supplied to
-  `force_rebuild` (e.g. `force_rebuild = c(2019, 2020)`).
-- The parameter `db_connection` is intended for advanced users who want
-  to use other [DBI
-  drivers](https://dbi.r-dbi.org/reference/dbidriver-class), such as
-  MariaDB, Postgres or odbc. Please note that `dbdir` and `dbname` are
-  dropped when a `db_connection` is provided but the argument `tblname`
-  will still be used to write the data table into the database.
+- [`update_pbp_db()`](https://nflfastr.com/reference/update_pbp_db.md)
+  follows the DBI argument naming convention and order. It requires an
+  open connection created with
+  [`DBI::dbConnect()`](https://dbi.r-dbi.org/reference/dbConnect.html).
+- You can specify a different table name with `name`.
+- The `seasons` argument controls how the table in the connected
+  database is handled. This is a hybrid argument, and its behavior is
+  described in detail [in the function
+  documentation](https://nflfastr.com/reference/update_pbp_db.html#the-seasons-argument).
+- If larger parts of the DB need to be updated, then you should
+  definitely consider doing so in chunks. The `"nflfastR.db_chunk_size"`
+  option is available for this purpose. Further details can also be
+  found in the function documentation.
 
-Let’s say I just want to dump a database into the current working
-directory. Here we go!
+#### Connect to a database
+
+Working with databases always requires an open connection. In this
+example, we will focus solely on duckdb databases, as duckdb has
+essentially become the state of the art for this type of data. duckdb
+can easily create a database in your memory. Of course, this doesn’t
+make sense for large amounts of data, because they shouldn’t be stored
+in memory, but the process is practically identical with a locally
+stored database.
+
+So let’s connect to an in-memory duckdb database:
 
 ``` r
-nflfastR::update_db()
-#> ── Update nflfastR Play-by-Play Database ──────── nflfastR version 5.2.0.9001 ──
-#> ℹ 14:44:27 | Can't find the data table "nflfastR_pbp"
-#> in your database. Will load the play by play data from
-#> scratch.
-#> • 14:44:27 | Starting download of 27 seasons between 1999 and 2025...
-#> • 14:45:53 | Checking for missing completed games...
-#> ℹ 14:45:54 | You have 7273 games and are missing 0.
-#> ✔ 14:45:55 | Database update completed
-#> ℹ 14:45:55 | Path to your db: ./pbp_db
+connection <- DBI::dbConnect(duckdb::duckdb())
+connection
+#> <duckdb_connection 85d20 driver=<duckdb_driver dbdir=':memory:' read_only=FALSE bigint=numeric>>
+```
+
+#### Write data to the database
+
+Let’s say I just want to dump play-by-play data of the 2024 season in my
+database. Here we go!
+
+``` r
+nflfastR::update_pbp_db(connection, seasons = 2024)
+#> ── Update nflverse Play-by-Play Data in Connected Database ─────────────────────
+#> ℹ Table "nflverse_pbp" does not yet exist in your connected database.
+#> Do you wish to create it? (Y/n)
+#> ℹ 11:01:40 | Initiate table "nflverse_pbp" with nflverse pbp schema
+#> ℹ 11:01:40 | Drop 2024 season from table "nflverse_pbp"
+#> ℹ 11:01:40 | Append 2024 season to table "nflverse_pbp"
+#> ✔ 11:01:43 | Database update completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
-This created a database in the current directory called `pbp_db`.
+This created a table named “nflverse_pbp” in the connected database and
+appended 2024 play-by-play data to it.
 
 Wait, that’s it? That’s it! What if it’s partway through the season and
-you want to make sure all the new games are added to the database? What
-do you run?
-[`update_db()`](https://nflfastr.com/reference/update_db.md)! (just make
-sure you’re in the directory the database is saved in or you supply the
-right file path)
+you want to make sure all the new games are added to the database to
+allow for data corrections from the NFL to propagate into your database?
+What do you run?
+[`update_pbp_db()`](https://nflfastr.com/reference/update_pbp_db.md)!
 
 ``` r
-nflfastR::update_db()
-#> ── Update nflfastR Play-by-Play Database ──────── nflfastR version 5.2.0.9001 ──
-#> • 14:45:55 | Checking for missing completed games...
-#> ℹ 14:45:55 | You have 7273 games and are missing 0.
-#> ✔ 14:45:56 | Database update completed
-#> ℹ 14:45:56 | Path to your db: /home/runner/work/nflfastR/nflfastR/vignettes/pbp_db
+nflfastR::update_pbp_db(connection)
+#> ── Update nflverse Play-by-Play Data in Connected Database ─────────────────────
+#> ℹ 11:01:43 | Drop 2025 season from table "nflverse_pbp"
+#> ℹ 11:01:43 | Append 2025 season to table "nflverse_pbp"
+#> ✔ 11:01:47 | Database update completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
-If it’s partway through a season and you want to re-build a season to
-allow for data corrections from the NFL to propagate into your database,
-you can specify one season to be rebuilt:
+#### Work with the database
 
-``` r
-nflfastR::update_db(force_rebuild = 2020)
-#> ── Update nflfastR Play-by-Play Database ──────── nflfastR version 5.2.0.9001 ──
-#> • 14:45:56 | Purging season 2020 from the data table "nflfastR_pbp" in your
-#> connected database...
-#> • 14:45:57 | Starting download of the 1 season 2020
-#> • 14:46:00 | Checking for missing completed games...
-#> ℹ 14:46:01 | You have 7273 games and are missing 0.
-#> ✔ 14:46:01 | Database update completed
-#> ℹ 14:46:01 | Path to your db: /home/runner/work/nflfastR/nflfastR/vignettes/pbp_db
-#> ── DONE ────────────────────────────────────────────────────────────────────────
-```
-
-#### Connect to database
-
-Now we can make a connection to the database. This is the only part that
-will look a little bit foreign, but all you need to know is where your
-database is located. If it’s in your current working directory, this
-will work:
-
-``` r
-connection <- DBI::dbConnect(RSQLite::SQLite(), "./pbp_db")
-connection
-#> <SQLiteConnection>
-#>   Path: /home/runner/work/nflfastR/nflfastR/vignettes/pbp_db
-#>   Extensions: TRUE
-```
-
-It looks like nothing happened, but we now have a connection to the
-database. Now we’re ready to do stuff. If you aren’t familiar with
-databases, they’re organized around tables. Here’s how to see which
-tables are present in our database:
+Now we’re ready to do stuff. If you aren’t familiar with databases,
+they’re organized around tables. Here’s how to see which tables are
+present in our database:
 
 ``` r
 DBI::dbListTables(connection)
-#> [1] "nflfastR_pbp"
+#> [1] "nflverse_pbp"
 ```
 
-Since we went with the defaults, there’s a table called `nflfastR_pbp`.
+Since we went with the defaults, there’s a table called `nflverse_pbp`.
 Another useful function is to see the fields (i.e., columns) in a table:
 
 ``` r
-DBI::dbListFields(connection, "nflfastR_pbp") |>
+DBI::dbListFields(connection, "nflverse_pbp") |>
   utils::head(10)
 #>  [1] "play_id"      "game_id"      "old_game_id"  "home_team"    "away_team"   
 #>  [6] "season_type"  "week"         "posteam"      "posteam_type" "defteam"
 ```
 
 This is the same list as the list of columns in `nflfastR` play-by-play.
-Notice we had to supply the name of the table above (`"nflfastR_pbp"`).
+Notice we had to supply the name of the table above (`"nflverse_pbp"`).
 
 With all that out of the way, there’s only a couple more things to
 learn. The main driver here is `tbl`, which helps get output with a
 specific table in a database:
 
 ``` r
-pbp_db <- dplyr::tbl(connection, "nflfastR_pbp")
+pbp_db <- dplyr::tbl(connection, "nflverse_pbp")
 ```
 
 And now, everything will magically just “work”: you can forget you’re
@@ -514,30 +489,26 @@ pbp_db |>
   dplyr::group_by(season) |>
   dplyr::summarize(n = dplyr::n())
 #> # Source:   SQL [?? x 2]
-#> # Database: sqlite 3.51.2 [/home/runner/work/nflfastR/nflfastR/vignettes/pbp_db]
-#>    season     n
-#>     <int> <int>
-#>  1   1999 46136
-#>  2   2000 45491
-#>  3   2001 44969
-#>  4   2002 47355
-#>  5   2003 46811
-#>  6   2004 46705
-#>  7   2005 46823
-#>  8   2006 46299
-#>  9   2007 46266
-#> 10   2008 45917
-#> # ℹ more rows
+#> # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
+#>   season     n
+#>    <int> <dbl>
+#> 1   2024 49492
+#> 2   2025 48771
 pbp_db |>
-  dplyr::filter(rush == 1 | pass == 1, down <= 2, !is.na(epa), !is.na(posteam)) |>
+  dplyr::filter(
+    rush == 1 | pass == 1,
+    down <= 2,
+    !is.na(epa),
+    !is.na(posteam)
+  ) |>
   dplyr::group_by(pass) |>
   dplyr::summarize(mean_epa = mean(epa, na.rm = TRUE))
 #> # Source:   SQL [?? x 2]
-#> # Database: sqlite 3.51.2 [/home/runner/work/nflfastR/nflfastR/vignettes/pbp_db]
+#> # Database: DuckDB 1.4.4 [unknown@Linux 6.11.0-1018-azure:R 4.5.2/:memory:]
 #>    pass mean_epa
 #>   <dbl>    <dbl>
-#> 1     0  -0.0988
-#> 2     1   0.0742
+#> 1     0  -0.0838
+#> 2     1   0.0819
 ```
 
 So far, everything has stayed in the database. If you want to bring a
@@ -551,24 +522,12 @@ russ <- pbp_db |>
   dplyr::select(desc, epa) |>
   dplyr::collect()
 russ
-#> # A tibble: 6,946 × 2
-#>    desc                                                                      epa
-#>    <chr>                                                                   <dbl>
-#>  1 (14:12) 3-R.Wilson pass short right to 18-S.Rice to SEA 34 for 9 yar…  1.13  
-#>  2 (12:53) 3-R.Wilson pass incomplete deep left to 18-S.Rice. PENALTY o…  2.68  
-#>  3 (11:25) (Shotgun) 3-R.Wilson pass incomplete short right to 18-S.Ric… -1.31  
-#>  4 (10:24) (Shotgun) 3-R.Wilson pass short left to 18-S.Rice to ARI 31 …  0.928 
-#>  5 (9:47) 3-R.Wilson scrambles right end ran ob at ARI 27 for 4 yards (… -0.0194
-#>  6 (8:35) 3-R.Wilson pass incomplete short right to 18-S.Rice.           -0.426 
-#>  7 (7:54) (Shotgun) 3-R.Wilson left end pushed ob at ARI 9 for 4 yards … -1.17  
-#>  8 (:27) 3-R.Wilson sacked at SEA 17 for -5 yards (51-P.Lenon). Penalty… -1.13  
-#>  9 (14:28) (Shotgun) 3-R.Wilson pass short right to 17-B.Edwards to SEA…  1.94  
-#> 10 (13:59) 3-R.Wilson pass incomplete deep left to 87-B.Obomanu.         -0.453 
-#> # ℹ 6,936 more rows
+#> # A tibble: 0 × 2
+#> # ℹ 2 variables: desc <chr>, epa <dbl>
 ```
 
 So we’ve searched through about 1 million rows of data across 300+
-columns and only brought about 6950 rows and two columns into memory.
+columns and only brought about 0 rows and two columns into memory.
 Pretty neat! This is how I supply the data to the shiny apps on
 rbsdm.com without running out of memory on the server. Now there’s only
 one more thing to remember. When you’re finished doing what you need
@@ -583,7 +542,7 @@ life-changing post
 here](https://themockup.blog/posts/2019-04-28-nflfastr-dbplyr-rsqlite/).
 More detailed information on dbplyr (the dplyr database back-end) are
 given in the second edition of [Hadley Wickham’s R for Data Science
-(2e)](https://r4ds.hadley.nz/import-databases.html).
+(2e)](https://r4ds.hadley.nz/databases.html).
 
 ### Example 7: working with the expected yards after catch model
 
@@ -622,7 +581,11 @@ nflfastR::load_pbp(2015) |>
   dplyr::group_by(receiver, receiver_id, posteam) |>
   dplyr::mutate(tgt = sum(complete_pass + incomplete_pass)) |>
   dplyr::filter(tgt >= 50) |>
-  dplyr::filter(complete_pass == 1, air_yards < yardline_100, !is.na(xyac_epa)) |>
+  dplyr::filter(
+    complete_pass == 1,
+    air_yards < yardline_100,
+    !is.na(xyac_epa)
+  ) |>
   dplyr::summarize(
     epa_oe = mean(yac_epa - xyac_epa),
     actual_fd = mean(first_down),
@@ -631,7 +594,15 @@ nflfastR::load_pbp(2015) |>
     rec = dplyr::n()
   ) |>
   dplyr::ungroup() |>
-  dplyr::select(receiver, posteam, actual_fd, expected_fd, fd_oe, epa_oe, rec) |>
+  dplyr::select(
+    receiver,
+    posteam,
+    actual_fd,
+    expected_fd,
+    fd_oe,
+    epa_oe,
+    rec
+  ) |>
   dplyr::slice_max(epa_oe, n = 10) |>
   knitr::kable(digits = 3)
 ```
@@ -661,12 +632,7 @@ At long last, there’s a way to merge the new play-by-play data with
 roster information. Use the function to get the rosters:
 
 ``` r
-roster <- nflfastR::fast_scraper_roster(2019)
-#> Warning: `fast_scraper_roster()` was deprecated in nflfastR 5.2.0.
-#> ℹ Please use `nflreadr::load_rosters()` instead.
-#> This warning is displayed once per session.
-#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-#> generated.
+roster <- nflfastR::load_rosters(2019)
 ```
 
 Now let’s load play-by-play data from 2019:
@@ -720,7 +686,13 @@ joined |>
   dplyr::group_by(position) |>
   dplyr::mutate(position_rank = 1:n()) |>
   dplyr::filter(position_rank <= 5) |>
-  dplyr::rename(Pos_Rank = position_rank, Player = receiver, Pos = position, Tgt = n, EPA = tot_epa) |>
+  dplyr::rename(
+    Pos_Rank = position_rank,
+    Player = receiver,
+    Pos = position,
+    Tgt = n,
+    EPA = tot_epa
+  ) |>
   dplyr::select(Player, Pos, Pos_Rank, Tgt, EPA) |>
   knitr::kable(digits = 0)
 ```
@@ -760,7 +732,11 @@ leaders](https://www.nfl.com/stats/player-stats/).
 
 ``` r
 nflfastR::load_pbp(2020) |>
-  dplyr::filter(season_type == "REG", complete_pass == 1 | incomplete_pass == 1 | interception == 1, !is.na(down)) |>
+  dplyr::filter(
+    season_type == "REG",
+    complete_pass == 1 | incomplete_pass == 1 | interception == 1,
+    !is.na(down)
+  ) |>
   dplyr::group_by(passer_player_name, posteam) |>
   dplyr::summarize(
     yards = sum(passing_yards, na.rm = T),
@@ -822,14 +798,23 @@ Now let’s replicate the above table using
 
 ``` r
 s <- nflfastR::calculate_stats(
-  seasons = 2020, 
+  seasons = 2020,
   summary_level = "season",
   stat_type = "player",
   season_type = "REG"
 )
 s |>
-  dplyr::slice_max(passing_yards, n = 10) |> 
-  dplyr::select(player_name, recent_team, completions, attempts, passing_yards, passing_tds, passing_interceptions, attempts) |>
+  dplyr::slice_max(passing_yards, n = 10) |>
+  dplyr::select(
+    player_name,
+    recent_team,
+    completions,
+    attempts,
+    passing_yards,
+    passing_tds,
+    passing_interceptions,
+    attempts
+  ) |>
   knitr::kable(digits = 0)
 ```
 
@@ -845,6 +830,15 @@ s |>
 | K.Cousins   | MIN         |         349 |      516 |          4265 |          35 |                    13 |
 | R.Wilson    | SEA         |         384 |      558 |          4212 |          40 |                    13 |
 | P.Rivers    | IND         |         369 |      543 |          4169 |          24 |                    11 |
+
+The same applies to stats data as to pbp data. Its computation is
+costly, but can be automated. There is therefore rarely a reason to call
+[`calculate_stats()`](https://nflfastr.com/reference/calculate_stats.md)
+directly. Instead, nflverse offers the functions
+[`nflfastR::load_player_stats()`](https://nflreadr.nflverse.com/reference/load_player_stats.html)
+and
+[`nflfastR::load_team_stats()`](https://nflreadr.nflverse.com/reference/load_team_stats.html)
+to load precomputed data from data releases.
 
 ## Frequent issues
 
