@@ -2,6 +2,7 @@
 
 - Added new function `update_pbp_db()`, a fresh approach to the database helper. (#544)
 - Added `"game_id"` to the output `calculate_stats()` if `summary_level == "week"`. (#566)
+- Fixed a bug where `fixed_drive` did not increment after a muffed blocked field goal attempt. Yes this happened in `"2025_10_NO_CAR"`, play id 2504. (#567)
 
 # nflfastR 5.2.0
 
