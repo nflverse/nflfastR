@@ -87,21 +87,21 @@ add_drive_results <- function(d) {
         # when there's a timeout on prior line bc if_else is obnoxious like that
         (.data$new_drive != 1 | is.na(.data$new_drive)) &
           (
-            # same team has ball after lost fumble on punt, pass or rush
+            # same team has ball after lost fumble on punt, fg, pass or rush
             (.data$posteam == dplyr::lag(.data$posteam) &
               dplyr::lag(.data$fumble_lost) == 1 &
-              dplyr::lag(.data$play_type) %in% c("punt", "pass", "run") &
+              dplyr::lag(.data$play_type) %in% c("punt", "pass", "run", "field_goal") &
               # but not if the play resulted in a touchdown because otherwise the
               # following extra point or 2pt conversion will be new drives
               dplyr::lag(.data$touchdown) == 0) |
 
-              # same team has ball after lost fumble on punt, pass or rush 2 plays earlier with prior play missing posteam
+              # same team has ball after lost fumble on punt, fg, pass or rush 2 plays earlier with prior play missing posteam
               (is.na(dplyr::lag(.data$posteam)) &
                 # posteam is same as posteam 2 plays ago
                 .data$posteam == dplyr::lag(.data$posteam, 2) &
                 # lost fumble 2 plays ago
                 dplyr::lag(.data$fumble_lost, 2) == 1 &
-                dplyr::lag(.data$play_type, 2) %in% c("punt", "pass", "run") &
+                dplyr::lag(.data$play_type, 2) %in% c("punt", "pass", "run", "field_goal") &
                 # but not if the lost fumble 2 plays ago resulted in a touchdown because otherwise the
                 # following extra point or 2pt conversion will be new drives
                 dplyr::lag(.data$touchdown, 2) == 0)
