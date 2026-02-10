@@ -281,6 +281,17 @@ calculate_stats <- function(
         paste(unique(.data$season_type), collapse = "+")
       },
 
+      # Game ID #####################
+      # it's not strictly necessary to output game_id because we have
+      # season, week, team, and opponent information but it is convenient
+      # to add this here
+      # Only makes sense in case of weekly stats of course
+      game_id = if (.env$summary_level == "week") {
+        dplyr::first(.data$game_id)
+      } else {
+        NULL
+      },
+
       # Team Info #####################
       # recent_team if we do a season summary of player stats
       # team if we do a week summary of player stats
