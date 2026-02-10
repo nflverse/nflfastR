@@ -1,6 +1,7 @@
 # nflfastR (development version)
 
 - Added new function `update_pbp_db()`, a fresh approach to the database helper. (#544)
+- Added `"game_id"` to the output `calculate_stats()` if `summary_level == "week"`. (#566)
 
 # nflfastR 5.2.0
 
