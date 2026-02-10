@@ -6,6 +6,10 @@
   [`update_pbp_db()`](https://nflfastr.com/reference/update_pbp_db.md),
   a fresh approach to the database helper.
   ([\#544](https://github.com/nflverse/nflfastR/issues/544))
+- Added `"game_id"` to the output
+  [`calculate_stats()`](https://nflfastr.com/reference/calculate_stats.md)
+  if `summary_level == "week"`.
+  ([\#566](https://github.com/nflverse/nflfastR/issues/566))
 
 ## nflfastR 5.2.0
 
