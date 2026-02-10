@@ -90,7 +90,8 @@ add_drive_results <- function(d) {
             # same team has ball after lost fumble on punt, fg, pass or rush
             (.data$posteam == dplyr::lag(.data$posteam) &
               dplyr::lag(.data$fumble_lost) == 1 &
-              dplyr::lag(.data$play_type) %in% c("punt", "pass", "run", "field_goal") &
+              dplyr::lag(.data$play_type) %in%
+                c("punt", "pass", "run", "field_goal") &
               # but not if the play resulted in a touchdown because otherwise the
               # following extra point or 2pt conversion will be new drives
               dplyr::lag(.data$touchdown) == 0) |
@@ -101,7 +102,8 @@ add_drive_results <- function(d) {
                 .data$posteam == dplyr::lag(.data$posteam, 2) &
                 # lost fumble 2 plays ago
                 dplyr::lag(.data$fumble_lost, 2) == 1 &
-                dplyr::lag(.data$play_type, 2) %in% c("punt", "pass", "run", "field_goal") &
+                dplyr::lag(.data$play_type, 2) %in%
+                  c("punt", "pass", "run", "field_goal") &
                 # but not if the lost fumble 2 plays ago resulted in a touchdown because otherwise the
                 # following extra point or 2pt conversion will be new drives
                 dplyr::lag(.data$touchdown, 2) == 0)
