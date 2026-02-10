@@ -250,10 +250,10 @@ connection
 
 ### Write data to the database
 
-Let's say I just want to dump play-by-play data of the 2024 season in my database. Here we go!
+Let's say I just want to dump play-by-play data of the 2021 - 2024 seasons in my database. Here we go!
 
 ``` {r create-db}
-nflfastR::update_pbp_db(connection, seasons = 2024)
+nflfastR::update_pbp_db(connection, seasons = 2021:2024)
 ```
 
 This created a table named "nflverse_pbp" in the connected database and appended 2024 play-by-play data to it.
@@ -314,7 +314,7 @@ russ <- pbp_db |>
 russ
 ```
 
-So we've searched through about 1 million rows of data across 300+ columns and only brought about `r round(nrow(russ), -1)` rows and two columns into memory. Pretty neat! This is how I supply the data to the shiny apps on rbsdm.com without running out of memory on the server. Now there's only one more thing to remember. When you're finished doing what you need with the database:
+So we've searched through `r pbp_db |> dplyr::count() |> dplyr::collect() |> dplyr::pull(n) |> prettyNum(big.mark = ",")` rows of data across 300+ columns and only brought about `r round(nrow(russ), -1)` rows and two columns into memory. Pretty neat! This is how we supply the data to the shiny apps on rbsdm.com without running out of memory on the server. Now there's only one more thing to remember. When you're finished doing what you need with the database:
 
 ``` {r}
 DBI::dbDisconnect(connection)
