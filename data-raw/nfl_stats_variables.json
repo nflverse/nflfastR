@@ -36,6 +36,10 @@
     "description": "One of 'REG', 'POST', or 'REG+POST'"
   },
   {
+    "variable": "game_id",
+    "description": "The nflverse game id of the form '{season}_{week}_{away abbreviation}_{home abbreviation}'. Available if summary_level = 'week'"
+  },
+  {
     "variable": "recent_team",
     "description": "Most recent team player appears in data with. Available if stat_type = 'player' & summary_level = 'season'."
   },
