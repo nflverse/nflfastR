@@ -116,10 +116,10 @@ update_pbp_db(con, seasons = 2024)
 #> ℹ Table "nflverse_pbp" does not yet exist in your connected database.
 #> Do you wish to create it? (Y/n)
 #> 
-#> ℹ 13:08:02 | Initiate table "nflverse_pbp" with nflverse pbp schema
-#> ℹ 13:08:02 | Drop 2024 season from table "nflverse_pbp"
-#> ℹ 13:08:02 | Append 2024 season to table "nflverse_pbp"
-#> ✔ 13:08:05 | Database update completed
+#> ℹ 07:55:16 | Initiate table "nflverse_pbp" with nflverse pbp schema
+#> ℹ 07:55:16 | Drop 2024 season from table "nflverse_pbp"
+#> ℹ 07:55:16 | Append 2024 season to table "nflverse_pbp"
+#> ✔ 07:55:19 | Database update completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 # }
 ```

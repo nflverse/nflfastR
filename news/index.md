@@ -10,6 +10,10 @@
   [`calculate_stats()`](https://nflfastr.com/reference/calculate_stats.md)
   if `summary_level == "week"`.
   ([\#566](https://github.com/nflverse/nflfastR/issues/566))
+- Fixed a bug where `fixed_drive` did not increment after a muffed
+  blocked field goal attempt. Yes this happened in `"2025_10_NO_CAR"`,
+  play id 2504.
+  ([\#567](https://github.com/nflverse/nflfastR/issues/567))
 
 ## nflfastR 5.2.0
 
