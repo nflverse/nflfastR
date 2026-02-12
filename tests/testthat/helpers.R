@@ -1,5 +1,5 @@
 # sample games we'll use to check with
-game_ids <- c("1999_01_MIN_ATL", "2019_01_GB_CHI")
+game_ids <- c("2025_01_KC_LAC", "2019_01_GB_CHI")
 
 test_dir <- getwd()
 
