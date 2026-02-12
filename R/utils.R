@@ -330,3 +330,20 @@ nflverse_thanks <- function() {
     )'
   )
 }
+
+check_for_dropped_seasons <- function(game_ids){
+  dropped_support <- grep("1999|2000", game_ids, value = TRUE)
+  if (length(dropped_support)) {
+    seasons <- substr(dropped_support, 1, 4) |> unique() |> sort()
+    cli::cli_alert_warning(
+      "You have supplied game ID(s) of the {seasons} \\
+      {cli::qty(length(seasons))}season{?s}. \\
+      nflfastR v6 has discontinued support for the parser for {?this/these} \\
+      season{?s} because of too many inconsistencies between the data sources. \\
+      The data is still available for download, however. \\
+      Please run {.run nflfastR::load_pbp(c({paste(seasons, collapse = ', ')}))}"
+    )
+    game_ids <- game_ids[!game_ids %in% dropped_support]
+  }
+  game_ids
+}
