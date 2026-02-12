@@ -331,7 +331,7 @@ nflverse_thanks <- function() {
   )
 }
 
-check_for_dropped_seasons <- function(game_ids){
+check_for_dropped_seasons <- function(game_ids) {
   dropped_support <- grep("1999|2000", game_ids, value = TRUE)
   if (length(dropped_support)) {
     seasons <- substr(dropped_support, 1, 4) |> unique() |> sort()
