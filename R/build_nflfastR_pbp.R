@@ -78,6 +78,13 @@ build_nflfastR_pbp <- function(
     rule_header("Build nflfastR Play-by-Play Data")
   }
 
+  # nflfastR v6 stopped supporting the 1999 and 2000 seasons because of
+  # inconsistent data sources. Data is still available through load_pbp
+  # but we will not fix any issues.
+  # It's possible to install nflfastR v5.2.0 to parse those seasons.
+  # try pak::pak("nflverse/nflfastR@v5.2.0")
+  game_ids <- check_for_dropped_seasons(game_ids)
+
   game_count <- ifelse(is.vector(game_ids), length(game_ids), nrow(game_ids))
   builder <- TRUE
 
