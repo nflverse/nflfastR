@@ -888,6 +888,6 @@ restore_kickoff_attempt <- function(pbp) {
   pbp |>
     dplyr::mutate(
       kickoff_attempt = .data$copy_of_kickoff_attempt,
-      actual_kickoff_attempt = NULL
+      copy_of_kickoff_attempt = NULL
     )
 }
