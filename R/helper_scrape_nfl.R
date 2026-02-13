@@ -273,7 +273,7 @@ get_pbp_nfl <- function(
       ),
 
       # can't trust the goal_to_go variable so we overwrite it here
-      goal_to_go = as.integer(stringr::str_detect(
+      goal_to_go = as.numeric(stringr::str_detect(
         tolower(.data$pre_play_by_play),
         "goal"
       ))

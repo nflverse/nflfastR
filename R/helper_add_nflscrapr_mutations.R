@@ -414,112 +414,17 @@ add_nflscrapr_mutations <- function(pbp) {
       # Create a play type column: either pass, run, field_goal, extra_point,
       # kickoff, punt, qb_kneel, qb_spike, or no_play (which includes timeouts and
       # penalties):
-      # but first reset the penalty fix variable in case it's trash
-      penalty_fix = dplyr::if_else(
-        .data$penalty == 1 & .data$play_type_nfl == "PENALTY",
-        0,
-        .data$penalty_fix
+      play_type = translate_play_type_nfl(
+        .data$play_type_nfl,
+        qb_spike = .data$qb_spike,
+        qb_kneel = .data$qb_kneel,
+        pass_attempt = .data$pass_attempt,
+        rush_attempt = .data$rush_attempt,
+        punt_attempt = .data$punt_attempt,
+        field_goal_attempt = .data$field_goal_attempt,
+        penalty = .data$penalty
       ),
 
-      play_type = dplyr::if_else(
-        (.data$penalty == 0 |
-          (.data$penalty == 1 & .data$penalty_fix == 1)) &
-          (.data$pass_attempt == 1 |
-            .data$incomplete_pass == 1 |
-            .data$two_point_pass_good == 1 |
-            .data$two_point_pass_failed == 1 |
-            .data$two_point_pass_safety == 1 |
-            .data$two_point_pass_reception_good == 1 |
-            .data$two_point_pass_reception_failed == 1 |
-            .data$pass_attempt == 1 |
-            .data$pass_touchdown == 1 |
-            .data$complete_pass == 1),
-        "pass",
-        "no_play"
-      ),
-      play_type = dplyr::if_else(
-        (.data$penalty == 0 |
-          (.data$penalty == 1 & .data$penalty_fix == 1)) &
-          (.data$two_point_rush_good == 1 |
-            .data$two_point_rush_failed == 1 |
-            .data$two_point_rush_safety == 1 |
-            .data$rush_attempt == 1 |
-            .data$rush_touchdown == 1),
-        "run",
-        .data$play_type
-      ),
-      play_type = dplyr::if_else(
-        (.data$penalty == 0 |
-          (.data$penalty == 1 & .data$return_penalty_fix == 1) |
-          (.data$penalty == 1 &
-            (.data$punt_inside_twenty == 1 |
-              .data$punt_in_endzone == 1 |
-              .data$punt_out_of_bounds == 1 |
-              .data$punt_downed == 1 |
-              .data$punt_fair_catch == 1))) &
-          .data$punt_attempt == 1,
-        "punt",
-        .data$play_type
-      ),
-      play_type = dplyr::if_else(
-        (.data$penalty == 0 |
-          (.data$penalty == 1 & .data$return_penalty_fix == 1) |
-          (.data$penalty == 1 &
-            (.data$kickoff_inside_twenty == 1 |
-              .data$kickoff_in_endzone == 1 |
-              .data$kickoff_out_of_bounds == 1 |
-              .data$kickoff_downed == 1 |
-              .data$kickoff_fair_catch == 1))) &
-          .data$kickoff_attempt == 1,
-        "kickoff",
-        .data$play_type
-      ),
-      play_type = dplyr::if_else(
-        (.data$penalty == 0 |
-          (.data$penalty == 1 & .data$penalty_fix == 1)) &
-          .data$field_goal_attempt == 1,
-        "field_goal",
-        .data$play_type
-      ),
-      play_type = dplyr::if_else(
-        (.data$penalty == 0 |
-          (.data$penalty == 1 & .data$penalty_fix == 1)) &
-          .data$extra_point_attempt == 1,
-        "extra_point",
-        .data$play_type
-      ),
-      play_type = dplyr::if_else(
-        (.data$penalty == 0 |
-          (.data$penalty == 1 & .data$penalty_fix == 1)) &
-          .data$qb_spike == 1,
-        "qb_spike",
-        .data$play_type
-      ),
-      play_type = dplyr::if_else(
-        (.data$penalty == 0 |
-          (.data$penalty == 1 & .data$penalty_fix == 1)) &
-          .data$qb_kneel == 1,
-        "qb_kneel",
-        .data$play_type
-      ),
-      play_type = dplyr::if_else(
-        is.na(.data$penalty) &
-          is.na(.data$play_type) &
-          stringr::str_detect(.data$play_description, " offsetting"),
-        "no_play",
-        .data$play_type
-      ),
-      # play_type can be no_play on special teams plays with penalties that don't
-      # result in a replayed down. We fix this here using play_type_nfl (#281)
-      play_type = dplyr::case_when(
-        .data$play_type == "no_play" &
-          !.data$play_type_nfl %in% c("PENALTY", "TIMEOUT") &
-          !stringr::str_detect(
-            .data$play_description,
-            "No Play"
-          ) ~ translate_play_type_nfl(.data$play_type_nfl),
-        TRUE ~ .data$play_type
-      ),
       # Indicator for QB dropbacks (exclude spikes and kneels):
       qb_dropback = dplyr::if_else(
         .data$play_type == "pass" |
@@ -902,23 +807,68 @@ fix_scrambles <- function(pbp) {
   # Data from Aaron Schatz!
 }
 
-translate_play_type_nfl <- function(play_type_nfl) {
+translate_play_type_nfl <- function(
+  play_type_nfl,
+  qb_spike,
+  qb_kneel,
+  pass_attempt,
+  rush_attempt,
+  punt_attempt,
+  field_goal_attempt,
+  penalty
+) {
+  # I want the arg name to be descriptive, but I want a short variable name
+  # for the code below
+  x <- play_type_nfl
+
+  out <- dplyr::case_when(
+    x == "COMMENT" ~ NA_character_,
+    x == "END_GAME" ~ NA_character_,
+    x == "END_QUARTER" ~ NA_character_,
+    x == "FIELD_GOAL" ~ "field_goal",
+    x == "FREE_KICK" ~ "kickoff",
+    x == "GAME_START" ~ NA_character_,
+    x == "INTERCEPTION" ~ "pass",
+    x == "KICK_OFF" ~ "kickoff",
+    x == "PASS" ~ "pass",
+    x == "PAT2" & pass_attempt == 1 ~ "pass",
+    x == "PAT2" & rush_attempt == 1 ~ "run",
+    x == "PENALTY" ~ "no_play",
+    x == "PUNT" ~ "punt",
+    x == "RUSH" ~ "run",
+    x == "SACK" ~ "pass",
+    x == "TIMEOUT" ~ "no_play",
+    x == "XP_KICK" ~ "extra_point",
+
+    # UNSPECIFIED is a mix of all sorts of weird plays
+    x == "UNSPECIFIED" & penalty == 1 ~ "no_play",
+
+    # the following lines imply penalty == 0 because penalty == 1 triggers above
+    x == "UNSPECIFIED" & pass_attempt == 1 ~ "pass",
+    x == "UNSPECIFIED" & rush_attempt == 1 ~ "run",
+    x == "UNSPECIFIED" & punt_attempt == 1 ~ "punt",
+    x == "UNSPECIFIED" & field_goal_attempt == 1 ~ "field_goal",
+
+    # most of the remaining UNSPECIFIED plays will be declined penalties
+    # from punt or fg formation. These don't really count as play so we define
+    # them as no_play
+    x == "UNSPECIFIED" ~ "no_play",
+
+    # default
+    TRUE ~ ""
+  )
+
+  # every play_type_nfl that we do not catch in the above cases
+  # will be an empty string. We try to resolve these as good as we can
+  # also need to replace passes and runs that were spikes and kneel downs
   dplyr::case_when(
-    play_type_nfl == "COMMENT" ~ "no_play",
-    play_type_nfl == "END_GAME" ~ "no_play",
-    play_type_nfl == "END_QUARTER" ~ "no_play",
-    play_type_nfl == "FIELD_GOAL" ~ "field_goal",
-    play_type_nfl == "FREE_KICK" ~ "kickoff",
-    play_type_nfl == "GAME_START" ~ "no_play",
-    play_type_nfl == "KICK_OFF" ~ "kickoff",
-    play_type_nfl == "PASS" ~ "pass",
-    play_type_nfl == "PAT2" ~ "extra_point",
-    play_type_nfl == "PENALTY" ~ "no_play",
-    play_type_nfl == "PUNT" ~ "punt",
-    play_type_nfl == "RUSH" ~ "run",
-    play_type_nfl == "SACK" ~ "pass",
-    play_type_nfl == "TIMEOUT" ~ "no_play",
-    play_type_nfl == "XP_KICK" ~ "extra_point",
-    TRUE ~ NA_character_
+    out == "" & penalty == 1 ~ "no_play",
+    out == "" & pass_attempt == 1 ~ "pass",
+    out == "" & rush_attempt == 1 ~ "run",
+    out == "" & punt_attempt == 1 ~ "punt",
+    out == "" & field_goal_attempt == 1 ~ "field_goal",
+    qb_spike == 1 & out %in% c("pass", "run") ~ "qb_spike",
+    qb_kneel == 1 & out %in% c("pass", "run") ~ "qb_kneel",
+    TRUE ~ out
   )
 }

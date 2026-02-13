@@ -45,7 +45,6 @@ sum_play_stats <- function(play_Id, stats) {
       row$rusher_player_name <- play_stats$player.displayName[index]
       row$yards_gained <- play_stats$yards[index]
       row$rushing_yards <- play_stats$yards[index]
-      row$penalty_fix <- 1
     } else if (stat_id == 11) {
       row$rush_attempt <- 1
       row$touchdown <- 1
@@ -58,7 +57,6 @@ sum_play_stats <- function(play_Id, stats) {
       row$td_team <- play_stats$teamAbbr[index]
       row$td_player_id <- play_stats$player.esbId[index]
       row$td_player_name <- play_stats$player.displayName[index]
-      row$penalty_fix <- 1
     } else if (stat_id == 12) {
       row$rush_attempt <- 1
       row$lateral_rush <- 1
@@ -66,7 +64,6 @@ sum_play_stats <- function(play_Id, stats) {
       row$lateral_rusher_player_name <- play_stats$player.displayName[index]
       row$yards_gained <- play_stats$yards[index]
       row$lateral_rushing_yards <- play_stats$yards[index]
-      row$penalty_fix <- 1
     } else if (stat_id == 13) {
       row$rush_attempt <- 1
       row$touchdown <- 1
@@ -79,13 +76,11 @@ sum_play_stats <- function(play_Id, stats) {
       row$td_player_name <- play_stats$player.displayName[index]
       row$yards_gained <- play_stats$yards[index]
       row$lateral_rushing_yards <- play_stats$yards[index]
-      row$penalty_fix <- 1
     } else if (stat_id == 14) {
       row$incomplete_pass <- 1
       row$pass_attempt <- 1
       row$passer_player_id <- play_stats$player.esbId[index]
       row$passer_player_name <- play_stats$player.displayName[index]
-      row$penalty_fix <- 1
     } else if (stat_id == 15) {
       row$pass_attempt <- 1
       row$complete_pass <- 1
@@ -93,7 +88,6 @@ sum_play_stats <- function(play_Id, stats) {
       row$passer_player_name <- play_stats$player.displayName[index]
       row$yards_gained <- play_stats$yards[index]
       row$passing_yards <- play_stats$yards[index]
-      row$penalty_fix <- 1
     } else if (stat_id == 16) {
       row$pass_attempt <- 1
       row$touchdown <- 1
@@ -106,20 +100,17 @@ sum_play_stats <- function(play_Id, stats) {
       row$td_team <- play_stats$teamAbbr[index]
       row$td_player_id <- play_stats$player.esbId[index]
       row$td_player_name <- play_stats$player.displayName[index]
-      row$penalty_fix <- 1
     } else if (stat_id == 19) {
       row$interception <- 1
       row$pass_attempt <- 1
       row$passer_player_id <- play_stats$player.esbId[index]
       row$passer_player_name <- play_stats$player.displayName[index]
-      row$penalty_fix <- 1
     } else if (stat_id == 20) {
       row$pass_attempt <- 1
       row$sack <- 1
       row$passer_player_id <- play_stats$player.esbId[index]
       row$passer_player_name <- play_stats$player.displayName[index]
       row$yards_gained <- play_stats$yards[index]
-      row$penalty_fix <- 1
     } else if (stat_id == 21) {
       row$pass_attempt <- 1
       row$complete_pass <- 1
@@ -127,7 +118,6 @@ sum_play_stats <- function(play_Id, stats) {
       row$receiver_player_name <- play_stats$player.displayName[index]
       row$yards_gained <- play_stats$yards[index]
       row$receiving_yards <- play_stats$yards[index]
-      row$penalty_fix <- 1
     } else if (stat_id == 22) {
       row$pass_attempt <- 1
       row$touchdown <- 1
@@ -140,7 +130,6 @@ sum_play_stats <- function(play_Id, stats) {
       row$td_player_name <- play_stats$player.displayName[index]
       row$yards_gained <- play_stats$yards[index]
       row$receiving_yards <- play_stats$yards[index]
-      row$penalty_fix <- 1
     } else if (stat_id == 23) {
       row$pass_attempt <- 1
       row$complete_pass <- 1
@@ -149,7 +138,6 @@ sum_play_stats <- function(play_Id, stats) {
       row$lateral_receiver_player_name <- play_stats$player.displayName[index]
       row$yards_gained <- play_stats$yards[index]
       row$lateral_receiving_yards <- play_stats$yards[index]
-      row$penalty_fix <- 1
     } else if (stat_id == 24) {
       row$pass_attempt <- 1
       row$touchdown <- 1
@@ -163,7 +151,6 @@ sum_play_stats <- function(play_Id, stats) {
       row$td_player_name <- play_stats$player.displayName[index]
       row$yards_gained <- play_stats$yards[index]
       row$lateral_receiving_yards <- play_stats$yards[index]
-      row$penalty_fix <- 1
     } else if (stat_id == 25) {
       row$pass_attempt <- 1
       row$interception_player_id <- play_stats$player.esbId[index]

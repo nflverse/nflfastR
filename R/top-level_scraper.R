@@ -430,16 +430,19 @@ fast_scraper <- function(
     )
   }
 
+  # nflfastR v6 stopped supporting the 1999 and 2000 seasons because of
+  # inconsistent data sources. Data is still available through load_pbp
+  # but we will not fix any issues.
+  # It's possible to install nflfastR v5.2.0 to parse those seasons.
+  # try pak::pak("nflverse/nflfastR@v5.2.0")
+  game_ids <- check_for_dropped_seasons(game_ids)
+
   suppressWarnings({
     p <- progressr::progressor(along = game_ids)
     pbp <- furrr::future_map_dfr(
       game_ids,
       function(x, p, dir, ...) {
-        if (substr(x, 1, 4) < 2001) {
-          plays <- please_work(get_pbp_gc)(x, dir = dir, ...)
-        } else {
-          plays <- please_work(get_pbp_nfl)(x, dir = dir, ...)
-        }
+        plays <- please_work(get_pbp_nfl)(x, dir = dir, ...)
         p(sprintf("ID=%s", as.character(x)))
         return(plays)
       },
