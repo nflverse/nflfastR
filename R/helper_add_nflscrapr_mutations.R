@@ -227,6 +227,12 @@ add_nflscrapr_mutations <- function(pbp) {
         TRUE ~ 0
       ),
 
+      # we overwrite kickoff_attempt for kickoffs with penalties because
+      # those mess with ep/epa/wp/wpa. Since this is inconsistent compared to
+      # all other *_attempt variables, we will restore kickoff_attempt after
+      # models are applied. That's done with a temporary copy of kickoff_attempt.
+      # See #556, #202, #199 for example
+      copy_of_kickoff_attempt = .data$kickoff_attempt,
       kickoff_attempt = dplyr::if_else(
         .data$lead_ko == 1,
         1,
@@ -871,4 +877,17 @@ translate_play_type_nfl <- function(
     qb_kneel == 1 & out %in% c("pass", "run") ~ "qb_kneel",
     TRUE ~ out
   )
+}
+
+# we overwrite kickoff_attempt for kickoffs with penalties because
+# those mess with ep/epa/wp/wpa. Since this is inconsistent compared to
+# all other *_attempt variables, we will restore kickoff_attempt after
+# models are applied. That's done with a temporary copy of kickoff_attempt.
+# See #556, #202, #199 for example
+restore_kickoff_attempt <- function(pbp) {
+  pbp |>
+    dplyr::mutate(
+      kickoff_attempt = .data$copy_of_kickoff_attempt,
+      copy_of_kickoff_attempt = NULL
+    )
 }
