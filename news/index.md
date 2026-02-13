@@ -14,6 +14,16 @@
   blocked field goal attempt. Yes this happened in `"2025_10_NO_CAR"`,
   play id 2504.
   ([\#567](https://github.com/nflverse/nflfastR/issues/567))
+- nflfastR stopped supporting the 1999 and 2000 seasons because of
+  inconsistent data sources. Data is still available through
+  [`load_pbp()`](https://nflreadr.nflverse.com/reference/load_pbp.html)
+  but we will not fix any issues related to those old seasons anymore.
+  It’s possible to install nflfastR v5.2.0 (with
+  `pak::pak("nflverse/nflfastR@v5.2.0")`) to parse those seasons if
+  necessary. ([\#568](https://github.com/nflverse/nflfastR/issues/568))
+- Implemented a fresh approach to compute `play_type` based on
+  `play_type_nfl` for faster and more consistent output.
+  ([\#568](https://github.com/nflverse/nflfastR/issues/568))
 
 ## nflfastR 5.2.0
 

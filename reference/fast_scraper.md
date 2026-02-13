@@ -1558,19 +1558,19 @@ try({# to avoid CRAN test problems
 fast_scraper(c("2019_01_GB_CHI", "2013_21_SEA_DEN"))
 })
 #> ℹ It is recommended to use parallel processing when trying to load multiple games.Please consider running `future::plan("multisession")`! Will go on sequentially...
-#> ✔ 07:55:02 | Download finished. Adding variables...
-#> ✔ 07:55:02 | added game variables
-#> ✔ 07:55:02 | added nflscrapR variables
-#> ✔ 07:55:02 | added ep variables
-#> ✔ 07:55:02 | added air_yac_ep variables
-#> ✔ 07:55:03 | added wp variables
-#> ✔ 07:55:03 | added air_yac_wp variables
-#> ✔ 07:55:03 | added cp and cpoe
-#> ✔ 07:55:03 | added fixed drive variables
-#> ✔ 07:55:03 | added series variables
-#> ✔ 07:55:03 | Procedure completed.
+#> ✔ 16:36:05 | Download finished. Adding variables...
+#> ✔ 16:36:05 | added game variables
+#> ✔ 16:36:05 | added nflscrapR variables
+#> ✔ 16:36:05 | added ep variables
+#> ✔ 16:36:06 | added air_yac_ep variables
+#> ✔ 16:36:06 | added wp variables
+#> ✔ 16:36:06 | added air_yac_wp variables
+#> ✔ 16:36:06 | added cp and cpoe
+#> ✔ 16:36:06 | added fixed drive variables
+#> ✔ 16:36:06 | added series variables
+#> ✔ 16:36:06 | Procedure completed.
 #> ── nflverse play by play ───────────────────────────────────────────────────────
-#> ℹ Data updated: 2026-02-11 07:55:03 UTC
+#> ℹ Data updated: 2026-02-13 16:36:06 UTC
 #> # A tibble: 337 × 339
 #>    play_id game_id     old_game_id home_team away_team season_type  week posteam
 #>      <dbl> <chr>       <chr>       <chr>     <chr>     <chr>       <int> <chr>  
@@ -1589,7 +1589,7 @@ fast_scraper(c("2019_01_GB_CHI", "2013_21_SEA_DEN"))
 #> #   yardline_100 <dbl>, game_date <chr>, quarter_seconds_remaining <dbl>,
 #> #   half_seconds_remaining <dbl>, game_seconds_remaining <dbl>,
 #> #   game_half <chr>, quarter_end <dbl>, drive <dbl>, sp <dbl>, qtr <dbl>,
-#> #   down <dbl>, goal_to_go <int>, time <chr>, yrdln <chr>, ydstogo <dbl>,
+#> #   down <dbl>, goal_to_go <dbl>, time <chr>, yrdln <chr>, ydstogo <dbl>,
 #> #   ydsnet <dbl>, desc <chr>, play_type <chr>, yards_gained <dbl>, …
 
 
@@ -1604,19 +1604,19 @@ fast_scraper_schedules(2020) |>
 #> Warning: `fast_scraper_schedules()` was deprecated in nflfastR 5.2.0.
 #> ℹ Please use `nflreadr::load_schedules()` instead.
 #> ℹ It is recommended to use parallel processing when trying to load multiple games.Please consider running `future::plan("multisession")`! Will go on sequentially...
-#> ✔ 07:55:06 | Download finished. Adding variables...
-#> ✔ 07:55:06 | added game variables
-#> ✔ 07:55:06 | added nflscrapR variables
-#> ✔ 07:55:06 | added ep variables
-#> ✔ 07:55:06 | added air_yac_ep variables
-#> ✔ 07:55:07 | added wp variables
-#> ✔ 07:55:07 | added air_yac_wp variables
-#> ✔ 07:55:07 | added cp and cpoe
-#> ✔ 07:55:07 | added fixed drive variables
-#> ✔ 07:55:07 | added series variables
-#> ✔ 07:55:07 | Procedure completed.
+#> ✔ 16:36:09 | Download finished. Adding variables...
+#> ✔ 16:36:09 | added game variables
+#> ✔ 16:36:09 | added nflscrapR variables
+#> ✔ 16:36:10 | added ep variables
+#> ✔ 16:36:10 | added air_yac_ep variables
+#> ✔ 16:36:10 | added wp variables
+#> ✔ 16:36:10 | added air_yac_wp variables
+#> ✔ 16:36:10 | added cp and cpoe
+#> ✔ 16:36:10 | added fixed drive variables
+#> ✔ 16:36:10 | added series variables
+#> ✔ 16:36:10 | Procedure completed.
 #> ── nflverse play by play ───────────────────────────────────────────────────────
-#> ℹ Data updated: 2026-02-11 07:55:07 UTC
+#> ℹ Data updated: 2026-02-13 16:36:10 UTC
 #> # A tibble: 539 × 339
 #>    play_id game_id     old_game_id home_team away_team season_type  week posteam
 #>      <dbl> <chr>       <chr>       <chr>     <chr>     <chr>       <int> <chr>  
@@ -1635,7 +1635,7 @@ fast_scraper_schedules(2020) |>
 #> #   yardline_100 <dbl>, game_date <chr>, quarter_seconds_remaining <dbl>,
 #> #   half_seconds_remaining <dbl>, game_seconds_remaining <dbl>,
 #> #   game_half <chr>, quarter_end <dbl>, drive <dbl>, sp <dbl>, qtr <dbl>,
-#> #   down <dbl>, goal_to_go <int>, time <chr>, yrdln <chr>, ydstogo <dbl>,
+#> #   down <dbl>, goal_to_go <dbl>, time <chr>, yrdln <chr>, ydstogo <dbl>,
 #> #   ydsnet <dbl>, desc <chr>, play_type <chr>, yards_gained <dbl>, …
 
 # }
