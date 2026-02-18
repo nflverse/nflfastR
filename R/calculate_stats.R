@@ -134,6 +134,7 @@ calculate_stats <- function(
   # load_playstats defined below
   # more_stats = all stat IDs of one player in a single play
   # team_stats = all stat IDs of one team in a single play
+  # all_stats = all stat IDs of a play, regardless of team (we need this for punting)
   # we need those to identify things like fumbles depending on playtype or
   # first downs depending on playtype
   playstats <- load_playstats(seasons = seasons_in_pbp) |>
@@ -153,6 +154,15 @@ calculate_stats <- function(
       # including the separator to avoid 1 matching 10
       team_stats = paste0(paste(stat_id, collapse = ";"), ";"),
       team_play_air_yards = sum((stat_id %in% 111:112) * yards)
+    ) |>
+    # need to group by game and play here to avoid mixing of play IDs of different
+    # games in the same week
+    dplyr::group_by(.data$game_id, .data$play_id) |>
+    dplyr::mutate(
+      # we append a collapse separator to the string in order to search for matches
+      # including the separator to avoid 1 matching 10
+      all_stats = paste0(paste(stat_id, collapse = ";"), ";"),
+      play_punt_return_yards = sum((stat_id %in% 33:36) * yards)
     ) |>
     # compute team targets and team air yards for calculation of target share
     # and air yard share. Since it's relative, we need to be careful with the groups
@@ -505,6 +515,34 @@ calculate_stats <- function(
       } else {
         NULL
       },
+
+      # Punts #####################
+      pt_att = sum(stat_id %in% c(2, 29, 31, 32)), # 31 probably unnecessary
+      pt_blocked = sum(stat_id == 2),
+      pt_long = max(stat_id %in% c(29, 32) * yards) %0% NA_integer_,
+      pt_yards = sum(stat_id %in% c(29, 32) * yards),
+      pt_inside_20 = sum(stat_id == 30),
+      # the following stats are a bit special as we need opponent team stats
+      # to get the counts right. That's what 'all_stats' is for
+      # stat IDs 37, 38, 39 (punts oob, downed, fair caught) are assigned to
+      # the receiving team (or to the receiver in case of 39)
+      # Also the number of returns, return TDs and the yardage
+      pt_out_of_bounds = sum((stat_id == 29) & has_id(37, all_stats)),
+      pt_downed = sum((stat_id == 29) & has_id(38, all_stats)),
+      pt_touchback = sum(stat_id == 32),
+      pt_fair_caught = sum((stat_id == 29) & has_id(39, all_stats)),
+      pt_returned = sum(
+        (stat_id %in% c(2, 29, 31, 32)) & has_id(33:34, all_stats)
+      ),
+      pt_return_yards = sum(
+        (stat_id %in% c(2, 29, 31, 32)) * .data$play_punt_return_yards
+      ),
+      pt_return_tds = sum(
+        (stat_id %in% c(2, 29, 31, 32)) & has_id(c(34, 36), all_stats)
+      ),
+      pt_net_yards = .data$pt_yards -
+        .data$pt_return_yards -
+        .data$pt_touchback * 20L
     ) |>
     dplyr::ungroup() |>
     dplyr::mutate_if(
