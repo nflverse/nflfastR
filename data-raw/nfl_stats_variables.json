@@ -516,6 +516,58 @@
     "description": "Distances of game winning field goal attempts. Available if summary_level = 'season'."
   },
   {
+    "variable": "pt_att",
+    "description": "Kicked punts."
+  },
+  {
+    "variable": "pt_blocked",
+    "description": "Kicked punts that were blocked."
+  },
+  {
+    "variable": "pt_long",
+    "description": "Longest punt kicked."
+  },
+  {
+    "variable": "pt_yards",
+    "description": "Length of punts kicked."
+  },
+  {
+    "variable": "pt_inside_20",
+    "description": "The number of punts where the RETURN ended inside the opponent's 20 yard line."
+  },
+  {
+    "variable": "pt_out_of_bounds",
+    "description": "The number of punts that went out of bounds without return."
+  },
+  {
+    "variable": "pt_downed",
+    "description": "The number of punts downed without return."
+  },
+  {
+    "variable": "pt_touchback",
+    "description": "The number of punts that resulted in a touchback."
+  },
+  {
+    "variable": "pt_fair_caught",
+    "description": "The number of punts that resulted in a fair catch."
+  },
+  {
+    "variable": "pt_returned",
+    "description": "The number of punts that were returned by the opponent team."
+  },
+  {
+    "variable": "pt_return_yards",
+    "description": "The punt return yardage of the opponent team."
+  },
+  {
+    "variable": "pt_return_tds",
+    "description": "The number of punts that were returned for a touchdown by the opponent team."
+  },
+  {
+    "variable": "pt_net_yards",
+    "description": "Net punt yardage. Equals `pt_yards` - `pt_return_yards` - `pt_touchback` * `20`."
+  },
+  {
     "variable": "fantasy_points",
     "description": "Standard fantasy points."
   },

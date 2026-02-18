@@ -7,6 +7,7 @@
 - Implemented a fresh approach to compute `play_type` based on `play_type_nfl` for faster and more consistent output. (#568)
 - Fixed a bug where nflfastR overrode the kickoff_attempt variable in the event of a penalty on a kickoff. (#569)
 - Added various definitions of 'explosive' plays to the output of `calculate_stats()`. It counts passes, runs, and receptions with 10+, 20+, 40+ yards gained as well as 12+ yard runs and 16+ yard passes. (#573)
+- Added several punting stats to the output of `calculate_stats()`. (#574)
 
 # nflfastR 5.2.0
 
