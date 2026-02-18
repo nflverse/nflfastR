@@ -49,95 +49,107 @@ nfl_stats_variables
 #> 28                 passing_cpoe
 #> 29      passing_2pt_conversions
 #> 30                         pacr
-#> 31                      carries
-#> 32                rushing_yards
-#> 33                  rushing_tds
-#> 34              rushing_fumbles
-#> 35         rushing_fumbles_lost
-#> 36          rushing_first_downs
-#> 37                  rushing_epa
-#> 38      rushing_2pt_conversions
-#> 39                   receptions
-#> 40                      targets
-#> 41              receiving_yards
-#> 42                receiving_tds
-#> 43            receiving_fumbles
-#> 44       receiving_fumbles_lost
-#> 45          receiving_air_yards
-#> 46  receiving_yards_after_catch
-#> 47        receiving_first_downs
-#> 48                receiving_epa
-#> 49    receiving_2pt_conversions
-#> 50                         racr
-#> 51                 target_share
-#> 52              air_yards_share
-#> 53                         wopr
-#> 54            special_teams_tds
-#> 55             def_tackles_solo
-#> 56      def_tackles_with_assist
-#> 57           def_tackle_assists
-#> 58         def_tackles_for_loss
-#> 59   def_tackles_for_loss_yards
-#> 60           def_fumbles_forced
-#> 61                    def_sacks
-#> 62               def_sack_yards
-#> 63                  def_qb_hits
-#> 64            def_interceptions
-#> 65       def_interception_yards
-#> 66            def_pass_defended
-#> 67                      def_tds
-#> 68                  def_fumbles
-#> 69                 def_safeties
-#> 70                   misc_yards
-#> 71          fumble_recovery_own
-#> 72    fumble_recovery_yards_own
-#> 73          fumble_recovery_opp
-#> 74    fumble_recovery_yards_opp
-#> 75          fumble_recovery_tds
-#> 76                    penalties
-#> 77                penalty_yards
-#> 78                     timeouts
-#> 79                 punt_returns
-#> 80            punt_return_yards
-#> 81              kickoff_returns
-#> 82         kickoff_return_yards
-#> 83                      fg_made
-#> 84                       fg_att
-#> 85                    fg_missed
-#> 86                   fg_blocked
-#> 87                      fg_long
-#> 88                       fg_pct
-#> 89                 fg_made_0_19
-#> 90                fg_made_20_29
-#> 91                fg_made_30_39
-#> 92                fg_made_40_49
-#> 93                fg_made_50_59
-#> 94                  fg_made_60_
-#> 95               fg_missed_0_19
-#> 96              fg_missed_20_29
-#> 97              fg_missed_30_39
-#> 98              fg_missed_40_49
-#> 99              fg_missed_50_59
-#> 100               fg_missed_60_
-#> 101                fg_made_list
-#> 102              fg_missed_list
-#> 103             fg_blocked_list
-#> 104            fg_made_distance
-#> 105          fg_missed_distance
-#> 106         fg_blocked_distance
-#> 107                    pat_made
-#> 108                     pat_att
-#> 109                  pat_missed
-#> 110                 pat_blocked
-#> 111                     pat_pct
-#> 112                   gwfg_made
-#> 113                    gwfg_att
-#> 114                 gwfg_missed
-#> 115                gwfg_blocked
-#> 116               gwfg_distance
-#> 117          gwfg_distance_list
-#> 118              fantasy_points
-#> 119          fantasy_points_ppr
+#> 31                   passing_10
+#> 32                   passing_16
+#> 33                   passing_20
+#> 34                   passing_40
+#> 35                      carries
+#> 36                rushing_yards
+#> 37                  rushing_tds
+#> 38              rushing_fumbles
+#> 39         rushing_fumbles_lost
+#> 40          rushing_first_downs
+#> 41                  rushing_epa
+#> 42      rushing_2pt_conversions
+#> 43                   rushing_10
+#> 44                   rushing_12
+#> 45                   rushing_20
+#> 46                   rushing_40
+#> 47                   receptions
+#> 48                      targets
+#> 49              receiving_yards
+#> 50                receiving_tds
+#> 51            receiving_fumbles
+#> 52       receiving_fumbles_lost
+#> 53          receiving_air_yards
+#> 54  receiving_yards_after_catch
+#> 55        receiving_first_downs
+#> 56                receiving_epa
+#> 57    receiving_2pt_conversions
+#> 58                 receiving_10
+#> 59                 receiving_16
+#> 60                 receiving_20
+#> 61                 receiving_40
+#> 62                         racr
+#> 63                 target_share
+#> 64              air_yards_share
+#> 65                         wopr
+#> 66            special_teams_tds
+#> 67             def_tackles_solo
+#> 68      def_tackles_with_assist
+#> 69           def_tackle_assists
+#> 70         def_tackles_for_loss
+#> 71   def_tackles_for_loss_yards
+#> 72           def_fumbles_forced
+#> 73                    def_sacks
+#> 74               def_sack_yards
+#> 75                  def_qb_hits
+#> 76            def_interceptions
+#> 77       def_interception_yards
+#> 78            def_pass_defended
+#> 79                      def_tds
+#> 80                  def_fumbles
+#> 81                 def_safeties
+#> 82                   misc_yards
+#> 83          fumble_recovery_own
+#> 84    fumble_recovery_yards_own
+#> 85          fumble_recovery_opp
+#> 86    fumble_recovery_yards_opp
+#> 87          fumble_recovery_tds
+#> 88                    penalties
+#> 89                penalty_yards
+#> 90                     timeouts
+#> 91                 punt_returns
+#> 92            punt_return_yards
+#> 93              kickoff_returns
+#> 94         kickoff_return_yards
+#> 95                      fg_made
+#> 96                       fg_att
+#> 97                    fg_missed
+#> 98                   fg_blocked
+#> 99                      fg_long
+#> 100                      fg_pct
+#> 101                fg_made_0_19
+#> 102               fg_made_20_29
+#> 103               fg_made_30_39
+#> 104               fg_made_40_49
+#> 105               fg_made_50_59
+#> 106                 fg_made_60_
+#> 107              fg_missed_0_19
+#> 108             fg_missed_20_29
+#> 109             fg_missed_30_39
+#> 110             fg_missed_40_49
+#> 111             fg_missed_50_59
+#> 112               fg_missed_60_
+#> 113                fg_made_list
+#> 114              fg_missed_list
+#> 115             fg_blocked_list
+#> 116            fg_made_distance
+#> 117          fg_missed_distance
+#> 118         fg_blocked_distance
+#> 119                    pat_made
+#> 120                     pat_att
+#> 121                  pat_missed
+#> 122                 pat_blocked
+#> 123                     pat_pct
+#> 124                   gwfg_made
+#> 125                    gwfg_att
+#> 126                 gwfg_missed
+#> 127                gwfg_blocked
+#> 128               gwfg_distance
+#> 129          gwfg_distance_list
+#> 130              fantasy_points
+#> 131          fantasy_points_ppr
 #>                                                                                                                                                                                                                                                                   description
 #> 1                                                                                                                                                                                                                          GSIS player ID. Available if stat_type = 'player'.
 #> 2         Short player name as listed in play-by-play data. Please keep in mind that this name is not always unique for one player and can change from season to season and sometimes even within a season. Do not group by this variable. Available if stat_type = 'player'.
@@ -169,94 +181,106 @@ nfl_stats_variables
 #> 28                                                                                                                                                                                                                                     Completion percentage over expectation
 #> 29                                                                                                                                                                                                                                               Two-point conversion passes.
 #> 30                                                                                                                                                             Passing Air Conversion Ratio. PACR = `passing_yards` / `passing_air_yards`. Available if stat_type = 'player'.
-#> 31                                                                                                                                             The number of official rush attempts (incl. scrambles and kneel downs). Rushes after a lateral reception don't count as carry.
-#> 32                                                                                             Yards gained when rushing with the ball (incl. scrambles and kneel downs). Also includes yards gained after obtaining a lateral on a play that started with a rushing attempt.
-#> 33                                                                                                                      The number of rushing touchdowns (incl. scrambles). Also includes touchdowns after obtaining a lateral on a play that started with a rushing attempt.
-#> 34                                                                                                                                                                                                                                        The number of rushes with a fumble.
-#> 35                                                                                                                                                                                                                                   The number of rushes with a lost fumble.
-#> 36                                                                                                                                                                                                                            First downs on rush attempts (incl. scrambles).
-#> 37                                                                                                                                                                                                  Expected points added on rush attempts (incl. scrambles and kneel downs).
-#> 38                                                                                                                                                                                                                                               Two-point conversion rushes.
-#> 39                                                                                                                                                                                     The number of pass receptions. Lateral receptions officially don't count as reception.
-#> 40                                                                                                                                                                                                       The number of pass plays where the player was the targeted receiver.
-#> 41                                                                                                                                                Yards gained after a pass reception. Includes yards gained after receiving a lateral on a play that started as a pass play.
-#> 42                                                                                                                             The number of touchdowns following a pass reception. Also includes touchdowns after receiving a lateral on a play that started as a pass play.
-#> 43                                                                                                                                                                                                                              The number of fumbles after a pass reception.
-#> 44                                                                                                                                                                                                                         The number of fumbles lost after a pass reception.
-#> 45                                                                                                                                                                                                                             Receiving air yards (incl. incomplete passes).
-#> 46                                                                                                                         Yards after the catch gained on plays in which player was receiver (this is an unofficial stat and may differ slightly between different sources).
-#> 47                                                                                                                                                                                                                                                 First downs on receptions.
-#> 48                                                                                                                                                                                                                                       Expected points added on receptions.
-#> 49                                                                                                                                                                                                                                           Two-point conversion receptions.
-#> 50                                                                                                                                                        Receiver Air Conversion Ratio. RACR = `receiving_yards` / `receiving_air_yards`. Available if stat_type = 'player'.
-#> 51                                                                                                                                                                          The share of targets of the player in all targets of his team. Available if stat_type = 'player'.
-#> 52                                                                                                                                                            The share of receiving_air_yards of the player in all air_yards of his team. Available if stat_type = 'player'.
-#> 53                                                                                                                                                     Weighted Opportunity Rating. WOPR = 1.5 × `target_share` + 0.7 × `air_yards_share`. Available if stat_type = 'player'.
-#> 54                                                                                                                                                                                                                    The number of touchdowns scored in special teams plays.
-#> 55                                                                                                                                                                                                                                                              Solo tackles.
-#> 56                                                                                                                                                                                                                                     Tackles where another player assisted.
-#> 57                                                                                                                                                                                                                                         Assist to another player's tackle.
-#> 58                                                                                                                                                                                                                                                          Tackles for loss.
-#> 59                                                                                                                                                                                                                          Yards lost by the opposing team through a tackle.
-#> 60                                                                                                                                                                                                                                                            Forced fumbles.
-#> 61                                                                                                                                                                                                                                                           Number of Sacks.
-#> 62                                                                                                                                                                                                                            Yards lost by the opposing team through a sack.
-#> 63                                                                                                                                                                                                                                                          Number of QB hits
-#> 64                                                                                                                                                                                                                                                      Interceptions caught.
-#> 65                                                                                                                                                                                                                                          Yards gained after interceptions.
-#> 66                                                                                                                                                                                                                                                 Number of defended passes.
-#> 67                                                                                                                                                                                                                                                      Defensive touchdowns.
-#> 68                                                                                                                                                                                                                                Number of fumbles while playing on defense.
-#> 69                                                                                                                                                                                                                                         Tackles that resulted in a safety.
-#> 70                                                                                                                                                          Yardage gained/lost that doesn't fall into any other category. Examples are blocked field goals or blocked punts.
-#> 71                                                                                                                                                                                                                  Recovered fumbles where the ball was fumbled by own team.
-#> 72                                                                                       Yardage gained/lost by a player after he recovered a fumble by his own team. Includes yardage gained/lost where a team mate recovered a fumble and lateraled the ball to the player.
-#> 73                                                                                                                                                                                                             Recovered fumbles where the ball was fumbled by opposing team.
-#> 74                                                                                  Yardage gained/lost by a player after he recovered a fumble by the opposing team. Includes yardage gained/lost where a team mate recovered a fumble and lateraled the ball to the player.
-#> 75                        Touchdowns scored after a fumble recovery. This can be in any unit. And both the own team and the opposing team can have fumbled the ball initially. Includes touchdowns where a team mate recovered a fumble and lateraled the ball to the player.
-#> 76                                                                                                                                                                                                                                                          Penalties caused.
-#> 77                                                                                                                                                                                                                                            Yardage lost through penalties.
-#> 78                                                                                                                                                                                                         Number of timeouts taken by team. Available if stat_type = 'team'.
-#> 79                                                                                                                                                                                                                                                  Number of punts returned.
-#> 80                                                                                                                                                                                                                      Yardage gained/lost by a player during a punt return.
-#> 81                                                                                                                                                                                                                                               Number of kickoffs returned.
-#> 82                                                                                                                                                                                                                   Yardage gained/lost by a player during a kickoff return.
-#> 83                                                                                                                                                                                                                                            Successful field goal attempts.
-#> 84                                                                                                                                                                                                                                                     Attempted field goals.
-#> 85                                                                                                                                                                                                                                                        Missed field goals.
-#> 86                                                                                                                                                                                                                                   Attempted field goals that were blocked.
-#> 87                                                                                                                                                                                                                                       Distance of longest made field goal.
-#> 88                                                                                                                                                                                                                              Percentage of successful field goal attempts.
-#> 89                                                                                                                                                                                                  Successful field goal attempts where distance was between 0 and 19 yards.
-#> 90                                                                                                                                                                                                 Successful field goal attempts where distance was between 20 and 29 yards.
-#> 91                                                                                                                                                                                                 Successful field goal attempts where distance was between 30 and 39 yards.
-#> 92                                                                                                                                                                                                 Successful field goal attempts where distance was between 40 and 49 yards.
-#> 93                                                                                                                                                                                                 Successful field goal attempts where distance was between 50 and 59 yards.
-#> 94                                                                                                                                                                                                               Successful field goal attempts where distance was 60+ yards.
-#> 95                                                                                                                                                                                                      Missed field goal attempts where distance was between 0 and 19 yards.
-#> 96                                                                                                                                                                                                     Missed field goal attempts where distance was between 20 and 29 yards.
-#> 97                                                                                                                                                                                                     Missed field goal attempts where distance was between 30 and 39 yards.
-#> 98                                                                                                                                                                                                     Missed field goal attempts where distance was between 40 and 49 yards.
-#> 99                                                                                                                                                                                                     Missed field goal attempts where distance was between 50 and 59 yards.
-#> 100                                                                                                                                                                                                                  Missed field goal attempts where distance was 60+ yards.
-#> 101                                                                                                                                                                                                                          Distances of all successful field goal attempts.
-#> 102                                                                                                                                                                                                                              Distances of all missed field goal attempts.
-#> 103                                                                                                                                                                                                                             Distances of all blocked field goal attempts.
-#> 104                                                                                                                                                                                                                                 Sum of distances of all made field goals.
-#> 105                                                                                                                                                                                                                               Sum of distances of all missed field goals.
-#> 106                                                                                                                                                                                                                              Sum of distances of all blocked field goals.
-#> 107                                                                                                                                                                                                                                          Successful extra point attempts.
-#> 108                                                                                                                                                                                                                                                   Attempted extra points.
-#> 109                                                                                                                                                                                                                                                      Missed extra points.
-#> 110                                                                                                                                                                                                                                         Extra points blocked by opponent.
-#> 111                                                                                                                                                                                                                            Percentage of successful extra point attempts.
-#> 112                                                                                                                                                                                                                              Successful game winning field goal attempts.
-#> 113                                                                                                                                                                                                                                       Attempted game winning field goals.
-#> 114                                                                                                                                                                                                                                          Missed game winning field goals.
-#> 115                                                                                                                                                                                                                     Game winning field goal attempts blocked by opponent.
-#> 116                                                                                                                                                                                         Distance of game winning field goal attempt. Available if summary_level = 'week'.
-#> 117                                                                                                                                                                                     Distances of game winning field goal attempts. Available if summary_level = 'season'.
-#> 118                                                                                                                                                                                                                                                  Standard fantasy points.
-#> 119                                                                                                                                                                                                                                                       PPR fantasy points.
+#> 31                                                                                                                                                                                The number of passes that gained 10 or more yards. Some define this as an 'explosive' play.
+#> 32                                                                                                                                                                                The number of passes that gained 16 or more yards. Some define this as an 'explosive' play.
+#> 33                                                                                                                                                                                The number of passes that gained 20 or more yards. Some define this as an 'explosive' play.
+#> 34                                                                                                                                                                                The number of passes that gained 40 or more yards. Some define this as an 'explosive' play.
+#> 35                                                                                                                                             The number of official rush attempts (incl. scrambles and kneel downs). Rushes after a lateral reception don't count as carry.
+#> 36                                                                                             Yards gained when rushing with the ball (incl. scrambles and kneel downs). Also includes yards gained after obtaining a lateral on a play that started with a rushing attempt.
+#> 37                                                                                                                      The number of rushing touchdowns (incl. scrambles). Also includes touchdowns after obtaining a lateral on a play that started with a rushing attempt.
+#> 38                                                                                                                                                                                                                                        The number of rushes with a fumble.
+#> 39                                                                                                                                                                                                                                   The number of rushes with a lost fumble.
+#> 40                                                                                                                                                                                                                            First downs on rush attempts (incl. scrambles).
+#> 41                                                                                                                                                                                                  Expected points added on rush attempts (incl. scrambles and kneel downs).
+#> 42                                                                                                                                                                                                                                               Two-point conversion rushes.
+#> 43                                                                                                                                                                                  The number of runs that gained 10 or more yards. Some define this as an 'explosive' play.
+#> 44                                                                                                                                                                                  The number of runs that gained 12 or more yards. Some define this as an 'explosive' play.
+#> 45                                                                                                                                                                                  The number of runs that gained 20 or more yards. Some define this as an 'explosive' play.
+#> 46                                                                                                                                                                                  The number of runs that gained 40 or more yards. Some define this as an 'explosive' play.
+#> 47                                                                                                                                                                                     The number of pass receptions. Lateral receptions officially don't count as reception.
+#> 48                                                                                                                                                                                                       The number of pass plays where the player was the targeted receiver.
+#> 49                                                                                                                                                Yards gained after a pass reception. Includes yards gained after receiving a lateral on a play that started as a pass play.
+#> 50                                                                                                                             The number of touchdowns following a pass reception. Also includes touchdowns after receiving a lateral on a play that started as a pass play.
+#> 51                                                                                                                                                                                                                              The number of fumbles after a pass reception.
+#> 52                                                                                                                                                                                                                         The number of fumbles lost after a pass reception.
+#> 53                                                                                                                                                                                                                             Receiving air yards (incl. incomplete passes).
+#> 54                                                                                                                         Yards after the catch gained on plays in which player was receiver (this is an unofficial stat and may differ slightly between different sources).
+#> 55                                                                                                                                                                                                                                                 First downs on receptions.
+#> 56                                                                                                                                                                                                                                       Expected points added on receptions.
+#> 57                                                                                                                                                                                                                                           Two-point conversion receptions.
+#> 58                                                                                                                                                                            The number of receptions that gained 10 or more yards. Some define this as an 'explosive' play.
+#> 59                                                                                                                                                                            The number of receptions that gained 16 or more yards. Some define this as an 'explosive' play.
+#> 60                                                                                                                                                                            The number of receptions that gained 20 or more yards. Some define this as an 'explosive' play.
+#> 61                                                                                                                                                                            The number of receptions that gained 40 or more yards. Some define this as an 'explosive' play.
+#> 62                                                                                                                                                        Receiver Air Conversion Ratio. RACR = `receiving_yards` / `receiving_air_yards`. Available if stat_type = 'player'.
+#> 63                                                                                                                                                                          The share of targets of the player in all targets of his team. Available if stat_type = 'player'.
+#> 64                                                                                                                                                            The share of receiving_air_yards of the player in all air_yards of his team. Available if stat_type = 'player'.
+#> 65                                                                                                                                                     Weighted Opportunity Rating. WOPR = 1.5 × `target_share` + 0.7 × `air_yards_share`. Available if stat_type = 'player'.
+#> 66                                                                                                                                                                                                                    The number of touchdowns scored in special teams plays.
+#> 67                                                                                                                                                                                                                                                              Solo tackles.
+#> 68                                                                                                                                                                                                                                     Tackles where another player assisted.
+#> 69                                                                                                                                                                                                                                         Assist to another player's tackle.
+#> 70                                                                                                                                                                                                                                                          Tackles for loss.
+#> 71                                                                                                                                                                                                                          Yards lost by the opposing team through a tackle.
+#> 72                                                                                                                                                                                                                                                            Forced fumbles.
+#> 73                                                                                                                                                                                                                                                           Number of Sacks.
+#> 74                                                                                                                                                                                                                            Yards lost by the opposing team through a sack.
+#> 75                                                                                                                                                                                                                                                          Number of QB hits
+#> 76                                                                                                                                                                                                                                                      Interceptions caught.
+#> 77                                                                                                                                                                                                                                          Yards gained after interceptions.
+#> 78                                                                                                                                                                                                                                                 Number of defended passes.
+#> 79                                                                                                                                                                                                                                                      Defensive touchdowns.
+#> 80                                                                                                                                                                                                                                Number of fumbles while playing on defense.
+#> 81                                                                                                                                                                                                                                         Tackles that resulted in a safety.
+#> 82                                                                                                                                                          Yardage gained/lost that doesn't fall into any other category. Examples are blocked field goals or blocked punts.
+#> 83                                                                                                                                                                                                                  Recovered fumbles where the ball was fumbled by own team.
+#> 84                                                                                       Yardage gained/lost by a player after he recovered a fumble by his own team. Includes yardage gained/lost where a team mate recovered a fumble and lateraled the ball to the player.
+#> 85                                                                                                                                                                                                             Recovered fumbles where the ball was fumbled by opposing team.
+#> 86                                                                                  Yardage gained/lost by a player after he recovered a fumble by the opposing team. Includes yardage gained/lost where a team mate recovered a fumble and lateraled the ball to the player.
+#> 87                        Touchdowns scored after a fumble recovery. This can be in any unit. And both the own team and the opposing team can have fumbled the ball initially. Includes touchdowns where a team mate recovered a fumble and lateraled the ball to the player.
+#> 88                                                                                                                                                                                                                                                          Penalties caused.
+#> 89                                                                                                                                                                                                                                            Yardage lost through penalties.
+#> 90                                                                                                                                                                                                         Number of timeouts taken by team. Available if stat_type = 'team'.
+#> 91                                                                                                                                                                                                                                                  Number of punts returned.
+#> 92                                                                                                                                                                                                                      Yardage gained/lost by a player during a punt return.
+#> 93                                                                                                                                                                                                                                               Number of kickoffs returned.
+#> 94                                                                                                                                                                                                                   Yardage gained/lost by a player during a kickoff return.
+#> 95                                                                                                                                                                                                                                            Successful field goal attempts.
+#> 96                                                                                                                                                                                                                                                     Attempted field goals.
+#> 97                                                                                                                                                                                                                                                        Missed field goals.
+#> 98                                                                                                                                                                                                                                   Attempted field goals that were blocked.
+#> 99                                                                                                                                                                                                                                       Distance of longest made field goal.
+#> 100                                                                                                                                                                                                                             Percentage of successful field goal attempts.
+#> 101                                                                                                                                                                                                 Successful field goal attempts where distance was between 0 and 19 yards.
+#> 102                                                                                                                                                                                                Successful field goal attempts where distance was between 20 and 29 yards.
+#> 103                                                                                                                                                                                                Successful field goal attempts where distance was between 30 and 39 yards.
+#> 104                                                                                                                                                                                                Successful field goal attempts where distance was between 40 and 49 yards.
+#> 105                                                                                                                                                                                                Successful field goal attempts where distance was between 50 and 59 yards.
+#> 106                                                                                                                                                                                                              Successful field goal attempts where distance was 60+ yards.
+#> 107                                                                                                                                                                                                     Missed field goal attempts where distance was between 0 and 19 yards.
+#> 108                                                                                                                                                                                                    Missed field goal attempts where distance was between 20 and 29 yards.
+#> 109                                                                                                                                                                                                    Missed field goal attempts where distance was between 30 and 39 yards.
+#> 110                                                                                                                                                                                                    Missed field goal attempts where distance was between 40 and 49 yards.
+#> 111                                                                                                                                                                                                    Missed field goal attempts where distance was between 50 and 59 yards.
+#> 112                                                                                                                                                                                                                  Missed field goal attempts where distance was 60+ yards.
+#> 113                                                                                                                                                                                                                          Distances of all successful field goal attempts.
+#> 114                                                                                                                                                                                                                              Distances of all missed field goal attempts.
+#> 115                                                                                                                                                                                                                             Distances of all blocked field goal attempts.
+#> 116                                                                                                                                                                                                                                 Sum of distances of all made field goals.
+#> 117                                                                                                                                                                                                                               Sum of distances of all missed field goals.
+#> 118                                                                                                                                                                                                                              Sum of distances of all blocked field goals.
+#> 119                                                                                                                                                                                                                                          Successful extra point attempts.
+#> 120                                                                                                                                                                                                                                                   Attempted extra points.
+#> 121                                                                                                                                                                                                                                                      Missed extra points.
+#> 122                                                                                                                                                                                                                                         Extra points blocked by opponent.
+#> 123                                                                                                                                                                                                                            Percentage of successful extra point attempts.
+#> 124                                                                                                                                                                                                                              Successful game winning field goal attempts.
+#> 125                                                                                                                                                                                                                                       Attempted game winning field goals.
+#> 126                                                                                                                                                                                                                                          Missed game winning field goals.
+#> 127                                                                                                                                                                                                                     Game winning field goal attempts blocked by opponent.
+#> 128                                                                                                                                                                                         Distance of game winning field goal attempt. Available if summary_level = 'week'.
+#> 129                                                                                                                                                                                     Distances of game winning field goal attempts. Available if summary_level = 'season'.
+#> 130                                                                                                                                                                                                                                                  Standard fantasy points.
+#> 131                                                                                                                                                                                                                                                       PPR fantasy points.
 # }
 ```
