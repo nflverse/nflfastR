@@ -338,6 +338,11 @@ calculate_stats <- function(
       } else {
         NULL
       },
+      # "Explosives" (see #550 for discussion about the definition)
+      passing_10 = sum((stat_id %in% 15:16) * (yards >= 10)),
+      passing_16 = sum((stat_id %in% 15:16) * (yards >= 16)),
+      passing_20 = sum((stat_id %in% 15:16) * (yards >= 20)),
+      passing_40 = sum((stat_id %in% 15:16) * (yards >= 40)),
       # dakota = requires pbp,
 
       carries = sum(stat_id %in% 10:11),
@@ -349,6 +354,11 @@ calculate_stats <- function(
       ),
       rushing_first_downs = sum((stat_id %in% 10:11) & has_id(3, team_stats)),
       rushing_2pt_conversions = sum(stat_id == 75),
+      # "Explosives" (see #550 for discussion about the definition)
+      rushing_10 = sum((stat_id %in% 10:13) * (yards >= 10)),
+      rushing_12 = sum((stat_id %in% 10:13) * (yards >= 12)),
+      rushing_20 = sum((stat_id %in% 10:13) * (yards >= 20)),
+      rushing_40 = sum((stat_id %in% 10:13) * (yards >= 40)),
 
       receptions = sum(stat_id %in% 21:22),
       targets = sum(stat_id == 115),
@@ -371,6 +381,11 @@ calculate_stats <- function(
       receiving_yards_after_catch = sum((stat_id == 113) * yards),
       receiving_first_downs = sum((stat_id %in% 21:22) & has_id(4, team_stats)),
       receiving_2pt_conversions = sum(stat_id == 104),
+      # "Explosives" (see #550 for discussion about the definition)
+      receiving_10 = sum((stat_id %in% 21:24) * (yards >= 10)),
+      receiving_16 = sum((stat_id %in% 21:24) * (yards >= 16)),
+      receiving_20 = sum((stat_id %in% 21:24) * (yards >= 20)),
+      receiving_40 = sum((stat_id %in% 21:24) * (yards >= 40)),
       # these are player stats and we skip them in team stats
       racr = if (.env$stat_type == "player") {
         .data$receiving_yards / .data$receiving_air_yards
