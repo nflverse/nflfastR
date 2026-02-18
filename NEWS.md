@@ -5,6 +5,7 @@
 - Fixed a bug where `fixed_drive` did not increment after a muffed blocked field goal attempt. Yes this happened in `"2025_10_NO_CAR"`, play id 2504. (#567)
 - nflfastR stopped supporting the 1999 and 2000 seasons because of inconsistent data sources. Data is still available through `load_pbp()` but we will not fix any issues related to those old seasons anymore. It's possible to install nflfastR v5.2.0 (with `pak::pak("nflverse/nflfastR@v5.2.0")`) to parse those seasons if necessary. (#568)
 - Implemented a fresh approach to compute `play_type` based on `play_type_nfl` for faster and more consistent output. (#568)
+- Fixed a bug where nflfastR overrode the kickoff_attempt variable in the event of a penalty on a kickoff. (#569)
 
 # nflfastR 5.2.0
 

@@ -463,6 +463,7 @@ fast_scraper <- function(
         add_cp() |>
         add_drive_results() |>
         add_series_data() |>
+        restore_kickoff_attempt() |>
         select_variables()
     }
   })
