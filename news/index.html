@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.2.0.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.2.0.9005</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,6 +71,7 @@
 <li>Fixed a bug where <code>fixed_drive</code> did not increment after a muffed blocked field goal attempt. Yes this happened in <code>"2025_10_NO_CAR"</code>, play id 2504. (<a href="https://github.com/nflverse/nflfastR/issues/567" class="external-link">#567</a>)</li>
 <li>nflfastR stopped supporting the 1999 and 2000 seasons because of inconsistent data sources. Data is still available through <code><a href="https://nflreadr.nflverse.com/reference/load_pbp.html" class="external-link">load_pbp()</a></code> but we will not fix any issues related to those old seasons anymore. It’s possible to install nflfastR v5.2.0 (with <code>pak::pak("nflverse/nflfastR@v5.2.0")</code>) to parse those seasons if necessary. (<a href="https://github.com/nflverse/nflfastR/issues/568" class="external-link">#568</a>)</li>
 <li>Implemented a fresh approach to compute <code>play_type</code> based on <code>play_type_nfl</code> for faster and more consistent output. (<a href="https://github.com/nflverse/nflfastR/issues/568" class="external-link">#568</a>)</li>
+<li>Fixed a bug where nflfastR overrode the kickoff_attempt variable in the event of a penalty on a kickoff. (<a href="https://github.com/nflverse/nflfastR/issues/569" class="external-link">#569</a>)</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="5.2.0" id="nflfastr-520">nflfastR 5.2.0<a class="anchor" aria-label="anchor" href="#nflfastr-520"></a></h2><p class="text-muted">CRAN release: 2026-02-07</p>

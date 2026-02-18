@@ -24,6 +24,9 @@
 - Implemented a fresh approach to compute `play_type` based on
   `play_type_nfl` for faster and more consistent output.
   ([\#568](https://github.com/nflverse/nflfastR/issues/568))
+- Fixed a bug where nflfastR overrode the kickoff_attempt variable in
+  the event of a penalty on a kickoff.
+  ([\#569](https://github.com/nflverse/nflfastR/issues/569))
 
 ## nflfastR 5.2.0
 
