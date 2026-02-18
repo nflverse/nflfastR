@@ -120,6 +120,22 @@
     "description": "Passing Air Conversion Ratio. PACR = `passing_yards` / `passing_air_yards`. Available if stat_type = 'player'."
   },
   {
+    "variable": "passing_10",
+    "description": "The number of passes that gained 10 or more yards. Some define this as an 'explosive' play."
+  },
+  {
+    "variable": "passing_16",
+    "description": "The number of passes that gained 16 or more yards. Some define this as an 'explosive' play."
+  },
+  {
+    "variable": "passing_20",
+    "description": "The number of passes that gained 20 or more yards. Some define this as an 'explosive' play."
+  },
+  {
+    "variable": "passing_40",
+    "description": "The number of passes that gained 40 or more yards. Some define this as an 'explosive' play."
+  },
+  {
     "variable": "carries",
     "description": "The number of official rush attempts (incl. scrambles and kneel downs). Rushes after a lateral reception don't count as carry."
   },
@@ -150,6 +166,22 @@
   {
     "variable": "rushing_2pt_conversions",
     "description": "Two-point conversion rushes."
+  },
+  {
+    "variable": "rushing_10",
+    "description": "The number of runs that gained 10 or more yards. Some define this as an 'explosive' play."
+  },
+  {
+    "variable": "rushing_12",
+    "description": "The number of runs that gained 12 or more yards. Some define this as an 'explosive' play."
+  },
+  {
+    "variable": "rushing_20",
+    "description": "The number of runs that gained 20 or more yards. Some define this as an 'explosive' play."
+  },
+  {
+    "variable": "rushing_40",
+    "description": "The number of runs that gained 40 or more yards. Some define this as an 'explosive' play."
   },
   {
     "variable": "receptions",
@@ -194,6 +226,22 @@
   {
     "variable": "receiving_2pt_conversions",
     "description": "Two-point conversion receptions."
+  },
+  {
+    "variable": "receiving_10",
+    "description": "The number of receptions that gained 10 or more yards. Some define this as an 'explosive' play."
+  },
+  {
+    "variable": "receiving_16",
+    "description": "The number of receptions that gained 16 or more yards. Some define this as an 'explosive' play."
+  },
+  {
+    "variable": "receiving_20",
+    "description": "The number of receptions that gained 20 or more yards. Some define this as an 'explosive' play."
+  },
+  {
+    "variable": "receiving_40",
+    "description": "The number of receptions that gained 40 or more yards. Some define this as an 'explosive' play."
   },
   {
     "variable": "racr",
