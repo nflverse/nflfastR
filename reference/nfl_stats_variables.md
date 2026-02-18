@@ -148,8 +148,21 @@ nfl_stats_variables
 #> 127                gwfg_blocked
 #> 128               gwfg_distance
 #> 129          gwfg_distance_list
-#> 130              fantasy_points
-#> 131          fantasy_points_ppr
+#> 130                      pt_att
+#> 131                  pt_blocked
+#> 132                     pt_long
+#> 133                    pt_yards
+#> 134                pt_inside_20
+#> 135            pt_out_of_bounds
+#> 136                   pt_downed
+#> 137                pt_touchback
+#> 138              pt_fair_caught
+#> 139                 pt_returned
+#> 140             pt_return_yards
+#> 141               pt_return_tds
+#> 142                pt_net_yards
+#> 143              fantasy_points
+#> 144          fantasy_points_ppr
 #>                                                                                                                                                                                                                                                                   description
 #> 1                                                                                                                                                                                                                          GSIS player ID. Available if stat_type = 'player'.
 #> 2         Short player name as listed in play-by-play data. Please keep in mind that this name is not always unique for one player and can change from season to season and sometimes even within a season. Do not group by this variable. Available if stat_type = 'player'.
@@ -280,7 +293,20 @@ nfl_stats_variables
 #> 127                                                                                                                                                                                                                     Game winning field goal attempts blocked by opponent.
 #> 128                                                                                                                                                                                         Distance of game winning field goal attempt. Available if summary_level = 'week'.
 #> 129                                                                                                                                                                                     Distances of game winning field goal attempts. Available if summary_level = 'season'.
-#> 130                                                                                                                                                                                                                                                  Standard fantasy points.
-#> 131                                                                                                                                                                                                                                                       PPR fantasy points.
+#> 130                                                                                                                                                                                                                                                             Kicked punts.
+#> 131                                                                                                                                                                                                                                           Kicked punts that were blocked.
+#> 132                                                                                                                                                                                                                                                      Longest punt kicked.
+#> 133                                                                                                                                                                                                                                                   Length of punts kicked.
+#> 134                                                                                                                                                                                            The number of punts where the RETURN ended inside the opponent's 20 yard line.
+#> 135                                                                                                                                                                                                               The number of punts that went out of bounds without return.
+#> 136                                                                                                                                                                                                                                The number of punts downed without return.
+#> 137                                                                                                                                                                                                                         The number of punts that resulted in a touchback.
+#> 138                                                                                                                                                                                                                        The number of punts that resulted in a fair catch.
+#> 139                                                                                                                                                                                                              The number of punts that were returned by the opponent team.
+#> 140                                                                                                                                                                                                                             The punt return yardage of the opponent team.
+#> 141                                                                                                                                                                                              The number of punts that were returned for a touchdown by the opponent team.
+#> 142                                                                                                                                                                                          Net punt yardage. Equals `pt_yards` - `pt_return_yards` - `pt_touchback` * `20`.
+#> 143                                                                                                                                                                                                                                                  Standard fantasy points.
+#> 144                                                                                                                                                                                                                                                       PPR fantasy points.
 # }
 ```

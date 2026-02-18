@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.2.0.9006</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.2.0.9007</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -214,8 +214,21 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 127                gwfg_blocked</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 128               gwfg_distance</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 129          gwfg_distance_list</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 130              fantasy_points</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 131          fantasy_points_ppr</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 130                      pt_att</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 131                  pt_blocked</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 132                     pt_long</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 133                    pt_yards</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 134                pt_inside_20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 135            pt_out_of_bounds</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 136                   pt_downed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 137                pt_touchback</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 138              pt_fair_caught</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 139                 pt_returned</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 140             pt_return_yards</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 141               pt_return_tds</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 142                pt_net_yards</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 143              fantasy_points</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 144          fantasy_points_ppr</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                   description</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                                                                                                                                                                                          GSIS player ID. Available if stat_type = 'player'.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2         Short player name as listed in play-by-play data. Please keep in mind that this name is not always unique for one player and can change from season to season and sometimes even within a season. Do not group by this variable. Available if stat_type = 'player'.</span>
@@ -346,8 +359,21 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 127                                                                                                                                                                                                                     Game winning field goal attempts blocked by opponent.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 128                                                                                                                                                                                         Distance of game winning field goal attempt. Available if summary_level = 'week'.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 129                                                                                                                                                                                     Distances of game winning field goal attempts. Available if summary_level = 'season'.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 130                                                                                                                                                                                                                                                  Standard fantasy points.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 131                                                                                                                                                                                                                                                       PPR fantasy points.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 130                                                                                                                                                                                                                                                             Kicked punts.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 131                                                                                                                                                                                                                                           Kicked punts that were blocked.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 132                                                                                                                                                                                                                                                      Longest punt kicked.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 133                                                                                                                                                                                                                                                   Length of punts kicked.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 134                                                                                                                                                                                            The number of punts where the RETURN ended inside the opponent's 20 yard line.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 135                                                                                                                                                                                                               The number of punts that went out of bounds without return.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 136                                                                                                                                                                                                                                The number of punts downed without return.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 137                                                                                                                                                                                                                         The number of punts that resulted in a touchback.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 138                                                                                                                                                                                                                        The number of punts that resulted in a fair catch.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 139                                                                                                                                                                                                              The number of punts that were returned by the opponent team.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 140                                                                                                                                                                                                                             The punt return yardage of the opponent team.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 141                                                                                                                                                                                              The number of punts that were returned for a touchdown by the opponent team.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 142                                                                                                                                                                                          Net punt yardage. Equals `pt_yards` - `pt_return_yards` - `pt_touchback` * `20`.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 143                                                                                                                                                                                                                                                  Standard fantasy points.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 144                                                                                                                                                                                                                                                       PPR fantasy points.</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

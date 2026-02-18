@@ -32,6 +32,9 @@
   It counts passes, runs, and receptions with 10+, 20+, 40+ yards gained
   as well as 12+ yard runs and 16+ yard passes.
   ([\#573](https://github.com/nflverse/nflfastR/issues/573))
+- Added several punting stats to the output of
+  [`calculate_stats()`](https://nflfastr.com/reference/calculate_stats.md).
+  ([\#574](https://github.com/nflverse/nflfastR/issues/574))
 
 ## nflfastR 5.2.0
 
