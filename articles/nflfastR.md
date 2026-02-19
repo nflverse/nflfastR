@@ -26,27 +26,27 @@ ids <- nflreadr::load_schedules(2017:2019) |>
   dplyr::filter(game_type == "SB") |>
   dplyr::pull(game_id)
 pbp <- nflfastR::build_nflfastR_pbp(ids)
-#> ── Build nflfastR Play-by-Play Data ───────────── nflfastR version 5.2.0.9007 ──
-#> • 15:27:50 | Start download of 3 games...
-#> ✔ 15:27:53 | Download finished. Adding variables...
-#> ✔ 15:27:53 | added game variables
-#> ✔ 15:27:54 | added nflscrapR variables
-#> ✔ 15:27:55 | added ep variables
-#> ✔ 15:27:55 | added air_yac_ep variables
-#> ✔ 15:27:55 | added wp variables
-#> ✔ 15:27:55 | added air_yac_wp variables
-#> ✔ 15:27:55 | added cp and cpoe
-#> ✔ 15:27:55 | added fixed drive variables
-#> ✔ 15:27:55 | added series variables
-#> • 15:27:55 | Cleaning up play-by-play...
-#> ✔ 15:27:55 | Cleaning completed
-#> ✔ 15:27:55 | added qb_epa
-#> • 15:27:56 | Computing xyac...
-#> ✔ 15:27:57 | added xyac variables
-#> • 15:27:58 | Computing xpass...
-#> ✔ 15:27:58 | added xpass and pass_oe
-#> • 15:27:58 | Decode player ids...
-#> ✔ 15:27:59 | Decoding of player ids completed
+#> ── Build nflfastR Play-by-Play Data ───────────── nflfastR version 5.2.0.9008 ──
+#> • 14:07:32 | Start download of 3 games...
+#> ✔ 14:07:35 | Download finished. Adding variables...
+#> ✔ 14:07:35 | added game variables
+#> ✔ 14:07:36 | added nflscrapR variables
+#> ✔ 14:07:36 | added ep variables
+#> ✔ 14:07:36 | added air_yac_ep variables
+#> ✔ 14:07:37 | added wp variables
+#> ✔ 14:07:37 | added air_yac_wp variables
+#> ✔ 14:07:37 | added cp and cpoe
+#> ✔ 14:07:37 | added fixed drive variables
+#> ✔ 14:07:37 | added series variables
+#> • 14:07:37 | Cleaning up play-by-play...
+#> ✔ 14:07:37 | Cleaning completed
+#> ✔ 14:07:37 | added qb_epa
+#> • 14:07:37 | Computing xyac...
+#> ✔ 14:07:39 | added xyac variables
+#> • 14:07:39 | Computing xpass...
+#> ✔ 14:07:40 | added xpass and pass_oe
+#> • 14:07:40 | Decode player ids...
+#> ✔ 14:07:40 | Decoding of player ids completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
@@ -411,7 +411,7 @@ So let’s connect to an in-memory duckdb database:
 ``` r
 connection <- DBI::dbConnect(duckdb::duckdb())
 connection
-#> <duckdb_connection a0a90 driver=<duckdb_driver dbdir=':memory:' read_only=FALSE bigint=numeric>>
+#> <duckdb_connection 78990 driver=<duckdb_driver dbdir=':memory:' read_only=FALSE bigint=numeric>>
 ```
 
 #### Write data to the database
@@ -424,10 +424,10 @@ nflfastR::update_pbp_db(connection, seasons = 2021:2024)
 #> ── Update nflverse Play-by-Play Data in Connected Database ─────────────────────
 #> ℹ Table "nflverse_pbp" does not yet exist in your connected database.
 #> Do you wish to create it? (Y/n)
-#> ℹ 15:28:26 | Initiate table "nflverse_pbp" with nflverse pbp schema
-#> ℹ 15:28:26 | Drop 2021, 2022, 2023, and 2024 seasons from table "nflverse_pbp"
-#> ℹ 15:28:26 | Append 2021, 2022, 2023, and 2024 seasons to table "nflverse_pbp"
-#> ✔ 15:28:41 | Database update completed
+#> ℹ 14:08:08 | Initiate table "nflverse_pbp" with nflverse pbp schema
+#> ℹ 14:08:08 | Drop 2021, 2022, 2023, and 2024 seasons from table "nflverse_pbp"
+#> ℹ 14:08:08 | Append 2021, 2022, 2023, and 2024 seasons to table "nflverse_pbp"
+#> ✔ 14:08:22 | Database update completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
@@ -443,9 +443,9 @@ What do you run?
 ``` r
 nflfastR::update_pbp_db(connection)
 #> ── Update nflverse Play-by-Play Data in Connected Database ─────────────────────
-#> ℹ 15:28:41 | Drop 2025 season from table "nflverse_pbp"
-#> ℹ 15:28:41 | Append 2025 season to table "nflverse_pbp"
-#> ✔ 15:28:48 | Database update completed
+#> ℹ 14:08:22 | Drop 2025 season from table "nflverse_pbp"
+#> ℹ 14:08:22 | Append 2025 season to table "nflverse_pbp"
+#> ✔ 14:08:30 | Database update completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
@@ -510,8 +510,8 @@ pbp_db |>
 #> # Database: DuckDB 1.4.4 [unknown@Linux 6.14.0-1017-azure:R 4.5.2/:memory:]
 #>    pass mean_epa
 #>   <dbl>    <dbl>
-#> 1     1   0.0717
-#> 2     0  -0.0865
+#> 1     0  -0.0865
+#> 2     1   0.0717
 ```
 
 So far, everything has stayed in the database. If you want to bring a

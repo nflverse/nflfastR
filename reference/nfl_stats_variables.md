@@ -109,60 +109,65 @@ nfl_stats_variables
 #> 88                    penalties
 #> 89                penalty_yards
 #> 90                     timeouts
-#> 91                 punt_returns
-#> 92            punt_return_yards
-#> 93              kickoff_returns
-#> 94         kickoff_return_yards
-#> 95                      fg_made
-#> 96                       fg_att
-#> 97                    fg_missed
-#> 98                   fg_blocked
-#> 99                      fg_long
-#> 100                      fg_pct
-#> 101                fg_made_0_19
-#> 102               fg_made_20_29
-#> 103               fg_made_30_39
-#> 104               fg_made_40_49
-#> 105               fg_made_50_59
-#> 106                 fg_made_60_
-#> 107              fg_missed_0_19
-#> 108             fg_missed_20_29
-#> 109             fg_missed_30_39
-#> 110             fg_missed_40_49
-#> 111             fg_missed_50_59
-#> 112               fg_missed_60_
-#> 113                fg_made_list
-#> 114              fg_missed_list
-#> 115             fg_blocked_list
-#> 116            fg_made_distance
-#> 117          fg_missed_distance
-#> 118         fg_blocked_distance
-#> 119                    pat_made
-#> 120                     pat_att
-#> 121                  pat_missed
-#> 122                 pat_blocked
-#> 123                     pat_pct
-#> 124                   gwfg_made
-#> 125                    gwfg_att
-#> 126                 gwfg_missed
-#> 127                gwfg_blocked
-#> 128               gwfg_distance
-#> 129          gwfg_distance_list
-#> 130                      pt_att
-#> 131                  pt_blocked
-#> 132                     pt_long
-#> 133                    pt_yards
-#> 134                pt_inside_20
-#> 135            pt_out_of_bounds
-#> 136                   pt_downed
-#> 137                pt_touchback
-#> 138              pt_fair_caught
-#> 139                 pt_returned
-#> 140             pt_return_yards
-#> 141               pt_return_tds
-#> 142                pt_net_yards
-#> 143              fantasy_points
-#> 144          fantasy_points_ppr
+#> 91        fumbles_forced_by_opp
+#> 92           fumbles_not_forced
+#> 93        fumbles_out_of_bounds
+#> 94                fumbles_total
+#> 95           fumbles_lost_total
+#> 96                 punt_returns
+#> 97            punt_return_yards
+#> 98              kickoff_returns
+#> 99         kickoff_return_yards
+#> 100                     fg_made
+#> 101                      fg_att
+#> 102                   fg_missed
+#> 103                  fg_blocked
+#> 104                     fg_long
+#> 105                      fg_pct
+#> 106                fg_made_0_19
+#> 107               fg_made_20_29
+#> 108               fg_made_30_39
+#> 109               fg_made_40_49
+#> 110               fg_made_50_59
+#> 111                 fg_made_60_
+#> 112              fg_missed_0_19
+#> 113             fg_missed_20_29
+#> 114             fg_missed_30_39
+#> 115             fg_missed_40_49
+#> 116             fg_missed_50_59
+#> 117               fg_missed_60_
+#> 118                fg_made_list
+#> 119              fg_missed_list
+#> 120             fg_blocked_list
+#> 121            fg_made_distance
+#> 122          fg_missed_distance
+#> 123         fg_blocked_distance
+#> 124                    pat_made
+#> 125                     pat_att
+#> 126                  pat_missed
+#> 127                 pat_blocked
+#> 128                     pat_pct
+#> 129                   gwfg_made
+#> 130                    gwfg_att
+#> 131                 gwfg_missed
+#> 132                gwfg_blocked
+#> 133               gwfg_distance
+#> 134          gwfg_distance_list
+#> 135                      pt_att
+#> 136                  pt_blocked
+#> 137                     pt_long
+#> 138                    pt_yards
+#> 139                pt_inside_20
+#> 140            pt_out_of_bounds
+#> 141                   pt_downed
+#> 142                pt_touchback
+#> 143              pt_fair_caught
+#> 144                 pt_returned
+#> 145             pt_return_yards
+#> 146               pt_return_tds
+#> 147                pt_net_yards
+#> 148              fantasy_points
+#> 149          fantasy_points_ppr
 #>                                                                                                                                                                                                                                                                   description
 #> 1                                                                                                                                                                                                                          GSIS player ID. Available if stat_type = 'player'.
 #> 2         Short player name as listed in play-by-play data. Please keep in mind that this name is not always unique for one player and can change from season to season and sometimes even within a season. Do not group by this variable. Available if stat_type = 'player'.
@@ -254,59 +259,64 @@ nfl_stats_variables
 #> 88                                                                                                                                                                                                                                                          Penalties caused.
 #> 89                                                                                                                                                                                                                                            Yardage lost through penalties.
 #> 90                                                                                                                                                                                                         Number of timeouts taken by team. Available if stat_type = 'team'.
-#> 91                                                                                                                                                                                                                                                  Number of punts returned.
-#> 92                                                                                                                                                                                                                      Yardage gained/lost by a player during a punt return.
-#> 93                                                                                                                                                                                                                                               Number of kickoffs returned.
-#> 94                                                                                                                                                                                                                   Yardage gained/lost by a player during a kickoff return.
-#> 95                                                                                                                                                                                                                                            Successful field goal attempts.
-#> 96                                                                                                                                                                                                                                                     Attempted field goals.
-#> 97                                                                                                                                                                                                                                                        Missed field goals.
-#> 98                                                                                                                                                                                                                                   Attempted field goals that were blocked.
-#> 99                                                                                                                                                                                                                                       Distance of longest made field goal.
-#> 100                                                                                                                                                                                                                             Percentage of successful field goal attempts.
-#> 101                                                                                                                                                                                                 Successful field goal attempts where distance was between 0 and 19 yards.
-#> 102                                                                                                                                                                                                Successful field goal attempts where distance was between 20 and 29 yards.
-#> 103                                                                                                                                                                                                Successful field goal attempts where distance was between 30 and 39 yards.
-#> 104                                                                                                                                                                                                Successful field goal attempts where distance was between 40 and 49 yards.
-#> 105                                                                                                                                                                                                Successful field goal attempts where distance was between 50 and 59 yards.
-#> 106                                                                                                                                                                                                              Successful field goal attempts where distance was 60+ yards.
-#> 107                                                                                                                                                                                                     Missed field goal attempts where distance was between 0 and 19 yards.
-#> 108                                                                                                                                                                                                    Missed field goal attempts where distance was between 20 and 29 yards.
-#> 109                                                                                                                                                                                                    Missed field goal attempts where distance was between 30 and 39 yards.
-#> 110                                                                                                                                                                                                    Missed field goal attempts where distance was between 40 and 49 yards.
-#> 111                                                                                                                                                                                                    Missed field goal attempts where distance was between 50 and 59 yards.
-#> 112                                                                                                                                                                                                                  Missed field goal attempts where distance was 60+ yards.
-#> 113                                                                                                                                                                                                                          Distances of all successful field goal attempts.
-#> 114                                                                                                                                                                                                                              Distances of all missed field goal attempts.
-#> 115                                                                                                                                                                                                                             Distances of all blocked field goal attempts.
-#> 116                                                                                                                                                                                                                                 Sum of distances of all made field goals.
-#> 117                                                                                                                                                                                                                               Sum of distances of all missed field goals.
-#> 118                                                                                                                                                                                                                              Sum of distances of all blocked field goals.
-#> 119                                                                                                                                                                                                                                          Successful extra point attempts.
-#> 120                                                                                                                                                                                                                                                   Attempted extra points.
-#> 121                                                                                                                                                                                                                                                      Missed extra points.
-#> 122                                                                                                                                                                                                                                         Extra points blocked by opponent.
-#> 123                                                                                                                                                                                                                            Percentage of successful extra point attempts.
-#> 124                                                                                                                                                                                                                              Successful game winning field goal attempts.
-#> 125                                                                                                                                                                                                                                       Attempted game winning field goals.
-#> 126                                                                                                                                                                                                                                          Missed game winning field goals.
-#> 127                                                                                                                                                                                                                     Game winning field goal attempts blocked by opponent.
-#> 128                                                                                                                                                                                         Distance of game winning field goal attempt. Available if summary_level = 'week'.
-#> 129                                                                                                                                                                                     Distances of game winning field goal attempts. Available if summary_level = 'season'.
-#> 130                                                                                                                                                                                                                                                             Kicked punts.
-#> 131                                                                                                                                                                                                                                           Kicked punts that were blocked.
-#> 132                                                                                                                                                                                                                                                      Longest punt kicked.
-#> 133                                                                                                                                                                                                                                                   Length of punts kicked.
-#> 134                                                                                                                                                                                            The number of punts where the RETURN ended inside the opponent's 20 yard line.
-#> 135                                                                                                                                                                                                               The number of punts that went out of bounds without return.
-#> 136                                                                                                                                                                                                                                The number of punts downed without return.
-#> 137                                                                                                                                                                                                                         The number of punts that resulted in a touchback.
-#> 138                                                                                                                                                                                                                        The number of punts that resulted in a fair catch.
-#> 139                                                                                                                                                                                                              The number of punts that were returned by the opponent team.
-#> 140                                                                                                                                                                                                                             The punt return yardage of the opponent team.
-#> 141                                                                                                                                                                                              The number of punts that were returned for a touchdown by the opponent team.
-#> 142                                                                                                                                                                                          Net punt yardage. Equals `pt_yards` - `pt_return_yards` - `pt_touchback` * `20`.
-#> 143                                                                                                                                                                                                                                                  Standard fantasy points.
-#> 144                                                                                                                                                                                                                                                       PPR fantasy points.
+#> 91                                                                                                                                                                                                The number of fumbles by the player. The fumble was forced by the opponent.
+#> 92                                                                                                                                                                                            The number of fumbles by the player. The fumble was NOT forced by the opponent.
+#> 93                                                                                                                                                          The number of fumbles by the player, and the ball went out of bounds. The fumble may or may not have been forced.
+#> 94                                                                                                                                                                          The total number of fumbles by the player. Equals `fumbles_forced_by_opp` + `fumbles_not_forced`.
+#> 95                                                                                                                                                                                                                            The total number of fumbles lost by the player.
+#> 96                                                                                                                                                                                                                                                  Number of punts returned.
+#> 97                                                                                                                                                                                                                      Yardage gained/lost by a player during a punt return.
+#> 98                                                                                                                                                                                                                                               Number of kickoffs returned.
+#> 99                                                                                                                                                                                                                   Yardage gained/lost by a player during a kickoff return.
+#> 100                                                                                                                                                                                                                                           Successful field goal attempts.
+#> 101                                                                                                                                                                                                                                                    Attempted field goals.
+#> 102                                                                                                                                                                                                                                                       Missed field goals.
+#> 103                                                                                                                                                                                                                                  Attempted field goals that were blocked.
+#> 104                                                                                                                                                                                                                                      Distance of longest made field goal.
+#> 105                                                                                                                                                                                                                             Percentage of successful field goal attempts.
+#> 106                                                                                                                                                                                                 Successful field goal attempts where distance was between 0 and 19 yards.
+#> 107                                                                                                                                                                                                Successful field goal attempts where distance was between 20 and 29 yards.
+#> 108                                                                                                                                                                                                Successful field goal attempts where distance was between 30 and 39 yards.
+#> 109                                                                                                                                                                                                Successful field goal attempts where distance was between 40 and 49 yards.
+#> 110                                                                                                                                                                                                Successful field goal attempts where distance was between 50 and 59 yards.
+#> 111                                                                                                                                                                                                              Successful field goal attempts where distance was 60+ yards.
+#> 112                                                                                                                                                                                                     Missed field goal attempts where distance was between 0 and 19 yards.
+#> 113                                                                                                                                                                                                    Missed field goal attempts where distance was between 20 and 29 yards.
+#> 114                                                                                                                                                                                                    Missed field goal attempts where distance was between 30 and 39 yards.
+#> 115                                                                                                                                                                                                    Missed field goal attempts where distance was between 40 and 49 yards.
+#> 116                                                                                                                                                                                                    Missed field goal attempts where distance was between 50 and 59 yards.
+#> 117                                                                                                                                                                                                                  Missed field goal attempts where distance was 60+ yards.
+#> 118                                                                                                                                                                                                                          Distances of all successful field goal attempts.
+#> 119                                                                                                                                                                                                                              Distances of all missed field goal attempts.
+#> 120                                                                                                                                                                                                                             Distances of all blocked field goal attempts.
+#> 121                                                                                                                                                                                                                                 Sum of distances of all made field goals.
+#> 122                                                                                                                                                                                                                               Sum of distances of all missed field goals.
+#> 123                                                                                                                                                                                                                              Sum of distances of all blocked field goals.
+#> 124                                                                                                                                                                                                                                          Successful extra point attempts.
+#> 125                                                                                                                                                                                                                                                   Attempted extra points.
+#> 126                                                                                                                                                                                                                                                      Missed extra points.
+#> 127                                                                                                                                                                                                                                         Extra points blocked by opponent.
+#> 128                                                                                                                                                                                                                            Percentage of successful extra point attempts.
+#> 129                                                                                                                                                                                                                              Successful game winning field goal attempts.
+#> 130                                                                                                                                                                                                                                       Attempted game winning field goals.
+#> 131                                                                                                                                                                                                                                          Missed game winning field goals.
+#> 132                                                                                                                                                                                                                     Game winning field goal attempts blocked by opponent.
+#> 133                                                                                                                                                                                         Distance of game winning field goal attempt. Available if summary_level = 'week'.
+#> 134                                                                                                                                                                                     Distances of game winning field goal attempts. Available if summary_level = 'season'.
+#> 135                                                                                                                                                                                                                                                             Kicked punts.
+#> 136                                                                                                                                                                                                                                           Kicked punts that were blocked.
+#> 137                                                                                                                                                                                                                                                      Longest punt kicked.
+#> 138                                                                                                                                                                                                                                                   Length of punts kicked.
+#> 139                                                                                                                                                                                            The number of punts where the RETURN ended inside the opponent's 20 yard line.
+#> 140                                                                                                                                                                                                               The number of punts that went out of bounds without return.
+#> 141                                                                                                                                                                                                                                The number of punts downed without return.
+#> 142                                                                                                                                                                                                                         The number of punts that resulted in a touchback.
+#> 143                                                                                                                                                                                                                        The number of punts that resulted in a fair catch.
+#> 144                                                                                                                                                                                                              The number of punts that were returned by the opponent team.
+#> 145                                                                                                                                                                                                                             The punt return yardage of the opponent team.
+#> 146                                                                                                                                                                                              The number of punts that were returned for a touchdown by the opponent team.
+#> 147                                                                                                                                                                                          Net punt yardage. Equals `pt_yards` - `pt_return_yards` - `pt_touchback` * `20`.
+#> 148                                                                                                                                                                                                                                                  Standard fantasy points.
+#> 149                                                                                                                                                                                                                                                       PPR fantasy points.
 # }
 ```

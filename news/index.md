@@ -35,6 +35,10 @@
 - Added several punting stats to the output of
   [`calculate_stats()`](https://nflfastr.com/reference/calculate_stats.md).
   ([\#574](https://github.com/nflverse/nflfastR/issues/574))
+- Added overall fumble counters to the output of
+  [`calculate_stats()`](https://nflfastr.com/reference/calculate_stats.md)
+  because it was missing some edge case fumbles on offense.
+  ([\#575](https://github.com/nflverse/nflfastR/issues/575))
 
 ## nflfastR 5.2.0
 
