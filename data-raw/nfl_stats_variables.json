@@ -360,6 +360,26 @@
     "description": "Number of timeouts taken by team. Available if stat_type = 'team'."
   },
   {
+    "variable": "fumbles_forced_by_opp",
+    "description": "The number of fumbles by the player. The fumble was forced by the opponent."
+  },
+  {
+    "variable": "fumbles_not_forced",
+    "description": "The number of fumbles by the player. The fumble was NOT forced by the opponent."
+  },
+  {
+    "variable": "fumbles_out_of_bounds",
+    "description": "The number of fumbles by the player, and the ball went out of bounds. The fumble may or may not have been forced."
+  },
+  {
+    "variable": "fumbles_total",
+    "description": "The total number of fumbles by the player. Equals `fumbles_forced_by_opp` + `fumbles_not_forced`."
+  },
+  {
+    "variable": "fumbles_lost_total",
+    "description": "The total number of fumbles lost by the player."
+  },
+  {
     "variable": "punt_returns",
     "description": "Number of punts returned."
   },
