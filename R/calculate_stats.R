@@ -436,7 +436,9 @@ calculate_stats <- function(
       def_interception_yards = sum((stat_id %in% 25:28) * yards),
       def_pass_defended = sum(stat_id == 85),
       def_tds = sum(team == def & special != 1 & stat_id %in% td_ids()),
-      def_fumbles = sum((team == def) & stat_id %in% 52:54),
+      # stat ID 54 is a fumble out of bounds. It's never counted alone,
+      # always in combination with 52 or 53.
+      def_fumbles = sum((team == def) & stat_id %in% 52:53),
       def_safeties = sum(stat_id == 89),
 
       # Misc #####################
