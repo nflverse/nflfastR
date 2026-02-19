@@ -8,6 +8,7 @@
 - Fixed a bug where nflfastR overrode the kickoff_attempt variable in the event of a penalty on a kickoff. (#569)
 - Added various definitions of 'explosive' plays to the output of `calculate_stats()`. It counts passes, runs, and receptions with 10+, 20+, 40+ yards gained as well as 12+ yard runs and 16+ yard passes. (#573)
 - Added several punting stats to the output of `calculate_stats()`. (#574)
+- Added overall fumble counters to the output of `calculate_stats()` because it was missing some edge case fumbles on offense. (#575)
 
 # nflfastR 5.2.0
 
