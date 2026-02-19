@@ -1,7 +1,7 @@
 Type: Package
 Package: nflfastR
 Title: Functions to Efficiently Access NFL Play by Play Data
-Version: 5.2.0.9007
+Version: 5.2.0.9008
 Authors@R: c(
     person("Sebastian", "Carl", , "mrcaseb@gmail.com", role = "aut"),
     person("Ben", "Baldwin", , "bbaldwin206@gmail.com", role = c("cre", "aut")),

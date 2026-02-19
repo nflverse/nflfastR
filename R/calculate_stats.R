@@ -436,7 +436,9 @@ calculate_stats <- function(
       def_interception_yards = sum((stat_id %in% 25:28) * yards),
       def_pass_defended = sum(stat_id == 85),
       def_tds = sum(team == def & special != 1 & stat_id %in% td_ids()),
-      def_fumbles = sum((team == def) & stat_id %in% 52:54),
+      # stat ID 54 is a fumble out of bounds. It's never counted alone,
+      # always in combination with 52 or 53.
+      def_fumbles = sum((team == def) & stat_id %in% 52:53),
       def_safeties = sum(stat_id == 89),
 
       # Misc #####################
@@ -454,6 +456,20 @@ calculate_stats <- function(
       penalties = sum(stat_id == 93),
       penalty_yards = sum((stat_id == 93) * yards),
       timeouts = if (.env$stat_type == "team") sum(stat_id == 68) else NULL,
+      # we are missing some fumbles on offense (see 515) so we just add
+      # totals here. These fumble stats count all fumbles regardless of
+      # the unit the player was on. This means that all above fumble stats
+      # are included here but we make sure not to loose any fumbles, esp. on offense
+      fumbles_forced_by_opp = sum(stat_id == 52),
+      fumbles_not_forced = sum(stat_id == 53),
+      fumbles_out_of_bounds = sum(stat_id == 54),
+      # we could tell users to just add the above three stats but fumbles are
+      # a bit confusing overall so it is ok to add a total counter that doesn't
+      # miss any fumbles.
+      # stat ID 54 is a fumble out of bounds. It's never counted alone,
+      # always in combination with 52 or 53. So we cannot add it to the total.
+      fumbles_total = sum(stat_id %in% 52:53),
+      fumbles_lost_total = sum(stat_id == 106),
 
       # Returning #####################
       punt_returns = sum(stat_id %in% 33:34),
