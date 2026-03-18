@@ -447,11 +447,11 @@ calculate_stats <- function(
       fumble_recovery_own = sum(stat_id %in% 55:56),
       # 57, 58 don't count as recovery because player received a
       # lateral after recovery by other player
-      fumble_recovery_yards_own = sum(stat_id %in% 55:58),
+      fumble_recovery_yards_own = sum((stat_id %in% 55:58) * yards),
       fumble_recovery_opp = sum(stat_id %in% 59:60),
       # 61, 62 don't count as recovery because player received a
       # lateral after recovery by other player
-      fumble_recovery_yards_opp = sum(stat_id %in% 59:62),
+      fumble_recovery_yards_opp = sum((stat_id %in% 59:62) * yards),
       fumble_recovery_tds = sum(stat_id %in% c(56, 58, 60, 62)),
       penalties = sum(stat_id == 93),
       penalty_yards = sum((stat_id == 93) * yards),
