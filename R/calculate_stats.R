@@ -533,7 +533,8 @@ calculate_stats <- function(
       },
 
       # Punts #####################
-      pt_att = sum(stat_id %in% c(2, 29, 31, 32)), # 31 probably unnecessary
+      # stat ID 2 counts blocked punts that do not count as punt
+      pt_att = sum(stat_id %in% c(29, 31, 32)), # 31 probably unnecessary
       pt_blocked = sum(stat_id == 2),
       pt_long = max(stat_id %in% c(29, 32) * yards) %0% NA_integer_,
       pt_yards = sum(stat_id %in% c(29, 32) * yards),
