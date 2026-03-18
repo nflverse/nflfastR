@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.2.0.9008</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.2.0.9009</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,6 +75,7 @@
 <li>Added various definitions of ‘explosive’ plays to the output of <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code>. It counts passes, runs, and receptions with 10+, 20+, 40+ yards gained as well as 12+ yard runs and 16+ yard passes. (<a href="https://github.com/nflverse/nflfastR/issues/573" class="external-link">#573</a>)</li>
 <li>Added several punting stats to the output of <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code>. (<a href="https://github.com/nflverse/nflfastR/issues/574" class="external-link">#574</a>)</li>
 <li>Added overall fumble counters to the output of <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code> because it was missing some edge case fumbles on offense. (<a href="https://github.com/nflverse/nflfastR/issues/575" class="external-link">#575</a>)</li>
+<li>The <code>play_type</code> variable now possibly shows <code>"pass"</code> or <code>"run"</code> on 2 point conversion plays with a post-snap penalty enforced between downs. This is different from <code>play_type_nfl</code> (which will show <code>"PENALTY"</code> in these cases). (<a href="https://github.com/nflverse/nflfastR/issues/579" class="external-link">#579</a>)</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="5.2.0" id="nflfastr-520">nflfastR 5.2.0<a class="anchor" aria-label="anchor" href="#nflfastr-520"></a></h2><p class="text-muted">CRAN release: 2026-02-07</p>
@@ -112,7 +113,7 @@
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-and-minor-changes-5-0-0">Bug Fixes and Minor Changes<a class="anchor" aria-label="anchor" href="#bug-fixes-and-minor-changes-5-0-0"></a></h3>
-<ul><li>Drop <a href="https://r-lib.github.io/crayon/" class="external-link">crayon</a>, <a href="https://github.com/rstudio/DT" class="external-link">DT</a>, <a href="https://httr.r-lib.org/" class="external-link">httr</a>, <a href="https://jeroen.r-universe.dev/jsonlite" class="external-link">jsonlite</a>, <a href="https://github.com/qsbase/qs" class="external-link">qs</a> dependencies. (<a href="https://github.com/nflverse/nflfastR/issues/453" class="external-link">#453</a>)</li>
+<ul><li>Drop <a href="https://r-lib.github.io/crayon/" class="external-link">crayon</a>, <a href="https://github.com/rstudio/DT" class="external-link">DT</a>, <a href="https://httr.r-lib.org/" class="external-link">httr</a>, <a href="https://jeroen.r-universe.dev/jsonlite" class="external-link">jsonlite</a>, <code>{qs}</code> dependencies. (<a href="https://github.com/nflverse/nflfastR/issues/453" class="external-link">#453</a>)</li>
 <li>The function <code>calculate_player_stats_def</code> now returns <code>season_type</code> if argument <code>weekly</code> is set to <code>TRUE</code> for consistency with the other player stats functions. (<a href="https://github.com/nflverse/nflfastR/issues/455" class="external-link">#455</a>)</li>
 <li>The function <code><a href="../reference/missing_raw_pbp.html">missing_raw_pbp()</a></code> now allows filtering by season. (<a href="https://github.com/nflverse/nflfastR/issues/457" class="external-link">#457</a>)</li>
 <li>More robust handling of player IDs in <code><a href="../reference/decode_player_ids.html">decode_player_ids()</a></code>. (<a href="https://github.com/nflverse/nflfastR/issues/458" class="external-link">#458</a>)</li>

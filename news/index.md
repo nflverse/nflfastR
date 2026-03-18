@@ -39,6 +39,11 @@
   [`calculate_stats()`](https://nflfastr.com/reference/calculate_stats.md)
   because it was missing some edge case fumbles on offense.
   ([\#575](https://github.com/nflverse/nflfastR/issues/575))
+- The `play_type` variable now possibly shows `"pass"` or `"run"` on 2
+  point conversion plays with a post-snap penalty enforced between
+  downs. This is different from `play_type_nfl` (which will show
+  `"PENALTY"` in these cases).
+  ([\#579](https://github.com/nflverse/nflfastR/issues/579))
 
 ## nflfastR 5.2.0
 
@@ -170,8 +175,8 @@ CRAN release: 2024-11-26
 
 - Drop [crayon](https://r-lib.github.io/crayon/),
   [DT](https://github.com/rstudio/DT), [httr](https://httr.r-lib.org/),
-  [jsonlite](https://jeroen.r-universe.dev/jsonlite),
-  [qs](https://github.com/qsbase/qs) dependencies.
+  [jsonlite](https://jeroen.r-universe.dev/jsonlite), `{qs}`
+  dependencies.
   ([\#453](https://github.com/nflverse/nflfastR/issues/453))
 - The function `calculate_player_stats_def` now returns `season_type` if
   argument `weekly` is set to `TRUE` for consistency with the other
