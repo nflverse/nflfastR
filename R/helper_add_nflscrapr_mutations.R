@@ -428,7 +428,11 @@ add_nflscrapr_mutations <- function(pbp) {
         rush_attempt = .data$rush_attempt,
         punt_attempt = .data$punt_attempt,
         field_goal_attempt = .data$field_goal_attempt,
-        penalty = .data$penalty
+        penalty = .data$penalty,
+        is_penalty_enforced_between_downs = stringr::str_detect(
+          tolower(.data$play_description),
+          "enforced between downs"
+        )
       ),
 
       # Indicator for QB dropbacks (exclude spikes and kneels):
@@ -821,7 +825,8 @@ translate_play_type_nfl <- function(
   rush_attempt,
   punt_attempt,
   field_goal_attempt,
-  penalty
+  penalty,
+  is_penalty_enforced_between_downs
 ) {
   # I want the arg name to be descriptive, but I want a short variable name
   # for the code below
@@ -839,6 +844,12 @@ translate_play_type_nfl <- function(
     x == "PASS" ~ "pass",
     x == "PAT2" & pass_attempt == 1 ~ "pass",
     x == "PAT2" & rush_attempt == 1 ~ "run",
+    x == "PENALTY" &
+      pass_attempt == 1 &
+      is_penalty_enforced_between_downs ~ "pass",
+    x == "PENALTY" &
+      rush_attempt == 1 &
+      is_penalty_enforced_between_downs ~ "run",
     x == "PENALTY" ~ "no_play",
     x == "PUNT" ~ "punt",
     x == "RUSH" ~ "run",
