@@ -44,6 +44,16 @@
   downs. This is different from `play_type_nfl` (which will show
   `"PENALTY"` in these cases).
   ([\#579](https://github.com/nflverse/nflfastR/issues/579))
+- Fixed bug where
+  [`calculate_stats()`](https://nflfastr.com/reference/calculate_stats.md)
+  counted fumble recoveries in `fumble_recovery_yards_own` and
+  `fumble_recovery_yards_opp` instead of the corresponding yards.
+  ([\#584](https://github.com/nflverse/nflfastR/issues/584))
+- Fixed bug where
+  [`calculate_stats()`](https://nflfastr.com/reference/calculate_stats.md)
+  counted some blocked punts as punt attempts that officially do not
+  count as punt attempts.
+  ([\#584](https://github.com/nflverse/nflfastR/issues/584))
 
 ## nflfastR 5.2.0
 
