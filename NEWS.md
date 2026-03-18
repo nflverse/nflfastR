@@ -10,6 +10,8 @@
 - Added several punting stats to the output of `calculate_stats()`. (#574)
 - Added overall fumble counters to the output of `calculate_stats()` because it was missing some edge case fumbles on offense. (#575)
 - The `play_type` variable now possibly shows `"pass"` or `"run"` on 2 point conversion plays with a post-snap penalty enforced between downs. This is different from `play_type_nfl` (which will show `"PENALTY"` in these cases). (#579)
+- Fixed bug where `calculate_stats()` counted fumble recoveries in `fumble_recovery_yards_own` and `fumble_recovery_yards_opp` instead of the corresponding yards. (#584)
+- Fixed bug where `calculate_stats()` counted some blocked punts as punt attempts that officially do not count as punt attempts. (#584)
 
 # nflfastR 5.2.0
 
