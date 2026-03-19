@@ -54,6 +54,10 @@
   counted some blocked punts as punt attempts that officially do not
   count as punt attempts.
   ([\#584](https://github.com/nflverse/nflfastR/issues/584))
+- Fixed bug where
+  [`calculate_stats()`](https://nflfastr.com/reference/calculate_stats.md)
+  overcounted first downs in some edge cases.
+  ([\#587](https://github.com/nflverse/nflfastR/issues/587))
 
 ## nflfastR 5.2.0
 
