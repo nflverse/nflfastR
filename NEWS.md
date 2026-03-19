@@ -12,6 +12,7 @@
 - The `play_type` variable now possibly shows `"pass"` or `"run"` on 2 point conversion plays with a post-snap penalty enforced between downs. This is different from `play_type_nfl` (which will show `"PENALTY"` in these cases). (#579)
 - Fixed bug where `calculate_stats()` counted fumble recoveries in `fumble_recovery_yards_own` and `fumble_recovery_yards_opp` instead of the corresponding yards. (#584)
 - Fixed bug where `calculate_stats()` counted some blocked punts as punt attempts that officially do not count as punt attempts. (#584)
+- Fixed bug where `calculate_stats()` overcounted first downs in some edge cases. (#587)
 
 # nflfastR 5.2.0
 
