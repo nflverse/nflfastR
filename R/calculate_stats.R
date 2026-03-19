@@ -144,24 +144,24 @@ calculate_stats <- function(
     dplyr::rename("player_id" = "gsis_player_id", "team" = "team_abbr") |>
     dplyr::group_by(.data$season, .data$week, .data$play_id, .data$player_id) |>
     dplyr::mutate(
-      # we append a collapse separator to the string in order to search for matches
-      # including the separator to avoid 1 matching 10
-      more_stats = paste0(paste(stat_id, collapse = ";"), ";")
+      # we wrap the collapsed string in ";" in order to search for the pattern
+      # ";stat_id;" to avoid matching 1 with 10, 11, 21, etc.
+      more_stats = paste0(";", paste(stat_id, collapse = ";"), ";")
     ) |>
     dplyr::group_by(.data$season, .data$week, .data$play_id, .data$team) |>
     dplyr::mutate(
-      # we append a collapse separator to the string in order to search for matches
-      # including the separator to avoid 1 matching 10
-      team_stats = paste0(paste(stat_id, collapse = ";"), ";"),
+      # we wrap the collapsed string in ";" in order to search for the pattern
+      # ";stat_id;" to avoid matching 1 with 10, 11, 21, etc.
+      team_stats = paste0(";", paste(stat_id, collapse = ";"), ";"),
       team_play_air_yards = sum((stat_id %in% 111:112) * yards)
     ) |>
     # need to group by game and play here to avoid mixing of play IDs of different
     # games in the same week
     dplyr::group_by(.data$game_id, .data$play_id) |>
     dplyr::mutate(
-      # we append a collapse separator to the string in order to search for matches
-      # including the separator to avoid 1 matching 10
-      all_stats = paste0(paste(stat_id, collapse = ";"), ";"),
+      # we wrap the collapsed string in ";" in order to search for the pattern
+      # ";stat_id;" to avoid matching 1 with 10, 11, 21, etc.
+      all_stats = paste0(";", paste(stat_id, collapse = ";"), ";"),
       play_punt_return_yards = sum((stat_id %in% 33:36) * yards)
     ) |>
     # compute team targets and team air yards for calculation of target share
@@ -716,7 +716,7 @@ fg_list <- function(stat_ids, yards, collapse_id, gwfg = NULL) {
 `%ifna%` <- function(lhs, rhs) data.table::fifelse(is.na(lhs), rhs, lhs)
 
 has_id <- function(id, all_ids) {
-  stringr::str_detect(all_ids, paste0(id, ";", collapse = "|"))
+  stringr::str_detect(all_ids, paste0(";", id, ";", collapse = "|"))
 }
 
 td_ids <- function() {
