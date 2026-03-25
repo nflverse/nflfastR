@@ -118,12 +118,7 @@ load_raw_game <- function(
     # cli::cli_progress_step("Load locally from {.path {local_file}}")
     raw <- readRDS(local_file)
   } else {
-    to_load <- file.path(
-      "https://raw.githubusercontent.com/nflverse/nflfastR-raw/master/raw",
-      season,
-      paste0(game_id, ".rds"),
-      fsep = "/"
-    )
+    to_load <- raw_pbp_urls(game_id)
     raw <- nflreadr::rds_from_url(to_load)
   }
 
@@ -193,12 +188,7 @@ fetch_raw <- function(
   season <- substr(game_id, 1, 4)
 
   if (is.null(dir)) {
-    to_load <- file.path(
-      "https://raw.githubusercontent.com/nflverse/nflfastR-raw/master/raw",
-      season,
-      paste0(game_id, ".rds"),
-      fsep = "/"
-    )
+    to_load <- raw_pbp_urls(game_id)
 
     fetched <- curl::curl_fetch_memory(to_load)
 
@@ -346,4 +336,15 @@ check_for_dropped_seasons <- function(game_ids) {
     game_ids <- game_ids[!game_ids %in% dropped_support]
   }
   game_ids
+}
+
+raw_pbp_urls <- function(game_ids){
+  # pattern
+  # https://github.com/nflverse/nflverse-pbp/releases/download/{season}/{game_id}.rds
+  file.path(
+    "https://github.com/nflverse/nflverse-pbp/releases/download",
+    paste0("raw_pbp_", substr(game_ids, 1, 4)),
+    paste0(game_ids, ".rds"),
+    fsep = "/"
+  )
 }
