@@ -67,18 +67,21 @@ save_raw_pbp <- function(
     dir.create,
     FUN.VALUE = logical(1L)
   )
-  to_load <- file.path(
-    "https://raw.githubusercontent.com/nflverse/nflfastR-raw/master/raw",
-    seasons,
-    paste0(game_ids, ".rds"),
-    fsep = "/"
-  )
+  to_load <- raw_pbp_urls(game_ids)
   save_to <- file.path(
     dir,
     seasons,
     paste0(game_ids, ".rds")
   )
-  curl::multi_download(to_load, save_to)
+  dl <- curl::multi_download(to_load, save_to)
+  failed <- dl$status_code != 200
+  if (any(failed)) {
+    cli::cli_alert_danger(
+      "Failed to download: {.var {game_ids[failed]}}"
+    )
+    file.remove(save_to[failed])
+  }
+  dl
 }
 
 #' Compute Missing Raw PBP Data on Local Filesystem
