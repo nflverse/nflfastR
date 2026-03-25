@@ -26,27 +26,27 @@ ids <- nflreadr::load_schedules(2017:2019) |>
   dplyr::filter(game_type == "SB") |>
   dplyr::pull(game_id)
 pbp <- nflfastR::build_nflfastR_pbp(ids)
-#> ── Build nflfastR Play-by-Play Data ───────────── nflfastR version 5.2.0.9011 ──
-#> • 13:00:03 | Start download of 3 games...
-#> ✔ 13:00:07 | Download finished. Adding variables...
-#> ✔ 13:00:07 | added game variables
-#> ✔ 13:00:07 | added nflscrapR variables
-#> ✔ 13:00:08 | added ep variables
-#> ✔ 13:00:08 | added air_yac_ep variables
-#> ✔ 13:00:08 | added wp variables
-#> ✔ 13:00:08 | added air_yac_wp variables
-#> ✔ 13:00:08 | added cp and cpoe
-#> ✔ 13:00:08 | added fixed drive variables
-#> ✔ 13:00:08 | added series variables
-#> • 13:00:08 | Cleaning up play-by-play...
-#> ✔ 13:00:09 | Cleaning completed
-#> ✔ 13:00:09 | added qb_epa
-#> • 13:00:09 | Computing xyac...
-#> ✔ 13:00:11 | added xyac variables
-#> • 13:00:11 | Computing xpass...
-#> ✔ 13:00:11 | added xpass and pass_oe
-#> • 13:00:11 | Decode player ids...
-#> ✔ 13:00:12 | Decoding of player ids completed
+#> ── Build nflfastR Play-by-Play Data ───────────── nflfastR version 5.2.0.9012 ──
+#> • 19:31:40 | Start download of 3 games...
+#> ✔ 19:31:43 | Download finished. Adding variables...
+#> ✔ 19:31:44 | added game variables
+#> ✔ 19:31:44 | added nflscrapR variables
+#> ✔ 19:31:45 | added ep variables
+#> ✔ 19:31:45 | added air_yac_ep variables
+#> ✔ 19:31:45 | added wp variables
+#> ✔ 19:31:45 | added air_yac_wp variables
+#> ✔ 19:31:45 | added cp and cpoe
+#> ✔ 19:31:45 | added fixed drive variables
+#> ✔ 19:31:45 | added series variables
+#> • 19:31:45 | Cleaning up play-by-play...
+#> ✔ 19:31:45 | Cleaning completed
+#> ✔ 19:31:45 | added qb_epa
+#> • 19:31:46 | Computing xyac...
+#> ✔ 19:31:47 | added xyac variables
+#> • 19:31:47 | Computing xpass...
+#> ✔ 19:31:48 | added xpass and pass_oe
+#> • 19:31:48 | Decode player ids...
+#> ✔ 19:31:49 | Decoding of player ids completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
@@ -411,7 +411,7 @@ So let’s connect to an in-memory duckdb database:
 ``` r
 connection <- DBI::dbConnect(duckdb::duckdb())
 connection
-#> <duckdb_connection 3c320 driver=<duckdb_driver dbdir=':memory:' read_only=FALSE bigint=numeric>>
+#> <duckdb_connection 2bf20 driver=<duckdb_driver dbdir=':memory:' read_only=FALSE bigint=numeric>>
 ```
 
 #### Write data to the database
@@ -424,10 +424,10 @@ nflfastR::update_pbp_db(connection, seasons = 2021:2024)
 #> ── Update nflverse Play-by-Play Data in Connected Database ─────────────────────
 #> ℹ Table "nflverse_pbp" does not yet exist in your connected database.
 #> Do you wish to create it? (Y/n)
-#> ℹ 13:00:40 | Initiate table "nflverse_pbp" with nflverse pbp schema
-#> ℹ 13:00:40 | Drop 2021, 2022, 2023, and 2024 seasons from table "nflverse_pbp"
-#> ℹ 13:00:40 | Append 2021, 2022, 2023, and 2024 seasons to table "nflverse_pbp"
-#> ✔ 13:00:54 | Database update completed
+#> ℹ 19:32:15 | Initiate table "nflverse_pbp" with nflverse pbp schema
+#> ℹ 19:32:16 | Drop 2021, 2022, 2023, and 2024 seasons from table "nflverse_pbp"
+#> ℹ 19:32:16 | Append 2021, 2022, 2023, and 2024 seasons to table "nflverse_pbp"
+#> ✔ 19:32:30 | Database update completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
@@ -443,9 +443,9 @@ What do you run?
 ``` r
 nflfastR::update_pbp_db(connection)
 #> ── Update nflverse Play-by-Play Data in Connected Database ─────────────────────
-#> ℹ 13:00:54 | Drop 2025 season from table "nflverse_pbp"
-#> ℹ 13:00:54 | Append 2025 season to table "nflverse_pbp"
-#> ✔ 13:01:02 | Database update completed
+#> ℹ 19:32:30 | Drop 2025 season from table "nflverse_pbp"
+#> ℹ 19:32:30 | Append 2025 season to table "nflverse_pbp"
+#> ✔ 19:32:37 | Database update completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 

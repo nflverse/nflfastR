@@ -1558,24 +1558,24 @@ try({# to avoid CRAN test problems
 fast_scraper(c("2019_01_GB_CHI", "2013_21_SEA_DEN"))
 })
 #> ℹ It is recommended to use parallel processing when trying to load multiple games.Please consider running `future::plan("multisession")`! Will go on sequentially...
-#> ✔ 12:57:49 | Download finished. Adding variables...
-#> ✔ 12:57:49 | added game variables
-#> ✔ 12:57:49 | added nflscrapR variables
-#> ✔ 12:57:49 | added ep variables
-#> ✔ 12:57:49 | added air_yac_ep variables
-#> ✔ 12:57:50 | added wp variables
-#> ✔ 12:57:50 | added air_yac_wp variables
-#> ✔ 12:57:50 | added cp and cpoe
-#> ✔ 12:57:50 | added fixed drive variables
-#> ✔ 12:57:50 | added series variables
-#> ✔ 12:57:50 | Procedure completed.
+#> ✔ 19:29:36 | Download finished. Adding variables...
+#> ✔ 19:29:36 | added game variables
+#> ✔ 19:29:36 | added nflscrapR variables
+#> ✔ 19:29:36 | added ep variables
+#> ✔ 19:29:37 | added air_yac_ep variables
+#> ✔ 19:29:37 | added wp variables
+#> ✔ 19:29:37 | added air_yac_wp variables
+#> ✔ 19:29:37 | added cp and cpoe
+#> ✔ 19:29:37 | added fixed drive variables
+#> ✔ 19:29:37 | added series variables
+#> ✔ 19:29:37 | Procedure completed.
 #> ── nflverse play by play ───────────────────────────────────────────────────────
-#> ℹ Data updated: 2026-03-19 12:57:50 UTC
+#> ℹ Data updated: 2026-03-25 19:29:37 UTC
 #> # A tibble: 337 × 339
 #>    play_id game_id     old_game_id home_team away_team season_type  week posteam
 #>      <dbl> <chr>       <chr>       <chr>     <chr>     <chr>       <int> <chr>  
 #>  1       1 2013_21_SE… 2014020200  DEN       SEA       POST           21 NA     
-#>  2      37 2013_21_SE… 2014020200  DEN       SEA       POST           21 DEN    
+#>  2      37 2013_21_SE… 2014020200  DEN       SEA       POST           21 NA     
 #>  3      61 2013_21_SE… 2014020200  DEN       SEA       POST           21 DEN    
 #>  4      83 2013_21_SE… 2014020200  DEN       SEA       POST           21 DEN    
 #>  5     119 2013_21_SE… 2014020200  DEN       SEA       POST           21 SEA    
@@ -1604,39 +1604,16 @@ fast_scraper_schedules(2020) |>
 #> Warning: `fast_scraper_schedules()` was deprecated in nflfastR 5.2.0.
 #> ℹ Please use `nflreadr::load_schedules()` instead.
 #> ℹ It is recommended to use parallel processing when trying to load multiple games.Please consider running `future::plan("multisession")`! Will go on sequentially...
-#> ✔ 12:57:53 | Download finished. Adding variables...
-#> ✔ 12:57:53 | added game variables
-#> ✔ 12:57:53 | added nflscrapR variables
-#> ✔ 12:57:53 | added ep variables
-#> ✔ 12:57:53 | added air_yac_ep variables
-#> ✔ 12:57:54 | added wp variables
-#> ✔ 12:57:54 | added air_yac_wp variables
-#> ✔ 12:57:54 | added cp and cpoe
-#> ✔ 12:57:54 | added fixed drive variables
-#> ✔ 12:57:54 | added series variables
-#> ✔ 12:57:54 | Procedure completed.
+#> ! The requested GameID "2020_20_TB_GB" is not loaded yet, please try again
+#> later!
+#> ! The requested GameID "2020_20_BUF_KC" is not loaded yet, please try
+#> again later!
+#> ! The requested GameID "2020_21_KC_TB" is not loaded yet, please try again
+#> later!
+#> ✔ 19:29:38 | Procedure completed.
 #> ── nflverse play by play ───────────────────────────────────────────────────────
-#> ℹ Data updated: 2026-03-19 12:57:54 UTC
-#> # A tibble: 539 × 339
-#>    play_id game_id     old_game_id home_team away_team season_type  week posteam
-#>      <dbl> <chr>       <chr>       <chr>     <chr>     <chr>       <int> <chr>  
-#>  1       1 2020_20_BU… 2021012401  KC        BUF       POST           20 NA     
-#>  2      42 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    
-#>  3      57 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    
-#>  4      78 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    
-#>  5     102 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    
-#>  6     123 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    
-#>  7     145 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    
-#>  8     174 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    
-#>  9     207 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    
-#> 10     236 2020_20_BU… 2021012401  KC        BUF       POST           20 BUF    
-#> # ℹ 529 more rows
-#> # ℹ 331 more variables: posteam_type <chr>, defteam <chr>, side_of_field <chr>,
-#> #   yardline_100 <dbl>, game_date <chr>, quarter_seconds_remaining <dbl>,
-#> #   half_seconds_remaining <dbl>, game_seconds_remaining <dbl>,
-#> #   game_half <chr>, quarter_end <dbl>, drive <dbl>, sp <dbl>, qtr <dbl>,
-#> #   down <dbl>, goal_to_go <dbl>, time <chr>, yrdln <chr>, ydstogo <dbl>,
-#> #   ydsnet <dbl>, desc <chr>, play_type <chr>, yards_gained <dbl>, …
+#> ℹ Data updated: 2026-03-25 19:29:38 UTC
+#> # A tibble: 0 × 0
 
 # }
 ```

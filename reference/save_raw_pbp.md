@@ -77,9 +77,9 @@ local_dir <- tempdir()
 # LOAD AND SAVE A GAME TO TEMP DIRECTORY
 save_raw_pbp("2021_20_BUF_KC", dir = local_dir)
 #> # A tibble: 1 × 10
-#>   success status_code resumefrom url    destfile error type  modified
-#>   <lgl>         <dbl>      <dbl> <chr>  <chr>    <chr> <chr> <dttm>  
-#> 1 TRUE            200          0 https… /tmp/Rt… NA    appl… NA      
+#>   success status_code resumefrom url    destfile error type  modified           
+#>   <lgl>         <dbl>      <dbl> <chr>  <chr>    <chr> <chr> <dttm>             
+#> 1 TRUE            200          0 https… /tmp/Rt… NA    appl… 2023-09-05 14:56:52
 #> # ℹ 2 more variables: time <dbl>, headers <list>
 
 # REMOVE THE DIRECTORY

@@ -24,7 +24,7 @@
 - Implemented a fresh approach to compute `play_type` based on
   `play_type_nfl` for faster and more consistent output.
   ([\#568](https://github.com/nflverse/nflfastR/issues/568))
-- Fixed a bug where nflfastR overrode the kickoff_attempt variable in
+- Fixed a bug where nflfastR overwrote the kickoff_attempt variable in
   the event of a penalty on a kickoff.
   ([\#569](https://github.com/nflverse/nflfastR/issues/569))
 - Added various definitions of ‘explosive’ plays to the output of
@@ -58,6 +58,12 @@
   [`calculate_stats()`](https://nflfastr.com/reference/calculate_stats.md)
   overcounted first downs in some edge cases.
   ([\#587](https://github.com/nflverse/nflfastR/issues/587))
+- nflfastR now loads raw play-by-play data from season based releases in
+  the `nflverse/nflverse-pbp` GitHub repository. The legacy repository
+  `nflverse/nflfastR-raw` is deprecated and won’t update in future
+  seasons. This means that previous nflfastR versions won’t be able to
+  download 2026+ seasons!
+  ([\#589](https://github.com/nflverse/nflfastR/issues/589))
 
 ## nflfastR 5.2.0
 
