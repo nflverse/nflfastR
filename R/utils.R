@@ -338,7 +338,7 @@ check_for_dropped_seasons <- function(game_ids) {
   game_ids
 }
 
-raw_pbp_urls <- function(game_ids){
+raw_pbp_urls <- function(game_ids) {
   # pattern
   # https://github.com/nflverse/nflverse-pbp/releases/download/{season}/{game_id}.rds
   file.path(
