@@ -13,6 +13,7 @@
 - Fixed bug where `calculate_stats()` counted fumble recoveries in `fumble_recovery_yards_own` and `fumble_recovery_yards_opp` instead of the corresponding yards. (#584)
 - Fixed bug where `calculate_stats()` counted some blocked punts as punt attempts that officially do not count as punt attempts. (#584)
 - Fixed bug where `calculate_stats()` overcounted first downs in some edge cases. (#587)
+- nflfastR now loads raw play-by-play data from season based releases in the `nflverse/nflverse-pbp` GitHub repository. The legacy repository `nflverse/nflfastR-raw` is deprecated and won't update in future seasons. This means that previous nflfastR versions won't be able to download 2026+ seasons! (#589)
 
 # nflfastR 5.2.0
 
