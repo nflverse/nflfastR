@@ -14,7 +14,7 @@
 - Fixed bug where `calculate_stats()` counted some blocked punts as punt attempts that officially do not count as punt attempts. (#584)
 - Fixed bug where `calculate_stats()` overcounted first downs in some edge cases. (#587)
 - nflfastR now loads raw play-by-play data from season based releases in the `nflverse/nflverse-pbp` GitHub repository. The legacy repository `nflverse/nflfastR-raw` is deprecated and won't update in future seasons. This means that previous nflfastR versions won't be able to download 2026+ seasons! (#589)
-- The legacy player stats functions `calculate_player_stats()`, `calculate_player_stats_def()`, and `calculate_player_stats_kicking()` have been deprecated 2024 with the release of nflfastR 5.0. They are now defunct and calling them will throw an error. (#590)
+- The legacy player stats functions `calculate_player_stats*()` have been deprecated in 2024 with the release of nflfastR 5.0. They are now defunct and calling them will throw an error. (#590)
 
 # nflfastR 5.2.0
 
