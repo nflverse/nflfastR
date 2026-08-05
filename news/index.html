@@ -80,6 +80,7 @@
 <li>Fixed bug where <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code> counted some blocked punts as punt attempts that officially do not count as punt attempts. (<a href="https://github.com/nflverse/nflfastR/issues/584" class="external-link">#584</a>)</li>
 <li>Fixed bug where <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code> overcounted first downs in some edge cases. (<a href="https://github.com/nflverse/nflfastR/issues/587" class="external-link">#587</a>)</li>
 <li>nflfastR now loads raw play-by-play data from season based releases in the <code>nflverse/nflverse-pbp</code> GitHub repository. The legacy repository <code>nflverse/nflfastR-raw</code> is deprecated and won’t update in future seasons. This means that previous nflfastR versions won’t be able to download 2026+ seasons! (<a href="https://github.com/nflverse/nflfastR/issues/589" class="external-link">#589</a>)</li>
+<li>The legacy player stats functions <code>calculate_player_stats*()</code> have been deprecated in 2024 with the release of nflfastR 5.0. They are now defunct and calling them will throw an error. (<a href="https://github.com/nflverse/nflfastR/issues/590" class="external-link">#590</a>)</li>
 <li>Updated <code>teams_colors_logos</code> after 2026 Titans and Rams rebrandings. (<a href="https://github.com/nflverse/nflfastR/issues/592" class="external-link">#592</a>)</li>
 </ul></div>
     <div class="section level2">

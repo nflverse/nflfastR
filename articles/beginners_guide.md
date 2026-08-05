@@ -933,7 +933,7 @@ str(games)
 #>  $ stadium_id      : chr [1:7548] "ATL00" "CHI98" "CLE00" "GNB00" ...
 #>  $ stadium         : chr [1:7548] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...
 #>  - attr(*, "nflverse_type")= chr "games and schedules"
-#>  - attr(*, "nflverse_timestamp")= chr "2026-08-05 07:19:47 EDT"
+#>  - attr(*, "nflverse_timestamp")= chr "2026-08-05 09:40:24 EDT"
 ```
 
 To start, we want to create a dataframe where each row is a team-season
@@ -949,7 +949,7 @@ home <- games |>
   rename(team = home_team)
 home |> head(5)
 #> ── nflverse games and schedules ────────────────────────────────────────────────
-#> ℹ Data updated: 2026-08-05 11:19:47 UTC
+#> ℹ Data updated: 2026-08-05 13:40:24 UTC
 #> # A tibble: 5 × 4
 #>   season  week team  result
 #>    <int> <int> <chr>  <int>
@@ -971,7 +971,7 @@ away <- games |>
   mutate(result = -result)
 away |> head(5)
 #> ── nflverse games and schedules ────────────────────────────────────────────────
-#> ℹ Data updated: 2026-08-05 11:19:47 UTC
+#> ℹ Data updated: 2026-08-05 13:40:24 UTC
 #> # A tibble: 5 × 4
 #>   season  week team  result
 #>    <int> <int> <chr>  <int>
@@ -1000,7 +1000,7 @@ results <- bind_rows(home, away) |>
 
 results |> filter(season == 2019 & team == 'SEA')
 #> ── nflverse games and schedules ────────────────────────────────────────────────
-#> ℹ Data updated: 2026-08-05 11:19:47 UTC
+#> ℹ Data updated: 2026-08-05 13:40:24 UTC
 #> # A tibble: 16 × 5
 #>    season  week team  result   win
 #>     <int> <int> <chr>  <int> <dbl>

@@ -64,6 +64,10 @@
   seasons. This means that previous nflfastR versions won’t be able to
   download 2026+ seasons!
   ([\#589](https://github.com/nflverse/nflfastR/issues/589))
+- The legacy player stats functions `calculate_player_stats*()` have
+  been deprecated in 2024 with the release of nflfastR 5.0. They are now
+  defunct and calling them will throw an error.
+  ([\#590](https://github.com/nflverse/nflfastR/issues/590))
 - Updated `teams_colors_logos` after 2026 Titans and Rams rebrandings.
   ([\#592](https://github.com/nflverse/nflfastR/issues/592))
 
