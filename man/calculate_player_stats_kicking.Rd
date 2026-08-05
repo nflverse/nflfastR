@@ -4,40 +4,25 @@
 \alias{calculate_player_stats_kicking}
 \title{Summarize Kicking Stats}
 \usage{
-calculate_player_stats_kicking(pbp, weekly = FALSE)
+calculate_player_stats_kicking(...)
 }
 \arguments{
-\item{pbp}{A Data frame of NFL play-by-play data typically loaded with
-\code{\link[=load_pbp]{load_pbp()}} or \code{\link[=build_nflfastR_pbp]{build_nflfastR_pbp()}}.}
-
-\item{weekly}{If \code{TRUE}, returns week-by-week stats, otherwise, stats for
-the entire data frame in argument \code{pbp}.}
+\item{...}{Leave this empty. The function is deprecated}
 }
 \value{
-a dataframe of kicking stats
+Nothing. Function is deprecated.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 
 This function was deprecated because we have a new, much better and
 harmonized approach in \code{\link[=calculate_stats]{calculate_stats()}}.
-
-Build columns that aggregate kicking stats at the game level.
 }
 \examples{
 \donttest{
 try({# to avoid CRAN test problems
-    # pbp <- nflreadr::load_pbp(2021)
-    # weekly <- calculate_player_stats_kicking(pbp, weekly = TRUE)
-    # dplyr::glimpse(weekly)
-
-    # overall <- calculate_player_stats_kicking(pbp, weekly = FALSE)
-    # dplyr::glimpse(overall)
+ # calculate_player_stats_kicking()
 })
 }
-
-}
-\seealso{
-\url{https://nflreadr.nflverse.com/reference/load_player_stats.html} for the nflreadr function to download this from repo (\code{stat_type = "kicking"})
 }
 \keyword{internal}

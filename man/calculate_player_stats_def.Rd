@@ -4,44 +4,25 @@
 \alias{calculate_player_stats_def}
 \title{Get Official Game Stats on Defense}
 \usage{
-calculate_player_stats_def(pbp, weekly = FALSE)
+calculate_player_stats_def(...)
 }
 \arguments{
-\item{pbp}{A Data frame of NFL play-by-play data typically loaded with
-\code{\link[=load_pbp]{load_pbp()}} or \code{\link[=build_nflfastR_pbp]{build_nflfastR_pbp()}}. If the data doesn't include the variable
-\code{qb_epa}, the function \code{add_qb_epa()} will be called to add it.}
-
-\item{weekly}{If \code{TRUE}, returns week-by-week stats, otherwise, stats
-for the entire Data frame.}
+\item{...}{Leave this empty. The function is deprecated}
 }
 \value{
-A data frame of defensive player stats. See dictionary (# TODO)
+Nothing. Function is deprecated.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 
 This function was deprecated because we have a new, much better and
 harmonized approach in \code{\link[=calculate_stats]{calculate_stats()}}.
-
-Build columns that aggregate official defense stats
-either at the game level or at the level of the entire data frame passed.
 }
 \examples{
 \donttest{
 try({# to avoid CRAN test problems
-  # pbp <- nflfastR::load_pbp(2020)
-
-  # weekly <- calculate_player_stats_def(pbp, weekly = TRUE)
-  # dplyr::glimpse(weekly)
-
-  # overall <- calculate_player_stats_def(pbp, weekly = FALSE)
-  # dplyr::glimpse(overall)
+ # calculate_player_stats_def()
 })
 }
-
-}
-\seealso{
-The function \code{\link[=load_player_stats]{load_player_stats()}} and the corresponding examples
-on \href{https://nflfastr.com/articles/nflfastR.html#example-11-replicating-official-stats}{the nflfastR website}
 }
 \keyword{internal}

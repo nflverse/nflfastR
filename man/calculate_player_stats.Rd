@@ -4,113 +4,25 @@
 \alias{calculate_player_stats}
 \title{Get Official Game Stats}
 \usage{
-calculate_player_stats(pbp, weekly = FALSE)
+calculate_player_stats(...)
 }
 \arguments{
-\item{pbp}{A Data frame of NFL play-by-play data typically loaded with
-\code{\link[=load_pbp]{load_pbp()}} or \code{\link[=build_nflfastR_pbp]{build_nflfastR_pbp()}}. If the data doesn't include the variable
-\code{qb_epa}, the function \code{add_qb_epa()} will be called to add it.}
-
-\item{weekly}{If \code{TRUE}, returns week-by-week stats, otherwise, stats
-for the entire Data frame.}
+\item{...}{Leave this empty. The function is deprecated}
 }
 \value{
-A data frame including the following columns (all ID columns are
-decoded to the gsis ID format):
-\describe{
-\item{player_id}{ID of the player. Use this to join to other sources.}
-\item{player_name}{Name of the player}
-\item{player_display_name}{Full name of the player}
-\item{position}{Position of the player}
-\item{position_group}{Position group of the player}
-\item{headshot_url}{URL to a player headshot image}
-\item{games}{The number of games where the player recorded passing, rushing or receiving stats.}
-\item{recent_team}{Most recent team player appears in \code{pbp} with.}
-\item{season}{Season if \code{weekly} is \code{TRUE}}
-\item{week}{Week if \code{weekly} is \code{TRUE}}
-\item{season_type}{\code{REG} or \code{POST} if \code{weekly} is \code{TRUE}}
-\item{opponent_team}{The player's opponent team if \code{weekly} is \code{TRUE}}
-\item{completions}{The number of completed passes.}
-\item{attempts}{The number of pass attempts as defined by the NFL.}
-\item{passing_yards}{Yards gained on pass plays.}
-\item{passing_tds}{The number of passing touchdowns.}
-\item{interceptions}{The number of interceptions thrown.}
-\item{sacks}{The Number of times sacked.}
-\item{sack_yards}{Yards lost on sack plays.}
-\item{sack_fumbles}{The number of sacks with a fumble.}
-\item{sack_fumbles_lost}{The number of sacks with a lost fumble.}
-\item{passing_air_yards}{Passing air yards (includes incomplete passes).}
-\item{passing_yards_after_catch}{Yards after the catch gained on plays in
-which player was the passer (this is an unofficial stat and may differ slightly
-between different sources).}
-\item{passing_first_downs}{First downs on pass attempts.}
-\item{passing_epa}{Total expected points added on pass attempts and sacks.
-NOTE: this uses the variable \code{qb_epa}, which gives QB credit for EPA for up
-to the point where a receiver lost a fumble after a completed catch and makes
-EPA work more like passing yards on plays with fumbles.}
-\item{passing_2pt_conversions}{Two-point conversion passes.}
-\item{pacr}{Passing Air Conversion Ratio. PACR = \code{passing_yards} / \code{passing_air_yards}}
-\item{dakota}{Adjusted EPA + CPOE composite based on coefficients which best predict adjusted EPA/play in the following year.}
-\item{carries}{The number of official rush attempts (incl. scrambles and kneel downs).
-Rushes after a lateral reception don't count as carry.}
-\item{rushing_yards}{Yards gained when rushing with the ball (incl. scrambles and kneel downs).
-Also includes yards gained after obtaining a lateral on a play that started
-with a rushing attempt.}
-\item{rushing_tds}{The number of rushing touchdowns (incl. scrambles).
-Also includes touchdowns after obtaining a lateral on a play that started
-with a rushing attempt.}
-\item{rushing_fumbles}{The number of rushes with a fumble.}
-\item{rushing_fumbles_lost}{The number of rushes with a lost fumble.}
-\item{rushing_first_downs}{First downs on rush attempts (incl. scrambles).}
-\item{rushing_epa}{Expected points added on rush attempts (incl. scrambles and kneel downs).}
-\item{rushing_2pt_conversions}{Two-point conversion rushes}
-\item{receptions}{The number of pass receptions. Lateral receptions officially
-don't count as reception.}
-\item{targets}{The number of pass plays where the player was the targeted receiver.}
-\item{receiving_yards}{Yards gained after a pass reception. Includes yards
-gained after receiving a lateral on a play that started as a pass play.}
-\item{receiving_tds}{The number of touchdowns following a pass reception.
-Also includes touchdowns after receiving a lateral on a play that started
-as a pass play.}
-\item{receiving_air_yards}{Receiving air yards (incl. incomplete passes).}
-\item{receiving_yards_after_catch}{Yards after the catch gained on plays in
-which player was receiver (this is an unofficial stat and may differ slightly
-between different sources).}
-\item{receiving_fumbles}{The number of fumbles after a pass reception.}
-\item{receiving_fumbles_lost}{The number of fumbles lost after a pass reception.}
-\item{receiving_2pt_conversions}{Two-point conversion receptions}
-\item{racr}{Receiver Air Conversion Ratio. RACR = \code{receiving_yards} / \code{receiving_air_yards}}
-\item{target_share}{The share of targets of the player in all targets of his team}
-\item{air_yards_share}{The share of receiving_air_yards of the player in all air_yards of his team}
-\item{wopr}{Weighted Opportunity Rating. WOPR = 1.5 × \code{target_share} + 0.7 × \code{air_yards_share}}
-\item{fantasy_points}{Standard fantasy points.}
-\item{fantasy_points_ppr}{PPR fantasy points.}
-}
+Nothing. Function is deprecated.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 
 This function was deprecated because we have a new, much better and
 harmonized approach in \code{\link[=calculate_stats]{calculate_stats()}}.
-
-Build columns that aggregate official passing, rushing, and receiving stats
-either at the game level or at the level of the entire data frame passed.
 }
 \examples{
 \donttest{
 try({# to avoid CRAN test problems
-# pbp <- nflfastR::load_pbp(2020)
-
-# weekly <- calculate_player_stats(pbp, weekly = TRUE)
-# dplyr::glimpse(weekly)
-
-# overall <- calculate_player_stats(pbp, weekly = FALSE)
-# dplyr::glimpse(overall)
+  # calculate_player_stats()
 })
 }
-}
-\seealso{
-The function \code{\link[=load_player_stats]{load_player_stats()}} and the corresponding examples
-on \href{https://nflfastr.com/articles/nflfastR.html#example-11-replicating-official-stats}{the nflfastR website}
 }
 \keyword{internal}
