@@ -24,7 +24,7 @@ jobs:
       isPush: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: r-lib/actions/setup-pandoc@v2
 
