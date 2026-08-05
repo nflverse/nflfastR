@@ -7,7 +7,7 @@
 #' NFL Team names, colors and logo urls.
 #'
 #' @docType data
-#' @format A data frame with 36 rows and 10 variables containing NFL team level
+#' @format A data frame with 36 rows and 16 variables containing NFL team level
 #' information, including franchises in multiple cities:
 #' \describe{
 #'   \item{team_abbr}{Team abbreviation}
@@ -25,6 +25,7 @@
 #'   \item{team_wordmark}{Url to team wordmarks}
 #'   \item{team_conference_logo}{Url to AFC and NFC logos}
 #'   \item{team_league_logo}{Url to NFL logo}
+#'   \item{team_logo_squared}{Url to squared version of NFL logo}
 #' }
 #' The primary and secondary colors have been taken from nfl.com with some modifications
 #' for better team distinction and most recent team color themes.

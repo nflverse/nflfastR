@@ -8,7 +8,7 @@ report(...)
 }
 \arguments{
 \item{...}{
-  Arguments passed on to \code{\link[nflreadr:sitrep]{nflreadr::nflverse_sitrep}}
+  Arguments passed on to \code{\link[nflreadr:nflverse_sitrep]{nflreadr::nflverse_sitrep}}
   \describe{
     \item{\code{pkg}}{a character vector naming installed packages, or \code{NULL}
 (the default) meaning all nflverse packages. The function checks internally
@@ -22,12 +22,13 @@ Character string \code{"all"} is shorthand for that vector, character string
 (default) for the first three elements of that vector.}
     \item{\code{redact_path}}{a logical indicating whether options that contain "path"
 in the name should be redacted, default = TRUE}
+    \item{\code{dev_repos}}{Developmental cran-like repos to check, e.g. r-universe repos}
   }}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 
-This function was deprecated. Please use \code{\link[nflreadr:sitrep]{nflreadr::nflverse_sitrep}}.
+This function was deprecated. Please use \code{\link[nflreadr:nflverse_sitrep]{nflreadr::nflverse_sitrep}}.
 
 This function gives a quick overview of the versions of R and
 the operating system as well as the versions of nflverse packages, options,
@@ -35,7 +36,7 @@ and their dependencies. It's primarily designed to help you get a quick
 idea of what's going on when you're helping someone else debug a problem.
 }
 \details{
-See \code{\link[nflreadr:sitrep]{nflreadr::nflverse_sitrep}} for details.
+See \code{\link[nflreadr:nflverse_sitrep]{nflreadr::nflverse_sitrep}} for details.
 }
 \examples{
 \donttest{
