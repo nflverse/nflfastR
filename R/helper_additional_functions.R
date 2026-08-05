@@ -505,6 +505,7 @@ team_name_fn <- function(var) {
       "SL" = "LA",
       "LAR" = "LA",
       "ARZ" = "ARI",
+      "AZ" = "ARI",
       "BLT" = "BAL",
       "CLV" = "CLE",
       "HST" = "HOU",
