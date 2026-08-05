@@ -133,6 +133,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Ben Baldwin \email{bbaldwin206@gmail.com}
   \item Sebastian Carl \email{mrcaseb@gmail.com}
 }
 

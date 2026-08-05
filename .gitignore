@@ -30,3 +30,4 @@ vignettes/*.pdf
 docs
 inst/doc
 revdep
+.positai

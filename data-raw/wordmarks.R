@@ -1,11 +1,10 @@
 library(dplyr)
 
-teams <- nflfastR::teams_colors_logos |>
-  dplyr::filter(!team_abbr %in% c("LAR", "OAK", "SD", "STL"))
+teams <- nflreadr::load_teams()
 
 purrr::walk(teams$team_abbr, function(x) {
   load <- glue::glue(
-    "https://static.www.nfl.com/league/apps/clubs/wordmarks/{x}_fullcolor.png"
+    "https://upload.wikimedia.org/wikipedia/commons/4/44/LA_Rams_wordmark.png"
   ) |>
     magick::image_read() |>
     magick::image_trim()
