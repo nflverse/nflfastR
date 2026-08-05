@@ -17,6 +17,6 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{nflreadr}{\code{\link[nflreadr]{load_pbp}}, \code{\link[nflreadr]{load_player_stats}}, \code{\link[nflreadr]{load_rosters}}, \code{\link[nflreadr]{load_schedules}}, \code{\link[nflreadr]{load_team_stats}}, \code{\link[nflreadr:latest_season]{most_recent_season}}, \code{\link[nflreadr:sitrep]{nflverse_sitrep}}}
+  \item{nflreadr}{\code{\link[nflreadr:load_pbp]{load_pbp()}}, \code{\link[nflreadr:load_player_stats]{load_player_stats()}}, \code{\link[nflreadr:load_rosters]{load_rosters()}}, \code{\link[nflreadr:load_schedules]{load_schedules()}}, \code{\link[nflreadr:load_team_stats]{load_team_stats()}}, \code{\link[nflreadr:most_recent_season]{most_recent_season()}}, \code{\link[nflreadr:nflverse_sitrep]{nflverse_sitrep()}}}
 }}
 

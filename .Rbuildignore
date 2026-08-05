@@ -26,3 +26,5 @@
 ^[.]?air[.]toml$
 ^\.vscode$
 ^\.git-blame-ignore-revs$
+^\.positai$
+^\.claude$
