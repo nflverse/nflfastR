@@ -67,8 +67,8 @@ nflverse_sitrep(pkg = "nflreadr", recursive = TRUE)
 #> ── System Info ─────────────────────────────────────────────────────────────────
 #> • R version 4.6.1 (2026-06-24) • Running under: Ubuntu 24.04.4 LTS
 #> ── Package Status ──────────────────────────────────────────────────────────────
-#>    package installed  cran   dev behind
-#> 1 nflreadr     1.5.1 1.5.1 1.5.1       
+#>    package  installed  cran        dev behind
+#> 1 nflreadr 1.5.1.9000 1.5.1 1.5.1.9000       
 #> ── Package Options ─────────────────────────────────────────────────────────────
 #> • No options set for above packages
 #> ── Package Dependencies ────────────────────────────────────────────────────────
