@@ -10,7 +10,7 @@ teams_colors_logos
 
 ## Format
 
-A data frame with 36 rows and 10 variables containing NFL team level
+A data frame with 36 rows and 16 variables containing NFL team level
 information, including franchises in multiple cities:
 
 - team_abbr:
@@ -73,6 +73,10 @@ information, including franchises in multiple cities:
 
   Url to NFL logo
 
+- team_logo_squared:
+
+  Url to squared version of NFL logo
+
 The primary and secondary colors have been taken from nfl.com with some
 modifications for better team distinction and most recent team color
 themes. The tertiary and quaternary colors are taken from Lee Sharpe's
@@ -85,7 +89,9 @@ from Lee Sharpe's logos.csv Team wordmarks from nfl.com
 ``` r
 # \donttest{
 teams_colors_logos
-#> # A tibble: 36 × 15
+#> ── nflverse teams data ─────────────────────────────────────────────────────────
+#> ℹ Data updated: 2026-03-27 15:49:44 UTC
+#> # A tibble: 32 × 16
 #>    team_abbr team_name      team_id team_nick team_conf team_division team_color
 #>    <chr>     <chr>          <chr>   <chr>     <chr>     <chr>         <chr>     
 #>  1 ARI       Arizona Cardi… 3800    Cardinals NFC       NFC West      #97233F   
@@ -98,9 +104,9 @@ teams_colors_logos
 #>  8 CLE       Cleveland Bro… 1050    Browns    AFC       AFC North     #FF3C00   
 #>  9 DAL       Dallas Cowboys 1200    Cowboys   NFC       NFC East      #002244   
 #> 10 DEN       Denver Broncos 1400    Broncos   AFC       AFC West      #002244   
-#> # ℹ 26 more rows
-#> # ℹ 8 more variables: team_color2 <chr>, team_color3 <chr>, team_color4 <chr>,
+#> # ℹ 22 more rows
+#> # ℹ 9 more variables: team_color2 <chr>, team_color3 <chr>, team_color4 <chr>,
 #> #   team_logo_wikipedia <chr>, team_logo_espn <chr>, team_wordmark <chr>,
-#> #   team_conference_logo <chr>, team_league_logo <chr>
+#> #   team_conference_logo <chr>, team_league_logo <chr>, team_logo_squared <chr>
 # }
 ```

@@ -109,6 +109,14 @@ written to the database.
 ``` r
 # \donttest{
 con <- DBI::dbConnect(duckdb::duckdb())
+#> duckdb keeps downloaded extensions and secrets in a temporary directory:
+#> ℹ /tmp/RtmpHL8lVk/duckdb
+#> This is removed when the R session ends.
+#> • Extensions are re-downloaded each session.
+#> • Secrets are lost.
+#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
+#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
+#> ℹ See ?duckdb_storage for details and alternatives.
 try({# to avoid CRAN test problems
 update_pbp_db(con, seasons = 2024)
 })
@@ -116,10 +124,10 @@ update_pbp_db(con, seasons = 2024)
 #> ℹ Table "nflverse_pbp" does not yet exist in your connected database.
 #> Do you wish to create it? (Y/n)
 #> 
-#> ℹ 19:29:47 | Initiate table "nflverse_pbp" with nflverse pbp schema
-#> ℹ 19:29:47 | Drop 2024 season from table "nflverse_pbp"
-#> ℹ 19:29:47 | Append 2024 season to table "nflverse_pbp"
-#> ✔ 19:29:50 | Database update completed
+#> ℹ 11:18:57 | Initiate table "nflverse_pbp" with nflverse pbp schema
+#> ℹ 11:18:57 | Drop 2024 season from table "nflverse_pbp"
+#> ℹ 11:18:57 | Append 2024 season to table "nflverse_pbp"
+#> ✔ 11:19:00 | Database update completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 # }
 ```

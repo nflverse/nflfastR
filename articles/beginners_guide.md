@@ -29,6 +29,7 @@ you’re never going to be doing this again.
 ### Install packages
 
 ``` r
+
 install.packages("tidyverse", type = "binary")
 install.packages("ggrepel", type = "binary")
 install.packages("nflreadr", type = "binary")
@@ -45,6 +46,7 @@ data, along with a lot of other data). Finally, `nflplotR` makes
 plotting easier.
 
 ``` r
+
 library(tidyverse)
 library(ggrepel)
 library(nflreadr)
@@ -55,6 +57,7 @@ This one is optional but makes R prefer not to display numbers in
 scientific notation, which I find very annoying:
 
 ``` r
+
 options(scipen = 9999)
 ```
 
@@ -68,6 +71,7 @@ function included in `nflreadr`, which is much faster than building pbp
 from scratch.
 
 ``` r
+
 data <- load_pbp(2019)
 ```
 
@@ -81,6 +85,7 @@ us that there are `47260` rows (i.e., plays) in the data and `372`
 columns (variables):
 
 ``` r
+
 dim(data)
 #> [1] 47260   372
 ```
@@ -88,6 +93,7 @@ dim(data)
 `str` displays the **str**ucture of the dataframe:
 
 ``` r
+
 str(data[1:10])
 #> nflvrs_d [47,260 × 10] (S3: nflverse_data/tbl_df/tbl/data.table/data.frame)
 #>  $ play_id     : num [1:47260] 1 36 51 79 100 121 148 185 214 239 ...
@@ -113,6 +119,7 @@ that there are `372` columns!). Normally, you would just type
 You can similarly take a glimpse at your data:
 
 ``` r
+
 glimpse(data[1:10])
 #> Rows: 47,260
 #> Columns: 10
@@ -147,6 +154,7 @@ from an Excel background, this will help you feel more at home as a way
 to see what’s in the data.
 
 ``` r
+
 View(data)
 ```
 
@@ -155,6 +163,7 @@ yourself! Since there are so many columns, the Viewer won’t show them
 all. To pick which columns to view, you can **select** some:
 
 ``` r
+
 data |>
   select(home_team, away_team, posteam, desc) |>
   View()
@@ -171,6 +180,7 @@ To start, let’s just look at the first few rows (the “head”) of the
 data.
 
 ``` r
+
 data |> 
   select(posteam, defteam, desc, rush, pass) |> 
   head()
@@ -196,6 +206,7 @@ which is useful when working with more complicated functions. We could
 run:
 
 ``` r
+
 data |> select(posteam, defteam, desc, rush, pass) |> head()
 ```
 
@@ -209,6 +220,7 @@ kickoffs, field goals, or dead ball penalties (e.g. false starts) where
 we don’t know what the attempted play was.
 
 ``` r
+
 data |> 
   filter(rush == 1 | pass == 1) |>
   select(posteam, desc, rush, pass, name, passer, rusher, receiver) |> 
@@ -246,6 +258,7 @@ What if we wanted to view special teams plays? Again, we can use
 `filter`:
 
 ``` r
+
 data |> 
   filter(special == 1) |>
   select(down, ydstogo, desc) |> 
@@ -266,6 +279,7 @@ data |>
 Fourth down plays?
 
 ``` r
+
 data |> 
   filter(down == 4) |>
   select(down, ydstogo, desc) |> 
@@ -286,6 +300,7 @@ data |>
 Fourth down plays that aren’t special teams plays?
 
 ``` r
+
 data |> 
   filter(down == 4 & special == 0) |>
   select(down, ydstogo, desc) |> 
@@ -310,6 +325,7 @@ dataframe. Let’s save a new dataframe that’s just run plays and pass
 plays with non-missing EPA, called `pbp_rp`.
 
 ``` r
+
 pbp_rp <- data |>
   filter(rush == 1 | pass == 1, !is.na(epa))
 ```
@@ -330,6 +346,7 @@ Let’s take a look at how various Cowboys’ running backs fared on run
 plays in 2019:
 
 ``` r
+
 pbp_rp |>
     filter(posteam == "DAL", rush == 1) |>
     group_by(rusher) |>
@@ -369,6 +386,7 @@ two-point conversions, which have down listed as `NA`) and
 `play_type = no_play`):
 
 ``` r
+
 pbp_rp |>
     filter(posteam == "DAL", down <= 4, play_type == 'run') |>
     group_by(rusher) |>
@@ -396,6 +414,7 @@ Let’s say we want to make a new column, named `home`, which is equal to
 extremely useful function, `if_else`:
 
 ``` r
+
 pbp_rp |>
   mutate(
     home = if_else(posteam == home_team, 1, 0)
@@ -428,6 +447,7 @@ condition is false (0). So we could use this to, for example, look at
 average EPA/play by home and road teams:
 
 ``` r
+
 pbp_rp |>
   mutate(
     home = if_else(posteam == home_team, 1, 0)
@@ -452,6 +472,7 @@ condition. But what if you need to do something more complicated?
 `case_when` is a good option. Here’s how it works:
 
 ``` r
+
 pbp_rp |>
   filter(!is.na(cp)) |>
   mutate(
@@ -488,6 +509,7 @@ half on early downs with win probability between 20 and 80, excluding
 the final 2 minutes of the half when everyone is pass-happy?
 
 ``` r
+
 schotty <- pbp_rp |>
     filter(wp > .20 & wp < .80 & down <= 2 & qtr <= 2 & half_seconds_remaining > 120) |>
     group_by(posteam) |>
@@ -518,6 +540,7 @@ in descending order.
 Let’s make our first figure:
 
 ``` r
+
 ggplot(schotty, aes(x = reorder(posteam, -mean_pass), y = mean_pass)) +
   geom_text(aes(label = posteam))
 ```
@@ -541,6 +564,7 @@ Because all the data is stored in the data repository, it is very fast
 to load data from multiple seasons.
 
 ``` r
+
 pbp <- load_pbp(2015:2019)
 ```
 
@@ -550,6 +574,7 @@ Let’s make sure we got it all. By now, you should understand what this
 is doing:
 
 ``` r
+
 pbp |>
   group_by(season) |>
   summarize(n = n())
@@ -567,6 +592,7 @@ So each season has about 48,000 plays. Just for fun, let’s look at the
 various play types:
 
 ``` r
+
 pbp |>
   group_by(play_type) |>
   summarize(n = n())
@@ -590,6 +616,7 @@ pbp |>
 Let’s do some stuff with quarterbacks:
 
 ``` r
+
 qbs <- pbp |>
   filter(season_type == "REG", !is.na(epa)) |>
   group_by(id, name) |>
@@ -634,22 +661,23 @@ function is provided in the `nflreadr` package, so since we have already
 loaded the package, it’s ready to use.
 
 ``` r
+
 load_teams()
 #> ── nflverse teams data ─────────────────────────────────────────────────────────
-#> ℹ Data updated: 2025-10-01 08:03:15 UTC
+#> ℹ Data updated: 2026-03-27 15:49:44 UTC
 #> # A tibble: 32 × 16
 #>    team_abbr team_name      team_id team_nick team_conf team_division team_color
-#>    <chr>     <chr>            <int> <chr>     <chr>     <chr>         <chr>     
-#>  1 ARI       Arizona Cardi…    3800 Cardinals NFC       NFC West      #97233F   
-#>  2 ATL       Atlanta Falco…     200 Falcons   NFC       NFC South     #A71930   
-#>  3 BAL       Baltimore Rav…     325 Ravens    AFC       AFC North     #241773   
-#>  4 BUF       Buffalo Bills      610 Bills     AFC       AFC East      #00338D   
-#>  5 CAR       Carolina Pant…     750 Panthers  NFC       NFC South     #0085CA   
-#>  6 CHI       Chicago Bears      810 Bears     NFC       NFC North     #0B162A   
-#>  7 CIN       Cincinnati Be…     920 Bengals   AFC       AFC North     #FB4F14   
-#>  8 CLE       Cleveland Bro…    1050 Browns    AFC       AFC North     #FF3C00   
-#>  9 DAL       Dallas Cowboys    1200 Cowboys   NFC       NFC East      #002244   
-#> 10 DEN       Denver Broncos    1400 Broncos   AFC       AFC West      #002244   
+#>    <chr>     <chr>          <chr>   <chr>     <chr>     <chr>         <chr>     
+#>  1 ARI       Arizona Cardi… 3800    Cardinals NFC       NFC West      #97233F   
+#>  2 ATL       Atlanta Falco… 0200    Falcons   NFC       NFC South     #A71930   
+#>  3 BAL       Baltimore Rav… 0325    Ravens    AFC       AFC North     #241773   
+#>  4 BUF       Buffalo Bills  0610    Bills     AFC       AFC East      #00338D   
+#>  5 CAR       Carolina Pant… 0750    Panthers  NFC       NFC South     #0085CA   
+#>  6 CHI       Chicago Bears  0810    Bears     NFC       NFC North     #0B162A   
+#>  7 CIN       Cincinnati Be… 0920    Bengals   AFC       AFC North     #FB4F14   
+#>  8 CLE       Cleveland Bro… 1050    Browns    AFC       AFC North     #FF3C00   
+#>  9 DAL       Dallas Cowboys 1200    Cowboys   NFC       NFC East      #002244   
+#> 10 DEN       Denver Broncos 1400    Broncos   AFC       AFC West      #002244   
 #> # ℹ 22 more rows
 #> # ℹ 9 more variables: team_color2 <chr>, team_color3 <chr>, team_color4 <chr>,
 #> #   team_logo_wikipedia <chr>, team_logo_espn <chr>, team_wordmark <chr>,
@@ -659,6 +687,7 @@ load_teams()
 Let’s join this to the `qbs` dataframe we created:
 
 ``` r
+
 qbs <- qbs |>
   left_join(load_teams(), by = c('team' = 'team_abbr'))
 ```
@@ -676,6 +705,7 @@ it’s what `left_join` requires as instructions for how to match.
 Now we can make a figure!
 
 ``` r
+
 qbs |>
   ggplot(aes(x = cpoe, y = epa)) +
   #horizontal line with mean EPA
@@ -719,6 +749,7 @@ google what I need.
 We could also make the same plot with team logos:
 
 ``` r
+
 qbs |>
   ggplot(aes(x = cpoe, y = epa)) +
   #horizontal line with mean EPA
@@ -762,6 +793,7 @@ here](https://www.nflfastr.com/articles/nflfastR.html#example-5-plot-offensive-a
 which like the above uses nflplotR for team logos.
 
 ``` r
+
 library(nflplotR)
 # get pbp and filter to regular season rush and pass plays
 pbp <- nflreadr::load_pbp(2005) |>
@@ -850,57 +882,58 @@ non-exported functions in a package. Think of this as like a secret menu
 number of exported functions as to be not overwhelming).
 
 ``` r
+
 games <- nflreadr::load_schedules()
 str(games)
-#> nflvrs_d [7,276 × 46] (S3: nflverse_data/tbl_df/tbl/data.table/data.frame)
-#>  $ game_id         : chr [1:7276] "1999_01_MIN_ATL" "1999_01_KC_CHI" "1999_01_PIT_CLE" "1999_01_OAK_GB" ...
-#>  $ season          : int [1:7276] 1999 1999 1999 1999 1999 1999 1999 1999 1999 1999 ...
-#>  $ game_type       : chr [1:7276] "REG" "REG" "REG" "REG" ...
-#>  $ week            : int [1:7276] 1 1 1 1 1 1 1 1 1 1 ...
-#>  $ gameday         : chr [1:7276] "1999-09-12" "1999-09-12" "1999-09-12" "1999-09-12" ...
-#>  $ weekday         : chr [1:7276] "Sunday" "Sunday" "Sunday" "Sunday" ...
-#>  $ gametime        : chr [1:7276] NA NA NA NA ...
-#>  $ away_team       : chr [1:7276] "MIN" "KC" "PIT" "OAK" ...
-#>  $ away_score      : int [1:7276] 17 17 43 24 14 3 10 30 25 28 ...
-#>  $ home_team       : chr [1:7276] "ATL" "CHI" "CLE" "GB" ...
-#>  $ home_score      : int [1:7276] 14 20 0 28 31 41 19 28 24 20 ...
-#>  $ location        : chr [1:7276] "Home" "Home" "Home" "Home" ...
-#>  $ result          : int [1:7276] -3 3 -43 4 17 38 9 -2 -1 -8 ...
-#>  $ total           : int [1:7276] 31 37 43 52 45 44 29 58 49 48 ...
-#>  $ overtime        : int [1:7276] 0 0 0 0 0 0 0 0 0 0 ...
-#>  $ old_game_id     : chr [1:7276] "1999091210" "1999091206" "1999091213" "1999091208" ...
-#>  $ gsis            : int [1:7276] 598 597 604 602 591 603 592 600 588 596 ...
-#>  $ nfl_detail_id   : chr [1:7276] NA NA NA NA ...
-#>  $ pfr             : chr [1:7276] "199909120atl" "199909120chi" "199909120cle" "199909120gnb" ...
-#>  $ pff             : int [1:7276] NA NA NA NA NA NA NA NA NA NA ...
-#>  $ espn            : chr [1:7276] "190912001" "190912003" "190912005" "190912009" ...
-#>  $ ftn             : int [1:7276] NA NA NA NA NA NA NA NA NA NA ...
-#>  $ away_rest       : int [1:7276] 7 7 7 7 7 7 7 7 7 7 ...
-#>  $ home_rest       : int [1:7276] 7 7 7 7 7 7 7 7 7 7 ...
-#>  $ away_moneyline  : int [1:7276] NA NA NA NA NA NA NA NA NA NA ...
-#>  $ home_moneyline  : int [1:7276] NA NA NA NA NA NA NA NA NA NA ...
-#>  $ spread_line     : num [1:7276] -4 -3 -6 9 -3 5.5 3.5 7 -3 9.5 ...
-#>  $ away_spread_odds: int [1:7276] NA NA NA NA NA NA NA NA NA NA ...
-#>  $ home_spread_odds: int [1:7276] NA NA NA NA NA NA NA NA NA NA ...
-#>  $ total_line      : num [1:7276] 49 38 37 43 45.5 49 38 44.5 37 42 ...
-#>  $ under_odds      : int [1:7276] NA NA NA NA NA NA NA NA NA NA ...
-#>  $ over_odds       : int [1:7276] NA NA NA NA NA NA NA NA NA NA ...
-#>  $ div_game        : int [1:7276] 0 0 1 0 1 0 1 1 1 0 ...
-#>  $ roof            : chr [1:7276] "dome" "outdoors" "outdoors" "outdoors" ...
-#>  $ surface         : chr [1:7276] "astroturf" "grass" "grass" "grass" ...
-#>  $ temp            : int [1:7276] NA 80 78 67 NA 76 NA 73 75 NA ...
-#>  $ wind            : int [1:7276] NA 12 12 10 NA 8 NA 5 3 NA ...
-#>  $ away_qb_id      : chr [1:7276] "00-0003761" "00-0006300" "00-0015700" "00-0005741" ...
-#>  $ home_qb_id      : chr [1:7276] "00-0002876" "00-0010560" "00-0004230" "00-0005106" ...
-#>  $ away_qb_name    : chr [1:7276] "Randall Cunningham" "Elvis Grbac" "Kordell Stewart" "Rich Gannon" ...
-#>  $ home_qb_name    : chr [1:7276] "Chris Chandler" "Shane Matthews" "Ty Detmer" "Brett Favre" ...
-#>  $ away_coach      : chr [1:7276] "Dennis Green" "Gunther Cunningham" "Bill Cowher" "Jon Gruden" ...
-#>  $ home_coach      : chr [1:7276] "Dan Reeves" "Dick Jauron" "Chris Palmer" "Ray Rhodes" ...
-#>  $ referee         : chr [1:7276] "Gerry Austin" "Phil Luckett" "Bob McElwee" "Tony Corrente" ...
-#>  $ stadium_id      : chr [1:7276] "ATL00" "CHI98" "CLE00" "GNB00" ...
-#>  $ stadium         : chr [1:7276] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...
+#> nflvrs_d [7,548 × 46] (S3: nflverse_data/tbl_df/tbl/data.table/data.frame)
+#>  $ game_id         : chr [1:7548] "1999_01_MIN_ATL" "1999_01_KC_CHI" "1999_01_PIT_CLE" "1999_01_OAK_GB" ...
+#>  $ season          : int [1:7548] 1999 1999 1999 1999 1999 1999 1999 1999 1999 1999 ...
+#>  $ game_type       : chr [1:7548] "REG" "REG" "REG" "REG" ...
+#>  $ week            : int [1:7548] 1 1 1 1 1 1 1 1 1 1 ...
+#>  $ gameday         : chr [1:7548] "1999-09-12" "1999-09-12" "1999-09-12" "1999-09-12" ...
+#>  $ weekday         : chr [1:7548] "Sunday" "Sunday" "Sunday" "Sunday" ...
+#>  $ gametime        : chr [1:7548] NA NA NA NA ...
+#>  $ away_team       : chr [1:7548] "MIN" "KC" "PIT" "OAK" ...
+#>  $ away_score      : int [1:7548] 17 17 43 24 14 3 10 30 25 28 ...
+#>  $ home_team       : chr [1:7548] "ATL" "CHI" "CLE" "GB" ...
+#>  $ home_score      : int [1:7548] 14 20 0 28 31 41 19 28 24 20 ...
+#>  $ location        : chr [1:7548] "Home" "Home" "Home" "Home" ...
+#>  $ result          : int [1:7548] -3 3 -43 4 17 38 9 -2 -1 -8 ...
+#>  $ total           : int [1:7548] 31 37 43 52 45 44 29 58 49 48 ...
+#>  $ overtime        : int [1:7548] 0 0 0 0 0 0 0 0 0 0 ...
+#>  $ old_game_id     : chr [1:7548] "1999091210" "1999091206" "1999091213" "1999091208" ...
+#>  $ gsis            : int [1:7548] 598 597 604 602 591 603 592 600 588 596 ...
+#>  $ nfl_detail_id   : chr [1:7548] NA NA NA NA ...
+#>  $ pfr             : chr [1:7548] "199909120atl" "199909120chi" "199909120cle" "199909120gnb" ...
+#>  $ pff             : int [1:7548] NA NA NA NA NA NA NA NA NA NA ...
+#>  $ espn            : chr [1:7548] "190912001" "190912003" "190912005" "190912009" ...
+#>  $ ftn             : int [1:7548] NA NA NA NA NA NA NA NA NA NA ...
+#>  $ away_rest       : int [1:7548] 7 7 7 7 7 7 7 7 7 7 ...
+#>  $ home_rest       : int [1:7548] 7 7 7 7 7 7 7 7 7 7 ...
+#>  $ away_moneyline  : int [1:7548] NA NA NA NA NA NA NA NA NA NA ...
+#>  $ home_moneyline  : int [1:7548] NA NA NA NA NA NA NA NA NA NA ...
+#>  $ spread_line     : num [1:7548] -4 -3 -6 9 -3 5.5 3.5 7 -3 9.5 ...
+#>  $ away_spread_odds: int [1:7548] NA NA NA NA NA NA NA NA NA NA ...
+#>  $ home_spread_odds: int [1:7548] NA NA NA NA NA NA NA NA NA NA ...
+#>  $ total_line      : num [1:7548] 49 38 37 43 45.5 49 38 44.5 37 42 ...
+#>  $ under_odds      : int [1:7548] NA NA NA NA NA NA NA NA NA NA ...
+#>  $ over_odds       : int [1:7548] NA NA NA NA NA NA NA NA NA NA ...
+#>  $ div_game        : int [1:7548] 0 0 1 0 1 0 1 1 1 0 ...
+#>  $ roof            : chr [1:7548] "dome" "outdoors" "outdoors" "outdoors" ...
+#>  $ surface         : chr [1:7548] "astroturf" "grass" "grass" "grass" ...
+#>  $ temp            : int [1:7548] NA 80 78 67 NA 76 NA 73 75 NA ...
+#>  $ wind            : int [1:7548] NA 12 12 10 NA 8 NA 5 3 NA ...
+#>  $ away_qb_id      : chr [1:7548] "00-0003761" "00-0006300" "00-0015700" "00-0005741" ...
+#>  $ home_qb_id      : chr [1:7548] "00-0002876" "00-0010560" "00-0004230" "00-0005106" ...
+#>  $ away_qb_name    : chr [1:7548] "Randall Cunningham" "Elvis Grbac" "Kordell Stewart" "Rich Gannon" ...
+#>  $ home_qb_name    : chr [1:7548] "Chris Chandler" "Shane Matthews" "Ty Detmer" "Brett Favre" ...
+#>  $ away_coach      : chr [1:7548] "Dennis Green" "Gunther Cunningham" "Bill Cowher" "Jon Gruden" ...
+#>  $ home_coach      : chr [1:7548] "Dan Reeves" "Dick Jauron" "Chris Palmer" "Ray Rhodes" ...
+#>  $ referee         : chr [1:7548] "Gerry Austin" "Phil Luckett" "Bob McElwee" "Tony Corrente" ...
+#>  $ stadium_id      : chr [1:7548] "ATL00" "CHI98" "CLE00" "GNB00" ...
+#>  $ stadium         : chr [1:7548] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...
 #>  - attr(*, "nflverse_type")= chr "games and schedules"
-#>  - attr(*, "nflverse_timestamp")= chr "2026-03-25 15:30:45 EDT"
+#>  - attr(*, "nflverse_timestamp")= chr "2026-08-05 07:19:47 EDT"
 ```
 
 To start, we want to create a dataframe where each row is a team-season
@@ -909,13 +942,14 @@ do this, but I’m going to just take the home and away results and bind
 together. As an example, here’s what the `home` results look like:
 
 ``` r
+
 home <- games |>
   filter(game_type == 'REG') |>
   select(season, week, home_team, result) |>
   rename(team = home_team)
 home |> head(5)
 #> ── nflverse games and schedules ────────────────────────────────────────────────
-#> ℹ Data updated: 2026-03-25 19:30:45 UTC
+#> ℹ Data updated: 2026-08-05 11:19:47 UTC
 #> # A tibble: 5 × 4
 #>   season  week team  result
 #>    <int> <int> <chr>  <int>
@@ -929,6 +963,7 @@ home |> head(5)
 Note that we used `rename` to change `home_team` to `team`.
 
 ``` r
+
 away <- games |>
   filter(game_type == 'REG') |>
   select(season, week, away_team, result) |>
@@ -936,7 +971,7 @@ away <- games |>
   mutate(result = -result)
 away |> head(5)
 #> ── nflverse games and schedules ────────────────────────────────────────────────
-#> ℹ Data updated: 2026-03-25 19:30:45 UTC
+#> ℹ Data updated: 2026-08-05 11:19:47 UTC
 #> # A tibble: 5 × 4
 #>   season  week team  result
 #>    <int> <int> <chr>  <int>
@@ -952,6 +987,7 @@ the perspective of the home team. Now let’s make a columns called `win`
 based on the result.
 
 ``` r
+
 results <- bind_rows(home, away) |>
   arrange(week) |>
   mutate(
@@ -964,7 +1000,7 @@ results <- bind_rows(home, away) |>
 
 results |> filter(season == 2019 & team == 'SEA')
 #> ── nflverse games and schedules ────────────────────────────────────────────────
-#> ℹ Data updated: 2026-03-25 19:30:45 UTC
+#> ℹ Data updated: 2026-08-05 11:19:47 UTC
 #> # A tibble: 16 × 5
 #>    season  week team  result   win
 #>     <int> <int> <chr>  <int> <dbl>
@@ -996,6 +1032,7 @@ Now that we have the dataframe we wanted, we can get team wins by season
 easily:
 
 ``` r
+
 team_wins <- results |>
   group_by(team, season) |>
   summarize(
@@ -1034,6 +1071,7 @@ Let’s start by getting data from every season from the `nflfastR` data
 repository:
 
 ``` r
+
 pbp <- load_pbp(1999:2019) |>
   filter(
     rush == 1 | pass == 1,
@@ -1057,6 +1095,7 @@ it in steps. We know we need to group by team, season, and pass, so
 there’s the beginning:
 
 ``` r
+
 pbp |>
   group_by(posteam, season, pass) |> 
   summarize(epa = mean(epa)) |>
@@ -1081,6 +1120,7 @@ But this makes two rows per team-season. How to get each team-season on
 the same row? `pivot_wider` is what we need:
 
 ``` r
+
 pbp |>
   group_by(posteam, season, pass) |> 
   summarize(epa = mean(epa)) |>
@@ -1112,6 +1152,7 @@ being pass == 0 (run plays) and the 1 column pass == 1.
 Now let’s rename to something more sensible and save:
 
 ``` r
+
 offense <- pbp |>
   group_by(posteam, season, pass) |> 
   summarize(epa = mean(epa)) |>
@@ -1131,6 +1172,7 @@ marks for this to work.
 Now we can repeat the same process for defense:
 
 ``` r
+
 defense <- pbp |>
   group_by(defteam, season, pass) |> 
   summarize(epa = mean(epa)) |>
@@ -1148,6 +1190,7 @@ Let’s do another sanity check looking at the top 5 pass offenses and
 defenses:
 
 ``` r
+
 #top 5 offenses
 offense |>
   arrange(-off_pass_epa) |>
@@ -1186,6 +1229,7 @@ Now we’re ready to bind it all together. Actually, let’s make sure all
 the team names are ready too.
 
 ``` r
+
 team_wins |>
   group_by(team) |>
   summarize(n=n()) |>
@@ -1193,16 +1237,16 @@ team_wins |>
 #> # A tibble: 35 × 2
 #>    team      n
 #>    <chr> <int>
-#>  1 LV        6
-#>  2 LAC       9
-#>  3 LA       10
+#>  1 LV        7
+#>  2 LAC      10
+#>  3 LA       11
 #>  4 STL      17
 #>  5 SD       18
 #>  6 OAK      21
-#>  7 HOU      24
-#>  8 ARI      27
-#>  9 ATL      27
-#> 10 BAL      27
+#>  7 HOU      25
+#>  8 ARI      28
+#>  9 ATL      28
+#> 10 BAL      28
 #> # ℹ 25 more rows
 ```
 
@@ -1210,6 +1254,7 @@ Nope, not yet, we need to fix the Raiders, Rams, and Chargers, which are
 LV, LA, and LAC in `nflfastR`.
 
 ``` r
+
 team_wins <- team_wins |>
   mutate(
     team = case_when(
@@ -1225,6 +1270,7 @@ The `TRUE` statement at the bottom says that if none of the above cases
 are found, keep team the same. Let’s make sure this worked:
 
 ``` r
+
 team_wins |>
   group_by(team) |>
   summarize(n=n()) |>
@@ -1232,16 +1278,16 @@ team_wins |>
 #> # A tibble: 32 × 2
 #>    team      n
 #>    <chr> <int>
-#>  1 HOU      24
-#>  2 ARI      27
-#>  3 ATL      27
-#>  4 BAL      27
-#>  5 BUF      27
-#>  6 CAR      27
-#>  7 CHI      27
-#>  8 CIN      27
-#>  9 CLE      27
-#> 10 DAL      27
+#>  1 HOU      25
+#>  2 ARI      28
+#>  3 ATL      28
+#>  4 BAL      28
+#>  5 BUF      28
+#>  6 CAR      28
+#>  7 CHI      28
+#>  8 CIN      28
+#>  9 CLE      28
+#> 10 DAL      28
 #> # ℹ 22 more rows
 ```
 
@@ -1250,13 +1296,14 @@ which is fine, and all the other team names have number of seasons that
 they should. Okay NOW we can join:
 
 ``` r
+
 data <- team_wins |>
   left_join(offense, by = c('team' = 'posteam', 'season')) |>
   left_join(defense, by = c('team' = 'defteam', 'season'))
 
 data |>
   filter(team == 'SEA' & season >= 2012)
-#> # A tibble: 14 × 8
+#> # A tibble: 15 × 8
 #>    team  season  wins point_diff off_rush_epa off_pass_epa def_rush_epa
 #>    <chr>  <int> <dbl>      <int>        <dbl>        <dbl>        <dbl>
 #>  1 SEA     2012  11          167     -0.00476       0.213       -0.0738
@@ -1273,6 +1320,7 @@ data |>
 #> 12 SEA     2023   9          -38     NA            NA           NA     
 #> 13 SEA     2024  10            7     NA            NA           NA     
 #> 14 SEA     2025  14          191     NA            NA           NA     
+#> 15 SEA     2026  NA           NA     NA            NA           NA     
 #> # ℹ 1 more variable: def_pass_epa <dbl>
 ```
 
@@ -1281,6 +1329,7 @@ create new columns for prior year EPA, and let’s do point differential
 too.
 
 ``` r
+
 data <- data |> 
   arrange(team, season) |>
   group_by(team) |> 
@@ -1314,6 +1363,7 @@ it.
 ### Correlations and regressions
 
 ``` r
+
 data |> 
   select(-team, -season) |>
   cor(use="complete.obs") |>
@@ -1373,6 +1423,7 @@ come from the `nflscrapR` era (2009 - 2019)? Let’s check what this looks
 like since 2009 relative to earlier seasons:
 
 ``` r
+
 message("2009 through 2019")
 #> 2009 through 2019
 data |> 
@@ -1399,6 +1450,7 @@ data |>
 ```
 
 ``` r
+
 message("1999 through 2008")
 #> 1999 through 2008
 data |> 
@@ -1437,6 +1489,7 @@ be more rigorous about making decisions like this, but let’s proceed
 anyway.
 
 ``` r
+
 data <- data |> filter(season >= 2009)
 
 fit <- lm(wins ~ prior_off_pass_epa  + prior_off_rush_epa + prior_def_pass_epa + prior_def_rush_epa, data = data)
@@ -1462,7 +1515,7 @@ summary(fit)
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
 #> Residual standard error: 2.861 on 379 degrees of freedom
-#>   (160 observations deleted due to missingness)
+#>   (192 observations deleted due to missingness)
 #> Multiple R-squared:  0.1633, Adjusted R-squared:  0.1545 
 #> F-statistic: 18.49 on 4 and 379 DF,  p-value: 0.00000000000006782
 ```
@@ -1471,6 +1524,7 @@ I’m actually pretty surprised passing offense isn’t higher here. How
 does this compare to simply using point differential?
 
 ``` r
+
 fit2 <- lm(wins ~ prior_point_diff, data = data)
 
 summary(fit2)
@@ -1490,6 +1544,7 @@ summary(fit2)
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
 #> Residual standard error: 2.863 on 542 degrees of freedom
+#>   (32 observations deleted due to missingness)
 #> Multiple R-squared:  0.1639, Adjusted R-squared:  0.1623 
 #> F-statistic: 106.2 on 1 and 542 DF,  p-value: < 0.00000000000000022
 ```
@@ -1504,6 +1559,7 @@ know can improve EPA’s predictive power.
 Now let’s get the predictions from the EPA model:
 
 ``` r
+
 preds <- predict(fit, data |> filter(season == 2020)) |>
   #was just a vector, need a tibble to bind
   as_tibble() |>
@@ -1533,6 +1589,7 @@ This mostly checks out.
 What if we just used simple point differential to predict?
 
 ``` r
+
 preds2 <- predict(fit2, data |> filter(season == 2020)) |>
   #was just a vector, need a tibble to bind
   as_tibble() |>

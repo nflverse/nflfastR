@@ -47,6 +47,10 @@ report(...)
   :   a logical indicating whether options that contain "path" in the
       name should be redacted, default = TRUE
 
+  `dev_repos`
+
+  :   Developmental cran-like repos to check, e.g. r-universe repos
+
 ## Details
 
 See
@@ -61,19 +65,19 @@ for details.
 # report(recursive = FALSE)
 nflverse_sitrep(pkg = "nflreadr", recursive = TRUE)
 #> ── System Info ─────────────────────────────────────────────────────────────────
-#> • R version 4.5.3 (2026-03-11) • Running under: Ubuntu 24.04.3 LTS
+#> • R version 4.6.1 (2026-06-24) • Running under: Ubuntu 24.04.4 LTS
 #> ── Package Status ──────────────────────────────────────────────────────────────
-#>    package  installed  cran        dev behind
-#> 1 nflreadr 1.5.0.9002 1.5.0 1.5.0.9002       
+#>    package installed  cran   dev behind
+#> 1 nflreadr     1.5.1 1.5.1 1.5.1       
 #> ── Package Options ─────────────────────────────────────────────────────────────
 #> • No options set for above packages
 #> ── Package Dependencies ────────────────────────────────────────────────────────
-#> • cachem     (1.1.0)     • lifecycle (1.0.5)  • methods (4.5.3)  
-#> • cli        (3.6.5)     • memoise   (2.0.1)  • stats   (4.5.3)  
-#> • curl       (7.0.0)     • rappdirs  (0.3.4)  • tools   (4.5.3)  
-#> • data.table (1.18.2.1)  • rlang     (1.1.7)  • utils   (4.5.3)  
-#> • fastmap    (1.2.0)     • grDevices (4.5.3)    
-#> • glue       (1.8.0)     • graphics  (4.5.3)    
+#> • cachem     (1.1.0)   • lifecycle (1.0.5)  • methods (4.6.1)  
+#> • cli        (3.6.6)   • memoise   (2.0.1)  • stats   (4.6.1)  
+#> • curl       (7.1.0)   • rappdirs  (0.3.4)  • tools   (4.6.1)  
+#> • data.table (1.18.4)  • rlang     (1.3.0)  • utils   (4.6.1)  
+#> • fastmap    (1.2.0)   • grDevices (4.6.1)    
+#> • glue       (1.8.1)   • graphics  (4.6.1)    
 #> ────────────────────────────────────────────────────────────────────────────────
 
 # }

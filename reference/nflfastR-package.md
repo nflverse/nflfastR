@@ -129,6 +129,8 @@ Useful links:
 
 Authors:
 
+- Ben Baldwin <bbaldwin206@gmail.com>
+
 - Sebastian Carl <mrcaseb@gmail.com>
 
 Other contributors:

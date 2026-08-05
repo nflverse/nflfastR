@@ -32,6 +32,7 @@ The easiest way to get nflfastR is to install it from
 [CRAN](https://cran.r-project.org/package=nflfastR) with:
 
 ``` r
+
 install.packages("nflfastR")
 ```
 
@@ -40,6 +41,7 @@ can install the development version of nflfastR either from
 [GitHub](https://github.com/nflverse/nflfastR/) with:
 
 ``` r
+
 if (!require("pak")) install.packages("pak")
 pak::pak("nflverse/nflfastR")
 ```
@@ -48,6 +50,7 @@ or prebuilt from the [development repo](https://nflverse.r-universe.dev)
 with:
 
 ``` r
+
 install.packages("nflfastR", repos = c("https://nflverse.r-universe.dev", getOption("repos")))
 ```
 

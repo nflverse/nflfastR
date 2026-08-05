@@ -22,31 +22,32 @@ The following code demonstrates how to build the nflfastR dataset for
 the Super Bowls of the 2017 - 2019 seasons.
 
 ``` r
+
 ids <- nflreadr::load_schedules(2017:2019) |>
   dplyr::filter(game_type == "SB") |>
   dplyr::pull(game_id)
 pbp <- nflfastR::build_nflfastR_pbp(ids)
-#> ── Build nflfastR Play-by-Play Data ───────────── nflfastR version 5.2.0.9012 ──
-#> • 19:31:40 | Start download of 3 games...
-#> ✔ 19:31:43 | Download finished. Adding variables...
-#> ✔ 19:31:44 | added game variables
-#> ✔ 19:31:44 | added nflscrapR variables
-#> ✔ 19:31:45 | added ep variables
-#> ✔ 19:31:45 | added air_yac_ep variables
-#> ✔ 19:31:45 | added wp variables
-#> ✔ 19:31:45 | added air_yac_wp variables
-#> ✔ 19:31:45 | added cp and cpoe
-#> ✔ 19:31:45 | added fixed drive variables
-#> ✔ 19:31:45 | added series variables
-#> • 19:31:45 | Cleaning up play-by-play...
-#> ✔ 19:31:45 | Cleaning completed
-#> ✔ 19:31:45 | added qb_epa
-#> • 19:31:46 | Computing xyac...
-#> ✔ 19:31:47 | added xyac variables
-#> • 19:31:47 | Computing xpass...
-#> ✔ 19:31:48 | added xpass and pass_oe
-#> • 19:31:48 | Decode player ids...
-#> ✔ 19:31:49 | Decoding of player ids completed
+#> ── Build nflfastR Play-by-Play Data ───────────── nflfastR version 5.2.0.9013 ──
+#> • 11:20:43 | Start download of 3 games...
+#> ✔ 11:20:46 | Download finished. Adding variables...
+#> ✔ 11:20:46 | added game variables
+#> ✔ 11:20:47 | added nflscrapR variables
+#> ✔ 11:20:47 | added ep variables
+#> ✔ 11:20:47 | added air_yac_ep variables
+#> ✔ 11:20:48 | added wp variables
+#> ✔ 11:20:48 | added air_yac_wp variables
+#> ✔ 11:20:48 | added cp and cpoe
+#> ✔ 11:20:48 | added fixed drive variables
+#> ✔ 11:20:48 | added series variables
+#> • 11:20:48 | Cleaning up play-by-play...
+#> ✔ 11:20:48 | Cleaning completed
+#> ✔ 11:20:48 | added qb_epa
+#> • 11:20:48 | Computing xyac...
+#> ✔ 11:20:50 | added xyac variables
+#> • 11:20:50 | Computing xpass...
+#> ✔ 11:20:50 | added xpass and pass_oe
+#> • 11:20:50 | Decode player ids...
+#> ✔ 11:20:51 | Decoding of player ids completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
@@ -70,6 +71,7 @@ data formats. Loading all play-by-play data of the 2022-2024 seasons is
 as easy as
 
 ``` r
+
 pbp <- nflfastR::load_pbp(2022:2024)
 ```
 
@@ -85,6 +87,7 @@ All examples listed below assume that the following libraries are
 installed (and loaded).
 
 ``` r
+
 library(nflfastR)
 library(nflplotR)
 library(dplyr)
@@ -104,6 +107,7 @@ are also available in the [data
 release](https://github.com/nflverse/nflverse-data/releases/tag/pbp)).
 
 ``` r
+
 games_2009 <- nflfastR::load_pbp(2009) |> dplyr::filter(season_type == "REG")
 games_2009 |>
   dplyr::filter_out(is.na(cpoe)) |>
@@ -136,6 +140,7 @@ were to score starting from 1st & 10 at their own 20 yard line in 2015
 2000.
 
 ``` r
+
 pbp <- nflfastR::load_pbp(c(2003, 2015))
 
 out <- pbp |>
@@ -181,6 +186,7 @@ count sacks and scrambles as pass plays and (b) properly include plays
 with penalties. Using this, we can keep only rush or pass plays.
 
 ``` r
+
 pbp <- nflfastR::load_pbp(2005) |>
   dplyr::filter(season_type == "REG") |>
   dplyr::filter(!is.na(posteam) & (rush == 1 | pass == 1))
@@ -227,6 +233,7 @@ matters for figuring out whether the team with the ball is the home team
 what team is supplied).
 
 ``` r
+
 data <- tibble::tibble(
   "season" = 1999:2019,
   "home_team" = "SEA",
@@ -281,6 +288,7 @@ playing in a dome by inputting all the same things and changing the
 `roof` input:
 
 ``` r
+
 data <- tibble::tibble(
   "season" = 2016:2019,
   "week" = 5,
@@ -321,6 +329,7 @@ matters for figuring out whether the team with the ball is the home team
 what team is supplied).
 
 ``` r
+
 data <- tibble::tibble(
   "receive_2h_ko" = 0,
   "home_team" = "SEA",
@@ -372,6 +381,7 @@ example will use duckdb). The `if` statements make sure the packages
 won’t be updated if they are already installed:
 
 ``` r
+
 if (!require("DBI")) install.packages("DBI")
 if (!require("duckdb")) install.packages("duckdb")
 ```
@@ -409,9 +419,18 @@ stored database.
 So let’s connect to an in-memory duckdb database:
 
 ``` r
+
 connection <- DBI::dbConnect(duckdb::duckdb())
+#> duckdb keeps downloaded extensions and secrets in a temporary directory:
+#> ℹ /tmp/RtmpEjvHk2/duckdb
+#> This is removed when the R session ends.
+#> • Extensions are re-downloaded each session.
+#> • Secrets are lost.
+#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
+#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
+#> ℹ See ?duckdb_storage for details and alternatives.
 connection
-#> <duckdb_connection 2bf20 driver=<duckdb_driver dbdir=':memory:' read_only=FALSE bigint=numeric>>
+#> <duckdb_connection 36700 driver=<duckdb_driver dbdir=':memory:' read_only=FALSE bigint=numeric>>
 ```
 
 #### Write data to the database
@@ -420,14 +439,15 @@ Let’s say I just want to dump play-by-play data of the 2021 - 2024
 seasons in my database. Here we go!
 
 ``` r
+
 nflfastR::update_pbp_db(connection, seasons = 2021:2024)
 #> ── Update nflverse Play-by-Play Data in Connected Database ─────────────────────
 #> ℹ Table "nflverse_pbp" does not yet exist in your connected database.
 #> Do you wish to create it? (Y/n)
-#> ℹ 19:32:15 | Initiate table "nflverse_pbp" with nflverse pbp schema
-#> ℹ 19:32:16 | Drop 2021, 2022, 2023, and 2024 seasons from table "nflverse_pbp"
-#> ℹ 19:32:16 | Append 2021, 2022, 2023, and 2024 seasons to table "nflverse_pbp"
-#> ✔ 19:32:30 | Database update completed
+#> ℹ 11:21:17 | Initiate table "nflverse_pbp" with nflverse pbp schema
+#> ℹ 11:21:17 | Drop 2021, 2022, 2023, and 2024 seasons from table "nflverse_pbp"
+#> ℹ 11:21:17 | Append 2021, 2022, 2023, and 2024 seasons to table "nflverse_pbp"
+#> ✔ 11:21:31 | Database update completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
@@ -441,11 +461,12 @@ What do you run?
 [`update_pbp_db()`](https://nflfastr.com/reference/update_pbp_db.md)!
 
 ``` r
+
 nflfastR::update_pbp_db(connection)
 #> ── Update nflverse Play-by-Play Data in Connected Database ─────────────────────
-#> ℹ 19:32:30 | Drop 2025 season from table "nflverse_pbp"
-#> ℹ 19:32:30 | Append 2025 season to table "nflverse_pbp"
-#> ✔ 19:32:37 | Database update completed
+#> ℹ 11:21:31 | Drop 2025 season from table "nflverse_pbp"
+#> ℹ 11:21:31 | Append 2025 season to table "nflverse_pbp"
+#> ✔ 11:21:37 | Database update completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
@@ -456,6 +477,7 @@ they’re organized around tables. Here’s how to see which tables are
 present in our database:
 
 ``` r
+
 DBI::dbListTables(connection)
 #> [1] "nflverse_pbp"
 ```
@@ -464,6 +486,7 @@ Since we went with the defaults, there’s a table called `nflverse_pbp`.
 Another useful function is to see the fields (i.e., columns) in a table:
 
 ``` r
+
 DBI::dbListFields(connection, "nflverse_pbp") |>
   utils::head(10)
 #>  [1] "play_id"      "game_id"      "old_game_id"  "home_team"    "away_team"   
@@ -478,6 +501,7 @@ learn. The main driver here is `tbl`, which helps get output with a
 specific table in a database:
 
 ``` r
+
 pbp_db <- dplyr::tbl(connection, "nflverse_pbp")
 ```
 
@@ -485,11 +509,12 @@ And now, everything will magically just “work”: you can forget you’re
 even working with a database!
 
 ``` r
+
 pbp_db |>
   dplyr::group_by(season) |>
   dplyr::summarize(n = dplyr::n())
-#> # Source:   SQL [?? x 2]
-#> # Database: DuckDB 1.5.0 [unknown@Linux 6.14.0-1017-azure:R 4.5.3/:memory:]
+#> # A query:  ?? x 2
+#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1020-azure:R 4.6.1/:memory:]
 #>   season     n
 #>    <int> <dbl>
 #> 1   2021 49922
@@ -506,12 +531,12 @@ pbp_db |>
   ) |>
   dplyr::group_by(pass) |>
   dplyr::summarize(mean_epa = mean(epa, na.rm = TRUE))
-#> # Source:   SQL [?? x 2]
-#> # Database: DuckDB 1.5.0 [unknown@Linux 6.14.0-1017-azure:R 4.5.3/:memory:]
+#> # A query:  ?? x 2
+#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1020-azure:R 4.6.1/:memory:]
 #>    pass mean_epa
 #>   <dbl>    <dbl>
-#> 1     0  -0.0865
-#> 2     1   0.0717
+#> 1     1   0.0717
+#> 2     0  -0.0865
 ```
 
 So far, everything has stayed in the database. If you want to bring a
@@ -520,6 +545,7 @@ query into memory, just use
 end:
 
 ``` r
+
 russ <- pbp_db |>
   dplyr::filter(name == "R.Wilson" & posteam == "SEA") |>
   dplyr::select(desc, epa) |>
@@ -548,6 +574,7 @@ running out of memory on the server. Now there’s only one more thing to
 remember. When you’re finished doing what you need with the database:
 
 ``` r
+
 DBI::dbDisconnect(connection)
 ```
 
@@ -591,6 +618,7 @@ Some other notes:
 Let’s create measures for EPA and first downs over expected in 2015:
 
 ``` r
+
 nflfastR::load_pbp(2015) |>
   dplyr::group_by(receiver, receiver_id, posteam) |>
   dplyr::mutate(tgt = sum(complete_pass + incomplete_pass)) |>
@@ -646,12 +674,14 @@ At long last, there’s a way to merge the new play-by-play data with
 roster information. Use the function to get the rosters:
 
 ``` r
+
 roster <- nflfastR::load_rosters(2019)
 ```
 
 Now let’s load play-by-play data from 2019:
 
 ``` r
+
 games_2019 <- nflfastR::load_pbp(2019)
 ```
 
@@ -659,6 +689,7 @@ Here is what the player IDs look like because `nflfastR` now
 automatically decodes IDs to look like the old format with GSIS IDs:
 
 ``` r
+
 games_2019 |>
   dplyr::filter(rush == 1 | pass == 1, posteam == "SEA") |>
   dplyr::select(name, id)
@@ -683,6 +714,7 @@ games_2019 |>
 Now we’re ready to join to the roster data using these IDs:
 
 ``` r
+
 joined <- games_2019 |>
   dplyr::filter(!is.na(receiver_id)) |>
   dplyr::select(posteam, season, desc, receiver, receiver_id, epa) |>
@@ -690,6 +722,7 @@ joined <- games_2019 |>
 ```
 
 ``` r
+
 # the real work is done, this just makes a table and has it look nice
 joined |>
   dplyr::filter(position %in% c("WR", "TE", "RB")) |>
@@ -745,6 +778,7 @@ replicate official statistics – perhaps for fantasy purposes – use the
 leaders](https://www.nfl.com/stats/player-stats/).
 
 ``` r
+
 nflfastR::load_pbp(2020) |>
   dplyr::filter(
     season_type == "REG",
@@ -811,6 +845,7 @@ Now let’s replicate the above table using
 [`calculate_stats()`](https://nflfastr.com/reference/calculate_stats.md):
 
 ``` r
+
 s <- nflfastR::calculate_stats(
   seasons = 2020,
   summary_level = "season",
@@ -833,17 +868,17 @@ s |>
 ```
 
 | player_name | recent_team | completions | attempts | passing_yards | passing_tds | passing_interceptions |
-|:------------|:------------|------------:|---------:|--------------:|------------:|----------------------:|
-| D.Watson    | HOU         |         382 |      544 |          4823 |          33 |                     7 |
-| P.Mahomes   | KC          |         390 |      588 |          4740 |          38 |                     6 |
-| T.Brady     | TB          |         401 |      610 |          4633 |          40 |                    12 |
-| M.Ryan      | ATL         |         407 |      626 |          4581 |          26 |                    11 |
-| J.Allen     | BUF         |         396 |      572 |          4544 |          37 |                    10 |
-| J.Herbert   | LAC         |         396 |      595 |          4336 |          31 |                    10 |
-| A.Rodgers   | GB          |         372 |      526 |          4299 |          48 |                     5 |
-| K.Cousins   | MIN         |         349 |      516 |          4265 |          35 |                    13 |
-| R.Wilson    | SEA         |         384 |      558 |          4212 |          40 |                    13 |
-| P.Rivers    | IND         |         369 |      543 |          4169 |          24 |                    11 |
+|:---|:---|---:|---:|---:|---:|---:|
+| D.Watson | HOU | 382 | 544 | 4823 | 33 | 7 |
+| P.Mahomes | KC | 390 | 588 | 4740 | 38 | 6 |
+| T.Brady | TB | 401 | 610 | 4633 | 40 | 12 |
+| M.Ryan | ATL | 407 | 626 | 4581 | 26 | 11 |
+| J.Allen | BUF | 396 | 572 | 4544 | 37 | 10 |
+| J.Herbert | LAC | 396 | 595 | 4336 | 31 | 10 |
+| A.Rodgers | GB | 372 | 526 | 4299 | 48 | 5 |
+| K.Cousins | MIN | 349 | 516 | 4265 | 35 | 13 |
+| R.Wilson | SEA | 384 | 558 | 4212 | 40 | 13 |
+| P.Rivers | IND | 369 | 543 | 4169 | 24 | 11 |
 
 The same applies to stats data as to pbp data. Its computation is
 costly, but can be automated. There is therefore rarely a reason to call
