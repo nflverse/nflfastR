@@ -440,6 +440,11 @@ calculate_stats <- function(
       # always in combination with 52 or 53.
       def_fumbles = sum((team == def) & stat_id %in% 52:53),
       def_safeties = sum(stat_id == 89),
+      def_punt_blocks = sum(stat_id == 86),
+      def_pat_blocks = sum(stat_id == 87),
+      def_fg_blocks = sum(stat_id == 88),
+      def_2pt_atts = sum(stat_id == 403),
+      def_2pt_made = sum(stat_id == 404),
 
       # Misc #####################
       # mostly yards gained after blocked punts or fgs
