@@ -324,6 +324,26 @@
     "description": "Tackles that resulted in a safety."
   },
   {
+    "variable": "def_punt_blocks",
+    "description": "Number of punts blocked on defense."
+  },
+  {
+    "variable": "def_pat_blocks",
+    "description": "Number of extra point attempts blocked on defense."
+  },
+  {
+    "variable": "def_fg_blocks",
+    "description": "Number of field goal attempts blocked on defense."
+  },
+  {
+    "variable": "def_2pt_atts",
+    "description": "Number of attempted 2 point conversion returns."
+  },
+  {
+    "variable": "def_2pt_made",
+    "description": "Number of successful 2 point conversion returns."
+  },
+  {
     "variable": "misc_yards",
     "description": "Yardage gained/lost that doesn't fall into any other category. Examples are blocked field goals or blocked punts."
   },
