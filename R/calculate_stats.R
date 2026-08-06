@@ -673,6 +673,7 @@ utils::globalVariables(c(
   "yards",
   "more_stats",
   "team_stats",
+  "all_stats",
   "team",
   "def",
   "off",
