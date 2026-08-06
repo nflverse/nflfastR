@@ -70,6 +70,9 @@
   ([\#590](https://github.com/nflverse/nflfastR/issues/590))
 - Updated `teams_colors_logos` after 2026 Titans and Rams rebrandings.
   ([\#592](https://github.com/nflverse/nflfastR/issues/592))
+- Added defensive blocked kicks and 2 point attempts to the output of
+  [`calculate_stats()`](https://nflfastr.com/reference/calculate_stats.md).
+  ([\#596](https://github.com/nflverse/nflfastR/issues/596))
 
 ## nflfastR 5.2.0
 
