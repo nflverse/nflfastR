@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.2.0.9014</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.2.0.9015</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,6 +83,7 @@
 <li>The legacy player stats functions <code>calculate_player_stats*()</code> have been deprecated in 2024 with the release of nflfastR 5.0. They are now defunct and calling them will throw an error. (<a href="https://github.com/nflverse/nflfastR/issues/590" class="external-link">#590</a>)</li>
 <li>Updated <code>teams_colors_logos</code> after 2026 Titans and Rams rebrandings. (<a href="https://github.com/nflverse/nflfastR/issues/592" class="external-link">#592</a>)</li>
 <li>Added defensive blocked kicks and 2 point attempts to the output of <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code>. (<a href="https://github.com/nflverse/nflfastR/issues/596" class="external-link">#596</a>)</li>
+<li>Fixed bug that led to missing pbp related team stats in <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code> because an internal function did not standardize team abbreviations. (<a href="https://github.com/nflverse/nflfastR/issues/599" class="external-link">#599</a>)</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="5.2.0" id="nflfastr-520">nflfastR 5.2.0<a class="anchor" aria-label="anchor" href="#nflfastr-520"></a></h2><p class="text-muted">CRAN release: 2026-02-07</p>

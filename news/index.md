@@ -73,6 +73,10 @@
 - Added defensive blocked kicks and 2 point attempts to the output of
   [`calculate_stats()`](https://nflfastr.com/reference/calculate_stats.md).
   ([\#596](https://github.com/nflverse/nflfastR/issues/596))
+- Fixed bug that led to missing pbp related team stats in
+  [`calculate_stats()`](https://nflfastr.com/reference/calculate_stats.md)
+  because an internal function did not standardize team abbreviations.
+  ([\#599](https://github.com/nflverse/nflfastR/issues/599))
 
 ## nflfastR 5.2.0
 
