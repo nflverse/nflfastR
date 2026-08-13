@@ -17,6 +17,7 @@
 - The legacy player stats functions `calculate_player_stats*()` have been deprecated in 2024 with the release of nflfastR 5.0. They are now defunct and calling them will throw an error. (#590)
 - Updated `teams_colors_logos` after 2026 Titans and Rams rebrandings. (#592)
 - Added defensive blocked kicks and 2 point attempts to the output of `calculate_stats()`. (#596)
+- Fixed bug that led to missing pbp related team stats in `calculate_stats()` because an internal function did not standardize team abbreviations. (#599)
 
 # nflfastR 5.2.0
 
