@@ -933,7 +933,7 @@ str(games)
 #>  $ stadium_id      : chr [1:7548] "ATL00" "CHI98" "CLE00" "GNB00" ...
 #>  $ stadium         : chr [1:7548] "Georgia Dome" "Soldier Field" "Cleveland Browns Stadium" "Lambeau Field" ...
 #>  - attr(*, "nflverse_type")= chr "games and schedules"
-#>  - attr(*, "nflverse_timestamp")= chr "2026-08-13 08:16:15 EDT"
+#>  - attr(*, "nflverse_timestamp")= chr "2026-08-13 08:39:28 EDT"
 ```
 
 To start, we want to create a dataframe where each row is a team-season
@@ -949,7 +949,7 @@ home <- games |>
   rename(team = home_team)
 home |> head(5)
 #> ── nflverse games and schedules ────────────────────────────────────────────────
-#> ℹ Data updated: 2026-08-13 12:16:15 UTC
+#> ℹ Data updated: 2026-08-13 12:39:28 UTC
 #> # A tibble: 5 × 4
 #>   season  week team  result
 #>    <int> <int> <chr>  <int>
@@ -971,7 +971,7 @@ away <- games |>
   mutate(result = -result)
 away |> head(5)
 #> ── nflverse games and schedules ────────────────────────────────────────────────
-#> ℹ Data updated: 2026-08-13 12:16:15 UTC
+#> ℹ Data updated: 2026-08-13 12:39:28 UTC
 #> # A tibble: 5 × 4
 #>   season  week team  result
 #>    <int> <int> <chr>  <int>
@@ -1000,7 +1000,7 @@ results <- bind_rows(home, away) |>
 
 results |> filter(season == 2019 & team == 'SEA')
 #> ── nflverse games and schedules ────────────────────────────────────────────────
-#> ℹ Data updated: 2026-08-13 12:16:15 UTC
+#> ℹ Data updated: 2026-08-13 12:39:28 UTC
 #> # A tibble: 16 × 5
 #>    season  week team  result   win
 #>     <int> <int> <chr>  <int> <dbl>
@@ -1213,7 +1213,7 @@ defense |>
 #> # Groups:   defteam, season [5]
 #>   defteam season def_rush_epa def_pass_epa
 #>   <chr>    <int>        <dbl>        <dbl>
-#> 1 TB        2002      -0.0757       -0.290
+#> 1 TB        2002      -0.0770       -0.290
 #> 2 NE        2019      -0.168        -0.241
 #> 3 JAX       2017      -0.141        -0.223
 #> 4 NYJ       2009      -0.103        -0.221
@@ -1377,7 +1377,7 @@ data |>
 #> def_pass_epa       -0.57      -0.62        -0.05        -0.10         0.31
 #> prior_off_rush_epa  0.24       0.26         0.32         0.23         0.04
 #> prior_off_pass_epa  0.29       0.32         0.19         0.46         0.00
-#> prior_def_rush_epa -0.12      -0.15         0.03        -0.03         0.27
+#> prior_def_rush_epa -0.11      -0.15         0.03        -0.03         0.27
 #> prior_def_pass_epa -0.18      -0.20        -0.08        -0.05         0.06
 #> prior_point_diff    0.36       0.41         0.21         0.36        -0.09
 #>                    def_pass_epa prior_off_rush_epa prior_off_pass_epa
@@ -1393,7 +1393,7 @@ data |>
 #> prior_def_pass_epa         0.27              -0.02              -0.08
 #> prior_point_diff          -0.19               0.47               0.75
 #>                    prior_def_rush_epa prior_def_pass_epa prior_point_diff
-#> wins                            -0.12              -0.18             0.36
+#> wins                            -0.11              -0.18             0.36
 #> point_diff                      -0.15              -0.20             0.41
 #> off_rush_epa                     0.03              -0.08             0.21
 #> off_pass_epa                    -0.03              -0.05             0.36
