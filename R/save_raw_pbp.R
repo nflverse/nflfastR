@@ -165,7 +165,11 @@ verify_game_ids <- function(game_ids) {
   team_name_check <-
     vapply(
       stringr::str_extract_all(game_ids, "(?<=_)[:upper:]{2,3}"),
-      function(t) all(t %in% nflfastR::teams_colors_logos$team_abbr),
+      function(t) {
+        all(
+          t %in% c(nflfastR::teams_colors_logos$team_abbr, "OAK", "SD", "STL")
+        )
+      },
       FUN.VALUE = logical(1L)
     )
   combined_check <- season_check & week_check & team_name_check

@@ -432,7 +432,7 @@ fix_posteams <- function(pbp) {
     # Let's be as explicit as possible about what we want to extract from the string
     # It's really only the first valid team abbreviation followed by a blank space
     valid_team_abbrs <- paste(
-      nflfastR::teams_colors_logos$team_abbr,
+      c(nflfastR::teams_colors_logos$team_abbr, "OAK", "SD", "STL"),
       collapse = " |"
     )
     posteam_regex <- paste0("^", valid_team_abbrs, "(?=[:space:])")

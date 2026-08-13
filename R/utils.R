@@ -72,7 +72,7 @@ maybe_valid <- function(id) {
       seq.int(1999, as.integer(format(Sys.Date(), "%Y")) + 1, 1),
     as.integer(substr(id, 6, 7)) %in% seq_len(22),
     stringr::str_extract_all(id, "(?<=_)[:upper:]{2,3}")[[1]] %in%
-      nflfastR::teams_colors_logos$team_abbr
+      c(nflfastR::teams_colors_logos$team_abbr, "OAK", "SD", "STL")
   )
 }
 
