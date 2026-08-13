@@ -28,26 +28,26 @@ ids <- nflreadr::load_schedules(2017:2019) |>
   dplyr::pull(game_id)
 pbp <- nflfastR::build_nflfastR_pbp(ids)
 #> ── Build nflfastR Play-by-Play Data ───────────── nflfastR version 5.2.0.9014 ──
-#> • 12:30:02 | Start download of 3 games...
-#> ✔ 12:30:06 | Download finished. Adding variables...
-#> ✔ 12:30:06 | added game variables
-#> ✔ 12:30:06 | added nflscrapR variables
-#> ✔ 12:30:07 | added ep variables
-#> ✔ 12:30:07 | added air_yac_ep variables
-#> ✔ 12:30:08 | added wp variables
-#> ✔ 12:30:08 | added air_yac_wp variables
-#> ✔ 12:30:08 | added cp and cpoe
-#> ✔ 12:30:08 | added fixed drive variables
-#> ✔ 12:30:08 | added series variables
-#> • 12:30:08 | Cleaning up play-by-play...
-#> ✔ 12:30:08 | Cleaning completed
-#> ✔ 12:30:08 | added qb_epa
-#> • 12:30:08 | Computing xyac...
-#> ✔ 12:30:10 | added xyac variables
-#> • 12:30:10 | Computing xpass...
-#> ✔ 12:30:10 | added xpass and pass_oe
-#> • 12:30:10 | Decode player ids...
-#> ✔ 12:30:11 | Decoding of player ids completed
+#> • 11:37:29 | Start download of 3 games...
+#> ✔ 11:37:33 | Download finished. Adding variables...
+#> ✔ 11:37:34 | added game variables
+#> ✔ 11:37:34 | added nflscrapR variables
+#> ✔ 11:37:35 | added ep variables
+#> ✔ 11:37:35 | added air_yac_ep variables
+#> ✔ 11:37:35 | added wp variables
+#> ✔ 11:37:35 | added air_yac_wp variables
+#> ✔ 11:37:35 | added cp and cpoe
+#> ✔ 11:37:35 | added fixed drive variables
+#> ✔ 11:37:35 | added series variables
+#> • 11:37:35 | Cleaning up play-by-play...
+#> ✔ 11:37:36 | Cleaning completed
+#> ✔ 11:37:36 | added qb_epa
+#> • 11:37:36 | Computing xyac...
+#> ✔ 11:37:38 | added xyac variables
+#> • 11:37:38 | Computing xpass...
+#> ✔ 11:37:38 | added xpass and pass_oe
+#> • 11:37:38 | Decode player ids...
+#> ✔ 11:37:39 | Decoding of player ids completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
@@ -422,7 +422,7 @@ So let’s connect to an in-memory duckdb database:
 
 connection <- DBI::dbConnect(duckdb::duckdb())
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/Rtmpl90Mng/duckdb
+#> ℹ /tmp/RtmpTUZ5XP/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
@@ -430,7 +430,7 @@ connection <- DBI::dbConnect(duckdb::duckdb())
 #> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
 #> ℹ See ?duckdb_storage for details and alternatives.
 connection
-#> <duckdb_connection 649a0 driver=<duckdb_driver dbdir=':memory:' read_only=FALSE bigint=numeric>>
+#> <duckdb_connection 29c80 driver=<duckdb_driver dbdir=':memory:' read_only=FALSE bigint=numeric>>
 ```
 
 #### Write data to the database
@@ -444,10 +444,10 @@ nflfastR::update_pbp_db(connection, seasons = 2021:2024)
 #> ── Update nflverse Play-by-Play Data in Connected Database ─────────────────────
 #> ℹ Table "nflverse_pbp" does not yet exist in your connected database.
 #> Do you wish to create it? (Y/n)
-#> ℹ 12:30:40 | Initiate table "nflverse_pbp" with nflverse pbp schema
-#> ℹ 12:30:40 | Drop 2021, 2022, 2023, and 2024 seasons from table "nflverse_pbp"
-#> ℹ 12:30:40 | Append 2021, 2022, 2023, and 2024 seasons to table "nflverse_pbp"
-#> ✔ 12:30:54 | Database update completed
+#> ℹ 11:38:07 | Initiate table "nflverse_pbp" with nflverse pbp schema
+#> ℹ 11:38:08 | Drop 2021, 2022, 2023, and 2024 seasons from table "nflverse_pbp"
+#> ℹ 11:38:08 | Append 2021, 2022, 2023, and 2024 seasons to table "nflverse_pbp"
+#> ✔ 11:38:23 | Database update completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
@@ -464,9 +464,9 @@ What do you run?
 
 nflfastR::update_pbp_db(connection)
 #> ── Update nflverse Play-by-Play Data in Connected Database ─────────────────────
-#> ℹ 12:30:54 | Drop 2025 season from table "nflverse_pbp"
-#> ℹ 12:30:54 | Append 2025 season to table "nflverse_pbp"
-#> ✔ 12:31:02 | Database update completed
+#> ℹ 11:38:23 | Drop 2025 season from table "nflverse_pbp"
+#> ℹ 11:38:23 | Append 2025 season to table "nflverse_pbp"
+#> ✔ 11:38:31 | Database update completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
