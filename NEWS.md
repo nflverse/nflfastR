@@ -1,9 +1,19 @@
 # nflfastR 6.0.0
 
+## New
+
 - Added new function `update_pbp_db()`, a fresh approach to the database helper. (#544)
+
+## Breaking changes and deprecation
+
+- nflfastR stopped supporting the 1999 and 2000 seasons because of inconsistent data sources. Data is still available through `load_pbp()` but we will not fix any issues related to those old seasons anymore. It's possible to install nflfastR v5.2.0 (with `pak::pak("nflverse/nflfastR@v5.2.0")`) to parse those seasons if necessary. (#568)
+- nflfastR now loads raw play-by-play data from season based releases in the `nflverse/nflverse-pbp` GitHub repository. The legacy repository `nflverse/nflfastR-raw` is deprecated and won't update in future seasons. This means that previous nflfastR versions won't be able to download 2026+ seasons! (#589)
+- The legacy player stats functions `calculate_player_stats*()` have been deprecated in 2024 with the release of nflfastR 5.0. They are now defunct and calling them will throw an error. (#590)
+
+## Minor changes and improvements
+
 - Added `"game_id"` to the output `calculate_stats()` if `summary_level == "week"`. (#566)
 - Fixed a bug where `fixed_drive` did not increment after a muffed blocked field goal attempt. Yes this happened in `"2025_10_NO_CAR"`, play id 2504. (#567)
-- nflfastR stopped supporting the 1999 and 2000 seasons because of inconsistent data sources. Data is still available through `load_pbp()` but we will not fix any issues related to those old seasons anymore. It's possible to install nflfastR v5.2.0 (with `pak::pak("nflverse/nflfastR@v5.2.0")`) to parse those seasons if necessary. (#568)
 - Implemented a fresh approach to compute `play_type` based on `play_type_nfl` for faster and more consistent output. (#568)
 - Fixed a bug where nflfastR overwrote the kickoff_attempt variable in the event of a penalty on a kickoff. (#569)
 - Added various definitions of 'explosive' plays to the output of `calculate_stats()`. It counts passes, runs, and receptions with 10+, 20+, 40+ yards gained as well as 12+ yard runs and 16+ yard passes. (#573)
@@ -13,11 +23,11 @@
 - Fixed bug where `calculate_stats()` counted fumble recoveries in `fumble_recovery_yards_own` and `fumble_recovery_yards_opp` instead of the corresponding yards. (#584)
 - Fixed bug where `calculate_stats()` counted some blocked punts as punt attempts that officially do not count as punt attempts. (#584)
 - Fixed bug where `calculate_stats()` overcounted first downs in some edge cases. (#587)
-- nflfastR now loads raw play-by-play data from season based releases in the `nflverse/nflverse-pbp` GitHub repository. The legacy repository `nflverse/nflfastR-raw` is deprecated and won't update in future seasons. This means that previous nflfastR versions won't be able to download 2026+ seasons! (#589)
-- The legacy player stats functions `calculate_player_stats*()` have been deprecated in 2024 with the release of nflfastR 5.0. They are now defunct and calling them will throw an error. (#590)
 - Updated `teams_colors_logos` after 2026 Titans and Rams rebrandings. (#592)
 - Added defensive blocked kicks and 2 point attempts to the output of `calculate_stats()`. (#596)
 - Fixed bug that led to missing pbp related team stats in `calculate_stats()` because an internal function did not standardize team abbreviations. (#599)
+
+Thank you to &#x0040;jdpretorius123, &#x0040;JoeMarino2021, &#x0040;lancejames35, &#x0040;mrcaseb, &#x0040;naymikm, &#x0040;rayrosales66, and &#x0040;TheMathNinja for their questions, feedback, and contributions towards this release.
 
 # nflfastR 5.2.0
 
