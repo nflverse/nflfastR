@@ -15,7 +15,7 @@ nflfastR dataset.
 
 ## Source
 
-[http://www.nflgsis.com/gsis/Documentation/Partners/StatIDs.html](http://www.nflgsis.com/gsis/Documentation/Partners/StatIDs.md)
+<https://www.nflgsis.com/gsis/Documentation/Partners/StatIDs.html>
 
 ## Examples
 

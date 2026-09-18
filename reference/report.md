@@ -65,19 +65,19 @@ for details.
 # report(recursive = FALSE)
 nflverse_sitrep(pkg = "nflreadr", recursive = TRUE)
 #> ── System Info ─────────────────────────────────────────────────────────────────
-#> • R version 4.6.1 (2026-06-24) • Running under: Ubuntu 24.04.4 LTS
+#> • R version 4.6.1 (2026-06-24) • Running under: Ubuntu 24.04.5 LTS
 #> ── Package Status ──────────────────────────────────────────────────────────────
 #>    package  installed  cran        dev behind
-#> 1 nflreadr 1.5.1.9000 1.5.1 1.5.1.9000       
+#> 1 nflreadr 1.5.1.9002 1.5.1 1.5.1.9002       
 #> ── Package Options ─────────────────────────────────────────────────────────────
 #> • No options set for above packages
 #> ── Package Dependencies ────────────────────────────────────────────────────────
-#> • cachem     (1.1.0)   • lifecycle (1.0.5)  • methods (4.6.1)  
-#> • cli        (3.6.6)   • memoise   (2.0.1)  • stats   (4.6.1)  
-#> • curl       (7.1.0)   • rappdirs  (0.3.4)  • tools   (4.6.1)  
-#> • data.table (1.18.4)  • rlang     (1.3.0)  • utils   (4.6.1)  
-#> • fastmap    (1.2.0)   • grDevices (4.6.1)    
-#> • glue       (1.8.1)   • graphics  (4.6.1)    
+#> • cachem     (1.1.0)     • lifecycle (1.0.5)  • methods (4.6.1)  
+#> • cli        (3.6.6)     • memoise   (2.0.1)  • stats   (4.6.1)  
+#> • curl       (8.0.0)     • rappdirs  (0.3.4)  • tools   (4.6.1)  
+#> • data.table (1.18.6.1)  • rlang     (1.3.0)  • utils   (4.6.1)  
+#> • fastmap    (1.2.0)     • grDevices (4.6.1)    
+#> • glue       (1.8.1)     • graphics  (4.6.1)    
 #> ────────────────────────────────────────────────────────────────────────────────
 
 # }

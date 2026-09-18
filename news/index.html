@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">nflfastR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.2.0.9015</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">6.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,11 +65,21 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="nflfastr-development-version">nflfastR (development version)<a class="anchor" aria-label="anchor" href="#nflfastr-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="6.0.0" id="nflfastr-600">nflfastR 6.0.0<a class="anchor" aria-label="anchor" href="#nflfastr-600"></a></h2>
+<div class="section level3">
+<h3 id="new-6-0-0">New<a class="anchor" aria-label="anchor" href="#new-6-0-0"></a></h3>
 <ul><li>Added new function <code><a href="../reference/update_pbp_db.html">update_pbp_db()</a></code>, a fresh approach to the database helper. (<a href="https://github.com/nflverse/nflfastR/issues/544" class="external-link">#544</a>)</li>
-<li>Added <code>"game_id"</code> to the output <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code> if <code>summary_level == "week"</code>. (<a href="https://github.com/nflverse/nflfastR/issues/566" class="external-link">#566</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="breaking-changes-and-deprecation-6-0-0">Breaking changes and deprecation<a class="anchor" aria-label="anchor" href="#breaking-changes-and-deprecation-6-0-0"></a></h3>
+<ul><li>nflfastR stopped supporting the 1999 and 2000 seasons because of inconsistent data sources. Data is still available through <code><a href="https://nflreadr.nflverse.com/reference/load_pbp.html" class="external-link">load_pbp()</a></code> but we will not fix any issues related to those old seasons anymore. It’s possible to install nflfastR v5.2.0 (with <code>pak::pak("nflverse/nflfastR@v5.2.0")</code>) to parse those seasons if necessary. (<a href="https://github.com/nflverse/nflfastR/issues/568" class="external-link">#568</a>)</li>
+<li>nflfastR now loads raw play-by-play data from season based releases in the <code>nflverse/nflverse-pbp</code> GitHub repository. The legacy repository <code>nflverse/nflfastR-raw</code> is deprecated and won’t update in future seasons. This means that previous nflfastR versions won’t be able to download 2026+ seasons! (<a href="https://github.com/nflverse/nflfastR/issues/589" class="external-link">#589</a>)</li>
+<li>The legacy player stats functions <code>calculate_player_stats*()</code> have been deprecated in 2024 with the release of nflfastR 5.0. They are now defunct and calling them will throw an error. (<a href="https://github.com/nflverse/nflfastR/issues/590" class="external-link">#590</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="minor-changes-and-improvements-6-0-0">Minor changes and improvements<a class="anchor" aria-label="anchor" href="#minor-changes-and-improvements-6-0-0"></a></h3>
+<ul><li>Added <code>"game_id"</code> to the output <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code> if <code>summary_level == "week"</code>. (<a href="https://github.com/nflverse/nflfastR/issues/566" class="external-link">#566</a>)</li>
 <li>Fixed a bug where <code>fixed_drive</code> did not increment after a muffed blocked field goal attempt. Yes this happened in <code>"2025_10_NO_CAR"</code>, play id 2504. (<a href="https://github.com/nflverse/nflfastR/issues/567" class="external-link">#567</a>)</li>
-<li>nflfastR stopped supporting the 1999 and 2000 seasons because of inconsistent data sources. Data is still available through <code><a href="https://nflreadr.nflverse.com/reference/load_pbp.html" class="external-link">load_pbp()</a></code> but we will not fix any issues related to those old seasons anymore. It’s possible to install nflfastR v5.2.0 (with <code>pak::pak("nflverse/nflfastR@v5.2.0")</code>) to parse those seasons if necessary. (<a href="https://github.com/nflverse/nflfastR/issues/568" class="external-link">#568</a>)</li>
 <li>Implemented a fresh approach to compute <code>play_type</code> based on <code>play_type_nfl</code> for faster and more consistent output. (<a href="https://github.com/nflverse/nflfastR/issues/568" class="external-link">#568</a>)</li>
 <li>Fixed a bug where nflfastR overwrote the kickoff_attempt variable in the event of a penalty on a kickoff. (<a href="https://github.com/nflverse/nflfastR/issues/569" class="external-link">#569</a>)</li>
 <li>Added various definitions of ‘explosive’ plays to the output of <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code>. It counts passes, runs, and receptions with 10+, 20+, 40+ yards gained as well as 12+ yard runs and 16+ yard passes. (<a href="https://github.com/nflverse/nflfastR/issues/573" class="external-link">#573</a>)</li>
@@ -79,12 +89,12 @@
 <li>Fixed bug where <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code> counted fumble recoveries in <code>fumble_recovery_yards_own</code> and <code>fumble_recovery_yards_opp</code> instead of the corresponding yards. (<a href="https://github.com/nflverse/nflfastR/issues/584" class="external-link">#584</a>)</li>
 <li>Fixed bug where <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code> counted some blocked punts as punt attempts that officially do not count as punt attempts. (<a href="https://github.com/nflverse/nflfastR/issues/584" class="external-link">#584</a>)</li>
 <li>Fixed bug where <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code> overcounted first downs in some edge cases. (<a href="https://github.com/nflverse/nflfastR/issues/587" class="external-link">#587</a>)</li>
-<li>nflfastR now loads raw play-by-play data from season based releases in the <code>nflverse/nflverse-pbp</code> GitHub repository. The legacy repository <code>nflverse/nflfastR-raw</code> is deprecated and won’t update in future seasons. This means that previous nflfastR versions won’t be able to download 2026+ seasons! (<a href="https://github.com/nflverse/nflfastR/issues/589" class="external-link">#589</a>)</li>
-<li>The legacy player stats functions <code>calculate_player_stats*()</code> have been deprecated in 2024 with the release of nflfastR 5.0. They are now defunct and calling them will throw an error. (<a href="https://github.com/nflverse/nflfastR/issues/590" class="external-link">#590</a>)</li>
 <li>Updated <code>teams_colors_logos</code> after 2026 Titans and Rams rebrandings. (<a href="https://github.com/nflverse/nflfastR/issues/592" class="external-link">#592</a>)</li>
 <li>Added defensive blocked kicks and 2 point attempts to the output of <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code>. (<a href="https://github.com/nflverse/nflfastR/issues/596" class="external-link">#596</a>)</li>
 <li>Fixed bug that led to missing pbp related team stats in <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code> because an internal function did not standardize team abbreviations. (<a href="https://github.com/nflverse/nflfastR/issues/599" class="external-link">#599</a>)</li>
-</ul></div>
+</ul><p>Thank you to <a href="https://github.com/jdpretorius123" class="external-link">@jdpretorius123</a>, <a href="https://github.com/JoeMarino2021" class="external-link">@JoeMarino2021</a>, <a href="https://github.com/lancejames35" class="external-link">@lancejames35</a>, <a href="https://github.com/mrcaseb" class="external-link">@mrcaseb</a>, <a href="https://github.com/naymikm" class="external-link">@naymikm</a>, <a href="https://github.com/rayrosales66" class="external-link">@rayrosales66</a>, and <a href="https://github.com/TheMathNinja" class="external-link">@TheMathNinja</a> for their questions, feedback, and contributions towards this release.</p>
+</div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="5.2.0" id="nflfastr-520">nflfastR 5.2.0<a class="anchor" aria-label="anchor" href="#nflfastr-520"></a></h2><p class="text-muted">CRAN release: 2026-02-07</p>
 <ul><li>Bump required fastrmodels version to 2.0 for better compatibility with xgboost.</li>

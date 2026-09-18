@@ -50,6 +50,6 @@ A character vector of missing game IDs. If no files are missing, returns
 try(
 missing <- missing_raw_pbp(tempdir())
 )
-#> ℹ You are missing 7276 game files. The oldest missing game is "1999_01_MIN_ATL". The most recent missing game is "2025_22_SEA_NE".
+#> ℹ You are missing 7293 game files. The oldest missing game is "1999_01_MIN_ATL". The most recent missing game is "2026_02_DET_BUF".
 # }
 ```

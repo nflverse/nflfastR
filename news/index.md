@@ -1,11 +1,36 @@
 # Changelog
 
-## nflfastR (development version)
+## nflfastR 6.0.0
+
+### New
 
 - Added new function
   [`update_pbp_db()`](https://nflfastr.com/reference/update_pbp_db.md),
   a fresh approach to the database helper.
   ([\#544](https://github.com/nflverse/nflfastR/issues/544))
+
+### Breaking changes and deprecation
+
+- nflfastR stopped supporting the 1999 and 2000 seasons because of
+  inconsistent data sources. Data is still available through
+  [`load_pbp()`](https://nflreadr.nflverse.com/reference/load_pbp.html)
+  but we will not fix any issues related to those old seasons anymore.
+  It’s possible to install nflfastR v5.2.0 (with
+  `pak::pak("nflverse/nflfastR@v5.2.0")`) to parse those seasons if
+  necessary. ([\#568](https://github.com/nflverse/nflfastR/issues/568))
+- nflfastR now loads raw play-by-play data from season based releases in
+  the `nflverse/nflverse-pbp` GitHub repository. The legacy repository
+  `nflverse/nflfastR-raw` is deprecated and won’t update in future
+  seasons. This means that previous nflfastR versions won’t be able to
+  download 2026+ seasons!
+  ([\#589](https://github.com/nflverse/nflfastR/issues/589))
+- The legacy player stats functions `calculate_player_stats*()` have
+  been deprecated in 2024 with the release of nflfastR 5.0. They are now
+  defunct and calling them will throw an error.
+  ([\#590](https://github.com/nflverse/nflfastR/issues/590))
+
+### Minor changes and improvements
+
 - Added `"game_id"` to the output
   [`calculate_stats()`](https://nflfastr.com/reference/calculate_stats.md)
   if `summary_level == "week"`.
@@ -14,13 +39,6 @@
   blocked field goal attempt. Yes this happened in `"2025_10_NO_CAR"`,
   play id 2504.
   ([\#567](https://github.com/nflverse/nflfastR/issues/567))
-- nflfastR stopped supporting the 1999 and 2000 seasons because of
-  inconsistent data sources. Data is still available through
-  [`load_pbp()`](https://nflreadr.nflverse.com/reference/load_pbp.html)
-  but we will not fix any issues related to those old seasons anymore.
-  It’s possible to install nflfastR v5.2.0 (with
-  `pak::pak("nflverse/nflfastR@v5.2.0")`) to parse those seasons if
-  necessary. ([\#568](https://github.com/nflverse/nflfastR/issues/568))
 - Implemented a fresh approach to compute `play_type` based on
   `play_type_nfl` for faster and more consistent output.
   ([\#568](https://github.com/nflverse/nflfastR/issues/568))
@@ -58,16 +76,6 @@
   [`calculate_stats()`](https://nflfastr.com/reference/calculate_stats.md)
   overcounted first downs in some edge cases.
   ([\#587](https://github.com/nflverse/nflfastR/issues/587))
-- nflfastR now loads raw play-by-play data from season based releases in
-  the `nflverse/nflverse-pbp` GitHub repository. The legacy repository
-  `nflverse/nflfastR-raw` is deprecated and won’t update in future
-  seasons. This means that previous nflfastR versions won’t be able to
-  download 2026+ seasons!
-  ([\#589](https://github.com/nflverse/nflfastR/issues/589))
-- The legacy player stats functions `calculate_player_stats*()` have
-  been deprecated in 2024 with the release of nflfastR 5.0. They are now
-  defunct and calling them will throw an error.
-  ([\#590](https://github.com/nflverse/nflfastR/issues/590))
 - Updated `teams_colors_logos` after 2026 Titans and Rams rebrandings.
   ([\#592](https://github.com/nflverse/nflfastR/issues/592))
 - Added defensive blocked kicks and 2 point attempts to the output of
@@ -77,6 +85,15 @@
   [`calculate_stats()`](https://nflfastr.com/reference/calculate_stats.md)
   because an internal function did not standardize team abbreviations.
   ([\#599](https://github.com/nflverse/nflfastR/issues/599))
+
+Thank you to [@jdpretorius123](https://github.com/jdpretorius123),
+[@JoeMarino2021](https://github.com/JoeMarino2021),
+[@lancejames35](https://github.com/lancejames35),
+[@mrcaseb](https://github.com/mrcaseb),
+[@naymikm](https://github.com/naymikm),
+[@rayrosales66](https://github.com/rayrosales66), and
+[@TheMathNinja](https://github.com/TheMathNinja) for their questions,
+feedback, and contributions towards this release.
 
 ## nflfastR 5.2.0
 
