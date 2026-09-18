@@ -9,7 +9,7 @@ A data frame including NFL stat IDs, names and descriptions used in
 an nflfastR dataset.
 }
 \source{
-\url{http://www.nflgsis.com/gsis/Documentation/Partners/StatIDs.html}
+\url{https://www.nflgsis.com/gsis/Documentation/Partners/StatIDs.html}
 }
 \usage{
 stat_ids
