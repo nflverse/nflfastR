@@ -103,7 +103,7 @@ build_playstats <- function(
     ) |>
     dplyr::mutate(
       # clean team abbrs for consistency in calculate_stats
-      team_abbr = team_name_fn(team_abbr)
+      team_abbr = team_name_fn(.data$team_abbr)
     )
   out
 }
