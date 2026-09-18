@@ -22,7 +22,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/nflverse/nflfastR/blob/v6.0.0/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/nflverse/nflfastR/blob/master/DESCRIPTION)
 
 Carl S, Baldwin B (2026). *nflfastR: Functions to Efficiently Access NFL
 Play by Play Data*. R package version 6.0.0, <https://nflfastr.com/>.
