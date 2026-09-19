@@ -2,6 +2,8 @@
 
 ## nflfastR 6.0.0
 
+CRAN release: 2026-09-18
+
 ### New
 
 - Added new function
