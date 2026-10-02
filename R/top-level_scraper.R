@@ -454,6 +454,7 @@ fast_scraper <- function(
     if (length(pbp) != 0) {
       user_message("Download finished. Adding variables...", "done")
       pbp <- pbp |>
+        patch_pbp() |>
         add_game_data(...) |>
         add_nflscrapr_mutations() |>
         add_ep() |>
