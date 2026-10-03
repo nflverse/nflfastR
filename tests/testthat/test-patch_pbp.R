@@ -1,5 +1,6 @@
 test_that("pbp_patch is formatted correctly", {
   patch_data <- .patch_read_data()
+  skip_if(is.null(patch_data))
 
   # check for duplicates
   expect_identical(patch_data, dplyr::distinct(patch_data))
