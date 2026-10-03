@@ -11,6 +11,8 @@ test_that("pbp_patch is formatted correctly", {
     dplyr::arrange(patch_data, dplyr::desc(game_id), play_id, column)
   )
 
+  # if one of the above fails, try running .patch_clean_data()
+
   # verify game IDs
   patch_ids <- unique(patch_data$game_id)
   expect_null(nflfastR:::verify_game_ids(patch_ids))
