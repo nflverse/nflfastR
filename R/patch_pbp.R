@@ -1,3 +1,42 @@
+# This function applies manual data patches to pbp data during the nflfastR
+# parsing process. It runs before any columns are added or modified.
+# The manual patch file is saved as JSON in "inst/" which makes it available
+# on every local machine
+
+# at the time of writing, the manual patch file has the following structure
+# when read into memory (note the list class of "value" which allows us to
+# store "value"s of different classes):
+
+# game_id         | play_id |     column |              value
+# character       | integer |  character |               list
+# -----------------------------------------------------------
+# 2020_01_LV_CAR  |     894 |        qtr |                  2 <- integer
+# 2020_01_LV_CAR  |     911 |        qtr |                  2
+# 2020_01_LV_CAR  |     935 |        qtr |                  2
+# 2020_01_LV_CAR  |     978 |        qtr |                  2
+# 2020_01_LV_CAR  |     999 |        qtr |                  2
+# 2018_08_IND_OAK |     874 |        qtr |                  2
+# 2016_15_MIA_NYJ |     901 |        qtr |                  1
+# 2016_05_TEN_MIA |    2919 |        qtr |                  4
+# 2016_05_TEN_MIA |    2943 |        qtr |                  4
+# 2015_01_IND_BUF |    1185 |        qtr |                  2
+# 2015_01_IND_BUF |    1207 |        qtr |                  2
+# 2014_07_ATL_BAL |   99999 | start_time | 10/19/14, 13:02:00 <- character
+# 2014_04_CAR_BAL |   99999 | start_time |  9/28/14, 13:02:00
+# 2014_01_CIN_BAL |   99999 | start_time |   9/7/14, 13:02:00
+# 2009_15_CHI_BAL |   99999 | start_time | 12/20/09, 16:15:00
+# 2009_14_DET_BAL |   99999 | start_time | 12/13/09, 13:02:00
+# 2009_12_PIT_BAL |   99999 | start_time | 11/29/09, 20:30:00
+# 2009_08_DEN_BAL |   99999 | start_time |  11/1/09, 13:02:00
+# 2009_05_CIN_BAL |   99999 | start_time | 10/11/09, 13:02:00
+# 2009_03_CLE_BAL |   99999 | start_time |  9/27/09, 13:02:00
+# 2009_01_KC_BAL  |   99999 | start_time |  9/13/09, 13:02:00
+
+# The function calls dplyr::rows_update and updates by game_id and play_id, unless
+# the play_id is 99999. In the case of 99999, dplyr::rows_update updates by game_id only.
+# since we can't update all columns in one step - this would introduce unintended -
+# NA values, we have to loop over the values of the column variable.
+
 patch_pbp <- function(pbp) {
   patch_data <- .patch_read_data()
   if (is.null(patch_data)) {
@@ -32,11 +71,15 @@ patch_pbp <- function(pbp) {
     new <- patch_data |>
       dplyr::filter(.data$column == colname, .data$play_id != 99999L)
 
+    # nrow can be 0 if a specific colname values has 99999 play_ids only
     if (nrow(new) > 0L) {
       new <- new |>
         dplyr::mutate(
+          # values are store in a list to preserve classes
           value = unlist(.data$value, use.names = FALSE)
         ) |>
+        # the value column gets renamed to colname so rows_update knows
+        # which column to update
         dplyr::rename_with(.fn = ~colname, .cols = "value") |>
         dplyr::select(-"column")
 
@@ -52,11 +95,15 @@ patch_pbp <- function(pbp) {
     new <- patch_data |>
       dplyr::filter(.data$column == colname, .data$play_id == 99999L)
 
+    # nrow can be 0 if a specific colname values has non 99999 play_ids only
     if (nrow(new) > 0L) {
       new <- new |>
         dplyr::mutate(
+          # values are store in a list to preserve classes
           value = unlist(.data$value, use.names = FALSE)
         ) |>
+        # the value column gets renamed to colname so rows_update knows
+        # which column to update
         dplyr::rename_with(.fn = ~colname, .cols = "value") |>
         dplyr::select(-"column")
 
