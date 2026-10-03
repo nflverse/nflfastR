@@ -18,4 +18,20 @@ test_that("pbp_patch is formatted correctly", {
   # verify column names
   patch_columns <- unique(patch_data$column)
   expect_all_true(patch_columns %in% names(nflfastR:::default_play))
+
+  # check column classes
+  expect_identical(
+    vapply(patch_data, class, FUN.VALUE = character(1L)),
+    c(
+      "game_id" = "character",
+      "play_id" = "integer",
+      "column" = "character",
+      "value" = "list"
+    )
+  )
+
+  # avoid NA game_ids play_id, or column
+  expect_false(anyNA(patch_data$game_id))
+  expect_false(anyNA(patch_data$play_id))
+  expect_false(anyNA(patch_data$column))
 })
