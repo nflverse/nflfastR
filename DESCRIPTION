@@ -29,6 +29,7 @@ Imports:
     future,
     glue,
     janitor,
+    jsonlite,
     lifecycle,
     mgcv,
     nflreadr (>= 1.2.0),
