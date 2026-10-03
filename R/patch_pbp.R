@@ -75,7 +75,6 @@ patch_pbp <- function(pbp) {
   pbp
 }
 
-
 .patch_read_data <- function() {
   local_file <- system.file("patch_pbp.json", package = "nflfastR")
   if (!file.exists(local_file)) {
@@ -88,7 +87,7 @@ patch_pbp <- function(pbp) {
   patch_data <- .patch_read_data()
   cleaned <- patch_data |>
     dplyr::distinct() |>
-    dplyr::arrange(dplyr::desc(game_id), play_id, column)
+    dplyr::arrange(dplyr::desc(.data$game_id), .data$play_id, .data$column)
 
   if (!identical(patch_data, cleaned) && interactive()) {
     update <- utils::menu(
