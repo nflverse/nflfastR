@@ -22,23 +22,23 @@ patch_pbp <- function(pbp) {
   patch_data <- patch_data |>
     dplyr::mutate(
       column = dplyr::case_when(
-        column == "qtr" ~ "quarter",
-        TRUE ~ column
+        .data$column == "qtr" ~ "quarter",
+        TRUE ~ .data$column
       )
     )
 
   for (colname in unique(patch_data$column)) {
     # PART 1: apply play level patches
     new <- patch_data |>
-      dplyr::filter(column == colname, play_id != 99999L)
+      dplyr::filter(.data$column == colname, .data$play_id != 99999L)
 
     if (nrow(new) > 0L) {
       new <- new |>
         dplyr::mutate(
-          value = unlist(value, use.names = FALSE)
+          value = unlist(.data$value, use.names = FALSE)
         ) |>
         dplyr::rename_with(.fn = ~colname, .cols = "value") |>
-        dplyr::select(-column)
+        dplyr::select(-"column")
 
       pbp <- dplyr::rows_update(
         pbp,
@@ -50,15 +50,15 @@ patch_pbp <- function(pbp) {
 
     # PART 2: apply game level patches
     new <- patch_data |>
-      dplyr::filter(column == colname, play_id == 99999L)
+      dplyr::filter(.data$column == colname, .data$play_id == 99999L)
 
     if (nrow(new) > 0L) {
       new <- new |>
         dplyr::mutate(
-          value = unlist(value, use.names = FALSE)
+          value = unlist(.data$value, use.names = FALSE)
         ) |>
         dplyr::rename_with(.fn = ~colname, .cols = "value") |>
-        dplyr::select(-column)
+        dplyr::select(-"column")
 
       pbp <- dplyr::rows_update(
         pbp,
