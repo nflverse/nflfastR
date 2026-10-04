@@ -40,7 +40,7 @@ to confirm that your patch works as intended
 1. commit and push
 1. create the pull request
 
-A patch in the `"inst/patch_pbp.json"` looks like this
+A patch in the `"inst/patch_pbp.json"` file looks like this
 
 ```json
 [
