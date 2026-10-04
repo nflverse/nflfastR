@@ -75,6 +75,8 @@ navbar:
       menu:
       - text: A beginner’s guide to nflfastR
         href: articles/beginners_guide.html
+      - text: Contribute to nflfastR
+        href: contributing.html
       - text: Field Descriptions
         href: articles/field_descriptions.html
       - text: Stats Variable Descriptions
