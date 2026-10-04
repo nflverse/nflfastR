@@ -36,4 +36,10 @@ test_that("pbp_patch is formatted correctly", {
   expect_false(anyNA(patch_data$game_id))
   expect_false(anyNA(patch_data$play_id))
   expect_false(anyNA(patch_data$column))
+
+  # enforce that value is always of length 1
+  expect_all_equal(
+    vapply(patch_data$value, length, FUN.VALUE = integer(1L)),
+    1L
+  )
 })
