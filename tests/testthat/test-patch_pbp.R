@@ -15,11 +15,11 @@ test_that("pbp_patch is formatted correctly", {
 
   # verify game IDs
   patch_ids <- unique(patch_data$game_id)
-  expect_null(nflfastR:::verify_game_ids(patch_ids))
+  expect_null(verify_game_ids(patch_ids))
 
   # verify column names
   patch_columns <- unique(patch_data$column)
-  expect_all_true(patch_columns %in% names(nflfastR:::default_play))
+  expect_in(patch_columns, names(default_play))
 
   # check column classes
   expect_identical(
