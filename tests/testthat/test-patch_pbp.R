@@ -2,8 +2,12 @@ test_that("pbp_patch is formatted correctly", {
   patch_data <- .patch_read_data()
   skip_if(is.null(patch_data))
 
-  # check for duplicates
-  expect_identical(patch_data, dplyr::distinct(patch_data))
+  # check for duplicate keys
+  # we can't have more than 1 combination of game_id, play_id, column
+  expect_all_equal(
+    dplyr::count(patch_data, game_id, play_id, column)$n,
+    1L
+  )
 
   # check for correct sorting (new games on top)
   expect_identical(
