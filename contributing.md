@@ -66,7 +66,8 @@ Some notes:
 - The second entry overwrites the `start_time` variable in the play-by-play data 
 of the complete `game_id 2015_01_IND_BUF` with the string `"10/19/14, 13:02:00"`.
 - Please note the `[]` brackets in the value field. They allow us to save `value`
-in different classes, i.e. `integer`, `numeric`, `character`.
+in different classes, i.e. `integer`, `numeric`, `character`. We apply validation
+to ensure that this value is a list of length one. 
 - Integers and numerics don't need quotes. We want to preserve their classes.
 - The field `play_id` is also unquoted and should be an integer. 
 - The special `play_id 99999` is a placeholder and tells nflfastR to apply the 
