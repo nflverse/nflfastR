@@ -73,6 +73,6 @@ to ensure that this value is a list of length one.
 - The special `play_id 99999` is a placeholder and tells nflfastR to apply the 
 patch to the complete column, i.e. all `play_id`s of the specified `game_id`. 
 - Only `value` is allowed to be `NA`, which means you would like to overwrite 
-specifically with `NA`.
+specifically with `"NA"`.
 
 Package tests should enforce the described format.
