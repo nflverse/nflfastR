@@ -39,7 +39,7 @@ test_that("pbp_patch is formatted correctly", {
 
   # enforce that value is always of length 1
   expect_all_equal(
-    vapply(patch_data$value, length, FUN.VALUE = integer(1L)),
+    lengths(patch_data$value),
     1L
   )
 })
