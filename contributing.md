@@ -64,7 +64,7 @@ Some notes:
 - The first entry overwrites the `qtr` variable in the play-by-play data of 
 `game_id 2015_01_IND_BUF` and `play_id 1207` with the integer `2`.
 - The second entry overwrites the `start_time` variable in the play-by-play data 
-of the complete `game_id 2015_01_IND_BUF` with the string `"10/19/14, 13:02:00"`.
+of the complete `game_id 2014_07_ATL_BAL` with the string `"10/19/14, 13:02:00"`.
 - Please note the `[]` brackets in the value field. They allow us to save `value`
 in different classes, i.e. `integer`, `numeric`, `character`. We apply validation
 to ensure that this value is a list of length one. 
