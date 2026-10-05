@@ -105,7 +105,7 @@ patch_pbp <- function(pbp) {
         # the value column gets renamed to colname so rows_update knows
         # which column to update
         dplyr::rename_with(.fn = ~colname, .cols = "value") |>
-        dplyr::select(-"column")
+        dplyr::select(-"column", -"play_id")
 
       pbp <- dplyr::rows_update(
         pbp,
