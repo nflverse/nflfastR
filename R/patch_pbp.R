@@ -10,17 +10,17 @@
 # game_id         | play_id |     column |              value
 # character       | integer |  character |               list
 # -----------------------------------------------------------
-# 2020_01_LV_CAR  |     894 |        qtr |                  2 <- integer
-# 2020_01_LV_CAR  |     911 |        qtr |                  2
-# 2020_01_LV_CAR  |     935 |        qtr |                  2
-# 2020_01_LV_CAR  |     978 |        qtr |                  2
-# 2020_01_LV_CAR  |     999 |        qtr |                  2
-# 2018_08_IND_OAK |     874 |        qtr |                  2
-# 2016_15_MIA_NYJ |     901 |        qtr |                  1
-# 2016_05_TEN_MIA |    2919 |        qtr |                  4
-# 2016_05_TEN_MIA |    2943 |        qtr |                  4
-# 2015_01_IND_BUF |    1185 |        qtr |                  2
-# 2015_01_IND_BUF |    1207 |        qtr |                  2
+# 2020_01_LV_CAR  |     894 |    quarter |                  2 <- integer
+# 2020_01_LV_CAR  |     911 |    quarter |                  2
+# 2020_01_LV_CAR  |     935 |    quarter |                  2
+# 2020_01_LV_CAR  |     978 |    quarter |                  2
+# 2020_01_LV_CAR  |     999 |    quarter |                  2
+# 2018_08_IND_OAK |     874 |    quarter |                  2
+# 2016_15_MIA_NYJ |     901 |    quarter |                  1
+# 2016_05_TEN_MIA |    2919 |    quarter |                  4
+# 2016_05_TEN_MIA |    2943 |    quarter |                  4
+# 2015_01_IND_BUF |    1185 |    quarter |                  2
+# 2015_01_IND_BUF |    1207 |    quarter |                  2
 # 2014_07_ATL_BAL |   99999 | start_time | 10/19/14, 13:02:00 <- character
 # 2014_04_CAR_BAL |   99999 | start_time |  9/28/14, 13:02:00
 # 2014_01_CIN_BAL |   99999 | start_time |   9/7/14, 13:02:00
@@ -62,6 +62,10 @@ patch_pbp <- function(pbp) {
     dplyr::mutate(
       column = dplyr::case_when(
         .data$column == "qtr" ~ "quarter",
+        .data$column == "yrdln" ~ "yardline",
+        .data$column == "ydstogo" ~ "yards_to_go",
+        .data$column == "side_of_field" ~ "yardline_side",
+        .data$column == "desc" ~ "play_description",
         TRUE ~ .data$column
       )
     )
