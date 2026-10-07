@@ -35,10 +35,12 @@ tidy_play_stats_row <-
 tidy_play_stats_row <- nflfastR:::tidy_play_stats_row
 scramble_fix <- readRDS("data-raw/scramble_fix.rds")
 default_play <- readRDS("data-raw/pbp_defaultplay.rds")
+patch_columns <- yaml::read_yaml("data-raw/patch_valid_column_names.yaml")$column
 usethis::use_data(
   tidy_play_stats_row,
   scramble_fix,
   default_play,
+  patch_columns,
   internal = TRUE,
   overwrite = TRUE
 )
