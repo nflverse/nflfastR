@@ -1,7 +1,9 @@
 # patch columns is a vector of column names
 # we will allow manual data corrections of these column names
 
-patch_columns <- yaml::read_yaml("data-raw/patch_valid_column_names.yaml")$column
+patch_columns <- yaml::read_yaml(
+  "data-raw/patch_valid_column_names.yaml"
+)$column
 final_pbp_columns <- names(default_play)
 
 diffs <- setdiff(patch_columns, full_names)
