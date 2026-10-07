@@ -3,6 +3,7 @@
 ^LICENSE\.md$
 ^data-raw$
 ^README\.Rmd$
+^contributing\.Rmd$
 ^.*\.pdf$
 ^.github$
 ^_pkgdown\.yml$
