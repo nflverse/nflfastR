@@ -1,5 +1,6 @@
 test_that("pbp_patch is formatted correctly", {
   patch_data <- .patch_read_data()
+  valid_patch_columns <- patch_columns # lives in sysdata.R
   skip_if(is.null(patch_data))
 
   # check for duplicate keys
@@ -23,7 +24,7 @@ test_that("pbp_patch is formatted correctly", {
 
   # verify column names
   patch_columns <- unique(patch_data$column)
-  expect_in(patch_columns, names(default_play))
+  expect_in(patch_columns, valid_patch_columns)
 
   # check column classes
   expect_identical(
@@ -36,7 +37,7 @@ test_that("pbp_patch is formatted correctly", {
     )
   )
 
-  # avoid NA game_ids play_id, or column
+  # avoid NA game_id, play_id, or column
   expect_false(anyNA(patch_data$game_id))
   expect_false(anyNA(patch_data$play_id))
   expect_false(anyNA(patch_data$column))
