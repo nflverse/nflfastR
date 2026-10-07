@@ -3,6 +3,7 @@
 ^LICENSE\.md$
 ^data-raw$
 ^README\.Rmd$
+^contributing\.Rmd$
 ^.*\.pdf$
 ^.github$
 ^_pkgdown\.yml$
@@ -28,3 +29,4 @@
 ^\.git-blame-ignore-revs$
 ^\.positai$
 ^\.claude$
+^contributing\.md$

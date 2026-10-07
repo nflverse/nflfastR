@@ -1,3 +1,7 @@
+# nflfastR (development version)
+
+- Added a new mechanism that allows for manual data corrections that would be difficult and time-consuming to implement in the parser itself. This was added in particular because, in the age of AI agents, even the rarest specific errors are found in the raw data. A [contribution guide](https://nflfastr.com/contributing.html) explains how to contribute manual data corrections. (#611)
+
 # nflfastR 6.0.0
 
 ## New

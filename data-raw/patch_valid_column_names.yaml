@@ -1,0 +1,298 @@
+# This file lists all column names available after `get_pbp_nfl()` which means
+# these are the column names that could potentionally be patched with `patch_pbp()`
+# We store them in this yaml file because it allows comments. We remove several
+# columns by commenting them out
+# The final result will be saved in nflfastR so we can reference it for valid
+# column names in `"inst/patch_pbp.json"` for manual patches
+column:
+- nfl_api_id
+# - home_team
+# - away_team
+- weather
+- stadium
+- start_time
+- time
+- down
+# - drive_net_yards
+- drive
+- end_clock_time
+- end_yard_line
+- first_down
+- goal_to_go
+# - is_big_play
+# - latest_play
+# - next_play_is_goal_to_go
+- order_sequence
+# - penalty_on_play
+- play_clock
+# - play_review_status
+# - play_deleted
+- play_description # `desc` in final pbp
+# - play_description_with_jersey_numbers
+- play_id
+- play_type_nfl
+# - pre_play_by_play
+- quarter # `qtr` in final pbp
+- sp
+# - scoring_play_type
+# - short_description
+- special_teams_play
+- st_play_type
+- time_of_day
+- yardline # `yrdln` in final pbp
+# - yards
+- yards_to_go # `ydstogo` in final pbp
+# - possession_team_id
+- posteam
+# - possession_team_nick_name
+# - possession_team_franchise_primary_color
+# - possession_team_franchise_secondary_color
+# - possession_team_franchise_tertiary_color
+# - possession_team_franchise_current_logo_url
+# - possession_team_franchise_large_type_color_dark
+# - possession_team_franchise_large_type_color_light
+# - possession_team_franchise_decorative_elements_color_dark
+# - possession_team_franchise_decorative_elements_color_light
+# - scoring_team_id
+# - scoring_team_abbreviation
+# - scoring_team_nick_name
+# - scoring_team_franchise_primary_color
+# - scoring_team_franchise_secondary_color
+# - scoring_team_franchise_tertiary_color
+# - scoring_team_franchise_current_logo_url
+# - scoring_team_franchise_large_type_color_dark
+# - scoring_team_franchise_large_type_color_light
+# - scoring_team_franchise_decorative_elements_color_dark
+# - scoring_team_franchise_decorative_elements_color_light
+- drive_quarter_start
+- drive_end_transition
+- drive_end_yard_line
+- drive_ended_with_score
+- drive_first_downs
+- drive_game_clock_end
+- drive_game_clock_start
+# - drive_how_ended_description
+# - drive_how_started_description
+- drive_inside20
+- drive_play_count
+- drive_play_id_ended
+- drive_play_id_started
+# - drive_play_seq_ended
+# - drive_play_seq_started
+- drive_quarter_end
+- drive_real_start_time
+- drive_start_transition
+- drive_start_yard_line
+- drive_time_of_possession
+# - drive_yards
+- drive_yards_penalized
+# - drive_possession_team_id
+# - drive_possession_team_franchise_primary_color
+# - drive_possession_team_franchise_secondary_color
+# - drive_possession_team_franchise_tertiary_color
+# - drive_possession_team_franchise_large_type_color_dark
+# - drive_possession_team_franchise_large_type_color_light
+# - drive_possession_team_franchise_decorative_elements_color_dark
+# - drive_possession_team_franchise_decorative_elements_color_light
+- ydsnet
+- punt_blocked
+- first_down_rush
+- first_down_pass
+- first_down_penalty
+- third_down_converted
+- third_down_failed
+- fourth_down_converted
+- fourth_down_failed
+- incomplete_pass
+- interception
+- punt_inside_twenty
+- punt_in_endzone
+- punt_out_of_bounds
+- punt_downed
+- punt_fair_catch
+- kickoff_inside_twenty
+- kickoff_in_endzone
+- kickoff_out_of_bounds
+- kickoff_fair_catch
+- fumble_forced
+- fumble_not_forced
+- fumble_out_of_bounds
+- timeout
+- field_goal_missed
+- field_goal_made
+- field_goal_blocked
+- extra_point_good
+- extra_point_failed
+- extra_point_blocked
+- two_point_rush_good # doesn't make it to final pbp
+- two_point_rush_failed # doesn't make it to final pbp
+- two_point_pass_good # doesn't make it to final pbp
+- two_point_pass_failed # doesn't make it to final pbp
+- solo_tackle
+- safety
+- penalty
+- tackled_for_loss
+- extra_point_safety # doesn't make it to final pbp
+- two_point_rush_safety # doesn't make it to final pbp
+- two_point_pass_safety # doesn't make it to final pbp
+- kickoff_downed
+- two_point_pass_reception_good # doesn't make it to final pbp
+- two_point_pass_reception_failed # doesn't make it to final pbp
+- fumble_lost
+- own_kickoff_recovery
+- own_kickoff_recovery_td
+- qb_hit
+- extra_point_aborted
+- two_point_return
+- rush_attempt
+- pass_attempt
+- sack
+- touchdown
+- pass_touchdown
+- rush_touchdown
+- return_touchdown
+- extra_point_attempt
+- two_point_attempt
+- field_goal_attempt
+- kickoff_attempt
+- punt_attempt
+- fumble
+- complete_pass
+- assist_tackle
+- lateral_reception
+- lateral_rush
+- lateral_return
+- lateral_recovery
+- passer_player_id
+- passer_player_name
+- receiver_player_id
+- receiver_player_name
+- rusher_player_id
+- rusher_player_name
+- lateral_receiver_player_id
+- lateral_receiver_player_name
+- lateral_rusher_player_id
+- lateral_rusher_player_name
+- lateral_sack_player_id
+- lateral_sack_player_name
+- interception_player_id
+- interception_player_name
+- lateral_interception_player_id
+- lateral_interception_player_name
+- punt_returner_player_id
+- punt_returner_player_name
+- lateral_punt_returner_player_id
+- lateral_punt_returner_player_name
+- kickoff_returner_player_name
+- kickoff_returner_player_id
+- lateral_kickoff_returner_player_id
+- lateral_kickoff_returner_player_name
+- punter_player_id
+- punter_player_name
+- kicker_player_name
+- kicker_player_id
+- own_kickoff_recovery_player_id
+- own_kickoff_recovery_player_name
+- blocked_player_id
+- blocked_player_name
+- tackle_for_loss_1_player_id
+- tackle_for_loss_1_player_name
+- tackle_for_loss_2_player_id
+- tackle_for_loss_2_player_name
+- qb_hit_1_player_id
+- qb_hit_1_player_name
+- qb_hit_2_player_id
+- qb_hit_2_player_name
+- forced_fumble_player_1_team
+- forced_fumble_player_1_player_id
+- forced_fumble_player_1_player_name
+- forced_fumble_player_2_team
+- forced_fumble_player_2_player_id
+- forced_fumble_player_2_player_name
+- solo_tackle_1_team
+- solo_tackle_2_team
+- solo_tackle_1_player_id
+- solo_tackle_2_player_id
+- solo_tackle_1_player_name
+- solo_tackle_2_player_name
+- assist_tackle_1_player_id
+- assist_tackle_1_player_name
+- assist_tackle_1_team
+- assist_tackle_2_player_id
+- assist_tackle_2_player_name
+- assist_tackle_2_team
+- assist_tackle_3_player_id
+- assist_tackle_3_player_name
+- assist_tackle_3_team
+- assist_tackle_4_player_id
+- assist_tackle_4_player_name
+- assist_tackle_4_team
+- tackle_with_assist
+- tackle_with_assist_1_player_id
+- tackle_with_assist_1_player_name
+- tackle_with_assist_1_team
+- tackle_with_assist_2_player_id
+- tackle_with_assist_2_player_name
+- tackle_with_assist_2_team
+- pass_defense_1_player_id
+- pass_defense_1_player_name
+- pass_defense_2_player_id
+- pass_defense_2_player_name
+- fumbled_1_team
+- fumbled_1_player_id
+- fumbled_1_player_name
+- fumbled_2_player_id
+- fumbled_2_player_name
+- fumbled_2_team
+- fumble_recovery_1_team
+- fumble_recovery_1_yards
+- fumble_recovery_1_player_id
+- fumble_recovery_1_player_name
+- fumble_recovery_2_team
+- fumble_recovery_2_yards
+- fumble_recovery_2_player_id
+- fumble_recovery_2_player_name
+- td_team
+- return_team
+- timeout_team
+- yards_gained
+- return_yards
+- air_yards
+- yards_after_catch
+- penalty_team
+- penalty_player_id
+- penalty_player_name
+- penalty_yards
+- kick_distance
+- defensive_two_point_attempt
+- defensive_two_point_conv
+- defensive_extra_point_attempt
+- defensive_extra_point_conv
+# - penalty_fix
+# - return_penalty_fix
+- rushing_yards
+- lateral_rushing_yards
+- passing_yards
+- receiving_yards
+- lateral_receiving_yards
+- td_player_id
+- td_player_name
+- sack_player_id
+- sack_player_name
+- half_sack_1_player_id
+- half_sack_1_player_name
+- half_sack_2_player_id
+- half_sack_2_player_name
+- safety_player_name
+- safety_player_id
+# - posteam_id
+- yardline_side # `side_of_field` in final pbp
+- yardline_number
+- quarter_end
+# - game_year
+# - season
+# - game_month
+# - game_id
+# - week
+# - season_type
+- safety_team

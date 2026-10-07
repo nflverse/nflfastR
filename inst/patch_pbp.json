@@ -1,0 +1,128 @@
+[
+  {
+    "game_id": "2020_01_LV_CAR",
+    "play_id": 894,
+    "column": "quarter",
+    "value": [2]
+  },
+  {
+    "game_id": "2020_01_LV_CAR",
+    "play_id": 911,
+    "column": "quarter",
+    "value": [2]
+  },
+  {
+    "game_id": "2020_01_LV_CAR",
+    "play_id": 935,
+    "column": "quarter",
+    "value": [2]
+  },
+  {
+    "game_id": "2020_01_LV_CAR",
+    "play_id": 978,
+    "column": "quarter",
+    "value": [2]
+  },
+  {
+    "game_id": "2020_01_LV_CAR",
+    "play_id": 999,
+    "column": "quarter",
+    "value": [2]
+  },
+  {
+    "game_id": "2018_08_IND_OAK",
+    "play_id": 874,
+    "column": "quarter",
+    "value": [2]
+  },
+  {
+    "game_id": "2016_15_MIA_NYJ",
+    "play_id": 901,
+    "column": "quarter",
+    "value": [1]
+  },
+  {
+    "game_id": "2016_05_TEN_MIA",
+    "play_id": 2919,
+    "column": "quarter",
+    "value": [4]
+  },
+  {
+    "game_id": "2016_05_TEN_MIA",
+    "play_id": 2943,
+    "column": "quarter",
+    "value": [4]
+  },
+  {
+    "game_id": "2015_01_IND_BUF",
+    "play_id": 1185,
+    "column": "quarter",
+    "value": [2]
+  },
+  {
+    "game_id": "2015_01_IND_BUF",
+    "play_id": 1207,
+    "column": "quarter",
+    "value": [2]
+  },
+  {
+    "game_id": "2014_07_ATL_BAL",
+    "play_id": 99999,
+    "column": "start_time",
+    "value": ["10/19/14, 13:02:00"]
+  },
+  {
+    "game_id": "2014_04_CAR_BAL",
+    "play_id": 99999,
+    "column": "start_time",
+    "value": ["9/28/14, 13:02:00"]
+  },
+  {
+    "game_id": "2014_01_CIN_BAL",
+    "play_id": 99999,
+    "column": "start_time",
+    "value": ["9/7/14, 13:02:00"]
+  },
+  {
+    "game_id": "2009_15_CHI_BAL",
+    "play_id": 99999,
+    "column": "start_time",
+    "value": ["12/20/09, 16:15:00"]
+  },
+  {
+    "game_id": "2009_14_DET_BAL",
+    "play_id": 99999,
+    "column": "start_time",
+    "value": ["12/13/09, 13:02:00"]
+  },
+  {
+    "game_id": "2009_12_PIT_BAL",
+    "play_id": 99999,
+    "column": "start_time",
+    "value": ["11/29/09, 20:30:00"]
+  },
+  {
+    "game_id": "2009_08_DEN_BAL",
+    "play_id": 99999,
+    "column": "start_time",
+    "value": ["11/1/09, 13:02:00"]
+  },
+  {
+    "game_id": "2009_05_CIN_BAL",
+    "play_id": 99999,
+    "column": "start_time",
+    "value": ["10/11/09, 13:02:00"]
+  },
+  {
+    "game_id": "2009_03_CLE_BAL",
+    "play_id": 99999,
+    "column": "start_time",
+    "value": ["9/27/09, 13:02:00"]
+  },
+  {
+    "game_id": "2009_01_KC_BAL",
+    "play_id": 99999,
+    "column": "start_time",
+    "value": ["9/13/09, 13:02:00"]
+  }
+]

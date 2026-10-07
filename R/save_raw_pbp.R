@@ -129,6 +129,7 @@ missing_raw_pbp <- function(
 
   finished_games <- nflreadr::load_schedules(seasons = seasons) |>
     dplyr::filter(!is.na(.data$result)) |>
+    dplyr::filter(!.data$game_id %in% missing_raw_games) |>
     dplyr::pull(.data$game_id)
 
   local_missing_games <- finished_games[!finished_games %in% local_games]

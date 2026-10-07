@@ -1,7 +1,7 @@
 Type: Package
 Package: nflfastR
 Title: Functions to Efficiently Access NFL Play by Play Data
-Version: 6.0.0
+Version: 6.0.0.9000
 Authors@R: c(
     person("Sebastian", "Carl", , "mrcaseb@gmail.com", role = "aut"),
     person("Ben", "Baldwin", , "bbaldwin206@gmail.com", role = c("cre", "aut")),
@@ -23,12 +23,13 @@ Imports:
     cli (>= 3.0.0),
     curl,
     data.table (>= 1.15.0),
-    dplyr (>= 1.0.0),
+    dplyr (>= 1.1.0),
     fastrmodels (>= 2.1.0),
     furrr,
     future,
     glue,
     janitor,
+    jsonlite,
     lifecycle,
     mgcv,
     nflreadr (>= 1.2.0),
