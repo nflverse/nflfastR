@@ -260,6 +260,10 @@
     "description": "Weighted Opportunity Rating. WOPR = 1.5 × `target_share` + 0.7 × `air_yards_share`. Available if stat_type = 'player'."
   },
   {
+    "variable": "special_teams_fumbles",
+    "description": "The number of fumbles while playing on special teams plays."
+  },
+  {
     "variable": "special_teams_tds",
     "description": "The number of touchdowns scored in special teams plays."
   },
@@ -317,7 +321,7 @@
   },
   {
     "variable": "def_fumbles",
-    "description": "Number of fumbles while playing on defense."
+    "description": "Number of fumbles while playing on defense. Excludes special teams plays."
   },
   {
     "variable": "def_safeties",

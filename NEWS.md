@@ -26,6 +26,7 @@
 - Updated `teams_colors_logos` after 2026 Titans and Rams rebrandings. (#592)
 - Added defensive blocked kicks and 2 point attempts to the output of `calculate_stats()`. (#596)
 - Fixed bug that led to missing pbp related team stats in `calculate_stats()` because an internal function did not standardize team abbreviations. (#599)
+- `calculate_stats()` now excludes special teams plays from `def_fumbles` and counts them in the new variable `special_teams_fumbles`. This is in line with the distinction of touchdwowns with `def_tds` and `special_teams_tds`. (#581) 
 
 Thank you to &#x0040;jdpretorius123, &#x0040;JoeMarino2021, &#x0040;lancejames35, &#x0040;mrcaseb, &#x0040;naymikm, &#x0040;rayrosales66, and &#x0040;TheMathNinja for their questions, feedback, and contributions towards this release.
 
