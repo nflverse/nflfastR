@@ -419,6 +419,9 @@ calculate_stats <- function(
       },
 
       special_teams_tds = sum((special == 1) & stat_id %in% td_ids()),
+      # stat ID 54 is a fumble out of bounds. It's never counted alone,
+      # always in combination with 52 or 53.
+      special_teams_fumbles = sum((special == 1) & stat_id %in% 52:53),
 
       # Defense #####################
       # def_tackles = ,
@@ -438,7 +441,7 @@ calculate_stats <- function(
       def_tds = sum(team == def & special != 1 & stat_id %in% td_ids()),
       # stat ID 54 is a fumble out of bounds. It's never counted alone,
       # always in combination with 52 or 53.
-      def_fumbles = sum((team == def) & stat_id %in% 52:53),
+      def_fumbles = sum((team == def) & special != 1 & stat_id %in% 52:53),
       def_safeties = sum(stat_id == 89),
       def_punt_blocks = sum(stat_id == 86),
       def_pat_blocks = sum(stat_id == 87),
