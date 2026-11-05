@@ -103,16 +103,42 @@ test_that("overtime: ties are worth a half win", {
   expect_equal(twopt, 0.4735, tolerance = 1e-3)
 })
 
-test_that("overtime: short clock makes ties more likely, so WP moves to 0.5", {
+test_that("overtime: a short clock takes away the advantage if out of range", {
+  # 1st & 10 at the offense's own 30. With 10 seconds left it is very unlikely
+  # to score, so the game is close to the 0.5 of a tie. With lots of time it
+  # is a clear advantage.
+  long <- ot_wp1(
+    season = 2025,
+    kind = "scrimmage",
+    phase = 3,
+    secs = 500,
+    y = 70,
+    down = 1
+  )
   short <- ot_wp1(
     season = 2025,
     kind = "scrimmage",
     phase = 3,
-    secs = 20,
+    secs = 10,
     y = 70,
     down = 1
   )
-  expect_equal(short, 0.5, tolerance = 0.05)
+  expect_lt(abs(short - 0.5), abs(long - 0.5))
+  expect_lt(short, 0.6)
+})
+
+test_that("overtime: a short clock does not matter if in field goal range", {
+  # 1st & 10 at the opponent's 20 with 20 seconds left: a field goal wins the
+  # game, so this is far from the 0.5 of a tie
+  in_range <- ot_wp1(
+    season = 2025,
+    kind = "scrimmage",
+    phase = 3,
+    secs = 20,
+    y = 20,
+    down = 1
+  )
+  expect_gt(in_range, 0.85)
 })
 
 test_that("overtime: situation matters", {
