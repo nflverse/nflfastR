@@ -1,10 +1,27 @@
-ot_state <- function(season = 2025, season_type = "REG", kind = "kickoff",
-                     d = 0, phase = 1, secs = 600, spread = 0, y = 65,
-                     down = 1, ytg = 10) {
+ot_state <- function(
+  season = 2025,
+  season_type = "REG",
+  kind = "kickoff",
+  d = 0,
+  phase = 1,
+  secs = 600,
+  spread = 0,
+  y = 65,
+  down = 1,
+  ytg = 10
+) {
   data.frame(
-    season = season, season_type = season_type, kind = kind,
-    yardline_100 = y, down = down, ydstogo = ytg, secs = secs, d = d,
-    spread = spread, phase = phase, p_make = 0.94
+    season = season,
+    season_type = season_type,
+    kind = kind,
+    yardline_100 = y,
+    down = down,
+    ydstogo = ytg,
+    secs = secs,
+    d = d,
+    spread = spread,
+    phase = phase,
+    p_make = 0.94
   )
 }
 ot_wp1 <- function(...) ot_wp_states(ot_state(...), use_spread = TRUE)
@@ -65,7 +82,16 @@ test_that("overtime: both teams get a ball (2025+ regular season)", {
 test_that("overtime: ties are worth a half win", {
   # no time left and tied
   expect_equal(
-    ot_wp1(season = 2025, kind = "scrimmage", d = 0, phase = 3, secs = 0, y = 60, down = 1, ytg = 10),
+    ot_wp1(
+      season = 2025,
+      kind = "scrimmage",
+      d = 0,
+      phase = 3,
+      secs = 0,
+      y = 60,
+      down = 1,
+      ytg = 10
+    ),
     0.5,
     tolerance = 0.02
   )
@@ -78,7 +104,14 @@ test_that("overtime: ties are worth a half win", {
 })
 
 test_that("overtime: short clock makes ties more likely, so WP moves to 0.5", {
-  short <- ot_wp1(season = 2025, kind = "scrimmage", phase = 3, secs = 20, y = 70, down = 1)
+  short <- ot_wp1(
+    season = 2025,
+    kind = "scrimmage",
+    phase = 3,
+    secs = 20,
+    y = 70,
+    down = 1
+  )
   expect_equal(short, 0.5, tolerance = 0.05)
 })
 
@@ -92,8 +125,14 @@ test_that("overtime: situation matters", {
 test_that("overtime: teams that have to score do not punt", {
   # trailing by 3 on the second possession, 4th & 6 at own 24 is not hopeless
   go <- ot_wp1(
-    season = 2025, kind = "scrimmage", d = -3, phase = 2, secs = 230,
-    y = 76, down = 4, ytg = 6
+    season = 2025,
+    kind = "scrimmage",
+    d = -3,
+    phase = 2,
+    secs = 230,
+    y = 76,
+    down = 4,
+    ytg = 6
   )
   expect_gt(go, 0.08)
   expect_lt(go, 0.3)
@@ -101,10 +140,20 @@ test_that("overtime: teams that have to score do not punt", {
 
 test_that("overtime: end of clock field goal attempts", {
   st <- ot_state(
-    season = 2022, kind = "scrimmage", d = 0, phase = 3, secs = 5, y = 40,
-    down = 4, ytg = 7
+    season = 2022,
+    kind = "scrimmage",
+    d = 0,
+    phase = 3,
+    secs = 5,
+    y = 40,
+    down = 4,
+    ytg = 7
   )
   st$p_fg <- 0.45
   # a make wins, a miss is a tie
-  expect_equal(ot_wp_states(st, use_spread = FALSE), 0.5 + 0.5 * 0.45, tolerance = 0.02)
+  expect_equal(
+    ot_wp_states(st, use_spread = FALSE),
+    0.5 + 0.5 * 0.45,
+    tolerance = 0.02
+  )
 })

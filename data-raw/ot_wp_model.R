@@ -34,12 +34,21 @@ ends <- d |>
   arrange(fixed_drive, .by_group = TRUE) |>
   mutate(end_clock = lead(start_clock)) |>
   ungroup()
-d <- d |> left_join(ends |> select(game_id, fixed_drive, end_clock), by = c("game_id", "fixed_drive"))
+d <- d |>
+  left_join(
+    ends |> select(game_id, fixed_drive, end_clock),
+    by = c("game_id", "fixed_drive")
+  )
 
 lab <- c(
-  "Touchdown" = "TD", "Field goal" = "FG", "Safety" = "SAF",
-  "Opp touchdown" = "OPPTD", "Punt" = "PUNT", "Turnover" = "STOP",
-  "Turnover on downs" = "STOP", "Missed field goal" = "STOP"
+  "Touchdown" = "TD",
+  "Field goal" = "FG",
+  "Safety" = "SAF",
+  "Opp touchdown" = "OPPTD",
+  "Punt" = "PUNT",
+  "Turnover" = "STOP",
+  "Turnover on downs" = "STOP",
+  "Missed field goal" = "STOP"
 )
 d <- d |>
   mutate(
@@ -51,9 +60,15 @@ d <- d |>
 # plays that are not distorted by the end of a half or by garbage time
 tr <- d |>
   filter(
-    !is.na(outcome), !is.na(down), !is.na(yardline_100),
-    !is.na(posteam_spread), !is.na(rem), rem >= 0, rem <= 600,
-    half_seconds_remaining >= 180, abs(score_differential) <= 16,
+    !is.na(outcome),
+    !is.na(down),
+    !is.na(yardline_100),
+    !is.na(posteam_spread),
+    !is.na(rem),
+    rem >= 0,
+    rem <= 600,
+    half_seconds_remaining >= 180,
+    abs(score_differential) <= 16,
     play_type %in% c("run", "pass", "punt", "field_goal"),
     two_point_attempt %in% c(0, NA)
   ) |>
@@ -64,9 +79,16 @@ classes <- c("TD", "FG", "SAF", "OPPTD", "STOP", "PUNT")
 classes5 <- c("TD", "FG", "SAF", "OPPTD", "STOP")
 tr$outcome5 <- ifelse(tr$outcome == "PUNT", "STOP", tr$outcome)
 X <- function(df) {
-  as.matrix(df |> transmute(
-    yardline_100, down, ydstogo = pmin(ydstogo, 30), posteam_spread, season_c
-  ))
+  as.matrix(
+    df |>
+      transmute(
+        yardline_100,
+        down,
+        ydstogo = pmin(ydstogo, 30),
+        posteam_spread,
+        season_c
+      )
+  )
 }
 y <- match(tr$outcome, classes) - 1
 
@@ -74,22 +96,45 @@ y <- match(tr$outcome, classes) - 1
 test_g <- sample(unique(tr$game_id), length(unique(tr$game_id)) * 0.15)
 is_te <- tr$game_id %in% test_g
 par <- list(
-  objective = "multi:softprob", num_class = 6, eta = 0.05, max_depth = 4,
-  min_child_weight = 200, subsample = 0.8, eval_metric = "mlogloss"
+  objective = "multi:softprob",
+  num_class = 6,
+  eta = 0.05,
+  max_depth = 4,
+  min_child_weight = 200,
+  subsample = 0.8,
+  eval_metric = "mlogloss"
 )
 m0 <- xgb.train(
-  par, xgb.DMatrix(X(tr[!is_te, ]), label = y[!is_te]), nrounds = 1500,
+  par,
+  xgb.DMatrix(X(tr[!is_te, ]), label = y[!is_te]),
+  nrounds = 1500,
   evals = list(te = xgb.DMatrix(X(tr[is_te, ]), label = y[is_te])),
-  early_stopping_rounds = 30, verbose = 0
+  early_stopping_rounds = 30,
+  verbose = 0
 )
 nr <- as.integer(xgb.attr(m0, "best_iteration")) + 1L
-out_model <- xgb.train(par, xgb.DMatrix(X(tr), label = y), nrounds = nr, verbose = 0)
+out_model <- xgb.train(
+  par,
+  xgb.DMatrix(X(tr), label = y),
+  nrounds = nr,
+  verbose = 0
+)
 
 # time the rest of the drive takes (gamma regression, outcome as feature)
-Dm <- function(df) cbind(X(df), sapply(classes5, function(k) as.numeric(df$outcome5 == k)))
+Dm <- function(df) {
+  cbind(X(df), sapply(classes5, function(k) as.numeric(df$outcome5 == k)))
+}
 dur <- xgb.train(
-  list(objective = "reg:gamma", eta = 0.05, max_depth = 4, min_child_weight = 200, subsample = 0.8),
-  xgb.DMatrix(Dm(tr), label = tr$rem + 5), nrounds = 300, verbose = 0
+  list(
+    objective = "reg:gamma",
+    eta = 0.05,
+    max_depth = 4,
+    min_child_weight = 200,
+    subsample = 0.8
+  ),
+  xgb.DMatrix(Dm(tr), label = tr$rem + 5),
+  nrounds = 300,
+  verbose = 0
 )
 ratio <- (tr$rem + 5) / predict(dur, xgb.DMatrix(Dm(tr)))
 shape <- as.list(tapply(ratio, tr$outcome5, function(r) 1 / var(r)))
@@ -106,7 +151,11 @@ ot_wp_models <- list(
 
 # ---- where drives start -----------------------------------------------------
 starts <- d |>
-  filter(!is.na(down), !is.na(yardline_100), play_type %in% c("run", "pass", "punt", "field_goal")) |>
+  filter(
+    !is.na(down),
+    !is.na(yardline_100),
+    play_type %in% c("run", "pass", "punt", "field_goal")
+  ) |>
   group_by(game_id, fixed_drive) |>
   arrange(play_id, .by_group = TRUE) |>
   slice(1) |>
@@ -116,7 +165,13 @@ starts <- d |>
   mutate(prev_res = lag(fixed_drive_result)) |>
   ungroup() |>
   filter(!is.na(prev_res)) |>
-  mutate(type = ifelse(prev_res %in% c("Touchdown", "Field goal", "Safety"), "kick", "stop")) |>
+  mutate(
+    type = ifelse(
+      prev_res %in% c("Touchdown", "Field goal", "Safety"),
+      "kick",
+      "stop"
+    )
+  ) |>
   select(season, type, yardline_100, down, ydstogo) |>
   as.data.frame()
 
@@ -127,7 +182,13 @@ keys <- unique(c(
 ))
 ot_wp_dp <- lapply(keys, function(k) {
   parts <- strsplit(k, "|", fixed = TRUE)[[1]]
-  ot_build_dp(parts[1], as.integer(parts[2]), as.integer(parts[3]), ot_wp_models, starts)
+  ot_build_dp(
+    parts[1],
+    as.integer(parts[2]),
+    as.integer(parts[3]),
+    ot_wp_models,
+    starts
+  )
 })
 names(ot_wp_dp) <- keys
 
@@ -175,8 +236,18 @@ untouched <- setdiff(ls(e), c("ot_wp_models", "ot_wp_dp"))
 before <- mget(untouched, envir = e)
 e$ot_wp_models <- ot_wp_models
 e$ot_wp_dp <- ot_wp_dp
-save(list = ls(e), file = "R/sysdata.rda", envir = e, compress = "bzip2", version = 2)
+save(
+  list = ls(e),
+  file = "R/sysdata.rda",
+  envir = e,
+  compress = "bzip2",
+  version = 2
+)
 # make sure we did not change anything else
 e2 <- new.env()
 load("R/sysdata.rda", envir = e2)
-stopifnot(all(vapply(untouched, function(n) identical(before[[n]], e2[[n]]), TRUE)))
+stopifnot(all(vapply(
+  untouched,
+  function(n) identical(before[[n]], e2[[n]]),
+  TRUE
+)))

@@ -146,7 +146,7 @@ ot_trans <- function(rule, p, d, kind) {
 
 # thin the full solution to the stored grid
 ot_thin_q <- function(Q) {
-  Q[, , , match(ot_s_store, ot_s_grid), seq(1L, ot_n + 1L, by = ot_t_stride)]
+  Q[,,, match(ot_s_store, ot_s_grid), seq(1L, ot_n + 1L, by = ot_t_stride)]
 }
 
 # interpolate a stored [spread x time] matrix. `tn` is time in 5 second nodes
@@ -181,7 +181,8 @@ ot_pmf <- function(mu, shape) {
   up <- (j + 0.5) * ot_step
   lo <- c(0, (j[-1] - 0.5) * ot_step)
   scale <- max(mu, 3) / shape
-  stats::pgamma(up, shape, scale = scale) - stats::pgamma(lo, shape, scale = scale)
+  stats::pgamma(up, shape, scale = scale) -
+    stats::pgamma(lo, shape, scale = scale)
 }
 
 ot_cache <- new.env(parent = emptyenv())
@@ -380,7 +381,8 @@ ot_wp_states <- function(st, use_spread = TRUE) {
     )
     # state of a fresh drive after a conversion
     y_new <- pmax(
-      feat[, "yardline_100"] - ifelse(feat[, "down"] == 4, feat[, "ydstogo"], 8),
+      feat[, "yardline_100"] -
+        ifelse(feat[, "down"] == 4, feat[, "ydstogo"], 8),
       1
     )
     cont_feat <- feat
@@ -396,17 +398,26 @@ ot_wp_states <- function(st, use_spread = TRUE) {
     # field goal (if that helps), otherwise it goes for it.
     sc <- secs[scrim]
     dd <- di[scrim]
-    pf <- if ("p_fg" %in% names(st)) st$p_fg[scrim] else rep(NA_real_, length(scrim))
+    pf <- if ("p_fg" %in% names(st)) {
+      st$p_fg[scrim]
+    } else {
+      rep(NA_real_, length(scrim))
+    }
     fourth <- feat[, "down"] == 4
     # a field goal helps when it wins or ties the game
-    kick <- fourth & !is.na(pf) & dd %in% c(1L, 2L) &
+    kick <- fourth &
+      !is.na(pf) &
+      dd %in% c(1L, 2L) &
       ((sc <= 45 & pf >= 0.1) | (p[scrim] == 2 & dd == 2L & pf >= 0.55))
     late_go <- fourth & sc <= 45 & !kick
     must <- (must | late_go) & !kick
     if (any(must)) {
       dpred$P[must, ] <- ot_apply_must_score(
-        dpred$P[must, , drop = FALSE], dpred$pun[must], cc[must],
-        dpred$r1[must], dpred$r2[must]
+        dpred$P[must, , drop = FALSE],
+        dpred$pun[must],
+        cc[must],
+        dpred$r1[must],
+        dpred$r2[must]
       )
     }
     if (any(kick)) {
@@ -424,8 +435,14 @@ ot_wp_states <- function(st, use_spread = TRUE) {
     if (k == "scrimmage") {
       ii <- match(i, scrim)
       out[i] <- ot_row_scrimmage(
-        dp, rule[i], p[i], di[i], secs[i], s[i],
-        dpred$P[ii, ], dpred$mu[ii, ]
+        dp,
+        rule[i],
+        p[i],
+        di[i],
+        secs[i],
+        s[i],
+        dpred$P[ii, ],
+        dpred$mu[ii, ]
       )
       # with a play or two left the offense can always kick instead
       pfi <- if ("p_fg" %in% names(st)) st$p_fg[i] else NA_real_
@@ -581,14 +598,22 @@ ot_build_dp <- function(rule, len, kick, models, starts) {
       cfeat[, "ydstogo"] <- 10
       r <- ot_collapse_preds(ot_predict_matrix(out_mod, cfeat))$P
       Pm[ty, si, ] <- colMeans(ot_apply_must_score(
-        pr, cp$pun, ot_go_avg, r[, 1], r[, 2]
+        pr,
+        cp$pun,
+        ot_go_avg,
+        r[, 1],
+        r[, 2]
       ))
-      PMF[[ty]][[si]] <- vapply(1:5, function(o) {
-        oh <- matrix(0, nrow(feat), 5)
-        oh[, o] <- 1
-        mu <- pmax(stats::predict(dur_mod, cbind(feat, oh)) - 5, 3)
-        sum(pr[, o] * mu) / sum(pr[, o])
-      }, numeric(1))
+      PMF[[ty]][[si]] <- vapply(
+        1:5,
+        function(o) {
+          oh <- matrix(0, nrow(feat), 5)
+          oh[, o] <- 1
+          mu <- pmax(stats::predict(dur_mod, cbind(feat, oh)) - 5, 3)
+          sum(pr[, o] * mu) / sum(pr[, o])
+        },
+        numeric(1)
+      )
     }
   }
 
