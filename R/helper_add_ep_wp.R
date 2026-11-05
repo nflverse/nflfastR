@@ -198,7 +198,8 @@ get_kickoff_values <- function(pbp_data) {
   # follows a score
   state_ep <- function(p, v, w) {
     td <- 6 + xp_make_prob
-    (p$Touchdown - p$Opp_Touchdown) * (td - v) +
+    (p$Touchdown - p$Opp_Touchdown) *
+      (td - v) +
       (p$Field_Goal - p$Opp_Field_Goal) * (3 - v) +
       (p$Safety - p$Opp_Safety) * 2 +
       p$Safety * w -
