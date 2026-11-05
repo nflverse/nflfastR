@@ -8,6 +8,7 @@
 
 - nflfastR stopped supporting the 1999 and 2000 seasons because of inconsistent data sources. Data is still available through `load_pbp()` but we will not fix any issues related to those old seasons anymore. It's possible to install nflfastR v5.2.0 (with `pak::pak("nflverse/nflfastR@v5.2.0")`) to parse those seasons if necessary. (#568)
 - nflfastR now loads raw play-by-play data from season based releases in the `nflverse/nflverse-pbp` GitHub repository. The legacy repository `nflverse/nflfastR-raw` is deprecated and won't update in future seasons. This means that previous nflfastR versions won't be able to download 2026+ seasons! (#589)
+- The EP model now values scoring plays by the points scored minus the expected points of the possession the other team gets afterwards, instead of a fixed 7, 3, and 2. A touchdown is worth `6 + 0.94 - V`, a field goal `3 - V`, and a safety `2 + W`, where `V` is the expected points of a kickoff touchback and `W` of a safety free kick, both evaluated at the current clock. The touchback spot now follows the kickoff rules by season (own 20 through 2015, own 25 for 2016-2023, own 30 in 2024, own 35 from 2025). This changes `ep`, `epa`, and all variables derived from them for all seasons. The EP model itself is unchanged.
 - The legacy player stats functions `calculate_player_stats*()` have been deprecated in 2024 with the release of nflfastR 5.0. They are now defunct and calling them will throw an error. (#590)
 
 ## Minor changes and improvements
