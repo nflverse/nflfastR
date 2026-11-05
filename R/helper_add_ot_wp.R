@@ -165,12 +165,25 @@ ot_q_interp <- function(Qm, s, tn) {
 }
 
 # Offenses hurry when the clock is short, so a possession takes a fraction of
-# its normal time. The ratios come from regulation two minute drills
-# (tied / trailing by up to 8, drives that scored), smoothed.
+# its normal time. A normal play takes about 38 seconds of game clock. The
+# ratios above two minutes come from regulation two minute drills (tied or
+# trailing by up to 8, drives that scored). Below that the drives we can
+# observe are only the ones that finished in time, which makes the ratio look
+# smaller than it is, so the curve levels off at a floor of about 6.5 seconds
+# per play (snap to whistle plus spikes and timeouts) instead of following the
+# data down.
+#
+# The chance that a possession finishes before the clock runs out must never
+# fall when there is more time. A possession needs `ratio * normal time`, so
+# that requires ratio / secs to never increase. All knots are chosen so that
+# this holds (it is checked in tests/testthat/test-ot_wp.R). Without it a team
+# with 30 seconds left looked more likely to score than the same team with 60
+# seconds left. Note that win probability itself is not monotone in the clock:
+# more time also gives the other team a chance to answer.
 ot_tempo <- function(secs) {
   stats::approx(
-    x = c(0, 30, 45, 75, 105, 150, 210, 270, 300),
-    y = c(0.06, 0.1, 0.18, 0.3, 0.4, 0.48, 0.65, 0.82, 1),
+    x = c(0, 45, 75, 105, 150, 210, 270, 330),
+    y = c(0.17, 0.17, 0.28, 0.39, 0.48, 0.65, 0.82, 1),
     xout = secs,
     rule = 2
   )$y

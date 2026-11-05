@@ -138,7 +138,7 @@ test_that("overtime: a short clock does not matter if in field goal range", {
     y = 20,
     down = 1
   )
-  expect_gt(in_range, 0.85)
+  expect_gt(in_range, 0.75)
 })
 
 test_that("overtime: situation matters", {
@@ -182,4 +182,30 @@ test_that("overtime: end of clock field goal attempts", {
     0.5 + 0.5 * 0.45,
     tolerance = 0.02
   )
+})
+
+test_that("overtime: tempo curve never makes finishing a possession harder with more time", {
+  secs <- seq(1, 900, by = 1)
+  ratio <- ot_tempo(secs) / secs
+  expect_true(all(diff(ratio) <= 1e-12))
+  # no hurry with lots of time, never faster than about 6.5 seconds per play
+  expect_equal(ot_tempo(600), 1)
+  expect_gte(min(ot_tempo(secs)), 0.17)
+})
+
+test_that("overtime: the team with the ball has a better shot with 60 than 30 seconds", {
+  # out of field goal range, tied. This did not hold with an overly aggressive
+  # tempo curve (30 seconds looked better than 60)
+  wp <- function(secs) {
+    ot_wp1(
+      season = 2025,
+      kind = "scrimmage",
+      phase = 3,
+      secs = secs,
+      y = 70,
+      down = 1
+    )
+  }
+  expect_gt(wp(60), wp(30))
+  expect_gt(wp(30), wp(10))
 })
