@@ -12,8 +12,8 @@
 
 ## Overtime win probability
 
-- Completely rebuilt the overtime win probability model (`wp`, `vegas_wp` and the derived `wpa`, `air_wpa`, `yac_wpa` variables for overtime plays). The previous model treated every overtime play like a next-score problem, ignored the clock and valued ties as losses for both teams. The new model predicts how the current drive ends and values each outcome with a dynamic program that knows the overtime rules in force for the game: sudden death (regular season through 2011, postseason through 2009), modified sudden death (regular season 2012-2024, postseason 2010-2021) and both teams being guaranteed a possession (postseason since 2022, regular season since 2025). It also knows the length of the period (15 minutes in the regular season through 2016, 10 minutes since 2017, 15 minute playoff periods) and that only regular season games can end in a tie, which is worth half a win. `wp` ignores the spread, `vegas_wp` includes it.
-- Win probability after a final overtime play that ends in a tie is now 0.5 for both teams (it used to be 0).
+- Completely rebuilt the overtime win probability model (`wp`, `vegas_wp` and the derived `wpa`, `air_wpa`, `yac_wpa` variables for overtime plays). The previous model treated every overtime play like a next-score problem, ignored the clock and valued ties as losses for both teams. The new model predicts how the current drive ends and values each outcome with a dynamic program that knows the overtime rules in force for the game: sudden death (regular season through 2011, postseason through 2009), modified sudden death (regular season 2012-2024, postseason 2010-2021) and both teams being guaranteed a possession (postseason since 2022, regular season since 2025). It also knows the length of the period (15 minutes in the regular season through 2016, 10 minutes since 2017, 15 minute playoff periods) and that only regular season games can end in a tie, which is worth half a win. `wp` ignores the spread, `vegas_wp` includes it. (#617)
+- Win probability after a final overtime play that ends in a tie is now 0.5 for both teams (it used to be 0). (#617)
 
 ## Minor changes and improvements
 
