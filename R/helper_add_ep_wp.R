@@ -1030,8 +1030,15 @@ add_wp_variables <- function(pbp_data) {
     dplyr::mutate(
       wp = OffWinProb,
       vegas_wp = OffWinProb_spread,
-      # for figuring out posteam on NA posteam lines
-      tmp_posteam = .data$posteam
+      # for figuring out posteam on NA wp lines. The team has to come from the
+      # same row that wp is filled from below. Non-plays (end of quarter notes,
+      # captains announcements, ...) can carry a stale posteam, which flipped
+      # home_wp for them when the next play belongs to the other team.
+      tmp_posteam = dplyr::if_else(
+        is.na(OffWinProb) | is.na(.data$posteam),
+        NA_character_,
+        .data$posteam
+      )
     ) |>
     tidyr::fill(
       .data$wp,
@@ -1140,13 +1147,19 @@ add_wp_variables <- function(pbp_data) {
 
   # Home and Away post:
 
+  # same team that wpa is relative to
+  post_team <- ifelse(
+    is.na(pbp_data$posteam),
+    NA_character_,
+    pbp_data$tmp_posteam
+  )
   pbp_data$home_wp_post <- ifelse(
-    pbp_data$posteam == pbp_data$home_team,
+    post_team == pbp_data$home_team,
     pbp_data$home_wp + pbp_data$wpa,
     pbp_data$home_wp - pbp_data$wpa
   )
   pbp_data$away_wp_post <- ifelse(
-    pbp_data$posteam == pbp_data$away_team,
+    post_team == pbp_data$away_team,
     pbp_data$away_wp + pbp_data$wpa,
     pbp_data$away_wp - pbp_data$wpa
   )
