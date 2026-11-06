@@ -23,7 +23,6 @@ parser_files <- c(
   "R/top-level_scraper.R",
   "R/helper_scrape_nfl.R",
   "R/helper_tidy_play_stats.R",
-  "R/patch_pbp.R",
   "R/helper_add_game_data.R",
   "R/helper_add_nflscrapr_mutations.R",
   "R/helper_add_ep_wp.R",
