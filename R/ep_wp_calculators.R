@@ -79,7 +79,7 @@ calculate_expected_points <- function(pbp_data) {
     get_kickoff_values(model_data),
     ep_continue_factors(model_data)
   ) |>
-    score_values()
+    score_values(model_data$season)
 
   preds <- preds |>
     dplyr::mutate(

@@ -136,8 +136,20 @@ predict_ep <- function(model_input) {
   return(preds)
 }
 
-# Probability of making an extra point, used for the value of a touchdown
-xp_make_prob <- 0.94
+# Probability of making an extra point, used for the value of a touchdown.
+# Extra points were about 99% through 2014 (before the move back to the 15 yard
+# line), about 94% from 2015 through 2022, and about 96% since.
+xp_make_prob <- function(season) {
+  dplyr::case_when(
+    is.na(season) ~ NA_real_,
+    season <= 2014 ~ 0.99,
+    season <= 2022 ~ 0.94,
+    TRUE ~ 0.96
+  )
+}
+
+# Probability of making a two point conversion
+two_point_make_prob <- 0.48
 
 # Where the receiving team's drive starts after a kickoff touchback, as
 # yardline_100, by season. Changes with kickoff rules:
@@ -255,6 +267,8 @@ get_kickoff_values <- function(pbp_data, kickoff_preds = NULL) {
   }
   k_opp <- state_preds(ko_yardline, flip = TRUE)
 
+  xp <- xp_make_prob(pbp_data$season[can_kick])
+
   # EP of a receiver's kickoff state given the common values of the possession
   # that follows a score: EP = a + b V + d W, where W = V + g, so that
   # V = (a + d g) / (1 - b - d)
@@ -264,7 +278,7 @@ get_kickoff_values <- function(pbp_data, kickoff_preds = NULL) {
     fg <- p$Field_Goal - p$Opp_Field_Goal
     sf <- p$Safety - p$Opp_Safety
     list(
-      a = td * (6 + xp_make_prob) + 3 * fg + 2 * sf,
+      a = td * (6 + xp) + 3 * fg + 2 * sf,
       b = -(td + fg),
       d = sf
     )
@@ -379,14 +393,15 @@ ep_continue_factors <- function(pbp_data) {
 
 # Value of each kind of score for the possession team, net of the possession
 # the other team gets afterwards. Input is get_kickoff_values() and
-# ep_continue_factors() together. When the score ends the game (c = 0) there
-# is no extra point either.
-score_values <- function(kv) {
+# ep_continue_factors() together, and the season (for the extra point). When
+# the score ends the game (c = 0) there is no extra point either.
+score_values <- function(kv, season) {
+  xp <- xp_make_prob(season)
   data.frame(
-    td_own = 6 + kv$c_td_own * (xp_make_prob - kv$v_opp),
+    td_own = 6 + kv$c_td_own * (xp - kv$v_opp),
     fg_own = 3 - kv$c_fg_own * kv$v_opp,
     saf_own = 2 + kv$c_saf_own * kv$w_own,
-    td_opp = -6 - kv$c_td_opp * (xp_make_prob - kv$v_own),
+    td_opp = -6 - kv$c_td_opp * (xp - kv$v_own),
     fg_opp = -3 + kv$c_fg_opp * kv$v_own,
     saf_opp = -2 - kv$c_saf_opp * kv$w_opp
   )
@@ -752,7 +767,7 @@ add_ep_variables <- function(pbp_data) {
   base_ep_preds$ExPoint_Prob[extrapoint_i] <- make_fg_prob[extrapoint_i]
 
   # Assign the TwoPoint_Prob with the historical success rate:
-  base_ep_preds$TwoPoint_Prob[twopoint_i] <- 0.4735
+  base_ep_preds$TwoPoint_Prob[twopoint_i] <- two_point_make_prob
 
   # ----------------------------------------------------------------------------------
   # Insert NAs for timeouts and end of play rows:
@@ -846,7 +861,7 @@ add_ep_variables <- function(pbp_data) {
     get_kickoff_values(pbp_data, kickoff_preds = kickoff_preds),
     ep_continue_factors(pbp_data)
   )
-  score_vals <- score_values(kick_values)
+  score_vals <- score_values(kick_values, pbp_data$season)
   names(kick_values) <- paste0("ep_", names(kick_values))
   names(score_vals) <- paste0("ep_sv_", names(score_vals))
   pbp_data <- cbind(pbp_data, kick_values, score_vals)
@@ -1754,7 +1769,7 @@ add_air_yac_ep_variables <- function(pbp_data) {
   snap_values$c_td_opp <- pass_pbp_data$ep_c_td_opp
   snap_values$c_fg_opp <- pass_pbp_data$ep_c_fg_opp
   snap_values$c_saf_opp <- pass_pbp_data$ep_c_saf_opp
-  snap_sv <- score_values(snap_values)
+  snap_sv <- score_values(snap_values, pass_pbp_data$season)
 
   # After a turnover on downs the other team has the ball in the air state
   turnover <- pass_pbp_data$Turnover_Ind %in% 1

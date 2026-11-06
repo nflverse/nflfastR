@@ -1,3 +1,11 @@
+test_that("extra point probability follows the seasons", {
+  expect_equal(
+    xp_make_prob(c(2009, 2014, 2015, 2022, 2023, 2026)),
+    c(0.99, 0.99, 0.94, 0.94, 0.96, 0.96)
+  )
+  expect_equal(xp_make_prob(NA_real_), NA_real_)
+})
+
 test_that("kickoff touchback spot follows the kickoff rules", {
   seasons <- c(2009, 2015, 2016, 2023, 2024, 2025, 2026)
   expect_equal(
@@ -73,17 +81,20 @@ test_that("score values are net of the other team's possession", {
     c_fg_opp = 1,
     c_saf_opp = 1
   )
-  sv <- score_values(kv)
-  expect_equal(sv$td_own, 6 + xp_make_prob - 1.0)
+  sv <- score_values(kv, 2020)
+  expect_equal(sv$td_own, 6 + 0.94 - 1.0)
   expect_equal(sv$fg_own, 3 - 1.0)
   expect_equal(sv$saf_own, 2 + 1.5)
-  expect_equal(sv$td_opp, -(6 + xp_make_prob - 1.2))
+  expect_equal(sv$td_opp, -(6 + 0.94 - 1.2))
   expect_equal(sv$fg_opp, -(3 - 1.2))
   expect_equal(sv$saf_opp, -(2 + 1.4))
   # a score that ends the game is worth its points: no extra point, no kickoff
   ends <- kv
   ends$c_td_own <- 0
-  expect_equal(score_values(ends)$td_own, 6)
+  expect_equal(score_values(ends, 2020)$td_own, 6)
+  # extra points were more reliable before 2015 and are a bit more since 2023
+  expect_equal(score_values(kv, 2010)$td_own, 6 + 0.99 - 1.0)
+  expect_equal(score_values(kv, 2024)$td_own, 6 + 0.96 - 1.0)
   # the other team's view is the same values with the roles swapped
   expect_equal(swap_score_values(swap_score_values(sv)), sv)
   expect_equal(swap_score_values(sv)$td_own, -sv$td_opp)

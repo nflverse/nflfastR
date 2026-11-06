@@ -81,7 +81,7 @@ add_xyac <- function(pbp, ...) {
         get_kickoff_values(catch_data),
         ep_continue_factors(pbp)[passes$index, ]
       ) |>
-        score_values()
+        score_values(passes$season)
       names(pass_score_values) <- paste0("sv_", names(pass_score_values))
       join_data <- cbind(join_data, pass_score_values)
 
