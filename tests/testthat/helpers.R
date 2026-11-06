@@ -100,3 +100,83 @@ relevant_variables <- function() {
     dplyr::starts_with("xyac")
   )
 }
+
+# Compare pbp against expected pbp and report differences per column.
+# Plays are matched by game_id and play_id. Doubles are compared with a small
+# relative tolerance, model outputs (see relevant_variables()) after rounding,
+# because model output differs slightly across platforms.
+expect_pbp_unchanged <- function(pbp, exp, tolerance = 1e-6, n_examples = 3) {
+  act <- strip_nflverse_attributes(pbp) |> round_double_to_digits()
+  exp <- strip_nflverse_attributes(exp) |> round_double_to_digits()
+  act <- tibble::as_tibble(act)
+  exp <- tibble::as_tibble(exp)
+  msg <- character()
+
+  # columns
+  missing_cols <- setdiff(names(exp), names(act))
+  new_cols <- setdiff(names(act), names(exp))
+  if (length(missing_cols)) {
+    msg <- c(msg, paste("Missing columns:", toString(missing_cols)))
+  }
+  if (length(new_cols)) {
+    msg <- c(msg, paste("New columns:", toString(new_cols)))
+  }
+  if (!identical(intersect(names(exp), names(act)), intersect(names(act), names(exp)))) {
+    msg <- c(msg, "Column order changed")
+  }
+
+  # plays
+  key <- function(df) paste(df$game_id, df$play_id)
+  k_act <- key(act)
+  k_exp <- key(exp)
+  if (anyDuplicated(k_act)) {
+    msg <- c(msg, paste("Duplicated plays:", toString(head(k_act[duplicated(k_act)], 10))))
+  }
+  missing_plays <- setdiff(k_exp, k_act)
+  new_plays <- setdiff(k_act, k_exp)
+  if (length(missing_plays)) {
+    msg <- c(msg, sprintf("%d missing plays, e.g. %s", length(missing_plays),
+                          toString(head(missing_plays, n_examples))))
+  }
+  if (length(new_plays)) {
+    msg <- c(msg, sprintf("%d new plays, e.g. %s", length(new_plays),
+                          toString(head(new_plays, n_examples))))
+  }
+
+  # values of common plays and columns
+  common <- intersect(k_exp, k_act)
+  a <- act[match(common, k_act), ]
+  e <- exp[match(common, k_exp), ]
+  for (col in intersect(names(exp), names(act))) {
+    x <- a[[col]]
+    y <- e[[col]]
+    if (!identical(class(x), class(y))) {
+      msg <- c(msg, sprintf("%s: type changed from %s to %s", col,
+                            toString(class(y)), toString(class(x))))
+      next
+    }
+    if (is.double(x)) {
+      diff <- xor(is.na(x), is.na(y)) |
+        (!is.na(x) & !is.na(y) & abs(x - y) > tolerance * pmax(1, abs(y)))
+    } else {
+      diff <- xor(is.na(x), is.na(y)) | (!is.na(x) & !is.na(y) & x != y)
+    }
+    diff[is.na(diff)] <- FALSE
+    if (any(diff)) {
+      i <- head(which(diff), n_examples)
+      examples <- sprintf("%s (expected %s, got %s)", common[i],
+                          format(y[i]), format(x[i]))
+      msg <- c(msg, sprintf(
+        "%s: %d values changed in %d games, e.g.\n    %s",
+        col, sum(diff), length(unique(a$game_id[diff])),
+        paste(examples, collapse = "\n    ")
+      ))
+    }
+  }
+
+  testthat::expect(
+    length(msg) == 0,
+    paste(c("pbp differs from expected output:", paste("-", msg)), collapse = "\n")
+  )
+  invisible(pbp)
+}

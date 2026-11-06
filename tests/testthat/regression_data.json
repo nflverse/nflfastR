@@ -1,0 +1,18 @@
+{
+  "repo": "nflverse/nflfastR",
+  "tag": "regression_tests",
+  "files": {
+    "raw": {
+      "name": "regression_raw_b6c0b4604e.tar",
+      "md5": "b6c0b4604e8cfd5543298faeac243293"
+    },
+    "games": {
+      "name": "regression_games_a05d31826e.rds",
+      "md5": "a05d31826eedd5ce450c123dce43a6b0"
+    },
+    "expected": {
+      "name": "regression_expected_e6fb5499f3.rds",
+      "md5": "e6fb5499f3392782c156cc2c9259fec9"
+    }
+  }
+}
