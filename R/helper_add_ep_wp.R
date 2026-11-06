@@ -1040,6 +1040,9 @@ add_wp_variables <- function(pbp_data) {
         .data$posteam
       )
     ) |>
+    # fill within a game so the last rows of a game can never pick up values
+    # from the first play of the next game when several games are processed
+    dplyr::group_by(.data$game_id) |>
     tidyr::fill(
       .data$wp,
       .direction = "up"
@@ -1052,7 +1055,6 @@ add_wp_variables <- function(pbp_data) {
       .data$tmp_posteam,
       .direction = "up"
     ) |>
-    dplyr::group_by(.data$game_id) |>
     dplyr::mutate(
       #add columns for home WP
       home_wp = dplyr::if_else(
