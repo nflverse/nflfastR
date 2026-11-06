@@ -28,3 +28,4 @@
 ^\.git-blame-ignore-revs$
 ^\.positai$
 ^\.claude$
+^AGENTS\.md$

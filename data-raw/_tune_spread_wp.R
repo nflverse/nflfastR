@@ -47,13 +47,13 @@ folds <- map(0:9, function(x) {
 })
 
 
-full_train = xgboost::xgb.DMatrix(
+full_train <- xgboost::xgb.DMatrix(
   model.matrix(~ . + 0, data = model_data |> select(-label, -season)),
   label = model_data$label
 )
 
 #params
-nrounds = 5000
+nrounds <- 5000
 
 
 # #################################################################################
@@ -121,9 +121,9 @@ get_metrics <- function(df, row = 1) {
   )
 
   output <- params
-  output$iter = wp_cv_model$best_iteration
-  output$logloss = wp_cv_model$evaluation_log[output$iter]$test_logloss_mean
-  output$error = wp_cv_model$evaluation_log[output$iter]$test_error_mean
+  output$iter <- wp_cv_model$best_iteration
+  output$logloss <- wp_cv_model$evaluation_log[output$iter]$test_logloss_mean
+  output$error <- wp_cv_model$evaluation_log[output$iter]$test_error_mean
 
   this_param <- bind_rows(output)
 

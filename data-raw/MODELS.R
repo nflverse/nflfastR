@@ -78,7 +78,7 @@ model_data <- pbp_data |>
     Total_W_Scaled
   )
 
-nrounds = 525
+nrounds <- 525
 params <-
   list(
     booster = "gbtree",
@@ -96,7 +96,7 @@ params <-
 model_data <- model_data |>
   mutate(label = as.numeric(label), label = label - 1)
 
-full_train = xgboost::xgb.DMatrix(
+full_train <- xgboost::xgb.DMatrix(
   model.matrix(~ . + 0, data = model_data |> select(-label, -Total_W_Scaled)),
   label = model_data$label,
   weight = model_data$Total_W_Scaled
@@ -140,7 +140,7 @@ model_vars <- pbp_data |>
   filter(valid_pass == 1) |>
   select(-valid_pass)
 
-nrounds = 560
+nrounds <- 560
 params <-
   list(
     booster = "gbtree",
@@ -155,7 +155,7 @@ params <-
     base_score = mean(model_vars$complete_pass)
   )
 
-full_train = xgboost::xgb.DMatrix(
+full_train <- xgboost::xgb.DMatrix(
   model.matrix(~ . + 0, data = model_vars |> dplyr::select(-complete_pass)),
   label = model_vars$complete_pass
 )
@@ -205,7 +205,7 @@ model_data <-
   )
 
 
-nrounds = 534
+nrounds <- 534
 params <-
   list(
     booster = "gbtree",
@@ -221,7 +221,7 @@ params <-
   )
 
 
-full_train = xgboost::xgb.DMatrix(
+full_train <- xgboost::xgb.DMatrix(
   model.matrix(~ . + 0, data = model_data |> select(-label)),
   label = model_data$label
 )
@@ -250,7 +250,7 @@ model_data <- model_data |>
     -spread_time
   )
 
-nrounds = 65
+nrounds <- 65
 params <-
   list(
     booster = "gbtree",
@@ -265,7 +265,7 @@ params <-
   )
 
 
-full_train = xgboost::xgb.DMatrix(
+full_train <- xgboost::xgb.DMatrix(
   model.matrix(~ . + 0, data = model_data |> select(-label)),
   label = model_data$label
 )
