@@ -148,8 +148,9 @@ xp_make_prob <- function(season) {
   )
 }
 
-# Probability of making a two point conversion
-two_point_make_prob <- 0.48
+# Probability of making a two point conversion: 0.49 for tries from the 2 yard
+# line since 2004, leaving out kneel downs and botched one point tries
+two_point_make_prob <- 0.49
 
 # Where the receiving team's drive starts after a kickoff touchback, as
 # yardline_100, by season. Changes with kickoff rules:
