@@ -203,7 +203,7 @@ add_xyac <- function(pbp, ...) {
           xyac_mean_yardage = (dplyr::first(.data$original_spot) -
             dplyr::first(.data$air_yards)) -
             sum(.data$wt_yardln),
-          xyac_median_yardage = max(.data$med),
+          xyac_median_yardage = as.numeric(max(.data$med)),
           xyac_success = sum((.data$ep > .data$original_ep) * .data$prob),
           xyac_fd = sum((.data$gain >= .data$original_ydstogo) * .data$prob)
         ) |>
