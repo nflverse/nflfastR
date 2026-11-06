@@ -42,6 +42,7 @@ must be present:
 \item{season}
 \item{home_team}
 \item{posteam}
+\item{location (optional: 'Neutral' for a neutral site game, in which both teams are treated as away teams)}
 \item{roof (coded as 'outdoors', 'dome', or 'open'/'closed'/NA (retractable))}
 \item{half_seconds_remaining}
 \item{yardline_100}

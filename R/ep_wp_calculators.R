@@ -19,6 +19,7 @@
 #' \item{season}
 #' \item{home_team}
 #' \item{posteam}
+#' \item{location (optional: 'Neutral' for a neutral site game, in which both teams are treated as away teams)}
 #' \item{roof (coded as 'outdoors', 'dome', or 'open'/'closed'/NA (retractable))}
 #' \item{half_seconds_remaining}
 #' \item{yardline_100}
@@ -69,7 +70,7 @@ calculate_expected_points <- function(pbp_data) {
       make_model_mutations()
   )
 
-  preds <- predict_ep(ep_model_select(model_data))
+  preds <- predict_ep(ep_model_input(model_data))
 
   # The value of the possession that follows a score depends on the clock, the
   # season (kickoff rules) and, in overtime, the rules (if the data has what
@@ -118,7 +119,7 @@ calculate_ep_probs <- function(pbp_data) {
       make_model_mutations()
   )
 
-  predict_ep(ep_model_select(model_data)) |>
+  predict_ep(ep_model_input(model_data)) |>
     dplyr::rename(
       td_prob = "Touchdown",
       opp_td_prob = "Opp_Touchdown",

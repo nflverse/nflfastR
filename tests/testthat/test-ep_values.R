@@ -38,8 +38,11 @@ test_that("a kickoff follows an overtime score only if the game goes on", {
   expect_equal(ep_ot_continues("MSD", 3, 0, 3), 0)
   # both teams get a possession
   expect_equal(ep_ot_continues("BOTH", 1, 0, c(7, 3, 2)), c(1, 1, 0))
-  expect_equal(ep_ot_continues("BOTH", 2, -7, c(7, 3)), c(1, 1))
+  expect_equal(ep_ot_continues("BOTH", 2, -7, 7), 1)
   expect_equal(ep_ot_continues("BOTH", 2, -3, c(7, 3)), c(0, 1))
+  # a second possession score that still trails ends the game, because both
+  # teams have had their possession (a field goal down seven)
+  expect_equal(ep_ot_continues("BOTH", 2, -7, 3), 0)
   # unknown possession or score differential: assume the game goes on
   expect_equal(ep_ot_continues("BOTH", NA, 0, 7), 1)
 })
@@ -172,7 +175,7 @@ test_that("kickoff values solve their own equations", {
     "home_team" = "SEA",
     "posteam" = c("SEA", "DEN", "SEA", "DEN"),
     "roof" = "outdoors",
-    "half_seconds_remaining" = c(1500, 900, 1500, 300),
+    "half_seconds_remaining" = c(1500, 900, 1500, 600),
     "yardline_100" = 75,
     "down" = 1,
     "ydstogo" = 10,
@@ -182,7 +185,8 @@ test_that("kickoff values solve their own equations", {
     make_model_mutations()
   kv <- get_kickoff_values(data)
 
-  # the free kick is worth the kickoff plus the extra field position
+  # the free kick is worth the kickoff plus the extra field position (when
+  # more than 5 minutes are left in the half)
   v <- kv$v
   yards <- kickoff_touchback_yardline(data$season) - safety_free_kick_yardline
   expect_equal(kv$w, v + safety_free_kick_ep_per_yard * yards)
@@ -248,4 +252,77 @@ test_that("expected points at the kickoff state match the kickoff value", {
     sv
   )
   expect_equal(ep, kv$v)
+})
+
+test_that("calculate_expected_points treats neutral sites as away games", {
+  skip_on_cran()
+  data <- tibble::tibble(
+    "season" = 2025,
+    "home_team" = "SEA",
+    "posteam" = c("SEA", "SEA", "DEN"),
+    "location" = c("Neutral", "Home", "Home"),
+    "roof" = "outdoors",
+    "half_seconds_remaining" = 900,
+    "yardline_100" = 65,
+    "down" = 1,
+    "ydstogo" = 10,
+    "posteam_timeouts_remaining" = 3,
+    "defteam_timeouts_remaining" = 3
+  )
+  ep <- calculate_expected_points(data)
+  # the "home" team at a neutral site has the probabilities of a road team,
+  # and not those of a home team
+  expect_equal(ep$td_prob[1], ep$td_prob[3])
+  expect_false(isTRUE(all.equal(ep$td_prob[1], ep$td_prob[2])))
+})
+
+test_that("the free kick value comes from the model late in the half", {
+  skip_on_cran()
+  data <- tibble::tibble(
+    "season" = c(2025, 2025, 2025, 2019),
+    "home_team" = "SEA",
+    "posteam" = c("SEA", "DEN", "SEA", "SEA"),
+    "roof" = "outdoors",
+    "half_seconds_remaining" = c(300, 60, 1, 10),
+    "yardline_100" = 75,
+    "down" = 1,
+    "ydstogo" = 10,
+    "posteam_timeouts_remaining" = 3,
+    "defteam_timeouts_remaining" = 3
+  ) |>
+    make_model_mutations()
+  kv <- get_kickoff_values(data)
+
+  state <- function(yardline_100, flip) {
+    d <- data
+    d$yardline_100 <- yardline_100
+    d$down1 <- 1
+    d$down2 <- 0
+    d$down3 <- 0
+    d$down4 <- 0
+    if (flip) {
+      d$home <- 1 - d$home
+    }
+    get_preds(d)
+  }
+  coefs <- function(yardline_100) {
+    p <- (state(yardline_100, FALSE) + state(yardline_100, TRUE)) / 2
+    td <- p$Touchdown - p$Opp_Touchdown
+    fg <- p$Field_Goal - p$Opp_Field_Goal
+    sf <- p$Safety - p$Opp_Safety
+    list(
+      a = td * (6 + xp_make_prob(data$season)) + 3 * fg + 2 * sf,
+      b = -(td + fg),
+      d = sf
+    )
+  }
+  k <- coefs(kickoff_touchback_yardline(data$season))
+  f <- coefs(safety_free_kick_yardline)
+
+  # V and W solve the equations of the kickoff state and the free kick state
+  expect_equal(kv$v, k$a + k$b * kv$v + k$d * kv$w)
+  expect_equal(kv$w, f$a + f$b * kv$v + f$d * kv$w)
+  # with a second left the free kick is worth little, not the kickoff value
+  # plus the extra field position of the shortcut
+  expect_lt(kv$w[3] - kv$v[3], 0.5 * safety_free_kick_ep_per_yard * 4)
 })
