@@ -6,13 +6,13 @@ test_that("the conversion value follows the seasons", {
   expect_equal(conversion_value(NA_real_), NA_real_)
 })
 
-test_that("kickoff touchback spot follows the kickoff rules", {
+test_that("the kickoff start spot follows the kickoff rules", {
   seasons <- c(2009, 2015, 2016, 2023, 2024, 2025, 2026)
   expect_equal(
-    kickoff_touchback_yardline(seasons),
-    c(80, 80, 75, 75, 70, 65, 65)
+    kickoff_start_yardline(seasons),
+    c(80, 80, 75, 75, 70, 69, 69)
   )
-  expect_equal(kickoff_touchback_yardline(NA_real_), NA_real_)
+  expect_equal(kickoff_start_yardline(NA_real_), NA_real_)
 })
 
 test_that("overtime rules are inferred from season and game id", {
@@ -136,8 +136,8 @@ test_that("kickoff values come from the clock, season and teams", {
   # much less value with 20 seconds left than with 15 minutes left
   expect_lt(kv$v[5], 0.5 * kv$v[3])
   expect_gt(kv$v[3], 0)
-  # a touchback further from the goal line is worth more: own 20 (2015) <
-  # own 25 (2018) < own 35 (2025)
+  # a start further from the goal line is worth more: own 20 (2015) <
+  # own 25 (2018) < own 31 (2025)
   expect_lt(kv$v[1], kv$v[2])
   expect_lt(kv$v[2], kv$v[3])
   # the free kick spot is better than the touchback
@@ -149,7 +149,7 @@ test_that("kickoff values come from the clock, season and teams", {
   # reusing the predictions for the possession team's kickoff state gives the
   # same values
   ko <- data
-  ko$yardline_100 <- kickoff_touchback_yardline(ko$season)
+  ko$yardline_100 <- kickoff_start_yardline(ko$season)
   ko$down1 <- 1
   ko$down2 <- 0
   ko$down3 <- 0
@@ -200,12 +200,12 @@ test_that("kickoff values solve their own equations", {
   # the free kick is worth the kickoff plus the extra field position (when
   # more than 5 minutes are left in the half)
   v <- kv$v
-  yards <- kickoff_touchback_yardline(data$season) - safety_free_kick_yardline
+  yards <- kickoff_start_yardline(data$season) - safety_free_kick_yardline
   expect_equal(kv$w, v + safety_free_kick_ep_per_yard * yards)
 
   # V = a + b V + d W on the average of the two teams' kickoff states
   ko <- data
-  ko$yardline_100 <- kickoff_touchback_yardline(ko$season)
+  ko$yardline_100 <- kickoff_start_yardline(ko$season)
   ko$down1 <- 1
   ko$down2 <- 0
   ko$down3 <- 0
@@ -244,7 +244,7 @@ test_that("expected points at the kickoff state match the kickoff value", {
   kv <- get_kickoff_values(data)
 
   ko <- data
-  ko$yardline_100 <- kickoff_touchback_yardline(ko$season)
+  ko$yardline_100 <- kickoff_start_yardline(ko$season)
   ko$down1 <- 1
   ko$down2 <- 0
   ko$down3 <- 0
@@ -328,7 +328,7 @@ test_that("the exact free kick value solves the equations of both states", {
       d = sf
     )
   }
-  k <- coefs(kickoff_touchback_yardline(data$season))
+  k <- coefs(kickoff_start_yardline(data$season))
   f <- coefs(safety_free_kick_yardline)
 
   # V and W solve the equations of the kickoff state and the free kick state

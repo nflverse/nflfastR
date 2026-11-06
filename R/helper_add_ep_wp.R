@@ -158,16 +158,19 @@ conversion_value <- function(season) {
 # line since 2004, leaving out kneel downs and botched one point tries
 two_point_make_prob <- 0.49
 
-# Where the receiving team's drive starts after a kickoff touchback, as
-# yardline_100, by season. Changes with kickoff rules:
-#   <= 2015: own 20, 2016-2023: own 25, 2024: own 30, 2025+: own 35
-kickoff_touchback_yardline <- function(season) {
+# Where the receiving team's drive starts after a kickoff, as yardline_100, by
+# season. Through 2024 this is the touchback spot, which changes with the
+# kickoff rules (own 20 through 2015, own 25 for 2016-2023, own 30 in 2024) and
+# is within 0.7 yards of the average start. Since 2025 most kicks are returned
+# (17-21% are touchbacks, to the own 35), so the average start is used instead:
+# own 31 (yardline_100 69.4 in 2025 and 2026, 4.4 yards worse than the touchback)
+kickoff_start_yardline <- function(season) {
   dplyr::case_when(
     is.na(season) ~ NA_real_,
     season < 2016 ~ 80,
     season < 2024 ~ 75,
     season == 2024 ~ 70,
-    TRUE ~ 65
+    TRUE ~ 69
   )
 }
 
@@ -178,7 +181,7 @@ kickoff_touchback_yardline <- function(season) {
 # after 2016), so own 39 is used
 safety_free_kick_yardline <- 61
 
-# Expected points per yard of field position between a kickoff touchback and
+# Expected points per yard of field position between a kickoff start and
 # the safety free kick spot. The EP model gives about 0.05 points per yard
 # between those two states, so the value of a free kick is the kickoff value
 # plus this slope times the yards. This saves model predictions on the rows
@@ -192,7 +195,7 @@ safety_free_kick_ep_per_yard <- 0.05
 # points of the opponent's kickoff possession at the current clock. A safety
 # gives the scoring team the ball on a free kick, so it is worth 2 + W.
 #
-# V is the EP of 1st and 10 at the kickoff touchback spot and W is the EP of
+# V is the EP of 1st and 10 at the kickoff start spot and W is the EP of
 # 1st and 10 at the safety free kick spot. These come from the same EP model,
 # whose scoring values depend on V and W themselves, which is a pair of linear
 # equations that is solved exactly. It is solved on probabilities averaged over
@@ -212,7 +215,7 @@ safety_free_kick_ep_per_yard <- 0.05
 # when no kickoff or free kick can follow: end of half or game.
 #
 # Model predictions are the expensive part, so this needs as few as possible:
-# `kickoff_preds` are the predictions for the possession team at the touchback
+# `kickoff_preds` are the predictions for the possession team at the kickoff start
 # spot if the caller already has them, so the only new prediction is the other
 # team's kickoff state. The free kick (safety) value is the kickoff value
 # plus the EP of the extra field position (see safety_free_kick_ep_per_yard),
@@ -273,7 +276,7 @@ get_kickoff_values <- function(
     predict_ep(ep_model_select(d))
   }
 
-  ko_yardline <- kickoff_touchback_yardline(pbp_data$season[can_kick])
+  ko_yardline <- kickoff_start_yardline(pbp_data$season[can_kick])
   k_own <- if (is.null(kickoff_preds)) {
     state_preds(ko_yardline, flip = FALSE)
   } else {
@@ -716,13 +719,13 @@ add_ep_variables <- function(pbp_data) {
 
   # ----------------------------------------------------------------------------------
   # ---- special case: deal with kickoffs
-  # Calculate the EP for receiving a touchback (from the point of view for recieving team)
+  # Calculate the EP for receiving a kickoff (from the point of view for recieving team)
   # and update the columns for Kickoff plays:
   kickoff_data <- pbp_data
 
-  # Change the yard line to the touchback spot, which depends on the kickoff
-  # rules in the season (see kickoff_touchback_yardline())
-  kickoff_data$yardline_100 <- kickoff_touchback_yardline(kickoff_data$season)
+  # Change the yard line to the start spot, which depends on the kickoff rules
+  # in the season (see kickoff_start_yardline())
+  kickoff_data$yardline_100 <- kickoff_start_yardline(kickoff_data$season)
   # Now first down:
   kickoff_data$down1 <- rep(1, nrow(pbp_data))
   kickoff_data$down2 <- rep(0, nrow(pbp_data))
@@ -761,7 +764,7 @@ add_ep_variables <- function(pbp_data) {
   base_ep_preds[kickoff_i, "No_Score"] <- kickoff_preds[kickoff_i, "No_Score"]
 
   # The free kick after a safety starts the scoring team's drive further up the
-  # field than a kickoff touchback does. The safety was valued with this spot
+  # field than a kickoff start does. The safety was valued with this spot
   # (see safety_free_kick_yardline), so the free kick has to start from it too
   game_row <- seq_len(nrow(pbp_data))
   is_safety <- pbp_data$safety %in% 1
@@ -782,7 +785,7 @@ add_ep_variables <- function(pbp_data) {
   }
 
   # A kickoff from midfield (after a penalty) that is a touchback is spotted at
-  # the receiving team's 20 since 2026, not at the usual touchback spot. This is
+  # the receiving team's 20 since 2026, not at the usual start spot. This is
   # only known on the actual kickoff, and not for a kickoff in the future
   midfield_i <- intersect(
     kickoff_i,
