@@ -1,46 +1,54 @@
 test_that("build_nflfastR_pbp works (local data)", {
-  # This test used to run on CRAN but their changes to env vars which cause
-  # check NOTES for multi-threading forced us to skip on cran. It uses locally
-  # available data so it can't break because of failed downloads
-  # UPDATE Feb 2026: we'll try testing on CRAN again
-  # skip_on_cran()
-
-  pbp <- load_test_pbp(dir = test_dir)
+  # Uses locally available raw data, so it can't break because of failed
+  # downloads. It only runs on CRAN, where the regression games test below is
+  # skipped. Everywhere else the regression games test covers it.
+  skip_if_not(is_on_cran(), "runs only on CRAN")
+  pbp <- load_test_pbp()
   expect_s3_class(pbp, "nflverse_data")
-  pbp <- strip_nflverse_attributes(pbp) |>
-    # we gotta round floating point numbers because of different model output
-    # across platforms
-    round_double_to_digits()
-  exp <- load_expectation("pbp")
-  expect_equal(pbp, exp)
+  expect_pbp_unchanged(pbp, load_expected_pbp(), diff_name = "pbp_local")
 })
 
 test_that("build_nflfastR_pbp works (outside CRAN)", {
-  # this test is almost the same as above. However, it requires data download
-  # and will therefore not run on CRAN but everywhere else.
+  # Same as above, but with downloaded raw data
   skip_on_cran()
-
   skip_if_offline("github.com")
+
   pbp <- load_test_pbp(dir = NULL)
-  pbp <- strip_nflverse_attributes(pbp) |>
-    # we gotta round floating point numbers because of different model output
-    # across platforms
-    round_double_to_digits()
-  exp <- load_expectation("pbp")
-  expect_equal(pbp, exp)
+  expect_pbp_unchanged(pbp, load_expected_pbp(), diff_name = "pbp_download")
 })
 
 test_that("default_play is synced with build_nflfastR_pbp", {
-  # `default_play` is a table of 1 row that is supposed to match the
-  # output structure of build_nflfastR_pbp. It is used to initialize the
-  # data table in pbp DBs.
-  # This test makes sure that it is synced with build_nflfastR_pbp
+  # `default_play` is a table of 1 row that initializes the data table in pbp
+  # DBs, so it must match the column names and types of build_nflfastR_pbp()
+  pbp <- strip_nflverse_attributes(load_test_pbp())
+  expect_identical(
+    vapply(default_play, class, character(1)),
+    vapply(pbp, class, character(1))
+  )
+})
 
-  exp <- load_expectation("pbp")
+test_that("build_nflfastR_pbp output is unchanged for the regression games", {
+  # The regression games are ~100 games picked to cover (almost) every
+  # condition in the parser, see data-raw/test_game_selection/. Their raw files
+  # and expected output are downloaded from a GitHub release (see
+  # helper-regression.R), so the test is skipped on CRAN and offline.
+  # For what to do when this test fails and how to update the expected
+  # output, see data-raw/test_game_selection/README.md
+  skip_on_cran()
+  skip_if_offline("github.com")
+  skip_if_not_installed("gsisdecoder")
 
-  names_and_types_exp <- vapply(exp, class, FUN.VALUE = character(1L))
-  names_and_types_def <- vapply(default_play, class, FUN.VALUE = character(1L))
+  reg <- regression_data(test_path("regression_data.dcf"))
+  skip_if(is.null(reg), "download of regression test data failed")
 
-  expect_identical(names_and_types_def, names_and_types_exp)
-  expect_snapshot_value(names_and_types_def, style = "json2")
+  exp <- readRDS(reg$expected)
+  pbp <- build_nflfastR_pbp(
+    unique(exp$game_id),
+    dir = reg$raw_dir,
+    games = readRDS(reg$games),
+    rules = FALSE
+  ) |>
+    suppressMessages()
+
+  expect_pbp_unchanged(pbp, exp, diff_name = "regression")
 })
