@@ -13,7 +13,11 @@
 #' team gets afterwards (a kickoff touchback, which depends on the season and
 #' the clock). The clock is `half_seconds_remaining`, which is all that is
 #' needed, since it is equivalent to the quarter and the time remaining in the
-#' quarter (a half is two quarters). The following columns
+#' quarter (a half is two quarters). In overtime, the value of a score also
+#' depends on the overtime rules and the possession, which is used if the data
+#' has `qtr`, `game_id`, `drive` and `score_differential`. The possessions are
+#' counted from the lowest `drive` of each overtime game, so all of the
+#' overtime plays of a game from its start have to be in the data. The following columns
 #' must be present:
 #' \itemize{
 #' \item{season}

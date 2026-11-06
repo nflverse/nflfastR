@@ -136,23 +136,22 @@ predict_ep <- function(model_input) {
   return(preds)
 }
 
-# Probability of making an extra point, used for the value of a touchdown.
-# Extra points were about 99% through 2014 (before the move back to the 15 yard
-# line), about 94% from 2015 through 2022, and about 96% since.
-xp_make_prob <- function(season) {
+# The expected net points of the conversion after a touchdown, before the team
+# chooses between a kick and a two point try, used in the value of a touchdown.
+# This is not the probability of making a kicked extra point: it is the average
+# over all conversions after touchdowns 2004-2025 (kicks and two point tries,
+# including botched ones and defensive returns), which was 0.991 through 2014
+# (before the move back to the 15 yard line), 0.941 from 2015 through 2022, and
+# 0.956 since (the kick success rates were 0.990, 0.940 and 0.959). The
+# differences between the kick or two point try that was chosen and this are in
+# the conversion's EPA.
+conversion_value <- function(season) {
   dplyr::case_when(
     is.na(season) ~ NA_real_,
     season <= 2014 ~ 0.99,
     season <= 2022 ~ 0.94,
     TRUE ~ 0.96
   )
-}
-
-# Where an extra point is usually kicked from, as yardline_100: the 2 yard line
-# through 2014 and the 15 yard line since. One that starts elsewhere was moved
-# by a penalty
-xp_standard_yardline <- function(season) {
-  dplyr::if_else(season <= 2014, 2, 15)
 }
 
 # Probability of making a two point conversion: 0.49 for tries from the 2 yard
@@ -181,12 +180,11 @@ safety_free_kick_yardline <- 61
 
 # Expected points per yard of field position between a kickoff touchback and
 # the safety free kick spot. The EP model gives about 0.05 points per yard
-# between those two states in every era while more than 5 minutes are left in
-# the half, so then the value of a free kick is the kickoff value plus this
-# slope times the yards. This saves a model prediction because free kicks
-# follow safeties, which are rare (the largest difference in EP from predicting
-# it was below 0.01). The difference changes quickly in the last 5 minutes, so
-# then the value comes from the model (see get_kickoff_values()).
+# between those two states, so the value of a free kick is the kickoff value
+# plus this slope times the yards. This saves model predictions on the rows
+# where a safety is unlikely, which it can get wrong by up to 0.24 points
+# (older seasons, where the yards are the most), so the rows where a safety is
+# likely or is the play get the value from the model (see get_kickoff_values()).
 safety_free_kick_ep_per_yard <- 0.05
 
 # The value of a scoring event is not only its points: the other team gets the
@@ -218,13 +216,15 @@ safety_free_kick_ep_per_yard <- 0.05
 # spot if the caller already has them, so the only new prediction is the other
 # team's kickoff state. The free kick (safety) value is the kickoff value
 # plus the EP of the extra field position (see safety_free_kick_ep_per_yard),
-# except in the last 5 minutes of a half, where it comes from the model (two
-# more predictions on those rows only). Only rows that can have a kickoff after
-# a score are predicted, and the model inputs are prepared once.
+# except for the rows flagged in `exact_w` (where a safety is likely or is the
+# play), where it comes from the model (two more predictions on those rows
+# only). Only rows that can have a kickoff after a score are predicted, and the
+# model inputs are prepared once.
 #
 # Returns V and W as columns `v` and `w`
-get_kickoff_values <- function(pbp_data, kickoff_preds = NULL) {
+get_kickoff_values <- function(pbp_data, kickoff_preds = NULL, exact_w = FALSE) {
   n <- nrow(pbp_data)
+  exact_w <- rep_len(exact_w, n)
 
   # no kickoff possible at the end of the half (or overtime period) or game.
   # Whether a score in overtime ends the game is handled by
@@ -278,7 +278,7 @@ get_kickoff_values <- function(pbp_data, kickoff_preds = NULL) {
   k_opp <- state_preds(ko_yardline, flip = TRUE)
 
   # EP of a state = a + b V + d W on the average of the two teams' states
-  xp <- xp_make_prob(pbp_data$season[can_kick])
+  xp <- conversion_value(pbp_data$season[can_kick])
   coefs <- function(p_own, p_opp, xp) {
     p <- (p_own + p_opp) / 2
     td <- p$Touchdown - p$Opp_Touchdown
@@ -293,12 +293,12 @@ get_kickoff_values <- function(pbp_data, kickoff_preds = NULL) {
   v <- (k$a + k$d * g) / (1 - k$b - k$d)
   w <- v + g
 
-  # The difference between W and V is about the same until 5 minutes are left
-  # in the half and then changes quickly (it is 0.46 with a minute left in
-  # 2025 and 0.09 with a second left, against 0.25 from the shortcut), so for
-  # those rows W comes from the model: V and W are the solution of the two
-  # linear equations for the kickoff state and the free kick state
-  late <- which(pbp_data$half_seconds_remaining[can_kick] <= 300)
+  # The difference between W and V depends on the season and the clock, and the
+  # shortcut can be off by 0.24 points in the early 2000s, so for the rows where
+  # W matters (`exact_w`: a safety is likely or is the play) W comes from the
+  # model: V and W are the solution of the two linear equations for the
+  # kickoff state and the free kick state
+  late <- which(exact_w[can_kick])
   if (length(late) > 0) {
     fk_yardline <- rep(safety_free_kick_yardline, length(late))
     f <- coefs(
@@ -365,22 +365,42 @@ ep_ot_continues <- function(rule, possession, diff, pts) {
   )
 }
 
+# The touchdown cases in overtime: does a kickoff follow (cont), is there a
+# conversion (conv) and is it a two point try that is certain to be attempted
+# (two). A touchdown counts as 7 points to see whether it ends the game. A
+# conversion follows unless the touchdown ends the game. In the era where both
+# teams get a possession, a team that scores a touchdown on the second
+# possession and is down 1 after it (the other team scored a touchdown and made
+# the extra point) always goes for two, since a successful try wins the game and
+# a kick only ties it. The game ends after the try either way.
+ep_ot_td <- function(rule, possession, diff) {
+  cont <- ep_ot_continues(rule, possession, diff, 7)
+  two <- rule == "BOTH" & possession %in% 2 & diff %in% -7
+  cont[two] <- 0
+  list(cont = cont, conv = as.numeric(cont == 1 | two), two = two)
+}
+
 # Factors between 0 and 1 for the value of the possession that follows each
 # kind of score (1 everywhere in regulation, and if the data does not have what
-# is needed to tell overtime possessions apart). Scores by the opponent are
-# assumed to happen in the next possession.
+# is needed to tell overtime possessions apart), whether a conversion follows a
+# touchdown (k_td_*) and whether it is certain to be a two point try (two_td_*).
+# Scores by the opponent are assumed to happen in the next possession.
+# two_try is true for a conversion that is that two point try.
 ep_continue_factors <- function(pbp_data) {
   n <- nrow(pbp_data)
-  cols <- c(
-    "c_td_own",
-    "c_fg_own",
-    "c_saf_own",
-    "c_td_opp",
-    "c_fg_opp",
-    "c_saf_opp"
+  out <- data.frame(
+    c_td_own = rep(1, n),
+    c_fg_own = rep(1, n),
+    c_saf_own = rep(1, n),
+    c_td_opp = rep(1, n),
+    c_fg_opp = rep(1, n),
+    c_saf_opp = rep(1, n),
+    k_td_own = rep(1, n),
+    k_td_opp = rep(1, n),
+    two_td_own = rep(FALSE, n),
+    two_td_opp = rep(FALSE, n),
+    two_try = rep(FALSE, n)
   )
-  out <- as.data.frame(matrix(1, nrow = n, ncol = length(cols)))
-  names(out) <- cols
 
   needed <- c("qtr", "game_id", "drive", "score_differential", "season")
   if (!all(needed %in% names(pbp_data))) {
@@ -399,27 +419,40 @@ ep_continue_factors <- function(pbp_data) {
   diff <- pbp_data$score_differential[ot]
   next_possession <- pmin(possession + 1, 3)
 
-  out$c_td_own[ot] <- ep_ot_continues(rule, possession, diff, 7)
+  own_td <- ep_ot_td(rule, possession, diff)
+  opp_td <- ep_ot_td(rule, next_possession, -diff)
+  out$c_td_own[ot] <- own_td$cont
+  out$k_td_own[ot] <- own_td$conv
+  out$two_td_own[ot] <- own_td$two
+  out$c_td_opp[ot] <- opp_td$cont
+  out$k_td_opp[ot] <- opp_td$conv
+  out$two_td_opp[ot] <- opp_td$two
   out$c_fg_own[ot] <- ep_ot_continues(rule, possession, diff, 3)
   out$c_saf_own[ot] <- ep_ot_continues(rule, possession, diff, 2)
-  out$c_td_opp[ot] <- ep_ot_continues(rule, next_possession, -diff, 7)
   out$c_fg_opp[ot] <- ep_ot_continues(rule, next_possession, -diff, 3)
   out$c_saf_opp[ot] <- ep_ot_continues(rule, next_possession, -diff, 2)
+  # the conversion after that touchdown: the team is down 1 on the second
+  # possession
+  out$two_try[ot] <- rule == "BOTH" & possession %in% 2 & diff %in% -1
 
   out
 }
 
 # Value of each kind of score for the possession team, net of the possession
 # the other team gets afterwards. Input is get_kickoff_values() and
-# ep_continue_factors() together, and the season (for the extra point). When
-# the score ends the game (c = 0) there is no extra point either.
+# ep_continue_factors() together, and the season (for the conversion). A
+# touchdown includes the value of the conversion that follows it (none if the
+# touchdown ends the game).
 score_values <- function(kv, season) {
-  xp <- xp_make_prob(season)
+  conv <- conversion_value(season)
+  two <- 2 * two_point_make_prob
+  conv_own <- dplyr::if_else(kv$two_td_own, two, conv)
+  conv_opp <- dplyr::if_else(kv$two_td_opp, two, conv)
   data.frame(
-    td_own = 6 + kv$c_td_own * (xp - kv$v),
+    td_own = 6 + kv$k_td_own * conv_own - kv$c_td_own * kv$v,
     fg_own = 3 - kv$c_fg_own * kv$v,
     saf_own = 2 + kv$c_saf_own * kv$w,
-    td_opp = -6 - kv$c_td_opp * (xp - kv$v),
+    td_opp = -6 - (kv$k_td_opp * conv_opp - kv$c_td_opp * kv$v),
     fg_opp = -3 + kv$c_fg_opp * kv$v,
     saf_opp = -2 - kv$c_saf_opp * kv$w
   )
@@ -744,6 +777,20 @@ add_ep_variables <- function(pbp_data) {
     base_ep_preds[free_kick_i, ] <- free_kick_preds[, names(base_ep_preds)]
   }
 
+  # A kickoff from midfield (after a penalty) that is a touchback is spotted at
+  # the receiving team's 20 since 2026, not at the usual touchback spot. This is
+  # only known on the actual kickoff, and not for a kickoff in the future
+  midfield_i <- intersect(
+    kickoff_i,
+    which(pbp_data$season >= 2026 & pbp_data$yardline_100 == 50)
+  )
+  if (length(midfield_i) > 0) {
+    midfield_data <- kickoff_data[midfield_i, ]
+    midfield_data$yardline_100 <- 80
+    midfield_preds <- get_preds(midfield_data)
+    base_ep_preds[midfield_i, ] <- midfield_preds[, names(base_ep_preds)]
+  }
+
   # ----------------------------------------------------------------------------------
   # Insert probabilities of 0 for everything but No_Score for QB Kneels that
   # occur on the possession team's side of the field:
@@ -816,19 +863,8 @@ add_ep_variables <- function(pbp_data) {
           dplyr::lead(pbp_data$kickoff_attempt) == 0))
   )
 
-  # Assign the make_fg_probs of the extra-point PATs. A normal extra point (from
-  # the usual spot) uses the season's extra point probability instead, which is
-  # the one in the value of a touchdown, so that a touchdown and its extra point
-  # add up. One that was moved by a penalty keeps the field goal model's
-  # probability for its distance
+  # Assign the make_fg_probs of the extra-point PATs:
   base_ep_preds$ExPoint_Prob[extrapoint_i] <- make_fg_prob[extrapoint_i]
-  normal_xp_i <- extrapoint_i[which(
-    pbp_data$yardline_100[extrapoint_i] ==
-      xp_standard_yardline(pbp_data$season[extrapoint_i])
-  )]
-  base_ep_preds$ExPoint_Prob[normal_xp_i] <- xp_make_prob(
-    pbp_data$season[normal_xp_i]
-  )
 
   # Assign the TwoPoint_Prob with the historical success rate:
   base_ep_preds$TwoPoint_Prob[twopoint_i] <- two_point_make_prob
@@ -921,8 +957,17 @@ add_ep_variables <- function(pbp_data) {
   # Value of the kickoff (or safety free kick) possession that follows a score
   # (the columns are kept for add_air_yac_ep_variables() and removed by
   # select_variables() at the end of the pipeline)
+  # The free kick value (W) is exact where a safety is likely (more than 1% of
+  # the next score) or is the play. Elsewhere the shortcut is off by at most
+  # 0.24 points, which is less than 0.003 points in EP at that probability
   kick_values <- cbind(
-    get_kickoff_values(pbp_data, kickoff_preds = kickoff_preds),
+    get_kickoff_values(
+      pbp_data,
+      kickoff_preds = kickoff_preds,
+      exact_w = (pbp_data$Safety_Prob + pbp_data$Opp_Safety_Prob > 0.01) %in%
+        TRUE |
+        pbp_data$safety %in% 1
+    ),
     ep_continue_factors(pbp_data)
   )
   score_vals <- score_values(kick_values, pbp_data$season)
@@ -985,6 +1030,13 @@ add_ep_variables <- function(pbp_data) {
       .direction = "up"
     ) |>
     dplyr::mutate(
+      # the conversion value in the touchdown's value, which is what the
+      # conversion that follows is measured against
+      ep_conversion = dplyr::if_else(
+        .data$ep_two_try,
+        2 * two_point_make_prob,
+        conversion_value(.data$season)
+      ),
       # a score on the last play of the game has no extra point and no kickoff
       # after it, so it is worth just its points
       ep_game_over = dplyr::lead(
@@ -1022,12 +1074,17 @@ add_ep_variables <- function(pbp_data) {
         .data$epa,
         missing = .data$epa
       ),
+      # Conversions (extra point and two point tries): the net points minus the
+      # conversion value in the touchdown's value, so a touchdown and its
+      # conversion add up to 6 + the conversion's points - V whichever action was
+      # taken (this includes the choice between a kick and a two point try, the
+      # difference between that action's expected points and the average)
       # Offense extra-point:
       epa = dplyr::if_else(
         is.na(.data$td_team) &
           .data$field_goal_made == 0 &
           .data$extra_point_good == 1,
-        1 - .data$ep,
+        1 - .data$ep_conversion,
         .data$epa,
         missing = .data$epa
       ),
@@ -1039,7 +1096,7 @@ add_ep_variables <- function(pbp_data) {
           (.data$two_point_rush_good == 1 |
             .data$two_point_pass_good == 1 |
             .data$two_point_pass_reception_good == 1),
-        2 - .data$ep,
+        2 - .data$ep_conversion,
         .data$epa,
         missing = .data$epa
       ),
@@ -1054,14 +1111,14 @@ add_ep_variables <- function(pbp_data) {
             (.data$two_point_rush_failed == 1 |
               .data$two_point_pass_failed == 1 |
               .data$two_point_pass_reception_failed == 1)),
-        0 - .data$ep,
+        0 - .data$ep_conversion,
         .data$epa,
         missing = .data$epa
       ),
       # Opponent scores defensive 2 point:
       epa = dplyr::if_else(
         .data$defensive_two_point_conv == 1,
-        -2 - .data$ep,
+        -2 - .data$ep_conversion,
         .data$epa,
         missing = .data$epa
       ),
@@ -1824,10 +1881,24 @@ add_air_yac_ep_variables <- function(pbp_data) {
     v = pass_pbp_data$ep_v,
     w = pass_pbp_data$ep_w
   )
-  late_i <- which(pass_pbp_data$half_seconds_remaining <= 180)
+  # (also the rows where a safety is likely or can be the end of the play, which
+  # need the exact free kick value)
+  late_i <- which(
+    pass_pbp_data$half_seconds_remaining <= 180 |
+      ((pass_pbp_data_preds$Safety + pass_pbp_data_preds$Opp_Safety) > 0.01) %in%
+        TRUE |
+      (pass_pbp_data$old_yrdline100 - pass_pbp_data$air_yards > 99) %in% TRUE
+  )
   if (length(late_i) > 0) {
-    snap_values[late_i, ] <- get_kickoff_values(pass_pbp_data[late_i, ])
+    snap_values[late_i, c("v", "w")] <- get_kickoff_values(
+      pass_pbp_data[late_i, ],
+      exact_w = TRUE
+    )
   }
+  snap_values$k_td_own <- pass_pbp_data$ep_k_td_own
+  snap_values$k_td_opp <- pass_pbp_data$ep_k_td_opp
+  snap_values$two_td_own <- pass_pbp_data$ep_two_td_own
+  snap_values$two_td_opp <- pass_pbp_data$ep_two_td_opp
   snap_values$c_td_own <- pass_pbp_data$ep_c_td_own
   snap_values$c_fg_own <- pass_pbp_data$ep_c_fg_own
   snap_values$c_saf_own <- pass_pbp_data$ep_c_saf_own
