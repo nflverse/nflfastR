@@ -1330,7 +1330,8 @@ add_wp_variables <- function(pbp_data) {
 
   # Using nflscrapR version of 2pt make prob on 2nd line here
   pat_go_for_1 <- 1 - (make_pat_prob * pat_1 + (1 - make_pat_prob) * pat_0)
-  pat_go_for_2 <- 1 - (0.4735 * pat_2 + (1 - 0.4735) * pat_0)
+  pat_go_for_2 <- 1 -
+    (two_point_make_prob * pat_2 + (1 - two_point_make_prob) * pat_0)
 
   OffWinProb_spread[two_pt_i] <- pat_go_for_2[two_pt_i]
   OffWinProb_spread[pat_i] <- pat_go_for_1[pat_i]
@@ -1351,7 +1352,8 @@ add_wp_variables <- function(pbp_data) {
 
   # Using nflscrapR version of 2pt make prob on 2nd line here
   pat_go_for_1 <- 1 - (make_pat_prob * pat_1 + (1 - make_pat_prob) * pat_0)
-  pat_go_for_2 <- 1 - (0.4735 * pat_2 + (1 - 0.4735) * pat_0)
+  pat_go_for_2 <- 1 -
+    (two_point_make_prob * pat_2 + (1 - two_point_make_prob) * pat_0)
 
   OffWinProb[two_pt_i] <- pat_go_for_2[two_pt_i]
   OffWinProb[pat_i] <- pat_go_for_1[pat_i]
