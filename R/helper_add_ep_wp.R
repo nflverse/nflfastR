@@ -185,38 +185,34 @@ safety_free_kick_ep_per_yard <- 0.05
 # points of the opponent's kickoff possession at the current clock. A safety
 # gives the scoring team the ball on a free kick, so it is worth 2 + W.
 #
-# V is the EP of 1st and 10 at the kickoff touchback spot for the receiving
-# team and W is the EP of 1st and 10 at the safety free kick spot. These come
-# from the same EP model, whose scoring values depend on V and W themselves.
-# That is a pair of linear equations that is solved exactly, on probabilities
-# averaged over the two teams' versions of the state (home field and timeouts
-# flipped). Solving it separately for each team does not work: no clock runs
-# between the possessions, so the difference between the two teams' values is
-# barely damped and the model's home field effect blows up. Instead the
-# receiver specific values apply the home field and timeout difference once,
-# in a single step from the common solution. Evaluating the possession after a
-# score later in the game (the clock when the next score happens) makes this
-# worse, because the model's home field effect then compounds over each
-# alternating possession (the home / road difference at the start of a half
-# goes from 0.6 to 1.5). The cost of applying it once is that the `ep` of a
-# kickoff row can differ from the value subtracted on the score before it, by
-# 0.14 on average (and by about -0.14 when the home team scored and +0.09 when
-# the road team scored). No play's EPA includes that difference. Score
-# differential is ignored and
-# the clock is the current clock ("as if they scored now"). All values are 0
+# V is the EP of 1st and 10 at the kickoff touchback spot and W is the EP of
+# 1st and 10 at the safety free kick spot. These come from the same EP model,
+# whose scoring values depend on V and W themselves, which is a pair of linear
+# equations that is solved exactly. It is solved on probabilities averaged over
+# the two teams' versions of the state (home field and timeouts flipped), so V
+# and W are the same for both teams. Using each receiving team's own state
+# does not work: the model's home field effect would be applied twice (the
+# home team's scores would subtract the road team's small kickoff value and
+# the road team's scores the home team's large one), which doubles the
+# home / road difference in EP at the same state (to about 1.2 from 0.7), and
+# solving the teams' values together blows up. The cost of one value for both
+# teams is that the `ep` of a kickoff row, which has the receiving team's home
+# field effect, can differ from the V subtracted on the score before it
+# (see the NEWS). No play's EPA includes that difference. Score differential is
+# ignored and the clock is the current clock ("as if they scored now"). Valuing
+# the possession at the clock of the next score is worse, since the home field
+# effect then compounds over each alternating possession. All values are 0
 # when no kickoff or free kick can follow: end of half or game.
 #
 # Model predictions are the expensive part, so this needs as few as possible:
 # `kickoff_preds` are the predictions for the possession team at the touchback
 # spot if the caller already has them, so the only new prediction is the other
 # team's kickoff state. The free kick (safety) value is the kickoff value
-# plus the EP of the extra field position (see safety_free_kick_ep_per_yard)
-# and is the same for both teams. Only rows that can have a kickoff after a
-# score are predicted, and the model inputs are prepared once.
+# plus the EP of the extra field position (see safety_free_kick_ep_per_yard).
+# Only rows that can have a kickoff after a score are predicted, and the model
+# inputs are prepared once.
 #
-# Returns, from the view of the row's possession team:
-#   v_own / w_own: kickoff / free kick value when posteam receives
-#   v_opp / w_opp: kickoff / free kick value when defteam receives
+# Returns V and W as columns `v` and `w`
 get_kickoff_values <- function(pbp_data, kickoff_preds = NULL) {
   n <- nrow(pbp_data)
 
@@ -228,12 +224,7 @@ get_kickoff_values <- function(pbp_data, kickoff_preds = NULL) {
       pbp_data$half_seconds_remaining > 0
   )
 
-  out <- data.frame(
-    v_own = numeric(n),
-    v_opp = numeric(n),
-    w_own = numeric(n),
-    w_opp = numeric(n)
-  )
+  out <- data.frame(v = numeric(n), w = numeric(n))
   if (length(can_kick) == 0L) {
     return(out)
   }
@@ -249,6 +240,8 @@ get_kickoff_values <- function(pbp_data, kickoff_preds = NULL) {
     rep(FALSE, m)
   }
 
+  # predictions for the kickoff state of the possession team (flip = FALSE) or
+  # of the other team (flip = TRUE)
   state_preds <- function(yardline_100, flip) {
     d <- base
     home <- if (flip) 1 - base$home else base$home
@@ -267,7 +260,6 @@ get_kickoff_values <- function(pbp_data, kickoff_preds = NULL) {
   }
 
   ko_yardline <- kickoff_touchback_yardline(pbp_data$season[can_kick])
-  # own = possession team is the receiver, opp = the other team is
   k_own <- if (is.null(kickoff_preds)) {
     state_preds(ko_yardline, flip = FALSE)
   } else {
@@ -275,37 +267,19 @@ get_kickoff_values <- function(pbp_data, kickoff_preds = NULL) {
   }
   k_opp <- state_preds(ko_yardline, flip = TRUE)
 
+  # EP of the kickoff state = a + b V + d W on the average of the two teams'
+  # states, where W = V + g, so that V = (a + d g) / (1 - b - d)
   xp <- xp_make_prob(pbp_data$season[can_kick])
-
-  # EP of a receiver's kickoff state given the common values of the possession
-  # that follows a score: EP = a + b V + d W, where W = V + g, so that
-  # V = (a + d g) / (1 - b - d)
-  coefs <- function(p_own, p_opp = p_own) {
-    p <- (p_own + p_opp) / 2
-    td <- p$Touchdown - p$Opp_Touchdown
-    fg <- p$Field_Goal - p$Opp_Field_Goal
-    sf <- p$Safety - p$Opp_Safety
-    list(
-      a = td * (6 + xp) + 3 * fg + 2 * sf,
-      b = -(td + fg),
-      d = sf
-    )
-  }
-  state_ep <- function(p, v, w) {
-    cf <- coefs(p)
-    cf$a + cf$b * v + cf$d * w
-  }
-
-  # common solution on the average of the two teams' states
+  p <- (k_own + k_opp) / 2
+  td <- p$Touchdown - p$Opp_Touchdown
+  fg <- p$Field_Goal - p$Opp_Field_Goal
+  sf <- p$Safety - p$Opp_Safety
+  a <- td * (6 + xp) + 3 * fg + 2 * sf
+  b <- -(td + fg)
   g <- safety_free_kick_ep_per_yard * (ko_yardline - safety_free_kick_yardline)
-  k <- coefs(k_own, k_opp)
-  v <- (k$a + k$d * g) / (1 - k$b - k$d)
-  w <- v + g
 
-  out$v_own[can_kick] <- state_ep(k_own, v, w)
-  out$v_opp[can_kick] <- state_ep(k_opp, v, w)
-  out$w_own[can_kick] <- w
-  out$w_opp[can_kick] <- w
+  out$v[can_kick] <- (a + sf * g) / (1 - b - sf)
+  out$w[can_kick] <- out$v[can_kick] + g
 
   out
 }
@@ -406,12 +380,12 @@ ep_continue_factors <- function(pbp_data) {
 score_values <- function(kv, season) {
   xp <- xp_make_prob(season)
   data.frame(
-    td_own = 6 + kv$c_td_own * (xp - kv$v_opp),
-    fg_own = 3 - kv$c_fg_own * kv$v_opp,
-    saf_own = 2 + kv$c_saf_own * kv$w_own,
-    td_opp = -6 - kv$c_td_opp * (xp - kv$v_own),
-    fg_opp = -3 + kv$c_fg_opp * kv$v_own,
-    saf_opp = -2 - kv$c_saf_opp * kv$w_opp
+    td_own = 6 + kv$c_td_own * (xp - kv$v),
+    fg_own = 3 - kv$c_fg_own * kv$v,
+    saf_own = 2 + kv$c_saf_own * kv$w,
+    td_opp = -6 - kv$c_td_opp * (xp - kv$v),
+    fg_opp = -3 + kv$c_fg_opp * kv$v,
+    saf_opp = -2 - kv$c_saf_opp * kv$w
   )
 }
 
@@ -1755,24 +1729,15 @@ add_air_yac_ep_variables <- function(pbp_data) {
   # reused from add_ep_variables() instead of predicting again. The air state
   # is 5.7 seconds later, which only matters when the value changes quickly
   # at the end of a half, so those few rows are recomputed at the air clock.
-  # Values are from the view of the team that had the ball at the snap.
+  # The values are the same for both teams, so it does not matter that the
+  # timeouts and home are from the other team's view after a turnover on downs.
   snap_values <- data.frame(
-    v_own = pass_pbp_data$ep_v_own,
-    v_opp = pass_pbp_data$ep_v_opp,
-    w_own = pass_pbp_data$ep_w_own,
-    w_opp = pass_pbp_data$ep_w_opp
+    v = pass_pbp_data$ep_v,
+    w = pass_pbp_data$ep_w
   )
   late_i <- which(pass_pbp_data$half_seconds_remaining <= 180)
   if (length(late_i) > 0) {
-    late_data <- pass_pbp_data[late_i, ]
-    late_data$posteam_timeouts_remaining <- late_data$posteam_timeouts_pre
-    late_data$defteam_timeouts_remaining <- late_data$defeam_timeouts_pre
-    late_data$home <- dplyr::if_else(
-      late_data$Turnover_Ind == 1,
-      1 - late_data$home,
-      late_data$home
-    )
-    snap_values[late_i, ] <- get_kickoff_values(late_data)
+    snap_values[late_i, ] <- get_kickoff_values(pass_pbp_data[late_i, ])
   }
   snap_values$c_td_own <- pass_pbp_data$ep_c_td_own
   snap_values$c_fg_own <- pass_pbp_data$ep_c_fg_own

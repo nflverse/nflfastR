@@ -70,10 +70,8 @@ test_that("overtime continue factors only change overtime rows", {
 
 test_that("score values are net of the other team's possession", {
   kv <- data.frame(
-    v_own = 1.2,
-    v_opp = 1.0,
-    w_own = 1.5,
-    w_opp = 1.4,
+    v = 1.1,
+    w = 1.5,
     c_td_own = 1,
     c_fg_own = 1,
     c_saf_own = 1,
@@ -82,19 +80,19 @@ test_that("score values are net of the other team's possession", {
     c_saf_opp = 1
   )
   sv <- score_values(kv, 2020)
-  expect_equal(sv$td_own, 6 + 0.94 - 1.0)
-  expect_equal(sv$fg_own, 3 - 1.0)
+  expect_equal(sv$td_own, 6 + 0.94 - 1.1)
+  expect_equal(sv$fg_own, 3 - 1.1)
   expect_equal(sv$saf_own, 2 + 1.5)
-  expect_equal(sv$td_opp, -(6 + 0.94 - 1.2))
-  expect_equal(sv$fg_opp, -(3 - 1.2))
-  expect_equal(sv$saf_opp, -(2 + 1.4))
+  expect_equal(sv$td_opp, -(6 + 0.94 - 1.1))
+  expect_equal(sv$fg_opp, -(3 - 1.1))
+  expect_equal(sv$saf_opp, -(2 + 1.5))
   # a score that ends the game is worth its points: no extra point, no kickoff
   ends <- kv
   ends$c_td_own <- 0
   expect_equal(score_values(ends, 2020)$td_own, 6)
   # extra points were more reliable before 2015 and are a bit more since 2023
-  expect_equal(score_values(kv, 2010)$td_own, 6 + 0.99 - 1.0)
-  expect_equal(score_values(kv, 2024)$td_own, 6 + 0.96 - 1.0)
+  expect_equal(score_values(kv, 2010)$td_own, 6 + 0.99 - 1.1)
+  expect_equal(score_values(kv, 2024)$td_own, 6 + 0.96 - 1.1)
   # the other team's view is the same values with the roles swapped
   expect_equal(swap_score_values(swap_score_values(sv)), sv)
   expect_equal(swap_score_values(sv)$td_own, -sv$td_opp)
@@ -116,21 +114,22 @@ test_that("kickoff values come from the clock, season and teams", {
   ) |>
     make_model_mutations()
   kv <- get_kickoff_values(data)
-  expect_named(kv, c("v_own", "v_opp", "w_own", "w_opp"))
+  expect_named(kv, c("v", "w"))
 
   # no kickoff after the half ends
-  expect_equal(unlist(kv[4, ], use.names = FALSE), rep(0, 4))
+  expect_equal(unlist(kv[4, ], use.names = FALSE), rep(0, 2))
   # much less value with 20 seconds left than with 15 minutes left
-  expect_lt(kv$v_own[5], 0.5 * kv$v_own[3])
-  expect_gt(kv$v_own[3], 0)
+  expect_lt(kv$v[5], 0.5 * kv$v[3])
+  expect_gt(kv$v[3], 0)
   # a touchback further from the goal line is worth more: own 20 (2015) <
   # own 25 (2018) < own 35 (2025)
-  expect_lt(kv$v_own[1], kv$v_own[2])
-  expect_lt(kv$v_own[2], kv$v_own[3])
+  expect_lt(kv$v[1], kv$v[2])
+  expect_lt(kv$v[2], kv$v[3])
   # the free kick spot is better than the touchback
-  expect_gt(kv$w_own[3], kv$v_own[3])
-  # the road team receiving is worth less than the home team receiving
-  expect_lt(kv$v_own[6], kv$v_own[3])
+  expect_gt(kv$w[3], kv$v[3])
+  # it is the same value whichever team has the ball (rows 3 and 6 are the
+  # same game state from each team's view)
+  expect_equal(kv$v[6], kv$v[3])
 
   # reusing the predictions for the possession team's kickoff state gives the
   # same values
@@ -183,12 +182,10 @@ test_that("kickoff values solve their own equations", {
     make_model_mutations()
   kv <- get_kickoff_values(data)
 
-  # the common value is the average of the two teams' values, and the free kick
-  # is worth that plus the extra field position
-  v <- (kv$v_own + kv$v_opp) / 2
+  # the free kick is worth the kickoff plus the extra field position
+  v <- kv$v
   yards <- kickoff_touchback_yardline(data$season) - safety_free_kick_yardline
-  expect_equal(kv$w_own, v + safety_free_kick_ep_per_yard * yards)
-  expect_equal(kv$w_opp, kv$w_own)
+  expect_equal(kv$w, v + safety_free_kick_ep_per_yard * yards)
 
   # V = a + b V + d W on the average of the two teams' kickoff states
   ko <- data
@@ -206,7 +203,7 @@ test_that("kickoff values solve their own equations", {
   xp <- xp_make_prob(data$season)
   expect_equal(
     v,
-    td * (6 + xp) + 3 * fg + 2 * sf - (td + fg) * v + sf * kv$w_own
+    td * (6 + xp) + 3 * fg + 2 * sf - (td + fg) * v + sf * kv$w
   )
 })
 
@@ -229,7 +226,6 @@ test_that("expected points at the kickoff state match the kickoff value", {
   ) |>
     make_model_mutations()
   kv <- get_kickoff_values(data)
-  expect_equal(kv$v_own, kv$v_opp)
 
   ko <- data
   ko$yardline_100 <- kickoff_touchback_yardline(ko$season)
@@ -251,5 +247,5 @@ test_that("expected points at the kickoff state match the kickoff value", {
     p$Opp_Safety,
     sv
   )
-  expect_equal(ep, kv$v_own)
+  expect_equal(ep, kv$v)
 })
