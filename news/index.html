@@ -61,7 +61,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/nflverse/nflfastR/blob/regression_tests/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/nflverse/nflfastR/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
@@ -75,6 +75,13 @@
 <ul><li>nflfastR stopped supporting the 1999 and 2000 seasons because of inconsistent data sources. Data is still available through <code><a href="https://nflreadr.nflverse.com/reference/load_pbp.html" class="external-link">load_pbp()</a></code> but we will not fix any issues related to those old seasons anymore. It’s possible to install nflfastR v5.2.0 (with <code>pak::pak("nflverse/nflfastR@v5.2.0")</code>) to parse those seasons if necessary. (<a href="https://github.com/nflverse/nflfastR/issues/568" class="external-link">#568</a>)</li>
 <li>nflfastR now loads raw play-by-play data from season based releases in the <code>nflverse/nflverse-pbp</code> GitHub repository. The legacy repository <code>nflverse/nflfastR-raw</code> is deprecated and won’t update in future seasons. This means that previous nflfastR versions won’t be able to download 2026+ seasons! (<a href="https://github.com/nflverse/nflfastR/issues/589" class="external-link">#589</a>)</li>
 <li>The legacy player stats functions <code>calculate_player_stats*()</code> have been deprecated in 2024 with the release of nflfastR 5.0. They are now defunct and calling them will throw an error. (<a href="https://github.com/nflverse/nflfastR/issues/590" class="external-link">#590</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="overtime-win-probability-6-0-0">Overtime win probability<a class="anchor" aria-label="anchor" href="#overtime-win-probability-6-0-0"></a></h3>
+<ul><li>Completely rebuilt the overtime win probability model (<code>wp</code>, <code>vegas_wp</code> and the derived <code>wpa</code>, <code>air_wpa</code>, <code>yac_wpa</code> variables for overtime plays). The previous model treated every overtime play like a next-score problem, ignored the clock and valued ties as losses for both teams. The new model predicts how the current drive ends and values each outcome with a dynamic program that knows the overtime rules in force for the game: sudden death (regular season through 2011, postseason through 2009), modified sudden death (regular season 2012-2024, postseason 2010-2021) and both teams being guaranteed a possession (postseason since 2022, regular season since 2025). It also knows the length of the period (15 minutes in the regular season through 2016, 10 minutes since 2017, 15 minute playoff periods) and that only regular season games can end in a tie, which is worth half a win. <code>wp</code> ignores the spread, <code>vegas_wp</code> includes it. (<a href="https://github.com/nflverse/nflfastR/issues/617" class="external-link">#617</a>)</li>
+<li>Overtime <code>xpass</code> and <code>pass_oe</code> change slightly on overtime rows because they use the new win probability. (<a href="https://github.com/nflverse/nflfastR/issues/617" class="external-link">#617</a>)</li>
+<li>
+<code>home_wp_post</code> and <code>away_wp_post</code> after a final overtime play that ends in a tie are now 0.5 (they used to be 0). (<a href="https://github.com/nflverse/nflfastR/issues/617" class="external-link">#617</a>)</li>
 </ul></div>
 <div class="section level3">
 <h3 id="minor-changes-and-improvements-6-0-0">Minor changes and improvements<a class="anchor" aria-label="anchor" href="#minor-changes-and-improvements-6-0-0"></a></h3>
@@ -92,6 +99,7 @@
 <li>Updated <code>teams_colors_logos</code> after 2026 Titans and Rams rebrandings. (<a href="https://github.com/nflverse/nflfastR/issues/592" class="external-link">#592</a>)</li>
 <li>Added defensive blocked kicks and 2 point attempts to the output of <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code>. (<a href="https://github.com/nflverse/nflfastR/issues/596" class="external-link">#596</a>)</li>
 <li>Fixed bug that led to missing pbp related team stats in <code><a href="../reference/calculate_stats.html">calculate_stats()</a></code> because an internal function did not standardize team abbreviations. (<a href="https://github.com/nflverse/nflfastR/issues/599" class="external-link">#599</a>)</li>
+<li>Fixed a bug where <code>home_wp</code> and <code>vegas_home_wp</code> were inverted on non-play rows (end of quarter notes, captains announcements, the <code>GAME</code> marker) that carried the previous team as <code>posteam</code> when the next play belonged to the other team. This also fixes the nonsensical <code>wpa</code> (and <code>home_wp_post</code>) of the plays right before such rows. (<a href="https://github.com/nflverse/nflfastR/issues/606" class="external-link">#606</a>)</li>
 </ul><p>Thank you to <a href="https://github.com/jdpretorius123" class="external-link">@jdpretorius123</a>, <a href="https://github.com/JoeMarino2021" class="external-link">@JoeMarino2021</a>, <a href="https://github.com/lancejames35" class="external-link">@lancejames35</a>, <a href="https://github.com/mrcaseb" class="external-link">@mrcaseb</a>, <a href="https://github.com/naymikm" class="external-link">@naymikm</a>, <a href="https://github.com/rayrosales66" class="external-link">@rayrosales66</a>, and <a href="https://github.com/TheMathNinja" class="external-link">@TheMathNinja</a> for their questions, feedback, and contributions towards this release.</p>
 </div>
 </div>
