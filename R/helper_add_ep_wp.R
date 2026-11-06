@@ -429,7 +429,8 @@ swap_score_values <- function(sv) {
 
 # EP from the probabilities of the next scoring event
 ep_from_probs <- function(td, opp_td, fg, opp_fg, saf, opp_saf, sv) {
-  td * sv$td_own +
+  td *
+    sv$td_own +
     opp_td * sv$td_opp +
     fg * sv$fg_own +
     opp_fg * sv$fg_opp +
