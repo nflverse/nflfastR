@@ -44,6 +44,7 @@ add_xyac <- function(pbp, ...) {
           "week",
           "home_team",
           "posteam",
+          "defteam",
           "roof",
           "half_seconds_remaining",
           "down",
@@ -175,6 +176,13 @@ add_xyac <- function(pbp, ...) {
           ),
           # save yardline_100 for yards gained calculation
           yardline_100_noflip = .data$yardline_100,
+          # the other team has the ball after a turnover, which matters for
+          # home field in the EP model
+          posteam = dplyr::if_else(
+            .data$turnover == 1,
+            .data$defteam,
+            .data$posteam
+          ),
           # flip yardline_100 and timeouts for turnovers for EP calculation
           yardline_100 = dplyr::if_else(
             .data$turnover == 1,

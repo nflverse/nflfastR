@@ -153,8 +153,11 @@ kickoff_touchback_yardline <- function(season) {
 }
 
 # Where the scoring team's drive starts after a safety free kick, as
-# yardline_100 for the receiving (scoring) team. This is a guess (own 40)
-safety_free_kick_yardline <- 60
+# yardline_100 for the receiving (scoring) team. This is a data-informed guess:
+# the first scrimmage play after the free kick was on average at yardline_100
+# 61.4 (median 63, n = 256 safeties, 2009-2025, and about the same before and
+# after 2016), so own 39 is used
+safety_free_kick_yardline <- 61
 
 # Expected points per yard of field position between a kickoff touchback and
 # the safety free kick spot. The EP model gives about 0.05 points per yard
@@ -1700,6 +1703,13 @@ add_air_yac_ep_variables <- function(pbp_data) {
       down2 = dplyr::if_else(.data$down == 2, 1, 0),
       down3 = dplyr::if_else(.data$down == 3, 1, 0),
       down4 = dplyr::if_else(.data$down == 4, 1, 0),
+      # the other team has the ball after a turnover on downs, so home and
+      # the timeouts are from its view
+      home = dplyr::if_else(
+        .data$Turnover_Ind == 1,
+        1 - .data$home,
+        .data$home
+      ),
       posteam_timeouts_remaining = dplyr::if_else(
         .data$Turnover_Ind == 1,
         .data$defeam_timeouts_pre,
@@ -1731,6 +1741,11 @@ add_air_yac_ep_variables <- function(pbp_data) {
     late_data <- pass_pbp_data[late_i, ]
     late_data$posteam_timeouts_remaining <- late_data$posteam_timeouts_pre
     late_data$defteam_timeouts_remaining <- late_data$defeam_timeouts_pre
+    late_data$home <- dplyr::if_else(
+      late_data$Turnover_Ind == 1,
+      1 - late_data$home,
+      late_data$home
+    )
     snap_values[late_i, ] <- get_kickoff_values(late_data)
   }
   snap_values$c_td_own <- pass_pbp_data$ep_c_td_own
