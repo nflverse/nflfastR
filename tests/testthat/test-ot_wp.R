@@ -201,3 +201,24 @@ test_that("overtime: postseason periods don't end the game", {
   expect_equal(wp("POST", 20), wp("POST", 900))
   expect_gt(wp("POST", 20), 0.3)
 })
+
+test_that("overtime: a 4th down field goal that wins is always an option", {
+  # tied in sudden death, 4th & 3 at the 20: kicking wins the game 90% of the
+  # time, so this can't be worth much less than that no matter how much time
+  # is left
+  st <- ot_state(
+    season = 2025,
+    kind = "scrimmage",
+    phase = 3,
+    secs = 400,
+    y = 20,
+    down = 4,
+    ytg = 3
+  )
+  st$p_fg <- 0.9
+  expect_gt(ot_wp_states(st, use_spread = FALSE), 0.9)
+  # a field goal that is very unlikely to be good is not forced
+  st$yardline_100 <- 60
+  st$p_fg <- 0.02
+  expect_lt(ot_wp_states(st, use_spread = FALSE), 0.6)
+})

@@ -456,11 +456,23 @@ ot_wp_states <- function(st, use_spread = TRUE) {
         dpred$P[ii, ],
         dpred$mu[ii, ]
       )
-      # with a play or two left the offense can always kick instead
+      # The offense can always kick a field goal instead. On 4th down that is
+      # the usual choice, and with a play or two left it is the choice on any
+      # down. Value that option with the rules (a miss gives the other team the
+      # ball, or ends the game) and never go below it.
       pfi <- if ("p_fg" %in% names(st)) st$p_fg[i] else NA_real_
-      if (secs[i] <= 12 && !is.na(pfi) && di[i] %in% c(1L, 2L)) {
-        kick_now <- if (di[i] == 1L) 0.5 + 0.5 * pfi else 0.5 * pfi
-        out[i] <- max(out[i], kick_now)
+      if (!is.na(pfi) && (st$down[i] == 4 || secs[i] <= 12)) {
+        kick_val <- ot_row_scrimmage(
+          dp,
+          rule[i],
+          p[i],
+          di[i],
+          secs[i],
+          s[i],
+          c(0, pfi, 0, 0, 1 - pfi),
+          rep(4, 5)
+        )
+        out[i] <- max(out[i], kick_val)
       }
     } else if (k == "kickoff") {
       out[i] <- ot_q_interp(dp$Q[1, p[i], di[i], , ], s[i], secs[i] / ot_step)
