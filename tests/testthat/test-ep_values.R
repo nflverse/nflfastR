@@ -367,7 +367,10 @@ test_that("a second possession touchdown down 7 in overtime always goes for two"
   factors <- ep_continue_factors(pbp)
   # second possession, down 7: the touchdown is a two point try that ends the game
   expect_equal(
-    unlist(factors[2, c("c_td_own", "k_td_own", "two_td_own")], use.names = FALSE),
+    unlist(
+      factors[2, c("c_td_own", "k_td_own", "two_td_own")],
+      use.names = FALSE
+    ),
     c(0, 1, 1)
   )
   # and the try itself is measured against the two point value

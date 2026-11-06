@@ -222,7 +222,11 @@ safety_free_kick_ep_per_yard <- 0.05
 # model inputs are prepared once.
 #
 # Returns V and W as columns `v` and `w`
-get_kickoff_values <- function(pbp_data, kickoff_preds = NULL, exact_w = FALSE) {
+get_kickoff_values <- function(
+  pbp_data,
+  kickoff_preds = NULL,
+  exact_w = FALSE
+) {
   n <- nrow(pbp_data)
   exact_w <- rep_len(exact_w, n)
 
@@ -1885,7 +1889,8 @@ add_air_yac_ep_variables <- function(pbp_data) {
   # need the exact free kick value)
   late_i <- which(
     pass_pbp_data$half_seconds_remaining <= 180 |
-      ((pass_pbp_data_preds$Safety + pass_pbp_data_preds$Opp_Safety) > 0.01) %in%
+      ((pass_pbp_data_preds$Safety + pass_pbp_data_preds$Opp_Safety) >
+        0.01) %in%
         TRUE |
       (pass_pbp_data$old_yrdline100 - pass_pbp_data$air_yards > 99) %in% TRUE
   )
