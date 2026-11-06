@@ -11,6 +11,145 @@ library(xgboost)
 source("R/helper_add_ot_wp.R")
 set.seed(1)
 
+# ---- helpers only needed to build the tables ------------------------------------
+# (possession number, differential) combinations the recursion can reach
+ot_reachable <- list(
+  c(1, 0),
+  c(2, 0),
+  c(2, -3),
+  c(2, -6),
+  c(2, -7),
+  c(2, -8),
+  c(3, 0)
+)
+
+# seasons whose drive starts are used for each kickoff regime, built from the
+# regime boundaries in R/helper_add_ot_wp.R (ot_kick_first) so both agree
+ot_kick_seasons <- Map(
+  c,
+  c(2001L, ot_kick_first),
+  c(ot_kick_first - 1L, 2100L)
+)
+# season fed to the drive model for each regime
+ot_kick_season_c <- c(2008, 2013, 2020, 2024, 2025)
+
+# thin the full solution to the stored grid
+ot_thin_q <- function(Q) {
+  Q[,,, match(ot_s_store, ot_s_grid), seq(1L, ot_n + 1L, by = ot_t_stride)]
+}
+
+
+# Build the dynamic programming table for one rule / period length / kickoff
+# regime. Called from data-raw/ot_wp_model.R
+ot_build_dp <- function(rule, len, kick, models, starts) {
+  S <- length(ot_s_grid)
+  N <- ot_n
+  out_mod <- xgboost::xgb.load.raw(models$out_raw)
+  dur_mod <- xgboost::xgb.load.raw(models$dur_raw)
+  win <- ot_kick_seasons[[kick]]
+  season_c <- ot_kick_season_c[kick]
+
+  # start of drive outcome probabilities and durations
+  P <- array(0, c(2, S, 5))
+  Pm <- array(0, c(2, S, 5))
+  PMF <- vector("list", 2)
+  for (ty in 1:2) {
+    smp <- starts[
+      starts$type == c("kick", "stop")[ty] &
+        starts$season >= win[1] &
+        starts$season <= win[2],
+    ]
+    PMF[[ty]] <- vector("list", S)
+    for (si in seq_len(S)) {
+      feat <- cbind(
+        yardline_100 = pmin(pmax(smp$yardline_100, 1), 99),
+        down = smp$down,
+        ydstogo = pmin(smp$ydstogo, 30),
+        posteam_spread = ot_s_grid[si],
+        season_c = season_c
+      )
+      cp <- ot_collapse_preds(ot_predict_matrix(out_mod, feat))
+      pr <- cp$P
+      P[ty, si, ] <- colMeans(pr)
+      # teams that have to score do not punt. A conversion continues the drive
+      # from around midfield
+      cfeat <- feat
+      cfeat[, "yardline_100"] <- 55
+      cfeat[, "down"] <- 1
+      cfeat[, "ydstogo"] <- 10
+      r <- ot_collapse_preds(ot_predict_matrix(out_mod, cfeat))$P
+      Pm[ty, si, ] <- colMeans(ot_apply_must_score(
+        pr,
+        cp$pun,
+        ot_go_avg,
+        r[, 1],
+        r[, 2]
+      ))
+      PMF[[ty]][[si]] <- vapply(
+        1:5,
+        function(o) {
+          oh <- matrix(0, nrow(feat), 5)
+          oh[, o] <- 1
+          mu <- pmax(stats::predict(dur_mod, cbind(feat, oh)) - 5, 3)
+          sum(pr[, o] * mu) / sum(pr[, o])
+        },
+        numeric(1)
+      )
+    }
+  }
+
+  Q <- array(NA_real_, c(2, 3, length(ot_d_set), S, N + 1))
+  for (r in ot_reachable) {
+    di <- ot_map_d(r[2])
+    Q[, r[1], di, , 1] <- ot_end_value(r[2])
+  }
+  for (t in seq_len(N)) {
+    jj <- seq_len(t)
+    h <- ot_tempo(t * ot_step)
+    pm_t <- lapply(1:2, function(ty) {
+      lapply(seq_len(S), function(si) {
+        lapply(1:5, function(o) {
+          if (!o %in% c(1L, 2L, 5L)) {
+            return(NULL)
+          }
+          pm <- ot_pmf(PMF[[ty]][[si]][o] * h, models$shape[[ot_outcomes[o]]])
+          list(pm = pm, cum = cumsum(pm))
+        })
+      })
+    })
+    for (ty in 1:2) {
+      for (r in ot_reachable) {
+        p <- r[1]
+        d <- r[2]
+        di <- ot_map_d(d)
+        for (si in seq_len(S)) {
+          val <- 0
+          for (o in c(1L, 2L, 5L)) {
+            pmo <- pm_t[[ty]][[si]][[o]]
+            tail <- 1 - pmo$cum[t]
+            comps <- ot_trans(rule, p, d, ot_outcomes[o])
+            v <- 0
+            for (cp in comps) {
+              if (is.na(cp$val)) {
+                qn <- Q[cp$ty, cp$p, cp$di, S + 1L - si, t - jj + 1L]
+                v <- v + cp$w * sum(pmo$pm[jj] * (1 - qn))
+              } else {
+                v <- v + cp$w * cp$val * sum(pmo$pm[jj])
+              }
+            }
+            pw <- if (p == 2 && d < 0) Pm[ty, si, o] else P[ty, si, o]
+            val <- val + pw * (v + tail * ot_end_value(d))
+          }
+          Q[ty, p, di, si, t + 1L] <- val
+        }
+      }
+    }
+  }
+  list(Q = Q)
+}
+
+# ---- build -------------------------------------------------------------------
+
 pbp_path <- Sys.getenv("OT_PBP")
 if (nzchar(pbp_path)) {
   pbp <- readRDS(pbp_path)

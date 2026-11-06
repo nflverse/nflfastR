@@ -1008,7 +1008,7 @@ add_wp_variables <- function(pbp_data) {
       mgcv::predict.bam(
         fastrmodels::fg_model,
         newdata = pbp_data[ot_i, ] |>
-          mutate(yardline_100 = dplyr::coalesce(.data$yardline_100, 50)),
+          dplyr::mutate(yardline_100 = dplyr::coalesce(.data$yardline_100, 50)),
         type = "response"
       )
     )
@@ -1638,13 +1638,6 @@ add_air_yac_wp_variables <- function(pbp_data) {
   # (including a turnover on downs) is valued with that model.
   ot_pass_i <- which(pass_pbp_data$qtr > 4)
   if (length(ot_pass_i) > 0) {
-    if (!"posteam_spread" %in% names(pass_pbp_data)) {
-      pass_pbp_data$posteam_spread <- dplyr::if_else(
-        pass_pbp_data$posteam == pass_pbp_data$home_team,
-        pass_pbp_data$spread_line,
-        -1 * pass_pbp_data$spread_line
-      )
-    }
     ot_air <- add_ot_air_wp(
       pass_pbp_data,
       ot_possession_number(pbp_data)[pass_plays_i]

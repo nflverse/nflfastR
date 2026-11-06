@@ -1,6 +1,7 @@
 test_that("non-plays with a stale posteam don't flip home_wp (#606)", {
   # This needs a download and gsisdecoder so it can't run on CRAN
   skip_on_cran()
+  skip_if_not_installed("gsisdecoder")
   skip_if_offline("github.com")
 
   # play 1017 is the note "End of quarter - 1.35 pm". It sits between a BUF

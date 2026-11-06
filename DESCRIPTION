@@ -37,7 +37,7 @@ Imports:
     stringr (>= 1.4.0),
     tibble (>= 3.0),
     tidyr (>= 1.0.0),
-    xgboost (>= 1.1)
+    xgboost (>= 1.6)
 Suggests: 
     DBI,
     duckdb,

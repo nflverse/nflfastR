@@ -42,16 +42,10 @@ ot_outcomes <- c("TD", "FG", "SAF", "OPPTD", "STOP")
 # It is only used to model teams that must score (see ot_apply_must_score())
 ot_go_avg <- 0.45 # average 4th down conversion rate when going for it
 
-# (possession number, differential) combinations the recursion can reach
-ot_reachable <- list(
-  c(1, 0),
-  c(2, 0),
-  c(2, -3),
-  c(2, -6),
-  c(2, -7),
-  c(2, -8),
-  c(3, 0)
-)
+# first season of kickoff regimes 2 to 5 (regime 1 is everything before). Where
+# drives start changed with the kickoff rules. data-raw/ot_wp_model.R builds the
+# training windows from the same seasons.
+ot_kick_first <- c(2011L, 2016L, 2024L, 2025L)
 
 # rule, period length and kickoff regime for each game
 ot_rule_key <- function(season, season_type) {
@@ -65,13 +59,7 @@ ot_rule_key <- function(season, season_type) {
   )
   len <- dplyr::if_else(!post & season >= 2017, 600L, 900L)
   # kickoff regime determines where drives start
-  kick <- dplyr::case_when(
-    season <= 2010 ~ 1L,
-    season <= 2015 ~ 2L,
-    season <= 2023 ~ 3L,
-    season == 2024 ~ 4L,
-    TRUE ~ 5L
-  )
+  kick <- findInterval(season, ot_kick_first) + 1L
   paste(rule, len, kick, sep = "|")
 }
 
@@ -82,15 +70,10 @@ ot_season_type <- function(game_id, season) {
   dplyr::if_else(wk > dplyr::if_else(season >= 2021, 18L, 17L), "POST", "REG")
 }
 
-ot_kick_seasons <- list(
-  c(2001, 2010),
-  c(2011, 2015),
-  c(2016, 2023),
-  c(2024, 2024),
-  c(2025, 2100)
-)
-ot_kick_season_c <- c(2008, 2013, 2020, 2024, 2025)
-
+# Score differentials the rules can produce (receiving team, start of a
+# possession) are exactly ot_d_set. Anything else, such as a lead or a deficit
+# of 1 or 2 points, can't occur in the supported rules and snaps to the nearest
+# value (a lead of 3 or 7 therefore counts as tied).
 ot_map_d <- function(x) {
   vapply(x, function(z) which.min(abs(z - ot_d_set) - 1e-6 * ot_d_set), 1L)
 }
@@ -142,11 +125,6 @@ ot_trans <- function(rule, p, d, kind) {
     return(list(term(0)))
   }
   list(term(1))
-}
-
-# thin the full solution to the stored grid
-ot_thin_q <- function(Q) {
-  Q[,,, match(ot_s_store, ot_s_grid), seq(1L, ot_n + 1L, by = ot_t_stride)]
 }
 
 # interpolate a stored [spread x time] matrix. `tn` is time in 5 second nodes
@@ -332,35 +310,53 @@ ot_row_post_score <- function(dp, rule, p, d2, secs, s) {
 }
 
 # possession number of each row in overtime (NA outside of overtime)
+# A new possession starts when the drive changes. The drive id can also stay the
+# same when the ball changes hands, e.g. a fumble or interception inside a
+# drive that is recovered right away, so a change of posteam (ignoring kickoff
+# rows, which carry the kicking team) starts a new possession as well.
 ot_possession_number <- function(pbp) {
   dr <- if ("fixed_drive" %in% names(pbp)) pbp$fixed_drive else pbp$drive
-  tmp <- data.frame(
-    game_id = pbp$game_id,
-    drive = dr,
-    ot = pbp$qtr > 4,
-    stringsAsFactors = FALSE
-  )
-  tmp$drive[!tmp$ot] <- NA
-  out <- stats::ave(
-    tmp$drive,
-    tmp$game_id,
+  ot <- pbp$qtr > 4
+  is_kick <- if ("kickoff_attempt" %in% names(pbp)) {
+    pbp$kickoff_attempt %in% 1
+  } else {
+    rep(FALSE, nrow(pbp))
+  }
+  team <- match(pbp$posteam, unique(pbp$posteam))
+  team[!ot | is_kick] <- NA
+  dr[!ot] <- NA
+  # counts changes of posteam within a drive
+  segment <- stats::ave(
+    team,
+    pbp$game_id,
+    dr,
     FUN = function(x) {
-      r <- match(x, sort(unique(x[!is.na(x)])))
-      r
+      k <- !is.na(x)
+      out <- numeric(length(x))
+      if (any(k)) {
+        out[k] <- cumsum(c(0, diff(x[k]) != 0))
+        last <- cummax(seq_along(x) * k)
+        out <- ifelse(last > 0, out[pmax(last, 1)], 0)
+      }
+      out
     }
+  )
+  id <- dr + segment / 1000
+  out <- stats::ave(
+    id,
+    pbp$game_id,
+    FUN = \(x) match(x, sort(unique(x[!is.na(x)])))
   )
   as.numeric(out)
 }
 
-#' Overtime win probability
-#'
-#' @param st data frame with one row per state to value. Required columns:
-#'   season, season_type, kind ("scrimmage", "kickoff", "pat", "twopt"),
-#'   yardline_100, down, ydstogo, secs (seconds left in the period),
-#'   d (score differential of the team with the ball), spread (spread of the
-#'   team with the ball), phase (possession number), p_make (PAT make prob)
-#' @param use_spread if FALSE the spread is ignored
-#' @noRd
+# Overtime win probability of the team with the ball.
+# `st` has one row per state to value. Required columns: season, season_type,
+# kind ("scrimmage", "kickoff", "pat", "twopt"), yardline_100, down, ydstogo,
+# secs (seconds left in the period), d (score differential of the team with the
+# ball), spread (spread of the team with the ball, only if use_spread), phase
+# (possession number), p_make (PAT make prob). Optional: p_fg (probability that
+# a field goal from here is good). If use_spread is FALSE the spread is ignored.
 ot_wp_states <- function(st, use_spread = TRUE) {
   n <- nrow(st)
   out <- rep(NA_real_, n)
@@ -373,6 +369,10 @@ ot_wp_states <- function(st, use_spread = TRUE) {
   s[is.na(s)] <- 0
   s <- pmin(pmax(s, ot_s_grid[1]), ot_s_grid[length(ot_s_grid)])
   secs <- pmin(pmax(st$secs, 0), ot_n * ot_step)
+  # Postseason games don't end when the period does. The next period starts and
+  # play goes on, so there is no clock pressure and the end of the period has no
+  # value of its own. Value those states as if there were lots of time left.
+  secs[st$season_type %in% "POST"] <- ot_n * ot_step
 
   # sanitize the state
   di <- ot_map_d(st$d)
@@ -381,7 +381,6 @@ ot_wp_states <- function(st, use_spread = TRUE) {
   di[rule == "SD"] <- 1L
   p[p == 1 & di != 1L] <- 2
   p[p == 3 & di != 1L] <- 2
-  p[p == 2 & di == 1L & st$kind %in% c("pat", "twopt")] <- 2
 
   scrim <- which(st$kind == "scrimmage")
   if (length(scrim) > 0) {
@@ -552,7 +551,6 @@ add_ot_air_wp <- function(pass_pbp, phase) {
     ydstogo = ifelse(to | first, 10, x$ydstogo - x$air_yards),
     secs = x$game_seconds_remaining, # already reduced by the average pass time
     d = ifelse(to, -x$score_differential, x$score_differential),
-    spread = ifelse(to, -x$posteam_spread, x$posteam_spread),
     phase = ifelse(
       to,
       ifelse(rule == "SD", 3, pmin(ph + 1, 3)),
@@ -561,121 +559,15 @@ add_ot_air_wp <- function(pass_pbp, phase) {
     stringsAsFactors = FALSE
   )
   st$yardline_100 <- pmin(pmax(st$yardline_100, 1), 99)
-  w <- ot_wp_states(st, use_spread = TRUE)
+  # wp (and with it airWPA) ignores the spread, so airWP must too
+  w <- ot_wp_states(st, use_spread = FALSE)
   # a turnover in the second possession while trailing ends the game
   lost <- to & ph == 2 & x$score_differential < 0 & rule != "SD"
   w <- ifelse(to, 1 - w, w)
   w[lost] <- 0
-  w[st$secs <= 0] <- ot_end_value(x$score_differential[st$secs <= 0])
+  # the game is over when the clock runs out in the regular season
+  over <- st$secs <= 0 & season_type == "REG"
+  w[over] <- ot_end_value(x$score_differential[over])
   air_wp[i] <- w
   air_wp
-}
-
-# Build the dynamic programming table for one rule / period length / kickoff
-# regime. Called from data-raw/ot_wp_model.R
-ot_build_dp <- function(rule, len, kick, models, starts) {
-  S <- length(ot_s_grid)
-  N <- ot_n
-  out_mod <- xgboost::xgb.load.raw(models$out_raw)
-  dur_mod <- xgboost::xgb.load.raw(models$dur_raw)
-  win <- ot_kick_seasons[[kick]]
-  season_c <- ot_kick_season_c[kick]
-
-  # start of drive outcome probabilities and durations
-  P <- array(0, c(2, S, 5))
-  Pm <- array(0, c(2, S, 5))
-  PMF <- vector("list", 2)
-  for (ty in 1:2) {
-    smp <- starts[
-      starts$type == c("kick", "stop")[ty] &
-        starts$season >= win[1] &
-        starts$season <= win[2],
-    ]
-    PMF[[ty]] <- vector("list", S)
-    for (si in seq_len(S)) {
-      feat <- cbind(
-        yardline_100 = pmin(pmax(smp$yardline_100, 1), 99),
-        down = smp$down,
-        ydstogo = pmin(smp$ydstogo, 30),
-        posteam_spread = ot_s_grid[si],
-        season_c = season_c
-      )
-      cp <- ot_collapse_preds(ot_predict_matrix(out_mod, feat))
-      pr <- cp$P
-      P[ty, si, ] <- colMeans(pr)
-      # teams that have to score do not punt. A conversion continues the drive
-      # from around midfield
-      cfeat <- feat
-      cfeat[, "yardline_100"] <- 55
-      cfeat[, "down"] <- 1
-      cfeat[, "ydstogo"] <- 10
-      r <- ot_collapse_preds(ot_predict_matrix(out_mod, cfeat))$P
-      Pm[ty, si, ] <- colMeans(ot_apply_must_score(
-        pr,
-        cp$pun,
-        ot_go_avg,
-        r[, 1],
-        r[, 2]
-      ))
-      PMF[[ty]][[si]] <- vapply(
-        1:5,
-        function(o) {
-          oh <- matrix(0, nrow(feat), 5)
-          oh[, o] <- 1
-          mu <- pmax(stats::predict(dur_mod, cbind(feat, oh)) - 5, 3)
-          sum(pr[, o] * mu) / sum(pr[, o])
-        },
-        numeric(1)
-      )
-    }
-  }
-
-  Q <- array(NA_real_, c(2, 3, length(ot_d_set), S, N + 1))
-  for (r in ot_reachable) {
-    di <- ot_map_d(r[2])
-    Q[, r[1], di, , 1] <- ot_end_value(r[2])
-  }
-  for (t in seq_len(N)) {
-    jj <- seq_len(t)
-    h <- ot_tempo(t * ot_step)
-    pm_t <- lapply(1:2, function(ty) {
-      lapply(seq_len(S), function(si) {
-        lapply(1:5, function(o) {
-          if (!o %in% c(1L, 2L, 5L)) {
-            return(NULL)
-          }
-          pm <- ot_pmf(PMF[[ty]][[si]][o] * h, models$shape[[ot_outcomes[o]]])
-          list(pm = pm, cum = cumsum(pm))
-        })
-      })
-    })
-    for (ty in 1:2) {
-      for (r in ot_reachable) {
-        p <- r[1]
-        d <- r[2]
-        di <- ot_map_d(d)
-        for (si in seq_len(S)) {
-          val <- 0
-          for (o in c(1L, 2L, 5L)) {
-            pmo <- pm_t[[ty]][[si]][[o]]
-            tail <- 1 - pmo$cum[t]
-            comps <- ot_trans(rule, p, d, ot_outcomes[o])
-            v <- 0
-            for (cp in comps) {
-              if (is.na(cp$val)) {
-                qn <- Q[cp$ty, cp$p, cp$di, S + 1L - si, t - jj + 1L]
-                v <- v + cp$w * sum(pmo$pm[jj] * (1 - qn))
-              } else {
-                v <- v + cp$w * cp$val * sum(pmo$pm[jj])
-              }
-            }
-            pw <- if (p == 2 && d < 0) Pm[ty, si, o] else P[ty, si, o]
-            val <- val + pw * (v + tail * ot_end_value(d))
-          }
-          Q[ty, p, di, si, t + 1L] <- val
-        }
-      }
-    }
-  }
-  list(Q = Q)
 }

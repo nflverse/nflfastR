@@ -1,31 +1,3 @@
-ot_state <- function(
-  season = 2025,
-  season_type = "REG",
-  kind = "kickoff",
-  d = 0,
-  phase = 1,
-  secs = 600,
-  spread = 0,
-  y = 65,
-  down = 1,
-  ytg = 10
-) {
-  data.frame(
-    season = season,
-    season_type = season_type,
-    kind = kind,
-    yardline_100 = y,
-    down = down,
-    ydstogo = ytg,
-    secs = secs,
-    d = d,
-    spread = spread,
-    phase = phase,
-    p_make = 0.94
-  )
-}
-ot_wp1 <- function(...) ot_wp_states(ot_state(...), use_spread = TRUE)
-
 test_that("overtime rule keys follow the rule changes", {
   key <- function(season, type) sub("\\|[0-9]$", "", ot_rule_key(season, type))
   expect_equal(key(2011, "REG"), "SD|900")
@@ -95,7 +67,7 @@ test_that("overtime: ties are worth a half win", {
     0.5,
     tolerance = 0.02
   )
-  # two point conversion to tie or lose in the BOTH era is worth the make prob
+  # two point conversion to win or lose in the BOTH era is worth the make prob
   twopt <- ot_wp_states(
     ot_state(season = 2025, kind = "twopt", d = -1, phase = 2, secs = 20),
     use_spread = FALSE
@@ -187,7 +159,7 @@ test_that("overtime: end of clock field goal attempts", {
 test_that("overtime: tempo curve never makes finishing a possession harder with more time", {
   secs <- seq(1, 900, by = 1)
   ratio <- ot_tempo(secs) / secs
-  expect_true(all(diff(ratio) <= 1e-12))
+  expect_all_true(diff(ratio) <= 1e-12)
   # no hurry with lots of time, never faster than about 6.5 seconds per play
   expect_equal(ot_tempo(600), 1)
   expect_gte(min(ot_tempo(secs)), 0.17)
@@ -208,4 +180,24 @@ test_that("overtime: the team with the ball has a better shot with 60 than 30 se
   }
   expect_gt(wp(60), wp(30))
   expect_gt(wp(30), wp(10))
+})
+
+test_that("overtime: postseason periods don't end the game", {
+  # trailing by 3 on the second possession with 20 seconds left in the period.
+  # In the regular season the game is nearly over. In the postseason the next
+  # period starts and the drive goes on.
+  wp <- function(type, secs) {
+    ot_wp1(
+      season = 2025,
+      season_type = type,
+      kind = "scrimmage",
+      d = -3,
+      phase = 2,
+      secs = secs,
+      y = 70
+    )
+  }
+  expect_lt(wp("REG", 20), 0.15)
+  expect_equal(wp("POST", 20), wp("POST", 900))
+  expect_gt(wp("POST", 20), 0.3)
 })
