@@ -8,12 +8,22 @@
 #'
 #' @param pbp_data Play-by-play dataset to estimate expected points for.
 #' @details Computes expected points for provided plays. Returns the data with
-#' probabilities of each scoring event and EP added. The following columns
+#' probabilities of each scoring event and EP added. Scoring events are valued
+#' as the points scored minus the expected points of the possession the other
+#' team gets afterwards (a kickoff touchback, which depends on the season and
+#' the clock). The clock is `half_seconds_remaining`, which is all that is
+#' needed, since it is equivalent to the quarter and the time remaining in the
+#' quarter (a half is two quarters). In overtime, the value of a score also
+#' depends on the overtime rules and the possession, which is used if the data
+#' has `qtr`, `game_id`, `drive` and `score_differential`. The possessions are
+#' counted from the lowest `drive` of each overtime game, so all of the
+#' overtime plays of a game from its start have to be in the data. The following columns
 #' must be present:
 #' \itemize{
 #' \item{season}
 #' \item{home_team}
 #' \item{posteam}
+#' \item{location (optional: 'Neutral' for a neutral site game, in which both teams are treated as away teams)}
 #' \item{roof (coded as 'outdoors', 'dome', or 'open'/'closed'/NA (retractable))}
 #' \item{half_seconds_remaining}
 #' \item{yardline_100}
@@ -61,44 +71,72 @@ calculate_expected_points <- function(pbp_data) {
 
   suppressWarnings(
     model_data <- pbp_data |>
-      make_model_mutations() |>
-      ep_model_select()
+      make_model_mutations()
   )
 
-  preds <- stats::predict(load_model("ep"), as.matrix(model_data))
+  preds <- predict_ep(ep_model_input(model_data))
 
-  # xgboost v3 returns a matrix of predictions instead of a vector as returned
-  # by xgboost v1.
-  if (is.vector(preds)) {
-    preds <- preds |>
-      matrix(ncol = 7, byrow = TRUE) |>
-      as.data.frame()
-  } else if (is.matrix(preds)) {
-    preds <- as.data.frame(preds)
-  }
-
-  colnames(preds) <- c(
-    "td_prob",
-    "opp_td_prob",
-    "fg_prob",
-    "opp_fg_prob",
-    "safety_prob",
-    "opp_safety_prob",
-    "no_score_prob"
-  )
+  # The value of the possession that follows a score depends on the clock, the
+  # season (kickoff rules) and, in overtime, the rules (if the data has what
+  # is needed to tell overtime possessions apart: game_id, drive, qtr, and
+  # score_differential). See get_kickoff_values().
+  score_vals <- cbind(
+    get_kickoff_values(
+      model_data,
+      exact_w = ep_exact_w(preds$Safety, preds$Opp_Safety)
+    ),
+    ep_continue_factors(model_data)
+  ) |>
+    score_values(model_data$season)
 
   preds <- preds |>
     dplyr::mutate(
-      ep = (-3 * .data$opp_fg_prob) +
-        (-2 * .data$opp_safety_prob) +
-        (-7 * .data$opp_td_prob) +
-        (3 * .data$fg_prob) +
-        (2 * .data$safety_prob) +
-        (7 * .data$td_prob)
+      ep = ep_from_probs(
+        .data$Touchdown,
+        .data$Opp_Touchdown,
+        .data$Field_Goal,
+        .data$Opp_Field_Goal,
+        .data$Safety,
+        .data$Opp_Safety,
+        score_vals
+      )
+    ) |>
+    dplyr::rename(
+      td_prob = "Touchdown",
+      opp_td_prob = "Opp_Touchdown",
+      fg_prob = "Field_Goal",
+      opp_fg_prob = "Opp_Field_Goal",
+      safety_prob = "Safety",
+      opp_safety_prob = "Opp_Safety",
+      no_score_prob = "No_Score"
     ) |>
     dplyr::bind_cols(pbp_data)
 
   return(preds)
+}
+
+# Probabilities of the next scoring event for data that has what is needed for
+# the EP model (without EP, which needs the value of the possession that
+# follows a score)
+calculate_ep_probs <- function(pbp_data) {
+  pbp_data <- pbp_data |> dplyr::select(-dplyr::any_of(drop.cols))
+
+  suppressWarnings(
+    model_data <- pbp_data |>
+      make_model_mutations()
+  )
+
+  predict_ep(ep_model_input(model_data)) |>
+    dplyr::rename(
+      td_prob = "Touchdown",
+      opp_td_prob = "Opp_Touchdown",
+      fg_prob = "Field_Goal",
+      opp_fg_prob = "Opp_Field_Goal",
+      safety_prob = "Safety",
+      opp_safety_prob = "Opp_Safety",
+      no_score_prob = "No_Score"
+    ) |>
+    dplyr::bind_cols(pbp_data)
 }
 
 # helper column for ep calculator

@@ -44,6 +44,7 @@ add_xyac <- function(pbp, ...) {
           "week",
           "home_team",
           "posteam",
+          "defteam",
           "roof",
           "half_seconds_remaining",
           "down",
@@ -65,6 +66,25 @@ add_xyac <- function(pbp, ...) {
           "original_ydstogo",
           dplyr::everything()
         )
+
+      # Value of the possession that follows each kind of score, at the clock
+      # after the catch. The kickoff values (which depend on the season, the
+      # clock and the teams) are the same for every yac outcome of a pass, so
+      # they are computed once per pass
+      catch_data <- passes
+      catch_data$half_seconds_remaining <- dplyr::if_else(
+        passes$half_seconds_remaining <= 6,
+        0,
+        passes$half_seconds_remaining - 6
+      )
+      pass_factors <- ep_continue_factors(pbp)[passes$index, ]
+      pass_score_values <- cbind(
+        get_kickoff_values(catch_data),
+        pass_factors
+      ) |>
+        score_values(passes$season)
+      names(pass_score_values) <- paste0("sv_", names(pass_score_values))
+      join_data <- cbind(join_data, pass_score_values)
 
       preds <- stats::predict(
         load_model("xyac"),
@@ -157,6 +177,13 @@ add_xyac <- function(pbp, ...) {
           ),
           # save yardline_100 for yards gained calculation
           yardline_100_noflip = .data$yardline_100,
+          # the other team has the ball after a turnover, which matters for
+          # home field in the EP model
+          posteam = dplyr::if_else(
+            .data$turnover == 1,
+            .data$defteam,
+            .data$posteam
+          ),
           # flip yardline_100 and timeouts for turnovers for EP calculation
           yardline_100 = dplyr::if_else(
             .data$turnover == 1,
@@ -181,11 +208,54 @@ add_xyac <- function(pbp, ...) {
           )
         ) |>
         dplyr::ungroup() |>
-        nflfastR::calculate_expected_points() |>
+        calculate_ep_probs() |>
+        xyac_exact_score_values(catch_data, pass_factors) |>
         dplyr::group_by(.data$index) |>
         dplyr::mutate(
+          # EP from the view of the team with the ball in the new state (the
+          # other team after a turnover on downs)
+          ep = ep_from_probs(
+            .data$td_prob,
+            .data$opp_td_prob,
+            .data$fg_prob,
+            .data$opp_fg_prob,
+            .data$safety_prob,
+            .data$opp_safety_prob,
+            data.frame(
+              td_own = dplyr::if_else(
+                .data$turnover == 1,
+                -.data$sv_td_opp,
+                .data$sv_td_own
+              ),
+              fg_own = dplyr::if_else(
+                .data$turnover == 1,
+                -.data$sv_fg_opp,
+                .data$sv_fg_own
+              ),
+              saf_own = dplyr::if_else(
+                .data$turnover == 1,
+                -.data$sv_saf_opp,
+                .data$sv_saf_own
+              ),
+              td_opp = dplyr::if_else(
+                .data$turnover == 1,
+                -.data$sv_td_own,
+                .data$sv_td_opp
+              ),
+              fg_opp = dplyr::if_else(
+                .data$turnover == 1,
+                -.data$sv_fg_own,
+                .data$sv_fg_opp
+              ),
+              saf_opp = dplyr::if_else(
+                .data$turnover == 1,
+                -.data$sv_saf_own,
+                .data$sv_saf_opp
+              )
+            )
+          ),
           ep = dplyr::case_when(
-            .data$yardline_100 == 0 ~ 7,
+            .data$yardline_100 == 0 ~ .data$sv_td_own,
             .data$turnover == 1 ~ -1 * .data$ep,
             TRUE ~ ep
           ),
@@ -235,6 +305,33 @@ add_xyac <- function(pbp, ...) {
   return(pbp)
 }
 
+
+### the scoring values of the passes where a safety is likely
+# The values of the possession after a score are computed once per pass, with the
+# shortcut for the free kick value. For the passes where a safety is likely in
+# any of the outcomes (the same rule as in the play-by-play, see ep_exact_w())
+# they come from the model.
+xyac_exact_score_values <- function(frame, catch_data, pass_factors) {
+  flagged <- unique(
+    frame$index[ep_exact_w(frame$safety_prob, frame$opp_safety_prob)]
+  )
+  if (length(flagged) == 0L) {
+    return(frame)
+  }
+  rows <- match(flagged, catch_data$index)
+  exact <- cbind(
+    get_kickoff_values(catch_data[rows, ], exact_w = TRUE),
+    pass_factors[rows, ]
+  ) |>
+    score_values(catch_data$season[rows])
+  names(exact) <- paste0("sv_", names(exact))
+  hit <- which(frame$index %in% flagged)
+  at <- match(frame$index[hit], flagged)
+  for (nm in names(exact)) {
+    frame[[nm]][hit] <- exact[[nm]][at]
+  }
+  frame
+}
 
 ### helper function for getting the data ready
 prepare_xyac_data <- function(pbp) {
