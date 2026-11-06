@@ -77,9 +77,10 @@ add_xyac <- function(pbp, ...) {
         0,
         passes$half_seconds_remaining - 6
       )
+      pass_factors <- ep_continue_factors(pbp)[passes$index, ]
       pass_score_values <- cbind(
         get_kickoff_values(catch_data),
-        ep_continue_factors(pbp)[passes$index, ]
+        pass_factors
       ) |>
         score_values(passes$season)
       names(pass_score_values) <- paste0("sv_", names(pass_score_values))
@@ -208,6 +209,7 @@ add_xyac <- function(pbp, ...) {
         ) |>
         dplyr::ungroup() |>
         calculate_ep_probs() |>
+        xyac_exact_score_values(catch_data, pass_factors) |>
         dplyr::group_by(.data$index) |>
         dplyr::mutate(
           # EP from the view of the team with the ball in the new state (the
@@ -303,6 +305,33 @@ add_xyac <- function(pbp, ...) {
   return(pbp)
 }
 
+
+### the scoring values of the passes where a safety is likely
+# The values of the possession after a score are computed once per pass, with the
+# shortcut for the free kick value. For the passes where a safety is likely in
+# any of the outcomes (the same rule as in the play-by-play, see ep_exact_w())
+# they come from the model.
+xyac_exact_score_values <- function(frame, catch_data, pass_factors) {
+  flagged <- unique(
+    frame$index[ep_exact_w(frame$safety_prob, frame$opp_safety_prob)]
+  )
+  if (length(flagged) == 0L) {
+    return(frame)
+  }
+  rows <- match(flagged, catch_data$index)
+  exact <- cbind(
+    get_kickoff_values(catch_data[rows, ], exact_w = TRUE),
+    pass_factors[rows, ]
+  ) |>
+    score_values(catch_data$season[rows])
+  names(exact) <- paste0("sv_", names(exact))
+  hit <- which(frame$index %in% flagged)
+  at <- match(frame$index[hit], flagged)
+  for (nm in names(exact)) {
+    frame[[nm]][hit] <- exact[[nm]][at]
+  }
+  frame
+}
 
 ### helper function for getting the data ready
 prepare_xyac_data <- function(pbp) {

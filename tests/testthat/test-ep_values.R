@@ -406,3 +406,50 @@ test_that("the free kick value comes from the model where a safety matters", {
   # V barely moves
   expect_lt(abs(exact$v[2] - shortcut$v[2]), 0.02)
 })
+
+test_that("the exact free kick value is selected from the probabilities only", {
+  expect_equal(
+    ep_exact_w(c(0.001, 0.02, 0.006, NA), c(0.002, 0.001, 0.006, 0.5)),
+    c(FALSE, TRUE, TRUE, FALSE)
+  )
+})
+
+test_that("the calculator uses the same free kick value as the play-by-play", {
+  skip_on_cran()
+  # a state where a safety is likely, so the exact free kick value is used
+  data <- tibble::tibble(
+    "season" = 2025,
+    "home_team" = "SEA",
+    "posteam" = "SEA",
+    "roof" = "outdoors",
+    "half_seconds_remaining" = 60,
+    "yardline_100" = 99,
+    "down" = 2,
+    "ydstogo" = 10,
+    "posteam_timeouts_remaining" = 3,
+    "defteam_timeouts_remaining" = 3
+  )
+  model_data <- make_model_mutations(data)
+  probs <- predict_ep(ep_model_input(model_data))
+  expect_true(ep_exact_w(probs$Safety, probs$Opp_Safety))
+
+  ep_with <- function(exact_w) {
+    sv <- cbind(
+      get_kickoff_values(model_data, exact_w = exact_w),
+      ep_continue_factors(model_data)
+    ) |>
+      score_values(model_data$season)
+    ep_from_probs(
+      probs$Touchdown,
+      probs$Opp_Touchdown,
+      probs$Field_Goal,
+      probs$Opp_Field_Goal,
+      probs$Safety,
+      probs$Opp_Safety,
+      sv
+    )
+  }
+  expect_equal(calculate_expected_points(data)$ep, ep_with(TRUE))
+  # and that is different from the shortcut
+  expect_gt(abs(ep_with(TRUE) - ep_with(FALSE)), 0.005)
+})

@@ -81,7 +81,10 @@ calculate_expected_points <- function(pbp_data) {
   # is needed to tell overtime possessions apart: game_id, drive, qtr, and
   # score_differential). See get_kickoff_values().
   score_vals <- cbind(
-    get_kickoff_values(model_data),
+    get_kickoff_values(
+      model_data,
+      exact_w = ep_exact_w(preds$Safety, preds$Opp_Safety)
+    ),
     ep_continue_factors(model_data)
   ) |>
     score_values(model_data$season)

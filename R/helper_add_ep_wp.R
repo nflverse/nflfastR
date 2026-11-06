@@ -190,6 +190,16 @@ safety_free_kick_yardline <- 61
 # likely or is the play get the value from the model (see get_kickoff_values()).
 safety_free_kick_ep_per_yard <- 0.05
 
+# The rows where the free kick value W has to come from the model: those where
+# a safety is likely (more than 1% of the next score), since the shortcut for W
+# can be off by up to 0.24 points and that is worth about 0.003 points of EP
+# at that probability. This only uses the probabilities of the state, never what
+# happens next, so that EP does not depend on the outcome of the play, and it is
+# the same rule everywhere (play-by-play, calculator, xYAC and air EP).
+ep_exact_w <- function(safety, opp_safety) {
+  ((safety + opp_safety) > 0.01) %in% TRUE
+}
+
 # The value of a scoring event is not only its points: the other team gets the
 # ball afterwards, so a touchdown is worth 6 + xp - V where V is the expected
 # points of the opponent's kickoff possession at the current clock. A safety
@@ -964,23 +974,36 @@ add_ep_variables <- function(pbp_data) {
   # Value of the kickoff (or safety free kick) possession that follows a score
   # (the columns are kept for add_air_yac_ep_variables() and removed by
   # select_variables() at the end of the pipeline)
-  # The free kick value (W) is exact where a safety is likely (more than 1% of
-  # the next score) or is the play. Elsewhere the shortcut is off by at most
-  # 0.24 points, which is less than 0.003 points in EP at that probability
+  # The free kick value (W) is exact where a safety is likely (see
+  # ep_exact_w()), using only what is known before the play
   kick_values <- cbind(
     get_kickoff_values(
       pbp_data,
       kickoff_preds = kickoff_preds,
-      exact_w = (pbp_data$Safety_Prob + pbp_data$Opp_Safety_Prob > 0.01) %in%
-        TRUE |
-        pbp_data$safety %in% 1
+      exact_w = ep_exact_w(pbp_data$Safety_Prob, pbp_data$Opp_Safety_Prob)
     ),
     ep_continue_factors(pbp_data)
   )
   score_vals <- score_values(kick_values, pbp_data$season)
+
+  # The endpoint of an actual safety always uses the exact W. It is separate from
+  # the EP before the play, which cannot depend on what happens next
+  end_saf <- score_vals[, c("saf_own", "saf_opp")]
+  safety_i <- which(pbp_data$safety %in% 1)
+  if (length(safety_i) > 0) {
+    safety_kv <- kick_values[safety_i, ]
+    safety_kv[, c("v", "w")] <- get_kickoff_values(
+      pbp_data[safety_i, ],
+      exact_w = TRUE
+    )
+    safety_sv <- score_values(safety_kv, pbp_data$season[safety_i])
+    end_saf$saf_own[safety_i] <- safety_sv$saf_own
+    end_saf$saf_opp[safety_i] <- safety_sv$saf_opp
+  }
+  names(end_saf) <- paste0("ep_end_", names(end_saf))
   names(kick_values) <- paste0("ep_", names(kick_values))
   names(score_vals) <- paste0("ep_sv_", names(score_vals))
-  pbp_data <- cbind(pbp_data, kick_values, score_vals)
+  pbp_data <- cbind(pbp_data, kick_values, score_vals, end_saf)
 
   # Calculate the ExpPts. The value of a score is its points plus or minus the
   # value of the possession the other team gets afterwards (see
@@ -1132,9 +1155,10 @@ add_ep_variables <- function(pbp_data) {
       # Safety:
       epa = dplyr::case_when(
         !is.na(.data$safety_team) & .data$safety_team == .data$posteam ~
-          dplyr::if_else(.data$ep_game_over, 2, .data$ep_sv_saf_own) - .data$ep,
+          dplyr::if_else(.data$ep_game_over, 2, .data$ep_end_saf_own) -
+          .data$ep,
         !is.na(.data$safety_team) & .data$safety_team == .data$defteam ~
-          dplyr::if_else(.data$ep_game_over, -2, .data$ep_sv_saf_opp) -
+          dplyr::if_else(.data$ep_game_over, -2, .data$ep_end_saf_opp) -
           .data$ep,
         TRUE ~ .data$epa
       )
@@ -1862,9 +1886,7 @@ add_air_yac_ep_variables <- function(pbp_data) {
   # need the exact free kick value)
   late_i <- which(
     pass_pbp_data$half_seconds_remaining <= 180 |
-      ((pass_pbp_data_preds$Safety + pass_pbp_data_preds$Opp_Safety) >
-        0.01) %in%
-        TRUE |
+      ep_exact_w(pass_pbp_data_preds$Safety, pass_pbp_data_preds$Opp_Safety) |
       (pass_pbp_data$old_yrdline100 - pass_pbp_data$air_yards > 99) %in% TRUE
   )
   if (length(late_i) > 0) {
