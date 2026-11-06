@@ -786,10 +786,12 @@ add_ep_variables <- function(pbp_data) {
       (dplyr::lead(pbp_data$two_point_attempt) == 1 |
         dplyr::lead(pbp_data$extra_point_attempt) == 1 |
         dplyr::lead(pbp_data$play_type_nfl) == "XP_KICK")) |
-      #kickoff: prior play was PAT and next play is kickoff
+      #kickoff: prior play was PAT and next play is kickoff, unless it is a
+      #kickoff that ended in a safety (the next kickoff is the free kick after it)
       ((dplyr::lag(pbp_data$two_point_attempt) == 1 |
         dplyr::lag(pbp_data$extra_point_attempt) == 1) &
-        dplyr::lead(pbp_data$kickoff_attempt == 1))
+        dplyr::lead(pbp_data$kickoff_attempt == 1) &
+        !(pbp_data$safety %in% 1))
   )
 
   st_penalty_i_2 <- which(
