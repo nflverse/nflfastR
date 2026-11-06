@@ -165,3 +165,91 @@ test_that("expected points are net of the next possession", {
   expect_gt(ep$ep[2], ep$ep[1])
   expect_lt(ep$ep[2], 6.94)
 })
+
+test_that("kickoff values solve their own equations", {
+  skip_on_cran()
+  data <- tibble::tibble(
+    "season" = c(2015, 2020, 2025, 2025),
+    "home_team" = "SEA",
+    "posteam" = c("SEA", "DEN", "SEA", "DEN"),
+    "roof" = "outdoors",
+    "half_seconds_remaining" = c(1500, 900, 1500, 300),
+    "yardline_100" = 75,
+    "down" = 1,
+    "ydstogo" = 10,
+    "posteam_timeouts_remaining" = 3,
+    "defteam_timeouts_remaining" = 3
+  ) |>
+    make_model_mutations()
+  kv <- get_kickoff_values(data)
+
+  # the common value is the average of the two teams' values, and the free kick
+  # is worth that plus the extra field position
+  v <- (kv$v_own + kv$v_opp) / 2
+  yards <- kickoff_touchback_yardline(data$season) - safety_free_kick_yardline
+  expect_equal(kv$w_own, v + safety_free_kick_ep_per_yard * yards)
+  expect_equal(kv$w_opp, kv$w_own)
+
+  # V = a + b V + d W on the average of the two teams' kickoff states
+  ko <- data
+  ko$yardline_100 <- kickoff_touchback_yardline(ko$season)
+  ko$down1 <- 1
+  ko$down2 <- 0
+  ko$down3 <- 0
+  ko$down4 <- 0
+  ko_opp <- ko
+  ko_opp$home <- 1 - ko$home
+  p <- (get_preds(ko) + get_preds(ko_opp)) / 2
+  td <- p$Touchdown - p$Opp_Touchdown
+  fg <- p$Field_Goal - p$Opp_Field_Goal
+  sf <- p$Safety - p$Opp_Safety
+  xp <- xp_make_prob(data$season)
+  expect_equal(
+    v,
+    td * (6 + xp) + 3 * fg + 2 * sf - (td + fg) * v + sf * kv$w_own
+  )
+})
+
+test_that("expected points at the kickoff state match the kickoff value", {
+  skip_on_cran()
+  # at a neutral site both teams are the same, so the kickoff possession is
+  # worth exactly what the EP formula gives at the touchback spot
+  data <- tibble::tibble(
+    "season" = c(2015, 2020, 2025),
+    "home_team" = "SEA",
+    "posteam" = "SEA",
+    "location" = "Neutral",
+    "roof" = "outdoors",
+    "half_seconds_remaining" = c(1500, 900, 600),
+    "yardline_100" = 75,
+    "down" = 1,
+    "ydstogo" = 10,
+    "posteam_timeouts_remaining" = 3,
+    "defteam_timeouts_remaining" = 3
+  ) |>
+    make_model_mutations()
+  kv <- get_kickoff_values(data)
+  expect_equal(kv$v_own, kv$v_opp)
+
+  ko <- data
+  ko$yardline_100 <- kickoff_touchback_yardline(ko$season)
+  ko$down1 <- 1
+  ko$down2 <- 0
+  ko$down3 <- 0
+  ko$down4 <- 0
+  p <- get_preds(ko)
+  sv <- score_values(
+    cbind(kv, ep_continue_factors(data)),
+    data$season
+  )
+  ep <- ep_from_probs(
+    p$Touchdown,
+    p$Opp_Touchdown,
+    p$Field_Goal,
+    p$Opp_Field_Goal,
+    p$Safety,
+    p$Opp_Safety,
+    sv
+  )
+  expect_equal(ep, kv$v_own)
+})
