@@ -114,14 +114,19 @@ find_targets <- function(file) {
     }
   }
 
-  calls <- pd[pd$token == "SYMBOL_FUNCTION_CALL" &
-    pd$text %in% c("case_when", "if_else", "ifelse", "fifelse", "fcase", "filter"), ]
+  calls <- pd[
+    pd$token == "SYMBOL_FUNCTION_CALL" &
+      pd$text %in%
+        c("case_when", "if_else", "ifelse", "fifelse", "fcase", "filter"),
+  ]
   for (i in seq_len(nrow(calls))) {
     fn <- calls$text[i]
     fn_expr <- calls$parent[i]
     call_id <- pd$parent[pd$id == fn_expr]
     args <- positional_args(call_id)
-    if (length(args) == 0) next
+    if (length(args) == 0) {
+      next
+    }
     piped <- is_piped(call_id)
 
     if (fn == "case_when") {
@@ -132,10 +137,16 @@ find_targets <- function(file) {
     } else if (fn %in% c("if_else", "ifelse", "fifelse")) {
       if (!piped) add(args[[1]], fn)
     } else if (fn == "fcase") {
-      for (j in seq(1, length(args), by = 2)) add(args[[j]], fn)
+      for (j in seq(1, length(args), by = 2)) {
+        add(args[[j]], fn)
+      }
     } else if (fn == "filter") {
-      if (!piped) args <- args[-1]
-      for (a in args) add(a, fn)
+      if (!piped) {
+        args <- args[-1]
+      }
+      for (a in args) {
+        add(a, fn)
+      }
     }
   }
 
@@ -155,23 +166,39 @@ instrument_lines <- function(lines, targets) {
 
   # gap g on a line means "after character g"
   ins <- rbind(
-    data.frame(line = targets$line1, gap = targets$col1 - 1, txt = open_txt,
-               type = 0, span = span),
-    data.frame(line = targets$line2, gap = targets$col2, txt = close_txt,
-               type = 1, span = span)
+    data.frame(
+      line = targets$line1,
+      gap = targets$col1 - 1,
+      txt = open_txt,
+      type = 0,
+      span = span
+    ),
+    data.frame(
+      line = targets$line2,
+      gap = targets$col2,
+      txt = close_txt,
+      type = 1,
+      span = span
+    )
   )
   # Insertions are applied back to front. At the same position, whatever is
   # applied last ends up first in the text. We want: closings before openings,
   # inner closings before outer closings, outer openings before inner openings.
-  ins <- ins[order(
-    -ins$line, -ins$gap, ins$type,
-    ifelse(ins$type == 0, ins$span, -ins$span)
-  ), ]
+  ins <- ins[
+    order(
+      -ins$line,
+      -ins$gap,
+      ins$type,
+      ifelse(ins$type == 0, ins$span, -ins$span)
+    ),
+  ]
   for (i in seq_len(nrow(ins))) {
     l <- lines[ins$line[i]]
     g <- ins$gap[i]
     lines[ins$line[i]] <- paste0(
-      substr(l, 1, g), ins$txt[i], substr(l, g + 1, nchar(l))
+      substr(l, 1, g),
+      ins$txt[i],
+      substr(l, g + 1, nchar(l))
     )
   }
   lines
@@ -186,9 +213,15 @@ load_instrumented <- function(pkg_dir = ".") {
   pkgload::load_all(pkg_dir, quiet = TRUE, export_all = FALSE)
   ns <- asNamespace("nflfastR")
 
-  targets <- do.call(rbind, lapply(file.path(pkg_dir, parser_files), find_targets))
-  targets$file <- sub(paste0("^", normalizePath(pkg_dir), "/"), "",
-                      normalizePath(targets$file))
+  targets <- do.call(
+    rbind,
+    lapply(file.path(pkg_dir, parser_files), find_targets)
+  )
+  targets$file <- sub(
+    paste0("^", normalizePath(pkg_dir), "/"),
+    "",
+    normalizePath(targets$file)
+  )
   targets$id <- seq_len(nrow(targets))
 
   cov <- new.env()
@@ -207,14 +240,18 @@ load_instrumented <- function(pkg_dir = ".") {
   cov$.cov_hit <- function(id, x) {
     cov$reach[id] <- TRUE
     if (is.logical(x) && length(x)) {
-      if (!cov$t[id] && any(x, na.rm = TRUE)) cov$t[id] <- TRUE
+      if (!cov$t[id] && any(x, na.rm = TRUE)) {
+        cov$t[id] <- TRUE
+      }
       if (!cov$f[id] && any(!x, na.rm = TRUE)) cov$f[id] <- TRUE
     }
     x
   }
   # attach() copies the environment, so attach only the helpers plus a
   # reference to the state env
-  if ("nflfastR_cov" %in% search()) detach("nflfastR_cov", character.only = TRUE)
+  if ("nflfastR_cov" %in% search()) {
+    detach("nflfastR_cov", character.only = TRUE)
+  }
   attach(
     list(.cov_hit = cov$.cov_hit, .cov_reach = cov$.cov_reach, cov = cov),
     name = "nflfastR_cov",
@@ -228,9 +265,13 @@ load_instrumented <- function(pkg_dir = ".") {
     exprs <- parse(text = new_lines, keep.source = FALSE)
     for (e in exprs) {
       # only re-evaluate top level assignments of existing objects
-      if (!is.call(e) || !as.character(e[[1]]) %in% c("<-", "=")) next
+      if (!is.call(e) || !as.character(e[[1]]) %in% c("<-", "=")) {
+        next
+      }
       name <- as.character(e[[2]])
-      if (!exists(name, envir = ns, inherits = FALSE)) next
+      if (!exists(name, envir = ns, inherits = FALSE)) {
+        next
+      }
       unlockBinding(name, ns)
       eval(e, ns)
       lockBinding(name, ns)

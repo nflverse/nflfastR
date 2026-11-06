@@ -22,7 +22,11 @@ cov <- cov_state()
 future::plan("sequential")
 games <- readRDS(file.path(out_dir, "games.rds"))
 
-game_ids <- sub("\\.rds$", "", list.files(file.path(raw_dir, season), "\\.rds$"))
+game_ids <- sub(
+  "\\.rds$",
+  "",
+  list.files(file.path(raw_dir, season), "\\.rds$")
+)
 
 res <- vector("list", length(game_ids))
 for (i in seq_along(game_ids)) {
@@ -40,7 +44,9 @@ for (i in seq_along(game_ids)) {
       NULL
     }
   )
-  if (!is.null(pbp)) n_plays <- nrow(pbp)
+  if (!is.null(pbp)) {
+    n_plays <- nrow(pbp)
+  }
   res[[i]] <- list(
     game_id = id,
     hits = current_hits(),

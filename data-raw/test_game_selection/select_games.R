@@ -21,7 +21,11 @@
 #   never_hit.csv        items no game covers (dead code candidates)
 
 args <- commandArgs(trailingOnly = TRUE)
-hits_dir <- if (length(args) >= 1) args[[1]] else "data-raw/test_game_selection/hits"
+hits_dir <- if (length(args) >= 1) {
+  args[[1]]
+} else {
+  "data-raw/test_game_selection/hits"
+}
 n_games <- if (length(args) >= 2) as.integer(args[[2]]) else 100L
 
 files <- list.files(hits_dir, "^hits_\\d{4}\\.rds$", full.names = TRUE)
@@ -56,11 +60,21 @@ while (length(order_sel) < max(n_games, 1L) || m == 0L) {
   m <- m + 1L
   need <- pmin(m, games_per_item)
   repeat {
-    if (length(remaining) == 0) break
-    gain <- vapply(game_items[remaining], function(x) sum(count[x] < need[x]), 0L)
-    if (max(gain) == 0) break
+    if (length(remaining) == 0) {
+      break
+    }
+    gain <- vapply(
+      game_items[remaining],
+      function(x) sum(count[x] < need[x]),
+      0L
+    )
+    if (max(gain) == 0) {
+      break
+    }
     # round 1 runs to full coverage, later rounds stop at the budget
-    if (m > 1L && length(order_sel) >= n_games) break
+    if (m > 1L && length(order_sel) >= n_games) {
+      break
+    }
     best <- remaining[order(-gain, games$n_plays[remaining])[1]]
     order_sel <- c(order_sel, best)
     gains <- c(gains, max(gain))
@@ -87,15 +101,26 @@ for (k in seq_along(order_sel)) {
   first_cover[x[!seen[x]]] <- k
   seen[x] <- TRUE
 }
-curve$coverage <- round(cumsum(tabulate(first_cover, length(order_sel))) / n_items, 4)
-curve$covered_twice <- vapply(seq_along(order_sel), function(k) {
-  cnt <- tabulate(unlist(game_items[order_sel[seq_len(k)]]), n_items)
-  round(mean(cnt >= pmin(2L, games_per_item)), 4)
-}, 0)
+curve$coverage <- round(
+  cumsum(tabulate(first_cover, length(order_sel))) / n_items,
+  4
+)
+curve$covered_twice <- vapply(
+  seq_along(order_sel),
+  function(k) {
+    cnt <- tabulate(unlist(game_items[order_sel[seq_len(k)]]), n_items)
+    round(mean(cnt >= pmin(2L, games_per_item)), 4)
+  },
+  0
+)
 write.csv(curve, file.path(hits_dir, "coverage_curve.csv"), row.names = FALSE)
 
 selected <- curve[seq_len(min(n_games, nrow(curve))), ]
-write.csv(selected, file.path(hits_dir, "selected_games.csv"), row.names = FALSE)
+write.csv(
+  selected,
+  file.path(hits_dir, "selected_games.csv"),
+  row.names = FALSE
+)
 
 # describe items
 describe <- function(items) {
@@ -135,12 +160,23 @@ cat("Items hit by at least one game:", n_items, "\n")
 cat("Items hit by every game:", sum(games_per_item == nrow(games)), "\n")
 cat("Games needed to cover everything once:", first_round, "\n\n")
 for (k in c(1, 5, 10, 25, 50, 75, 100, 150, 200)) {
-  if (k <= nrow(curve)) cat(sprintf("  %3d games: %.1f%%\n", k, 100 * curve$coverage[k]))
+  if (k <= nrow(curve)) {
+    cat(sprintf("  %3d games: %.1f%%\n", k, 100 * curve$coverage[k]))
+  }
 }
-cat("\nSelected", nrow(selected), "games cover",
-    sprintf("%.2f%%", 100 * selected$coverage[nrow(selected)]),
-    "of items any game hits. Remaining gaps:", nrow(gaps), "\n")
-cat("Items covered at least twice (where 2+ games hit them):",
-    sprintf("%.2f%%", 100 * selected$covered_twice[nrow(selected)]), "\n")
+cat(
+  "\nSelected",
+  nrow(selected),
+  "games cover",
+  sprintf("%.2f%%", 100 * selected$coverage[nrow(selected)]),
+  "of items any game hits. Remaining gaps:",
+  nrow(gaps),
+  "\n"
+)
+cat(
+  "Items covered at least twice (where 2+ games hit them):",
+  sprintf("%.2f%%", 100 * selected$covered_twice[nrow(selected)]),
+  "\n"
+)
 cat("Seasons in selection:\n")
 print(table(substr(selected$game_id, 1, 4)))
