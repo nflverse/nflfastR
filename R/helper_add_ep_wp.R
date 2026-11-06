@@ -148,6 +148,13 @@ xp_make_prob <- function(season) {
   )
 }
 
+# Where an extra point is usually kicked from, as yardline_100: the 2 yard line
+# through 2014 and the 15 yard line since. One that starts elsewhere was moved
+# by a penalty
+xp_standard_yardline <- function(season) {
+  dplyr::if_else(season <= 2014, 2, 15)
+}
+
 # Probability of making a two point conversion: 0.49 for tries from the 2 yard
 # line since 2004, leaving out kneel downs and botched one point tries
 two_point_make_prob <- 0.49
@@ -807,8 +814,19 @@ add_ep_variables <- function(pbp_data) {
           dplyr::lead(pbp_data$kickoff_attempt) == 0))
   )
 
-  # Assign the make_fg_probs of the extra-point PATs:
+  # Assign the make_fg_probs of the extra-point PATs. A normal extra point (from
+  # the usual spot) uses the season's extra point probability instead, which is
+  # the one in the value of a touchdown, so that a touchdown and its extra point
+  # add up. One that was moved by a penalty keeps the field goal model's
+  # probability for its distance
   base_ep_preds$ExPoint_Prob[extrapoint_i] <- make_fg_prob[extrapoint_i]
+  normal_xp_i <- extrapoint_i[which(
+    pbp_data$yardline_100[extrapoint_i] ==
+      xp_standard_yardline(pbp_data$season[extrapoint_i])
+  )]
+  base_ep_preds$ExPoint_Prob[normal_xp_i] <- xp_make_prob(
+    pbp_data$season[normal_xp_i]
+  )
 
   # Assign the TwoPoint_Prob with the historical success rate:
   base_ep_preds$TwoPoint_Prob[twopoint_i] <- two_point_make_prob
@@ -1051,7 +1069,7 @@ add_ep_variables <- function(pbp_data) {
           dplyr::if_else(.data$ep_game_over, 2, .data$ep_sv_saf_own) - .data$ep,
         !is.na(.data$safety_team) & .data$safety_team == .data$defteam ~
           dplyr::if_else(.data$ep_game_over, -2, .data$ep_sv_saf_opp) -
-            .data$ep,
+          .data$ep,
         TRUE ~ .data$epa
       )
     ) |>

@@ -6,6 +6,13 @@ test_that("extra point probability follows the seasons", {
   expect_equal(xp_make_prob(NA_real_), NA_real_)
 })
 
+test_that("the usual extra point spot follows the 2015 rule change", {
+  expect_equal(
+    xp_standard_yardline(c(2004, 2014, 2015, 2025)),
+    c(2, 2, 15, 15)
+  )
+})
+
 test_that("kickoff touchback spot follows the kickoff rules", {
   seasons <- c(2009, 2015, 2016, 2023, 2024, 2025, 2026)
   expect_equal(
