@@ -194,7 +194,15 @@ safety_free_kick_ep_per_yard <- 0.05
 # between the possessions, so the difference between the two teams' values is
 # barely damped and the model's home field effect blows up. Instead the
 # receiver specific values apply the home field and timeout difference once,
-# in a single step from the common solution. Score differential is ignored and
+# in a single step from the common solution. Evaluating the possession after a
+# score later in the game (the clock when the next score happens) makes this
+# worse, because the model's home field effect then compounds over each
+# alternating possession (the home / road difference at the start of a half
+# goes from 0.6 to 1.5). The cost of applying it once is that the `ep` of a
+# kickoff row can differ from the value subtracted on the score before it, by
+# 0.14 on average (and by about -0.14 when the home team scored and +0.09 when
+# the road team scored). No play's EPA includes that difference. Score
+# differential is ignored and
 # the clock is the current clock ("as if they scored now"). All values are 0
 # when no kickoff or free kick can follow: end of half or game.
 #
