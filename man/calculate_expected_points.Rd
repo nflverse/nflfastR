@@ -31,7 +31,12 @@ ydstogo, posteam_timeouts_remaining, defteam_timeouts_remaining
 }
 \details{
 Computes expected points for provided plays. Returns the data with
-probabilities of each scoring event and EP added. The following columns
+probabilities of each scoring event and EP added. Scoring events are valued
+as the points scored minus the expected points of the possession the other
+team gets afterwards (a kickoff touchback, which depends on the season and
+the clock). The clock is \code{half_seconds_remaining}, which is all that is
+needed, since it is equivalent to the quarter and the time remaining in the
+quarter (a half is two quarters). The following columns
 must be present:
 \itemize{
 \item{season}
