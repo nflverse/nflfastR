@@ -28,26 +28,26 @@ ids <- nflreadr::load_schedules(2017:2019) |>
   dplyr::pull(game_id)
 pbp <- nflfastR::build_nflfastR_pbp(ids)
 #> ── Build nflfastR Play-by-Play Data ────────────────── nflfastR version 6.0.0 ──
-#> • 04:39:37 | Start download of 3 games...
-#> ✔ 04:39:41 | Download finished. Adding variables...
-#> ✔ 04:39:41 | added game variables
-#> ✔ 04:39:41 | added nflscrapR variables
-#> ✔ 04:39:42 | added ep variables
-#> ✔ 04:39:42 | added air_yac_ep variables
-#> ✔ 04:39:42 | added wp variables
-#> ✔ 04:39:42 | added air_yac_wp variables
-#> ✔ 04:39:42 | added cp and cpoe
-#> ✔ 04:39:42 | added fixed drive variables
-#> ✔ 04:39:42 | added series variables
-#> • 04:39:42 | Cleaning up play-by-play...
-#> ✔ 04:39:42 | Cleaning completed
-#> ✔ 04:39:42 | added qb_epa
-#> • 04:39:43 | Computing xyac...
-#> ✔ 04:39:44 | added xyac variables
-#> • 04:39:44 | Computing xpass...
-#> ✔ 04:39:45 | added xpass and pass_oe
-#> • 04:39:45 | Decode player ids...
-#> ✔ 04:39:46 | Decoding of player ids completed
+#> • 07:57:38 | Start download of 3 games...
+#> ✔ 07:57:42 | Download finished. Adding variables...
+#> ✔ 07:57:42 | added game variables
+#> ✔ 07:57:42 | added nflscrapR variables
+#> ✔ 07:57:43 | added ep variables
+#> ✔ 07:57:43 | added air_yac_ep variables
+#> ✔ 07:57:43 | added wp variables
+#> ✔ 07:57:44 | added air_yac_wp variables
+#> ✔ 07:57:44 | added cp and cpoe
+#> ✔ 07:57:44 | added fixed drive variables
+#> ✔ 07:57:44 | added series variables
+#> • 07:57:44 | Cleaning up play-by-play...
+#> ✔ 07:57:44 | Cleaning completed
+#> ✔ 07:57:44 | added qb_epa
+#> • 07:57:44 | Computing xyac...
+#> ✔ 07:57:46 | added xyac variables
+#> • 07:57:46 | Computing xpass...
+#> ✔ 07:57:46 | added xpass and pass_oe
+#> • 07:57:46 | Decode player ids...
+#> ✔ 07:57:47 | Decoding of player ids completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
@@ -422,7 +422,7 @@ So let’s connect to an in-memory duckdb database:
 
 connection <- DBI::dbConnect(duckdb::duckdb())
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/Rtmppd7ysg/duckdb
+#> ℹ /tmp/Rtmp5MZPZZ/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
@@ -430,7 +430,7 @@ connection <- DBI::dbConnect(duckdb::duckdb())
 #> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
 #> ℹ See ?duckdb_storage for details and alternatives.
 connection
-#> <duckdb_connection fc090 driver=<duckdb_driver dbdir=':memory:' read_only=FALSE bigint=numeric>>
+#> <duckdb_connection 626e0 driver=<duckdb_driver dbdir=':memory:' read_only=FALSE bigint=numeric>>
 ```
 
 #### Write data to the database
@@ -444,10 +444,10 @@ nflfastR::update_pbp_db(connection, seasons = 2021:2024)
 #> ── Update nflverse Play-by-Play Data in Connected Database ─────────────────────
 #> ℹ Table "nflverse_pbp" does not yet exist in your connected database.
 #> Do you wish to create it? (Y/n)
-#> ℹ 04:40:15 | Initiate table "nflverse_pbp" with nflverse pbp schema
-#> ℹ 04:40:15 | Drop 2021, 2022, 2023, and 2024 seasons from table "nflverse_pbp"
-#> ℹ 04:40:15 | Append 2021, 2022, 2023, and 2024 seasons to table "nflverse_pbp"
-#> ✔ 04:40:30 | Database update completed
+#> ℹ 07:58:12 | Initiate table "nflverse_pbp" with nflverse pbp schema
+#> ℹ 07:58:12 | Drop 2021, 2022, 2023, and 2024 seasons from table "nflverse_pbp"
+#> ℹ 07:58:12 | Append 2021, 2022, 2023, and 2024 seasons to table "nflverse_pbp"
+#> ✔ 07:58:27 | Database update completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
@@ -464,9 +464,9 @@ What do you run?
 
 nflfastR::update_pbp_db(connection)
 #> ── Update nflverse Play-by-Play Data in Connected Database ─────────────────────
-#> ℹ 04:40:30 | Drop 2026 season from table "nflverse_pbp"
-#> ℹ 04:40:30 | Append 2026 season to table "nflverse_pbp"
-#> ✔ 04:40:31 | Database update completed
+#> ℹ 07:58:27 | Drop 2026 season from table "nflverse_pbp"
+#> ℹ 07:58:27 | Append 2026 season to table "nflverse_pbp"
+#> ✔ 07:58:31 | Database update completed
 #> ── DONE ────────────────────────────────────────────────────────────────────────
 ```
 
@@ -514,14 +514,14 @@ pbp_db |>
   dplyr::group_by(season) |>
   dplyr::summarize(n = dplyr::n())
 #> # A query:  ?? x 2
-#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1022-azure:R 4.6.1/:memory:]
+#> # Database: DuckDB 2.0.0 [unknown@Linux 7.0.0-1019-azure:R 4.6.2/:memory:]
 #>   season     n
 #>    <int> <dbl>
 #> 1   2021 49922
 #> 2   2022 49434
 #> 3   2023 49665
 #> 4   2024 49492
-#> 5   2026  2940
+#> 5   2026 21347
 pbp_db |>
   dplyr::filter(
     rush == 1 | pass == 1,
@@ -532,11 +532,11 @@ pbp_db |>
   dplyr::group_by(pass) |>
   dplyr::summarize(mean_epa = mean(epa, na.rm = TRUE))
 #> # A query:  ?? x 2
-#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1022-azure:R 4.6.1/:memory:]
+#> # Database: DuckDB 2.0.0 [unknown@Linux 7.0.0-1019-azure:R 4.6.2/:memory:]
 #>    pass mean_epa
 #>   <dbl>    <dbl>
-#> 1     0  -0.0880
-#> 2     1   0.0702
+#> 1     0  -0.0907
+#> 2     1   0.0720
 ```
 
 So far, everything has stayed in the database. If you want to bring a
@@ -567,7 +567,7 @@ russ
 #> # ℹ 492 more rows
 ```
 
-So we’ve searched through 201,453 rows of data across 300+ columns and
+So we’ve searched through 219,860 rows of data across 300+ columns and
 only brought about 500 rows and two columns into memory. Pretty neat!
 This is how we supply the data to the shiny apps on rbsdm.com without
 running out of memory on the server. Now there’s only one more thing to
