@@ -50,14 +50,14 @@ ot_kick_first <- c(2011L, 2016L, 2024L, 2025L)
 # rule, period length and kickoff regime for each game
 ot_rule_key <- function(season, season_type) {
   post <- season_type %in% "POST"
-  rule <- dplyr::case_when(
-    post & season >= 2022 ~ "BOTH",
-    !post & season >= 2025 ~ "BOTH",
-    post & season >= 2010 ~ "MSD",
-    !post & season >= 2012 ~ "MSD",
-    TRUE ~ "SD"
+  rule <- case_when_vec(
+    list(post & season >= 2022, "BOTH"),
+    list(!post & season >= 2025, "BOTH"),
+    list(post & season >= 2010, "MSD"),
+    list(!post & season >= 2012, "MSD"),
+    list(TRUE, "SD")
   )
-  len <- dplyr::if_else(!post & season >= 2017, 600L, 900L)
+  len <- if_else_vec(!post & season >= 2017, 600L, 900L)
   # kickoff regime determines where drives start
   kick <- findInterval(season, ot_kick_first) + 1L
   paste(rule, len, kick, sep = "|")
@@ -67,7 +67,7 @@ ot_rule_key <- function(season, season_type) {
 # from the week in the game id
 ot_season_type <- function(game_id, season) {
   wk <- suppressWarnings(as.integer(substr(game_id, 6, 7)))
-  dplyr::if_else(wk > dplyr::if_else(season >= 2021, 18L, 17L), "POST", "REG")
+  if_else_vec(wk > if_else_vec(season >= 2021, 18L, 17L), "POST", "REG")
 }
 
 # Score differentials the rules can produce (receiving team, start of a
@@ -78,7 +78,9 @@ ot_map_d <- function(x) {
   vapply(x, function(z) which.min(abs(z - ot_d_set) - 1e-6 * ot_d_set), 1L)
 }
 
-ot_end_value <- function(d) dplyr::case_when(d > 0 ~ 1, d < 0 ~ 0, TRUE ~ 0.5)
+ot_end_value <- function(d) {
+  case_when_vec(list(d > 0, 1), list(d < 0, 0), list(TRUE, 0.5))
+}
 
 # Possible results of a completed possession for the team that had the ball
 # (R). Returns a list of components. Each has a weight w and either a terminal

@@ -462,3 +462,108 @@ if_else_missing <- function(condition, true, false, missing) {
 
 # case_when() treats a missing condition as FALSE
 is_true <- function(x) !is.na(x) & x
+
+# ---- dplyr semantics for plain vectors -----------------------------------
+# The parser steps run on plain vectors instead of dplyr verbs because the
+# per-call overhead of dplyr dominates on single games. These helpers keep
+# dplyr's semantics, so the results are identical.
+
+# dplyr::if_else(): a missing condition gives NA (or `missing`), the result
+# has the common type of true, false and missing
+if_else_vec <- function(condition, true, false, missing = NULL) {
+  out <- rep(NA, length(condition))
+  yes <- !is.na(condition) & condition
+  no <- !is.na(condition) & !condition
+  out[yes] <- if (length(true) == 1L) true else true[yes]
+  out[no] <- if (length(false) == 1L) false else false[no]
+  if (!is.null(missing)) {
+    na <- is.na(condition)
+    out[na] <- if (length(missing) == 1L) missing else missing[na]
+  }
+  c(true[0L], false[0L], missing[0L], out)
+}
+
+# dplyr::case_when() with every case given as list(condition, value): the
+# value of the first TRUE condition (a missing condition counts as FALSE), NA
+# if there is none. A condition of length 1 (e.g. TRUE) applies to all rows.
+case_when_vec <- function(...) {
+  cases <- list(...)
+  # the common size of all conditions and values, length 1 is recycled
+  sizes <- unlist(lapply(cases, lengths), use.names = FALSE)
+  n <- if (any(sizes != 1L)) sizes[sizes != 1L][1L] else 1L
+  out <- rep(NA, n)
+  open <- rep(TRUE, n)
+  for (cs in cases) {
+    hit <- open & is_true(rep_len(cs[[1L]], n))
+    if (any(hit)) {
+      out[hit] <- if (length(cs[[2L]]) == 1L) cs[[2L]] else cs[[2L]][hit]
+    }
+    open <- open & !hit
+  }
+  c(do.call(c, lapply(cases, function(x) x[[2L]][0L])), out)
+}
+
+# dplyr::lag() and dplyr::lead() over all rows
+lag_vec <- function(x, k = 1L) {
+  n <- length(x)
+  if (n <= k) {
+    return(x[rep(NA_integer_, n)])
+  }
+  x[c(rep(NA_integer_, k), seq_len(n - k))]
+}
+
+lead_vec <- function(x, k = 1L) {
+  n <- length(x)
+  if (n <= k) {
+    return(x[rep(NA_integer_, n)])
+  }
+  x[c(seq.int(k + 1L, n), rep(NA_integer_, k))]
+}
+
+# Row index of the next row of the same group (NA for the last row of a group)
+group_next_index <- function(key) {
+  prev <- group_prev_index(key)
+  nxt <- rep(NA_integer_, length(key))
+  has_prev <- which(!is.na(prev))
+  nxt[prev[has_prev]] <- has_prev
+  nxt
+}
+
+# tidyr::fill(.direction = "up") within groups: a missing value takes the next
+# non-missing value of its group
+fill_up_by <- function(x, key) {
+  unsplit(lapply(split(x, key), fill_up), key)
+}
+
+fill_up <- function(x) {
+  n <- length(x)
+  pos <- ifelse(is.na(x), n + 1L, seq_len(n))
+  x[rev(cummin(rev(pos)))]
+}
+
+# dplyr::first(stats::na.omit(x)) within groups, for every row
+first_non_na_by <- function(x, key) {
+  first <- vapply(
+    split(x, key),
+    function(v) {
+      v <- v[!is.na(v)]
+      if (length(v) == 0) v[NA_integer_] else v[1L]
+    },
+    x[NA_integer_]
+  )
+  unname(first[match(key, as.integer(names(first)))])
+}
+
+# custom_mode() within groups, for every row
+mode_by <- function(x, key) {
+  modes <- vapply(split(x, key), custom_mode, x[NA_integer_])
+  unname(modes[match(key, as.integer(names(modes)))])
+}
+
+# The columns of a data frame as a plain named list, without any other
+# attributes of the data frame
+as_column_list <- function(df) {
+  out <- as.list(df)
+  attributes(out) <- list(names = names(df))
+  out
+}

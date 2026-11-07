@@ -230,52 +230,42 @@ ep_model_select <- function(pbp) {
 #get the columns needed for wp predictions
 #making sure they're in the right order
 wp_model_select <- function(pbp) {
-  pbp <- pbp |>
-    dplyr::select(
-      "receive_2h_ko",
-      "home",
-      "half_seconds_remaining",
-      "game_seconds_remaining",
-      "Diff_Time_Ratio",
-      "score_differential",
-      "down",
-      "ydstogo",
-      "yardline_100",
-      "posteam_timeouts_remaining",
-      "defteam_timeouts_remaining"
-    )
-
-  return(pbp)
+  pbp[c(
+    "receive_2h_ko",
+    "home",
+    "half_seconds_remaining",
+    "game_seconds_remaining",
+    "Diff_Time_Ratio",
+    "score_differential",
+    "down",
+    "ydstogo",
+    "yardline_100",
+    "posteam_timeouts_remaining",
+    "defteam_timeouts_remaining"
+  )]
 }
 
 #get the columns needed for wp predictions
 #making sure they're in the right order
 wp_spread_model_select <- function(pbp) {
-  pbp <- pbp |>
-    dplyr::select(
-      "receive_2h_ko",
-      "spread_time",
-      "home",
-      "half_seconds_remaining",
-      "game_seconds_remaining",
-      "Diff_Time_Ratio",
-      "score_differential",
-      "down",
-      "ydstogo",
-      "yardline_100",
-      "posteam_timeouts_remaining",
-      "defteam_timeouts_remaining"
-    )
-
-  return(pbp)
+  pbp[c(
+    "receive_2h_ko",
+    "spread_time",
+    "home",
+    "half_seconds_remaining",
+    "game_seconds_remaining",
+    "Diff_Time_Ratio",
+    "score_differential",
+    "down",
+    "ydstogo",
+    "yardline_100",
+    "posteam_timeouts_remaining",
+    "defteam_timeouts_remaining"
+  )]
 }
 prepare_wp_data <- function(pbp) {
   if (any(is.na(pbp$spread_line))) {
-    broken_games <- pbp |>
-      dplyr::filter(is.na(.data$spread_line)) |>
-      dplyr::pull(.data$game_id) |>
-      unique() |>
-      sort()
+    broken_games <- sort(unique(pbp$game_id[is.na(pbp$spread_line)]))
     cli::cli_alert_danger(
       "The following game{?s} {?is/are} missing valid spread lines: {.val {broken_games}}."
     )
@@ -288,28 +278,21 @@ prepare_wp_data <- function(pbp) {
     pbp$spread_line[is.na(pbp$spread_line)] <- 1.5
   }
 
-  pbp <- pbp |>
-    dplyr::group_by(.data$game_id) |>
-    dplyr::mutate(
-      receive_2h_ko = dplyr::if_else(
-        .data$qtr <= 2 &
-          .data$posteam == dplyr::first(stats::na.omit(.data$defteam)),
-        1,
-        0
-      )
-    ) |>
-    dplyr::ungroup() |>
-    dplyr::mutate(
-      posteam_spread = dplyr::if_else(
-        .data$home == 1,
-        .data$spread_line,
-        -1 * .data$spread_line
-      ),
-      elapsed_share = (3600 - .data$game_seconds_remaining) / 3600,
-      spread_time = .data$posteam_spread * exp(-4 * .data$elapsed_share),
-      Diff_Time_Ratio = .data$score_differential /
-        (exp(-4 * .data$elapsed_share))
-    )
+  first_defteam <- first_non_na_by(pbp$defteam, group_key(pbp$game_id))
+  pbp$receive_2h_ko <- if_else_vec(
+    pbp$qtr <= 2 & pbp$posteam == first_defteam,
+    1,
+    0
+  )
+  pbp$posteam_spread <- if_else_vec(
+    pbp$home == 1,
+    pbp$spread_line,
+    -1 * pbp$spread_line
+  )
+  pbp$elapsed_share <- (3600 - pbp$game_seconds_remaining) / 3600
+  pbp$spread_time <- pbp$posteam_spread * exp(-4 * pbp$elapsed_share)
+  pbp$Diff_Time_Ratio <- pbp$score_differential /
+    (exp(-4 * pbp$elapsed_share))
 
   return(pbp)
 }
@@ -926,13 +909,11 @@ add_wp_variables <- function(pbp_data) {
   # PAT make probability, only needed for PATs (also in overtime)
   make_pat_prob <- predict_rows(
     function(data) {
+      data$yardline_100 <- ifelse(data$season >= 2015, 15, 3)
       as.numeric(
         mgcv::predict.bam(
           fastrmodels::fg_model,
-          newdata = data |>
-            mutate(
-              yardline_100 = ifelse(.data$season >= 2015, 15, 3)
-            ),
+          newdata = data,
           type = "response"
         )
       )
@@ -949,66 +930,58 @@ add_wp_variables <- function(pbp_data) {
   two_pt_i <- two_pt_i[!two_pt_i %in% two_pt_i_ot]
 
   # make df of post-PAT plays
-  pat_data <- pbp_data |>
-    dplyr::mutate(
-      # swap timeouts
-      to_pos = .data$posteam_timeouts_remaining,
-      to_def = .data$defteam_timeouts_remaining,
-      posteam_timeouts_remaining = .data$to_def,
-      defteam_timeouts_remaining = .data$to_pos,
-      # swap score
-      score_differential = -.data$score_differential,
-      # 1st and 10
-      down = 1,
-      ydstogo = 10,
-      # flip receive_2h_ko var
-      receive_2h_ko = case_when(
-        .data$qtr <= 2 & .data$receive_2h_ko == 0 ~ 1,
-        .data$qtr <= 2 & .data$receive_2h_ko == 1 ~ 0,
-        TRUE ~ .data$receive_2h_ko
-      ),
-      # switch posteam
-      posteam = if_else(
-        .data$home_team == .data$posteam,
-        .data$away_team,
-        .data$home_team
-      ),
-      yardline_100 = 75
-    ) |>
-    dplyr::mutate(
-      home = case_when(
-        .data$home == 0 ~ 1,
-        .data$home == 1 ~ 0
-      ),
-      posteam_spread = dplyr::if_else(
-        .data$home == 1,
-        .data$spread_line,
-        -1 * .data$spread_line
-      ),
-      elapsed_share = (3600 - .data$game_seconds_remaining) / 3600,
-      spread_time = .data$posteam_spread * exp(-4 * .data$elapsed_share)
-    )
+  pat_data <- pbp_data
+  # swap timeouts
+  pat_data$posteam_timeouts_remaining <- pbp_data$defteam_timeouts_remaining
+  pat_data$defteam_timeouts_remaining <- pbp_data$posteam_timeouts_remaining
+  # swap score
+  pat_data$score_differential <- -pbp_data$score_differential
+  # 1st and 10
+  pat_data$down <- 1
+  pat_data$ydstogo <- 10
+  # flip receive_2h_ko var
+  pat_data$receive_2h_ko <- case_when_vec(
+    list(pbp_data$qtr <= 2 & pbp_data$receive_2h_ko == 0, 1),
+    list(pbp_data$qtr <= 2 & pbp_data$receive_2h_ko == 1, 0),
+    list(TRUE, pbp_data$receive_2h_ko)
+  )
+  # switch posteam
+  pat_data$posteam <- if_else_vec(
+    pbp_data$home_team == pbp_data$posteam,
+    pbp_data$away_team,
+    pbp_data$home_team
+  )
+  pat_data$yardline_100 <- 75
+  pat_data$home <- case_when_vec(
+    list(pbp_data$home == 0, 1),
+    list(pbp_data$home == 1, 0)
+  )
+  pat_data$posteam_spread <- if_else_vec(
+    pat_data$home == 1,
+    pat_data$spread_line,
+    -1 * pat_data$spread_line
+  )
+  pat_data$elapsed_share <- (3600 - pat_data$game_seconds_remaining) / 3600
+  pat_data$spread_time <- pat_data$posteam_spread *
+    exp(-4 * pat_data$elapsed_share)
+
+  # the PAT data if the team scores 0, 1 or 2 points
+  pat_scored <- function(points) {
+    x <- pat_data
+    if (points != 0) {
+      x$score_differential <- x$score_differential - points
+    }
+    add_esdtr(x)
+  }
 
   # the predictions below are only needed for PATs in regulation
   pat_rows <- sort(c(pat_i, two_pt_i))
 
   ## start with spread version
   # get pat if 0, 1, or 2
-  pat_0 <- predict_rows(get_preds_wp_spread, pat_data |> add_esdtr(), pat_rows)
-  pat_1 <- predict_rows(
-    get_preds_wp_spread,
-    pat_data |>
-      dplyr::mutate(score_differential = .data$score_differential - 1) |>
-      add_esdtr(),
-    pat_rows
-  )
-  pat_2 <- predict_rows(
-    get_preds_wp_spread,
-    pat_data |>
-      dplyr::mutate(score_differential = .data$score_differential - 2) |>
-      add_esdtr(),
-    pat_rows
-  )
+  pat_0 <- predict_rows(get_preds_wp_spread, pat_scored(0), pat_rows)
+  pat_1 <- predict_rows(get_preds_wp_spread, pat_scored(1), pat_rows)
+  pat_2 <- predict_rows(get_preds_wp_spread, pat_scored(2), pat_rows)
 
   # Using nflscrapR version of 2pt make prob on 2nd line here
   pat_go_for_1 <- 1 - (make_pat_prob * pat_1 + (1 - make_pat_prob) * pat_0)
@@ -1019,21 +992,9 @@ add_wp_variables <- function(pbp_data) {
 
   ## repeat for non-spread version
   # get pat if 0, 1, or 2
-  pat_0 <- predict_rows(get_preds_wp, pat_data |> add_esdtr(), pat_rows)
-  pat_1 <- predict_rows(
-    get_preds_wp,
-    pat_data |>
-      dplyr::mutate(score_differential = .data$score_differential - 1) |>
-      add_esdtr(),
-    pat_rows
-  )
-  pat_2 <- predict_rows(
-    get_preds_wp,
-    pat_data |>
-      dplyr::mutate(score_differential = .data$score_differential - 2) |>
-      add_esdtr(),
-    pat_rows
-  )
+  pat_0 <- predict_rows(get_preds_wp, pat_scored(0), pat_rows)
+  pat_1 <- predict_rows(get_preds_wp, pat_scored(1), pat_rows)
+  pat_2 <- predict_rows(get_preds_wp, pat_scored(2), pat_rows)
 
   # Using nflscrapR version of 2pt make prob on 2nd line here
   pat_go_for_1 <- 1 - (make_pat_prob * pat_1 + (1 - make_pat_prob) * pat_0)
@@ -1087,11 +1048,12 @@ add_wp_variables <- function(pbp_data) {
   if (length(ot_i) > 0) {
     # probability that a field goal from the current spot is good
     fg_prob_ot <- rep(NA_real_, nrow(pbp_data))
+    ot_data <- pbp_data[ot_i, ]
+    ot_data$yardline_100[is.na(ot_data$yardline_100)] <- 50
     fg_prob_ot[ot_i] <- as.numeric(
       mgcv::predict.bam(
         fastrmodels::fg_model,
-        newdata = pbp_data[ot_i, ] |>
-          dplyr::mutate(yardline_100 = dplyr::coalesce(.data$yardline_100, 50)),
+        newdata = ot_data,
         type = "response"
       )
     )
@@ -1109,126 +1071,91 @@ add_wp_variables <- function(pbp_data) {
   }
 
   # Now create the win probability columns and return:
-  pbp_data <- pbp_data |>
-    dplyr::mutate(
-      wp = OffWinProb,
-      vegas_wp = OffWinProb_spread,
-      # for figuring out posteam on NA wp lines. The team has to come from the
-      # same row that wp is filled from below. Non-plays (end of quarter notes,
-      # captains announcements, ...) can carry a stale posteam, which flipped
-      # home_wp for them when the next play belongs to the other team.
-      tmp_posteam = dplyr::if_else(
-        is.na(OffWinProb) | is.na(.data$posteam),
-        NA_character_,
-        .data$posteam
-      )
-    ) |>
-    # fill within a game so the last rows of a game can never pick up values
-    # from the first play of the next game when several games are processed
-    dplyr::group_by(.data$game_id) |>
-    tidyr::fill(
-      .data$wp,
-      .direction = "up"
-    ) |>
-    tidyr::fill(
-      .data$vegas_wp,
-      .direction = "up"
-    ) |>
-    tidyr::fill(
-      .data$tmp_posteam,
-      .direction = "up"
-    ) |>
-    dplyr::mutate(
-      #add columns for home WP
-      home_wp = dplyr::if_else(
-        .data$tmp_posteam == .data$home_team,
-        .data$wp,
-        1 - .data$wp
-      ),
-      vegas_home_wp = dplyr::if_else(
-        .data$tmp_posteam == .data$home_team,
-        .data$vegas_wp,
-        1 - .data$vegas_wp
-      ),
+  game <- group_key(pbp_data$game_id)
+  pbp_data$wp <- OffWinProb
+  pbp_data$vegas_wp <- OffWinProb_spread
+  # for figuring out posteam on NA wp lines. The team has to come from the
+  # same row that wp is filled from below. Non-plays (end of quarter notes,
+  # captains announcements, ...) can carry a stale posteam, which flipped
+  # home_wp for them when the next play belongs to the other team.
+  pbp_data$tmp_posteam <- if_else_vec(
+    is.na(OffWinProb) | is.na(pbp_data$posteam),
+    NA_character_,
+    pbp_data$posteam
+  )
+  # fill within a game so the last rows of a game can never pick up values
+  # from the first play of the next game when several games are processed
+  pbp_data$wp <- fill_up_by(pbp_data$wp, game)
+  pbp_data$vegas_wp <- fill_up_by(pbp_data$vegas_wp, game)
+  pbp_data$tmp_posteam <- fill_up_by(pbp_data$tmp_posteam, game)
 
-      # convenience to mark end of game
-      end_game = ifelse(
-        stringr::str_detect(tolower(.data$desc), "(end of game)|(end game)"),
-        1,
-        0
-      ),
+  # lead() within the game
+  next_in_game <- group_next_index(game)
+  lead_in_game <- function(x) x[next_in_game]
+  home_has_ball <- pbp_data$tmp_posteam == pbp_data$home_team
+  desc_lower <- tolower(pbp_data$desc)
 
-      # convenience for marking home win prob on last line
-      final_value = dplyr::case_when(
-        .data$home_score > .data$away_score ~ 1,
-        .data$away_score > .data$home_score ~ 0,
-        .data$home_score == .data$away_score ~ .5
-      ),
+  #add columns for home WP
+  pbp_data$home_wp <- if_else_vec(home_has_ball, pbp_data$wp, 1 - pbp_data$wp)
+  pbp_data$vegas_home_wp <- if_else_vec(
+    home_has_ball,
+    pbp_data$vegas_wp,
+    1 - pbp_data$vegas_wp
+  )
+  # convenience to mark end of game
+  pbp_data$end_game <- ifelse(
+    stringr::str_detect(desc_lower, "(end of game)|(end game)"),
+    1,
+    0
+  )
+  # convenience for marking home win prob on last line
+  pbp_data$final_value <- case_when_vec(
+    list(pbp_data$home_score > pbp_data$away_score, 1),
+    list(pbp_data$away_score > pbp_data$home_score, 0),
+    list(pbp_data$home_score == pbp_data$away_score, .5)
+  )
+  #make 1 or 0 the final win prob
+  pbp_data$vegas_home_wp <- if_else_vec(
+    pbp_data$end_game == 1,
+    pbp_data$final_value,
+    pbp_data$vegas_home_wp
+  )
+  pbp_data$home_wp <- if_else_vec(
+    pbp_data$end_game == 1,
+    pbp_data$final_value,
+    pbp_data$home_wp
+  )
+  pbp_data$away_wp <- 1 - pbp_data$home_wp
+  # make wp of posteam on last line NA because there's no posteam
+  pbp_data$vegas_wp <- if_else_vec(
+    pbp_data$end_game == 1,
+    NA_real_,
+    pbp_data$vegas_wp
+  )
+  pbp_data$wp <- if_else_vec(pbp_data$end_game == 1, NA_real_, pbp_data$wp)
+  pbp_data$def_wp <- 1 - pbp_data$wp
 
-      #make 1 or 0 the final win prob
-      vegas_home_wp = dplyr::if_else(
-        .data$end_game == 1,
-        .data$final_value,
-        .data$vegas_home_wp
-      ),
-
-      # can we make this and the above into a function? feels like a lot of repitition
-      home_wp = dplyr::if_else(
-        .data$end_game == 1,
-        .data$final_value,
-        .data$home_wp
-      ),
-
-      away_wp = 1 - .data$home_wp,
-
-      # make wp of posteam on last line NA because there's no posteam
-      vegas_wp = dplyr::if_else(
-        .data$end_game == 1,
-        NA_real_,
-        .data$vegas_wp
-      ),
-
-      wp = dplyr::if_else(
-        .data$end_game == 1,
-        NA_real_,
-        .data$wp
-      ),
-
-      def_wp = 1 - .data$wp,
-
-      # make wpa
-      vegas_home_wpa = dplyr::lead(.data$vegas_home_wp) - .data$vegas_home_wp,
-      vegas_wpa = dplyr::if_else(
-        .data$tmp_posteam == .data$home_team,
-        .data$vegas_home_wpa,
-        -.data$vegas_home_wpa
-      ),
-      vegas_wpa = dplyr::if_else(
-        stringr::str_detect(
-          tolower(.data$desc),
-          "( kneels )|(end of game)|(end game)"
-        ),
-        NA_real_,
-        .data$vegas_wpa
-      ),
-
-      # home wpa isn't saved but needed for next line
-      home_wpa = dplyr::lead(.data$home_wp) - .data$home_wp,
-      wpa = dplyr::if_else(
-        .data$tmp_posteam == .data$home_team,
-        .data$home_wpa,
-        -.data$home_wpa
-      ),
-      wpa = dplyr::if_else(
-        stringr::str_detect(
-          tolower(.data$desc),
-          "( kneels )|(end of game)|(end game)"
-        ),
-        NA_real_,
-        .data$wpa
-      )
-    ) |>
-    dplyr::ungroup()
+  # make wpa
+  kneel_or_end <- stringr::str_detect(
+    desc_lower,
+    "( kneels )|(end of game)|(end game)"
+  )
+  pbp_data$vegas_home_wpa <- lead_in_game(pbp_data$vegas_home_wp) -
+    pbp_data$vegas_home_wp
+  pbp_data$vegas_wpa <- if_else_vec(
+    home_has_ball,
+    pbp_data$vegas_home_wpa,
+    -pbp_data$vegas_home_wpa
+  )
+  pbp_data$vegas_wpa <- if_else_vec(kneel_or_end, NA_real_, pbp_data$vegas_wpa)
+  # home wpa isn't saved but needed for next line
+  pbp_data$home_wpa <- lead_in_game(pbp_data$home_wp) - pbp_data$home_wp
+  pbp_data$wpa <- if_else_vec(
+    home_has_ball,
+    pbp_data$home_wpa,
+    -pbp_data$home_wpa
+  )
+  pbp_data$wpa <- if_else_vec(kneel_or_end, NA_real_, pbp_data$wpa)
 
   # Home and Away post:
 
@@ -1249,145 +1176,74 @@ add_wp_variables <- function(pbp_data) {
     pbp_data$away_wp - pbp_data$wpa
   )
 
-  # If next thing is end of game, and post score differential is tied because it's
-  # overtime then the game ended in a tie, which counts as 0.5 for both teams:
-  pbp_data <- pbp_data |>
-    dplyr::mutate(
-      home_wp_post = dplyr::if_else(
-        .data$qtr >= 5 &
-          stringr::str_detect(
-            tolower(dplyr::lead(.data$desc)),
-            "(end of game)|(end game)"
-          ) &
-          .data$score_differential_post == 0,
-        0.5,
-        .data$home_wp_post
-      ),
-      away_wp_post = dplyr::if_else(
-        .data$qtr >= 5 &
-          stringr::str_detect(
-            tolower(dplyr::lead(.data$desc)),
-            "(end of game)|(end game)"
-          ) &
-          .data$score_differential_post == 0,
-        0.5,
-        .data$away_wp_post
-      )
-    )
+  # If next thing is end of game, and post score differential is tied because
+  # it's overtime then the game ended in a tie, which counts as 0.5 for both
+  # teams:
+  ot_tie <- pbp_data$qtr >= 5 &
+    stringr::str_detect(lead_vec(desc_lower), "(end of game)|(end game)") &
+    pbp_data$score_differential_post == 0
+  pbp_data$home_wp_post <- if_else_vec(ot_tie, 0.5, pbp_data$home_wp_post)
+  pbp_data$away_wp_post <- if_else_vec(ot_tie, 0.5, pbp_data$away_wp_post)
 
-  # For plays with playtype of End of Game, use the previous play's WP_post columns
-  # as the pre and post, since those are already set to be 1 and 0:
-
-  pbp_data$home_wp_post <- with(
-    pbp_data,
-    ifelse(
-      stringr::str_detect(tolower(desc), "(end of game)|(end game)"),
-      dplyr::lag(home_wp_post),
-      ifelse(
-        dplyr::lag(play_type) == "no_play" & play_type == "no_play",
-        dplyr::lag(home_wp_post),
-        home_wp_post
-      )
-    )
+  # For plays with playtype of End of Game, use the previous play's WP_post
+  # columns as the pre and post, since those are already set to be 1 and 0:
+  end_of_game <- stringr::str_detect(desc_lower, "(end of game)|(end game)")
+  two_no_plays <- lag_vec(pbp_data$play_type) == "no_play" &
+    pbp_data$play_type == "no_play"
+  pbp_data$home_wp_post <- ifelse(
+    end_of_game,
+    lag_vec(pbp_data$home_wp_post),
+    ifelse(two_no_plays, lag_vec(pbp_data$home_wp_post), pbp_data$home_wp_post)
+  )
+  pbp_data$away_wp_post <- ifelse(
+    end_of_game,
+    lag_vec(pbp_data$away_wp_post),
+    ifelse(two_no_plays, lag_vec(pbp_data$away_wp_post), pbp_data$away_wp_post)
   )
 
-  pbp_data$away_wp_post <- with(
-    pbp_data,
-    ifelse(
-      stringr::str_detect(tolower(desc), "(end of game)|(end game)"),
-      dplyr::lag(away_wp_post),
-      ifelse(
-        dplyr::lag(play_type) == "no_play" & play_type == "no_play",
-        dplyr::lag(away_wp_post),
-        away_wp_post
-      )
-    )
+  # Generate columns to keep track of cumulative rushing and passing WPA
+  # values within each game:
+  zero_if_na <- function(x) if_else_vec(is.na(x), 0, x)
+  pbp_data$home_team_wpa <- zero_if_na(if_else_vec(
+    pbp_data$posteam == pbp_data$home_team,
+    pbp_data$wpa,
+    -pbp_data$wpa
+  ))
+  pbp_data$away_team_wpa <- zero_if_na(if_else_vec(
+    pbp_data$posteam == pbp_data$away_team,
+    pbp_data$wpa,
+    -pbp_data$wpa
+  ))
+  # Same thing but separating passing and rushing:
+  is_run <- pbp_data$play_type == "run"
+  pbp_data$home_team_rush_wpa <- zero_if_na(
+    if_else_vec(is_run, pbp_data$home_team_wpa, 0)
   )
+  pbp_data$away_team_rush_wpa <- zero_if_na(
+    if_else_vec(is_run, pbp_data$away_team_wpa, 0)
+  )
+  pbp_data$total_home_rush_wpa <- cumsum_by(pbp_data$home_team_rush_wpa, game)
+  pbp_data$total_away_rush_wpa <- cumsum_by(pbp_data$away_team_rush_wpa, game)
+  is_pass <- pbp_data$play_type == "pass"
+  pbp_data$home_team_pass_wpa <- zero_if_na(
+    if_else_vec(is_pass, pbp_data$home_team_wpa, 0)
+  )
+  pbp_data$away_team_pass_wpa <- zero_if_na(
+    if_else_vec(is_pass, pbp_data$away_team_wpa, 0)
+  )
+  pbp_data$total_home_pass_wpa <- cumsum_by(pbp_data$home_team_pass_wpa, game)
+  pbp_data$total_away_pass_wpa <- cumsum_by(pbp_data$away_team_pass_wpa, game)
 
-  # Now drop the unnecessary columns, rename variables back, and return:
-  pbp_data |>
-    dplyr::group_by(.data$game_id) |>
-    dplyr::mutate(
-      # Generate columns to keep track of cumulative rushing and
-      # passing WPA values:
-      home_team_wpa = dplyr::if_else(
-        .data$posteam == .data$home_team,
-        .data$wpa,
-        -.data$wpa
-      ),
-      away_team_wpa = dplyr::if_else(
-        .data$posteam == .data$away_team,
-        .data$wpa,
-        -.data$wpa
-      ),
-      home_team_wpa = dplyr::if_else(
-        is.na(.data$home_team_wpa),
-        0,
-        .data$home_team_wpa
-      ),
-      away_team_wpa = dplyr::if_else(
-        is.na(.data$away_team_wpa),
-        0,
-        .data$away_team_wpa
-      ),
-      # Same thing but separating passing and rushing:
-      home_team_rush_wpa = dplyr::if_else(
-        .data$play_type == "run",
-        .data$home_team_wpa,
-        0
-      ),
-      away_team_rush_wpa = dplyr::if_else(
-        .data$play_type == "run",
-        .data$away_team_wpa,
-        0
-      ),
-      home_team_rush_wpa = dplyr::if_else(
-        is.na(.data$home_team_rush_wpa),
-        0,
-        .data$home_team_rush_wpa
-      ),
-      away_team_rush_wpa = dplyr::if_else(
-        is.na(.data$away_team_rush_wpa),
-        0,
-        .data$away_team_rush_wpa
-      ),
-      total_home_rush_wpa = cumsum(.data$home_team_rush_wpa),
-      total_away_rush_wpa = cumsum(.data$away_team_rush_wpa),
-      home_team_pass_wpa = dplyr::if_else(
-        .data$play_type == "pass",
-        .data$home_team_wpa,
-        0
-      ),
-      away_team_pass_wpa = dplyr::if_else(
-        .data$play_type == "pass",
-        .data$away_team_wpa,
-        0
-      ),
-      home_team_pass_wpa = dplyr::if_else(
-        is.na(.data$home_team_pass_wpa),
-        0,
-        .data$home_team_pass_wpa
-      ),
-      away_team_pass_wpa = dplyr::if_else(
-        is.na(.data$away_team_pass_wpa),
-        0,
-        .data$away_team_pass_wpa
-      ),
-      total_home_pass_wpa = cumsum(.data$home_team_pass_wpa),
-      total_away_pass_wpa = cumsum(.data$away_team_pass_wpa)
-    ) |>
-    dplyr::ungroup()
+  pbp_data
 }
 
 
 # helper function to get expected score diff to time ratio
 # needed after flipping teams in WP for getting PAT WP
 add_esdtr <- function(data) {
-  data |>
-    dplyr::mutate(
-      Diff_Time_Ratio = .data$score_differential /
-        (exp(-4 * .data$elapsed_share))
-    )
+  data$Diff_Time_Ratio <- data$score_differential /
+    (exp(-4 * data$elapsed_share))
+  data
 }
 
 
