@@ -317,7 +317,36 @@ get_pbp_nfl <- function(
       )
   }
 
-  return(combined)
+  # remove duplicate plays. can't do this with play_id because duplicate plays
+  # sometimes have different play_ids. Doing it here for every game is much
+  # cheaper than for the bound data of all games.
+  duplicate <- duplicated(data.table::as.data.table(
+    combined[c("quarter", "time", "play_description", "down")]
+  ))
+  if (any(duplicate)) {
+    combined <- combined[!duplicate, ]
+  }
+
+  # Columns of the raw data that no step uses and that aren't part of the
+  # output. select_variables() would drop them at the end, dropping them here
+  # saves memory in all steps.
+  unused <- c(
+    grep(
+      "^(drive_)?(possession|scoring)_team_(id|nick_name|franchise_.+)$",
+      names(combined),
+      value = TRUE
+    ),
+    "short_description",
+    "drive_net_yards",
+    "drive_yards",
+    "is_big_play",
+    "latest_play",
+    "next_play_is_goal_to_go",
+    "penalty_on_play",
+    "play_review_status",
+    "scoring_play_type"
+  )
+  combined[setdiff(names(combined), unused)]
 }
 
 # helper function to manually fill in fields for problematic games

@@ -21,7 +21,8 @@ add_game_data <- function(pbp, games = NULL, ...) {
         )
       }
 
-      # update join by reference
+      # add the game columns by reference. A join with [.data.table would
+      # allocate about twice the size of pbp
       cols <- c(
         "old_game_id",
         "away_score",
@@ -42,13 +43,12 @@ add_game_data <- function(pbp, games = NULL, ...) {
         "stadium_id",
         "gameday"
       )
-      game_data <- data.table::setDT(lapply(
-        stats::setNames(nm = c("game_id", cols)),
-        function(col) games[[col]]
-      ))
-      data.table::setnames(game_data, "stadium", "game_stadium")
-      new_cols <- setdiff(names(game_data), "game_id")
-      out[game_data, on = "game_id", (new_cols) := mget(paste0("i.", new_cols))]
+      game_row <- match(out$game_id, games$game_id)
+      data.table::set(
+        out,
+        j = sub("^stadium$", "game_stadium", cols),
+        value = lapply(cols, function(col) games[[col]][game_row])
+      )
       data.table::set(out, j = "game_date", value = out$gameday)
 
       user_message("added game variables", "done")

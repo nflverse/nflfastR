@@ -5,53 +5,51 @@
 ################################################################################
 
 add_nflscrapr_mutations <- function(pbp) {
-  # pbp is the data.table of build_nflfastR_pbp(). The result is a new table
-  # because rows are removed and reordered.
+  # pbp is the data.table of build_nflfastR_pbp(), changed by reference.
+  # get_pbp_nfl() already removed duplicate plays.
+  d <- pbp
 
-  # remove duplicate plays. can't do this with play_id because duplicate plays
-  # sometimes have different play_ids
-  keep <- which(
-    !duplicated(
-      pbp,
-      by = c("game_id", "quarter", "time", "play_description", "down")
+  # Modify the time column for the quarter end:
+  data.table::set(
+    d,
+    j = "time",
+    value = data.table::fifelse(
+      d$play_description == "GAME",
+      "15:00",
+      data.table::fifelse(
+        d$quarter_end == 1 | (d$play_description == "END GAME" & is.na(d$time)),
+        "00:00",
+        d$time
+      )
     )
   )
-
-  # Modify the time column for the quarter end and create a column with the
-  # time in seconds remaining for the quarter:
-  desc <- pbp$play_description[keep]
-  time <- pbp$time[keep]
-  time <- data.table::fifelse(
-    desc == "GAME",
-    "15:00",
-    data.table::fifelse(
-      pbp$quarter_end[keep] == 1 | (desc == "END GAME" & is.na(time)),
-      "00:00",
-      time
-    )
+  # Create a column with the time in seconds remaining for the quarter:
+  data.table::set(
+    d,
+    j = "quarter_seconds_remaining",
+    value = time_to_seconds(d$time)
   )
-  quarter_seconds_remaining <- time_to_seconds(time)
 
   # put plays in the right order
   # the !is.na(drive), drive part is to make the initial GAME line show up first
   # https://stackoverflow.com/questions/43343590/how-to-sort-putting-nas-first-in-dplyr
   play_order <- order(
-    pbp$game_id[keep],
-    pbp$order_sequence[keep],
-    pbp$quarter[keep],
-    !is.na(quarter_seconds_remaining),
-    -quarter_seconds_remaining,
-    !is.na(pbp$drive[keep]),
-    pbp$drive[keep],
-    keep,
+    d$game_id,
+    d$order_sequence,
+    d$quarter,
+    !is.na(d$quarter_seconds_remaining),
+    -d$quarter_seconds_remaining,
+    !is.na(d$drive),
+    d$drive,
+    seq_len(nrow(d)),
     method = "radix"
   )
-  d <- pbp[keep[play_order]]
-  data.table::set(
-    d,
-    j = c("time", "quarter_seconds_remaining"),
-    value = list(time[play_order], quarter_seconds_remaining[play_order])
-  )
+  # sort by reference (one column at a time) instead of copying the table
+  if (is.unsorted(play_order)) {
+    data.table::set(d, j = "tmp_order", value = order(play_order))
+    data.table::setorderv(d, "tmp_order")
+    data.table::set(d, j = "tmp_order", value = NULL)
+  }
   kick_yards <- "(?<=kicks )[:alpha:]{1,}.[:alpha:]{1,}(?= yards)"
   data.table::set(
     d,
@@ -781,7 +779,12 @@ add_nflscrapr_mutations <- function(pbp) {
     ),
     c("ydstogo", "desc", "yrdln", "side_of_field", "qtr")
   )
-  d <- d[!is.na(desc) & desc != "" & !is.na(qtr)]
+  # data.table can't remove rows by reference, so we only copy the table if
+  # there are rows to remove
+  empty <- is.na(d$desc) | d$desc == "" | is.na(d$qtr)
+  if (any(empty)) {
+    d <- d[!empty]
+  }
 
   data.table::set(d, j = "game_id", value = as.character(d$game_id))
   # kick distance is NA on kickoffs and punts that result in touchbacks
