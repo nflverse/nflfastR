@@ -1,6 +1,7 @@
 # nflfastR (development version)
 
 - `xyac_median_yardage` is now always a double. It used to be an integer unless the data had no valid pass plays, which didn't match the column type in pbp databases.
+- `build_nflfastR_pbp()` is now about 3.7 times faster on a full season and about 2 times faster on a single game. The output is unchanged.
 
 # nflfastR 6.0.0
 
