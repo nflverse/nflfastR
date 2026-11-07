@@ -64,7 +64,7 @@ prepare_cp_data <- function(pbp) {
         !(.data$tmp_valid %in% FALSE) & is.na(.data$receiver_player_id),
         .data$desc,
         function(x) {
-          stringr::str_extract(
+          stringi::stri_extract_first_regex(
             x,
             "(?<=((to)|(for))\\s[:digit:]{0,2}\\-{0,1})[A-Z][A-z]*\\.\\s?[A-Z][A-z]+(\\s(I{2,3})|(IV))?"
           )

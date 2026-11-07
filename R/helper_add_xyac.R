@@ -300,7 +300,10 @@ prepare_xyac_data <- function(pbp) {
         !(.data$tmp_valid %in% FALSE),
         .data$desc,
         function(x) {
-          stringr::str_extract(x, glue::glue('{receiver_finder}{big_parser}'))
+          stringi::stri_extract_first_regex(
+            x,
+            glue::glue('{receiver_finder}{big_parser}')
+          )
         }
       ),
       pass_middle = dplyr::if_else(.data$pass_location == "middle", 1, 0),

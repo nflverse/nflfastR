@@ -31,10 +31,11 @@ get_pbp_gc <- function(
 
   game_json <- raw[[1]]
 
-  date_parse <- names(raw)[1] |> stringr::str_extract(pattern = "[0-9]{8}")
-  date_year <- stringr::str_sub(date_parse, 1, 4)
-  date_month <- stringr::str_sub(date_parse, 5, 6)
-  date_day <- stringr::str_sub(
+  date_parse <- names(raw)[1] |>
+    stringi::stri_extract_first_regex(pattern = "[0-9]{8}")
+  date_year <- stringi::stri_sub(date_parse, 1, 4)
+  date_month <- stringi::stri_sub(date_parse, 5, 6)
+  date_day <- stringi::stri_sub(
     date_parse,
     nchar(date_parse) - 1,
     nchar(date_parse)
@@ -84,7 +85,7 @@ get_pbp_gc <- function(
   plays$play_id <- uniquify_ids(plays$play_id)
 
   plays$quarter_end <- dplyr::if_else(
-    stringr::str_detect(
+    stringi::stri_detect_regex(
       plays$desc,
       "(END QUARTER)|(END GAME)|(End of quarter)"
     ),
@@ -222,11 +223,11 @@ get_pbp_gc <- function(
 
       # have to do all this nonsense to make goal_to_go and yardline_side for compatibility with later functions
       yardline_side = furrr::future_map_chr(
-        stringr::str_split(.data$yardline, " "),
+        stringi::stri_split_regex(.data$yardline, " "),
         function(x) x[1]
       ),
       yardline_number = as.numeric(furrr::future_map_chr(
-        stringr::str_split(.data$yardline, " "),
+        stringi::stri_split_regex(.data$yardline, " "),
         function(x) x[2]
       )),
       goal_to_go = dplyr::if_else(

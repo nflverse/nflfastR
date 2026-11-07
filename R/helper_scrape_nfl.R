@@ -45,7 +45,7 @@ get_pbp_nfl <- function(
   # if home team and away team are the same, the game is messed up and needs fixing
   if (home_team == away_team) {
     # get correct home and away from the game ID
-    id_parts <- stringr::str_split(id, "_")
+    id_parts <- stringi::stri_split_regex(id, "_")
     away_team <- id_parts[[1]][3]
     home_team <- id_parts[[1]][4]
     bad_game <- 1
@@ -164,7 +164,7 @@ get_pbp_nfl <- function(
         2
       )),
       quarter_end = dplyr::if_else(
-        stringr::str_detect(.data$play_description, "END QUARTER"),
+        stringi::stri_detect_regex(.data$play_description, "END QUARTER"),
         1,
         0
       ),
@@ -238,7 +238,7 @@ get_pbp_nfl <- function(
       ),
 
       # can't trust the goal_to_go variable so we overwrite it here
-      goal_to_go = as.numeric(stringr::str_detect(
+      goal_to_go = as.numeric(stringi::stri_detect_regex(
         tolower(.data$pre_play_by_play),
         "goal"
       ))
@@ -248,7 +248,7 @@ get_pbp_nfl <- function(
     # These mess up some of our logic. Since they are useless, we remove them here
     dplyr::filter(
       !(is.na(.data$timeout_team) &
-        stringr::str_detect(
+        stringi::stri_detect_regex(
           tolower(.data$play_description),
           "timeout at|two-minute"
         ))
@@ -257,9 +257,9 @@ get_pbp_nfl <- function(
     # These mess up some of our logic. Since they are useless, we remove them here
     dplyr::filter(
       !(is.na(.data$timeout_team) &
-        stringr::str_starts(
+        stringi::stri_detect_regex(
           tolower(.data$play_description),
-          "\\*\\* injury update:"
+          paste0("^(", "\\*\\* injury update:", ")")
         ))
     ) |>
     fix_posteams()
@@ -371,7 +371,7 @@ fix_bad_games <- function(pbp) {
         # if there's a timeout in the affected seasons
         !is.na(.data$timeout_team),
         # extract from play description
-        stringr::str_extract(
+        stringi::stri_extract_first_regex(
           .data$play_description,
           "(?<=Timeout #[1-3] by )[:upper:]+"
         ),
@@ -401,13 +401,13 @@ fix_posteams <- function(pbp) {
 
     pbp <- pbp |>
       dplyr::mutate(
-        parsed_posteam = stringr::str_extract(
+        parsed_posteam = stringi::stri_extract_first_regex(
           .data$pre_play_by_play,
           posteam_regex
         ) |>
-          stringr::str_trim(),
+          stringi::stri_trim_both(),
         posteam = dplyr::case_when(
-          stringr::str_detect(
+          stringi::stri_detect_regex(
             .data$play_description,
             "^Timeout "
           ) ~ NA_character_,
@@ -439,7 +439,7 @@ normalize_raw_columns <- function(df) {
     }
     if (is.character(x)) {
       # str_squish() also turns line breaks into blanks
-      x <- stringr::str_squish(team_name_fn(x))
+      x <- squish(team_name_fn(x))
     }
     cols[[j]] <- x
   }

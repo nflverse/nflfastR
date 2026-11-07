@@ -49,7 +49,7 @@ add_series_data <- function(pbp) {
         pbp$yards_gained < pbp$ydstogo &
         pbp$play_type != "no_play",
       pbp$qb_kneel == 1,
-      stringr::str_detect(
+      stringi::stri_detect_regex(
         pbp$desc,
         "(END QUARTER 2)|(END QUARTER 4)|(END GAME)"
       )

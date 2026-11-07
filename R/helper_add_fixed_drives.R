@@ -14,7 +14,10 @@ add_drive_results <- function(d) {
   lag <- function(x, k = 1L) lag_in_group(x, prev, k)
   first_row <- is.na(prev)
   td <- d$touchdown == 1
-  is_timeout <- stringr::str_detect(d$desc, "(Timeout)|(Two-Minute Warning)")
+  is_timeout <- stringi::stri_detect_regex(
+    d$desc,
+    "(Timeout)|(Two-Minute Warning)"
+  )
   play_types <- c("punt", "pass", "run", "field_goal")
 
   new_drive <- data.table::fifelse(
@@ -121,7 +124,10 @@ add_drive_results <- function(d) {
       d$play_type == "punt" | d$punt_attempt == 1,
       d$interception == 1 | d$fumble_lost == 1,
       d$down == 4 & d$yards_gained < d$ydstogo & d$play_type != "no_play",
-      stringr::str_detect(d$desc, "(END QUARTER 2)|(END QUARTER 4)|(END GAME)")
+      stringi::stri_detect_regex(
+        d$desc,
+        "(END QUARTER 2)|(END QUARTER 4)|(END GAME)"
+      )
     ),
     c(
       "Touchdown",
@@ -159,7 +165,7 @@ drive_posteam <- function(d) {
     # if a kickoff has to be replayed due to a penalty and is then
     # recovered, the prior (reversed) kickoff shouldn't be a new drive/series
     is_true(
-      stringr::str_detect(d$desc, kickoff_finder) &
+      stringi::stri_detect_regex(d$desc, kickoff_finder) &
         d$own_kickoff_recovery == 0 &
         dplyr::lead(d$own_kickoff_recovery == 1)
     )

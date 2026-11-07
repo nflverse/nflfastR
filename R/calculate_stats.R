@@ -722,7 +722,7 @@ fg_list <- function(stat_ids, yards, collapse_id, gwfg = NULL) {
 `%ifna%` <- function(lhs, rhs) data.table::fifelse(is.na(lhs), rhs, lhs)
 
 has_id <- function(id, all_ids) {
-  stringr::str_detect(all_ids, paste0(";", id, ";", collapse = "|"))
+  stringi::stri_detect_regex(all_ids, paste0(";", id, ";", collapse = "|"))
 }
 
 td_ids <- function() {

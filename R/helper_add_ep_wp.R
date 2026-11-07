@@ -279,12 +279,12 @@ prepare_wp_data <- function(pbp) {
   }
 
   first_defteam <- first_non_na_by(pbp$defteam, group_key(pbp$game_id))
-  pbp$receive_2h_ko <- if_else_vec(
+  pbp$receive_2h_ko <- data.table::fifelse(
     pbp$qtr <= 2 & pbp$posteam == first_defteam,
     1,
     0
   )
-  pbp$posteam_spread <- if_else_vec(
+  pbp$posteam_spread <- data.table::fifelse(
     pbp$home == 1,
     pbp$spread_line,
     -1 * pbp$spread_line
@@ -485,19 +485,19 @@ add_ep_variables <- function(pbp_data) {
   st_penalty_i_2 <- which(
     is.na(dplyr::lead(pbp_data$down)) &
       # has a key term in desc
-      (((stringr::str_detect(pbp_data$desc, 'Kick formation') &
+      (((stringi::stri_detect_regex(pbp_data$desc, 'Kick formation') &
         is.na(pbp_data$down) &
         pbp_data$play_type == 'no_play') |
-        (stringr::str_detect(pbp_data$desc, 'Pass formation') &
+        (stringi::stri_detect_regex(pbp_data$desc, 'Pass formation') &
           is.na(pbp_data$down) &
           pbp_data$play_type == 'no_play') |
-        (stringr::str_detect(pbp_data$desc, 'kicks onside') &
+        (stringi::stri_detect_regex(pbp_data$desc, 'kicks onside') &
           is.na(pbp_data$down) &
           pbp_data$play_type == 'no_play') |
-        (stringr::str_detect(pbp_data$desc, 'Offside on Free Kick') &
+        (stringi::stri_detect_regex(pbp_data$desc, 'Offside on Free Kick') &
           is.na(pbp_data$down) &
           pbp_data$play_type == 'no_play') |
-        (stringr::str_detect(pbp_data$desc, 'TWO-POINT CONVERSION')) &
+        (stringi::stri_detect_regex(pbp_data$desc, 'TWO-POINT CONVERSION')) &
           # down is NA and play type no play and next play isn't a kickoff
           is.na(pbp_data$down) &
           pbp_data$play_type == 'no_play' &
@@ -515,17 +515,17 @@ add_ep_variables <- function(pbp_data) {
   missing_i <- which(
     (pbp_data$timeout == 1 &
       pbp_data$play_type == "no_play" &
-      !stringr::str_detect(pbp_data$desc, ' pass ') &
-      !stringr::str_detect(pbp_data$desc, ' sacked ') &
-      !stringr::str_detect(pbp_data$desc, ' scramble ') &
-      !stringr::str_detect(pbp_data$desc, ' punts ') &
-      !stringr::str_detect(pbp_data$desc, ' up the middle ') &
-      !stringr::str_detect(pbp_data$desc, ' left end ') &
-      !stringr::str_detect(pbp_data$desc, ' left guard ') &
-      !stringr::str_detect(pbp_data$desc, ' left tackle ') &
-      !stringr::str_detect(pbp_data$desc, ' right end ') &
-      !stringr::str_detect(pbp_data$desc, ' right guard ') &
-      !stringr::str_detect(pbp_data$desc, ' right tackle ')) |
+      !stringi::stri_detect_regex(pbp_data$desc, ' pass ') &
+      !stringi::stri_detect_regex(pbp_data$desc, ' sacked ') &
+      !stringi::stri_detect_regex(pbp_data$desc, ' scramble ') &
+      !stringi::stri_detect_regex(pbp_data$desc, ' punts ') &
+      !stringi::stri_detect_regex(pbp_data$desc, ' up the middle ') &
+      !stringi::stri_detect_regex(pbp_data$desc, ' left end ') &
+      !stringi::stri_detect_regex(pbp_data$desc, ' left guard ') &
+      !stringi::stri_detect_regex(pbp_data$desc, ' left tackle ') &
+      !stringi::stri_detect_regex(pbp_data$desc, ' right end ') &
+      !stringi::stri_detect_regex(pbp_data$desc, ' right guard ') &
+      !stringi::stri_detect_regex(pbp_data$desc, ' right tackle ')) |
       is.na(pbp_data$play_type)
   )
 
@@ -746,7 +746,10 @@ add_ep_variables <- function(pbp_data) {
     dplyr::mutate(
       # helper for end of game
       end_game = ifelse(
-        stringr::str_detect(tolower(.data$desc), "(end of game)|(end game)"),
+        stringi::stri_detect_regex(
+          tolower(.data$desc),
+          "(end of game)|(end game)"
+        ),
         1,
         0
       ),
@@ -883,22 +886,25 @@ add_wp_variables <- function(pbp_data) {
   # plays with 1 point PAT attempts
   pat_i <- which(
     (pbp_data$kickoff_attempt == 0 &
-      !(stringr::str_detect(pbp_data$desc, 'Onside Kick')) &
-      (stringr::str_detect(pbp_data$desc, 'Kick formation')) &
+      !(stringi::stri_detect_regex(pbp_data$desc, 'Onside Kick')) &
+      (stringi::stri_detect_regex(pbp_data$desc, 'Kick formation')) &
       is.na(pbp_data$down)) |
       # or has PAT indicators
-      stringr::str_detect(pbp_data$desc, 'extra point') |
+      stringi::stri_detect_regex(pbp_data$desc, 'extra point') |
       !is.na(pbp_data$extra_point_result)
   )
 
   # plays with 2 point PAT attempts
   two_pt_i <- which(
     (pbp_data$kickoff_attempt == 0 &
-      !(stringr::str_detect(pbp_data$desc, 'Onside Kick')) &
-      (stringr::str_detect(pbp_data$desc, 'Pass formation')) &
+      !(stringi::stri_detect_regex(pbp_data$desc, 'Onside Kick')) &
+      (stringi::stri_detect_regex(pbp_data$desc, 'Pass formation')) &
       is.na(pbp_data$down)) |
       # or has PAT indicators
-      stringr::str_detect(pbp_data$desc, 'TWO-POINT CONVERSION ATTEMPT') |
+      stringi::stri_detect_regex(
+        pbp_data$desc,
+        'TWO-POINT CONVERSION ATTEMPT'
+      ) |
       !is.na(pbp_data$two_point_conv_result)
   )
 
@@ -940,23 +946,27 @@ add_wp_variables <- function(pbp_data) {
   pat_data$down <- 1
   pat_data$ydstogo <- 10
   # flip receive_2h_ko var
-  pat_data$receive_2h_ko <- case_when_vec(
-    list(pbp_data$qtr <= 2 & pbp_data$receive_2h_ko == 0, 1),
-    list(pbp_data$qtr <= 2 & pbp_data$receive_2h_ko == 1, 0),
-    list(TRUE, pbp_data$receive_2h_ko)
+  pat_data$receive_2h_ko <- data.table::fcase(
+    pbp_data$qtr <= 2 & pbp_data$receive_2h_ko == 0 ,
+                                                  1 ,
+    pbp_data$qtr <= 2 & pbp_data$receive_2h_ko == 1 ,
+                                                  0 ,
+    default = pbp_data$receive_2h_ko
   )
   # switch posteam
-  pat_data$posteam <- if_else_vec(
+  pat_data$posteam <- data.table::fifelse(
     pbp_data$home_team == pbp_data$posteam,
     pbp_data$away_team,
     pbp_data$home_team
   )
   pat_data$yardline_100 <- 75
-  pat_data$home <- case_when_vec(
-    list(pbp_data$home == 0, 1),
-    list(pbp_data$home == 1, 0)
+  pat_data$home <- data.table::fcase(
+    pbp_data$home == 0 ,
+                     1 ,
+    pbp_data$home == 1 ,
+                     0
   )
-  pat_data$posteam_spread <- if_else_vec(
+  pat_data$posteam_spread <- data.table::fifelse(
     pat_data$home == 1,
     pat_data$spread_line,
     -1 * pat_data$spread_line
@@ -1078,7 +1088,7 @@ add_wp_variables <- function(pbp_data) {
   # same row that wp is filled from below. Non-plays (end of quarter notes,
   # captains announcements, ...) can carry a stale posteam, which flipped
   # home_wp for them when the next play belongs to the other team.
-  pbp_data$tmp_posteam <- if_else_vec(
+  pbp_data$tmp_posteam <- data.table::fifelse(
     is.na(OffWinProb) | is.na(pbp_data$posteam),
     NA_character_,
     pbp_data$posteam
@@ -1096,66 +1106,81 @@ add_wp_variables <- function(pbp_data) {
   desc_lower <- tolower(pbp_data$desc)
 
   #add columns for home WP
-  pbp_data$home_wp <- if_else_vec(home_has_ball, pbp_data$wp, 1 - pbp_data$wp)
-  pbp_data$vegas_home_wp <- if_else_vec(
+  pbp_data$home_wp <- data.table::fifelse(
+    home_has_ball,
+    pbp_data$wp,
+    1 - pbp_data$wp
+  )
+  pbp_data$vegas_home_wp <- data.table::fifelse(
     home_has_ball,
     pbp_data$vegas_wp,
     1 - pbp_data$vegas_wp
   )
   # convenience to mark end of game
   pbp_data$end_game <- ifelse(
-    stringr::str_detect(desc_lower, "(end of game)|(end game)"),
+    stringi::stri_detect_regex(desc_lower, "(end of game)|(end game)"),
     1,
     0
   )
   # convenience for marking home win prob on last line
-  pbp_data$final_value <- case_when_vec(
-    list(pbp_data$home_score > pbp_data$away_score, 1),
-    list(pbp_data$away_score > pbp_data$home_score, 0),
-    list(pbp_data$home_score == pbp_data$away_score, .5)
+  pbp_data$final_value <- data.table::fcase(
+    pbp_data$home_score > pbp_data$away_score  ,
+    1                                          ,
+    pbp_data$away_score > pbp_data$home_score  ,
+    0                                          ,
+    pbp_data$home_score == pbp_data$away_score ,
+     .5
   )
   #make 1 or 0 the final win prob
-  pbp_data$vegas_home_wp <- if_else_vec(
+  pbp_data$vegas_home_wp <- data.table::fifelse(
     pbp_data$end_game == 1,
     pbp_data$final_value,
     pbp_data$vegas_home_wp
   )
-  pbp_data$home_wp <- if_else_vec(
+  pbp_data$home_wp <- data.table::fifelse(
     pbp_data$end_game == 1,
     pbp_data$final_value,
     pbp_data$home_wp
   )
   pbp_data$away_wp <- 1 - pbp_data$home_wp
   # make wp of posteam on last line NA because there's no posteam
-  pbp_data$vegas_wp <- if_else_vec(
+  pbp_data$vegas_wp <- data.table::fifelse(
     pbp_data$end_game == 1,
     NA_real_,
     pbp_data$vegas_wp
   )
-  pbp_data$wp <- if_else_vec(pbp_data$end_game == 1, NA_real_, pbp_data$wp)
+  pbp_data$wp <- data.table::fifelse(
+    pbp_data$end_game == 1,
+    NA_real_,
+    pbp_data$wp
+  )
   pbp_data$def_wp <- 1 - pbp_data$wp
 
   # make wpa
-  kneel_or_end <- stringr::str_detect(
+  kneel_or_end <- stringi::stri_detect_regex(
     desc_lower,
     "( kneels )|(end of game)|(end game)"
   )
   pbp_data$vegas_home_wpa <- lead_in_game(pbp_data$vegas_home_wp) -
     pbp_data$vegas_home_wp
-  pbp_data$vegas_wpa <- if_else_vec(
+  pbp_data$vegas_wpa <- data.table::fifelse(
     home_has_ball,
     pbp_data$vegas_home_wpa,
     -pbp_data$vegas_home_wpa
   )
-  pbp_data$vegas_wpa <- if_else_vec(kneel_or_end, NA_real_, pbp_data$vegas_wpa)
+  pbp_data$vegas_wpa <- data.table::fifelse(
+    kneel_or_end,
+    NA_real_,
+    pbp_data$vegas_wpa
+  )
   # home wpa isn't saved but needed for next line
   pbp_data$home_wpa <- lead_in_game(pbp_data$home_wp) - pbp_data$home_wp
-  pbp_data$wpa <- if_else_vec(
+  pbp_data$wpa <- data.table::fifelse(
     home_has_ball,
     pbp_data$home_wpa,
     -pbp_data$home_wpa
   )
-  pbp_data$wpa <- if_else_vec(kneel_or_end, NA_real_, pbp_data$wpa)
+  pbp_data$wpa <- data.table::fifelse(kneel_or_end, NA_real_, pbp_data$wpa)
 
   # Home and Away post:
 
@@ -1180,36 +1205,58 @@ add_wp_variables <- function(pbp_data) {
   # it's overtime then the game ended in a tie, which counts as 0.5 for both
   # teams:
   ot_tie <- pbp_data$qtr >= 5 &
-    stringr::str_detect(lead_vec(desc_lower), "(end of game)|(end game)") &
+    stringi::stri_detect_regex(
+      data.table::shift(desc_lower, type = "lead"),
+      "(end of game)|(end game)"
+    ) &
     pbp_data$score_differential_post == 0
-  pbp_data$home_wp_post <- if_else_vec(ot_tie, 0.5, pbp_data$home_wp_post)
-  pbp_data$away_wp_post <- if_else_vec(ot_tie, 0.5, pbp_data$away_wp_post)
+  pbp_data$home_wp_post <- data.table::fifelse(
+    ot_tie,
+    0.5,
+    pbp_data$home_wp_post
+  )
+  pbp_data$away_wp_post <- data.table::fifelse(
+    ot_tie,
+    0.5,
+    pbp_data$away_wp_post
+  )
 
   # For plays with playtype of End of Game, use the previous play's WP_post
   # columns as the pre and post, since those are already set to be 1 and 0:
-  end_of_game <- stringr::str_detect(desc_lower, "(end of game)|(end game)")
-  two_no_plays <- lag_vec(pbp_data$play_type) == "no_play" &
+  end_of_game <- stringi::stri_detect_regex(
+    desc_lower,
+    "(end of game)|(end game)"
+  )
+  two_no_plays <- data.table::shift(pbp_data$play_type) == "no_play" &
     pbp_data$play_type == "no_play"
   pbp_data$home_wp_post <- ifelse(
     end_of_game,
-    lag_vec(pbp_data$home_wp_post),
-    ifelse(two_no_plays, lag_vec(pbp_data$home_wp_post), pbp_data$home_wp_post)
+    data.table::shift(pbp_data$home_wp_post),
+    ifelse(
+      two_no_plays,
+      data.table::shift(pbp_data$home_wp_post),
+      pbp_data$home_wp_post
+    )
   )
   pbp_data$away_wp_post <- ifelse(
     end_of_game,
-    lag_vec(pbp_data$away_wp_post),
-    ifelse(two_no_plays, lag_vec(pbp_data$away_wp_post), pbp_data$away_wp_post)
+    data.table::shift(pbp_data$away_wp_post),
+    ifelse(
+      two_no_plays,
+      data.table::shift(pbp_data$away_wp_post),
+      pbp_data$away_wp_post
+    )
   )
 
   # Generate columns to keep track of cumulative rushing and passing WPA
   # values within each game:
-  zero_if_na <- function(x) if_else_vec(is.na(x), 0, x)
-  pbp_data$home_team_wpa <- zero_if_na(if_else_vec(
+  zero_if_na <- function(x) data.table::fifelse(is.na(x), 0, x)
+  pbp_data$home_team_wpa <- zero_if_na(data.table::fifelse(
     pbp_data$posteam == pbp_data$home_team,
     pbp_data$wpa,
     -pbp_data$wpa
   ))
-  pbp_data$away_team_wpa <- zero_if_na(if_else_vec(
+  pbp_data$away_team_wpa <- zero_if_na(data.table::fifelse(
     pbp_data$posteam == pbp_data$away_team,
     pbp_data$wpa,
     -pbp_data$wpa
@@ -1217,19 +1264,19 @@ add_wp_variables <- function(pbp_data) {
   # Same thing but separating passing and rushing:
   is_run <- pbp_data$play_type == "run"
   pbp_data$home_team_rush_wpa <- zero_if_na(
-    if_else_vec(is_run, pbp_data$home_team_wpa, 0)
+    data.table::fifelse(is_run, pbp_data$home_team_wpa, 0)
   )
   pbp_data$away_team_rush_wpa <- zero_if_na(
-    if_else_vec(is_run, pbp_data$away_team_wpa, 0)
+    data.table::fifelse(is_run, pbp_data$away_team_wpa, 0)
   )
   pbp_data$total_home_rush_wpa <- cumsum_by(pbp_data$home_team_rush_wpa, game)
   pbp_data$total_away_rush_wpa <- cumsum_by(pbp_data$away_team_rush_wpa, game)
   is_pass <- pbp_data$play_type == "pass"
   pbp_data$home_team_pass_wpa <- zero_if_na(
-    if_else_vec(is_pass, pbp_data$home_team_wpa, 0)
+    data.table::fifelse(is_pass, pbp_data$home_team_wpa, 0)
   )
   pbp_data$away_team_pass_wpa <- zero_if_na(
-    if_else_vec(is_pass, pbp_data$away_team_wpa, 0)
+    data.table::fifelse(is_pass, pbp_data$away_team_wpa, 0)
   )
   pbp_data$total_home_pass_wpa <- cumsum_by(pbp_data$home_team_pass_wpa, game)
   pbp_data$total_away_pass_wpa <- cumsum_by(pbp_data$away_team_pass_wpa, game)
