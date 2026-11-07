@@ -78,8 +78,13 @@ get_pbp_nfl <- function(
     start_time
   )
 
-  plays <- raw_data$data$viewer$gameDetail$plays |>
-    dplyr::mutate(game_id = as.character(game_id))
+  # The raw data has three description columns. We only need the one with
+  # jersey numbers, so we drop the others before they go through all steps.
+  plays <- raw_data$data$viewer$gameDetail$plays
+  plays$playDescription <- plays$playDescriptionWithJerseyNumbers
+  plays$playDescriptionWithJerseyNumbers <- NULL
+  plays$shortDescription <- NULL
+  plays <- dplyr::mutate(plays, game_id = as.character(game_id))
 
   # We have this issue https://github.com/nflverse/nflfastR/issues/309 with 2013 postseason games
   # where the driveSequenceNumber in the plays df is NA for all plays. That prevents drive information
@@ -177,7 +182,6 @@ get_pbp_nfl <- function(
       # this is only needed for epa and dropped later
       game_month = as.integer(11),
       game_id = id,
-      play_description = .data$play_description_with_jersey_numbers,
       week = week,
       season_type = season_type,
       play_clock = as.character(.data$play_clock),
@@ -336,7 +340,6 @@ get_pbp_nfl <- function(
       names(combined),
       value = TRUE
     ),
-    "short_description",
     "drive_net_yards",
     "drive_yards",
     "is_big_play",
