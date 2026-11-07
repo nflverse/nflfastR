@@ -19,8 +19,7 @@ test_that("build_nflfastR_pbp works (outside CRAN)", {
 
 test_that("build_nflfastR_pbp is quiet with option nflfastR.verbose = FALSE", {
   skip_if_not_installed("gsisdecoder")
-  old <- options(nflfastR.verbose = FALSE)
-  on.exit(options(old), add = TRUE)
+  withr::local_options(nflfastR.verbose = FALSE)
   g <- readRDS(file.path(test_dir, "games.rds"))
   expect_no_message(
     build_nflfastR_pbp(game_ids, dir = test_dir, games = g, rules = FALSE)
