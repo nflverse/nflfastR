@@ -88,6 +88,28 @@ add_air_yac_wp <- function(pbp) {
   return(out)
 }
 
+# Run the prediction function fn() only on the rows i of data. The result has
+# one element (or row) for every row of data and is NA outside of i. Model
+# predictions of a row don't depend on other rows, so the values in i are the
+# same as if fn() ran on all rows.
+predict_rows <- function(fn, data, i) {
+  n <- nrow(data)
+  if (n == 0) {
+    return(fn(data))
+  }
+  # with no rows to predict we still need the shape of the result
+  preds <- fn(data[if (length(i) == 0) 1L else i, , drop = FALSE])
+  if (is.data.frame(preds)) {
+    out <- preds[rep(NA_integer_, n), , drop = FALSE]
+    rownames(out) <- NULL
+    if (length(i) > 0) out[i, ] <- preds
+  } else {
+    out <- rep(NA_real_, n)
+    if (length(i) > 0) out[i] <- preds
+  }
+  out
+}
+
 #get predictions for a set of pbp data
 #for predict stage of EP
 get_preds <- function(pbp) {
@@ -289,12 +311,17 @@ add_ep_variables <- function(pbp_data) {
   # 10 ydstogo:
   missed_fg_data$ydstogo <- rep(10, nrow(pbp_data))
 
+  # Find the FG attempts and extra points. The predictions of the special
+  # cases below are only needed for those plays.
+  fg_attempt_i <- which(pbp_data$play_type == "field_goal")
+  extrapoint_i <- which(
+    (pbp_data$play_type == "extra_point" |
+      pbp_data$play_type_nfl == "XP_KICK") &
+      (is.na(pbp_data$play_type_nfl) | pbp_data$play_type_nfl != "PAT2")
+  )
+
   # Get the new predicted probabilites:
-  if (nrow(missed_fg_data) > 1) {
-    missed_fg_ep_preds <- get_preds(missed_fg_data)
-  } else {
-    missed_fg_ep_preds <- get_preds(missed_fg_data)
-  }
+  missed_fg_ep_preds <- predict_rows(get_preds, missed_fg_data, fg_attempt_i)
 
   # Find the rows where TimeSecs_Remaining became 0 or negative and make all the probs equal to 0:
   end_game_i <- which(missed_fg_data$half_seconds_remaining <= 0)
@@ -304,17 +331,20 @@ add_ep_variables <- function(pbp_data) {
   missed_fg_ep_preds[end_game_i, "No_Score"] <- 1
 
   # Get the probability of making the field goal:
-  make_fg_prob <- as.numeric(mgcv::predict.bam(
-    fastrmodels::fg_model,
-    newdata = pbp_data,
-    type = "response"
-  ))
+  make_fg_prob <- predict_rows(
+    function(data) {
+      as.numeric(mgcv::predict.bam(
+        fastrmodels::fg_model,
+        newdata = data,
+        type = "response"
+      ))
+    },
+    pbp_data,
+    sort(unique(c(fg_attempt_i, extrapoint_i)))
+  )
 
   # Multiply each value of the missed_fg_ep_preds by the 1 - make_fg_prob
   missed_fg_ep_preds <- missed_fg_ep_preds * (1 - make_fg_prob)
-  # Find the FG attempts:
-  fg_attempt_i <- which(pbp_data$play_type == "field_goal")
-
   # Now update the probabilities for the FG attempts (also includes Opp_Field_Goal probability from missed_fg_ep_preds)
   base_ep_preds[fg_attempt_i, "Field_Goal"] <- make_fg_prob[fg_attempt_i] +
     missed_fg_ep_preds[fg_attempt_i, "Opp_Field_Goal"]
@@ -361,13 +391,13 @@ add_ep_variables <- function(pbp_data) {
   # 10 ydstogo:
   kickoff_data$ydstogo <- rep(10, nrow(pbp_data))
 
-  # Get the new predicted probabilites:
-  kickoff_preds <- get_preds(kickoff_data)
-
   # Find the kickoffs:
   kickoff_i <- which(
     pbp_data$play_type == "kickoff" | pbp_data$kickoff_attempt == 1
   )
+
+  # Get the new predicted probabilites:
+  kickoff_preds <- predict_rows(get_preds, kickoff_data, kickoff_i)
 
   # Now update the probabilities:
   base_ep_preds[kickoff_i, "Field_Goal"] <- kickoff_preds[
@@ -413,11 +443,6 @@ add_ep_variables <- function(pbp_data) {
   base_ep_preds$TwoPoint_Prob <- 0
 
   # Find the indices for these types of plays:
-  extrapoint_i <- which(
-    (pbp_data$play_type == "extra_point" |
-      pbp_data$play_type_nfl == "XP_KICK") &
-      (is.na(pbp_data$play_type_nfl) | pbp_data$play_type_nfl != "PAT2")
-  )
   twopoint_i <- which(pbp_data$two_point_attempt == 1)
 
   #new: special case for PAT or kickoff with penalty
@@ -836,17 +861,6 @@ add_wp_variables <- function(pbp_data) {
 
   ## start PAT fix
 
-  make_pat_prob <- as.numeric(
-    mgcv::predict.bam(
-      fastrmodels::fg_model,
-      newdata = pbp_data |>
-        mutate(
-          yardline_100 = ifelse(.data$season >= 2015, 15, 3)
-        ),
-      type = "response"
-    )
-  )
-
   # plays with 1 point PAT attempts
   pat_i <- which(
     (pbp_data$kickoff_attempt == 0 &
@@ -872,6 +886,24 @@ add_wp_variables <- function(pbp_data) {
   # some rare 2 point PAT attempts have duplicated matches in 1 point PAT attempts
   # so we remove them in the next line
   pat_i <- pat_i[!pat_i %in% two_pt_i]
+
+  # PAT make probability, only needed for PATs (also in overtime)
+  make_pat_prob <- predict_rows(
+    function(data) {
+      as.numeric(
+        mgcv::predict.bam(
+          fastrmodels::fg_model,
+          newdata = data |>
+            mutate(
+              yardline_100 = ifelse(.data$season >= 2015, 15, 3)
+            ),
+          type = "response"
+        )
+      )
+    },
+    pbp_data,
+    pat_i
+  )
 
   # overtime has its own win probability model (see add_ot_wp_vectors()), the
   # regulation formulas below only apply to regulation
@@ -921,18 +953,25 @@ add_wp_variables <- function(pbp_data) {
       spread_time = .data$posteam_spread * exp(-4 * .data$elapsed_share)
     )
 
+  # the predictions below are only needed for PATs in regulation
+  pat_rows <- sort(c(pat_i, two_pt_i))
+
   ## start with spread version
   # get pat if 0, 1, or 2
-  pat_0 <- get_preds_wp_spread(pat_data |> add_esdtr())
-  pat_1 <- get_preds_wp_spread(
+  pat_0 <- predict_rows(get_preds_wp_spread, pat_data |> add_esdtr(), pat_rows)
+  pat_1 <- predict_rows(
+    get_preds_wp_spread,
     pat_data |>
       dplyr::mutate(score_differential = .data$score_differential - 1) |>
-      add_esdtr()
+      add_esdtr(),
+    pat_rows
   )
-  pat_2 <- get_preds_wp_spread(
+  pat_2 <- predict_rows(
+    get_preds_wp_spread,
     pat_data |>
       dplyr::mutate(score_differential = .data$score_differential - 2) |>
-      add_esdtr()
+      add_esdtr(),
+    pat_rows
   )
 
   # Using nflscrapR version of 2pt make prob on 2nd line here
@@ -944,16 +983,20 @@ add_wp_variables <- function(pbp_data) {
 
   ## repeat for non-spread version
   # get pat if 0, 1, or 2
-  pat_0 <- get_preds_wp(pat_data |> add_esdtr())
-  pat_1 <- get_preds_wp(
+  pat_0 <- predict_rows(get_preds_wp, pat_data |> add_esdtr(), pat_rows)
+  pat_1 <- predict_rows(
+    get_preds_wp,
     pat_data |>
       dplyr::mutate(score_differential = .data$score_differential - 1) |>
-      add_esdtr()
+      add_esdtr(),
+    pat_rows
   )
-  pat_2 <- get_preds_wp(
+  pat_2 <- predict_rows(
+    get_preds_wp,
     pat_data |>
       dplyr::mutate(score_differential = .data$score_differential - 2) |>
-      add_esdtr()
+      add_esdtr(),
+    pat_rows
   )
 
   # Using nflscrapR version of 2pt make prob on 2nd line here
@@ -979,14 +1022,18 @@ add_wp_variables <- function(pbp_data) {
   # 10 ydstogo:
   kickoff_data$ydstogo <- rep(10, nrow(pbp_data))
 
-  # Get the new predicted probabilites:
-  kickoff_preds <- get_preds_wp(kickoff_data)
-  kickoff_preds_spread <- get_preds_wp_spread(kickoff_data)
-
   # Find the kickoffs in regulation:
   kickoff_i <- which(
     (pbp_data$play_type == "kickoff" | pbp_data$kickoff_attempt == 1) &
       pbp_data$qtr <= 4
+  )
+
+  # Get the new predicted probabilites:
+  kickoff_preds <- predict_rows(get_preds_wp, kickoff_data, kickoff_i)
+  kickoff_preds_spread <- predict_rows(
+    get_preds_wp_spread,
+    kickoff_data,
+    kickoff_i
   )
 
   # Now update the probabilities:
