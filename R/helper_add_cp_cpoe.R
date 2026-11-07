@@ -10,32 +10,23 @@ add_cp <- function(pbp) {
   # pbp <- g
 
   passes <- prepare_cp_data(pbp)
+  valid <- which(passes$valid_pass == 1)
 
-  if (!nrow(passes |> dplyr::filter(.data$valid_pass == 1)) == 0) {
-    pred <- stats::predict(
+  if (length(valid) > 0) {
+    # the model is only needed for valid passes
+    cp <- rep(NA_real_, nrow(pbp))
+    cp[valid] <- stats::predict(
       load_model("cp"),
-      as.matrix(passes |> dplyr::select(-"complete_pass", -"valid_pass"))
-    ) |>
-      tibble::as_tibble() |>
-      dplyr::rename(cp = "value") |>
-      dplyr::bind_cols(passes) |>
-      dplyr::select("cp", "valid_pass")
-
-    pbp <- pbp |>
-      dplyr::bind_cols(pred) |>
-      dplyr::mutate(
-        cp = dplyr::if_else(
-          .data$valid_pass == 1,
-          .data$cp,
-          NA_real_
-        ),
-        cpoe = dplyr::if_else(
-          !is.na(.data$cp),
-          100 * (.data$complete_pass - .data$cp),
-          NA_real_
-        )
-      ) |>
-      dplyr::select(-"valid_pass")
+      as.matrix(
+        passes[valid, ] |> dplyr::select(-"complete_pass", -"valid_pass")
+      )
+    )
+    pbp$cp <- cp
+    pbp$cpoe <- data.table::fifelse(
+      !is.na(cp),
+      100 * (pbp$complete_pass - cp),
+      NA_real_
+    )
 
     user_message("added cp and cpoe", "done")
   } else {
@@ -67,9 +58,10 @@ prepare_cp_data <- function(pbp) {
         .data$air_yards >= -15 &
         .data$air_yards < 70 &
         !is.na(.data$pass_location),
-      # the receiver only matters if the other conditions aren't FALSE
+      # the receiver name only matters if the other conditions aren't FALSE
+      # and there is no receiver id
       receiver_player_name = apply_where(
-        !(.data$tmp_valid %in% FALSE),
+        !(.data$tmp_valid %in% FALSE) & is.na(.data$receiver_player_id),
         .data$desc,
         function(x) {
           stringr::str_extract(
