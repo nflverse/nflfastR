@@ -60,9 +60,12 @@ if (new_games) {
     if (!ok) stop("Could not copy raw file of ", id)
   }
   raw_tar <- file.path(staging, "raw.tar")
-  # raw files are already compressed
-  status <- system2("tar", c("-cf", raw_tar, "-C", raw_dir, "."))
-  stopifnot(status == 0)
+  # raw files are already compressed. R's own tar writes no extended file
+  # attributes (macOS tar adds them and GNU tar warns about them on Linux)
+  withr::with_dir(
+    raw_dir,
+    utils::tar(raw_tar, files = ".", compression = "none", tar = "internal")
+  )
   files$raw <- raw_tar
 
   games <- nflreadr::load_schedules(2001:2030)
