@@ -99,6 +99,11 @@ predict_rows <- function(fn, data, i) {
   }
   # with no rows to predict we still need the shape of the result
   preds <- fn(data[if (length(i) == 0) 1L else i, , drop = FALSE])
+  expand_rows(preds, n, i)
+}
+
+# Expand predictions for the rows i to n rows (or elements) with NA elsewhere
+expand_rows <- function(preds, n, i) {
   if (is.data.frame(preds)) {
     out <- preds[rep(NA_integer_, n), , drop = FALSE]
     rownames(out) <- NULL
@@ -110,31 +115,47 @@ predict_rows <- function(fn, data, i) {
   out
 }
 
-#get predictions for a set of pbp data
-#for predict stage of EP
-get_preds <- function(pbp) {
-  if ("location" %in% names(pbp)) {
-    pbp <- pbp |>
-      dplyr::mutate(
-        home = dplyr::if_else(.data$location == "Neutral", 0, .data$home)
-      )
-  }
+# The features of the EP model, in the order of ep_model_select()
+ep_model_features <- c(
+  "half_seconds_remaining",
+  "yardline_100",
+  "home",
+  "retractable",
+  "dome",
+  "outdoors",
+  "ydstogo",
+  "era0",
+  "era1",
+  "era2",
+  "era3",
+  "era4",
+  "down1",
+  "down2",
+  "down3",
+  "down4",
+  "posteam_timeouts_remaining",
+  "defteam_timeouts_remaining"
+)
 
-  preds <- stats::predict(
-    load_model("ep"),
-    pbp |> ep_model_select() |> as.matrix()
-  )
+# EP predictions for several data frames with one call of the model. Returns a
+# list with a data frame of probabilities for each data frame.
+get_preds_stacked <- function(data_list) {
+  matrices <- lapply(data_list, function(pbp) {
+    if ("location" %in% names(pbp)) {
+      pbp$home <- data.table::fifelse(pbp$location == "Neutral", 0, pbp$home)
+    }
+    m <- do.call(cbind, lapply(ep_model_features, function(f) pbp[[f]]))
+    colnames(m) <- ep_model_features
+    m
+  })
+  preds <- stats::predict(load_model("ep"), do.call(rbind, matrices))
 
   # xgboost v3 returns a matrix of predictions instead of a vector as returned
   # by xgboost v1.
   if (is.vector(preds)) {
-    preds <- preds |>
-      matrix(ncol = 7, byrow = TRUE) |>
-      as.data.frame()
-  } else if (is.matrix(preds)) {
-    preds <- as.data.frame(preds)
+    preds <- matrix(preds, ncol = 7, byrow = TRUE)
   }
-
+  preds <- as.data.frame(preds)
   colnames(preds) <- c(
     "Touchdown",
     "Opp_Touchdown",
@@ -144,8 +165,18 @@ get_preds <- function(pbp) {
     "Opp_Safety",
     "No_Score"
   )
+  part <- rep(seq_along(matrices), vapply(matrices, nrow, integer(1)))
+  lapply(seq_along(matrices), function(k) {
+    out <- preds[part == k, , drop = FALSE]
+    rownames(out) <- NULL
+    out
+  })
+}
 
-  return(preds)
+#get predictions for a set of pbp data
+#for predict stage of EP
+get_preds <- function(pbp) {
+  get_preds_stacked(list(pbp))[[1]]
 }
 
 #get predictions for a set of pbp data
@@ -290,9 +321,6 @@ add_ep_variables <- function(pbp_data) {
   #testing
   #pbp_data <- g
 
-  #this function is below
-  base_ep_preds <- get_preds(pbp_data)
-
   # ----------------------------------------------------------------------------
   # ---- special case: deal with FG attempts
   # Now make another dataset that to get the EP probabilities from a missed FG:
@@ -320,8 +348,37 @@ add_ep_variables <- function(pbp_data) {
       (is.na(pbp_data$play_type_nfl) | pbp_data$play_type_nfl != "PAT2")
   )
 
-  # Get the new predicted probabilites:
-  missed_fg_ep_preds <- predict_rows(get_preds, missed_fg_data, fg_attempt_i)
+  # ---- special case: deal with kickoffs (probabilities are updated below)
+  # Calculate the EP for receiving a touchback (from the point of view for
+  # recieving team)
+  kickoff_data <- pbp_data
+
+  # Change the yard line to be 80 for 2009-2015 and 75 otherwise
+  # (accounting for the fact that Jan 2016 is in the 2015 season:
+  kickoff_data$yardline_100 <- with(kickoff_data, ifelse(season < 2016, 80, 75))
+  # Now first down:
+  kickoff_data$down1 <- rep(1, nrow(pbp_data))
+  kickoff_data$down2 <- rep(0, nrow(pbp_data))
+  kickoff_data$down3 <- rep(0, nrow(pbp_data))
+  kickoff_data$down4 <- rep(0, nrow(pbp_data))
+  # 10 ydstogo:
+  kickoff_data$ydstogo <- rep(10, nrow(pbp_data))
+
+  # Find the kickoffs:
+  kickoff_i <- which(
+    pbp_data$play_type == "kickoff" | pbp_data$kickoff_attempt == 1
+  )
+
+  # Get the predicted probabilites of all plays and of the special cases with
+  # one call of the EP model
+  preds <- get_preds_stacked(list(
+    pbp_data,
+    missed_fg_data[fg_attempt_i, ],
+    kickoff_data[kickoff_i, ]
+  ))
+  base_ep_preds <- preds[[1]]
+  missed_fg_ep_preds <- expand_rows(preds[[2]], nrow(pbp_data), fg_attempt_i)
+  kickoff_preds <- expand_rows(preds[[3]], nrow(pbp_data), kickoff_i)
 
   # Find the rows where TimeSecs_Remaining became 0 or negative and make all the probs equal to 0:
   end_game_i <- which(missed_fg_data$half_seconds_remaining <= 0)
@@ -376,28 +433,7 @@ add_ep_variables <- function(pbp_data) {
 
   # ----------------------------------------------------------------------------------
   # ---- special case: deal with kickoffs
-  # Calculate the EP for receiving a touchback (from the point of view for recieving team)
-  # and update the columns for Kickoff plays:
-  kickoff_data <- pbp_data
-
-  # Change the yard line to be 80 for 2009-2015 and 75 otherwise
-  # (accounting for the fact that Jan 2016 is in the 2015 season:
-  kickoff_data$yardline_100 <- with(kickoff_data, ifelse(season < 2016, 80, 75))
-  # Now first down:
-  kickoff_data$down1 <- rep(1, nrow(pbp_data))
-  kickoff_data$down2 <- rep(0, nrow(pbp_data))
-  kickoff_data$down3 <- rep(0, nrow(pbp_data))
-  kickoff_data$down4 <- rep(0, nrow(pbp_data))
-  # 10 ydstogo:
-  kickoff_data$ydstogo <- rep(10, nrow(pbp_data))
-
-  # Find the kickoffs:
-  kickoff_i <- which(
-    pbp_data$play_type == "kickoff" | pbp_data$kickoff_attempt == 1
-  )
-
-  # Get the new predicted probabilites:
-  kickoff_preds <- predict_rows(get_preds, kickoff_data, kickoff_i)
+  # update the columns for Kickoff plays with the touchback probabilities
 
   # Now update the probabilities:
   base_ep_preds[kickoff_i, "Field_Goal"] <- kickoff_preds[
