@@ -223,11 +223,11 @@ get_pbp_gc <- function(
 
       # have to do all this nonsense to make goal_to_go and yardline_side for compatibility with later functions
       yardline_side = furrr::future_map_chr(
-        stringi::stri_split_regex(.data$yardline, " "),
+        stringi::stri_split_fixed(.data$yardline, " "),
         function(x) x[1]
       ),
       yardline_number = as.numeric(furrr::future_map_chr(
-        stringi::stri_split_regex(.data$yardline, " "),
+        stringi::stri_split_fixed(.data$yardline, " "),
         function(x) x[2]
       )),
       goal_to_go = dplyr::if_else(

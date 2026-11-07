@@ -32,20 +32,24 @@ get_pbp_nfl <- function(
   home_team <- raw_data$data$viewer$gameDetail$homeTeam$abbreviation
   away_team <- raw_data$data$viewer$gameDetail$visitorTeam$abbreviation
   home_team <- data.table::fcase(
-    home_team == "JAC" , "JAX" ,
-    home_team == "SD"  , "LAC" ,
+    home_team == "JAC",
+    "JAX",
+    home_team == "SD",
+    "LAC",
     default = home_team
   )
   away_team <- data.table::fcase(
-    away_team == "JAC" , "JAX" ,
-    away_team == "SD"  , "LAC" ,
+    away_team == "JAC",
+    "JAX",
+    away_team == "SD",
+    "LAC",
     default = away_team
   )
 
   # if home team and away team are the same, the game is messed up and needs fixing
   if (home_team == away_team) {
     # get correct home and away from the game ID
-    id_parts <- stringi::stri_split_regex(id, "_")
+    id_parts <- stringi::stri_split_fixed(id, "_")
     away_team <- id_parts[[1]][3]
     home_team <- id_parts[[1]][4]
     bad_game <- 1
@@ -164,7 +168,7 @@ get_pbp_nfl <- function(
         2
       )),
       quarter_end = dplyr::if_else(
-        stringi::stri_detect_regex(.data$play_description, "END QUARTER"),
+        stringi::stri_detect_fixed(.data$play_description, "END QUARTER"),
         1,
         0
       ),
@@ -238,7 +242,7 @@ get_pbp_nfl <- function(
       ),
 
       # can't trust the goal_to_go variable so we overwrite it here
-      goal_to_go = as.numeric(stringi::stri_detect_regex(
+      goal_to_go = as.numeric(stringi::stri_detect_fixed(
         tolower(.data$pre_play_by_play),
         "goal"
       ))
@@ -257,9 +261,9 @@ get_pbp_nfl <- function(
     # These mess up some of our logic. Since they are useless, we remove them here
     dplyr::filter(
       !(is.na(.data$timeout_team) &
-        stringi::stri_detect_regex(
+        stringi::stri_startswith_fixed(
           tolower(.data$play_description),
-          paste0("^(", "\\*\\* injury update:", ")")
+          "** injury update:"
         ))
     ) |>
     fix_posteams()
@@ -482,15 +486,11 @@ unnest_play_stats <- function(plays) {
 # janitor::make_clean_names() is slow and the raw data of most games has the
 # same column names, so we remember the results
 clean_names_cached <- function(x) {
-  seen <- nflfastR_cache$clean_names
-  for (pair in seen) {
-    if (identical(pair$x, x)) {
-      return(pair$clean)
-    }
+  key <- paste0("clean_names_", rlang::hash(x))
+  if (is.null(nflfastR_cache[[key]])) {
+    assign(key, janitor::make_clean_names(x), envir = nflfastR_cache)
   }
-  clean <- janitor::make_clean_names(x)
-  nflfastR_cache$clean_names <- c(seen, list(list(x = x, clean = clean)))
-  clean
+  nflfastR_cache[[key]]
 }
 
 empty_strings_to_na <- function(df) {
@@ -499,7 +499,7 @@ empty_strings_to_na <- function(df) {
   for (j in seq_along(cols)) {
     x <- cols[[j]]
     if (is.character(x)) {
-      x[!is.na(x) & x == ""] <- NA_character_
+      x[which(x == "")] <- NA_character_
       cols[[j]] <- x
     }
   }

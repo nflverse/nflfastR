@@ -50,7 +50,7 @@ custom_mode <- function(x, na.rm = TRUE) {
 rule_header <- function(x) {
   print(cli::rule(
     left = cli::style_bold(x),
-    right = paste("nflfastR version", utils::packageVersion("nflfastR")),
+    right = paste("nflfastR version", utils::packageVersion("nflfastR"))
   ))
 }
 
@@ -207,7 +207,7 @@ fetch_raw <- function(
 
     fetched <- curl::curl_fetch_memory(to_load)
 
-    if (fetched$status_code == 404 & maybe_valid(game_id)) {
+    if (fetched$status_code == 404 && maybe_valid(game_id)) {
       cli::cli_abort(
         "The requested GameID {.val {game_id}} is not loaded yet, please try again later!"
       )
@@ -411,13 +411,10 @@ utils::globalVariables(
     ".SD",
     "ExpPts",
     "away_points_scored",
-    "away_team_pass_wpa",
-    "away_team_rush_wpa",
     "away_timeout_used",
     "csum",
     "cum_prob",
     "defteam",
-    "defteam_score",
     "extra_point_result",
     "field_goal_result",
     "first_down_pass",
@@ -431,8 +428,6 @@ utils::globalVariables(
     "home_opening_kickoff",
     "home_points_scored",
     "home_team",
-    "home_team_pass_wpa",
-    "home_team_rush_wpa",
     "home_timeout_used",
     "home_wp",
     "home_wpa",
@@ -449,7 +444,6 @@ utils::globalVariables(
     "play_type",
     "posteam",
     "posteam_id",
-    "posteam_score",
     "qtr",
     "quarter_end",
     "receive_2h_ko",
@@ -462,12 +456,6 @@ utils::globalVariables(
     "tmp_desc_lower",
     "tmp_posteam",
     "tmp_result",
-    "total_away_pass_wpa",
-    "total_away_rush_wpa",
-    "total_away_score",
-    "total_home_pass_wpa",
-    "total_home_rush_wpa",
-    "total_home_score",
     "touchdown",
     "two_point_conv_result",
     "vegas_home_wp",

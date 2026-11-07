@@ -33,7 +33,7 @@ Imports:
     mgcv,
     nflreadr (>= 1.2.0),
     progressr (>= 0.6.0),
-    rlang (>= 0.4.7),
+    rlang (>= 0.4.10),
     stringi,
     tibble (>= 3.0),
     tidyr (>= 1.0.0),

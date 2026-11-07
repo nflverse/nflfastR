@@ -67,18 +67,20 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
   id_vector <- players$gsis_id
   names(id_vector) <- players$esb_id
 
-  decode_one <- function(id, id_vec = id_vector) {
-    chars <- nchar(id)
-    dplyr::case_when(
-      is.na(chars) ~ NA_character_,
-      # this means it's gsis ID. 30 30 2d 30 30 translates to 00-00
-      stringi::stri_sub(id, 5, 16) == "3030-2d30-30" ~ decode_gsis(id),
-      # if it's not gsis, it is likely elias. We drop names to avoid confusion
-      nchar(id) == 36 ~ unname(id_vec[extract_elias(
-        id,
-        decoder = decode_gsis
-      )]),
-      TRUE ~ id
+  decode_one <- function(id) {
+    # this means it's gsis ID. 30 30 2d 30 30 translates to 00-00
+    is_gsis <- stringi::stri_sub(id, 5, 16) == "3030-2d30-30"
+    # if it's not gsis, it is likely elias. We drop names to avoid confusion
+    is_elias <- nchar(id) == 36
+    elias_id <- unname(id_vector[extract_elias(id, decoder = decode_gsis)])
+    data.table::fcase(
+      is.na(id),
+      NA_character_,
+      is_gsis,
+      decode_gsis(id),
+      is_elias,
+      elias_id,
+      default = id
     )
   }
 
@@ -110,12 +112,12 @@ decode_ids <- function(var) {
 }
 
 convert_to_gsis_id <- function(new_id) {
-  if (is.na(new_id) | stringi::stri_length(new_id) != 36) {
+  if (is.na(new_id) || stringi::stri_length(new_id) != 36) {
     ret <- new_id
   } else {
     to_decode <- new_id |>
       stringi::stri_sub(5, -9) |>
-      stringi::stri_replace_all_regex("-", "")
+      stringi::stri_replace_all_fixed("-", "")
     hex_raw <- sapply(seq(1, nchar(to_decode), by = 2), function(x) {
       substr(to_decode, x, x + 1)
     })
@@ -126,7 +128,7 @@ convert_to_gsis_id <- function(new_id) {
 
 extract_elias <- function(smart_id, decoder) {
   name_abbr <- decoder(smart_id) |> substr(1, 3)
-  id_no <- stringi::stri_replace_all_regex(smart_id, "-", "") |>
+  id_no <- stringi::stri_replace_all_fixed(smart_id, "-", "") |>
     stringi::stri_sub(11, 16)
   elias_id <- paste0(name_abbr, id_no)
   elias_id
