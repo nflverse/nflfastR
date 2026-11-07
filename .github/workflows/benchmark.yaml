@@ -1,0 +1,80 @@
+# Compares the speed of build_nflfastR_pbp() of this branch (head) with
+# another ref (base, master by default) on the regression games. The result is
+# shown in the job summary. See data-raw/parser_performance/compare_benchmark.R
+on:
+  workflow_dispatch:
+    inputs:
+      base:
+        description: "Git ref to compare against"
+        default: "master"
+        type: string
+      iterations:
+        description: "Number of runs per version"
+        default: "3"
+        type: string
+  # TEMPORARY: workflow_dispatch only works once this file is on the default
+  # branch, so the benchmark runs on pushes to this branch until it's merged.
+  # Remove this trigger before merging.
+  push:
+    branches: [parser-performance]
+  pull_request:
+    paths:
+      - "R/**"
+      - "DESCRIPTION"
+      - "data-raw/parser_performance/**"
+      - ".github/workflows/benchmark.yaml"
+
+name: benchmark.yaml
+
+permissions: read-all
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      BASE_REF: ${{ inputs.base || github.base_ref || 'master' }}
+      HEAD_REF: ${{ github.head_ref || github.ref_name }}
+
+    steps:
+      - name: Checkout head
+        uses: actions/checkout@v7
+        with:
+          path: head
+
+      - name: Checkout base
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ env.BASE_REF }}
+          path: base
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      # dependencies of both versions (deps:: installs only the dependencies of
+      # the base checkout, not the package itself)
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          working-directory: head
+          extra-packages: |
+            any::pkgload
+            any::gsisdecoder
+            deps::../base
+            nflverse/fastrmodels
+            nflverse/nflreadr
+
+      - name: Run benchmark
+        run: |
+          Rscript head/data-raw/parser_performance/compare_benchmark.R \
+            base head ${{ inputs.iterations || '3' }} benchmark_results
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: |
+            benchmark_results/results.csv
+            benchmark_results/summary.md
