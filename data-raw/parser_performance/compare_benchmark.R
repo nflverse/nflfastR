@@ -7,6 +7,8 @@
 # data-raw/test_game_selection/README.md) with a sequential future plan:
 # - all regression games in one build_nflfastR_pbp() call
 # - one game 10 times (median)
+# - the same game 10 times with `add_xyac = FALSE` (median), if the version
+#   has that argument
 # Every measurement runs in a fresh R process that loads the package with
 # pkgload::load_all(), alternating between the versions, so changing load on
 # the machine affects both. The script also checks that both versions return
@@ -37,12 +39,13 @@ if (identical(args[1], "worker")) {
     ))
   )
   single_id <- max(ids)
-  build <- function(game_ids) {
+  build <- function(game_ids, ...) {
     suppressWarnings(suppressMessages(build_nflfastR_pbp(
       game_ids,
       dir = raw_dir,
       games = games,
-      rules = FALSE
+      rules = FALSE,
+      ...
     )))
   }
 
@@ -53,6 +56,18 @@ if (identical(args[1], "worker")) {
     function(i) system.time(build(single_id))[["elapsed"]],
     numeric(1)
   )
+  # older versions don't have the argument and would pass it on in `...`
+  single_no_xyac <- if ("add_xyac" %in% names(formals(build_nflfastR_pbp))) {
+    vapply(
+      1:10,
+      function(i) {
+        system.time(build(single_id, add_xyac = FALSE))[["elapsed"]]
+      },
+      numeric(1)
+    )
+  } else {
+    NA_real_
+  }
   all_games <- system.time(out <- build(ids))[["elapsed"]]
 
   if (save_output) {
@@ -64,6 +79,7 @@ if (identical(args[1], "worker")) {
   saveRDS(
     list(
       single_game = stats::median(single),
+      single_game_no_xyac = stats::median(single_no_xyac),
       all_games = all_games,
       n_games = length(ids),
       n_plays = nrow(out),
@@ -131,6 +147,7 @@ for (i in seq_len(iterations)) {
       version = version,
       iteration = i,
       single_game_s = r$single_game,
+      single_game_no_xyac_s = r$single_game_no_xyac,
       all_games_s = r$all_games,
       n_games = r$n_games,
       n_plays = r$n_plays,
@@ -163,15 +180,14 @@ med <- function(version, col) {
 row <- function(label, col, digits, unit, scale = 1) {
   b <- med("base", col) * scale
   h <- med("head", col) * scale
-  sprintf(
-    "| %s | %s %s | %s %s | %.1fx |",
-    label,
-    format(round(b, digits), nsmall = digits),
-    unit,
-    format(round(h, digits), nsmall = digits),
-    unit,
-    b / h
-  )
+  fmt <- function(x) {
+    if (is.na(x)) {
+      return("n/a")
+    }
+    paste(format(round(x, digits), nsmall = digits), unit)
+  }
+  speedup <- if (is.na(b) || is.na(h)) "n/a" else sprintf("%.1fx", b / h)
+  sprintf("| %s | %s | %s | %s |", label, fmt(b), fmt(h), speedup)
 }
 summary_md <- c(
   "## Parser benchmark",
@@ -200,6 +216,13 @@ summary_md <- c(
   row(
     sprintf("Single game (`%s`, median of 10)", results$single_id[1]),
     "single_game_s",
+    0,
+    "ms",
+    scale = 1000
+  ),
+  row(
+    "Single game with `add_xyac = FALSE` (median of 10)",
+    "single_game_no_xyac_s",
     0,
     "ms",
     scale = 1000
