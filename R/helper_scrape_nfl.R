@@ -119,28 +119,7 @@ get_pbp_nfl <- function(
     )
   colnames(drives) <- paste0("drive_", clean_names_cached(colnames(drives)))
 
-  stats <- tidyr::unnest(
-    plays |> dplyr::select(-"yards"),
-    cols = c("playStats")
-  ) |>
-    dplyr::mutate(
-      yards = as.integer(.data$yards),
-      statId = as.numeric(.data$statId),
-      team.abbreviation = as.character(.data$team.abbreviation)
-    ) |>
-    dplyr::rename(
-      player.esbId = "gsisPlayer.id",
-      player.displayName = "playerName",
-      teamAbbr = "team.abbreviation"
-    ) |>
-    dplyr::select(
-      "playId",
-      "statId",
-      "yards",
-      "teamAbbr",
-      "player.displayName",
-      "player.esbId"
-    )
+  stats <- unnest_play_stats(plays)
 
   # there was a penalty on this play so these stat IDs shouldn't exist
   if (id == "2020_10_DEN_LV") {
@@ -466,6 +445,38 @@ normalize_raw_columns <- function(df) {
   }
   names(cols) <- clean_names_cached(names(cols))
   tibble::new_tibble(cols, nrow = n)
+}
+
+# One row per stat with the columns tidy_play_stats() needs, like
+# tidyr::unnest() of plays$playStats but without carrying all play columns
+# along. Plays without stats have no rows. A game without any stats yet (before
+# kickoff) gives an empty table.
+unnest_play_stats <- function(plays) {
+  ps <- plays$playStats
+  n <- vapply(ps, NROW, integer(1))
+  has <- which(n > 0)
+  if (length(has) == 0) {
+    return(tibble::tibble(
+      playId = plays$playId[0],
+      statId = numeric(),
+      yards = integer(),
+      teamAbbr = character(),
+      player.displayName = character(),
+      player.esbId = character()
+    ))
+  }
+  stats <- data.table::rbindlist(ps[has], fill = TRUE)
+  pick <- function(col) {
+    if (is.null(stats[[col]])) rep(NA, nrow(stats)) else stats[[col]]
+  }
+  tibble::tibble(
+    playId = rep(plays$playId[has], n[has]),
+    statId = as.numeric(pick("statId")),
+    yards = as.integer(pick("yards")),
+    teamAbbr = as.character(pick("team.abbreviation")),
+    player.displayName = pick("playerName"),
+    player.esbId = pick("gsisPlayer.id")
+  )
 }
 
 # janitor::make_clean_names() is slow and the raw data of most games has the
