@@ -10,17 +10,15 @@
 ## series_success =
 ##  1: scored touchdown, gained enough yards for first down
 ##  0: everything else
-add_series_data <- function(pbp) {
-  # pbp is the data.table of build_nflfastR_pbp(), changed by reference
-  dt <- pbp
-  # helper column, dropped below
-  data.table::set(dt, j = "drive_posteam", value = drive_posteam(dt))
+add_series_data <- function(d) {
+  # d is the data.table of build_nflfastR_pbp(), changed by reference. It
+  # needs the helper columns of add_drive_results() and drops them.
 
   # new series, with lags within the game half
-  dt[,
+  d[,
     new_series := {
-      lag <- data.table::shift
-      new_series <- data.table::fifelse(
+      lag <- function(x) data.table::shift(x)
+      data.table::fifelse(
         # a new drive
         fixed_drive != lag(fixed_drive) |
           # or a first down on the prior play except touchdown plays
@@ -31,60 +29,32 @@ add_series_data <- function(pbp) {
           # or the first play
           seq_len(.N) == 1L,
         1,
-        0
+        0,
+        na = 0
       )
-      new_series[is.na(new_series)] <- 0
-      new_series
     },
     by = c("game_id", "game_half")
   ]
 
   # now compute series number with cumsum
-  dt[, series := cumsum(new_series), by = "game_id"]
+  d[, series := cumsum(new_series), by = "game_id"]
+  data.table::set(d, j = "tmp_result", value = play_result(d, series = TRUE))
+  d[, series_result := drive_result(tmp_result), by = c("game_id", "series")]
   data.table::set(
-    dt,
-    j = "tmp_result",
-    value = data.table::fcase(
-      (dt$first_down_penalty == 1 | dt$first_down_rush == 1 | dt$first_down_pass == 1) & dt$touchdown == 0 ,
-      "First down"                                                                                         ,
-      dt$touchdown == 1 & dt$drive_posteam == dt$td_team                                                   ,
-      "Touchdown"                                                                                          ,
-      dt$touchdown == 1 & dt$drive_posteam != dt$td_team                                                   ,
-      "Opp touchdown"                                                                                      ,
-      dt$field_goal_result == "made"                                                                       ,
-      "Field goal"                                                                                         ,
-      dt$field_goal_result %in% c("blocked", "missed")                                                     ,
-      "Missed field goal"                                                                                  ,
-      dt$safety == 1                                                                                       ,
-      "Safety"                                                                                             ,
-      dt$play_type == "punt" | dt$punt_attempt == 1                                                        ,
-      "Punt"                                                                                               ,
-      dt$interception == 1 | dt$fumble_lost == 1                                                           ,
-      "Turnover"                                                                                           ,
-      dt$down == 4 & dt$yards_gained < dt$ydstogo & dt$play_type != "no_play"                              ,
-      "Turnover on downs"                                                                                  ,
-      dt$qb_kneel == 1                                                                                     ,
-      "QB kneel"                                                                                           ,
-      stringi::stri_detect_regex(dt$desc, "(END QUARTER 2)|(END QUARTER 4)|(END GAME)")                    ,
-      "End of half"
-    )
-  )
-  dt[, series_result := drive_result(tmp_result), by = c("game_id", "series")]
-  data.table::set(
-    dt,
+    d,
     j = "series_success",
     value = data.table::fifelse(
-      dt$series_result %in% c("Touchdown", "First down"),
+      d$series_result %in% c("Touchdown", "First down"),
       1,
       0
     )
   )
   data.table::set(
-    dt,
-    j = c("drive_posteam", "new_series", "tmp_result"),
+    d,
+    j = c("drive_posteam", "end_of_half", "new_series", "tmp_result"),
     value = NULL
   )
 
   user_message("added series variables", "done")
-  dt
+  d
 }

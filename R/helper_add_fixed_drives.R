@@ -9,21 +9,24 @@
 ## fixed_drive_result =
 ##  result of  given drive
 add_drive_results <- function(d) {
-  # d is the data.table of build_nflfastR_pbp(), changed by reference
-  dt <- d
-  # helper columns, dropped below
-  data.table::set(dt, j = "drive_posteam", value = drive_posteam(dt))
+  # d is the data.table of build_nflfastR_pbp(), changed by reference.
+  # The helper columns drive_posteam and end_of_half are also used by
+  # add_series_data(), which drops them.
   data.table::set(
-    dt,
-    j = "is_timeout",
-    value = stringi::stri_detect_regex(
-      dt$desc,
-      "(Timeout)|(Two-Minute Warning)"
+    d,
+    j = c("drive_posteam", "end_of_half", "is_timeout"),
+    value = list(
+      drive_posteam(d),
+      stringi::stri_detect_regex(
+        d$desc,
+        "(END QUARTER 2)|(END QUARTER 4)|(END GAME)"
+      ),
+      stringi::stri_detect_regex(d$desc, "(Timeout)|(Two-Minute Warning)")
     )
   )
 
   # new drives, with lags within the game half
-  dt[,
+  d[,
     new_drive := {
       pos <- drive_posteam
       lag <- function(x, k = 1L) data.table::shift(x, k)
@@ -126,43 +129,20 @@ add_drive_results <- function(d) {
     by = c("game_id", "game_half")
   ]
 
-  dt[, fixed_drive := cumsum(new_drive), by = "game_id"]
-  data.table::set(
-    dt,
-    j = "tmp_result",
-    value = data.table::fcase(
-      dt$touchdown == 1 & dt$drive_posteam == dt$td_team                                ,
-      "Touchdown"                                                                       ,
-      dt$touchdown == 1 & dt$drive_posteam != dt$td_team                                ,
-      "Opp touchdown"                                                                   ,
-      dt$field_goal_result == "made"                                                    ,
-      "Field goal"                                                                      ,
-      dt$field_goal_result %in% c("blocked", "missed")                                  ,
-      "Missed field goal"                                                               ,
-      dt$safety == 1                                                                    ,
-      "Safety"                                                                          ,
-      dt$play_type == "punt" | dt$punt_attempt == 1                                     ,
-      "Punt"                                                                            ,
-      dt$interception == 1 | dt$fumble_lost == 1                                        ,
-      "Turnover"                                                                        ,
-      dt$down == 4 & dt$yards_gained < dt$ydstogo & dt$play_type != "no_play"           ,
-      "Turnover on downs"                                                               ,
-      stringi::stri_detect_regex(dt$desc, "(END QUARTER 2)|(END QUARTER 4)|(END GAME)") ,
-      "End of half"
-    )
-  )
-  dt[,
+  d[, fixed_drive := cumsum(new_drive), by = "game_id"]
+  data.table::set(d, j = "tmp_result", value = play_result(d))
+  d[,
     fixed_drive_result := drive_result(tmp_result),
     by = c("game_id", "fixed_drive")
   ]
   data.table::set(
-    dt,
-    j = c("drive_posteam", "is_timeout", "new_drive", "tmp_result"),
+    d,
+    j = c("is_timeout", "new_drive", "tmp_result"),
     value = NULL
   )
 
   user_message("added fixed drive variables", "done")
-  dt
+  d
 }
 
 # The team that has the ball in terms of drives and series
@@ -182,6 +162,52 @@ drive_posteam <- function(d) {
       TRUE
   posteam[swap] <- d$defteam[swap]
   posteam
+}
+
+# The result of each play in terms of drives (or series with series = TRUE),
+# NA if it doesn't decide the result. Needs the helper columns drive_posteam
+# and end_of_half of add_drive_results().
+play_result <- function(d, series = FALSE) {
+  first_down <- series &
+    (d$first_down_penalty == 1 |
+      d$first_down_rush == 1 |
+      d$first_down_pass == 1) &
+    d$touchdown == 0
+  touchdown <- d$touchdown == 1 & d$drive_posteam == d$td_team
+  opp_touchdown <- d$touchdown == 1 & d$drive_posteam != d$td_team
+  field_goal <- d$field_goal_result == "made"
+  missed_field_goal <- d$field_goal_result %in% c("blocked", "missed")
+  safety <- d$safety == 1
+  punt <- d$play_type == "punt" | d$punt_attempt == 1
+  turnover <- d$interception == 1 | d$fumble_lost == 1
+  turnover_on_downs <- d$down == 4 &
+    d$yards_gained < d$ydstogo &
+    d$play_type != "no_play"
+  qb_kneel <- series & d$qb_kneel == 1
+  data.table::fcase(
+    first_down,
+    "First down",
+    touchdown,
+    "Touchdown",
+    opp_touchdown,
+    "Opp touchdown",
+    field_goal,
+    "Field goal",
+    missed_field_goal,
+    "Missed field goal",
+    safety,
+    "Safety",
+    punt,
+    "Punt",
+    turnover,
+    "Turnover",
+    turnover_on_downs,
+    "Turnover on downs",
+    qb_kneel,
+    "QB kneel",
+    d$end_of_half,
+    "End of half"
+  )
 }
 
 # The result of a drive or series from the results of its plays: the last
