@@ -63,6 +63,65 @@ What's left: ~14.5 s of `add_xyac()` is xgboost prediction, which is single-thre
 
 `tidy_play_stats()` was generated mechanically from the branches of the old `sum_play_stats()` (`row$x <- v` became `x[i] <- v`), so the stat rules didn't change. It is still an R loop; a C++ port would save another ~2 s per season.
 
+A cleanup pass after a code review removed leftovers of the mechanical translation, again checked with `identical()` on the regression games and the 2003 and 2023 seasons: cascades of `set()` calls on one column became one `fcase()` (two point, field goal and extra point results, points scored via `points_scored()`), `fcoalesce()` replaces hand-written coalescing in `clean_pbp()`, literal patterns use `stri_detect_fixed()`, regexes that ran several times on `desc` run once, `drive_posteam()` and the end of half are computed once for drives and series (helper columns of `add_drive_results()` that `add_series_data()` drops; both use `play_result()`), EP and WP team totals share `add_team_totals()`, `predict_rows()` only handles vector predictions, `tidy_play_stats()` uses `switch()` instead of 108 `else if` branches, and the remaining `dplyr` calls in `add_ep_variables()` and `decode_player_ids()` are gone. New tests check that the exported steps don't change their input and keep its type, and cover games without play stats and the parser helpers.
+
+## Notes for the next agent
+
+The paragraphs above are the history. This section describes the state of branch `parser-performance` (based on `regression-test-games`, pushed, no pull request yet) and what you need to continue.
+
+### Current architecture
+
+- `fast_scraper()` binds the parsed games, converts them once with `data.table::setDT()` and passes one data.table through all steps. Internal steps (`add_game_data()`, `add_nflscrapr_mutations()`, `add_ep()`, `add_air_yac_ep()`, `add_wp()`, `add_air_yac_wp()`, `add_cp()`, `add_drive_results()`, `add_series_data()`, `restore_kickoff_attempt()`, `select_variables()`) expect a data.table and change it by reference. They don't accept tibbles anymore.
+- The exported steps (`clean_pbp()`, `add_qb_epa()`, `add_xyac()`, `add_xpass()`, `decode_player_ids()`) start with `by_ref <- in_pipeline(pbp, ...)`. Inside the builder they change the table by reference; called by users they work on `as_pbp_dt(pbp)` (a copy) and return `as_input_type(d, pbp)` (`clean_pbp()` always returns a tibble, like before).
+- `build_nflfastR_pbp()` and `fast_scraper()` call `data.table::setDF()` before `make_nflverse_data()`, so the final object is identical to the old one.
+- Model inputs are built with `model_matrix(data, features)`; the feature vectors are `ep_model_features`, `wp_model_features`, `wp_spread_model_features`, `cp_model_features`, `xpass_model_features` and `xyac_model_features`.
+- Remaining own helpers in `R/utils.R`: `apply_where()` (run a function only where a condition is TRUE, for expensive regexes), `squish()` (stringr's `str_squish()`), `as_pbp_dt()`, `in_pipeline()`, `as_input_type()`, `model_matrix()`, `is_verbose()`. `predict_rows()`/`expand_rows()` (`R/helper_add_ep_wp.R`) predict on a subset of rows and return a full-length result.
+- No dplyr, tidyr or stringr in the pipeline anymore, except in the exported `calculate_expected_points()` (still dplyr, used by `add_qb_epa()` for the few fumble rows) and in non-pipeline functions such as `calculate_stats()`. stringr is no longer a dependency.
+
+### How changes were verified
+
+Every change was checked with `identical()` against the previous version, not only with the regression test (which has tolerances):
+
+- Full pipeline: `build_nflfastR_pbp()` of the 2023 season (local raw files) and of the regression games, with the old code from a `git worktree` and the new code (`pkgload::load_all()` of each), compared with `identical()` after removing the `nflverse_timestamp` attribute.
+- Single functions: old version from a copy of the `R/` files (`sys.source()` into an environment whose parent is the nflfastR namespace) against the new one, on the 2023 season, the regression games, a single game and the season with shuffled rows or games.
+- Exported steps: tibble, `nflverse_data`, data.frame and data.table input, compared with the behavior from before all changes (commit `dc5912b2`), including that the input isn't modified.
+- Tests: `devtools::test(filter = "calculate_stats", invert = TRUE)`. `tests/testthat/setup.R` runs all tests with `nflfastR.verbose = FALSE`.
+- `jarl check` on changed files (config in `jarl.toml`). The only remaining finding in the touched files is the unused `get_pbp_gc()` (dead code from before this branch).
+- R CMD check without tests must have no notes. Column names used in data.table calls go into the `utils::globalVariables()` call at the end of `R/utils.R`.
+
+### Pitfalls we ran into
+
+- `x$col <- value` on a data.table (`$<-.data.table`) copies the whole table. Use `data.table::set()`, or plain column lists (`as.list(dt)`, no copy) for scenario data.
+- On a column list, `l$col <- 1` stores a single value; tibbles recycled it. Use `rep(1, n)`. This silently broke the WP of PATs once.
+- `nflverse_data` objects (from `load_pbp()`, `make_nflverse_data()`) have class `data.table` without being valid data.tables. Never change user input by reference and don't call `as.data.table()` on them blindly (the schedule in `add_game_data()` is rebuilt from its columns).
+- `data.table::fcase()` errors on mixed integer/double results; `fifelse()` converts them. `fifelse(..., na = x)` replaces `if_else(..., missing = x)`.
+- In package code, `` `:=`(a = ..., b = ...) `` causes an R CMD check note because rlang's `:=` is imported; use `c("a", "b") := list(...)`. Use `list()` instead of `.()`.
+- `dt[logical_vector]` filters rows, it doesn't select columns (this broke `clean_pbp()` on data.table input once). Drop columns with `set(dt, j = cols, value = NULL)`.
+- Passing a data.table to mgcv can misbehave; `predict.bam()` gets `as.data.frame()`.
+- `air format` formats `data.table::fcase()` calls as aligned tables by default. `air.toml` turns this off with `default-table = false`. Assign long conditions to named variables anyway, it keeps `fcase()` calls readable.
+- xgboost on macOS (CRAN and r-universe binaries) has no OpenMP, so predictions are single-threaded there. On Linux they use all cores automatically (models are loaded with `nthread = 0`; limit with `OMP_NUM_THREADS`).
+- The xgboost predictions of a row don't depend on other rows, so predicting only the rows that are needed (or unique rows) gives identical output. mgcv predictions on subsets were identical too.
+
+### Benchmark workflow
+
+`.github/workflows/benchmark.yaml` runs `data-raw/parser_performance/compare_benchmark.R` on `ubuntu-latest`: `build_nflfastR_pbp()` of the branch against master (or the `base` input) on the ~100 regression games and on one game (median of 10, after a warm-up), each measurement in a fresh R process, alternating the versions. It also compares the outputs of both versions. The result is in the job summary.
+
+- It currently also runs on every push to `parser-performance` (a temporary trigger, because `workflow_dispatch` only works once the file is on the default branch). Remove that trigger before merging.
+- Against master, the output check reports `xyac_median_yardage` (integer → double). That's the intended change of the base branch `regression-test-games`, not a bug.
+- Locally (Apple Silicon, single-threaded xgboost): 100 regression games 55.2 s → 12.1 s, single game 1359 ms → 317 ms.
+- On GitHub (`ubuntu-latest`, 4 cores, run 42393129509): 100 regression games 113.4 s → 17.5 s (6.5x), single game 2904 ms → 616 ms (4.7x).
+- **Unresolved:** on Linux the output check found more differences than on the Mac: `xyac_epa` (2282 values), and `ep`, `epa` and the EP probabilities of 1-2 plays (plus the totals and `qb_epa` derived from them). On Apple Silicon both versions are `identical()`. Suspected causes (not verified): (1) the per-pass `sum()` in the grouped data.table summary of `summarize_xyac()` uses data.table's GForce sum, while base `sum()` (old code) accumulates in 80-bit `long double` on x86, which is the same as `double` on Apple Silicon; (2) mgcv predictions of the FG model on a subset of rows can differ in the last bits with a different BLAS. Next step: report the size of the differences in the benchmark (max absolute/relative difference) and, if they are only rounding, decide whether to restore bitwise identity (e.g. base `sum()` outside of GForce).
+
+### Open items
+
+- Find out why the Linux output differs slightly from master (see the benchmark workflow notes above).
+- Remove the temporary push trigger of the benchmark workflow before merging, and open the pull request (`regression-test-games` should be merged first).
+- `add_xyac()`: ~14.5 s per season are xgboost predictions. On macOS, chunks across `future` workers would help; on Linux, xgboost already uses all cores.
+- `tidy_play_stats()` is an R loop; a C++ port would save ~2 s per season.
+- `calculate_expected_points()` still uses dplyr.
+- `drop.cols` is defined twice (`R/ep_wp_calculators.R` and `R/helper_additional_functions.R`); the second one wins, so `calculate_expected_points()` drops the columns of `clean_pbp()` instead of old EP columns. No effect on the builder output; looks like a bug in the exported function.
+- The exported steps can't be used on a data.table by reference outside the builder by design (`in_pipeline()` needs `in_builder = TRUE`).
+
 ## Steps, in order
 
 Do one step at a time. After each step, run the tests (see below) and compare timings with `data-raw/parser_performance/benchmark.R`.
@@ -118,4 +177,5 @@ Do one step at a time. After each step, run the tests (see below) and compare ti
 
 - Run `air format .` after changing code.
 - Keep output columns, column order and column types unchanged.
+- Changes don't have to be exact ports of the old code. Idiomatic approaches are welcome as long as the output stays identical. Prefer well-tested packages (data.table, stringi) over own implementations of generic functions; own helpers are harder to maintain.
 - Internal refactorings don't get a `NEWS.md` bullet. Add one bullet for the overall speedup.
