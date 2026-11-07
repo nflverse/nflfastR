@@ -67,32 +67,45 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
   id_vector <- players$gsis_id
   names(id_vector) <- players$esb_id
 
+  decode_one <- function(id, id_vec = id_vector) {
+    chars <- nchar(id)
+    dplyr::case_when(
+      is.na(chars) ~ NA_character_,
+      # this means it's gsis ID. 30 30 2d 30 30 translates to 00-00
+      stringr::str_sub(id, 5, 16) == "3030-2d30-30" ~ decode_gsis(id),
+      # if it's not gsis, it is likely elias. We drop names to avoid confusion
+      nchar(id) == 36 ~ unname(id_vec[extract_elias(
+        id,
+        decoder = decode_gsis
+      )]),
+      TRUE ~ id
+    )
+  }
+
+  id_cols <- pbp |>
+    dplyr::select(
+      dplyr::any_of(c(
+        "passer_id",
+        "rusher_id",
+        "receiver_id",
+        "id",
+        "fantasy_id"
+      )),
+      dplyr::ends_with("player_id")
+    ) |>
+    names()
+
+  # The same ids show up many times in many columns, so we decode every unique
+  # id only once
+  ids <- unique(unlist(lapply(id_cols, function(col) pbp[[col]])))
+  decoded <- decode_one(ids)
+
   ret <- pbp |>
-    dplyr::mutate_at(
-      dplyr::vars(
-        dplyr::any_of(c(
-          "passer_id",
-          "rusher_id",
-          "receiver_id",
-          "id",
-          "fantasy_id"
-        )),
-        dplyr::ends_with("player_id")
-      ),
-      function(id, id_vec = id_vector) {
-        chars <- nchar(id)
-        dplyr::case_when(
-          is.na(chars) ~ NA_character_,
-          # this means it's gsis ID. 30 30 2d 30 30 translates to 00-00
-          stringr::str_sub(id, 5, 16) == "3030-2d30-30" ~ decode_gsis(id),
-          # if it's not gsis, it is likely elias. We drop names to avoid confusion
-          nchar(id) == 36 ~ unname(id_vec[extract_elias(
-            id,
-            decoder = decode_gsis
-          )]),
-          TRUE ~ id
-        )
-      }
+    dplyr::mutate(
+      dplyr::across(
+        dplyr::all_of(id_cols),
+        function(id) decoded[match(id, ids)]
+      )
     )
 
   message_completed("Decoding of player ids completed", ...)
