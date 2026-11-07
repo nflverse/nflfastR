@@ -59,26 +59,36 @@ prepare_cp_data <- function(pbp) {
   # valid pass play: at least -15 air yards, less than 70 air yards, has intended receiver, has pass location
   passes <- pbp |>
     dplyr::mutate(
-      receiver_player_name = stringr::str_extract(
+      # all conditions of a valid pass except the receiver (helper)
+      tmp_valid = (.data$complete_pass == 1 |
+        .data$incomplete_pass == 1 |
+        .data$interception == 1) &
+        !is.na(.data$air_yards) &
+        .data$air_yards >= -15 &
+        .data$air_yards < 70 &
+        !is.na(.data$pass_location),
+      # the receiver only matters if the other conditions aren't FALSE
+      receiver_player_name = apply_where(
+        !(.data$tmp_valid %in% FALSE),
         .data$desc,
-        "(?<=((to)|(for))\\s[:digit:]{0,2}\\-{0,1})[A-Z][A-z]*\\.\\s?[A-Z][A-z]+(\\s(I{2,3})|(IV))?"
+        function(x) {
+          stringr::str_extract(
+            x,
+            "(?<=((to)|(for))\\s[:digit:]{0,2}\\-{0,1})[A-Z][A-z]*\\.\\s?[A-Z][A-z]+(\\s(I{2,3})|(IV))?"
+          )
+        }
       ),
       pass_middle = dplyr::if_else(.data$pass_location == "middle", 1, 0),
       air_is_zero = dplyr::if_else(.data$air_yards == 0, 1, 0),
       distance_to_sticks = .data$air_yards - .data$ydstogo,
       valid_pass = dplyr::if_else(
-        (.data$complete_pass == 1 |
-          .data$incomplete_pass == 1 |
-          .data$interception == 1) &
-          !is.na(.data$air_yards) &
-          .data$air_yards >= -15 &
-          .data$air_yards < 70 &
+        .data$tmp_valid &
           (!is.na(.data$receiver_player_name) |
-            !is.na(.data$receiver_player_id)) &
-          !is.na(.data$pass_location),
+            !is.na(.data$receiver_player_id)),
         1,
         0
-      )
+      ),
+      tmp_valid = NULL
     ) |>
     dplyr::select(
       "complete_pass",
