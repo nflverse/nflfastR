@@ -59,6 +59,7 @@ There are three possible ways to run code, listed in rough order of desirability
 
 - Follow the tidyverse style guide
 - Always run `air format .` after generating code. (air is bundled with Positron so look there if you can't otherwise find it.)
+- Run `jarl check` on the files you have created. (notify the user if it isn't available on the local machine)
 - Use the base pipe operator (`|>`), not the magrittr pipe (`%>%`).
 - Use `\() ...` for single-line anonymous functions. For all other cases, use `function() {...}`.
 
