@@ -76,13 +76,15 @@ Measure memory with `gc(reset = TRUE)` before and the "max used" of `gc()` after
 
 `%in%` on character vectors became data.table's `%chin%` (22 lines, mostly in the parser: `play_type`, `series_result`, `field_goal_result`, `season_type`, the `scramble_fix` lookup; also `calculate_stats()`, `calculate_series_conversion_rates()` and `completed_game_ids()`). On 50k plays it is about 4x faster with 4x less memory (0.2 ms vs 0.8 ms), so the effect on a full build is small. Results are the same, including `NA` handling. Checked with the test suite and the regression games test, not with `identical()` on full builds. Numeric and scalar `%in%` calls stay; `substr(id, 1, 4) %in% seq.int(...)` in `maybe_valid()` and `verify_game_ids()` compares character to numbers and must keep `%in%`.
 
+`fast_scraper()` replaced the deprecated `furrr::future_map_dfr()` (which binds with `dplyr::bind_rows()`) with `furrr::future_map()` and `data.table::rbindlist(use.names = TRUE, fill = TRUE)`. `rbindlist()` returns a data.table, so the separate `setDT()` is gone. For the 2023 season (286 games, 50k plays, plus an empty `data.frame()` from a failed game) the bound table is `identical()` to `setDT(bind_rows(...))`; the bind is 43 ms instead of 74 ms, which is negligible next to the total run time. Checked with the regression games test. `get_pbp_gc()` (`R/helper_scrape_gc.R`) still uses `future_map_dfr()` but is deprecated, so it stays.
+
 ## Notes for the next agent
 
 The paragraphs above are the history. This section describes the state of branch `parser-performance` (based on `regression-test-games`, pushed, no pull request yet) and what you need to continue.
 
 ### Current architecture
 
-- `fast_scraper()` binds the parsed games, converts them once with `data.table::setDT()` and passes one data.table through all steps. Internal steps (`add_game_data()`, `add_nflscrapr_mutations()`, `add_ep()`, `add_air_yac_ep()`, `add_wp()`, `add_air_yac_wp()`, `add_cp()`, `add_drive_results()`, `add_series_data()`, `restore_kickoff_attempt()`, `select_variables()`) expect a data.table and change it by reference. They don't accept tibbles anymore.
+- `fast_scraper()` binds the parsed games with `data.table::rbindlist()` and passes one data.table through all steps. Internal steps (`add_game_data()`, `add_nflscrapr_mutations()`, `add_ep()`, `add_air_yac_ep()`, `add_wp()`, `add_air_yac_wp()`, `add_cp()`, `add_drive_results()`, `add_series_data()`, `restore_kickoff_attempt()`, `select_variables()`) expect a data.table and change it by reference. They don't accept tibbles anymore.
 - The exported steps (`clean_pbp()`, `add_qb_epa()`, `add_xyac()`, `add_xpass()`, `decode_player_ids()`) start with `by_ref <- in_pipeline(pbp, ...)`. Inside the builder they change the table by reference; called by users they work on `as_pbp_dt(pbp)` (a copy) and return `as_input_type(d, pbp)` (`clean_pbp()` always returns a tibble, like before).
 - `build_nflfastR_pbp()` and `fast_scraper()` call `data.table::setDF()` before `make_nflverse_data()`, so the final object is identical to the old one.
 - Model inputs are built with `model_matrix(data, features)`; the feature vectors are `ep_model_features`, `wp_model_features`, `wp_spread_model_features`, `cp_model_features`, `xpass_model_features` and `xyac_model_features`.
