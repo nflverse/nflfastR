@@ -82,35 +82,27 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
     )
   }
 
-  id_cols <- pbp |>
-    dplyr::select(
-      dplyr::any_of(c(
-        "passer_id",
-        "rusher_id",
-        "receiver_id",
-        "id",
-        "fantasy_id"
-      )),
-      dplyr::ends_with("player_id")
-    ) |>
-    names()
+  by_ref <- in_pipeline(pbp, ...)
+  d <- if (by_ref) pbp else as_pbp_dt(pbp)
+  id_cols <- intersect(
+    c("passer_id", "rusher_id", "receiver_id", "id", "fantasy_id"),
+    names(d)
+  )
+  id_cols <- c(id_cols, grep("player_id$", names(d), value = TRUE))
 
   # The same ids show up many times in many columns, so we decode every unique
   # id only once
-  ids <- unique(unlist(lapply(id_cols, function(col) pbp[[col]])))
+  ids <- unique(unlist(lapply(id_cols, function(col) d[[col]])))
   decoded <- decode_one(ids)
-
-  ret <- pbp |>
-    dplyr::mutate(
-      dplyr::across(
-        dplyr::all_of(id_cols),
-        function(id) decoded[match(id, ids)]
-      )
-    )
+  data.table::set(
+    d,
+    j = id_cols,
+    value = lapply(id_cols, function(col) decoded[match(d[[col]], ids)])
+  )
 
   message_completed("Decoding of player ids completed", ...)
 
-  ret
+  if (by_ref) d else as_input_type(d, pbp)
 }
 
 decode_ids <- function(var) {

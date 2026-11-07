@@ -9,7 +9,8 @@
 ## fixed_drive_result =
 ##  result of  given drive
 add_drive_results <- function(d) {
-  dt <- as_pbp_dt(d)
+  # d is the data.table of build_nflfastR_pbp(), changed by reference
+  dt <- d
   # helper columns, dropped below
   data.table::set(dt, j = "drive_posteam", value = drive_posteam(dt))
   data.table::set(
@@ -161,7 +162,7 @@ add_drive_results <- function(d) {
   )
 
   user_message("added fixed drive variables", "done")
-  tibble::as_tibble(data.table::setDF(dt))
+  dt
 }
 
 # The team that has the ball in terms of drives and series

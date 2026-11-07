@@ -55,10 +55,13 @@ clean_pbp <- function(pbp, ...) {
   } else {
     user_message("Cleaning up play-by-play...", "todo")
 
+    by_ref <- in_pipeline(pbp, ...)
+    d <- if (by_ref) pbp else as_pbp_dt(pbp)
     # drop existing values of clean_pbp
-    pbp <- pbp[!names(pbp) %in% drop.cols]
-
-    d <- as_pbp_dt(pbp)
+    drop <- intersect(drop.cols, names(d))
+    if (length(drop) > 0) {
+      data.table::set(d, j = drop, value = NULL)
+    }
     data.table::set(
       d,
       j = "aborted_play",
@@ -546,7 +549,7 @@ clean_pbp <- function(pbp, ...) {
       by = "game_id"
     ]
 
-    r <- tibble::as_tibble(data.table::setDF(d))
+    r <- if (by_ref) d else tibble::as_tibble(data.table::setDF(d))
   }
 
   message_completed("Cleaning completed", ...)
@@ -666,122 +669,84 @@ team_name_fn <- function(var) {
 add_qb_epa <- function(pbp, ...) {
   if (nrow(pbp) == 0) {
     user_message("Nothing to do. Return passed data frame.", "info")
-  } else {
-    # drop existing values of clean_pbp
-    pbp <- pbp |> dplyr::select(-dplyr::any_of("qb_epa"))
-
-    # completed passes with a lost fumble, there are none in most games
-    fumble_rows <- (pbp$complete_pass == 1 &
-      pbp$fumble_lost == 1 &
-      !is.na(pbp$epa) &
-      !is.na(pbp$down)) %in%
-      TRUE
-    if (!any(fumble_rows)) {
-      pbp$qb_epa <- pbp$epa
-    } else {
-      fumbles_df <- pbp |>
-        dplyr::filter(
-          .data$complete_pass == 1 &
-            .data$fumble_lost == 1 &
-            !is.na(.data$epa) &
-            !is.na(.data$down)
-        ) |>
-        dplyr::mutate(
-          half_seconds_remaining = dplyr::if_else(
-            .data$half_seconds_remaining <= 6,
-            0,
-            .data$half_seconds_remaining - 6
-          ),
-          down = as.numeric(.data$down),
-          # save old stuff for testing/checking
-          posteam_timeouts_pre = .data$posteam_timeouts_remaining,
-          defeam_timeouts_pre = .data$defteam_timeouts_remaining,
-          down_old = .data$down,
-          ydstogo_old = .data$ydstogo,
-          epa_old = .data$epa,
-          # update yard line, down, yards to go from play result
-          yardline_100 = .data$yardline_100 - .data$yards_gained,
-          down = dplyr::if_else(
-            .data$yards_gained >= .data$ydstogo,
-            1,
-            .data$down + 1
-          ),
-          # if the fumble spot would have resulted in turnover on downs, need to give other team the ball and fix
-          change = dplyr::if_else(.data$down == 5, 1, 0),
-          down = dplyr::if_else(.data$down == 5, 1, .data$down),
-          # yards to go is 10 if its a first down, update otherwise
-          ydstogo = dplyr::if_else(
-            .data$down == 1,
-            10,
-            .data$ydstogo - .data$yards_gained
-          ),
-          # 10 yards to go if possession change
-          ydstogo = dplyr::if_else(.data$change == 1, 10, .data$ydstogo),
-          # flip field and timeouts for possession change
-          yardline_100 = dplyr::if_else(
-            .data$change == 1,
-            100 - .data$yardline_100,
-            .data$yardline_100
-          ),
-          posteam_timeouts_remaining = dplyr::if_else(
-            .data$change == 1,
-            .data$defeam_timeouts_pre,
-            .data$posteam_timeouts_pre
-          ),
-          defteam_timeouts_remaining = dplyr::if_else(
-            .data$change == 1,
-            .data$posteam_timeouts_pre,
-            .data$defeam_timeouts_pre
-          ),
-          # fix yards to go for goal line (eg can't have 1st & 10 inside opponent 10 yard line)
-          ydstogo = dplyr::if_else(
-            .data$yardline_100 < .data$ydstogo,
-            .data$yardline_100,
-            .data$ydstogo
-          ),
-          ep_old = .data$ep
-        ) |>
-        dplyr::select(
-          "game_id",
-          "play_id",
-          "season",
-          "home_team",
-          "posteam",
-          "roof",
-          "half_seconds_remaining",
-          "yardline_100",
-          "down",
-          "ydstogo",
-          "posteam_timeouts_remaining",
-          "defteam_timeouts_remaining",
-          "down_old",
-          "ep_old",
-          "change"
-        )
-
-      new_ep_df <- calculate_expected_points(fumbles_df) |>
-        dplyr::mutate(
-          ep = dplyr::if_else(.data$change == 1, -.data$ep, .data$ep),
-          fixed_epa = .data$ep - .data$ep_old
-        ) |>
-        dplyr::select("game_id", "play_id", "fixed_epa")
-
-      pbp <- pbp |>
-        dplyr::left_join(new_ep_df, by = c("game_id", "play_id")) |>
-        dplyr::mutate(
-          qb_epa = dplyr::if_else(
-            !is.na(.data$fixed_epa),
-            .data$fixed_epa,
-            .data$epa
-          )
-        ) |>
-        dplyr::select(-"fixed_epa")
-    }
+    return(pbp)
+  }
+  by_ref <- in_pipeline(pbp, ...)
+  d <- if (by_ref) pbp else as_pbp_dt(pbp)
+  # drop existing values of clean_pbp
+  if ("qb_epa" %in% names(d)) {
+    data.table::set(d, j = "qb_epa", value = NULL)
   }
 
-  message_completed("added qb_epa", ...)
+  qb_epa <- d$epa
+  # completed passes with a lost fumble, there are none in most games
+  fumble_rows <- which(
+    d$complete_pass == 1 & d$fumble_lost == 1 & !is.na(d$epa) & !is.na(d$down)
+  )
+  if (length(fumble_rows) > 0) {
+    f <- lapply(d, `[`, fumble_rows)
+    down <- as.numeric(f$down)
+    yardline_100 <- f$yardline_100 - f$yards_gained
+    down <- data.table::fifelse(f$yards_gained >= f$ydstogo, 1, down + 1)
+    # if the fumble spot would have resulted in turnover on downs, need to give
+    # other team the ball and fix
+    change <- data.table::fifelse(down == 5, 1, 0)
+    down <- data.table::fifelse(down == 5, 1, down)
+    # yards to go is 10 if its a first down, update otherwise
+    ydstogo <- data.table::fifelse(down == 1, 10, f$ydstogo - f$yards_gained)
+    # 10 yards to go if possession change
+    ydstogo <- data.table::fifelse(change == 1, 10, ydstogo)
+    # flip field and timeouts for possession change
+    yardline_100 <- data.table::fifelse(
+      change == 1,
+      100 - yardline_100,
+      yardline_100
+    )
+    fumbles_df <- tibble::tibble(
+      game_id = f$game_id,
+      play_id = f$play_id,
+      season = f$season,
+      home_team = f$home_team,
+      posteam = f$posteam,
+      roof = f$roof,
+      half_seconds_remaining = data.table::fifelse(
+        f$half_seconds_remaining <= 6,
+        0,
+        f$half_seconds_remaining - 6
+      ),
+      yardline_100 = yardline_100,
+      down = down,
+      # fix yards to go for goal line (eg can't have 1st & 10 inside opponent
+      # 10 yard line)
+      ydstogo = data.table::fifelse(
+        yardline_100 < ydstogo,
+        yardline_100,
+        ydstogo
+      ),
+      posteam_timeouts_remaining = data.table::fifelse(
+        change == 1,
+        f$defteam_timeouts_remaining,
+        f$posteam_timeouts_remaining
+      ),
+      defteam_timeouts_remaining = data.table::fifelse(
+        change == 1,
+        f$posteam_timeouts_remaining,
+        f$defteam_timeouts_remaining
+      )
+    )
+    ep <- calculate_expected_points(fumbles_df)$ep
+    ep <- data.table::fifelse(change == 1, -ep, ep)
+    fixed_epa <- ep - f$ep
+    qb_epa[fumble_rows] <- data.table::fifelse(
+      !is.na(fixed_epa),
+      fixed_epa,
+      f$epa
+    )
+  }
+  data.table::set(d, j = "qb_epa", value = qb_epa)
 
-  return(pbp)
+  message_completed("added qb_epa", ...)
+  if (by_ref) d else as_input_type(d, pbp)
 }
 
 # Function that fixes false "pass" positives in some hard coded plays where

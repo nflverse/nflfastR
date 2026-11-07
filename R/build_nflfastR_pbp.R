@@ -109,5 +109,9 @@ build_nflfastR_pbp <- function(
     rule_footer("DONE")
   }
 
+  # the steps above changed one data.table by reference
+  if (data.table::is.data.table(ret)) {
+    data.table::setDF(ret)
+  }
   make_nflverse_data(ret)
 }

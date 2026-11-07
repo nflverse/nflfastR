@@ -400,8 +400,10 @@ as_pbp_dt <- function(df) {
 utils::globalVariables(
   c(
     ".BY",
+    ".GRP",
     ".N",
     ".SD",
+    "ExpPts",
     "away_points_scored",
     "away_team_pass_wpa",
     "away_team_rush_wpa",
@@ -418,6 +420,8 @@ utils::globalVariables(
     "fixed_drive",
     "fixed_drive_result",
     "fumble_lost",
+    "home_ep",
+    "home_epa",
     "home_opening_kickoff",
     "home_points_scored",
     "home_team",
@@ -468,3 +472,38 @@ utils::globalVariables(
   ),
   add = TRUE
 )
+
+# Inside build_nflfastR_pbp() the steps change one data.table by reference.
+# The exported steps can also be called by users. Then they work on a copy and
+# return the type of the input (user input of class nflverse_data inherits
+# from data.table, so is.data.table() alone isn't enough).
+in_pipeline <- function(pbp, ...) {
+  isTRUE(list(...)[["in_builder"]]) && data.table::is.data.table(pbp)
+}
+
+# Turn the data.table dt into the type of input (class and attributes), like
+# the output of dplyr verbs
+as_input_type <- function(dt, input) {
+  data.table::setDF(dt)
+  if (
+    data.table::is.data.table(input) &&
+      identical(class(input), c("data.table", "data.frame"))
+  ) {
+    return(data.table::setDT(dt))
+  }
+  keep <- setdiff(
+    names(attributes(input)),
+    c("names", "row.names", ".internal.selfref")
+  )
+  for (a in keep) {
+    data.table::setattr(dt, a, attr(input, a))
+  }
+  dt
+}
+
+# Model input: a matrix of the feature columns of data, in the given order
+model_matrix <- function(data, features) {
+  m <- do.call(cbind, lapply(features, function(f) data[[f]]))
+  colnames(m) <- features
+  m
+}

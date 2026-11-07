@@ -5,7 +5,8 @@
 ################################################################################
 
 add_nflscrapr_mutations <- function(pbp) {
-  d <- as_pbp_dt(pbp)
+  # pbp is the data.table of build_nflfastR_pbp(), changed by reference
+  d <- pbp
   data.table::set(d, j = "index", value = seq_len(nrow(d)))
   # remove duplicate plays. can't do this with play_id because duplicate plays
   # sometimes have different play_ids
@@ -1079,12 +1080,11 @@ add_nflscrapr_mutations <- function(pbp) {
   data.table::set(d, j = "is_relevant_touchback", value = NULL)
   data.table::set(d, j = "tmp_desc_lower", value = NULL)
 
-  out <- tibble::as_tibble(data.table::setDF(d)) |>
-    fix_scrambles() |>
-    make_model_mutations()
+  d <- fix_scrambles(d)
+  d <- make_model_mutations(d)
 
   user_message("added nflscrapR variables", "done")
-  return(out)
+  d
 }
 
 # to help find kickoffs on plays with penalties
@@ -1095,39 +1095,49 @@ kickoff_finder <- "(Offside on Free Kick)|(Delay of Kickoff)|(Onside Kick format
 ##some steps to prepare the data for the EP/WP/CP/FG models
 make_model_mutations <- function(pbp) {
   #for EP, CP, and WP model, xgb needs 0/1 for eras
-  pbp$era0 <- data.table::fifelse(pbp$season <= 2001, 1, 0)
-  pbp$era1 <- data.table::fifelse(pbp$season > 2001 & pbp$season <= 2005, 1, 0)
-  pbp$era2 <- data.table::fifelse(pbp$season > 2005 & pbp$season <= 2013, 1, 0)
-  pbp$era3 <- data.table::fifelse(pbp$season > 2013 & pbp$season <= 2017, 1, 0)
-  pbp$era4 <- data.table::fifelse(pbp$season > 2017, 1, 0)
-  #for fg model, an era factor
-  pbp$era <- data.table::fcase(
-    pbp$era0 == 1                 ,
-                                0 ,
-    pbp$era1 == 1                 ,
-                                1 ,
-    pbp$era2 == 1                 ,
-                                2 ,
-    pbp$era3 == 1 | pbp$era4 == 1 ,
-                                3
-  )
-  pbp$era <- as.factor(pbp$era)
-  pbp$down1 <- data.table::fifelse(pbp$down == 1, 1, 0)
-  pbp$down2 <- data.table::fifelse(pbp$down == 2, 1, 0)
-  pbp$down3 <- data.table::fifelse(pbp$down == 3, 1, 0)
-  pbp$down4 <- data.table::fifelse(pbp$down == 4, 1, 0)
-  pbp$home <- data.table::fifelse(pbp$posteam == pbp$home_team, 1, 0)
-  pbp$model_roof <- data.table::fifelse(
-    is.na(pbp$roof) | pbp$roof == 'open' | pbp$roof == 'closed',
-    as.character('retractable'),
+  era0 <- data.table::fifelse(pbp$season <= 2001, 1, 0)
+  era1 <- data.table::fifelse(pbp$season > 2001 & pbp$season <= 2005, 1, 0)
+  era2 <- data.table::fifelse(pbp$season > 2005 & pbp$season <= 2013, 1, 0)
+  era3 <- data.table::fifelse(pbp$season > 2013 & pbp$season <= 2017, 1, 0)
+  era4 <- data.table::fifelse(pbp$season > 2017, 1, 0)
+  model_roof <- as.factor(data.table::fifelse(
+    is.na(pbp$roof) | pbp$roof == "open" | pbp$roof == "closed",
+    "retractable",
     as.character(pbp$roof)
+  ))
+  cols <- list(
+    era0 = era0,
+    era1 = era1,
+    era2 = era2,
+    era3 = era3,
+    era4 = era4,
+    #for fg model, an era factor
+    era = as.factor(data.table::fcase(
+      era0 == 1             ,
+                          0 ,
+      era1 == 1             ,
+                          1 ,
+      era2 == 1             ,
+                          2 ,
+      era3 == 1 | era4 == 1 ,
+                          3
+    )),
+    down1 = data.table::fifelse(pbp$down == 1, 1, 0),
+    down2 = data.table::fifelse(pbp$down == 2, 1, 0),
+    down3 = data.table::fifelse(pbp$down == 3, 1, 0),
+    down4 = data.table::fifelse(pbp$down == 4, 1, 0),
+    home = data.table::fifelse(pbp$posteam == pbp$home_team, 1, 0),
+    model_roof = model_roof,
+    retractable = data.table::fifelse(model_roof == "retractable", 1, 0),
+    dome = data.table::fifelse(model_roof == "dome", 1, 0),
+    outdoors = data.table::fifelse(model_roof == "outdoors", 1, 0)
   )
-  pbp$model_roof <- as.factor(pbp$model_roof)
-  pbp$retractable <- data.table::fifelse(pbp$model_roof == 'retractable', 1, 0)
-  pbp$dome <- data.table::fifelse(pbp$model_roof == 'dome', 1, 0)
-  pbp$outdoors <- data.table::fifelse(pbp$model_roof == 'outdoors', 1, 0)
-
-  return(pbp)
+  if (data.table::is.data.table(pbp)) {
+    data.table::set(pbp, j = names(cols), value = cols)
+  } else {
+    pbp[names(cols)] <- cols
+  }
+  pbp
 }
 
 
@@ -1138,10 +1148,14 @@ fix_scrambles <- function(pbp) {
   }
 
   scramble_id <- paste0(pbp$game_id, "_", pbp$play_id)
-  pbp$qb_scramble <- data.table::fifelse(
-    scramble_id %in% scramble_fix,
-    1,
-    pbp$qb_scramble
+  data.table::set(
+    pbp,
+    j = "qb_scramble",
+    value = data.table::fifelse(
+      scramble_id %in% scramble_fix,
+      1,
+      pbp$qb_scramble
+    )
   )
   pbp
 
@@ -1254,7 +1268,11 @@ translate_play_type_nfl <- function(
 # models are applied. That's done with a temporary copy of kickoff_attempt.
 # See #556, #202, #199 for example
 restore_kickoff_attempt <- function(pbp) {
-  pbp$kickoff_attempt <- pbp$copy_of_kickoff_attempt
-  pbp$copy_of_kickoff_attempt <- NULL
+  data.table::set(
+    pbp,
+    j = "kickoff_attempt",
+    value = pbp$copy_of_kickoff_attempt
+  )
+  data.table::set(pbp, j = "copy_of_kickoff_attempt", value = NULL)
   pbp
 }

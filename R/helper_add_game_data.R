@@ -21,36 +21,35 @@ add_game_data <- function(pbp, games = NULL, ...) {
         )
       }
 
-      out <- out |>
-        dplyr::left_join(
-          games |>
-            dplyr::select(
-              "game_id",
-              "old_game_id",
-              "away_score",
-              "home_score",
-              "location",
-              "result",
-              "total",
-              "spread_line",
-              "total_line",
-              "div_game",
-              "roof",
-              "surface",
-              "temp",
-              "wind",
-              "home_coach",
-              "away_coach",
-              "stadium",
-              "stadium_id",
-              "gameday"
-            ) |>
-            dplyr::rename(game_stadium = "stadium"),
-          by = c("game_id")
-        ) |>
-        dplyr::mutate(
-          game_date = .data$gameday
-        )
+      # update join by reference
+      cols <- c(
+        "old_game_id",
+        "away_score",
+        "home_score",
+        "location",
+        "result",
+        "total",
+        "spread_line",
+        "total_line",
+        "div_game",
+        "roof",
+        "surface",
+        "temp",
+        "wind",
+        "home_coach",
+        "away_coach",
+        "stadium",
+        "stadium_id",
+        "gameday"
+      )
+      game_data <- data.table::setDT(lapply(
+        stats::setNames(nm = c("game_id", cols)),
+        function(col) games[[col]]
+      ))
+      data.table::setnames(game_data, "stadium", "game_stadium")
+      new_cols <- setdiff(names(game_data), "game_id")
+      out[game_data, on = "game_id", (new_cols) := mget(paste0("i.", new_cols))]
+      data.table::set(out, j = "game_date", value = out$gameday)
 
       user_message("added game variables", "done")
     },

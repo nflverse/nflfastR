@@ -19,8 +19,7 @@ steps <- list(
     data.table::rbindlist(
       lapply(ids, get_pbp_nfl, dir = dir),
       fill = TRUE
-    ) |>
-      tibble::as_tibble()
+    )
   },
   add_game_data = function(x, ids) add_game_data(x, games = games),
   add_nflscrapr_mutations = function(x, ids) add_nflscrapr_mutations(x),

@@ -20,59 +20,52 @@
 add_xyac <- function(pbp, ...) {
   if (nrow(pbp) == 0) {
     user_message("Nothing to do. Return passed data frame.", "info")
-  } else {
-    pbp <- pbp |> dplyr::select(-dplyr::any_of(drop.cols.xyac))
-
-    # for joining at the end
-    pbp <- pbp |>
-      dplyr::mutate(index = 1:dplyr::n())
-
-    # prepare_xyac_data helper function shown below
-    passes <- prepare_xyac_data(pbp) |>
-      dplyr::filter(.data$valid_pass == 1, .data$distance_to_goal != 0)
-
-    if (!nrow(passes) == 0) {
-      user_message("Computing xyac...", "todo")
-
-      preds <- stats::predict(
-        load_model("xyac"),
-        as.matrix(passes |> xyac_model_select())
-      )
-
-      # xgboost v3 returns a matrix of predictions (one row per pass) but the
-      # below code is designed to work with a vector as returned by xgboost v1
-      if (is.matrix(preds)) {
-        preds <- preds |>
-          t() |>
-          as.vector("numeric")
-      }
-
-      xyac_vars <- summarize_xyac(passes, preds)
-
-      pbp <- pbp |>
-        dplyr::left_join(xyac_vars, by = "index") |>
-        dplyr::select(-"index")
-
-      message_completed("added xyac variables", ...)
-    } else {
-      # means no valid pass plays in the pbp
-      pbp <- pbp |>
-        dplyr::mutate(
-          xyac_epa = NA_real_,
-          xyac_mean_yardage = NA_real_,
-          xyac_median_yardage = NA_real_,
-          xyac_success = NA_real_,
-          xyac_fd = NA_real_
-        ) |>
-        dplyr::select(-"index")
-      user_message(
-        "No non-NA values for xyac calculation detected. xyac variables set to NA",
-        "info"
-      )
-    }
+    return(pbp)
+  }
+  by_ref <- in_pipeline(pbp, ...)
+  d <- if (by_ref) pbp else as_pbp_dt(pbp)
+  drop <- intersect(drop.cols.xyac, names(d))
+  if (length(drop) > 0) {
+    data.table::set(d, j = drop, value = NULL)
   }
 
-  return(pbp)
+  passes <- prepare_xyac_data(d)
+  data.table::set(d, j = drop.cols.xyac, value = NA_real_)
+
+  if (length(passes$index) > 0) {
+    user_message("Computing xyac...", "todo")
+
+    preds <- stats::predict(
+      load_model("xyac"),
+      model_matrix(passes, xyac_model_features)
+    )
+
+    # xgboost v3 returns a matrix of predictions (one row per pass) but the
+    # below code is designed to work with a vector as returned by xgboost v1
+    if (is.matrix(preds)) {
+      preds <- preds |>
+        t() |>
+        as.vector("numeric")
+    }
+
+    xyac_vars <- summarize_xyac(passes, preds)
+    data.table::set(
+      d,
+      i = xyac_vars$index,
+      j = drop.cols.xyac,
+      value = as.list(xyac_vars[drop.cols.xyac])
+    )
+
+    message_completed("added xyac variables", ...)
+  } else {
+    # means no valid pass plays in the pbp
+    user_message(
+      "No non-NA values for xyac calculation detected. xyac variables set to NA",
+      "info"
+    )
+  }
+
+  if (by_ref) d else as_input_type(d, pbp)
 }
 
 # Turn the predicted yac distribution of each pass into the xyac variables.
@@ -84,7 +77,7 @@ add_xyac <- function(pbp, ...) {
 # summarized per pass.
 summarize_xyac <- function(passes, preds) {
   n_yac <- 76L
-  n_pass <- nrow(passes)
+  n_pass <- length(passes$index)
   each <- function(x) rep(x, each = n_yac)
 
   index <- each(passes$index)
@@ -256,7 +249,7 @@ predict_ep <- function(
     "retractable",
     roof
   )
-  features <- tibble::tibble(
+  features <- data.table::data.table(
     half_seconds_remaining = as.numeric(half_seconds_remaining),
     yardline_100 = as.numeric(yardline_100),
     home = as.numeric(home),
@@ -278,13 +271,12 @@ predict_ep <- function(
   )
   # Many rows share the same features. Predictions don't depend on other
   # rows, so we predict every unique row once.
-  combo <- features |>
-    dplyr::group_by(dplyr::across(dplyr::everything())) |>
-    dplyr::group_indices()
+  features[, combo := .GRP, by = ep_model_features]
+  combo <- features$combo
   unique_rows <- !duplicated(combo)
   preds <- stats::predict(
     load_model("ep"),
-    as.matrix(features[unique_rows, ])
+    model_matrix(features[unique_rows], ep_model_features)
   )
   if (is.vector(preds)) {
     preds <- matrix(preds, ncol = 7, byrow = TRUE)
@@ -300,69 +292,66 @@ predict_ep <- function(
 }
 
 ### helper function for getting the data ready
+# The valid passes (with a distance to the goal line after the air yards) as
+# list of columns with the model features and the row index of the pass in pbp
 prepare_xyac_data <- function(pbp) {
-  # valid pass play: at least -15 air yards, less than 70 air yards, has intended receiver, has pass location
-  passes <- pbp |>
-    make_model_mutations() |>
-    dplyr::mutate(
-      # all conditions of a valid pass except the receiver (helper)
-      tmp_valid = (.data$complete_pass == 1 |
-        .data$incomplete_pass == 1 |
-        .data$interception == 1) &
-        !is.na(.data$air_yards) &
-        .data$air_yards >= -15 &
-        .data$air_yards < 70 &
-        !is.na(.data$pass_location),
-      # the receiver only matters if the other conditions aren't FALSE
-      receiver_player_name = apply_where(
-        !(.data$tmp_valid %in% FALSE),
-        .data$desc,
-        function(x) {
-          stringi::stri_extract_first_regex(
-            x,
-            glue::glue('{receiver_finder}{big_parser}')
-          )
-        }
-      ),
-      pass_middle = dplyr::if_else(.data$pass_location == "middle", 1, 0),
-      air_is_zero = dplyr::if_else(.data$air_yards == 0, 1, 0),
-      distance_to_sticks = .data$air_yards - .data$ydstogo,
-      distance_to_goal = .data$yardline_100 - .data$air_yards,
-      valid_pass = dplyr::if_else(
-        .data$tmp_valid & !is.na(.data$receiver_player_name),
-        1,
-        0
-      ),
-      tmp_valid = NULL
-    )
-  return(passes)
+  # a list of columns, so make_model_mutations() doesn't change pbp
+  passes <- make_model_mutations(as.list(pbp))
+  passes$index <- seq_len(nrow(pbp))
+  # valid pass play: at least -15 air yards, less than 70 air yards, has
+  # intended receiver, has pass location
+  valid <- (passes$complete_pass == 1 |
+    passes$incomplete_pass == 1 |
+    passes$interception == 1) &
+    !is.na(passes$air_yards) &
+    passes$air_yards >= -15 &
+    passes$air_yards < 70 &
+    !is.na(passes$pass_location)
+  # the receiver only matters if the other conditions aren't FALSE
+  receiver_player_name <- apply_where(
+    !(valid %in% FALSE),
+    passes$desc,
+    function(x) {
+      stringi::stri_extract_first_regex(
+        x,
+        glue::glue('{receiver_finder}{big_parser}')
+      )
+    }
+  )
+  passes$pass_middle <- data.table::fifelse(
+    passes$pass_location == "middle",
+    1,
+    0
+  )
+  passes$air_is_zero <- data.table::fifelse(passes$air_yards == 0, 1, 0)
+  passes$distance_to_sticks <- passes$air_yards - passes$ydstogo
+  passes$distance_to_goal <- passes$yardline_100 - passes$air_yards
+  valid_pass <- data.table::fifelse(valid & !is.na(receiver_player_name), 1, 0)
+  lapply(passes, `[`, which(valid_pass == 1 & passes$distance_to_goal != 0))
 }
 
 ### another helper function for getting the data ready
-xyac_model_select <- function(pbp) {
-  pbp |>
-    dplyr::select(
-      "air_yards",
-      "yardline_100",
-      "ydstogo",
-      "distance_to_goal",
-      "down1",
-      "down2",
-      "down3",
-      "down4",
-      "air_is_zero",
-      "pass_middle",
-      "era2",
-      "era3",
-      "era4",
-      "qb_hit",
-      "home",
-      "outdoors",
-      "retractable",
-      "dome",
-      "distance_to_sticks"
-    )
-}
+xyac_model_features <- c(
+  "air_yards",
+  "yardline_100",
+  "ydstogo",
+  "distance_to_goal",
+  "down1",
+  "down2",
+  "down3",
+  "down4",
+  "air_is_zero",
+  "pass_middle",
+  "era2",
+  "era3",
+  "era4",
+  "qb_hit",
+  "home",
+  "outdoors",
+  "retractable",
+  "dome",
+  "distance_to_sticks"
+)
 
 # These columns are being generated by add_xyac and the function tries to drop
 # them in case it is being used on a pbp dataset where the columns already exist

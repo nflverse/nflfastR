@@ -453,6 +453,8 @@ fast_scraper <- function(
 
     if (length(pbp) != 0) {
       user_message("Download finished. Adding variables...", "done")
+      # from here on, all steps change this one data.table by reference
+      data.table::setDT(pbp)
       pbp <- pbp |>
         add_game_data(...) |>
         add_nflscrapr_mutations() |>
@@ -468,9 +470,16 @@ fast_scraper <- function(
     }
   })
 
+  # build_nflfastR_pbp() continues with the data.table
+  if (in_builder && data.table::is.data.table(pbp)) {
+    return(pbp)
+  }
   if (!in_builder) {
     str <- paste0(my_time(), " | Procedure completed.")
     cli::cli_alert_success("{.field {str}}")
+  }
+  if (data.table::is.data.table(pbp)) {
+    data.table::setDF(pbp)
   }
   make_nflverse_data(pbp)
 }

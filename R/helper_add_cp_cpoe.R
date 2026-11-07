@@ -6,9 +6,7 @@
 ################################################################################
 
 add_cp <- function(pbp) {
-  # testing only
-  # pbp <- g
-
+  # pbp is the data.table of build_nflfastR_pbp(), changed by reference
   passes <- prepare_cp_data(pbp)
   valid <- which(passes$valid_pass == 1)
 
@@ -17,91 +15,87 @@ add_cp <- function(pbp) {
     cp <- rep(NA_real_, nrow(pbp))
     cp[valid] <- stats::predict(
       load_model("cp"),
-      as.matrix(
-        passes[valid, ] |> dplyr::select(-"complete_pass", -"valid_pass")
+      model_matrix(lapply(passes, `[`, valid), cp_model_features)
+    )
+    data.table::set(
+      pbp,
+      j = c("cp", "cpoe"),
+      value = list(
+        cp,
+        data.table::fifelse(
+          !is.na(cp),
+          100 * (pbp$complete_pass - cp),
+          NA_real_
+        )
       )
     )
-    pbp$cp <- cp
-    pbp$cpoe <- data.table::fifelse(
-      !is.na(cp),
-      100 * (pbp$complete_pass - cp),
-      NA_real_
-    )
-
     user_message("added cp and cpoe", "done")
   } else {
-    pbp <- pbp |>
-      dplyr::mutate(
-        cp = NA_real_,
-        cpoe = NA_real_
-      )
+    data.table::set(pbp, j = c("cp", "cpoe"), value = NA_real_)
     user_message(
       "No non-NA values for cp calculation detected. cp and cpoe set to NA",
       "info"
     )
   }
 
-  return(pbp)
+  pbp
 }
-
 
 ### helper function for getting the data ready
+# The features of the cp model and valid_pass as list of columns
 prepare_cp_data <- function(pbp) {
-  # valid pass play: at least -15 air yards, less than 70 air yards, has intended receiver, has pass location
-  passes <- pbp |>
-    dplyr::mutate(
-      # all conditions of a valid pass except the receiver (helper)
-      tmp_valid = (.data$complete_pass == 1 |
-        .data$incomplete_pass == 1 |
-        .data$interception == 1) &
-        !is.na(.data$air_yards) &
-        .data$air_yards >= -15 &
-        .data$air_yards < 70 &
-        !is.na(.data$pass_location),
-      # the receiver name only matters if the other conditions aren't FALSE
-      # and there is no receiver id
-      receiver_player_name = apply_where(
-        !(.data$tmp_valid %in% FALSE) & is.na(.data$receiver_player_id),
-        .data$desc,
-        function(x) {
-          stringi::stri_extract_first_regex(
-            x,
-            "(?<=((to)|(for))\\s[:digit:]{0,2}\\-{0,1})[A-Z][A-z]*\\.\\s?[A-Z][A-z]+(\\s(I{2,3})|(IV))?"
-          )
-        }
-      ),
-      pass_middle = dplyr::if_else(.data$pass_location == "middle", 1, 0),
-      air_is_zero = dplyr::if_else(.data$air_yards == 0, 1, 0),
-      distance_to_sticks = .data$air_yards - .data$ydstogo,
-      valid_pass = dplyr::if_else(
-        .data$tmp_valid &
-          (!is.na(.data$receiver_player_name) |
-            !is.na(.data$receiver_player_id)),
-        1,
-        0
-      ),
-      tmp_valid = NULL
-    ) |>
-    dplyr::select(
-      "complete_pass",
-      "air_yards",
-      "yardline_100",
-      "ydstogo",
-      "down1",
-      "down2",
-      "down3",
-      "down4",
-      "air_is_zero",
-      "pass_middle",
-      "era2",
-      "era3",
-      "era4",
-      "qb_hit",
-      "home",
-      "outdoors",
-      "retractable",
-      "dome",
-      "distance_to_sticks",
-      "valid_pass"
-    )
+  # valid pass play: at least -15 air yards, less than 70 air yards, has
+  # intended receiver, has pass location
+  valid <- (pbp$complete_pass == 1 |
+    pbp$incomplete_pass == 1 |
+    pbp$interception == 1) &
+    !is.na(pbp$air_yards) &
+    pbp$air_yards >= -15 &
+    pbp$air_yards < 70 &
+    !is.na(pbp$pass_location)
+  # the receiver name only matters if the other conditions aren't FALSE and
+  # there is no receiver id
+  receiver_player_name <- apply_where(
+    !(valid %in% FALSE) & is.na(pbp$receiver_player_id),
+    pbp$desc,
+    function(x) {
+      stringi::stri_extract_first_regex(
+        x,
+        "(?<=((to)|(for))\\s[:digit:]{0,2}\\-{0,1})[A-Z][A-z]*\\.\\s?[A-Z][A-z]+(\\s(I{2,3})|(IV))?"
+      )
+    }
+  )
+  passes <- lapply(stats::setNames(nm = cp_model_features), function(f) {
+    pbp[[f]]
+  })
+  passes$pass_middle <- data.table::fifelse(pbp$pass_location == "middle", 1, 0)
+  passes$air_is_zero <- data.table::fifelse(pbp$air_yards == 0, 1, 0)
+  passes$distance_to_sticks <- pbp$air_yards - pbp$ydstogo
+  passes$valid_pass <- data.table::fifelse(
+    valid & (!is.na(receiver_player_name) | !is.na(pbp$receiver_player_id)),
+    1,
+    0
+  )
+  passes
 }
+
+cp_model_features <- c(
+  "air_yards",
+  "yardline_100",
+  "ydstogo",
+  "down1",
+  "down2",
+  "down3",
+  "down4",
+  "air_is_zero",
+  "pass_middle",
+  "era2",
+  "era3",
+  "era4",
+  "qb_hit",
+  "home",
+  "outdoors",
+  "retractable",
+  "dome",
+  "distance_to_sticks"
+)

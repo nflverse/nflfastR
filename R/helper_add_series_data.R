@@ -11,7 +11,8 @@
 ##  1: scored touchdown, gained enough yards for first down
 ##  0: everything else
 add_series_data <- function(pbp) {
-  dt <- as_pbp_dt(pbp)
+  # pbp is the data.table of build_nflfastR_pbp(), changed by reference
+  dt <- pbp
   # helper column, dropped below
   data.table::set(dt, j = "drive_posteam", value = drive_posteam(dt))
 
@@ -85,5 +86,5 @@ add_series_data <- function(pbp) {
   )
 
   user_message("added series variables", "done")
-  tibble::as_tibble(data.table::setDF(dt))
+  dt
 }
