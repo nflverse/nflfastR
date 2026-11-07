@@ -51,14 +51,14 @@ ot_kick_first <- c(2011L, 2016L, 2024L, 2025L)
 ot_rule_key <- function(season, season_type) {
   post <- season_type %in% "POST"
   rule <- data.table::fcase(
-    post & season >= 2022  ,
-    "BOTH"                 ,
-    !post & season >= 2025 ,
-    "BOTH"                 ,
-    post & season >= 2010  ,
-    "MSD"                  ,
-    !post & season >= 2012 ,
-    "MSD"                  ,
+    post & season >= 2022,
+    "BOTH",
+    !post & season >= 2025,
+    "BOTH",
+    post & season >= 2010,
+    "MSD",
+    !post & season >= 2012,
+    "MSD",
     default = "SD"
   )
   len <- data.table::fifelse(!post & season >= 2017, 600L, 900L)
@@ -88,10 +88,10 @@ ot_map_d <- function(x) {
 
 ot_end_value <- function(d) {
   data.table::fcase(
-    d > 0 ,
-        1 ,
-    d < 0 ,
-        0 ,
+    d > 0,
+    1,
+    d < 0,
+    0,
     default = 0.5
   )
 }
