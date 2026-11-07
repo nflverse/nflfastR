@@ -53,15 +53,24 @@ jobs:
         with:
           use-public-rspm: true
 
-      # dependencies of both versions (deps:: installs only the dependencies of
-      # the base checkout, not the package itself)
-      - uses: r-lib/actions/setup-r-dependencies@v2
+      # dependencies of both versions (one step per version, because pak can't
+      # resolve both nflfastR versions at once)
+      - name: Install dependencies of head
+        uses: r-lib/actions/setup-r-dependencies@v2
         with:
           working-directory: head
           extra-packages: |
             any::pkgload
             any::gsisdecoder
-            deps::../base
+            nflverse/fastrmodels
+            nflverse/nflreadr
+
+      - name: Install dependencies of base
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          working-directory: base
+          extra-packages: |
+            any::pkgload
             nflverse/fastrmodels
             nflverse/nflreadr
 
