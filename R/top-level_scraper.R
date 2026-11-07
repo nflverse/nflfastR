@@ -439,7 +439,7 @@ fast_scraper <- function(
 
   suppressWarnings({
     p <- progressr::progressor(along = game_ids)
-    pbp <- furrr::future_map_dfr(
+    pbp <- furrr::future_map(
       game_ids,
       function(x, p, dir, ...) {
         plays <- please_work(get_pbp_nfl)(x, dir = dir, ...)
@@ -449,12 +449,12 @@ fast_scraper <- function(
       p,
       dir = dir,
       ...
-    )
+    ) |>
+      data.table::rbindlist(use.names = TRUE, fill = TRUE)
 
     if (length(pbp) != 0) {
       user_message("Download finished. Adding variables...", "done")
       # from here on, all steps change this one data.table by reference
-      data.table::setDT(pbp)
       pbp <- pbp |>
         add_game_data(...) |>
         add_nflscrapr_mutations() |>
