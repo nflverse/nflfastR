@@ -10,8 +10,9 @@
 # Every measurement runs in a fresh R process that loads the package with
 # pkgload::load_all(), alternating between the versions, so changing load on
 # the machine affects both. The script also checks that both versions return
-# the same output. The results are written to out_dir as results.csv and
-# summary.md, and appended to the GitHub job summary if there is one.
+# the same output, with the tolerances of the regression test. The results are
+# written to out_dir as results.csv and summary.md, and appended to the GitHub
+# job summary if there is one.
 
 args <- commandArgs(TRUE)
 
@@ -140,35 +141,20 @@ for (i in seq_len(iterations)) {
 results <- do.call(rbind, results)
 utils::write.csv(results, file.path(out_dir, "results.csv"), row.names = FALSE)
 
+# Compare the outputs like the regression test does: model output can differ
+# in the last digits between versions and platforms (e.g. a different
+# summation order or BLAS), so it is compared with the tolerances of
+# expect_pbp_unchanged() in tests/testthat/helpers.R
 base_out <- readRDS(file.path(out_dir, "base_1_output.rds"))
 head_out <- readRDS(file.path(out_dir, "head_1_output.rds"))
 same_output <- identical(base_out, head_out)
 differences <- if (!same_output) {
-  cols <- intersect(names(base_out), names(head_out))
-  changed <- cols[
-    !vapply(cols, function(n) identical(base_out[[n]], head_out[[n]]), TRUE)
-  ]
-  describe <- function(n) {
-    b <- base_out[[n]]
-    h <- head_out[[n]]
-    if (!identical(typeof(b), typeof(h))) {
-      sprintf("`%s`: type %s -> %s", n, typeof(b), typeof(h))
-    } else if (length(b) == length(h)) {
-      sprintf(
-        "`%s`: %d values differ",
-        n,
-        sum(!(b == h | (is.na(b) & is.na(h))) | xor(is.na(b), is.na(h)))
-      )
-    } else {
-      sprintf("`%s`", n)
-    }
-  }
-  c(
-    if (!identical(names(base_out), names(head_out))) "column names or order",
-    if (!identical(class(base_out), class(head_out))) "class",
-    if (nrow(base_out) != nrow(head_out)) "number of plays",
-    vapply(changed, describe, character(1), USE.NAMES = FALSE)
+  test_helpers <- new.env()
+  sys.source(
+    file.path(head_dir, "tests", "testthat", "helpers.R"),
+    envir = test_helpers
   )
+  test_helpers$pbp_differences(head_out, base_out)$messages
 }
 
 med <- function(version, col) {
@@ -221,6 +207,11 @@ summary_md <- c(
   "",
   if (same_output) {
     "Both versions return identical output."
+  } else if (length(differences) == 0) {
+    paste(
+      "Both versions return the same output within the tolerances of the",
+      "regression test (model output differs only in the last digits)."
+    )
   } else {
     c(
       "**The output differs** between the versions:",

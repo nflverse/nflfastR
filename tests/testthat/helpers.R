@@ -104,14 +104,35 @@ relevant_variables <- function() {
 # only matters for values close to zero, where relative noise is meaningless.
 # Outside CRAN, all value differences are written to `<diff_name>_diff.csv`,
 # see write_pbp_diff().
-expect_pbp_unchanged <- function(
+expect_pbp_unchanged <- function(pbp, exp, ..., diff_name = "pbp") {
+  res <- pbp_differences(pbp, exp, ...)
+  msg <- res$messages
+  path <- write_pbp_diff(res$diffs, diff_name)
+  if (!is.null(path)) {
+    msg <- c(msg, paste("All value differences written to", path))
+  }
+
+  testthat::expect(
+    length(msg) == 0,
+    paste(
+      c("pbp differs from expected output:", paste("-", msg)),
+      collapse = "\n"
+    )
+  )
+  invisible(pbp)
+}
+
+# The comparison of expect_pbp_unchanged(), also used by the benchmark in
+# data-raw/parser_performance/compare_benchmark.R. Returns a list with a
+# message for every difference and a data frame per changed column with the
+# value differences.
+pbp_differences <- function(
   pbp,
   exp,
   tolerance = 1e-6,
   model_tolerance = 1e-3,
   abs_tolerance = 1e-6,
-  n_examples = 3,
-  diff_name = "pbp"
+  n_examples = 3
 ) {
   act <- tibble::as_tibble(strip_nflverse_attributes(pbp))
   exp <- tibble::as_tibble(strip_nflverse_attributes(exp))
@@ -219,19 +240,7 @@ expect_pbp_unchanged <- function(
     )
   }
 
-  path <- write_pbp_diff(diffs, diff_name)
-  if (!is.null(path)) {
-    msg <- c(msg, paste("All value differences written to", path))
-  }
-
-  testthat::expect(
-    length(msg) == 0,
-    paste(
-      c("pbp differs from expected output:", paste("-", msg)),
-      collapse = "\n"
-    )
-  )
-  invisible(pbp)
+  list(messages = msg, diffs = diffs)
 }
 
 regression_model_columns <- function(pbp) {
