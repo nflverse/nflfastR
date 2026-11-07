@@ -357,3 +357,41 @@ raw_pbp_urls <- function(game_ids) {
     fsep = "/"
   )
 }
+
+# Cumulative sum within groups of adjacent elements. `groups` is either a
+# vector of group ids (adjacent equal ids form one group) or the size of
+# equally sized groups.
+group_cumsum <- function(x, groups) {
+  if (length(groups) == 1) {
+    groups <- rep(seq_len(length(x) / groups), each = groups)
+  }
+  unlist(
+    lapply(split(x, factor(groups, levels = unique(groups))), cumsum),
+    use.names = FALSE
+  )
+}
+
+# dplyr::lead() and dplyr::lag() within games. The plays of a game must be
+# adjacent. The last (first) play of a game gets NA.
+lead_in_game <- function(x, game_id) {
+  out <- dplyr::lead(x)
+  next_game <- dplyr::lead(game_id)
+  out[is.na(next_game) | next_game != game_id] <- NA
+  out
+}
+
+lag_in_game <- function(x, game_id) {
+  out <- dplyr::lag(x)
+  prev_game <- dplyr::lag(game_id)
+  out[is.na(prev_game) | prev_game != game_id] <- NA
+  out
+}
+
+# Same as dplyr::if_else(condition, fn(x), NA) but fn() only runs on the
+# elements where condition is TRUE. Useful for expensive regular expressions.
+apply_where <- function(condition, x, fn) {
+  out <- rep(NA_character_, length(x))
+  i <- which(condition)
+  out[i] <- fn(x[i])
+  out
+}
