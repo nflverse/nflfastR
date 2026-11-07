@@ -69,7 +69,7 @@ prepare_xpass_data <- function(pbp) {
   plays <- make_model_mutations(as.list(pbp))
   plays$valid_play <- data.table::fifelse(
     plays$season >= 2006 &
-      plays$play_type %in% c("no_play", "pass", "run") &
+      plays$play_type %chin% c("no_play", "pass", "run") &
       !is.na(plays$posteam) &
       !is.na(plays$down) &
       !is.na(plays$defteam_timeouts_remaining) &

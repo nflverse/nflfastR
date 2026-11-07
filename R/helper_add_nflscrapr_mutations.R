@@ -216,7 +216,7 @@ add_nflscrapr_mutations <- function(pbp) {
           "(injured sf )|(tonight's attendance )|(injury update )|(end quarter)|(timeout)|( captains:)|( captains )|( captians:)|( humidity:)|(note - )|( deferred)|(game start )|( game has been suspended)"
         ) &
         !stringi::stri_detect_regex(play_description, "GAME ") &
-        !play_description %in%
+        !play_description %chin%
           c("GAME", "Two-Minute Warning", "The game has resumed.") &
         is.na(two_point_conv_result) &
         is.na(extra_point_result) &
@@ -792,7 +792,7 @@ add_nflscrapr_mutations <- function(pbp) {
   # we use yardline_100 to add it in those cases
   is_relevant_touchback <- is.na(d$kick_distance) &
     d$touchback == 1 &
-    d$play_type %in% c("punt", "kickoff")
+    d$play_type %chin% c("punt", "kickoff")
   data.table::set(
     d,
     j = "kick_distance",
@@ -914,7 +914,7 @@ fix_scrambles <- function(pbp) {
     pbp,
     j = "qb_scramble",
     value = data.table::fifelse(
-      scramble_id %in% scramble_fix,
+      scramble_id %chin% scramble_fix,
       1,
       pbp$qb_scramble
     )
@@ -1016,9 +1016,9 @@ translate_play_type_nfl <- function(
     "punt",
     out == "" & field_goal_attempt == 1,
     "field_goal",
-    qb_spike == 1 & out %in% c("pass", "run"),
+    qb_spike == 1 & out %chin% c("pass", "run"),
     "qb_spike",
-    qb_kneel == 1 & out %in% c("pass", "run"),
+    qb_kneel == 1 & out %chin% c("pass", "run"),
     "qb_kneel",
     default = out
   )

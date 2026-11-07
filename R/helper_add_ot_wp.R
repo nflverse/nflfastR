@@ -49,7 +49,7 @@ ot_kick_first <- c(2011L, 2016L, 2024L, 2025L)
 
 # rule, period length and kickoff regime for each game
 ot_rule_key <- function(season, season_type) {
-  post <- season_type %in% "POST"
+  post <- season_type %chin% "POST"
   rule <- data.table::fcase(
     post & season >= 2022,
     "BOTH",
@@ -388,7 +388,7 @@ ot_wp_states <- function(st, use_spread = TRUE) {
   # Postseason games don't end when the period does. The next period starts and
   # play goes on, so there is no clock pressure and the end of the period has no
   # value of its own. Value those states as if there were lots of time left.
-  secs[st$season_type %in% "POST"] <- ot_n * ot_step
+  secs[st$season_type %chin% "POST"] <- ot_n * ot_step
 
   # sanitize the state
   di <- ot_map_d(st$d)

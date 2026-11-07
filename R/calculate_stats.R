@@ -223,7 +223,7 @@ calculate_stats <- function(
   # since these depend on different player id variables and filters,
   # we create separate dfs for these stats
   passing_stats_from_pbp <- pbp |>
-    dplyr::filter(.data$play_type %in% c("pass", "qb_spike")) |>
+    dplyr::filter(.data$play_type %chin% c("pass", "qb_spike")) |>
     dplyr::select(
       "season",
       "week",
@@ -245,7 +245,7 @@ calculate_stats <- function(
     dplyr::ungroup()
 
   rushing_stats_from_pbp <- pbp |>
-    dplyr::filter(.data$play_type %in% c("run", "qb_kneel")) |>
+    dplyr::filter(.data$play_type %chin% c("run", "qb_kneel")) |>
     dplyr::select(
       "season",
       "week",
@@ -625,7 +625,7 @@ calculate_stats <- function(
           .data$receiving_air_yards == 0 ~ 0,
           # following Josh Hermsmeyer's definition, RACR stays < 0 for RBs (and FBs) and is set to
           # 0 for Receivers. The list "racr_ids" includes all known RB and FB gsis_ids
-          .data$receiving_air_yards < 0 & !.data$player_id %in% racr_ids ~ 0,
+          .data$receiving_air_yards < 0 & !.data$player_id %chin% racr_ids ~ 0,
           TRUE ~ .data$racr
         ),
         # Fantasy #####################

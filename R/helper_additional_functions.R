@@ -286,7 +286,7 @@ clean_pbp <- function(pbp, ...) {
       d,
       j = "special",
       value = data.table::fifelse(
-        d$play_type %in%
+        d$play_type %chin%
           c("extra_point", "field_goal", "kickoff", "punt"),
         1,
         0
@@ -302,7 +302,7 @@ clean_pbp <- function(pbp, ...) {
           !is.na(d$posteam) &
           d$desc != "*** play under review ***" &
           !startsWith(d$desc, "Timeout ") &
-          d$play_type %in% c("no_play", "pass", "run"),
+          d$play_type %chin% c("no_play", "pass", "run"),
         1,
         0
       )

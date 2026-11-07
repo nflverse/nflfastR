@@ -83,7 +83,7 @@ add_drive_results <- function(d) {
             # same team has ball after lost fumble on punt, fg, pass or rush
             (pos == lag(pos) &
               lag(fumble_lost) == 1 &
-              lag(play_type) %in% play_types &
+              lag(play_type) %chin% play_types &
               # but not if the play resulted in a touchdown because otherwise
               # the following extra point or 2pt conversion will be new drives
               lag(touchdown) == 0) |
@@ -94,7 +94,7 @@ add_drive_results <- function(d) {
                 pos == lag(pos, 2) &
                 # lost fumble 2 plays ago
                 lag(fumble_lost, 2) == 1 &
-                lag(play_type, 2) %in% play_types &
+                lag(play_type, 2) %chin% play_types &
                 # but not if the lost fumble 2 plays ago resulted in a
                 # touchdown because otherwise the following extra point or 2pt
                 # conversion will be new drives
@@ -176,7 +176,7 @@ play_result <- function(d, series = FALSE) {
   touchdown <- d$touchdown == 1 & d$drive_posteam == d$td_team
   opp_touchdown <- d$touchdown == 1 & d$drive_posteam != d$td_team
   field_goal <- d$field_goal_result == "made"
-  missed_field_goal <- d$field_goal_result %in% c("blocked", "missed")
+  missed_field_goal <- d$field_goal_result %chin% c("blocked", "missed")
   safety <- d$safety == 1
   punt <- d$play_type == "punt" | d$punt_attempt == 1
   turnover <- d$interception == 1 | d$fumble_lost == 1
