@@ -395,3 +395,70 @@ apply_where <- function(condition, x, fn) {
   out[i] <- fn(x[i])
   out
 }
+
+# Integer id of the groups defined by one or more vectors. Missing values form
+# a group of their own, like in dplyr::group_by().
+group_key <- function(...) {
+  key <- 0
+  for (x in list(...)) {
+    id <- match(x, unique(x))
+    key <- key * (max(id, 0L) + 1) + id
+  }
+  match(key, unique(key))
+}
+
+# Row index of the previous row of the same group (NA for the first row of a
+# group). The rows of a group don't need to be adjacent.
+group_prev_index <- function(key) {
+  n <- length(key)
+  o <- order(key, seq_len(n), method = "radix")
+  prev <- rep(NA_integer_, n)
+  same <- c(FALSE, key[o][-1] == key[o][-n])
+  prev[o[same]] <- o[which(same) - 1L]
+  prev
+}
+
+# dplyr::lag(x, k) within groups, using the index from group_prev_index()
+lag_in_group <- function(x, prev, k = 1L) {
+  idx <- seq_along(x)
+  for (j in seq_len(k)) {
+    idx <- prev[idx]
+  }
+  x[idx]
+}
+
+# cumsum() within groups (rows of a group don't need to be adjacent)
+cumsum_by <- function(x, key) {
+  unsplit(lapply(split(x, key), cumsum), key)
+}
+
+# The result of a drive or series from the results of its plays: the last
+# non-missing result, or the first one if the last is the end of a half
+group_result <- function(result, key) {
+  per_group <- vapply(
+    split(result, key),
+    function(r) {
+      r <- r[!is.na(r)]
+      if (length(r) == 0) {
+        NA_character_
+      } else if (r[length(r)] == "End of half") {
+        r[1]
+      } else {
+        r[length(r)]
+      }
+    },
+    character(1)
+  )
+  unname(per_group[match(key, as.integer(names(per_group)))])
+}
+
+# dplyr::if_else(condition, true, false, missing): NA conditions give missing
+if_else_missing <- function(condition, true, false, missing) {
+  out <- data.table::fifelse(condition, true, false)
+  na <- is.na(condition)
+  out[na] <- missing[na]
+  out
+}
+
+# case_when() treats a missing condition as FALSE
+is_true <- function(x) !is.na(x) & x

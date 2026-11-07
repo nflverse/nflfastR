@@ -11,88 +11,75 @@
 ##  1: scored touchdown, gained enough yards for first down
 ##  0: everything else
 add_series_data <- function(pbp) {
-  out <-
-    pbp |>
-    dplyr::mutate(
-      old_posteam = .data$posteam,
-      posteam = dplyr::case_when(
-        # on kickoffs the kicking team is the defteam but this should be swapped
-        # in terms of this function if the kickoff is recovered
-        .data$kickoff_attempt == 1 &
-          (.data$own_kickoff_recovery == 1 |
-            .data$fumble_lost == 1) ~ .data$defteam,
-        # if a kickoff has to be replayed due to a penalty and is then recovered,
-        # the prior (reversed) kickoff shouldn't be a new drive/series
-        stringr::str_detect(.data$desc, kickoff_finder) &
-          .data$own_kickoff_recovery == 0 &
-          dplyr::lead(.data$own_kickoff_recovery == 1) ~ .data$defteam,
-        TRUE ~ .data$posteam
+  posteam <- drive_posteam(pbp)
+  prev <- group_prev_index(group_key(pbp$game_id, pbp$game_half))
+  lag <- function(x, k = 1L) lag_in_group(x, prev, k)
+
+  new_series <- data.table::fifelse(
+    # a new drive
+    pbp$fixed_drive != lag(pbp$fixed_drive) |
+      # or a first down on the prior play except touchdown plays
+      ((lag(pbp$first_down_rush) == 1 |
+        lag(pbp$first_down_pass) == 1 |
+        lag(pbp$first_down_penalty) == 1) &
+        lag(pbp$touchdown) == 0) |
+      # or the first play
+      is.na(prev),
+    1,
+    0
+  )
+  new_series[is.na(new_series)] <- 0
+
+  # now compute series number with cumsum
+  series <- cumsum_by(new_series, group_key(pbp$game_id))
+  tmp_result <- first_match(
+    list(
+      (pbp$first_down_penalty == 1 |
+        pbp$first_down_rush == 1 |
+        pbp$first_down_pass == 1) &
+        pbp$touchdown == 0,
+      pbp$touchdown == 1 & posteam == pbp$td_team,
+      pbp$touchdown == 1 & posteam != pbp$td_team,
+      pbp$field_goal_result == "made",
+      pbp$field_goal_result %in% c("blocked", "missed"),
+      pbp$safety == 1,
+      pbp$play_type == "punt" | pbp$punt_attempt == 1,
+      pbp$interception == 1 | pbp$fumble_lost == 1,
+      pbp$down == 4 &
+        pbp$yards_gained < pbp$ydstogo &
+        pbp$play_type != "no_play",
+      pbp$qb_kneel == 1,
+      stringr::str_detect(
+        pbp$desc,
+        "(END QUARTER 2)|(END QUARTER 4)|(END GAME)"
       )
-    ) |>
-    dplyr::group_by(.data$game_id, .data$game_half) |>
-    dplyr::mutate(
-      row = 1:dplyr::n(),
-      new_series = dplyr::if_else(
-        # a new drive
-        .data$fixed_drive != dplyr::lag(.data$fixed_drive) |
-          # or a first down on the prior play except touchdown plays
-          ((dplyr::lag(.data$first_down_rush) == 1 |
-            dplyr::lag(.data$first_down_pass) == 1 |
-            dplyr::lag(.data$first_down_penalty) == 1) &
-            dplyr::lag(.data$touchdown) == 0) |
-          # or the first play
-          .data$row == 1,
-        1,
-        0
-      ),
-      new_series = dplyr::if_else(is.na(.data$new_series), 0, .data$new_series)
-    ) |>
-    # now compute series number with cumsum (for the calculation NA are being relaced with 0)
-    dplyr::group_by(.data$game_id) |>
-    dplyr::mutate(
-      series = cumsum(.data$new_series),
-      tmp_result = dplyr::case_when(
-        (.data$first_down_penalty == 1 |
-          .data$first_down_rush == 1 |
-          .data$first_down_pass == 1) &
-          touchdown == 0 ~ "First down",
-        .data$touchdown == 1 & .data$posteam == .data$td_team ~ "Touchdown",
-        .data$touchdown == 1 & .data$posteam != .data$td_team ~ "Opp touchdown",
-        .data$field_goal_result == "made" ~ "Field goal",
-        .data$field_goal_result %in%
-          c("blocked", "missed") ~ "Missed field goal",
-        .data$safety == 1 ~ "Safety",
-        .data$play_type == "punt" | .data$punt_attempt == 1 ~ "Punt",
-        .data$interception == 1 | .data$fumble_lost == 1 ~ "Turnover",
-        .data$down == 4 &
-          .data$yards_gained < .data$ydstogo &
-          .data$play_type != "no_play" ~ "Turnover on downs",
-        .data$qb_kneel == 1 ~ "QB kneel",
-        stringr::str_detect(
-          .data$desc,
-          "(END QUARTER 2)|(END QUARTER 4)|(END GAME)"
-        ) ~ "End of half"
-      )
-    ) |>
-    dplyr::group_by(.data$game_id, .data$series) |>
-    dplyr::mutate(
-      series_result = dplyr::if_else(
-        # if it's end of half, take the first thing we see
-        dplyr::last(stats::na.omit(.data$tmp_result)) == "End of half",
-        dplyr::first(stats::na.omit(.data$tmp_result)),
-        # otherwise take the last
-        dplyr::last(stats::na.omit(.data$tmp_result))
-      ),
-      series_success = dplyr::if_else(
-        .data$series_result %in% c("Touchdown", "First down"),
-        1,
-        0
-      )
-    ) |>
-    dplyr::ungroup() |>
-    dplyr::mutate(posteam = .data$old_posteam) |>
-    dplyr::select(-"row", -"tmp_result", -"new_series", -"old_posteam")
+    ),
+    c(
+      "First down",
+      "Touchdown",
+      "Opp touchdown",
+      "Field goal",
+      "Missed field goal",
+      "Safety",
+      "Punt",
+      "Turnover",
+      "Turnover on downs",
+      "QB kneel",
+      "End of half"
+    )
+  )
+
+  pbp$series <- series
+  pbp$series_result <- group_result(
+    tmp_result,
+    group_key(pbp$game_id, series)
+  )
+  pbp$series_success <- data.table::fifelse(
+    pbp$series_result %in% c("Touchdown", "First down"),
+    1,
+    0
+  )
 
   user_message("added series variables", "done")
-  return(out)
+  return(pbp)
 }
