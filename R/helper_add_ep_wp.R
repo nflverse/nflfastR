@@ -100,6 +100,13 @@ predict_rows <- function(fn, data, i) {
   out
 }
 
+# The columns cols of pbp in the rows i, as list of columns. Steps that work on
+# a part of the plays use it to copy only the columns they need.
+subset_columns <- function(pbp, i, cols) {
+  cols <- intersect(cols, names(pbp))
+  lapply(stats::setNames(nm = cols), function(col) pbp[[col]][i])
+}
+
 # Expand a data frame of predictions for the rows i to n rows with NA elsewhere
 expand_rows <- function(preds, n, i) {
   out <- preds[rep(NA_integer_, n), , drop = FALSE]
@@ -774,10 +781,7 @@ add_wp_variables <- function(pbp_data) {
 
   # the features of just the regulation plays (all WP features are features of
   # the spread model):
-  regular_df <- lapply(
-    stats::setNames(nm = wp_spread_model_features),
-    function(f) pbp_data[[f]][regular_i]
-  )
+  regular_df <- subset_columns(pbp_data, regular_i, wp_spread_model_features)
 
   # do predictions for the regular df
   OffWinProb[regular_i] <- get_preds_wp(regular_df)
@@ -1273,7 +1277,22 @@ add_air_yac_ep_variables <- function(pbp_data) {
   )
   # the pass plays as list of columns, the state after the air yards replaces
   # the state before the play
-  pass_pbp_data <- lapply(pbp_data, `[`, pass_plays_i)
+  pass_pbp_data <- subset_columns(
+    pbp_data,
+    pass_plays_i,
+    c(
+      ep_model_features,
+      "location",
+      "down",
+      "air_yards",
+      "ep",
+      "epa",
+      "two_point_attempt",
+      "penalty",
+      "yards_after_catch",
+      "complete_pass"
+    )
+  )
   old_yrdline100 <- pass_pbp_data$yardline_100
   old_ydstogo <- pass_pbp_data$ydstogo
   old_down <- pass_pbp_data$down
@@ -1405,7 +1424,25 @@ add_air_yac_wp_variables <- function(pbp_data) {
   )
   # the pass plays as list of columns, the state after the air yards replaces
   # the state before the play
-  pass_pbp_data <- lapply(pbp_data, `[`, pass_plays_i)
+  pass_pbp_data <- subset_columns(
+    pbp_data,
+    pass_plays_i,
+    c(
+      wp_model_features,
+      "elapsed_share",
+      "air_yards",
+      "wp",
+      "wpa",
+      "two_point_attempt",
+      "qtr",
+      "penalty",
+      "yards_after_catch",
+      "complete_pass",
+      # for add_ot_air_wp()
+      "game_id",
+      "season"
+    )
+  )
   posteam_timeouts_pre <- pass_pbp_data$posteam_timeouts_remaining
   defeam_timeouts_pre <- pass_pbp_data$defteam_timeouts_remaining
   pass_pbp_data$half_seconds_remaining <- pass_pbp_data$half_seconds_remaining -

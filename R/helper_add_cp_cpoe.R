@@ -15,7 +15,10 @@ add_cp <- function(pbp) {
     cp <- rep(NA_real_, nrow(pbp))
     cp[valid] <- stats::predict(
       load_model("cp"),
-      model_matrix(lapply(passes, `[`, valid), cp_model_features)
+      model_matrix(
+        subset_columns(passes, valid, cp_model_features),
+        cp_model_features
+      )
     )
     data.table::set(
       pbp,

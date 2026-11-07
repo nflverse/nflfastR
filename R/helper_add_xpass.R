@@ -39,7 +39,10 @@ add_xpass <- function(pbp, ...) {
     xpass <- rep(NA_real_, nrow(d))
     xpass[valid] <- stats::predict(
       load_model("xpass"),
-      model_matrix(lapply(plays, `[`, valid), xpass_model_features)
+      model_matrix(
+        subset_columns(plays, valid, xpass_model_features),
+        xpass_model_features
+      )
     )
     pass_oe <- data.table::fifelse(
       !is.na(xpass),
