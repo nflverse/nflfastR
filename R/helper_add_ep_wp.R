@@ -88,41 +88,29 @@ add_air_yac_wp <- function(pbp) {
   pbp
 }
 
-# Run the prediction function fn() only on the rows i of data. The result has
-# one element (or row) for every row of data and is NA outside of i. Model
-# predictions of a row don't depend on other rows, so the values in i are the
-# same as if fn() ran on all rows.
+# Run the prediction function fn() only on the rows i of data (a data.table or
+# a list of columns). The result has one element for every row of data and is
+# NA outside of i. Model predictions of a row don't depend on other rows, so
+# the values in i are the same as if fn() ran on all rows.
 predict_rows <- function(fn, data, i) {
-  n <- if (is.data.frame(data)) nrow(data) else length(data[[1L]])
-  if (n == 0) {
-    return(fn(data))
-  }
-  # with no rows to predict we still need the shape of the result
-  rows <- if (length(i) == 0) 1L else i
-  data <- if (data.table::is.data.table(data)) {
-    data[rows]
-  } else if (is.data.frame(data)) {
-    data[rows, , drop = FALSE]
-  } else {
-    lapply(data, `[`, rows)
-  }
-  expand_rows(fn(data), n, i)
-}
-
-# Expand predictions for the rows i to n rows (or elements) with NA elsewhere
-expand_rows <- function(preds, n, i) {
-  if (is.data.frame(preds)) {
-    out <- preds[rep(NA_integer_, n), , drop = FALSE]
-    rownames(out) <- NULL
-    if (length(i) > 0) out[i, ] <- preds
-  } else {
-    out <- rep(NA_real_, n)
-    if (length(i) > 0) out[i] <- preds
+  out <- rep(NA_real_, length(data[[1L]]))
+  if (length(i) > 0) {
+    out[i] <- fn(lapply(data, `[`, i))
   }
   out
 }
 
-# The features of the EP model, in the order of ep_model_select()
+# Expand a data frame of predictions for the rows i to n rows with NA elsewhere
+expand_rows <- function(preds, n, i) {
+  out <- preds[rep(NA_integer_, n), , drop = FALSE]
+  rownames(out) <- NULL
+  if (length(i) > 0) {
+    out[i, ] <- preds
+  }
+  out
+}
+
+# The features of the EP model, in the order the model expects
 ep_model_features <- c(
   "half_seconds_remaining",
   "yardline_100",
@@ -204,29 +192,7 @@ get_preds_wp_spread <- function(pbp) {
 #get the columns needed for ep predictions
 #making sure they're in the right order
 ep_model_select <- function(pbp) {
-  pbp <- pbp |>
-    dplyr::select(
-      "half_seconds_remaining",
-      "yardline_100",
-      "home",
-      "retractable",
-      "dome",
-      "outdoors",
-      "ydstogo",
-      "era0",
-      "era1",
-      "era2",
-      "era3",
-      "era4",
-      "down1",
-      "down2",
-      "down3",
-      "down4",
-      "posteam_timeouts_remaining",
-      "defteam_timeouts_remaining",
-    )
-
-  return(pbp)
+  dplyr::select(pbp, dplyr::all_of(ep_model_features))
 }
 
 #get the columns needed for wp predictions
@@ -262,7 +228,7 @@ wp_spread_model_features <- c(
   "defteam_timeouts_remaining"
 )
 prepare_wp_data <- function(pbp) {
-  if (any(is.na(pbp$spread_line))) {
+  if (anyNA(pbp$spread_line)) {
     broken_games <- sort(unique(pbp$game_id[is.na(pbp$spread_line)]))
     cli::cli_alert_danger(
       "The following game{?s} {?is/are} missing valid spread lines: {.val {broken_games}}."
@@ -361,7 +327,11 @@ add_ep_variables <- function(pbp_data) {
 
   # Change the yard line to be 80 for 2009-2015 and 75 otherwise
   # (accounting for the fact that Jan 2016 is in the 2015 season:
-  kickoff_data$yardline_100 <- with(kickoff_data, ifelse(season < 2016, 80, 75))
+  kickoff_data$yardline_100 <- data.table::fifelse(
+    kickoff_data$season < 2016,
+    80,
+    75
+  )
   # Now first down:
   kickoff_data$down1 <- rep(1, nrow(pbp_data))
   kickoff_data$down2 <- rep(0, nrow(pbp_data))
@@ -412,29 +382,26 @@ add_ep_variables <- function(pbp_data) {
   base_ep_preds[fg_attempt_i, "Field_Goal"] <- make_fg_prob[fg_attempt_i] +
     missed_fg_ep_preds[fg_attempt_i, "Opp_Field_Goal"]
   # Update the other columns based on the opposite possession:
-  base_ep_preds[fg_attempt_i, "Touchdown"] <- missed_fg_ep_preds[
+  base_ep_preds[
     fg_attempt_i,
-    "Opp_Touchdown"
-  ]
-  base_ep_preds[fg_attempt_i, "Opp_Field_Goal"] <- missed_fg_ep_preds[
+    c(
+      "Touchdown",
+      "Opp_Field_Goal",
+      "Opp_Touchdown",
+      "Safety",
+      "Opp_Safety",
+      "No_Score"
+    )
+  ] <- missed_fg_ep_preds[
     fg_attempt_i,
-    "Field_Goal"
-  ]
-  base_ep_preds[fg_attempt_i, "Opp_Touchdown"] <- missed_fg_ep_preds[
-    fg_attempt_i,
-    "Touchdown"
-  ]
-  base_ep_preds[fg_attempt_i, "Safety"] <- missed_fg_ep_preds[
-    fg_attempt_i,
-    "Opp_Safety"
-  ]
-  base_ep_preds[fg_attempt_i, "Opp_Safety"] <- missed_fg_ep_preds[
-    fg_attempt_i,
-    "Safety"
-  ]
-  base_ep_preds[fg_attempt_i, "No_Score"] <- missed_fg_ep_preds[
-    fg_attempt_i,
-    "No_Score"
+    c(
+      "Opp_Touchdown",
+      "Field_Goal",
+      "Touchdown",
+      "Opp_Safety",
+      "Safety",
+      "No_Score"
+    )
   ]
 
   # ----------------------------------------------------------------------------------
@@ -442,25 +409,7 @@ add_ep_variables <- function(pbp_data) {
   # update the columns for Kickoff plays with the touchback probabilities
 
   # Now update the probabilities:
-  base_ep_preds[kickoff_i, "Field_Goal"] <- kickoff_preds[
-    kickoff_i,
-    "Field_Goal"
-  ]
-  base_ep_preds[kickoff_i, "Touchdown"] <- kickoff_preds[kickoff_i, "Touchdown"]
-  base_ep_preds[kickoff_i, "Opp_Field_Goal"] <- kickoff_preds[
-    kickoff_i,
-    "Opp_Field_Goal"
-  ]
-  base_ep_preds[kickoff_i, "Opp_Touchdown"] <- kickoff_preds[
-    kickoff_i,
-    "Opp_Touchdown"
-  ]
-  base_ep_preds[kickoff_i, "Safety"] <- kickoff_preds[kickoff_i, "Safety"]
-  base_ep_preds[kickoff_i, "Opp_Safety"] <- kickoff_preds[
-    kickoff_i,
-    "Opp_Safety"
-  ]
-  base_ep_preds[kickoff_i, "No_Score"] <- kickoff_preds[kickoff_i, "No_Score"]
+  base_ep_preds[kickoff_i, ] <- kickoff_preds[kickoff_i, ]
 
   # ----------------------------------------------------------------------------------
   # Insert probabilities of 0 for everything but No_Score for QB Kneels that
@@ -471,12 +420,7 @@ add_ep_variables <- function(pbp_data) {
   )
 
   # Now update the probabilities:
-  base_ep_preds[qb_kneels_i, "Field_Goal"] <- 0
-  base_ep_preds[qb_kneels_i, "Touchdown"] <- 0
-  base_ep_preds[qb_kneels_i, "Opp_Field_Goal"] <- 0
-  base_ep_preds[qb_kneels_i, "Opp_Touchdown"] <- 0
-  base_ep_preds[qb_kneels_i, "Safety"] <- 0
-  base_ep_preds[qb_kneels_i, "Opp_Safety"] <- 0
+  base_ep_preds[qb_kneels_i, ] <- 0
   base_ep_preds[qb_kneels_i, "No_Score"] <- 1
 
   # ----------------------------------------------------------------------------------
@@ -489,42 +433,38 @@ add_ep_variables <- function(pbp_data) {
 
   #new: special case for PAT or kickoff with penalty
   #for inserting NAs
+  lag <- function(x) data.table::shift(x)
+  lead <- function(x) data.table::shift(x, type = "lead")
   st_penalty_i_1 <- which(
     # pat: prior play was TD or PAT or Timeout and next play is PAT and this play isn't a td and it's not a regular down
     (pbp_data$touchdown == 0 &
       is.na(pbp_data$down) &
-      (dplyr::lag(pbp_data$touchdown) == 1 |
-        dplyr::lag(pbp_data$play_type_nfl) == "XP_KICK" |
-        dplyr::lag(pbp_data$timeout) == 1) &
-      (dplyr::lead(pbp_data$two_point_attempt) == 1 |
-        dplyr::lead(pbp_data$extra_point_attempt) == 1 |
-        dplyr::lead(pbp_data$play_type_nfl) == "XP_KICK")) |
+      (lag(pbp_data$touchdown) == 1 |
+        lag(pbp_data$play_type_nfl) == "XP_KICK" |
+        lag(pbp_data$timeout) == 1) &
+      (lead(pbp_data$two_point_attempt) == 1 |
+        lead(pbp_data$extra_point_attempt) == 1 |
+        lead(pbp_data$play_type_nfl) == "XP_KICK")) |
       #kickoff: prior play was PAT and next play is kickoff
-      ((dplyr::lag(pbp_data$two_point_attempt) == 1 |
-        dplyr::lag(pbp_data$extra_point_attempt) == 1) &
-        dplyr::lead(pbp_data$kickoff_attempt == 1))
+      ((lag(pbp_data$two_point_attempt) == 1 |
+        lag(pbp_data$extra_point_attempt) == 1) &
+        lead(pbp_data$kickoff_attempt == 1))
   )
 
+  # down is NA and play type no play
+  no_play_without_down <- is.na(pbp_data$down) & pbp_data$play_type == "no_play"
+  # has a key term in desc
+  st_penalty_term <- no_play_without_down &
+    stringi::stri_detect_regex(
+      pbp_data$desc,
+      "Kick formation|Pass formation|kicks onside|Offside on Free Kick"
+    )
+  # two point conversion and next play isn't a kickoff
+  st_penalty_two_point <- no_play_without_down &
+    stringi::stri_detect_fixed(pbp_data$desc, "TWO-POINT CONVERSION") &
+    lead(pbp_data$kickoff_attempt) == 0
   st_penalty_i_2 <- which(
-    is.na(dplyr::lead(pbp_data$down)) &
-      # has a key term in desc
-      (((stringi::stri_detect_regex(pbp_data$desc, 'Kick formation') &
-        is.na(pbp_data$down) &
-        pbp_data$play_type == 'no_play') |
-        (stringi::stri_detect_regex(pbp_data$desc, 'Pass formation') &
-          is.na(pbp_data$down) &
-          pbp_data$play_type == 'no_play') |
-        (stringi::stri_detect_regex(pbp_data$desc, 'kicks onside') &
-          is.na(pbp_data$down) &
-          pbp_data$play_type == 'no_play') |
-        (stringi::stri_detect_regex(pbp_data$desc, 'Offside on Free Kick') &
-          is.na(pbp_data$down) &
-          pbp_data$play_type == 'no_play') |
-        (stringi::stri_detect_regex(pbp_data$desc, 'TWO-POINT CONVERSION')) &
-          # down is NA and play type no play and next play isn't a kickoff
-          is.na(pbp_data$down) &
-          pbp_data$play_type == 'no_play' &
-          dplyr::lead(pbp_data$kickoff_attempt) == 0))
+    is.na(lead(pbp_data$down)) & (st_penalty_term | st_penalty_two_point)
   )
 
   # Assign the make_fg_probs of the extra-point PATs:
@@ -538,81 +478,24 @@ add_ep_variables <- function(pbp_data) {
   missing_i <- which(
     (pbp_data$timeout == 1 &
       pbp_data$play_type == "no_play" &
-      !stringi::stri_detect_regex(pbp_data$desc, ' pass ') &
-      !stringi::stri_detect_regex(pbp_data$desc, ' sacked ') &
-      !stringi::stri_detect_regex(pbp_data$desc, ' scramble ') &
-      !stringi::stri_detect_regex(pbp_data$desc, ' punts ') &
-      !stringi::stri_detect_regex(pbp_data$desc, ' up the middle ') &
-      !stringi::stri_detect_regex(pbp_data$desc, ' left end ') &
-      !stringi::stri_detect_regex(pbp_data$desc, ' left guard ') &
-      !stringi::stri_detect_regex(pbp_data$desc, ' left tackle ') &
-      !stringi::stri_detect_regex(pbp_data$desc, ' right end ') &
-      !stringi::stri_detect_regex(pbp_data$desc, ' right guard ') &
-      !stringi::stri_detect_regex(pbp_data$desc, ' right tackle ')) |
+      !stringi::stri_detect_regex(
+        pbp_data$desc,
+        " (pass|sacked|scramble|punts|up the middle|left end|left guard|left tackle|right end|right guard|right tackle) "
+      )) |
       is.na(pbp_data$play_type)
   )
 
   # Now update the probabilities for missing and PATs:
-  base_ep_preds$Field_Goal[c(
-    missing_i,
-    extrapoint_i,
-    twopoint_i,
-    st_penalty_i_1,
-    st_penalty_i_2
-  )] <- 0
-  base_ep_preds$Touchdown[c(
-    missing_i,
-    extrapoint_i,
-    twopoint_i,
-    st_penalty_i_1,
-    st_penalty_i_2
-  )] <- 0
-  base_ep_preds$Opp_Field_Goal[c(
-    missing_i,
-    extrapoint_i,
-    twopoint_i,
-    st_penalty_i_1,
-    st_penalty_i_2
-  )] <- 0
-  base_ep_preds$Opp_Touchdown[c(
-    missing_i,
-    extrapoint_i,
-    twopoint_i,
-    st_penalty_i_1,
-    st_penalty_i_2
-  )] <- 0
-  base_ep_preds$Safety[c(
-    missing_i,
-    extrapoint_i,
-    twopoint_i,
-    st_penalty_i_1,
-    st_penalty_i_2
-  )] <- 0
-  base_ep_preds$Opp_Safety[c(
-    missing_i,
-    extrapoint_i,
-    twopoint_i,
-    st_penalty_i_1,
-    st_penalty_i_2
-  )] <- 0
-  base_ep_preds$No_Score[c(
-    missing_i,
-    extrapoint_i,
-    twopoint_i,
-    st_penalty_i_1,
-    st_penalty_i_2
-  )] <- 0
+  ep_outcomes <- names(kickoff_preds)
+  base_ep_preds[
+    c(missing_i, extrapoint_i, twopoint_i, st_penalty_i_1, st_penalty_i_2),
+    ep_outcomes
+  ] <- 0
 
   # Rename the events to all have _Prob at the end of them:
-  base_ep_preds <- dplyr::rename(
-    base_ep_preds,
-    Field_Goal_Prob = "Field_Goal",
-    Touchdown_Prob = "Touchdown",
-    Opp_Field_Goal_Prob = "Opp_Field_Goal",
-    Opp_Touchdown_Prob = "Opp_Touchdown",
-    Safety_Prob = "Safety",
-    Opp_Safety_Prob = "Opp_Safety",
-    No_Score_Prob = "No_Score"
+  names(base_ep_preds)[match(ep_outcomes, names(base_ep_preds))] <- paste0(
+    ep_outcomes,
+    "_Prob"
   )
 
   # Join them together:
@@ -740,10 +623,10 @@ add_ep_variables <- function(pbp_data) {
   # Safety:
   safety_team <- pbp_data$safety_team
   epa <- data.table::fcase(
-    !is.na(safety_team) & safety_team == pbp_data$posteam ,
-    2 - ep                                                ,
-    !is.na(safety_team) & safety_team == pbp_data$defteam ,
-    -2 - ep                                               ,
+    !is.na(safety_team) & safety_team == pbp_data$posteam,
+    2 - ep,
+    !is.na(safety_team) & safety_team == pbp_data$defteam,
+    -2 - ep,
     default = epa
   )
   data.table::set(pbp_data, j = "epa", value = epa)
@@ -833,45 +716,43 @@ add_ep_variables <- function(pbp_data) {
   )
 
   # Create columns with cumulative epa totals for both teams:
-  home_team_epa <- data.table::nafill(
-    data.table::fifelse(pbp_data$posteam == pbp_data$home_team, epa, -epa),
-    fill = 0
-  )
-  away_team_epa <- data.table::nafill(
-    data.table::fifelse(pbp_data$posteam == pbp_data$away_team, epa, -epa),
-    fill = 0
-  )
-  is_run <- pbp_data$play_type == "run"
-  is_pass <- pbp_data$play_type == "pass"
-  team_cols <- list(
-    home_team_epa = home_team_epa,
-    away_team_epa = away_team_epa,
-    # Same thing but separating passing and rushing:
-    home_team_rush_epa = data.table::nafill(
-      data.table::fifelse(is_run, home_team_epa, 0),
-      fill = 0
-    ),
-    away_team_rush_epa = data.table::nafill(
-      data.table::fifelse(is_run, away_team_epa, 0),
-      fill = 0
-    ),
-    home_team_pass_epa = data.table::nafill(
-      data.table::fifelse(is_pass, home_team_epa, 0),
-      fill = 0
-    ),
-    away_team_pass_epa = data.table::nafill(
-      data.table::fifelse(is_pass, away_team_epa, 0),
+  add_team_totals(pbp_data, epa, "epa")
+}
+
+# The value x from the point of view of the home and away team (0 if missing),
+# also only for run and pass plays, and their cumulative totals within each
+# game. type is "epa" or "wpa".
+add_team_totals <- function(pbp, x, type) {
+  team_value <- function(team) {
+    data.table::nafill(
+      data.table::fifelse(pbp$posteam == team, x, -x),
       fill = 0
     )
+  }
+  play_value <- function(is_type, value) {
+    data.table::nafill(data.table::fifelse(is_type, value, 0), fill = 0)
+  }
+  home <- team_value(pbp$home_team)
+  away <- team_value(pbp$away_team)
+  is_run <- pbp$play_type == "run"
+  is_pass <- pbp$play_type == "pass"
+  team_cols <- list(
+    home_team = home,
+    away_team = away,
+    home_team_rush = play_value(is_run, home),
+    away_team_rush = play_value(is_run, away),
+    home_team_pass = play_value(is_pass, home),
+    away_team_pass = play_value(is_pass, away)
   )
-  data.table::set(pbp_data, j = names(team_cols), value = team_cols)
+  names(team_cols) <- paste0(names(team_cols), "_", type)
+  data.table::set(pbp, j = names(team_cols), value = team_cols)
   total_cols <- sub("_team_", "_", paste0("total_", names(team_cols)))
-  pbp_data[,
+  pbp[,
     (total_cols) := lapply(.SD, cumsum),
     by = "game_id",
     .SDcols = names(team_cols)
   ]
-  pbp_data
+  pbp
 }
 
 
@@ -891,8 +772,12 @@ add_wp_variables <- function(pbp_data) {
   #regulation plays
   regular_i <- which(pbp_data$qtr <= 4)
 
-  # df of just the regulation plays:
-  regular_df <- pbp_data[regular_i, ]
+  # the features of just the regulation plays (all WP features are features of
+  # the spread model):
+  regular_df <- lapply(
+    stats::setNames(nm = wp_spread_model_features),
+    function(f) pbp_data[[f]][regular_i]
+  )
 
   # do predictions for the regular df
   OffWinProb[regular_i] <- get_preds_wp(regular_df)
@@ -907,27 +792,27 @@ add_wp_variables <- function(pbp_data) {
 
   ## start PAT fix
 
+  # PAT attempts in a play without down that isn't an onside kick
+  pat_formation <- pbp_data$kickoff_attempt == 0 &
+    !stringi::stri_detect_fixed(pbp_data$desc, "Onside Kick") &
+    is.na(pbp_data$down)
   # plays with 1 point PAT attempts
   pat_i <- which(
-    (pbp_data$kickoff_attempt == 0 &
-      !(stringi::stri_detect_regex(pbp_data$desc, 'Onside Kick')) &
-      (stringi::stri_detect_regex(pbp_data$desc, 'Kick formation')) &
-      is.na(pbp_data$down)) |
+    (pat_formation &
+      stringi::stri_detect_fixed(pbp_data$desc, "Kick formation")) |
       # or has PAT indicators
-      stringi::stri_detect_regex(pbp_data$desc, 'extra point') |
+      stringi::stri_detect_fixed(pbp_data$desc, "extra point") |
       !is.na(pbp_data$extra_point_result)
   )
 
   # plays with 2 point PAT attempts
   two_pt_i <- which(
-    (pbp_data$kickoff_attempt == 0 &
-      !(stringi::stri_detect_regex(pbp_data$desc, 'Onside Kick')) &
-      (stringi::stri_detect_regex(pbp_data$desc, 'Pass formation')) &
-      is.na(pbp_data$down)) |
+    (pat_formation &
+      stringi::stri_detect_fixed(pbp_data$desc, "Pass formation")) |
       # or has PAT indicators
-      stringi::stri_detect_regex(
+      stringi::stri_detect_fixed(
         pbp_data$desc,
-        'TWO-POINT CONVERSION ATTEMPT'
+        "TWO-POINT CONVERSION ATTEMPT"
       ) |
       !is.na(pbp_data$two_point_conv_result)
   )
@@ -974,10 +859,10 @@ add_wp_variables <- function(pbp_data) {
   pat_data$ydstogo <- rep(10, nrow(pbp_data))
   # flip receive_2h_ko var
   pat_data$receive_2h_ko <- data.table::fcase(
-    pbp_data$qtr <= 2 & pbp_data$receive_2h_ko == 0 ,
-                                                  1 ,
-    pbp_data$qtr <= 2 & pbp_data$receive_2h_ko == 1 ,
-                                                  0 ,
+    pbp_data$qtr <= 2 & pbp_data$receive_2h_ko == 0,
+    1,
+    pbp_data$qtr <= 2 & pbp_data$receive_2h_ko == 1,
+    0,
     default = pbp_data$receive_2h_ko
   )
   # switch posteam
@@ -988,10 +873,10 @@ add_wp_variables <- function(pbp_data) {
   )
   pat_data$yardline_100 <- rep(75, nrow(pbp_data))
   pat_data$home <- data.table::fcase(
-    pbp_data$home == 0 ,
-                     1 ,
-    pbp_data$home == 1 ,
-                     0
+    pbp_data$home == 0,
+    1,
+    pbp_data$home == 1,
+    0
   )
   pat_data$posteam_spread <- data.table::fifelse(
     pat_data$home == 1,
@@ -1046,7 +931,11 @@ add_wp_variables <- function(pbp_data) {
   kickoff_data <- as.list(pbp_data)
 
   # Change the yard line to be 80 for 2009-2015 and 75 otherwise
-  kickoff_data$yardline_100 <- with(kickoff_data, ifelse(season < 2016, 80, 75))
+  kickoff_data$yardline_100 <- data.table::fifelse(
+    kickoff_data$season < 2016,
+    80,
+    75
+  )
   # Now first down:
   kickoff_data$down <- rep(1, nrow(pbp_data))
   kickoff_data$down1 <- rep(1, nrow(pbp_data))
@@ -1175,12 +1064,12 @@ add_wp_variables <- function(pbp_data) {
     pbp_data,
     j = "final_value",
     value = data.table::fcase(
-      pbp_data$home_score > pbp_data$away_score  ,
-      1                                          ,
-      pbp_data$away_score > pbp_data$home_score  ,
-      0                                          ,
-      pbp_data$home_score == pbp_data$away_score ,
-       .5
+      pbp_data$home_score > pbp_data$away_score,
+      1,
+      pbp_data$away_score > pbp_data$home_score,
+      0,
+      pbp_data$home_score == pbp_data$away_score,
+      0.5
     )
   )
   #make 1 or 0 the final win prob
@@ -1329,10 +1218,7 @@ add_wp_variables <- function(pbp_data) {
 
   # For plays with playtype of End of Game, use the previous play's WP_post
   # columns as the pre and post, since those are already set to be 1 and 0:
-  end_of_game <- stringi::stri_detect_regex(
-    desc_lower,
-    "(end of game)|(end game)"
-  )
+  end_of_game <- pbp_data$end_game == 1
   two_no_plays <- data.table::shift(pbp_data$play_type) == "no_play" &
     pbp_data$play_type == "no_play"
   data.table::set(
@@ -1364,71 +1250,7 @@ add_wp_variables <- function(pbp_data) {
 
   # Generate columns to keep track of cumulative rushing and passing WPA
   # values within each game:
-  data.table::set(
-    pbp_data,
-    j = "home_team_wpa",
-    value = data.table::nafill(
-      fill = 0,
-      x = data.table::fifelse(
-        pbp_data$posteam == pbp_data$home_team,
-        pbp_data$wpa,
-        -pbp_data$wpa
-      )
-    )
-  )
-  data.table::set(
-    pbp_data,
-    j = "away_team_wpa",
-    value = data.table::nafill(
-      fill = 0,
-      x = data.table::fifelse(
-        pbp_data$posteam == pbp_data$away_team,
-        pbp_data$wpa,
-        -pbp_data$wpa
-      )
-    )
-  )
-  # Same thing but separating passing and rushing:
-  is_run <- pbp_data$play_type == "run"
-  data.table::set(
-    pbp_data,
-    j = "home_team_rush_wpa",
-    value = data.table::nafill(
-      fill = 0,
-      x = data.table::fifelse(is_run, pbp_data$home_team_wpa, 0)
-    )
-  )
-  data.table::set(
-    pbp_data,
-    j = "away_team_rush_wpa",
-    value = data.table::nafill(
-      fill = 0,
-      x = data.table::fifelse(is_run, pbp_data$away_team_wpa, 0)
-    )
-  )
-  pbp_data[, total_home_rush_wpa := cumsum(home_team_rush_wpa), by = "game_id"]
-  pbp_data[, total_away_rush_wpa := cumsum(away_team_rush_wpa), by = "game_id"]
-  is_pass <- pbp_data$play_type == "pass"
-  data.table::set(
-    pbp_data,
-    j = "home_team_pass_wpa",
-    value = data.table::nafill(
-      fill = 0,
-      x = data.table::fifelse(is_pass, pbp_data$home_team_wpa, 0)
-    )
-  )
-  data.table::set(
-    pbp_data,
-    j = "away_team_pass_wpa",
-    value = data.table::nafill(
-      fill = 0,
-      x = data.table::fifelse(is_pass, pbp_data$away_team_wpa, 0)
-    )
-  )
-  pbp_data[, total_home_pass_wpa := cumsum(home_team_pass_wpa), by = "game_id"]
-  pbp_data[, total_away_pass_wpa := cumsum(away_team_pass_wpa), by = "game_id"]
-
-  pbp_data
+  add_team_totals(pbp_data, pbp_data$wpa, "wpa")
 }
 
 

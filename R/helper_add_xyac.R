@@ -53,7 +53,7 @@ add_xyac <- function(pbp, ...) {
       d,
       i = xyac_vars$index,
       j = drop.cols.xyac,
-      value = as.list(xyac_vars[drop.cols.xyac])
+      value = xyac_vars[drop.cols.xyac]
     )
 
     message_completed("added xyac variables", ...)
@@ -198,8 +198,8 @@ summarize_xyac <- function(passes, preds) {
     first_down = (gain >= original_ydstogo) * prob
   )
   outcomes[, csum := cumsum(prob), by = "pass_row"]
-  outcomes[, lag_below_half := data.table::shift(csum < .5), by = "pass_row"]
-  outcomes[, med := data.table::fifelse(csum > .5 & lag_below_half, yac, 0L)]
+  outcomes[, lag_below_half := data.table::shift(csum < 0.5), by = "pass_row"]
+  outcomes[, med := data.table::fifelse(csum > 0.5 & lag_below_half, yac, 0L)]
 
   # one row per pass; passes without any possible yac value don't get xyac
   # variables
@@ -213,8 +213,9 @@ summarize_xyac <- function(passes, preds) {
     ),
     by = "pass_row"
   ]
+  # pass_row is in increasing order, so the result is ordered by index
   present <- per_pass_sums$pass_row
-  out <- tibble::tibble(
+  list(
     index = passes$index[present],
     xyac_epa = per_pass_sums$wt_epa - passes$air_epa[present],
     xyac_mean_yardage = (passes$yardline_100[present] -
@@ -224,7 +225,6 @@ summarize_xyac <- function(passes, preds) {
     xyac_success = per_pass_sums$success,
     xyac_fd = per_pass_sums$first_down
   )
-  out[order(out$index), ]
 }
 
 # EP of the possession team, computed like calculate_expected_points() but from
@@ -298,15 +298,7 @@ prepare_xyac_data <- function(pbp) {
   # a list of columns, so make_model_mutations() doesn't change pbp
   passes <- make_model_mutations(as.list(pbp))
   passes$index <- seq_len(nrow(pbp))
-  # valid pass play: at least -15 air yards, less than 70 air yards, has
-  # intended receiver, has pass location
-  valid <- (passes$complete_pass == 1 |
-    passes$incomplete_pass == 1 |
-    passes$interception == 1) &
-    !is.na(passes$air_yards) &
-    passes$air_yards >= -15 &
-    passes$air_yards < 70 &
-    !is.na(passes$pass_location)
+  valid <- is_valid_pass(passes)
   # the receiver only matters if the other conditions aren't FALSE
   receiver_player_name <- apply_where(
     !(valid %in% FALSE),
@@ -314,7 +306,7 @@ prepare_xyac_data <- function(pbp) {
     function(x) {
       stringi::stri_extract_first_regex(
         x,
-        glue::glue('{receiver_finder}{big_parser}')
+        paste0(receiver_finder, big_parser)
       )
     }
   )
@@ -326,8 +318,12 @@ prepare_xyac_data <- function(pbp) {
   passes$air_is_zero <- data.table::fifelse(passes$air_yards == 0, 1, 0)
   passes$distance_to_sticks <- passes$air_yards - passes$ydstogo
   passes$distance_to_goal <- passes$yardline_100 - passes$air_yards
-  valid_pass <- data.table::fifelse(valid & !is.na(receiver_player_name), 1, 0)
-  lapply(passes, `[`, which(valid_pass == 1 & passes$distance_to_goal != 0))
+  # a valid pass also has an intended receiver
+  lapply(
+    passes,
+    `[`,
+    which(valid & !is.na(receiver_player_name) & passes$distance_to_goal != 0)
+  )
 }
 
 ### another helper function for getting the data ready

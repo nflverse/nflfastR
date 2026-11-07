@@ -8,7 +8,7 @@
 add_cp <- function(pbp) {
   # pbp is the data.table of build_nflfastR_pbp(), changed by reference
   passes <- prepare_cp_data(pbp)
-  valid <- which(passes$valid_pass == 1)
+  valid <- which(passes$valid_pass)
 
   if (length(valid) > 0) {
     # the model is only needed for valid passes
@@ -44,15 +44,7 @@ add_cp <- function(pbp) {
 ### helper function for getting the data ready
 # The features of the cp model and valid_pass as list of columns
 prepare_cp_data <- function(pbp) {
-  # valid pass play: at least -15 air yards, less than 70 air yards, has
-  # intended receiver, has pass location
-  valid <- (pbp$complete_pass == 1 |
-    pbp$incomplete_pass == 1 |
-    pbp$interception == 1) &
-    !is.na(pbp$air_yards) &
-    pbp$air_yards >= -15 &
-    pbp$air_yards < 70 &
-    !is.na(pbp$pass_location)
+  valid <- is_valid_pass(pbp)
   # the receiver name only matters if the other conditions aren't FALSE and
   # there is no receiver id
   receiver_player_name <- apply_where(
@@ -71,12 +63,21 @@ prepare_cp_data <- function(pbp) {
   passes$pass_middle <- data.table::fifelse(pbp$pass_location == "middle", 1, 0)
   passes$air_is_zero <- data.table::fifelse(pbp$air_yards == 0, 1, 0)
   passes$distance_to_sticks <- pbp$air_yards - pbp$ydstogo
-  passes$valid_pass <- data.table::fifelse(
-    valid & (!is.na(receiver_player_name) | !is.na(pbp$receiver_player_id)),
-    1,
-    0
-  )
+  # a valid pass also has an intended receiver
+  passes$valid_pass <- valid &
+    (!is.na(receiver_player_name) | !is.na(pbp$receiver_player_id))
   passes
+}
+
+# Valid pass play for the cp and xyac models: at least -15 air yards, less
+# than 70 air yards, has pass location. The intended receiver is checked by
+# the callers.
+is_valid_pass <- function(pbp) {
+  (pbp$complete_pass == 1 | pbp$incomplete_pass == 1 | pbp$interception == 1) &
+    !is.na(pbp$air_yards) &
+    pbp$air_yards >= -15 &
+    pbp$air_yards < 70 &
+    !is.na(pbp$pass_location)
 }
 
 cp_model_features <- c(
