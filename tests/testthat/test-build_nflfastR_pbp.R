@@ -26,6 +26,22 @@ test_that("build_nflfastR_pbp is quiet with option nflfastR.verbose = FALSE", {
   )
 })
 
+test_that("build_nflfastR_pbp skips xyac with add_xyac = FALSE", {
+  g <- readRDS(file.path(test_dir, "games.rds"))
+  pbp <- build_nflfastR_pbp(
+    game_ids,
+    dir = test_dir,
+    games = g,
+    add_xyac = FALSE,
+    decode = FALSE
+  ) |>
+    suppressMessages()
+  expected <- load_expected_pbp()
+  xyac_cols <- grep("^xyac_", names(expected), value = TRUE)
+  expect_length(intersect(xyac_cols, names(pbp)), 0)
+  expect_identical(nrow(pbp), nrow(expected))
+})
+
 test_that("default_play is synced with build_nflfastR_pbp", {
   # `default_play` is a table of 1 row that initializes the data table in pbp
   # DBs, so it must match the column names and types of build_nflfastR_pbp()

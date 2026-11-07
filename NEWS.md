@@ -3,6 +3,7 @@
 - `xyac_median_yardage` is now always a double. It used to be an integer unless the data had no valid pass plays, which didn't match the column type in pbp databases.
 - nflfastR no longer depends on stringr. It uses stringi directly.
 - New option `nflfastR.verbose`. Set `options(nflfastR.verbose = FALSE)` to turn off the progress messages of `build_nflfastR_pbp()` and the functions it calls.
+- `build_nflfastR_pbp()` gained the argument `add_xyac`. Set `add_xyac = FALSE` to skip `add_xyac()` and save computation time.
 - `build_nflfastR_pbp()` is now about 4 times faster, on a full season as well as on a single game. The output is unchanged.
 - `build_nflfastR_pbp()` no longer drops games whose raw data doesn't contain any play stats yet, e.g. right before kickoff.
 

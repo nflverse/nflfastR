@@ -26,6 +26,8 @@
 #' to learn about the output.
 #'
 #' @inheritParams fast_scraper
+#' @param add_xyac If `TRUE`, the function [add_xyac()] will be executed. Set
+#'   to `FALSE` to skip the xyac columns and save computation time.
 #' @param decode If `TRUE`, the function [decode_player_ids()] will be executed.
 #' @param rules If `FALSE`, printing of the header and footer in the console output will be suppressed.
 #' @return An nflfastR play-by-play data frame like it can be loaded from <https://github.com/nflverse/nflverse-data>.
@@ -57,6 +59,7 @@ build_nflfastR_pbp <- function(
   game_ids,
   dir = getOption("nflfastR.raw_directory", default = NULL),
   ...,
+  add_xyac = TRUE,
   decode = TRUE,
   rules = TRUE
 ) {
@@ -99,9 +102,13 @@ build_nflfastR_pbp <- function(
     in_builder = builder
   ) |>
     clean_pbp(in_builder = builder) |>
-    add_qb_epa(in_builder = builder) |>
-    add_xyac(in_builder = builder) |>
-    add_xpass(in_builder = builder)
+    add_qb_epa(in_builder = builder)
+
+  if (isTRUE(add_xyac)) {
+    ret <- add_xyac(ret, in_builder = builder)
+  }
+
+  ret <- add_xpass(ret, in_builder = builder)
 
   if (isTRUE(decode)) {
     ret <- decode_player_ids(ret, in_builder = builder)
