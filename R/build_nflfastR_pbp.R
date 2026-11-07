@@ -74,7 +74,7 @@ build_nflfastR_pbp <- function(
     )
   }
 
-  if (isTRUE(rules)) {
+  if (isTRUE(rules) && is_verbose()) {
     rule_header("Build nflfastR Play-by-Play Data")
   }
 
@@ -107,7 +107,7 @@ build_nflfastR_pbp <- function(
     ret <- decode_player_ids(ret, in_builder = builder)
   }
 
-  if (isTRUE(rules)) {
+  if (isTRUE(rules) && is_verbose()) {
     rule_footer("DONE")
   }
 
