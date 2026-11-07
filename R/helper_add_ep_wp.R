@@ -196,12 +196,6 @@ get_preds_wp_spread <- function(pbp) {
 }
 
 
-#get the columns needed for ep predictions
-#making sure they're in the right order
-ep_model_select <- function(pbp) {
-  dplyr::select(pbp, dplyr::all_of(ep_model_features))
-}
-
 #get the columns needed for wp predictions
 #making sure they're in the right order
 wp_model_features <- c(

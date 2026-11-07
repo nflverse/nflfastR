@@ -603,7 +603,7 @@ add_qb_epa <- function(pbp, ...) {
       100 - yardline_100,
       yardline_100
     )
-    fumbles_df <- tibble::tibble(
+    fumbles_df <- data.table::data.table(
       game_id = f$game_id,
       play_id = f$play_id,
       season = f$season,
