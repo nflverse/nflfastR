@@ -5,115 +5,98 @@
 ################################################################################
 
 add_nflscrapr_mutations <- function(pbp) {
-  # pbp is the data.table of build_nflfastR_pbp(), changed by reference
-  d <- pbp
-  data.table::set(d, j = "index", value = seq_len(nrow(d)))
+  # pbp is the data.table of build_nflfastR_pbp(). The result is a new table
+  # because rows are removed and reordered.
+
   # remove duplicate plays. can't do this with play_id because duplicate plays
   # sometimes have different play_ids
-  d <- unique(
-    d,
-    by = c("game_id", "quarter", "time", "play_description", "down")
+  keep <- which(
+    !duplicated(
+      pbp,
+      by = c("game_id", "quarter", "time", "play_description", "down")
+    )
   )
 
-  # Modify the time column for the quarter end:
-  data.table::set(
-    d,
-    j = "time",
-    value = data.table::fifelse(
-      d$quarter_end == 1 |
-        (d$play_description == "END GAME" & is.na(d$time)),
+  # Modify the time column for the quarter end and create a column with the
+  # time in seconds remaining for the quarter:
+  desc <- pbp$play_description[keep]
+  time <- pbp$time[keep]
+  time <- data.table::fifelse(
+    desc == "GAME",
+    "15:00",
+    data.table::fifelse(
+      pbp$quarter_end[keep] == 1 | (desc == "END GAME" & is.na(time)),
       "00:00",
-      d$time
+      time
     )
   )
-  data.table::set(
-    d,
-    j = "time",
-    value = data.table::fifelse(
-      d$play_description == 'GAME',
-      "15:00",
-      d$time
-    )
-  )
-  # Create a column with the time in seconds remaining for the quarter:
-  data.table::set(
-    d,
-    j = "quarter_seconds_remaining",
-    value = time_to_seconds(d$time)
-  )
-  data.table::set(
-    d,
-    j = "play_description",
-    value = data.table::fcase(
-      stringi::stri_detect_regex(d$play_description, "(?<=kicks )[:alpha:]{1,}.[:alpha:]{1,}(?= yards)")                                       ,
-      stringi::stri_replace_first_regex(d$play_description, "(?<=kicks )[:alpha:]{1,}.[:alpha:]{1,}(?= yards)", as.character(d$kick_distance)) ,
-      default = d$play_description
-    )
-  )
+  quarter_seconds_remaining <- time_to_seconds(time)
 
   # put plays in the right order
   # the !is.na(drive), drive part is to make the initial GAME line show up first
   # https://stackoverflow.com/questions/43343590/how-to-sort-putting-nas-first-in-dplyr
   play_order <- order(
-    d$game_id,
-    d$order_sequence,
-    d$quarter,
-    !is.na(d$quarter_seconds_remaining),
-    -d$quarter_seconds_remaining,
-    !is.na(d$drive),
-    d$drive,
-    d$index,
+    pbp$game_id[keep],
+    pbp$order_sequence[keep],
+    pbp$quarter[keep],
+    !is.na(quarter_seconds_remaining),
+    -quarter_seconds_remaining,
+    !is.na(pbp$drive[keep]),
+    pbp$drive[keep],
+    keep,
     method = "radix"
   )
-  d <- d[play_order]
+  d <- pbp[keep[play_order]]
+  data.table::set(
+    d,
+    j = c("time", "quarter_seconds_remaining"),
+    value = list(time[play_order], quarter_seconds_remaining[play_order])
+  )
+  kick_yards <- "(?<=kicks )[:alpha:]{1,}.[:alpha:]{1,}(?= yards)"
+  data.table::set(
+    d,
+    j = "play_description",
+    value = data.table::fifelse(
+      stringi::stri_detect_regex(d$play_description, kick_yards),
+      stringi::stri_replace_first_regex(
+        d$play_description,
+        kick_yards,
+        as.character(d$kick_distance)
+      ),
+      d$play_description,
+      na = d$play_description
+    )
+  )
 
   # helper, dropped below
   data.table::set(d, j = "tmp_desc_lower", value = tolower(d$play_description))
   # Using the various two point indicators, create a column denoting the result
   # outcome for two point conversions:
+  # (later conditions win)
+  two_point <- d$two_point_attempt == 1
+  two_point_return <- two_point & d$two_point_return == 1
+  two_point_safety <- two_point &
+    (d$two_point_rush_safety == 1 | d$two_point_pass_safety == 1)
+  two_point_failure <- two_point &
+    (d$two_point_rush_failed == 1 |
+      d$two_point_pass_failed == 1 |
+      d$two_point_pass_reception_failed == 1)
+  two_point_success <- two_point &
+    (d$two_point_rush_good == 1 |
+      d$two_point_pass_good == 1 |
+      d$two_point_pass_reception_good == 1)
   data.table::set(
     d,
     j = "two_point_conv_result",
-    value = data.table::fifelse(
-      (d$two_point_rush_good == 1 |
-        d$two_point_pass_good == 1 |
-        d$two_point_pass_reception_good == 1) &
-        d$two_point_attempt == 1,
-      "success",
-      NA_character_
-    )
-  )
-  data.table::set(
-    d,
-    j = "two_point_conv_result",
-    value = data.table::fifelse(
-      (d$two_point_rush_failed == 1 |
-        d$two_point_pass_failed == 1 |
-        d$two_point_pass_reception_failed == 1) &
-        d$two_point_attempt == 1,
-      "failure",
-      d$two_point_conv_result
-    )
-  )
-  data.table::set(
-    d,
-    j = "two_point_conv_result",
-    value = data.table::fifelse(
-      (d$two_point_rush_safety == 1 |
-        d$two_point_pass_safety == 1) &
-        d$two_point_attempt == 1,
-      "safety",
-      d$two_point_conv_result
-    )
-  )
-  data.table::set(
-    d,
-    j = "two_point_conv_result",
-    value = data.table::fifelse(
-      d$two_point_return == 1 &
-        d$two_point_attempt == 1,
+    value = data.table::fcase(
+      two_point_return,
       "return",
-      d$two_point_conv_result
+      two_point_safety,
+      "safety",
+      two_point_failure,
+      "failure",
+      two_point_success,
+      "success"
     )
   )
   # If the result was a success, make the yards_gained to be 2:
@@ -128,14 +111,21 @@ add_nflscrapr_mutations <- function(pbp) {
     )
   )
   # Fix yards_gained for plays with laterals
+  passing_differs <- !is.na(d$passing_yards) &
+    d$yards_gained != d$passing_yards &
+    d$penalty == 0
+  rushing_differs <- !is.na(d$rushing_yards) &
+    !is.na(d$lateral_rushing_yards) &
+    d$yards_gained != d$rushing_yards &
+    d$penalty == 0
   data.table::set(
     d,
     j = "yards_gained",
     value = data.table::fcase(
-      !is.na(d$passing_yards) & d$yards_gained != d$passing_yards & d$penalty == 0                                   ,
-      d$passing_yards                                                                                                ,
-      !is.na(d$rushing_yards) & !is.na(d$lateral_rushing_yards) & d$yards_gained != d$rushing_yards & d$penalty == 0 ,
-      d$rushing_yards + d$lateral_rushing_yards                                                                      ,
+      passing_differs,
+      d$passing_yards,
+      rushing_differs,
+      d$rushing_yards + d$lateral_rushing_yards,
       default = d$yards_gained
     )
   )
@@ -160,122 +150,62 @@ add_nflscrapr_mutations <- function(pbp) {
     )
   )
   # The new "dynamic Kickoff" in the 2024 season introduces new penalty types
-  data.table::set(
-    d,
-    j = "penalty_type",
-    value = data.table::fifelse(
-      d$penalty == 1 &
-        stringi::stri_detect_regex(
-          d$tmp_desc_lower,
-          "kickoff short of landing zone"
-        ),
-      "Kickoff Short of Landing Zone",
-      d$penalty_type
+  out_of_bounds <- d$penalty == 1 &
+    stringi::stri_detect_fixed(d$tmp_desc_lower, "kickoff out of bounds")
+  short_of_landing_zone <- d$penalty == 1 &
+    stringi::stri_detect_fixed(
+      d$tmp_desc_lower,
+      "kickoff short of landing zone"
     )
-  )
   data.table::set(
     d,
     j = "penalty_type",
-    value = data.table::fifelse(
-      d$penalty == 1 &
-        stringi::stri_detect_regex(
-          d$tmp_desc_lower,
-          "kickoff out of bounds"
-        ),
+    value = data.table::fcase(
+      out_of_bounds,
       "Kickoff Out of Bounds",
-      d$penalty_type
+      short_of_landing_zone,
+      "Kickoff Short of Landing Zone",
+      default = d$penalty_type
     )
   )
   # Make plays marked with down == 0 as NA:
   data.table::set(
     d,
     j = "down",
-    value = data.table::fifelse(
-      d$down == 0,
-      NA_real_,
-      d$down
-    )
+    value = data.table::fifelse(d$down == 0, NA_real_, d$down)
   )
-  # Using the field goal indicators make a column with the field goal result:
+  # Using the field goal indicators make a column with the field goal result
+  # (later conditions win):
+  fg <- d$field_goal_attempt == 1
   data.table::set(
     d,
     j = "field_goal_result",
-    value = data.table::fifelse(
-      d$field_goal_attempt == 1 &
-        d$field_goal_made == 1,
-      "made",
-      NA_character_
-    )
-  )
-  data.table::set(
-    d,
-    j = "field_goal_result",
-    value = data.table::fifelse(
-      d$field_goal_attempt == 1 &
-        d$field_goal_missed == 1,
+    value = data.table::fcase(
+      fg & d$field_goal_blocked == 1,
+      "blocked",
+      fg & d$field_goal_missed == 1,
       "missed",
-      d$field_goal_result
+      fg & d$field_goal_made == 1,
+      "made"
     )
   )
-  data.table::set(
-    d,
-    j = "field_goal_result",
-    value = data.table::fifelse(
-      d$field_goal_attempt == 1 &
-        d$field_goal_blocked == 1,
-      "blocked",
-      d$field_goal_result
-    )
-  )
-  # Using the indicators make a column with the extra point result:
+  # Using the indicators make a column with the extra point result (later
+  # conditions win):
+  xp <- d$extra_point_attempt == 1
   data.table::set(
     d,
     j = "extra_point_result",
-    value = data.table::fifelse(
-      d$extra_point_attempt == 1 &
-        d$extra_point_good == 1,
-      "good",
-      NA_character_
-    )
-  )
-  data.table::set(
-    d,
-    j = "extra_point_result",
-    value = data.table::fifelse(
-      d$extra_point_attempt == 1 &
-        d$extra_point_failed == 1,
-      "failed",
-      d$extra_point_result
-    )
-  )
-  data.table::set(
-    d,
-    j = "extra_point_result",
-    value = data.table::fifelse(
-      d$extra_point_attempt == 1 &
-        d$extra_point_blocked == 1,
-      "blocked",
-      d$extra_point_result
-    )
-  )
-  data.table::set(
-    d,
-    j = "extra_point_result",
-    value = data.table::fifelse(
-      d$extra_point_attempt == 1 &
-        d$extra_point_safety == 1,
-      "safety",
-      d$extra_point_result
-    )
-  )
-  data.table::set(
-    d,
-    j = "extra_point_result",
-    value = data.table::fifelse(
-      d$extra_point_attempt == 1 &
-        d$extra_point_aborted == 1,
+    value = data.table::fcase(
+      xp & d$extra_point_aborted == 1,
       "aborted",
-      d$extra_point_result
+      xp & d$extra_point_safety == 1,
+      "safety",
+      xp & d$extra_point_blocked == 1,
+      "blocked",
+      xp & d$extra_point_failed == 1,
+      "failed",
+      xp & d$extra_point_good == 1,
+      "good"
     )
   )
   # find kickoffs with penalty: a play where the next play is a kickoff
@@ -329,32 +259,34 @@ add_nflscrapr_mutations <- function(pbp) {
   )
   # Make the possession team for kickoffs be the return team, since that is
   # more intuitive from the EPA / WPA point of view:
+  is_kickoff <- d$lead_ko == 1 |
+    d$kickoff_attempt == 1 |
+    # kickoff_finder is defined below
+    stringi::stri_detect_regex(d$play_description, kickoff_finder)
   data.table::set(
     d,
     j = "posteam",
     value = data.table::fcase(
-      # kickoff_finder is defined below
-      (d$lead_ko == 1 | d$kickoff_attempt == 1 | stringi::stri_detect_regex(d$play_description, kickoff_finder)) & d$posteam == d$home_team ,
-      d$away_team                                                                                                                           ,
-      (d$lead_ko == 1 | d$kickoff_attempt == 1 | stringi::stri_detect_regex(d$play_description, kickoff_finder)) & d$posteam == d$away_team ,
-      d$home_team                                                                                                                           ,
+      is_kickoff & d$posteam == d$home_team,
+      d$away_team,
+      is_kickoff & d$posteam == d$away_team,
+      d$home_team,
       default = d$posteam
     )
   )
   # Fill in the rows with missing posteam with the lead:
   d[,
-    posteam := data.table::fifelse(
-      (quarter_end == 1 | posteam == ""),
-      data.table::shift(posteam, type = "lead"),
-      posteam
-    ),
-    by = "game_id"
-  ]
-  d[,
-    posteam_id := data.table::fifelse(
-      (quarter_end == 1 | posteam_id == ""),
-      data.table::shift(posteam_id, type = "lead"),
-      posteam_id
+    c("posteam", "posteam_id") := list(
+      data.table::fifelse(
+        quarter_end == 1 | posteam == "",
+        data.table::shift(posteam, type = "lead"),
+        posteam
+      ),
+      data.table::fifelse(
+        quarter_end == 1 | posteam_id == "",
+        data.table::shift(posteam_id, type = "lead"),
+        posteam_id
+      )
     ),
     by = "game_id"
   ]
@@ -376,27 +308,20 @@ add_nflscrapr_mutations <- function(pbp) {
   data.table::set(
     d,
     j = "posteam_type",
-    value = data.table::fifelse(
-      d$posteam == d$home_team,
-      "home",
-      "away"
-    )
+    value = data.table::fifelse(d$posteam == d$home_team, "home", "away")
   )
   # manual posteam adjustments for rare plays with issues related to game
   # delays.
+  # 2025_01_CAR_JAX, 1317: Game resumed after weather delay
+  # AND it was delayed right after a PAT.
+  # Prior two plays were delay info that shouldn't have posteam in order
+  # to get correct fixed drive results #529
+  # https://github.com/nflverse/nflfastR/issues/529
   data.table::set(
     d,
+    i = which(d$game_id == "2025_01_CAR_JAX" & d$play_id %in% c(1282, 1303)),
     j = "posteam",
-    value = data.table::fcase(
-      # 2025_01_CAR_JAX, 1317: Game resumed after weather delay
-      # AND it was delayed right after a PAT.
-      # Prior two plays were delay info that shouldn't have posteam in order
-      # to get correct fixed drive results #529
-      # https://github.com/nflverse/nflfastR/issues/529
-      d$game_id == "2025_01_CAR_JAX" & d$play_id %in% c(1282, 1303) ,
-      NA_character_                                                 ,
-      default = d$posteam
-    )
+    value = NA_character_
   )
   # Column denoting which team is on defense:
   data.table::set(
@@ -412,7 +337,7 @@ add_nflscrapr_mutations <- function(pbp) {
     d,
     j = "yardline",
     value = data.table::fifelse(
-      stringi::stri_detect_regex(d$yardline, "50"),
+      stringi::stri_detect_fixed(d$yardline, "50"),
       "MID 50",
       d$yardline
     )
@@ -485,22 +410,19 @@ add_nflscrapr_mutations <- function(pbp) {
       as.numeric()
   )
   # Result of replay or challenge:
+  replay_result <- stringi::stri_extract_first_regex(
+    d$tmp_desc_lower,
+    " (upheld|reversed|confirmed)"
+  )
   data.table::set(
     d,
     j = "replay_or_challenge_result",
     value = data.table::fifelse(
       d$replay_or_challenge == 1,
       data.table::fifelse(
-        stringi::stri_detect_regex(
-          d$tmp_desc_lower,
-          "( upheld)|( reversed)|( confirmed)"
-        ),
-        stringi::stri_extract_first_regex(
-          d$tmp_desc_lower,
-          "( upheld)|( reversed)|( confirmed)"
-        ) |>
-          stringi::stri_trim_both(),
-        "denied"
+        is.na(replay_result),
+        "denied",
+        stringi::stri_trim_both(replay_result)
       ),
       NA_character_
     )
@@ -547,38 +469,24 @@ add_nflscrapr_mutations <- function(pbp) {
     d,
     j = "qb_kneel",
     value = data.table::fifelse(
-      stringi::stri_detect_regex(d$play_description, " kneels ") &
+      stringi::stri_detect_fixed(d$play_description, " kneels ") &
         d$kickoff_attempt != 1,
       1,
       0
     )
   )
-  data.table::set(
-    d,
-    j = "qb_spike",
-    value = stringi::stri_detect_regex(d$play_description, " spiked ") |>
-      as.numeric()
+  flags <- c(
+    qb_spike = " spiked ",
+    qb_scramble = " scrambles ",
+    shotgun = "Shotgun",
+    no_huddle = "No Huddle"
   )
   data.table::set(
     d,
-    j = "qb_scramble",
-    value = stringi::stri_detect_regex(
-      d$play_description,
-      " scrambles "
-    ) |>
-      as.numeric()
-  )
-  data.table::set(
-    d,
-    j = "shotgun",
-    value = stringi::stri_detect_regex(d$play_description, "Shotgun") |>
-      as.numeric()
-  )
-  data.table::set(
-    d,
-    j = "no_huddle",
-    value = stringi::stri_detect_regex(d$play_description, "No Huddle") |>
-      as.numeric()
+    j = names(flags),
+    value = lapply(flags, function(pattern) {
+      as.numeric(stringi::stri_detect_fixed(d$play_description, pattern))
+    })
   )
   # Create a play type column: either pass, run, field_goal, extra_point,
   # kickoff, punt, qb_kneel, qb_spike, or no_play (which includes timeouts and
@@ -595,7 +503,7 @@ add_nflscrapr_mutations <- function(pbp) {
       punt_attempt = d$punt_attempt,
       field_goal_attempt = d$field_goal_attempt,
       penalty = d$penalty,
-      is_penalty_enforced_between_downs = stringi::stri_detect_regex(
+      is_penalty_enforced_between_downs = stringi::stri_detect_fixed(
         d$tmp_desc_lower,
         "enforced between downs"
       )
@@ -646,14 +554,12 @@ add_nflscrapr_mutations <- function(pbp) {
     d,
     j = "game_half",
     value = data.table::fcase(
-      d$quarter %in% c(1, 2) ,
-      "Half1"                ,
-      d$quarter %in% c(3, 4) ,
-      "Half2"                ,
-      d$quarter >= 5         ,
-      "Overtime"             ,
-      FALSE                  ,
-      NA_character_
+      d$quarter %in% c(1, 2),
+      "Half1",
+      d$quarter %in% c(3, 4),
+      "Half2",
+      d$quarter >= 5,
+      "Overtime"
     )
   )
   # Create columns to denote the timeouts remaining for each team, making
@@ -662,79 +568,44 @@ add_nflscrapr_mutations <- function(pbp) {
   # Initialize both home and away to have 3 timeouts for each
   # half except overtime where they have 2:
   # extract timeouts from failed challenges when it's not otherwise there
-  data.table::set(
-    d,
-    j = "tmp_timeout",
-    value = stringi::stri_extract_first_regex(
-      d$play_description,
-      "(?<=by\\s)[:upper:]{2,3}(?=\\s)"
-    )
-  )
+  challenge_timeout <- d$replay_or_challenge == 1 &
+    d$timeout == 1 &
+    is.na(d$timeout_team)
   data.table::set(
     d,
     j = "timeout_team",
     value = data.table::fifelse(
-      d$replay_or_challenge == 1 &
-        d$timeout == 1 &
-        is.na(d$timeout_team),
-      d$tmp_timeout,
+      challenge_timeout,
+      apply_where(challenge_timeout, d$play_description, function(x) {
+        stringi::stri_extract_first_regex(x, "(?<=by\\s)[:upper:]{2,3}(?=\\s)")
+      }),
       d$timeout_team
     )
   )
+  timeouts_per_half <- data.table::fifelse(d$quarter %in% c(1, 2, 3, 4), 3, 2)
   data.table::set(
     d,
-    j = "home_timeouts_remaining",
-    value = data.table::fifelse(
-      d$quarter %in% c(1, 2, 3, 4),
-      3,
-      2
-    )
-  )
-  data.table::set(
-    d,
-    j = "away_timeouts_remaining",
-    value = data.table::fifelse(
-      d$quarter %in% c(1, 2, 3, 4),
-      3,
-      2
-    )
-  )
-  data.table::set(
-    d,
-    j = "home_timeout_used",
-    value = data.table::fifelse(
-      d$timeout == 1 &
-        d$timeout_team == d$home_team,
-      1,
-      0
-    )
-  )
-  data.table::set(
-    d,
-    j = "away_timeout_used",
-    value = data.table::fifelse(
-      d$timeout == 1 &
-        d$timeout_team == d$away_team,
-      1,
-      0
-    )
-  )
-  data.table::set(
-    d,
-    j = "home_timeout_used",
-    value = data.table::fifelse(
-      is.na(d$home_timeout_used),
-      0,
-      d$home_timeout_used
-    )
-  )
-  data.table::set(
-    d,
-    j = "away_timeout_used",
-    value = data.table::fifelse(
-      is.na(d$away_timeout_used),
-      0,
-      d$away_timeout_used
+    j = c(
+      "home_timeouts_remaining",
+      "away_timeouts_remaining",
+      "home_timeout_used",
+      "away_timeout_used"
+    ),
+    value = list(
+      timeouts_per_half,
+      timeouts_per_half,
+      data.table::fifelse(
+        d$timeout == 1 & d$timeout_team == d$home_team,
+        1,
+        0,
+        na = 0
+      ),
+      data.table::fifelse(
+        d$timeout == 1 & d$timeout_team == d$away_team,
+        1,
+        0,
+        na = 0
+      )
     )
   )
 
@@ -749,10 +620,14 @@ add_nflscrapr_mutations <- function(pbp) {
     data.table::set(
       d,
       j = col,
-      value = data.table::fcase(
-        stringi::stri_detect_regex(x, "[:upper:]{2,3}(?=[:digit:]{1,2})")                                                                          ,
-        stringi::stri_c(stringi::stri_extract_first_regex(x, "[:upper:]{2,3}"), stringi::stri_extract_first_regex(x, "[:digit:]{1,2}"), sep = " ") ,
-        default = x
+      value = data.table::fifelse(
+        stringi::stri_detect_regex(x, "[:upper:]{2,3}(?=[:digit:]{1,2})"),
+        paste(
+          stringi::stri_extract_first_regex(x, "[:upper:]{2,3}"),
+          stringi::stri_extract_first_regex(x, "[:digit:]{1,2}")
+        ),
+        x,
+        na = x
       )
     )
   }
@@ -761,16 +636,8 @@ add_nflscrapr_mutations <- function(pbp) {
   # half:
   d[,
     c("total_home_timeouts_used", "total_away_timeouts_used") := list(
-      data.table::fifelse(
-        cumsum(home_timeout_used) > 3,
-        3,
-        cumsum(home_timeout_used)
-      ),
-      data.table::fifelse(
-        cumsum(away_timeout_used) > 3,
-        3,
-        cumsum(away_timeout_used)
-      )
+      pmin(cumsum(home_timeout_used), 3),
+      pmin(cumsum(away_timeout_used), 3)
     ),
     by = c("game_id", "game_half")
   ]
@@ -814,167 +681,34 @@ add_nflscrapr_mutations <- function(pbp) {
   # both the home and away teams:
   data.table::set(
     d,
-    j = "home_points_scored",
-    value = data.table::fifelse(
-      d$touchdown == 1 &
-        d$td_team == d$home_team,
-      6,
-      0
-    )
+    j = c("home_points_scored", "away_points_scored"),
+    value = list(points_scored(d, d$home_team), points_scored(d, d$away_team))
   )
-  data.table::set(
-    d,
-    j = "home_points_scored",
-    value = data.table::fifelse(
-      d$posteam == d$home_team &
-        d$field_goal_made == 1,
-      3,
-      d$home_points_scored
-    )
-  )
-  data.table::set(
-    d,
-    j = "home_points_scored",
-    value = data.table::fifelse(
-      d$posteam == d$home_team &
-        (d$extra_point_good == 1 |
-          d$extra_point_safety == 1 |
-          d$two_point_rush_safety == 1 |
-          d$two_point_pass_safety == 1),
-      1,
-      d$home_points_scored
-    )
-  )
-  data.table::set(
-    d,
-    j = "home_points_scored",
-    value = data.table::fifelse(
-      d$posteam == d$home_team &
-        (d$two_point_rush_good == 1 |
-          d$two_point_pass_good == 1 |
-          d$two_point_pass_reception_good == 1),
-      2,
-      d$home_points_scored
-    )
-  )
-  data.table::set(
-    d,
-    j = "home_points_scored",
-    value = data.table::fifelse(
-      d$defteam == d$home_team &
-        (d$two_point_return == 1 | d$defensive_two_point_conv == 1),
-      2,
-      d$home_points_scored
-    )
-  )
-  data.table::set(
-    d,
-    j = "home_points_scored",
-    value = data.table::fifelse(
-      d$safety_team == d$home_team & d$safety == 1,
-      2,
-      d$home_points_scored
-    )
-  )
-  data.table::set(
-    d,
-    j = "away_points_scored",
-    value = data.table::fifelse(
-      d$touchdown == 1 &
-        d$td_team == d$away_team,
-      6,
-      0
-    )
-  )
-  data.table::set(
-    d,
-    j = "away_points_scored",
-    value = data.table::fifelse(
-      d$posteam == d$away_team &
-        d$field_goal_made == 1,
-      3,
-      d$away_points_scored
-    )
-  )
-  data.table::set(
-    d,
-    j = "away_points_scored",
-    value = data.table::fifelse(
-      d$posteam == d$away_team &
-        (d$extra_point_good == 1 |
-          d$extra_point_safety == 1 |
-          d$two_point_rush_safety == 1 |
-          d$two_point_pass_safety == 1),
-      1,
-      d$away_points_scored
-    )
-  )
-  data.table::set(
-    d,
-    j = "away_points_scored",
-    value = data.table::fifelse(
-      d$posteam == d$away_team &
-        (d$two_point_rush_good == 1 |
-          d$two_point_pass_good == 1 |
-          d$two_point_pass_reception_good == 1),
-      2,
-      d$away_points_scored
-    )
-  )
-  data.table::set(
-    d,
-    j = "away_points_scored",
-    value = data.table::fifelse(
-      d$defteam == d$away_team &
-        (d$two_point_return == 1 | d$defensive_two_point_conv == 1),
-      2,
-      d$away_points_scored
-    )
-  )
-  data.table::set(
-    d,
-    j = "away_points_scored",
-    value = data.table::fifelse(
-      d$safety_team == d$away_team & d$safety == 1,
-      2,
-      d$away_points_scored
-    )
-  )
-  data.table::set(
-    d,
-    j = "home_points_scored",
-    value = data.table::fifelse(
-      is.na(d$home_points_scored),
-      0,
-      d$home_points_scored
-    )
-  )
-  data.table::set(
-    d,
-    j = "away_points_scored",
-    value = data.table::fifelse(
-      is.na(d$away_points_scored),
-      0,
-      d$away_points_scored
-    )
-  )
-  # Now create cumulative totals:
-  d[, total_home_score := cumsum(home_points_scored), by = "game_id"]
-  d[, total_away_score := cumsum(away_points_scored), by = "game_id"]
+  # Now create cumulative totals and the score before the play:
   d[,
-    posteam_score := data.table::fifelse(
-      posteam == home_team,
-      data.table::shift(total_home_score),
-      data.table::shift(total_away_score)
-    ),
-    by = "game_id"
-  ]
-  d[,
-    defteam_score := data.table::fifelse(
-      defteam == home_team,
-      data.table::shift(total_home_score),
-      data.table::shift(total_away_score)
-    ),
+    c(
+      "total_home_score",
+      "total_away_score",
+      "posteam_score",
+      "defteam_score"
+    ) := {
+      home_score <- cumsum(home_points_scored)
+      away_score <- cumsum(away_points_scored)
+      list(
+        home_score,
+        away_score,
+        data.table::fifelse(
+          posteam == home_team,
+          data.table::shift(home_score),
+          data.table::shift(away_score)
+        ),
+        data.table::fifelse(
+          defteam == home_team,
+          data.table::shift(home_score),
+          data.table::shift(away_score)
+        )
+      )
+    },
     by = "game_id"
   ]
   data.table::set(
@@ -1016,9 +750,7 @@ add_nflscrapr_mutations <- function(pbp) {
   data.table::set(
     d,
     j = "abs_score_differential_post",
-    value = abs(
-      d$posteam_score_post - d$defteam_score_post
-    )
+    value = abs(d$score_differential_post)
   )
   # Create a variable for whether or not a touchback occurred, this
   # will apply to any type of play:
@@ -1055,29 +787,22 @@ add_nflscrapr_mutations <- function(pbp) {
   # kick distance is NA on kickoffs and punts that result in touchbacks
   # (unless the kick/punt) was caught between endzones
   # we use yardline_100 to add it in those cases
-  data.table::set(
-    d,
-    j = "is_relevant_touchback",
-    value = as.numeric(
-      is.na(d$kick_distance) &
-        d$touchback == 1 &
-        d$play_type %in% c("punt", "kickoff")
-    )
-  )
+  is_relevant_touchback <- is.na(d$kick_distance) &
+    d$touchback == 1 &
+    d$play_type %in% c("punt", "kickoff")
   data.table::set(
     d,
     j = "kick_distance",
     value = data.table::fcase(
-      d$is_relevant_touchback == 1 & d$kickoff_attempt == 0 ,
-      d$yardline_100                                        ,
+      is_relevant_touchback & d$kickoff_attempt == 0,
+      d$yardline_100,
       # gotta reverse yardline_100 on kickoffs
-      d$is_relevant_touchback == 1 & d$kickoff_attempt == 1 ,
-      100 - d$yardline_100                                  ,
+      is_relevant_touchback & d$kickoff_attempt == 1,
+      100 - d$yardline_100,
       default = d$kick_distance
     )
   )
   # drop helper variables
-  data.table::set(d, j = "is_relevant_touchback", value = NULL)
   data.table::set(d, j = "tmp_desc_lower", value = NULL)
 
   d <- fix_scrambles(d)
@@ -1085,6 +810,40 @@ add_nflscrapr_mutations <- function(pbp) {
 
   user_message("added nflscrapR variables", "done")
   d
+}
+
+# Points scored by team on each play (later conditions win)
+points_scored <- function(d, team) {
+  has_ball <- d$posteam == team
+  safety <- d$safety_team == team & d$safety == 1
+  defensive_two_point <- d$defteam == team &
+    (d$two_point_return == 1 | d$defensive_two_point_conv == 1)
+  two_point <- has_ball &
+    (d$two_point_rush_good == 1 |
+      d$two_point_pass_good == 1 |
+      d$two_point_pass_reception_good == 1)
+  one_point <- has_ball &
+    (d$extra_point_good == 1 |
+      d$extra_point_safety == 1 |
+      d$two_point_rush_safety == 1 |
+      d$two_point_pass_safety == 1)
+  field_goal <- has_ball & d$field_goal_made == 1
+  touchdown <- d$touchdown == 1 & d$td_team == team
+  data.table::fcase(
+    safety,
+    2,
+    defensive_two_point,
+    2,
+    two_point,
+    2,
+    one_point,
+    1,
+    field_goal,
+    3,
+    touchdown,
+    6,
+    default = 0
+  )
 }
 
 # to help find kickoffs on plays with penalties
@@ -1113,14 +872,14 @@ make_model_mutations <- function(pbp) {
     era4 = era4,
     #for fg model, an era factor
     era = as.factor(data.table::fcase(
-      era0 == 1             ,
-                          0 ,
-      era1 == 1             ,
-                          1 ,
-      era2 == 1             ,
-                          2 ,
-      era3 == 1 | era4 == 1 ,
-                          3
+      era0 == 1,
+      0,
+      era1 == 1,
+      1,
+      era2 == 1,
+      2,
+      era3 == 1 | era4 == 1,
+      3
     )),
     down1 = data.table::fifelse(pbp$down == 1, 1, 0),
     down2 = data.table::fifelse(pbp$down == 2, 1, 0),
@@ -1181,61 +940,61 @@ translate_play_type_nfl <- function(
   x <- play_type_nfl
 
   out <- data.table::fcase(
-    x == "COMMENT"                                                         ,
-    NA_character_                                                          ,
-    x == "END_GAME"                                                        ,
-    NA_character_                                                          ,
-    x == "END_QUARTER"                                                     ,
-    NA_character_                                                          ,
-    x == "FIELD_GOAL"                                                      ,
-    "field_goal"                                                           ,
-    x == "FREE_KICK"                                                       ,
-    "kickoff"                                                              ,
-    x == "GAME_START"                                                      ,
-    NA_character_                                                          ,
-    x == "INTERCEPTION"                                                    ,
-    "pass"                                                                 ,
-    x == "KICK_OFF"                                                        ,
-    "kickoff"                                                              ,
-    x == "PASS"                                                            ,
-    "pass"                                                                 ,
-    x == "PAT2" & pass_attempt == 1                                        ,
-    "pass"                                                                 ,
-    x == "PAT2" & rush_attempt == 1                                        ,
-    "run"                                                                  ,
-    x == "PENALTY" & pass_attempt == 1 & is_penalty_enforced_between_downs ,
-    "pass"                                                                 ,
-    x == "PENALTY" & rush_attempt == 1 & is_penalty_enforced_between_downs ,
-    "run"                                                                  ,
-    x == "PENALTY"                                                         ,
-    "no_play"                                                              ,
-    x == "PUNT"                                                            ,
-    "punt"                                                                 ,
-    x == "RUSH"                                                            ,
-    "run"                                                                  ,
-    x == "SACK"                                                            ,
-    "pass"                                                                 ,
-    x == "TIMEOUT"                                                         ,
-    "no_play"                                                              ,
-    x == "XP_KICK"                                                         ,
-    "extra_point"                                                          ,
+    x == "COMMENT",
+    NA_character_,
+    x == "END_GAME",
+    NA_character_,
+    x == "END_QUARTER",
+    NA_character_,
+    x == "FIELD_GOAL",
+    "field_goal",
+    x == "FREE_KICK",
+    "kickoff",
+    x == "GAME_START",
+    NA_character_,
+    x == "INTERCEPTION",
+    "pass",
+    x == "KICK_OFF",
+    "kickoff",
+    x == "PASS",
+    "pass",
+    x == "PAT2" & pass_attempt == 1,
+    "pass",
+    x == "PAT2" & rush_attempt == 1,
+    "run",
+    x == "PENALTY" & pass_attempt == 1 & is_penalty_enforced_between_downs,
+    "pass",
+    x == "PENALTY" & rush_attempt == 1 & is_penalty_enforced_between_downs,
+    "run",
+    x == "PENALTY",
+    "no_play",
+    x == "PUNT",
+    "punt",
+    x == "RUSH",
+    "run",
+    x == "SACK",
+    "pass",
+    x == "TIMEOUT",
+    "no_play",
+    x == "XP_KICK",
+    "extra_point",
     # UNSPECIFIED is a mix of all sorts of weird plays
-    x == "UNSPECIFIED" & penalty == 1                                      ,
-    "no_play"                                                              ,
+    x == "UNSPECIFIED" & penalty == 1,
+    "no_play",
     # the following lines imply penalty == 0 because penalty == 1 triggers above
-    x == "UNSPECIFIED" & pass_attempt == 1                                 ,
-    "pass"                                                                 ,
-    x == "UNSPECIFIED" & rush_attempt == 1                                 ,
-    "run"                                                                  ,
-    x == "UNSPECIFIED" & punt_attempt == 1                                 ,
-    "punt"                                                                 ,
-    x == "UNSPECIFIED" & field_goal_attempt == 1                           ,
-    "field_goal"                                                           ,
+    x == "UNSPECIFIED" & pass_attempt == 1,
+    "pass",
+    x == "UNSPECIFIED" & rush_attempt == 1,
+    "run",
+    x == "UNSPECIFIED" & punt_attempt == 1,
+    "punt",
+    x == "UNSPECIFIED" & field_goal_attempt == 1,
+    "field_goal",
     # most of the remaining UNSPECIFIED plays will be declined penalties
     # from punt or fg formation. These don't really count as play so we define
     # them as no_play
-    x == "UNSPECIFIED"                                                     ,
-    "no_play"                                                              ,
+    x == "UNSPECIFIED",
+    "no_play",
     # default
     default = ""
   )
@@ -1244,20 +1003,20 @@ translate_play_type_nfl <- function(
   # will be an empty string. We try to resolve these as good as we can
   # also need to replace passes and runs that were spikes and kneel downs
   data.table::fcase(
-    out == "" & penalty == 1                  ,
-    "no_play"                                 ,
-    out == "" & pass_attempt == 1             ,
-    "pass"                                    ,
-    out == "" & rush_attempt == 1             ,
-    "run"                                     ,
-    out == "" & punt_attempt == 1             ,
-    "punt"                                    ,
-    out == "" & field_goal_attempt == 1       ,
-    "field_goal"                              ,
-    qb_spike == 1 & out %in% c("pass", "run") ,
-    "qb_spike"                                ,
-    qb_kneel == 1 & out %in% c("pass", "run") ,
-    "qb_kneel"                                ,
+    out == "" & penalty == 1,
+    "no_play",
+    out == "" & pass_attempt == 1,
+    "pass",
+    out == "" & rush_attempt == 1,
+    "run",
+    out == "" & punt_attempt == 1,
+    "punt",
+    out == "" & field_goal_attempt == 1,
+    "field_goal",
+    qb_spike == 1 & out %in% c("pass", "run"),
+    "qb_spike",
+    qb_kneel == 1 & out %in% c("pass", "run"),
+    "qb_kneel",
     default = out
   )
 }
