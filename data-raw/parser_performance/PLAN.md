@@ -74,6 +74,8 @@ Memory was reduced next, again with `identical()` output. Peak memory of `build_
 
 Measure memory with `gc(reset = TRUE)` before and the "max used" of `gc()` after a step (in a fresh process, models preloaded, because the first `load_model()` and `nflreadr::load_players()` count otherwise), and `/usr/bin/time -l` for the RSS of the whole process. `bench::bench_memory()` inflates the heap a lot. Rprof memory profiles attribute the allocations of lazily evaluated arguments (e.g. a dplyr pipe passed to a function) to the called function.
 
+`%in%` on character vectors became data.table's `%chin%` (22 lines, mostly in the parser: `play_type`, `series_result`, `field_goal_result`, `season_type`, the `scramble_fix` lookup; also `calculate_stats()`, `calculate_series_conversion_rates()` and `completed_game_ids()`). On 50k plays it is about 4x faster with 4x less memory (0.2 ms vs 0.8 ms), so the effect on a full build is small. Results are the same, including `NA` handling. Checked with the test suite and the regression games test, not with `identical()` on full builds. Numeric and scalar `%in%` calls stay; `substr(id, 1, 4) %in% seq.int(...)` in `maybe_valid()` and `verify_game_ids()` compares character to numbers and must keep `%in%`.
+
 ## Notes for the next agent
 
 The paragraphs above are the history. This section describes the state of branch `parser-performance` (based on `regression-test-games`, pushed, no pull request yet) and what you need to continue.
