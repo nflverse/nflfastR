@@ -420,7 +420,7 @@ fast_scraper <- function(
     cli::cli_abort("Param {.code game_ids} is not a valid vector!")
   }
 
-  if (length(game_ids) > 1 && is_sequential()) {
+  if (length(game_ids) > 1 && is_sequential() && is_verbose()) {
     cli::cli_alert_info(
       c(
         "It is recommended to use parallel processing when trying to load multiple games.",
@@ -474,7 +474,7 @@ fast_scraper <- function(
   if (in_builder && data.table::is.data.table(pbp)) {
     return(pbp)
   }
-  if (!in_builder) {
+  if (!in_builder && is_verbose()) {
     str <- paste0(my_time(), " | Procedure completed.")
     cli::cli_alert_success("{.field {str}}")
   }

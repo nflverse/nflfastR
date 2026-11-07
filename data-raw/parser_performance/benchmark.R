@@ -1,12 +1,15 @@
 # Time every step of build_nflfastR_pbp() on one season and on one game.
 # Usage (from the package root):
-#   Rscript data-raw/parser_performance/benchmark.R <raw_dir> [season] [game_id]
+#   Rscript data-raw/parser_performance/benchmark.R <raw_dir> [season] [game_id] [verbose]
+# verbose is TRUE (default) or FALSE and sets options(nflfastR.verbose)
 # <raw_dir> is a directory with raw pbp files as written by save_raw_pbp().
 
 args <- commandArgs(TRUE)
 dir <- args[1]
 season <- as.integer(if (length(args) >= 2) args[2] else 2023)
 single_id <- if (length(args) >= 3) args[3] else "2023_05_KC_MIN"
+verbose <- if (length(args) >= 4) as.logical(args[4]) else TRUE
+options(nflfastR.verbose = verbose)
 
 suppressMessages(devtools::load_all(quiet = TRUE))
 future::plan("sequential")

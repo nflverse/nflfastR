@@ -1,6 +1,9 @@
 # The function `message_completed` to create the green "...completed" message
 # only exists to hide the option `in_builder` in dots
 message_completed <- function(x, in_builder = FALSE) {
+  if (!is_verbose()) {
+    return(invisible())
+  }
   if (isFALSE(in_builder)) {
     str <- paste0(my_time(), " | ", x)
     cli::cli_alert_success("{.field {str}}")
@@ -10,6 +13,9 @@ message_completed <- function(x, in_builder = FALSE) {
 }
 
 user_message <- function(x, type) {
+  if (!is_verbose()) {
+    return(invisible())
+  }
   if (type == "done") {
     cli::cli_alert_success("{my_time()} | {x}")
   } else if (type == "todo") {
@@ -472,6 +478,11 @@ utils::globalVariables(
   ),
   add = TRUE
 )
+
+# Progress messages can be turned off with options(nflfastR.verbose = FALSE)
+is_verbose <- function() {
+  !isFALSE(getOption("nflfastR.verbose", default = TRUE))
+}
 
 # Inside build_nflfastR_pbp() the steps change one data.table by reference.
 # The exported steps can also be called by users. Then they work on a copy and

@@ -47,7 +47,7 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
   rlang::check_installed("nflreadr (>= 1.3.0)", "to decode player IDs.")
 
   if (isFALSE(fast)) {
-    if (nrow(pbp) > 1000 && is_sequential()) {
+    if (nrow(pbp) > 1000 && is_sequential() && is_verbose()) {
       cli::cli_alert_info(c(
         "It is recommended to use parallel processing when trying to to decode big data frames.",
         "Please consider running {.code future::plan(\"multisession\")}! ",

@@ -98,6 +98,16 @@
 #' For more information on `.Rprofile` please see
 #' [this book chapter](https://rstats.wtf/r-startup.html).
 #'
+#' ## Turn Off Messages
+#'
+#' The functions that build play-by-play data print a message for every step.
+#' To turn them off, e.g. when building single games repeatedly, set
+#' ```
+#' options(nflfastR.verbose = FALSE)
+#' ```
+#' Warnings and errors are still shown. This also skips a few milliseconds per
+#' message.
+#'
 "_PACKAGE"
 
 # The following block is used by usethis to automatically manage
