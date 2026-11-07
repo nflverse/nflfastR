@@ -106,7 +106,7 @@ Every change was checked with `identical()` against the previous version, not on
 
 `.github/workflows/benchmark.yaml` runs `data-raw/parser_performance/compare_benchmark.R` on `ubuntu-latest`: `build_nflfastR_pbp()` of the branch against master (or the `base` input) on the ~100 regression games and on one game (median of 10, after a warm-up), each measurement in a fresh R process, alternating the versions. It also compares the outputs of both versions. The result is in the job summary.
 
-- It currently also runs on every push to `parser-performance` (a temporary trigger, because `workflow_dispatch` only works once the file is on the default branch). Remove that trigger before merging.
+- It runs on pull requests that change the parser and, once the file is on the default branch, manually (`workflow_dispatch`). A temporary `push` trigger for this branch was removed after the pull request was opened, because it ran the benchmark twice for every push (against master and against the pull request base).
 - Against master, the output check reports `xyac_median_yardage` (integer → double). That's the intended change of the base branch `regression-test-games`, not a bug.
 - Locally (Apple Silicon, single-threaded xgboost): 100 regression games 55.2 s → 12.1 s, single game 1359 ms → 317 ms.
 - On GitHub (`ubuntu-latest`, 4 cores, run 42393129509): 100 regression games 113.4 s → 17.5 s (6.5x), single game 2904 ms → 616 ms (4.7x).
@@ -115,7 +115,7 @@ Every change was checked with `identical()` against the previous version, not on
 ### Open items
 
 - Find out why the Linux output differs slightly from master (see the benchmark workflow notes above).
-- Remove the temporary push trigger of the benchmark workflow before merging, and open the pull request (`regression-test-games` should be merged first).
+- Pull request #622 is open against `regression-test-games` (#621), which should be merged first.
 - `add_xyac()`: ~14.5 s per season are xgboost predictions. On macOS, chunks across `future` workers would help; on Linux, xgboost already uses all cores.
 - `tidy_play_stats()` is an R loop; a C++ port would save ~2 s per season.
 - `calculate_expected_points()` still uses dplyr.

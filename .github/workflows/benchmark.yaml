@@ -12,11 +12,6 @@ on:
         description: "Number of runs per version"
         default: "3"
         type: string
-  # TEMPORARY: workflow_dispatch only works once this file is on the default
-  # branch, so the benchmark runs on pushes to this branch until it's merged.
-  # Remove this trigger before merging.
-  push:
-    branches: [parser-performance]
   pull_request:
     paths:
       - "R/**"
