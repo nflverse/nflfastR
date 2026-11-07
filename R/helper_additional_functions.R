@@ -58,229 +58,318 @@ clean_pbp <- function(pbp, ...) {
     # drop existing values of clean_pbp
     pbp <- pbp[!names(pbp) %in% drop.cols]
 
-    # All steps work on a list of column vectors instead of dplyr verbs (much
-    # faster on single games). Grouped dplyr operations use the helpers in
-    # utils.R
-    d <- as_column_list(pbp)
-    d$aborted_play <- data.table::fifelse(
-      stringi::stri_detect_regex(d$desc, 'Aborted'),
-      1,
-      0
+    d <- as_pbp_dt(pbp)
+    data.table::set(
+      d,
+      j = "aborted_play",
+      value = data.table::fifelse(
+        stringi::stri_detect_regex(d$desc, 'Aborted'),
+        1,
+        0
+      )
     )
     #get rid of extraneous spaces that mess with player name finding
     #if there is a space or dash, and then a capital letter, and then a period, and then a space, take out the space
-    d$desc <- stringi::stri_replace_all_regex(
-      d$desc,
-      "(((\\s)|(\\-))[A-Z]\\.)\\s+",
-      "$1"
+    data.table::set(
+      d,
+      j = "desc",
+      value = stringi::stri_replace_all_regex(
+        d$desc,
+        "(((\\s)|(\\-))[A-Z]\\.)\\s+",
+        "$1"
+      )
     )
-    d$success <- data.table::fifelse(
-      is.na(d$epa),
-      NA_real_,
-      data.table::fifelse(d$epa > 0, 1, 0)
+    data.table::set(
+      d,
+      j = "success",
+      value = data.table::fifelse(
+        is.na(d$epa),
+        NA_real_,
+        data.table::fifelse(d$epa > 0, 1, 0)
+      )
     )
     new_cols <- extract_name_and_number(d$desc, pass_finder, "passer")
-    d[names(new_cols)] <- as.list(new_cols)
+    data.table::set(d, j = names(new_cols), value = as.list(new_cols))
     new_cols <- extract_name_and_number(d$desc, rush_finder, "rusher")
-    d[names(new_cols)] <- as.list(new_cols)
+    data.table::set(d, j = names(new_cols), value = as.list(new_cols))
     #get rusher_player_name as a measure of last resort
     #finds things like aborted snaps and "F.Last to NYG 44."
-    d$rusher <- data.table::fifelse(
-      is.na(d$rusher) &
-        is.na(d$passer) &
-        !is.na(d$rusher_player_name),
-      d$rusher_player_name,
-      d$rusher
+    data.table::set(
+      d,
+      j = "rusher",
+      value = data.table::fifelse(
+        is.na(d$rusher) &
+          is.na(d$passer) &
+          !is.na(d$rusher_player_name),
+        d$rusher_player_name,
+        d$rusher
+      )
     )
-    d$receiver <- stringi::stri_extract_first_regex(
-      d$desc,
-      glue::glue('{receiver_finder}{big_parser}')
-    )
-    d$receiver_jersey_number <- stringi::stri_extract_first_regex(
-      stringi::stri_extract_first_regex(
+    data.table::set(
+      d,
+      j = "receiver",
+      value = stringi::stri_extract_first_regex(
         d$desc,
-        glue::glue('{receiver_number}{big_parser}')
-      ),
-      "[:digit:]*"
-    ) |>
-      as.integer()
+        glue::glue('{receiver_finder}{big_parser}')
+      )
+    )
+    data.table::set(
+      d,
+      j = "receiver_jersey_number",
+      value = stringi::stri_extract_first_regex(
+        stringi::stri_extract_first_regex(
+          d$desc,
+          glue::glue('{receiver_number}{big_parser}')
+        ),
+        "[:digit:]*"
+      ) |>
+        as.integer()
+    )
     #overwrite all these weird plays messing with the parser
-    d$receiver <- data.table::fcase(
-      stringi::stri_detect_regex(d$desc, glue::glue('{abnormal_play}')) & !is.na(d$receiver_player_name) ,
-      d$receiver_player_name                                                                             ,
-      default = d$receiver
+    data.table::set(
+      d,
+      j = "receiver",
+      value = data.table::fcase(
+        stringi::stri_detect_regex(d$desc, glue::glue('{abnormal_play}')) & !is.na(d$receiver_player_name) ,
+        d$receiver_player_name                                                                             ,
+        default = d$receiver
+      )
     )
-    d$rusher <- data.table::fcase(
-      stringi::stri_detect_regex(d$desc, glue::glue('{abnormal_play}')) & !is.na(d$rusher_player_name) ,
-      d$rusher_player_name                                                                             ,
-      default = d$rusher
+    data.table::set(
+      d,
+      j = "rusher",
+      value = data.table::fcase(
+        stringi::stri_detect_regex(d$desc, glue::glue('{abnormal_play}')) & !is.na(d$rusher_player_name) ,
+        d$rusher_player_name                                                                             ,
+        default = d$rusher
+      )
     )
-    d$passer <- data.table::fcase(
-      stringi::stri_detect_regex(d$desc, glue::glue('{abnormal_play}')) & !is.na(d$passer_player_name) ,
-      d$passer_player_name                                                                             ,
-      default = d$passer
+    data.table::set(
+      d,
+      j = "passer",
+      value = data.table::fcase(
+        stringi::stri_detect_regex(d$desc, glue::glue('{abnormal_play}')) & !is.na(d$passer_player_name) ,
+        d$passer_player_name                                                                             ,
+        default = d$passer
+      )
     )
     # fix the plays where scramble was fixed using charting data from 1999 to 2005
-    d$passer <- data.table::fcase(
-      is.na(d$passer) & d$qb_scramble == 1 & !is.na(d$rusher) & d$season <= 2005 ,
-      d$rusher                                                                   ,
-      default = d$passer
+    data.table::set(
+      d,
+      j = "passer",
+      value = data.table::fcase(
+        is.na(d$passer) & d$qb_scramble == 1 & !is.na(d$rusher) & d$season <= 2005 ,
+        d$rusher                                                                   ,
+        default = d$passer
+      )
     )
     # finally, for rusher, if there was already a passer (eg from scramble), set rusher to NA
-    d$rusher <- data.table::fifelse(
-      !is.na(d$passer),
-      NA_character_,
-      d$rusher
+    data.table::set(
+      d,
+      j = "rusher",
+      value = data.table::fifelse(
+        !is.na(d$passer),
+        NA_character_,
+        d$rusher
+      )
     )
     # if no pass is thrown, there shouldn't be a receiver
-    d$receiver <- data.table::fifelse(
-      stringi::stri_detect_regex(d$desc, ' pass '),
-      d$receiver,
-      NA_character_
+    data.table::set(
+      d,
+      j = "receiver",
+      value = data.table::fifelse(
+        stringi::stri_detect_regex(d$desc, ' pass '),
+        d$receiver,
+        NA_character_
+      )
     )
     # if there's a pass, sack, or scramble, it's a pass play...
-    d$pass <- data.table::fifelse(
-      stringi::stri_detect_regex(d$desc, "( pass )|(sacked)|(scramble)") |
-        d$qb_scramble == 1,
-      1,
-      0
+    data.table::set(
+      d,
+      j = "pass",
+      value = data.table::fifelse(
+        stringi::stri_detect_regex(d$desc, "( pass )|(sacked)|(scramble)") |
+          d$qb_scramble == 1,
+        1,
+        0
+      )
     )
     # ...unless it says "backward(s) pass" or "lateral pass" and there's a rusher
-    d$pass <- data.table::fifelse(
-      stringi::stri_detect_regex(
-        stringi::stri_trans_tolower(d$desc, locale = "en"),
-        "(backward pass)|(backwards pass)|(lateral pass)"
-      ) &
-        !is.na(d$rusher),
-      0,
-      d$pass
+    data.table::set(
+      d,
+      j = "pass",
+      value = data.table::fifelse(
+        stringi::stri_detect_regex(
+          stringi::stri_trans_tolower(d$desc, locale = "en"),
+          "(backward pass)|(backwards pass)|(lateral pass)"
+        ) &
+          !is.na(d$rusher),
+        0,
+        d$pass
+      )
     )
     # and make sure there's no pass on a kickoff (sometimes there's forward pass on kickoff but that's not a pass play)
-    d$pass <- data.table::fcase(
-      d$kickoff_attempt == 1 ,
-                           0 ,
-      default = d$pass
+    data.table::set(
+      d,
+      j = "pass",
+      value = data.table::fcase(
+        d$kickoff_attempt == 1 ,
+                             0 ,
+        default = d$pass
+      )
     )
     # in very rare cases, the pass logic can fail. We do a hard coded overwrite here because it's not worth the time
     # to overthink the logic to catch weird play descriptions.
-    d$pass <- fix_weird_pass_plays(d$pass, d$game_id, d$play_id)
+    data.table::set(
+      d,
+      j = "pass",
+      value = fix_weird_pass_plays(d$pass, d$game_id, d$play_id)
+    )
     #if there's a rusher and it wasn't a QB kneel or pass play, it's a run play
-    d$rush <- data.table::fifelse(
-      !is.na(d$rusher) & d$qb_kneel == 0 & d$pass == 0,
-      1,
-      0
+    data.table::set(
+      d,
+      j = "rush",
+      value = data.table::fifelse(
+        !is.na(d$rusher) & d$qb_kneel == 0 & d$pass == 0,
+        1,
+        0
+      )
     )
     #fix some common QBs with inconsistent names
-    d$passer <- data.table::fcase(
-      d$passer == "Jos.Allen"                            ,
-      "J.Allen"                                          ,
-      d$passer == "Alex Smith" | d$passer == "Ale.Smith" ,
-      "A.Smith"                                          ,
-      d$passer == "Ryan" & d$posteam == "ATL"            ,
-      "M.Ryan"                                           ,
-      d$passer == "Tr.Brown"                             ,
-      "T.Brown"                                          ,
-      d$passer == "Sh.Hill"                              ,
-      "S.Hill"                                           ,
-      d$passer == "Matt.Moore" | d$passer == "Mat.Moore" ,
-      "M.Moore"                                          ,
-      d$passer == "Jo.Freeman"                           ,
-      "J.Freeman"                                        ,
-      d$passer == "G.Minshew"                            ,
-      "G.Minshew II"                                     ,
-      d$passer == "R.Griffin"                            ,
-      "R.Griffin III"                                    ,
-      d$passer == "Randel El"                            ,
-      "A.Randle El"                                      ,
-      d$passer == "Randle El"                            ,
-      "A.Randle El"                                      ,
-      d$season <= 2003 & d$passer == "Van Pelt"          ,
-      "A.Van Pelt"                                       ,
-      d$season > 2003 & d$passer == "Van Pelt"           ,
-      "B.Van Pelt"                                       ,
-      d$passer == "Dom.Davis"                            ,
-      "D.Davis"                                          ,
-      default = d$passer
+    data.table::set(
+      d,
+      j = "passer",
+      value = data.table::fcase(
+        d$passer == "Jos.Allen"                            ,
+        "J.Allen"                                          ,
+        d$passer == "Alex Smith" | d$passer == "Ale.Smith" ,
+        "A.Smith"                                          ,
+        d$passer == "Ryan" & d$posteam == "ATL"            ,
+        "M.Ryan"                                           ,
+        d$passer == "Tr.Brown"                             ,
+        "T.Brown"                                          ,
+        d$passer == "Sh.Hill"                              ,
+        "S.Hill"                                           ,
+        d$passer == "Matt.Moore" | d$passer == "Mat.Moore" ,
+        "M.Moore"                                          ,
+        d$passer == "Jo.Freeman"                           ,
+        "J.Freeman"                                        ,
+        d$passer == "G.Minshew"                            ,
+        "G.Minshew II"                                     ,
+        d$passer == "R.Griffin"                            ,
+        "R.Griffin III"                                    ,
+        d$passer == "Randel El"                            ,
+        "A.Randle El"                                      ,
+        d$passer == "Randle El"                            ,
+        "A.Randle El"                                      ,
+        d$season <= 2003 & d$passer == "Van Pelt"          ,
+        "A.Van Pelt"                                       ,
+        d$season > 2003 & d$passer == "Van Pelt"           ,
+        "B.Van Pelt"                                       ,
+        d$passer == "Dom.Davis"                            ,
+        "D.Davis"                                          ,
+        default = d$passer
+      )
     )
-    d$rusher <- data.table::fcase(
-      d$rusher == "D.Johnson" & d$posteam == "HOU" & d$season == 2020 & d$rusher_jersey_number == 31 ,
-      "Da.Johnson"                                                                                   ,
-      d$rusher == "D.Johnson" & d$posteam == "HOU" & d$season == 2020 & d$rusher_jersey_number == 25 ,
-      "Du.Johnson"                                                                                   ,
-      d$rusher == "Jos.Allen"                                                                        ,
-      "J.Allen"                                                                                      ,
-      d$rusher == "Alex Smith" | d$rusher == "Ale.Smith"                                             ,
-      "A.Smith"                                                                                      ,
-      d$rusher == "Ryan" & d$posteam == "ATL"                                                        ,
-      "M.Ryan"                                                                                       ,
-      d$rusher == "Tr.Brown"                                                                         ,
-      "T.Brown"                                                                                      ,
-      d$rusher == "Sh.Hill"                                                                          ,
-      "S.Hill"                                                                                       ,
-      d$rusher == "Matt.Moore" | d$rusher == "Mat.Moore"                                             ,
-      "M.Moore"                                                                                      ,
-      d$rusher == "Jo.Freeman"                                                                       ,
-      "J.Freeman"                                                                                    ,
-      d$rusher == "G.Minshew"                                                                        ,
-      "G.Minshew II"                                                                                 ,
-      d$rusher == "R.Griffin"                                                                        ,
-      "R.Griffin III"                                                                                ,
-      d$rusher == "Randel El"                                                                        ,
-      "A.Randle El"                                                                                  ,
-      d$rusher == "Randle El"                                                                        ,
-      "A.Randle El"                                                                                  ,
-      d$season <= 2003 & d$rusher == "Van Pelt"                                                      ,
-      "A.Van Pelt"                                                                                   ,
-      d$season > 2003 & d$rusher == "Van Pelt"                                                       ,
-      "B.Van Pelt"                                                                                   ,
-      d$rusher == "Dom.Davis"                                                                        ,
-      "D.Davis"                                                                                      ,
-      default = d$rusher
+    data.table::set(
+      d,
+      j = "rusher",
+      value = data.table::fcase(
+        d$rusher == "D.Johnson" & d$posteam == "HOU" & d$season == 2020 & d$rusher_jersey_number == 31 ,
+        "Da.Johnson"                                                                                   ,
+        d$rusher == "D.Johnson" & d$posteam == "HOU" & d$season == 2020 & d$rusher_jersey_number == 25 ,
+        "Du.Johnson"                                                                                   ,
+        d$rusher == "Jos.Allen"                                                                        ,
+        "J.Allen"                                                                                      ,
+        d$rusher == "Alex Smith" | d$rusher == "Ale.Smith"                                             ,
+        "A.Smith"                                                                                      ,
+        d$rusher == "Ryan" & d$posteam == "ATL"                                                        ,
+        "M.Ryan"                                                                                       ,
+        d$rusher == "Tr.Brown"                                                                         ,
+        "T.Brown"                                                                                      ,
+        d$rusher == "Sh.Hill"                                                                          ,
+        "S.Hill"                                                                                       ,
+        d$rusher == "Matt.Moore" | d$rusher == "Mat.Moore"                                             ,
+        "M.Moore"                                                                                      ,
+        d$rusher == "Jo.Freeman"                                                                       ,
+        "J.Freeman"                                                                                    ,
+        d$rusher == "G.Minshew"                                                                        ,
+        "G.Minshew II"                                                                                 ,
+        d$rusher == "R.Griffin"                                                                        ,
+        "R.Griffin III"                                                                                ,
+        d$rusher == "Randel El"                                                                        ,
+        "A.Randle El"                                                                                  ,
+        d$rusher == "Randle El"                                                                        ,
+        "A.Randle El"                                                                                  ,
+        d$season <= 2003 & d$rusher == "Van Pelt"                                                      ,
+        "A.Van Pelt"                                                                                   ,
+        d$season > 2003 & d$rusher == "Van Pelt"                                                       ,
+        "B.Van Pelt"                                                                                   ,
+        d$rusher == "Dom.Davis"                                                                        ,
+        "D.Davis"                                                                                      ,
+        default = d$rusher
+      )
     )
-    d$receiver <- data.table::fcase(
-      d$receiver == "F.R"                                                        ,
-      "F.Jones"                                                                  ,
-      d$receiver_player_name == "D.Wells" & d$receiver_player_id == "00-0017421" ,
-      "D.Wells"                                                                  ,
-      d$receiver_player_name == "D.Hayes" & d$receiver_player_id == "00-0007144" ,
-      "D.Hayes"                                                                  ,
-      d$receiver_player_name == "DanielThomas"                                   ,
-      "D.Thomas"                                                                 ,
-      d$receiver_player_name == "JulioJones"                                     ,
-      "J.Jones"                                                                  ,
-      d$receiver_player_name == "Andre' Davis"                                   ,
-      "A.Davis"                                                                  ,
-      d$receiver_player_name == "A.al-Jabbar"                                    ,
-      "A.al-Jabbar"                                                              ,
-      d$receiver_player_name == "A.St. Brown"                                    ,
-      "A.St. Brown"                                                              ,
-      default = d$receiver
+    data.table::set(
+      d,
+      j = "receiver",
+      value = data.table::fcase(
+        d$receiver == "F.R"                                                        ,
+        "F.Jones"                                                                  ,
+        d$receiver_player_name == "D.Wells" & d$receiver_player_id == "00-0017421" ,
+        "D.Wells"                                                                  ,
+        d$receiver_player_name == "D.Hayes" & d$receiver_player_id == "00-0007144" ,
+        "D.Hayes"                                                                  ,
+        d$receiver_player_name == "DanielThomas"                                   ,
+        "D.Thomas"                                                                 ,
+        d$receiver_player_name == "JulioJones"                                     ,
+        "J.Jones"                                                                  ,
+        d$receiver_player_name == "Andre' Davis"                                   ,
+        "A.Davis"                                                                  ,
+        d$receiver_player_name == "A.al-Jabbar"                                    ,
+        "A.al-Jabbar"                                                              ,
+        d$receiver_player_name == "A.St. Brown"                                    ,
+        "A.St. Brown"                                                              ,
+        default = d$receiver
+      )
     )
-    d$first_down <- data.table::fifelse(
-      d$first_down_rush == 1 |
-        d$first_down_pass == 1 |
-        d$first_down_penalty == 1,
-      1,
-      0
+    data.table::set(
+      d,
+      j = "first_down",
+      value = data.table::fifelse(
+        d$first_down_rush == 1 |
+          d$first_down_pass == 1 |
+          d$first_down_penalty == 1,
+        1,
+        0
+      )
     )
     # easy filter: play is 1 if a "special teams" play, or 0 otherwise
     # with thanks to Lee Sharpe for the code
-    d$special <- data.table::fifelse(
-      d$play_type %in%
-        c("extra_point", "field_goal", "kickoff", "punt"),
-      1,
-      0
+    data.table::set(
+      d,
+      j = "special",
+      value = data.table::fifelse(
+        d$play_type %in%
+          c("extra_point", "field_goal", "kickoff", "punt"),
+        1,
+        0
+      )
     )
     # easy filter: play is 1 if a "normal" play (including penalties), or 0 otherwise
     # with thanks to Lee Sharpe for the code
-    d$play <- data.table::fifelse(
-      !is.na(d$epa) &
-        !is.na(d$posteam) &
-        d$desc != "*** play under review ***" &
-        substr(d$desc, 1, 8) != "Timeout " &
-        d$play_type %in% c("no_play", "pass", "run"),
-      1,
-      0
+    data.table::set(
+      d,
+      j = "play",
+      value = data.table::fifelse(
+        !is.na(d$epa) &
+          !is.na(d$posteam) &
+          d$desc != "*** play under review ***" &
+          substr(d$desc, 1, 8) != "Timeout " &
+          d$play_type %in% c("no_play", "pass", "run"),
+        1,
+        0
+      )
     )
 
     #standardize team names (eg Chargers are always LAC even when they were playing in SD)
@@ -313,122 +402,151 @@ clean_pbp <- function(pbp, ...) {
       "drive_start_yard_line",
       "drive_end_yard_line"
     )) {
-      d[[col]] <- team_name_fn(d[[col]])
+      data.table::set(d, j = col, value = team_name_fn(d[[col]]))
     }
 
     #Seb's stuff for fixing player ids
     # the most common id of a name (per team and season), then the most common
     # name of an id
-    g <- group_key(d$passer, d$posteam, d$season)
-    d$passer_id <- data.table::fifelse(
-      is.na(d$passer),
-      NA_character_,
-      mode_by(d$passer_player_id, g)
-    )
-    d$passer <- data.table::fifelse(
-      is.na(d$passer_id),
-      NA_character_,
-      mode_by(d$passer, group_key(d$passer_id))
-    )
-    g <- group_key(d$rusher, d$posteam, d$season)
-    d$rusher_id <- data.table::fifelse(
-      is.na(d$rusher),
-      NA_character_,
-      mode_by(d$rusher_player_id, g)
-    )
-    d$rusher <- data.table::fifelse(
-      is.na(d$rusher_id),
-      NA_character_,
-      mode_by(d$rusher, group_key(d$rusher_id))
-    )
-    g <- group_key(d$receiver, d$posteam, d$season)
-    d$receiver_id <- data.table::fifelse(
-      is.na(d$receiver),
-      NA_character_,
-      mode_by(d$receiver_player_id, g)
-    )
-    d$receiver <- data.table::fifelse(
-      is.na(d$receiver_id),
-      NA_character_,
-      mode_by(d$receiver, group_key(d$receiver_id))
-    )
-
+    for (role in c("passer", "rusher", "receiver")) {
+      role_id <- paste0(role, "_id")
+      d[,
+        (role_id) := data.table::fifelse(
+          is.na(.BY[[1L]]),
+          NA_character_,
+          custom_mode(.SD[[1L]])
+        ),
+        by = c(role, "posteam", "season"),
+        .SDcols = paste0(role, "_player_id")
+      ]
+      d[,
+        (role) := data.table::fifelse(
+          is.na(.BY[[1L]]),
+          NA_character_,
+          custom_mode(.SD[[1L]])
+        ),
+        by = role_id,
+        .SDcols = role
+      ]
+    }
     # if there's an aborted snap and qb didn't get a pass off,
     # then charge it to whoever charged with the fumble
     # this has to go after all the custom_mode stuff or it gets messed up
-    d$rusher <- data.table::fifelse(
-      d$aborted_play == 1 &
-        is.na(d$passer) &
-        !is.na(d$fumbled_1_player_name),
-      d$fumbled_1_player_name,
-      d$rusher
+    data.table::set(
+      d,
+      j = "rusher",
+      value = data.table::fifelse(
+        d$aborted_play == 1 &
+          is.na(d$passer) &
+          !is.na(d$fumbled_1_player_name),
+        d$fumbled_1_player_name,
+        d$rusher
+      )
     )
-    d$rusher_id <- data.table::fifelse(
-      d$aborted_play == 1 &
-        is.na(d$passer) &
-        !is.na(d$fumbled_1_player_id),
-      d$fumbled_1_player_id,
-      d$rusher_id
+    data.table::set(
+      d,
+      j = "rusher_id",
+      value = data.table::fifelse(
+        d$aborted_play == 1 &
+          is.na(d$passer) &
+          !is.na(d$fumbled_1_player_id),
+        d$fumbled_1_player_id,
+        d$rusher_id
+      )
     )
-    d$name <- data.table::fifelse(!is.na(d$passer), d$passer, d$rusher)
-    d$jersey_number <- data.table::fifelse(
-      !is.na(d$passer_jersey_number),
-      d$passer_jersey_number,
-      d$rusher_jersey_number
+    data.table::set(
+      d,
+      j = "name",
+      value = data.table::fifelse(!is.na(d$passer), d$passer, d$rusher)
     )
-    d$id <- data.table::fifelse(
-      !is.na(d$passer_id),
-      d$passer_id,
-      d$rusher_id
+    data.table::set(
+      d,
+      j = "jersey_number",
+      value = data.table::fifelse(
+        !is.na(d$passer_jersey_number),
+        d$passer_jersey_number,
+        d$rusher_jersey_number
+      )
+    )
+    data.table::set(
+      d,
+      j = "id",
+      value = data.table::fifelse(
+        !is.na(d$passer_id),
+        d$passer_id,
+        d$rusher_id
+      )
     )
 
     # add action player
-    d$fantasy_player_name <- data.table::fcase(
-      !is.na(d$rusher_player_name)                                 ,
-      d$rusher_player_name                                         ,
-      is.na(d$rusher_player_name) & !is.na(d$receiver_player_name) ,
-      d$receiver_player_name                                       ,
-      default = NA_character_
+    data.table::set(
+      d,
+      j = "fantasy_player_name",
+      value = data.table::fcase(
+        !is.na(d$rusher_player_name)                                 ,
+        d$rusher_player_name                                         ,
+        is.na(d$rusher_player_name) & !is.na(d$receiver_player_name) ,
+        d$receiver_player_name                                       ,
+        default = NA_character_
+      )
     )
-    d$fantasy_player_id <- data.table::fcase(
-      !is.na(d$rusher_player_id)                               ,
-      d$rusher_player_id                                       ,
-      is.na(d$rusher_player_id) & !is.na(d$receiver_player_id) ,
-      d$receiver_player_id                                     ,
-      default = NA_character_
+    data.table::set(
+      d,
+      j = "fantasy_player_id",
+      value = data.table::fcase(
+        !is.na(d$rusher_player_id)                               ,
+        d$rusher_player_id                                       ,
+        is.na(d$rusher_player_id) & !is.na(d$receiver_player_id) ,
+        d$receiver_player_id                                     ,
+        default = NA_character_
+      )
     )
-    d$fantasy <- data.table::fcase(
-      !is.na(d$rusher)                     ,
-      d$rusher                             ,
-      is.na(d$rusher) & !is.na(d$receiver) ,
-      d$receiver                           ,
-      d$qb_scramble == 1                   ,
-      d$passer                             ,
-      default = NA_character_
+    data.table::set(
+      d,
+      j = "fantasy",
+      value = data.table::fcase(
+        !is.na(d$rusher)                     ,
+        d$rusher                             ,
+        is.na(d$rusher) & !is.na(d$receiver) ,
+        d$receiver                           ,
+        d$qb_scramble == 1                   ,
+        d$passer                             ,
+        default = NA_character_
+      )
     )
-    d$fantasy_id <- data.table::fcase(
-      !is.na(d$rusher_id)                        ,
-      d$rusher_id                                ,
-      is.na(d$rusher_id) & !is.na(d$receiver_id) ,
-      d$receiver_id                              ,
-      d$qb_scramble == 1                         ,
-      d$passer_id                                ,
-      default = NA_character_
+    data.table::set(
+      d,
+      j = "fantasy_id",
+      value = data.table::fcase(
+        !is.na(d$rusher_id)                        ,
+        d$rusher_id                                ,
+        is.na(d$rusher_id) & !is.na(d$receiver_id) ,
+        d$receiver_id                              ,
+        d$qb_scramble == 1                         ,
+        d$passer_id                                ,
+        default = NA_character_
+      )
     )
-    d$out_of_bounds <- data.table::fifelse(
-      stringi::stri_detect_regex(d$desc, "(ran ob)|(pushed ob)|(sacked ob)"),
-      1,
-      0
+    data.table::set(
+      d,
+      j = "out_of_bounds",
+      value = data.table::fifelse(
+        stringi::stri_detect_regex(d$desc, "(ran ob)|(pushed ob)|(sacked ob)"),
+        1,
+        0
+      )
     )
 
-    first_posteam <- first_non_na_by(d$posteam, group_key(d$game_id))
-    d$home_opening_kickoff <- data.table::fifelse(
-      d$home_team == first_posteam,
-      1,
-      0
-    )
+    d[,
+      home_opening_kickoff := data.table::fifelse(
+        home_team == posteam[!is.na(posteam)][1L],
+        1,
+        0
+      ),
+      by = "game_id"
+    ]
 
-    r <- tibble::new_tibble(d, nrow = nrow(pbp))
+    r <- tibble::as_tibble(data.table::setDF(d))
   }
 
   message_completed("Cleaning completed", ...)
@@ -553,12 +671,11 @@ add_qb_epa <- function(pbp, ...) {
     pbp <- pbp |> dplyr::select(-dplyr::any_of("qb_epa"))
 
     # completed passes with a lost fumble, there are none in most games
-    fumble_rows <- is_true(
-      pbp$complete_pass == 1 &
-        pbp$fumble_lost == 1 &
-        !is.na(pbp$epa) &
-        !is.na(pbp$down)
-    )
+    fumble_rows <- (pbp$complete_pass == 1 &
+      pbp$fumble_lost == 1 &
+      !is.na(pbp$epa) &
+      !is.na(pbp$down)) %in%
+      TRUE
     if (!any(fumble_rows)) {
       pbp$qb_epa <- pbp$epa
     } else {

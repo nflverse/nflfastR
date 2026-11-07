@@ -99,9 +99,16 @@ summarize_xyac <- function(passes, preds) {
     distance_to_goal - 99
   )
   max_gain <- data.table::fifelse(distance_to_goal > 70, 70, distance_to_goal)
-  cum_prob <- group_cumsum(prob, n_yac)
-  lag_cum_prob <- c(NA_real_, cum_prob[-length(cum_prob)])
-  lag_cum_prob[yac == -5L] <- NA_real_
+  # cumulative probabilities within each pass (the rows of a pass are adjacent,
+  # so the grouped results are in row order)
+  dist <- data.table::data.table(
+    pass = rep(seq_len(n_pass), each = n_yac),
+    prob
+  )
+  dist[, cum_prob := cumsum(prob), by = "pass"]
+  dist[, lag_cum_prob := data.table::shift(cum_prob), by = "pass"]
+  cum_prob <- dist$cum_prob
+  lag_cum_prob <- dist$lag_cum_prob
   is_gain <- yac == max_gain
   prob[is_gain] <- 1 - lag_cum_prob[is_gain]
   is_loss <- yac == max_loss
@@ -188,32 +195,43 @@ summarize_xyac <- function(passes, preds) {
   epa <- ep - original_ep
   wt_epa <- epa * prob
   wt_yardln <- yardline_100_noflip * prob
-  first_row <- c(TRUE, pass_row[-1] != pass_row[-length(pass_row)])
-  csum <- group_cumsum(prob, pass_row)
-  below_half <- csum < .5
-  lag_below_half <- c(NA, below_half[-length(below_half)])
-  lag_below_half[first_row] <- NA
-  med <- data.table::fifelse(csum > .5 & lag_below_half, yac, 0L)
+  outcomes <- data.table::data.table(
+    pass_row,
+    yac,
+    prob,
+    wt_epa,
+    wt_yardln,
+    success = (ep > original_ep) * prob,
+    first_down = (gain >= original_ydstogo) * prob
+  )
+  outcomes[, csum := cumsum(prob), by = "pass_row"]
+  outcomes[, lag_below_half := data.table::shift(csum < .5), by = "pass_row"]
+  outcomes[, med := data.table::fifelse(csum > .5 & lag_below_half, yac, 0L)]
 
-  # passes without any possible yac value don't get xyac variables
-  present <- sort(unique(pass_row))
-  group <- factor(pass_row, levels = present)
-  group_sum <- function(x) unname(vapply(split(x, group), sum, numeric(1)))
-  tibble::tibble(
+  # one row per pass; passes without any possible yac value don't get xyac
+  # variables
+  per_pass_sums <- outcomes[,
+    list(
+      wt_epa = sum(wt_epa),
+      wt_yardln = sum(wt_yardln),
+      med = max(med),
+      success = sum(success),
+      first_down = sum(first_down)
+    ),
+    by = "pass_row"
+  ]
+  present <- per_pass_sums$pass_row
+  out <- tibble::tibble(
     index = passes$index[present],
-    xyac_epa = group_sum(wt_epa) - passes$air_epa[present],
+    xyac_epa = per_pass_sums$wt_epa - passes$air_epa[present],
     xyac_mean_yardage = (passes$yardline_100[present] -
       passes$air_yards[present]) -
-      group_sum(wt_yardln),
-    xyac_median_yardage = as.numeric(vapply(
-      split(med, group),
-      max,
-      integer(1)
-    )),
-    xyac_success = group_sum((ep > original_ep) * prob),
-    xyac_fd = group_sum((gain >= original_ydstogo) * prob)
-  ) |>
-    dplyr::arrange(.data$index)
+      per_pass_sums$wt_yardln,
+    xyac_median_yardage = as.numeric(per_pass_sums$med),
+    xyac_success = per_pass_sums$success,
+    xyac_fd = per_pass_sums$first_down
+  )
+  out[order(out$index), ]
 }
 
 # EP of the possession team, computed like calculate_expected_points() but from

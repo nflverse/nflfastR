@@ -367,35 +367,6 @@ raw_pbp_urls <- function(game_ids) {
   )
 }
 
-# Cumulative sum within groups of adjacent elements. `groups` is either a
-# vector of group ids (adjacent equal ids form one group) or the size of
-# equally sized groups.
-group_cumsum <- function(x, groups) {
-  if (length(groups) == 1) {
-    groups <- rep(seq_len(length(x) / groups), each = groups)
-  }
-  unlist(
-    lapply(split(x, factor(groups, levels = unique(groups))), cumsum),
-    use.names = FALSE
-  )
-}
-
-# dplyr::lead() and dplyr::lag() within games. The plays of a game must be
-# adjacent. The last (first) play of a game gets NA.
-lead_in_game <- function(x, game_id) {
-  out <- dplyr::lead(x)
-  next_game <- dplyr::lead(game_id)
-  out[is.na(next_game) | next_game != game_id] <- NA
-  out
-}
-
-lag_in_game <- function(x, game_id) {
-  out <- dplyr::lag(x)
-  prev_game <- dplyr::lag(game_id)
-  out[is.na(prev_game) | prev_game != game_id] <- NA
-  out
-}
-
 # Same as dplyr::if_else(condition, fn(x), NA) but fn() only runs on the
 # elements where condition is TRUE. Useful for expensive regular expressions.
 apply_where <- function(condition, x, fn) {
@@ -405,129 +376,95 @@ apply_where <- function(condition, x, fn) {
   out
 }
 
-# Integer id of the groups defined by one or more vectors. Missing values form
-# a group of their own, like in dplyr::group_by().
-group_key <- function(...) {
-  key <- 0
-  for (x in list(...)) {
-    id <- match(x, unique(x))
-    key <- key * (max(id, 0L) + 1) + id
-  }
-  match(key, unique(key))
-}
-
-# Row index of the previous row of the same group (NA for the first row of a
-# group). The rows of a group don't need to be adjacent.
-group_prev_index <- function(key) {
-  n <- length(key)
-  o <- order(key, seq_len(n), method = "radix")
-  prev <- rep(NA_integer_, n)
-  same <- c(FALSE, key[o][-1] == key[o][-n])
-  prev[o[same]] <- o[which(same) - 1L]
-  prev
-}
-
-# dplyr::lag(x, k) within groups, using the index from group_prev_index()
-lag_in_group <- function(x, prev, k = 1L) {
-  idx <- seq_along(x)
-  for (j in seq_len(k)) {
-    idx <- prev[idx]
-  }
-  x[idx]
-}
-
-# cumsum() within groups (rows of a group don't need to be adjacent)
-cumsum_by <- function(x, key) {
-  unsplit(lapply(split(x, key), cumsum), key)
-}
-
-# The result of a drive or series from the results of its plays: the last
-# non-missing result, or the first one if the last is the end of a half
-group_result <- function(result, key) {
-  per_group <- vapply(
-    split(result, key),
-    function(r) {
-      r <- r[!is.na(r)]
-      if (length(r) == 0) {
-        NA_character_
-      } else if (r[length(r)] == "End of half") {
-        r[1]
-      } else {
-        r[length(r)]
-      }
-    },
-    character(1)
-  )
-  unname(per_group[match(key, as.integer(names(per_group)))])
-}
-
-# dplyr::if_else(condition, true, false, missing): NA conditions give missing
-if_else_missing <- function(condition, true, false, missing) {
-  out <- data.table::fifelse(condition, true, false)
-  na <- is.na(condition)
-  out[na] <- missing[na]
-  out
-}
-
-# case_when() treats a missing condition as FALSE
-is_true <- function(x) !is.na(x) & x
-
-# ---- grouped operations on plain vectors ----------------------------------
-# The parser steps run on plain vectors with data.table::fifelse(),
-# data.table::fcase() and data.table::shift() instead of dplyr verbs because
-# the per-call overhead of dplyr dominates on single games. These helpers do
-# what group_by() |> mutate() did. They are faster than grouped data.table
-# calls on single games.
-
-# Row index of the next row of the same group (NA for the last row of a group)
-group_next_index <- function(key) {
-  prev <- group_prev_index(key)
-  nxt <- rep(NA_integer_, length(key))
-  has_prev <- which(!is.na(prev))
-  nxt[prev[has_prev]] <- has_prev
-  nxt
-}
-
-# tidyr::fill(.direction = "up") within groups: a missing value takes the next
-# non-missing value of its group
-fill_up_by <- function(x, key) {
-  unsplit(lapply(split(x, key), fill_up), key)
-}
-
-fill_up <- function(x) {
-  n <- length(x)
-  pos <- ifelse(is.na(x), n + 1L, seq_len(n))
-  x[rev(cummin(rev(pos)))]
-}
-
-# dplyr::first(stats::na.omit(x)) within groups, for every row
-first_non_na_by <- function(x, key) {
-  first <- vapply(
-    split(x, key),
-    function(v) {
-      v <- v[!is.na(v)]
-      if (length(v) == 0) v[NA_integer_] else v[1L]
-    },
-    x[NA_integer_]
-  )
-  unname(first[match(key, as.integer(names(first)))])
-}
-
-# custom_mode() within groups, for every row
-mode_by <- function(x, key) {
-  modes <- vapply(split(x, key), custom_mode, x[NA_integer_])
-  unname(modes[match(key, as.integer(names(modes)))])
-}
-
-# The columns of a data frame as a plain named list, without any other
-# attributes of the data frame
-as_column_list <- function(df) {
-  out <- as.list(df)
-  attributes(out) <- list(names = names(df))
-  out
-}
-
 # stringr::str_squish(): collapse white space to single blanks and trim
 squish <- function(x) {
   stringi::stri_trim_both(stringi::stri_replace_all_regex(x, "\\s+", " "))
 }
+
+# A copy of a data frame as data.table with only the attributes of a plain data
+# frame (like the output of dplyr verbs). It's a copy, so modifying it by
+# reference never changes the input.
+as_pbp_dt <- function(df) {
+  dt <- data.table::as.data.table(df)
+  extra <- setdiff(
+    names(attributes(dt)),
+    c("names", "row.names", "class", ".internal.selfref")
+  )
+  for (a in extra) {
+    data.table::setattr(dt, a, NULL)
+  }
+  dt
+}
+
+# Columns used inside data.table calls of the parser
+utils::globalVariables(
+  c(
+    ".BY",
+    ".N",
+    ".SD",
+    "away_points_scored",
+    "away_team_pass_wpa",
+    "away_team_rush_wpa",
+    "away_timeout_used",
+    "csum",
+    "cum_prob",
+    "defteam",
+    "defteam_score",
+    "extra_point_result",
+    "field_goal_result",
+    "first_down_pass",
+    "first_down_penalty",
+    "first_down_rush",
+    "fixed_drive",
+    "fixed_drive_result",
+    "fumble_lost",
+    "home_opening_kickoff",
+    "home_points_scored",
+    "home_team",
+    "home_team_pass_wpa",
+    "home_team_rush_wpa",
+    "home_timeout_used",
+    "home_wp",
+    "home_wpa",
+    "is_timeout",
+    "kickoff_attempt",
+    "lag_below_half",
+    "lag_cum_prob",
+    "lead_ko",
+    "med",
+    "new_drive",
+    "new_series",
+    "own_kickoff_recovery",
+    "play_description",
+    "play_type",
+    "posteam",
+    "posteam_id",
+    "posteam_score",
+    "qtr",
+    "quarter_end",
+    "receive_2h_ko",
+    "safety",
+    "season",
+    "series",
+    "series_result",
+    "success",
+    "td_team",
+    "tmp_desc_lower",
+    "tmp_posteam",
+    "tmp_result",
+    "total_away_pass_wpa",
+    "total_away_rush_wpa",
+    "total_away_score",
+    "total_home_pass_wpa",
+    "total_home_rush_wpa",
+    "total_home_score",
+    "touchdown",
+    "two_point_conv_result",
+    "vegas_home_wp",
+    "vegas_home_wpa",
+    "vegas_wp",
+    "wp",
+    "yardline"
+  ),
+  add = TRUE
+)
