@@ -233,7 +233,15 @@ release_bullets <- function() {
   )
 }
 
+# Cache for objects that are expensive to create, e.g. loaded models
+nflfastR_cache <- new.env(parent = emptyenv())
+
 load_model <- function(name) {
+  key <- paste0("model_", name)
+  if (!is.null(nflfastR_cache[[key]])) {
+    return(nflfastR_cache[[key]])
+  }
+
   model <- switch(
     name,
     "ep" = fastrmodels::ep_model,
@@ -252,6 +260,7 @@ load_model <- function(name) {
   } else {
     model
   }
+  assign(key, out, envir = nflfastR_cache)
   out
 }
 

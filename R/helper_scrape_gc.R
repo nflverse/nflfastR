@@ -114,8 +114,7 @@ get_pbp_gc <- function(
       playStatSeq = "sequence"
     )
 
-  pbp_stats <- lapply(unique(stats$playId), sum_play_stats, stats)
-  pbp_stats <- data.table::rbindlist(pbp_stats) |> tibble::as_tibble()
+  pbp_stats <- tidy_play_stats(stats) |> tibble::as_tibble()
 
   # drive info
   d <- tibble::tibble(drives) |>

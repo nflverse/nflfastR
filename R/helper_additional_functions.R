@@ -496,23 +496,32 @@ drop.cols <- c(
 # example: 'SD 49' --> 'LAC 49'
 # thanks to awgymer for the contribution:
 # https://github.com/nflverse/nflfastR/issues/29#issuecomment-654592195
+team_name_replacements <- c(
+  "JAC" = "JAX",
+  "STL" = "LA",
+  "SL" = "LA",
+  "LAR" = "LA",
+  "ARZ" = "ARI",
+  "AZ" = "ARI",
+  "BLT" = "BAL",
+  "CLV" = "CLE",
+  "HST" = "HOU",
+  "SD" = "LAC",
+  "OAK" = "LV"
+)
+
+team_name_pattern <- paste(names(team_name_replacements), collapse = "|")
+
 team_name_fn <- function(var) {
-  stringr::str_replace_all(
-    var,
-    c(
-      "JAC" = "JAX",
-      "STL" = "LA",
-      "SL" = "LA",
-      "LAR" = "LA",
-      "ARZ" = "ARI",
-      "AZ" = "ARI",
-      "BLT" = "BAL",
-      "CLV" = "CLE",
-      "HST" = "HOU",
-      "SD" = "LAC",
-      "OAK" = "LV"
-    )
-  )
+  # Most columns contain no old abbreviation, so we skip the replacements for
+  # them. No replacement creates an old abbreviation, so the result is the same.
+  if (
+    is.character(var) &&
+      !any(stringr::str_detect(var, team_name_pattern), na.rm = TRUE)
+  ) {
+    return(var)
+  }
+  stringr::str_replace_all(var, team_name_replacements)
 }
 
 #' Compute QB epa

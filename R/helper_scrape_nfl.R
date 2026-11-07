@@ -116,9 +116,8 @@ get_pbp_nfl <- function(
       -"possessionTeam.abbreviation",
       -"possessionTeam.nickName",
       -"possessionTeam.franchise.currentLogo.url"
-    ) |>
-    janitor::clean_names()
-  colnames(drives) <- paste0("drive_", colnames(drives))
+    )
+  colnames(drives) <- paste0("drive_", clean_names_cached(colnames(drives)))
 
   stats <- tidyr::unnest(
     plays |> dplyr::select(-"yards"),
@@ -149,8 +148,7 @@ get_pbp_nfl <- function(
       dplyr::filter(!(.data$playId == 979 & .data$statId %in% c(8, 10, 79)))
   }
 
-  pbp_stats <- lapply(unique(stats$playId), sum_play_stats, stats)
-  pbp_stats <- data.table::rbindlist(pbp_stats) |> tibble::as_tibble()
+  pbp_stats <- tidy_play_stats(stats) |> tibble::as_tibble()
 
   combined <- game_info |>
     dplyr::bind_cols(plays |> dplyr::select(-"playStats", -"game_id")) |>
@@ -159,19 +157,7 @@ get_pbp_nfl <- function(
       by = c("driveSequenceNumber" = "drive_order_sequence")
     ) |>
     dplyr::left_join(pbp_stats, by = c("playId" = "play_id")) |>
-    dplyr::mutate_if(is.logical, as.numeric) |>
-    dplyr::mutate_if(is.integer, as.numeric) |>
-    dplyr::mutate_if(is.factor, as.character) |>
-    # The abbreviations SD <-> LAC and JAC <-> JAX are mixed up in the raw json data
-    # to make sure team names match, we normalize the names here
-    # We also remove new line characters esp. from desc
-    dplyr::mutate_if(
-      .predicate = is.character,
-      .funs = ~ team_name_fn(.x) |>
-        stringr::str_replace_all("[\r\n]", " ") |>
-        stringr::str_squish()
-    ) |>
-    janitor::clean_names() |>
+    normalize_raw_columns() |>
     dplyr::select(
       -"drive_play_count",
       -"drive_time_of_possession",
@@ -278,10 +264,7 @@ get_pbp_nfl <- function(
         "goal"
       ))
     ) |>
-    dplyr::mutate_if(
-      .predicate = is.character,
-      .funs = ~ dplyr::na_if(.x, "")
-    ) |>
+    empty_strings_to_na() |>
     # Data in 2023 pbp introduced separate "plays" for TV timeouts and two minute warnings
     # These mess up some of our logic. Since they are useless, we remove them here
     dplyr::filter(
@@ -459,4 +442,55 @@ fix_posteams <- function(pbp) {
   }
 
   pbp
+}
+
+# Convert logical and integer columns to double and factors to character,
+# normalize team abbreviations and white space in character columns, and
+# clean the column names. Same result as a chain of dplyr::mutate_if() calls
+# and janitor::clean_names(), but much faster on wide data with few rows.
+normalize_raw_columns <- function(df) {
+  n <- nrow(df)
+  cols <- as.list(df)
+  for (j in seq_along(cols)) {
+    x <- cols[[j]]
+    if (is.logical(x) || is.integer(x)) {
+      x <- as.numeric(x)
+    } else if (is.factor(x)) {
+      x <- as.character(x)
+    }
+    if (is.character(x)) {
+      # str_squish() also turns line breaks into blanks
+      x <- stringr::str_squish(team_name_fn(x))
+    }
+    cols[[j]] <- x
+  }
+  names(cols) <- clean_names_cached(names(cols))
+  tibble::new_tibble(cols, nrow = n)
+}
+
+# janitor::make_clean_names() is slow and the raw data of most games has the
+# same column names, so we remember the results
+clean_names_cached <- function(x) {
+  seen <- nflfastR_cache$clean_names
+  for (pair in seen) {
+    if (identical(pair$x, x)) {
+      return(pair$clean)
+    }
+  }
+  clean <- janitor::make_clean_names(x)
+  nflfastR_cache$clean_names <- c(seen, list(list(x = x, clean = clean)))
+  clean
+}
+
+empty_strings_to_na <- function(df) {
+  n <- nrow(df)
+  cols <- as.list(df)
+  for (j in seq_along(cols)) {
+    x <- cols[[j]]
+    if (is.character(x)) {
+      x[!is.na(x) & x == ""] <- NA_character_
+      cols[[j]] <- x
+    }
+  }
+  tibble::new_tibble(cols, nrow = n)
 }

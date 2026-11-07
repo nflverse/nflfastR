@@ -1,1350 +1,1708 @@
 ################################################################################
 # Author: Sebastian Carl
-# Purpose: Create a single row with all play stats of a given play built in the
-#          Scraper Functions
+# Purpose: Create one row with all play stats per play, built in the scraper
+#          functions
 # Stlyeguide: styler::tidyverse_style()
 ################################################################################
 
-# Build a single row for tidy data structure
+# Build one row per play for a tidy data structure
 #
 # This is a sub-function for the get_pbp_nfl and get_pbp_gc functions.
 #
-# @param play_Id (integer) Specifies the play_Id for which the stats should be combined
-# @param stats A dataframe including multiple rows for each play_Id holding
-# gsis stat ids and stats
-sum_play_stats <- function(play_Id, stats) {
-  play_stats <- stats[stats$playId == play_Id, ]
+# @param stats A data frame with one row per gsis stat and the columns playId,
+# statId, yards, teamAbbr, player.displayName and player.esbId
+# @return A data.table with one row per play in stats (in order of first
+# appearance) and the columns play_id and names(tidy_play_stats_row)
+#
+# The stats of each play are processed in their original order, so later stats
+# overwrite earlier ones, and numbered slots (e.g. fumbled_1, fumbled_2) are
+# filled in order. Output columns are local vectors that are modified in place.
+tidy_play_stats <- function(stats) {
+  play_ids <- unique(stats$playId)
+  n <- length(play_ids)
+  play_index <- match(stats$playId, play_ids)
+  s_stat <- stats$statId
+  s_yards <- stats$yards
+  s_team <- stats$teamAbbr
+  s_name <- stats$player.displayName
+  s_id <- stats$player.esbId
 
-  row <- c("play_id" = as.integer(play_Id), tidy_play_stats_row)
+  punt_blocked <- rep(0, n)
+  first_down_rush <- rep(0, n)
+  first_down_pass <- rep(0, n)
+  first_down_penalty <- rep(0, n)
+  third_down_converted <- rep(0, n)
+  third_down_failed <- rep(0, n)
+  fourth_down_converted <- rep(0, n)
+  fourth_down_failed <- rep(0, n)
+  incomplete_pass <- rep(0, n)
+  interception <- rep(0, n)
+  punt_inside_twenty <- rep(0, n)
+  punt_in_endzone <- rep(0, n)
+  punt_out_of_bounds <- rep(0, n)
+  punt_downed <- rep(0, n)
+  punt_fair_catch <- rep(0, n)
+  kickoff_inside_twenty <- rep(0, n)
+  kickoff_in_endzone <- rep(0, n)
+  kickoff_out_of_bounds <- rep(0, n)
+  kickoff_fair_catch <- rep(0, n)
+  fumble_forced <- rep(0, n)
+  fumble_not_forced <- rep(0, n)
+  fumble_out_of_bounds <- rep(0, n)
+  timeout <- rep(0, n)
+  field_goal_missed <- rep(0, n)
+  field_goal_made <- rep(0, n)
+  field_goal_blocked <- rep(0, n)
+  extra_point_good <- rep(0, n)
+  extra_point_failed <- rep(0, n)
+  extra_point_blocked <- rep(0, n)
+  two_point_rush_good <- rep(0, n)
+  two_point_rush_failed <- rep(0, n)
+  two_point_pass_good <- rep(0, n)
+  two_point_pass_failed <- rep(0, n)
+  solo_tackle <- rep(0, n)
+  safety <- rep(0, n)
+  penalty <- rep(0, n)
+  tackled_for_loss <- rep(0, n)
+  extra_point_safety <- rep(0, n)
+  two_point_rush_safety <- rep(0, n)
+  two_point_pass_safety <- rep(0, n)
+  kickoff_downed <- rep(0, n)
+  two_point_pass_reception_good <- rep(0, n)
+  two_point_pass_reception_failed <- rep(0, n)
+  fumble_lost <- rep(0, n)
+  own_kickoff_recovery <- rep(0, n)
+  own_kickoff_recovery_td <- rep(0, n)
+  qb_hit <- rep(0, n)
+  extra_point_aborted <- rep(0, n)
+  two_point_return <- rep(0, n)
+  rush_attempt <- rep(0, n)
+  pass_attempt <- rep(0, n)
+  sack <- rep(0, n)
+  touchdown <- rep(0, n)
+  pass_touchdown <- rep(0, n)
+  rush_touchdown <- rep(0, n)
+  return_touchdown <- rep(0, n)
+  extra_point_attempt <- rep(0, n)
+  two_point_attempt <- rep(0, n)
+  field_goal_attempt <- rep(0, n)
+  kickoff_attempt <- rep(0, n)
+  punt_attempt <- rep(0, n)
+  fumble <- rep(0, n)
+  complete_pass <- rep(0, n)
+  assist_tackle <- rep(0, n)
+  lateral_reception <- rep(0, n)
+  lateral_rush <- rep(0, n)
+  lateral_return <- rep(0, n)
+  lateral_recovery <- rep(0, n)
+  passer_player_id <- rep(NA_character_, n)
+  passer_player_name <- rep(NA_character_, n)
+  receiver_player_id <- rep(NA_character_, n)
+  receiver_player_name <- rep(NA_character_, n)
+  rusher_player_id <- rep(NA_character_, n)
+  rusher_player_name <- rep(NA_character_, n)
+  lateral_receiver_player_id <- rep(NA_character_, n)
+  lateral_receiver_player_name <- rep(NA_character_, n)
+  lateral_rusher_player_id <- rep(NA_character_, n)
+  lateral_rusher_player_name <- rep(NA_character_, n)
+  lateral_sack_player_id <- rep(NA_character_, n)
+  lateral_sack_player_name <- rep(NA_character_, n)
+  interception_player_id <- rep(NA_character_, n)
+  interception_player_name <- rep(NA_character_, n)
+  lateral_interception_player_id <- rep(NA_character_, n)
+  lateral_interception_player_name <- rep(NA_character_, n)
+  punt_returner_player_id <- rep(NA_character_, n)
+  punt_returner_player_name <- rep(NA_character_, n)
+  lateral_punt_returner_player_id <- rep(NA_character_, n)
+  lateral_punt_returner_player_name <- rep(NA_character_, n)
+  kickoff_returner_player_name <- rep(NA_character_, n)
+  kickoff_returner_player_id <- rep(NA_character_, n)
+  lateral_kickoff_returner_player_id <- rep(NA_character_, n)
+  lateral_kickoff_returner_player_name <- rep(NA_character_, n)
+  punter_player_id <- rep(NA_character_, n)
+  punter_player_name <- rep(NA_character_, n)
+  kicker_player_name <- rep(NA_character_, n)
+  kicker_player_id <- rep(NA_character_, n)
+  own_kickoff_recovery_player_id <- rep(NA_character_, n)
+  own_kickoff_recovery_player_name <- rep(NA_character_, n)
+  blocked_player_id <- rep(NA_character_, n)
+  blocked_player_name <- rep(NA_character_, n)
+  tackle_for_loss_1_player_id <- rep(NA_character_, n)
+  tackle_for_loss_1_player_name <- rep(NA_character_, n)
+  tackle_for_loss_2_player_id <- rep(NA_character_, n)
+  tackle_for_loss_2_player_name <- rep(NA_character_, n)
+  qb_hit_1_player_id <- rep(NA_character_, n)
+  qb_hit_1_player_name <- rep(NA_character_, n)
+  qb_hit_2_player_id <- rep(NA_character_, n)
+  qb_hit_2_player_name <- rep(NA_character_, n)
+  forced_fumble_player_1_team <- rep(NA_character_, n)
+  forced_fumble_player_1_player_id <- rep(NA_character_, n)
+  forced_fumble_player_1_player_name <- rep(NA_character_, n)
+  forced_fumble_player_2_team <- rep(NA_character_, n)
+  forced_fumble_player_2_player_id <- rep(NA_character_, n)
+  forced_fumble_player_2_player_name <- rep(NA_character_, n)
+  solo_tackle_1_team <- rep(NA_character_, n)
+  solo_tackle_2_team <- rep(NA_character_, n)
+  solo_tackle_1_player_id <- rep(NA_character_, n)
+  solo_tackle_2_player_id <- rep(NA_character_, n)
+  solo_tackle_1_player_name <- rep(NA_character_, n)
+  solo_tackle_2_player_name <- rep(NA_character_, n)
+  assist_tackle_1_player_id <- rep(NA_character_, n)
+  assist_tackle_1_player_name <- rep(NA_character_, n)
+  assist_tackle_1_team <- rep(NA_character_, n)
+  assist_tackle_2_player_id <- rep(NA_character_, n)
+  assist_tackle_2_player_name <- rep(NA_character_, n)
+  assist_tackle_2_team <- rep(NA_character_, n)
+  assist_tackle_3_player_id <- rep(NA_character_, n)
+  assist_tackle_3_player_name <- rep(NA_character_, n)
+  assist_tackle_3_team <- rep(NA_character_, n)
+  assist_tackle_4_player_id <- rep(NA_character_, n)
+  assist_tackle_4_player_name <- rep(NA_character_, n)
+  assist_tackle_4_team <- rep(NA_character_, n)
+  tackle_with_assist <- rep(0, n)
+  tackle_with_assist_1_player_id <- rep(NA_character_, n)
+  tackle_with_assist_1_player_name <- rep(NA_character_, n)
+  tackle_with_assist_1_team <- rep(NA_character_, n)
+  tackle_with_assist_2_player_id <- rep(NA_character_, n)
+  tackle_with_assist_2_player_name <- rep(NA_character_, n)
+  tackle_with_assist_2_team <- rep(NA_character_, n)
+  pass_defense_1_player_id <- rep(NA_character_, n)
+  pass_defense_1_player_name <- rep(NA_character_, n)
+  pass_defense_2_player_id <- rep(NA_character_, n)
+  pass_defense_2_player_name <- rep(NA_character_, n)
+  fumbled_1_team <- rep(NA_character_, n)
+  fumbled_1_player_id <- rep(NA_character_, n)
+  fumbled_1_player_name <- rep(NA_character_, n)
+  fumbled_2_player_id <- rep(NA_character_, n)
+  fumbled_2_player_name <- rep(NA_character_, n)
+  fumbled_2_team <- rep(NA_character_, n)
+  fumble_recovery_1_team <- rep(NA_character_, n)
+  fumble_recovery_1_yards <- rep(NA_integer_, n)
+  fumble_recovery_1_player_id <- rep(NA_character_, n)
+  fumble_recovery_1_player_name <- rep(NA_character_, n)
+  fumble_recovery_2_team <- rep(NA_character_, n)
+  fumble_recovery_2_yards <- rep(NA_integer_, n)
+  fumble_recovery_2_player_id <- rep(NA_character_, n)
+  fumble_recovery_2_player_name <- rep(NA_character_, n)
+  td_team <- rep(NA_character_, n)
+  return_team <- rep(NA_character_, n)
+  timeout_team <- rep(NA_character_, n)
+  yards_gained <- rep(0, n)
+  return_yards <- rep(0, n)
+  air_yards <- rep(NA_integer_, n)
+  yards_after_catch <- rep(NA_integer_, n)
+  penalty_team <- rep(NA_character_, n)
+  penalty_player_id <- rep(NA_character_, n)
+  penalty_player_name <- rep(NA_character_, n)
+  penalty_yards <- rep(NA_integer_, n)
+  kick_distance <- rep(NA_integer_, n)
+  defensive_two_point_attempt <- rep(0, n)
+  defensive_two_point_conv <- rep(0, n)
+  defensive_extra_point_attempt <- rep(0, n)
+  defensive_extra_point_conv <- rep(0, n)
+  penalty_fix <- rep(0, n)
+  return_penalty_fix <- rep(0, n)
+  rushing_yards <- rep(NA_integer_, n)
+  lateral_rushing_yards <- rep(NA_integer_, n)
+  passing_yards <- rep(NA_integer_, n)
+  receiving_yards <- rep(NA_integer_, n)
+  lateral_receiving_yards <- rep(NA_integer_, n)
+  td_player_id <- rep(NA_character_, n)
+  td_player_name <- rep(NA_character_, n)
+  sack_player_id <- rep(NA_character_, n)
+  sack_player_name <- rep(NA_character_, n)
+  half_sack_1_player_id <- rep(NA_character_, n)
+  half_sack_1_player_name <- rep(NA_character_, n)
+  half_sack_2_player_id <- rep(NA_character_, n)
+  half_sack_2_player_name <- rep(NA_character_, n)
+  safety_player_name <- rep(NA_character_, n)
+  safety_player_id <- rep(NA_character_, n)
 
-  for (index in seq_along(play_stats$playId)) {
-    stat_id <- play_stats$statId[index]
+  for (index in seq_along(s_stat)) {
+    i <- play_index[index]
+    stat_id <- s_stat[index]
     if (stat_id == 2) {
-      row$punt_blocked <- 1
-      row$punt_attempt <- 1
-      row$kick_distance <- play_stats$yards[index]
-      row$punter_player_id <- play_stats$player.esbId[index]
-      row$punter_player_name <- play_stats$player.displayName[index]
+      punt_blocked[i] <- 1
+      punt_attempt[i] <- 1
+      kick_distance[i] <- s_yards[index]
+      punter_player_id[i] <- s_id[index]
+      punter_player_name[i] <- s_name[index]
     } else if (stat_id == 3) {
-      row$first_down_rush <- 1
+      first_down_rush[i] <- 1
     } else if (stat_id == 4) {
-      row$first_down_pass <- 1
+      first_down_pass[i] <- 1
     } else if (stat_id == 5) {
-      row$first_down_penalty <- 1
+      first_down_penalty[i] <- 1
     } else if (stat_id == 6) {
-      row$third_down_converted <- 1
+      third_down_converted[i] <- 1
     } else if (stat_id == 7) {
-      row$third_down_failed <- 1
+      third_down_failed[i] <- 1
     } else if (stat_id == 8) {
-      row$fourth_down_converted <- 1
+      fourth_down_converted[i] <- 1
     } else if (stat_id == 9) {
-      row$fourth_down_failed <- 1
+      fourth_down_failed[i] <- 1
     } else if (stat_id == 10) {
-      row$rush_attempt <- 1
-      row$rusher_player_id <- play_stats$player.esbId[index]
-      row$rusher_player_name <- play_stats$player.displayName[index]
-      row$yards_gained <- play_stats$yards[index]
-      row$rushing_yards <- play_stats$yards[index]
+      rush_attempt[i] <- 1
+      rusher_player_id[i] <- s_id[index]
+      rusher_player_name[i] <- s_name[index]
+      yards_gained[i] <- s_yards[index]
+      rushing_yards[i] <- s_yards[index]
     } else if (stat_id == 11) {
-      row$rush_attempt <- 1
-      row$touchdown <- 1
-      row$first_down_rush <- 1
-      row$rush_touchdown <- 1
-      row$rusher_player_id <- play_stats$player.esbId[index]
-      row$rusher_player_name <- play_stats$player.displayName[index]
-      row$yards_gained <- play_stats$yards[index]
-      row$rushing_yards <- play_stats$yards[index]
-      row$td_team <- play_stats$teamAbbr[index]
-      row$td_player_id <- play_stats$player.esbId[index]
-      row$td_player_name <- play_stats$player.displayName[index]
+      rush_attempt[i] <- 1
+      touchdown[i] <- 1
+      first_down_rush[i] <- 1
+      rush_touchdown[i] <- 1
+      rusher_player_id[i] <- s_id[index]
+      rusher_player_name[i] <- s_name[index]
+      yards_gained[i] <- s_yards[index]
+      rushing_yards[i] <- s_yards[index]
+      td_team[i] <- s_team[index]
+      td_player_id[i] <- s_id[index]
+      td_player_name[i] <- s_name[index]
     } else if (stat_id == 12) {
-      row$rush_attempt <- 1
-      row$lateral_rush <- 1
-      row$lateral_rusher_player_id <- play_stats$player.esbId[index]
-      row$lateral_rusher_player_name <- play_stats$player.displayName[index]
-      row$yards_gained <- play_stats$yards[index]
-      row$lateral_rushing_yards <- play_stats$yards[index]
+      rush_attempt[i] <- 1
+      lateral_rush[i] <- 1
+      lateral_rusher_player_id[i] <- s_id[index]
+      lateral_rusher_player_name[i] <- s_name[index]
+      yards_gained[i] <- s_yards[index]
+      lateral_rushing_yards[i] <- s_yards[index]
     } else if (stat_id == 13) {
-      row$rush_attempt <- 1
-      row$touchdown <- 1
-      row$rush_touchdown <- 1
-      row$lateral_rush <- 1
-      row$lateral_rusher_player_id <- play_stats$player.esbId[index]
-      row$lateral_rusher_player_name <- play_stats$player.displayName[index]
-      row$td_team <- play_stats$teamAbbr[index]
-      row$td_player_id <- play_stats$player.esbId[index]
-      row$td_player_name <- play_stats$player.displayName[index]
-      row$yards_gained <- play_stats$yards[index]
-      row$lateral_rushing_yards <- play_stats$yards[index]
+      rush_attempt[i] <- 1
+      touchdown[i] <- 1
+      rush_touchdown[i] <- 1
+      lateral_rush[i] <- 1
+      lateral_rusher_player_id[i] <- s_id[index]
+      lateral_rusher_player_name[i] <- s_name[index]
+      td_team[i] <- s_team[index]
+      td_player_id[i] <- s_id[index]
+      td_player_name[i] <- s_name[index]
+      yards_gained[i] <- s_yards[index]
+      lateral_rushing_yards[i] <- s_yards[index]
     } else if (stat_id == 14) {
-      row$incomplete_pass <- 1
-      row$pass_attempt <- 1
-      row$passer_player_id <- play_stats$player.esbId[index]
-      row$passer_player_name <- play_stats$player.displayName[index]
+      incomplete_pass[i] <- 1
+      pass_attempt[i] <- 1
+      passer_player_id[i] <- s_id[index]
+      passer_player_name[i] <- s_name[index]
     } else if (stat_id == 15) {
-      row$pass_attempt <- 1
-      row$complete_pass <- 1
-      row$passer_player_id <- play_stats$player.esbId[index]
-      row$passer_player_name <- play_stats$player.displayName[index]
-      row$yards_gained <- play_stats$yards[index]
-      row$passing_yards <- play_stats$yards[index]
+      pass_attempt[i] <- 1
+      complete_pass[i] <- 1
+      passer_player_id[i] <- s_id[index]
+      passer_player_name[i] <- s_name[index]
+      yards_gained[i] <- s_yards[index]
+      passing_yards[i] <- s_yards[index]
     } else if (stat_id == 16) {
-      row$pass_attempt <- 1
-      row$touchdown <- 1
-      row$pass_touchdown <- 1
-      row$complete_pass <- 1
-      row$passer_player_id <- play_stats$player.esbId[index]
-      row$passer_player_name <- play_stats$player.displayName[index]
-      row$yards_gained <- play_stats$yards[index]
-      row$passing_yards <- play_stats$yards[index]
-      row$td_team <- play_stats$teamAbbr[index]
-      row$td_player_id <- play_stats$player.esbId[index]
-      row$td_player_name <- play_stats$player.displayName[index]
+      pass_attempt[i] <- 1
+      touchdown[i] <- 1
+      pass_touchdown[i] <- 1
+      complete_pass[i] <- 1
+      passer_player_id[i] <- s_id[index]
+      passer_player_name[i] <- s_name[index]
+      yards_gained[i] <- s_yards[index]
+      passing_yards[i] <- s_yards[index]
+      td_team[i] <- s_team[index]
+      td_player_id[i] <- s_id[index]
+      td_player_name[i] <- s_name[index]
     } else if (stat_id == 19) {
-      row$interception <- 1
-      row$pass_attempt <- 1
-      row$passer_player_id <- play_stats$player.esbId[index]
-      row$passer_player_name <- play_stats$player.displayName[index]
+      interception[i] <- 1
+      pass_attempt[i] <- 1
+      passer_player_id[i] <- s_id[index]
+      passer_player_name[i] <- s_name[index]
     } else if (stat_id == 20) {
-      row$pass_attempt <- 1
-      row$sack <- 1
-      row$passer_player_id <- play_stats$player.esbId[index]
-      row$passer_player_name <- play_stats$player.displayName[index]
-      row$yards_gained <- play_stats$yards[index]
+      pass_attempt[i] <- 1
+      sack[i] <- 1
+      passer_player_id[i] <- s_id[index]
+      passer_player_name[i] <- s_name[index]
+      yards_gained[i] <- s_yards[index]
     } else if (stat_id == 21) {
-      row$pass_attempt <- 1
-      row$complete_pass <- 1
-      row$receiver_player_id <- play_stats$player.esbId[index]
-      row$receiver_player_name <- play_stats$player.displayName[index]
-      row$yards_gained <- play_stats$yards[index]
-      row$receiving_yards <- play_stats$yards[index]
+      pass_attempt[i] <- 1
+      complete_pass[i] <- 1
+      receiver_player_id[i] <- s_id[index]
+      receiver_player_name[i] <- s_name[index]
+      yards_gained[i] <- s_yards[index]
+      receiving_yards[i] <- s_yards[index]
     } else if (stat_id == 22) {
-      row$pass_attempt <- 1
-      row$touchdown <- 1
-      row$pass_touchdown <- 1
-      row$complete_pass <- 1
-      row$receiver_player_id <- play_stats$player.esbId[index]
-      row$receiver_player_name <- play_stats$player.displayName[index]
-      row$td_team <- play_stats$teamAbbr[index]
-      row$td_player_id <- play_stats$player.esbId[index]
-      row$td_player_name <- play_stats$player.displayName[index]
-      row$yards_gained <- play_stats$yards[index]
-      row$receiving_yards <- play_stats$yards[index]
+      pass_attempt[i] <- 1
+      touchdown[i] <- 1
+      pass_touchdown[i] <- 1
+      complete_pass[i] <- 1
+      receiver_player_id[i] <- s_id[index]
+      receiver_player_name[i] <- s_name[index]
+      td_team[i] <- s_team[index]
+      td_player_id[i] <- s_id[index]
+      td_player_name[i] <- s_name[index]
+      yards_gained[i] <- s_yards[index]
+      receiving_yards[i] <- s_yards[index]
     } else if (stat_id == 23) {
-      row$pass_attempt <- 1
-      row$complete_pass <- 1
-      row$lateral_reception <- 1
-      row$lateral_receiver_player_id <- play_stats$player.esbId[index]
-      row$lateral_receiver_player_name <- play_stats$player.displayName[index]
-      row$yards_gained <- play_stats$yards[index]
-      row$lateral_receiving_yards <- play_stats$yards[index]
+      pass_attempt[i] <- 1
+      complete_pass[i] <- 1
+      lateral_reception[i] <- 1
+      lateral_receiver_player_id[i] <- s_id[index]
+      lateral_receiver_player_name[i] <- s_name[index]
+      yards_gained[i] <- s_yards[index]
+      lateral_receiving_yards[i] <- s_yards[index]
     } else if (stat_id == 24) {
-      row$pass_attempt <- 1
-      row$touchdown <- 1
-      row$pass_touchdown <- 1
-      row$complete_pass <- 1
-      row$lateral_reception <- 1
-      row$lateral_receiver_player_id <- play_stats$player.esbId[index]
-      row$lateral_receiver_player_name <- play_stats$player.displayName[index]
-      row$td_team <- play_stats$teamAbbr[index]
-      row$td_player_id <- play_stats$player.esbId[index]
-      row$td_player_name <- play_stats$player.displayName[index]
-      row$yards_gained <- play_stats$yards[index]
-      row$lateral_receiving_yards <- play_stats$yards[index]
+      pass_attempt[i] <- 1
+      touchdown[i] <- 1
+      pass_touchdown[i] <- 1
+      complete_pass[i] <- 1
+      lateral_reception[i] <- 1
+      lateral_receiver_player_id[i] <- s_id[index]
+      lateral_receiver_player_name[i] <- s_name[index]
+      td_team[i] <- s_team[index]
+      td_player_id[i] <- s_id[index]
+      td_player_name[i] <- s_name[index]
+      yards_gained[i] <- s_yards[index]
+      lateral_receiving_yards[i] <- s_yards[index]
     } else if (stat_id == 25) {
-      row$pass_attempt <- 1
-      row$interception_player_id <- play_stats$player.esbId[index]
-      row$interception_player_name <- play_stats$player.displayName[index]
-      row$return_team <- play_stats$teamAbbr[index]
-      row$return_yards <- play_stats$yards[index]
-      row$return_penalty_fix <- 1
+      pass_attempt[i] <- 1
+      interception_player_id[i] <- s_id[index]
+      interception_player_name[i] <- s_name[index]
+      return_team[i] <- s_team[index]
+      return_yards[i] <- s_yards[index]
+      return_penalty_fix[i] <- 1
     } else if (stat_id == 26) {
-      row$pass_attempt <- 1
-      row$touchdown <- 1
-      row$return_touchdown <- 1
-      row$interception_player_id <- play_stats$player.esbId[index]
-      row$interception_player_name <- play_stats$player.displayName[index]
-      row$td_team <- play_stats$teamAbbr[index]
-      row$td_player_id <- play_stats$player.esbId[index]
-      row$td_player_name <- play_stats$player.displayName[index]
-      row$return_team <- play_stats$teamAbbr[index]
-      row$return_yards <- play_stats$yards[index]
-      row$return_penalty_fix <- 1
+      pass_attempt[i] <- 1
+      touchdown[i] <- 1
+      return_touchdown[i] <- 1
+      interception_player_id[i] <- s_id[index]
+      interception_player_name[i] <- s_name[index]
+      td_team[i] <- s_team[index]
+      td_player_id[i] <- s_id[index]
+      td_player_name[i] <- s_name[index]
+      return_team[i] <- s_team[index]
+      return_yards[i] <- s_yards[index]
+      return_penalty_fix[i] <- 1
     } else if (stat_id == 27) {
-      row$pass_attempt <- 1
-      row$lateral_return <- 1
-      row$lateral_interception_player_id <- play_stats$player.esbId[index]
-      row$lateral_interception_player_name <- play_stats$player.displayName[
-        index
-      ]
-      row$return_yards <- play_stats$yards[index]
-      row$return_penalty_fix <- 1
+      pass_attempt[i] <- 1
+      lateral_return[i] <- 1
+      lateral_interception_player_id[i] <- s_id[index]
+      lateral_interception_player_name[i] <- s_name[index]
+      return_yards[i] <- s_yards[index]
+      return_penalty_fix[i] <- 1
     } else if (stat_id == 28) {
-      row$pass_attempt <- 1
-      row$touchdown <- 1
-      row$return_touchdown <- 1
-      row$lateral_return <- 1
-      row$lateral_interception_player_id <- play_stats$player.esbId[index]
-      row$lateral_interception_player_name <- play_stats$player.displayName[
-        index
-      ]
-      row$td_team <- play_stats$teamAbbr[index]
-      row$td_player_id <- play_stats$player.esbId[index]
-      row$td_player_name <- play_stats$player.displayName[index]
-      row$return_yards <- play_stats$yards[index]
-      row$return_penalty_fix <- 1
+      pass_attempt[i] <- 1
+      touchdown[i] <- 1
+      return_touchdown[i] <- 1
+      lateral_return[i] <- 1
+      lateral_interception_player_id[i] <- s_id[index]
+      lateral_interception_player_name[i] <- s_name[index]
+      td_team[i] <- s_team[index]
+      td_player_id[i] <- s_id[index]
+      td_player_name[i] <- s_name[index]
+      return_yards[i] <- s_yards[index]
+      return_penalty_fix[i] <- 1
     } else if (stat_id == 29) {
-      row$punt_attempt <- 1
-      row$punter_player_id <- play_stats$player.esbId[index]
-      row$punter_player_name <- play_stats$player.displayName[index]
-      row$kick_distance <- play_stats$yards[index]
+      punt_attempt[i] <- 1
+      punter_player_id[i] <- s_id[index]
+      punter_player_name[i] <- s_name[index]
+      kick_distance[i] <- s_yards[index]
     } else if (stat_id == 30) {
       # yards always zero for stat_id 30 (punt inside 20) so we don't write kick_distance here
-      row$punt_inside_twenty <- 1
-      row$punt_attempt <- 1
-      row$punter_player_id <- play_stats$player.esbId[index]
-      row$punter_player_name <- play_stats$player.displayName[index]
+      punt_inside_twenty[i] <- 1
+      punt_attempt[i] <- 1
+      punter_player_id[i] <- s_id[index]
+      punter_player_name[i] <- s_name[index]
     } else if (stat_id == 31) {
-      row$punt_in_endzone <- 1
-      row$punt_attempt <- 1
-      row$punter_player_id <- play_stats$player.esbId[index]
-      row$punter_player_name <- play_stats$player.displayName[index]
-      row$kick_distance <- play_stats$yards[index]
+      punt_in_endzone[i] <- 1
+      punt_attempt[i] <- 1
+      punter_player_id[i] <- s_id[index]
+      punter_player_name[i] <- s_name[index]
+      kick_distance[i] <- s_yards[index]
     } else if (stat_id == 32) {
-      row$punt_attempt <- 1
-      row$kick_distance <- play_stats$yards[index]
-      row$punter_player_id <- play_stats$player.esbId[index]
-      row$punter_player_name <- play_stats$player.displayName[index]
+      punt_attempt[i] <- 1
+      kick_distance[i] <- s_yards[index]
+      punter_player_id[i] <- s_id[index]
+      punter_player_name[i] <- s_name[index]
     } else if (stat_id == 33) {
-      row$punt_attempt <- 1
-      row$punt_returner_player_id <- play_stats$player.esbId[index]
-      row$punt_returner_player_name <- play_stats$player.displayName[index]
-      row$return_yards <- play_stats$yards[index]
-      row$return_team <- play_stats$teamAbbr[index]
-      row$return_penalty_fix <- 1
+      punt_attempt[i] <- 1
+      punt_returner_player_id[i] <- s_id[index]
+      punt_returner_player_name[i] <- s_name[index]
+      return_yards[i] <- s_yards[index]
+      return_team[i] <- s_team[index]
+      return_penalty_fix[i] <- 1
     } else if (stat_id == 34) {
-      row$touchdown <- 1
-      row$return_touchdown <- 1
-      row$punt_attempt <- 1
-      row$punt_returner_player_id <- play_stats$player.esbId[index]
-      row$punt_returner_player_name <- play_stats$player.displayName[index]
-      row$td_team <- play_stats$teamAbbr[index]
-      row$td_player_id <- play_stats$player.esbId[index]
-      row$td_player_name <- play_stats$player.displayName[index]
-      row$return_team <- play_stats$teamAbbr[index]
-      row$return_yards <- play_stats$yards[index]
-      row$return_penalty_fix <- 1
+      touchdown[i] <- 1
+      return_touchdown[i] <- 1
+      punt_attempt[i] <- 1
+      punt_returner_player_id[i] <- s_id[index]
+      punt_returner_player_name[i] <- s_name[index]
+      td_team[i] <- s_team[index]
+      td_player_id[i] <- s_id[index]
+      td_player_name[i] <- s_name[index]
+      return_team[i] <- s_team[index]
+      return_yards[i] <- s_yards[index]
+      return_penalty_fix[i] <- 1
     } else if (stat_id == 35) {
-      row$punt_attempt <- 1
-      row$lateral_return <- 1
-      row$lateral_punt_returner_player_id <- play_stats$player.esbId[index]
-      row$lateral_punt_returner_player_name <- play_stats$player.displayName[
-        index
-      ]
-      row$return_yards <- play_stats$yards[index]
-      row$return_penalty_fix <- 1
+      punt_attempt[i] <- 1
+      lateral_return[i] <- 1
+      lateral_punt_returner_player_id[i] <- s_id[index]
+      lateral_punt_returner_player_name[i] <- s_name[index]
+      return_yards[i] <- s_yards[index]
+      return_penalty_fix[i] <- 1
     } else if (stat_id == 36) {
-      row$touchdown <- 1
-      row$return_touchdown <- 1
-      row$punt_attempt <- 1
-      row$lateral_return <- 1
-      row$lateral_punt_returner_player_id <- play_stats$player.esbId[index]
-      row$lateral_punt_returner_player_name <- play_stats$player.displayName[
-        index
-      ]
-      row$td_team <- play_stats$teamAbbr[index]
-      row$td_player_id <- play_stats$player.esbId[index]
-      row$td_player_name <- play_stats$player.displayName[index]
-      row$return_yards <- play_stats$yards[index]
-      row$return_team <- play_stats$teamAbbr[index]
-      row$return_penalty_fix <- 1
+      touchdown[i] <- 1
+      return_touchdown[i] <- 1
+      punt_attempt[i] <- 1
+      lateral_return[i] <- 1
+      lateral_punt_returner_player_id[i] <- s_id[index]
+      lateral_punt_returner_player_name[i] <- s_name[index]
+      td_team[i] <- s_team[index]
+      td_player_id[i] <- s_id[index]
+      td_player_name[i] <- s_name[index]
+      return_yards[i] <- s_yards[index]
+      return_team[i] <- s_team[index]
+      return_penalty_fix[i] <- 1
     } else if (stat_id == 37) {
-      row$punt_out_of_bounds <- 1
-      row$punt_attempt <- 1
-      row$return_yards <- 0
-      row$return_team <- play_stats$teamAbbr[index]
+      punt_out_of_bounds[i] <- 1
+      punt_attempt[i] <- 1
+      return_yards[i] <- 0
+      return_team[i] <- s_team[index]
     } else if (stat_id == 38) {
-      row$punt_downed <- 1
-      row$punt_attempt <- 1
-      row$return_team <- play_stats$teamAbbr[index]
+      punt_downed[i] <- 1
+      punt_attempt[i] <- 1
+      return_team[i] <- s_team[index]
     } else if (stat_id == 39) {
-      row$punt_fair_catch <- 1
-      row$punt_attempt <- 1
-      row$punt_returner_player_id <- play_stats$player.esbId[index]
-      row$punt_returner_player_name <- play_stats$player.displayName[index]
-      row$return_team <- play_stats$teamAbbr[index]
+      punt_fair_catch[i] <- 1
+      punt_attempt[i] <- 1
+      punt_returner_player_id[i] <- s_id[index]
+      punt_returner_player_name[i] <- s_name[index]
+      return_team[i] <- s_team[index]
     } else if (stat_id == 40) {
-      row$punt_attempt <- 1
-      row$return_team <- play_stats$teamAbbr[index]
+      punt_attempt[i] <- 1
+      return_team[i] <- s_team[index]
     } else if (stat_id == 41) {
-      row$kickoff_attempt <- 1
-      row$kicker_player_id <- play_stats$player.esbId[index]
-      row$kicker_player_name <- play_stats$player.displayName[index]
-      row$kick_distance <- play_stats$yards[index]
+      kickoff_attempt[i] <- 1
+      kicker_player_id[i] <- s_id[index]
+      kicker_player_name[i] <- s_name[index]
+      kick_distance[i] <- s_yards[index]
     } else if (stat_id == 42) {
       # yards always zero for stat_id 42 so we don't write kick_distance here
-      row$kickoff_inside_twenty <- 1
-      row$kickoff_attempt <- 1
-      row$kicker_player_id <- play_stats$player.esbId[index]
-      row$kicker_player_name <- play_stats$player.displayName[index]
+      kickoff_inside_twenty[i] <- 1
+      kickoff_attempt[i] <- 1
+      kicker_player_id[i] <- s_id[index]
+      kicker_player_name[i] <- s_name[index]
     } else if (stat_id == 43) {
-      row$kickoff_in_endzone <- 1
-      row$kickoff_attempt <- 1
-      row$kick_distance <- play_stats$yards[index]
-      row$kicker_player_id <- play_stats$player.esbId[index]
-      row$kicker_player_name <- play_stats$player.displayName[index]
+      kickoff_in_endzone[i] <- 1
+      kickoff_attempt[i] <- 1
+      kick_distance[i] <- s_yards[index]
+      kicker_player_id[i] <- s_id[index]
+      kicker_player_name[i] <- s_name[index]
     } else if (stat_id == 44) {
-      row$kickoff_attempt <- 1
-      row$kick_distance <- play_stats$yards[index]
-      row$kicker_player_id <- play_stats$player.esbId[index]
-      row$kicker_player_name <- play_stats$player.displayName[index]
+      kickoff_attempt[i] <- 1
+      kick_distance[i] <- s_yards[index]
+      kicker_player_id[i] <- s_id[index]
+      kicker_player_name[i] <- s_name[index]
     } else if (stat_id == 45) {
-      row$kickoff_attempt <- 1
-      row$kickoff_returner_player_id <- play_stats$player.esbId[index]
-      row$kickoff_returner_player_name <- play_stats$player.displayName[index]
-      row$return_yards <- play_stats$yards[index]
-      row$return_team <- play_stats$teamAbbr[index]
-      row$return_penalty_fix <- 1
+      kickoff_attempt[i] <- 1
+      kickoff_returner_player_id[i] <- s_id[index]
+      kickoff_returner_player_name[i] <- s_name[index]
+      return_yards[i] <- s_yards[index]
+      return_team[i] <- s_team[index]
+      return_penalty_fix[i] <- 1
     } else if (stat_id == 46) {
-      row$touchdown <- 1
-      row$return_touchdown <- 1
-      row$kickoff_attempt <- 1
-      row$kickoff_returner_player_id <- play_stats$player.esbId[index]
-      row$kickoff_returner_player_name <- play_stats$player.displayName[index]
-      row$td_team <- play_stats$teamAbbr[index]
-      row$td_player_id <- play_stats$player.esbId[index]
-      row$td_player_name <- play_stats$player.displayName[index]
-      row$return_yards <- play_stats$yards[index]
-      row$return_team <- play_stats$teamAbbr[index]
-      row$return_penalty_fix <- 1
+      touchdown[i] <- 1
+      return_touchdown[i] <- 1
+      kickoff_attempt[i] <- 1
+      kickoff_returner_player_id[i] <- s_id[index]
+      kickoff_returner_player_name[i] <- s_name[index]
+      td_team[i] <- s_team[index]
+      td_player_id[i] <- s_id[index]
+      td_player_name[i] <- s_name[index]
+      return_yards[i] <- s_yards[index]
+      return_team[i] <- s_team[index]
+      return_penalty_fix[i] <- 1
     } else if (stat_id == 47) {
-      row$kickoff_attempt <- 1
-      row$lateral_return <- 1
-      row$lateral_kickoff_returner_player_id <- play_stats$player.esbId[index]
-      row$lateral_kickoff_returner_player_name <- play_stats$player.displayName[
-        index
-      ]
-      row$return_yards <- play_stats$yards[index]
-      row$return_team <- play_stats$teamAbbr[index]
-      row$return_penalty_fix <- 1
+      kickoff_attempt[i] <- 1
+      lateral_return[i] <- 1
+      lateral_kickoff_returner_player_id[i] <- s_id[index]
+      lateral_kickoff_returner_player_name[i] <- s_name[index]
+      return_yards[i] <- s_yards[index]
+      return_team[i] <- s_team[index]
+      return_penalty_fix[i] <- 1
     } else if (stat_id == 48) {
-      row$touchdown <- 1
-      row$return_touchdown <- 1
-      row$kickoff_attempt <- 1
-      row$lateral_return <- 1
-      row$lateral_kickoff_returner_player_id <- play_stats$player.esbId[index]
-      row$lateral_kickoff_returner_player_name <- play_stats$player.displayName[
-        index
-      ]
-      row$td_team <- play_stats$teamAbbr[index]
-      row$td_player_id <- play_stats$player.esbId[index]
-      row$td_player_name <- play_stats$player.displayName[index]
-      row$return_yards <- play_stats$yards[index]
-      row$return_team <- play_stats$teamAbbr[index]
-      row$return_penalty_fix <- 1
+      touchdown[i] <- 1
+      return_touchdown[i] <- 1
+      kickoff_attempt[i] <- 1
+      lateral_return[i] <- 1
+      lateral_kickoff_returner_player_id[i] <- s_id[index]
+      lateral_kickoff_returner_player_name[i] <- s_name[index]
+      td_team[i] <- s_team[index]
+      td_player_id[i] <- s_id[index]
+      td_player_name[i] <- s_name[index]
+      return_yards[i] <- s_yards[index]
+      return_team[i] <- s_team[index]
+      return_penalty_fix[i] <- 1
     } else if (stat_id == 49) {
-      row$kickoff_out_of_bounds <- 1
-      row$kickoff_attempt <- 1
-      row$return_team <- play_stats$teamAbbr[index]
+      kickoff_out_of_bounds[i] <- 1
+      kickoff_attempt[i] <- 1
+      return_team[i] <- s_team[index]
     } else if (stat_id == 50) {
-      row$kickoff_fair_catch <- 1
-      row$kickoff_attempt <- 1
-      row$kickoff_returner_player_id <- play_stats$player.esbId[index]
-      row$kickoff_returner_player_name <- play_stats$player.displayName[index]
-      row$return_team <- play_stats$teamAbbr[index]
+      kickoff_fair_catch[i] <- 1
+      kickoff_attempt[i] <- 1
+      kickoff_returner_player_id[i] <- s_id[index]
+      kickoff_returner_player_name[i] <- s_name[index]
+      return_team[i] <- s_team[index]
     } else if (stat_id == 51) {
-      row$kickoff_attempt <- 1
-      row$return_team <- play_stats$teamAbbr[index]
+      kickoff_attempt[i] <- 1
+      return_team[i] <- s_team[index]
     } else if (stat_id == 52) {
-      row$fumble_forced <- 1
-      row$fumble <- 1
-      row$fumbled_1_player_id <-
-        if_else(
-          is.na(row$fumbled_1_player_id),
-          play_stats$player.esbId[index],
-          row$fumbled_1_player_id
+      fumble_forced[i] <- 1
+      fumble[i] <- 1
+      fumbled_1_player_id[i] <-
+        scalar_if_else(
+          is.na(fumbled_1_player_id[i]),
+          s_id[index],
+          fumbled_1_player_id[i]
         )
-      row$fumbled_1_player_name <-
-        if_else(
-          is.na(row$fumbled_1_player_name),
-          play_stats$player.displayName[index],
-          row$fumbled_1_player_name
+      fumbled_1_player_name[i] <-
+        scalar_if_else(
+          is.na(fumbled_1_player_name[i]),
+          s_name[index],
+          fumbled_1_player_name[i]
         )
-      row$fumbled_1_team <-
-        if_else(
-          is.na(row$fumbled_1_team),
-          play_stats$teamAbbr[index],
-          row$fumbled_1_team
+      fumbled_1_team[i] <-
+        scalar_if_else(
+          is.na(fumbled_1_team[i]),
+          s_team[index],
+          fumbled_1_team[i]
         )
-      row$fumbled_2_player_id <-
-        if_else(
-          is.na(row$fumbled_2_player_id) &
-            row$fumbled_1_player_id != play_stats$player.esbId[index],
-          play_stats$player.esbId[index],
-          row$fumbled_2_player_id
+      fumbled_2_player_id[i] <-
+        scalar_if_else(
+          is.na(fumbled_2_player_id[i]) &
+            fumbled_1_player_id[i] != s_id[index],
+          s_id[index],
+          fumbled_2_player_id[i]
         )
-      row$fumbled_2_player_name <-
-        if_else(
-          is.na(row$fumbled_2_player_name) &
-            row$fumbled_1_player_name != play_stats$player.displayName[index],
-          play_stats$player.displayName[index],
-          row$fumbled_2_player_name
+      fumbled_2_player_name[i] <-
+        scalar_if_else(
+          is.na(fumbled_2_player_name[i]) &
+            fumbled_1_player_name[i] != s_name[index],
+          s_name[index],
+          fumbled_2_player_name[i]
         )
-      row$fumbled_2_team <-
-        if_else(
-          is.na(row$fumbled_2_team) &
-            row$fumbled_1_player_name != play_stats$player.displayName[index],
-          # row$fumbled_1_team != play_stats$teamAbbr[index], # can't use team here because multiple players of the same team are possible
-          play_stats$teamAbbr[index],
-          row$fumbled_2_team
+      fumbled_2_team[i] <-
+        scalar_if_else(
+          is.na(fumbled_2_team[i]) &
+            fumbled_1_player_name[i] != s_name[index],
+          # fumbled_1_team[i] != s_team[index], # can't use team here because multiple players of the same team are possible
+          s_team[index],
+          fumbled_2_team[i]
         )
     } else if (stat_id == 53) {
-      row$fumble_not_forced <- 1
-      row$fumble <- 1
-      row$fumbled_1_player_id <-
-        if_else(
-          is.na(row$fumbled_1_player_id),
-          play_stats$player.esbId[index],
-          row$fumbled_1_player_id
+      fumble_not_forced[i] <- 1
+      fumble[i] <- 1
+      fumbled_1_player_id[i] <-
+        scalar_if_else(
+          is.na(fumbled_1_player_id[i]),
+          s_id[index],
+          fumbled_1_player_id[i]
         )
-      row$fumbled_1_player_name <-
-        if_else(
-          is.na(row$fumbled_1_player_name),
-          play_stats$player.displayName[index],
-          row$fumbled_1_player_name
+      fumbled_1_player_name[i] <-
+        scalar_if_else(
+          is.na(fumbled_1_player_name[i]),
+          s_name[index],
+          fumbled_1_player_name[i]
         )
-      row$fumbled_1_team <-
-        if_else(
-          is.na(row$fumbled_1_team),
-          play_stats$teamAbbr[index],
-          row$fumbled_1_team
+      fumbled_1_team[i] <-
+        scalar_if_else(
+          is.na(fumbled_1_team[i]),
+          s_team[index],
+          fumbled_1_team[i]
         )
-      row$fumbled_2_player_id <-
-        if_else(
-          is.na(row$fumbled_2_player_id) &
-            row$fumbled_1_player_id != play_stats$player.esbId[index],
-          play_stats$player.esbId[index],
-          row$fumbled_2_player_id
+      fumbled_2_player_id[i] <-
+        scalar_if_else(
+          is.na(fumbled_2_player_id[i]) &
+            fumbled_1_player_id[i] != s_id[index],
+          s_id[index],
+          fumbled_2_player_id[i]
         )
-      row$fumbled_2_player_name <-
-        if_else(
-          is.na(row$fumbled_2_player_name) &
-            row$fumbled_1_player_name != play_stats$player.displayName[index],
-          play_stats$player.displayName[index],
-          row$fumbled_2_player_name
+      fumbled_2_player_name[i] <-
+        scalar_if_else(
+          is.na(fumbled_2_player_name[i]) &
+            fumbled_1_player_name[i] != s_name[index],
+          s_name[index],
+          fumbled_2_player_name[i]
         )
-      row$fumbled_2_team <-
-        if_else(
-          is.na(row$fumbled_2_team) &
-            row$fumbled_1_player_name != play_stats$player.displayName[index],
-          # row$fumbled_1_team != play_stats$teamAbbr[index],
-          play_stats$teamAbbr[index],
-          row$fumbled_2_team
+      fumbled_2_team[i] <-
+        scalar_if_else(
+          is.na(fumbled_2_team[i]) &
+            fumbled_1_player_name[i] != s_name[index],
+          # fumbled_1_team[i] != s_team[index],
+          s_team[index],
+          fumbled_2_team[i]
         )
     } else if (stat_id == 54) {
-      row$fumble_out_of_bounds <- 1
-      row$fumble <- 1
-      row$fumbled_1_player_id <-
-        if_else(
-          is.na(row$fumbled_1_player_id),
-          play_stats$player.esbId[index],
-          row$fumbled_1_player_id
+      fumble_out_of_bounds[i] <- 1
+      fumble[i] <- 1
+      fumbled_1_player_id[i] <-
+        scalar_if_else(
+          is.na(fumbled_1_player_id[i]),
+          s_id[index],
+          fumbled_1_player_id[i]
         )
-      row$fumbled_1_player_name <-
-        if_else(
-          is.na(row$fumbled_1_player_name),
-          play_stats$player.displayName[index],
-          row$fumbled_1_player_name
+      fumbled_1_player_name[i] <-
+        scalar_if_else(
+          is.na(fumbled_1_player_name[i]),
+          s_name[index],
+          fumbled_1_player_name[i]
         )
-      row$fumbled_1_team <-
-        if_else(
-          is.na(row$fumbled_1_team),
-          play_stats$teamAbbr[index],
-          row$fumbled_1_team
+      fumbled_1_team[i] <-
+        scalar_if_else(
+          is.na(fumbled_1_team[i]),
+          s_team[index],
+          fumbled_1_team[i]
         )
-      row$fumbled_2_player_id <-
-        if_else(
-          is.na(row$fumbled_2_player_id) &
-            row$fumbled_1_player_id != play_stats$player.esbId[index],
-          play_stats$player.esbId[index],
-          row$fumbled_2_player_id
+      fumbled_2_player_id[i] <-
+        scalar_if_else(
+          is.na(fumbled_2_player_id[i]) &
+            fumbled_1_player_id[i] != s_id[index],
+          s_id[index],
+          fumbled_2_player_id[i]
         )
-      row$fumbled_2_player_name <-
-        if_else(
-          is.na(row$fumbled_2_player_name) &
-            row$fumbled_1_player_name != play_stats$player.displayName[index],
-          play_stats$player.displayName[index],
-          row$fumbled_2_player_name
+      fumbled_2_player_name[i] <-
+        scalar_if_else(
+          is.na(fumbled_2_player_name[i]) &
+            fumbled_1_player_name[i] != s_name[index],
+          s_name[index],
+          fumbled_2_player_name[i]
         )
-      row$fumbled_2_team <-
-        if_else(
-          is.na(row$fumbled_2_team) &
-            row$fumbled_1_player_name != play_stats$player.displayName[index],
-          # row$fumbled_1_team != play_stats$teamAbbr[index],
-          play_stats$teamAbbr[index],
-          row$fumbled_2_team
+      fumbled_2_team[i] <-
+        scalar_if_else(
+          is.na(fumbled_2_team[i]) &
+            fumbled_1_player_name[i] != s_name[index],
+          # fumbled_1_team[i] != s_team[index],
+          s_team[index],
+          fumbled_2_team[i]
         )
     } else if (stat_id == 55) {
-      row$fumble <- 1
-      row$fumble_recovery_1_player_id <-
-        if_else(
-          is.na(row$fumble_recovery_1_player_id),
-          play_stats$player.esbId[index],
-          row$fumble_recovery_1_player_id
+      fumble[i] <- 1
+      fumble_recovery_1_player_id[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_1_player_id[i]),
+          s_id[index],
+          fumble_recovery_1_player_id[i]
         )
-      row$fumble_recovery_1_player_name <-
-        if_else(
-          is.na(row$fumble_recovery_1_player_name),
-          play_stats$player.displayName[index],
-          row$fumble_recovery_1_player_name
+      fumble_recovery_1_player_name[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_1_player_name[i]),
+          s_name[index],
+          fumble_recovery_1_player_name[i]
         )
-      row$fumble_recovery_1_team <-
-        if_else(
-          is.na(row$fumble_recovery_1_team),
-          play_stats$teamAbbr[index],
-          row$fumble_recovery_1_team
+      fumble_recovery_1_team[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_1_team[i]),
+          s_team[index],
+          fumble_recovery_1_team[i]
         )
-      row$fumble_recovery_1_yards <-
-        if_else(
-          is.na(row$fumble_recovery_1_yards),
-          play_stats$yards[index],
-          row$fumble_recovery_1_yards
+      fumble_recovery_1_yards[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_1_yards[i]),
+          s_yards[index],
+          fumble_recovery_1_yards[i]
         )
-      row$fumble_recovery_2_player_id <-
-        if_else(
-          is.na(row$fumble_recovery_2_player_id) &
-            row$fumble_recovery_1_player_id != play_stats$player.esbId[index],
-          play_stats$player.esbId[index],
-          row$fumble_recovery_2_player_id
+      fumble_recovery_2_player_id[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_2_player_id[i]) &
+            fumble_recovery_1_player_id[i] != s_id[index],
+          s_id[index],
+          fumble_recovery_2_player_id[i]
         )
-      row$fumble_recovery_2_player_name <-
-        if_else(
-          is.na(row$fumble_recovery_2_player_name) &
-            row$fumble_recovery_1_player_name !=
-              play_stats$player.displayName[index],
-          play_stats$player.displayName[index],
-          row$fumble_recovery_2_player_name
+      fumble_recovery_2_player_name[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_2_player_name[i]) &
+            fumble_recovery_1_player_name[i] != s_name[index],
+          s_name[index],
+          fumble_recovery_2_player_name[i]
         )
-      row$fumble_recovery_2_team <-
-        if_else(
-          is.na(row$fumble_recovery_2_team) &
-            row$fumble_recovery_1_player_name !=
-              play_stats$player.displayName[index],
-          # row$fumble_recovery_1_team != play_stats$teamAbbr[index],
-          play_stats$teamAbbr[index],
-          row$fumble_recovery_2_team
+      fumble_recovery_2_team[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_2_team[i]) &
+            fumble_recovery_1_player_name[i] != s_name[index],
+          # fumble_recovery_1_team[i] != s_team[index],
+          s_team[index],
+          fumble_recovery_2_team[i]
         )
-      row$fumble_recovery_2_yards <-
-        if_else(
-          is.na(row$fumble_recovery_2_yards) &
-            row$fumble_recovery_1_player_name !=
-              play_stats$player.displayName[index],
-          # row$fumble_recovery_1_yards != play_stats$yards[index],
-          play_stats$yards[index],
-          row$fumble_recovery_2_yards
+      fumble_recovery_2_yards[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_2_yards[i]) &
+            fumble_recovery_1_player_name[i] != s_name[index],
+          # fumble_recovery_1_yards[i] != s_yards[index],
+          s_yards[index],
+          fumble_recovery_2_yards[i]
         )
     } else if (stat_id == 56) {
-      row$touchdown <- 1
-      row$fumble <- 1
-      row$td_team <- play_stats$teamAbbr[index]
-      row$td_player_id <- play_stats$player.esbId[index]
-      row$td_player_name <- play_stats$player.displayName[index]
-      row$fumble_recovery_1_player_id <-
-        if_else(
-          is.na(row$fumble_recovery_1_player_id),
-          play_stats$player.esbId[index],
-          row$fumble_recovery_1_player_id
+      touchdown[i] <- 1
+      fumble[i] <- 1
+      td_team[i] <- s_team[index]
+      td_player_id[i] <- s_id[index]
+      td_player_name[i] <- s_name[index]
+      fumble_recovery_1_player_id[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_1_player_id[i]),
+          s_id[index],
+          fumble_recovery_1_player_id[i]
         )
-      row$fumble_recovery_1_player_name <-
-        if_else(
-          is.na(row$fumble_recovery_1_player_name),
-          play_stats$player.displayName[index],
-          row$fumble_recovery_1_player_name
+      fumble_recovery_1_player_name[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_1_player_name[i]),
+          s_name[index],
+          fumble_recovery_1_player_name[i]
         )
-      row$fumble_recovery_1_team <-
-        if_else(
-          is.na(row$fumble_recovery_1_team),
-          play_stats$teamAbbr[index],
-          row$fumble_recovery_1_team
+      fumble_recovery_1_team[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_1_team[i]),
+          s_team[index],
+          fumble_recovery_1_team[i]
         )
-      row$fumble_recovery_1_yards <-
-        if_else(
-          is.na(row$fumble_recovery_1_yards),
-          play_stats$yards[index],
-          row$fumble_recovery_1_yards
+      fumble_recovery_1_yards[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_1_yards[i]),
+          s_yards[index],
+          fumble_recovery_1_yards[i]
         )
-      row$fumble_recovery_2_player_id <-
-        if_else(
-          is.na(row$fumble_recovery_2_player_id) &
-            row$fumble_recovery_1_player_id != play_stats$player.esbId[index],
-          play_stats$player.esbId[index],
-          row$fumble_recovery_2_player_id
+      fumble_recovery_2_player_id[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_2_player_id[i]) &
+            fumble_recovery_1_player_id[i] != s_id[index],
+          s_id[index],
+          fumble_recovery_2_player_id[i]
         )
-      row$fumble_recovery_2_player_name <-
-        if_else(
-          is.na(row$fumble_recovery_2_player_name) &
-            row$fumble_recovery_1_player_name !=
-              play_stats$player.displayName[index],
-          play_stats$player.displayName[index],
-          row$fumble_recovery_2_player_name
+      fumble_recovery_2_player_name[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_2_player_name[i]) &
+            fumble_recovery_1_player_name[i] != s_name[index],
+          s_name[index],
+          fumble_recovery_2_player_name[i]
         )
-      row$fumble_recovery_2_team <-
-        if_else(
-          is.na(row$fumble_recovery_2_team) &
-            row$fumble_recovery_1_player_name !=
-              play_stats$player.displayName[index],
-          # row$fumble_recovery_1_team != play_stats$teamAbbr[index],
-          play_stats$teamAbbr[index],
-          row$fumble_recovery_2_team
+      fumble_recovery_2_team[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_2_team[i]) &
+            fumble_recovery_1_player_name[i] != s_name[index],
+          # fumble_recovery_1_team[i] != s_team[index],
+          s_team[index],
+          fumble_recovery_2_team[i]
         )
-      row$fumble_recovery_2_yards <-
-        if_else(
-          is.na(row$fumble_recovery_2_yards) &
-            row$fumble_recovery_1_player_name !=
-              play_stats$player.displayName[index],
-          # row$fumble_recovery_1_yards != play_stats$yards[index],
-          play_stats$yards[index],
-          row$fumble_recovery_2_yards
+      fumble_recovery_2_yards[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_2_yards[i]) &
+            fumble_recovery_1_player_name[i] != s_name[index],
+          # fumble_recovery_1_yards[i] != s_yards[index],
+          s_yards[index],
+          fumble_recovery_2_yards[i]
         )
     } else if (stat_id == 57) {
-      row$fumble <- 1
-      row$lateral_recovery <- 1
+      fumble[i] <- 1
+      lateral_recovery[i] <- 1
     } else if (stat_id == 58) {
-      row$touchdown <- 1
-      row$td_team <- play_stats$teamAbbr[index]
-      row$td_player_id <- play_stats$player.esbId[index]
-      row$td_player_name <- play_stats$player.displayName[index]
-      row$fumble <- 1
-      row$lateral_recovery <- 1
+      touchdown[i] <- 1
+      td_team[i] <- s_team[index]
+      td_player_id[i] <- s_id[index]
+      td_player_name[i] <- s_name[index]
+      fumble[i] <- 1
+      lateral_recovery[i] <- 1
     } else if (stat_id == 59) {
-      row$fumble <- 1
-      row$fumble_recovery_1_player_id <-
-        if_else(
-          is.na(row$fumble_recovery_1_player_id),
-          play_stats$player.esbId[index],
-          row$fumble_recovery_1_player_id
+      fumble[i] <- 1
+      fumble_recovery_1_player_id[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_1_player_id[i]),
+          s_id[index],
+          fumble_recovery_1_player_id[i]
         )
-      row$fumble_recovery_1_player_name <-
-        if_else(
-          is.na(row$fumble_recovery_1_player_name),
-          play_stats$player.displayName[index],
-          row$fumble_recovery_1_player_name
+      fumble_recovery_1_player_name[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_1_player_name[i]),
+          s_name[index],
+          fumble_recovery_1_player_name[i]
         )
-      row$fumble_recovery_1_team <-
-        if_else(
-          is.na(row$fumble_recovery_1_team),
-          play_stats$teamAbbr[index],
-          row$fumble_recovery_1_team
+      fumble_recovery_1_team[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_1_team[i]),
+          s_team[index],
+          fumble_recovery_1_team[i]
         )
-      row$fumble_recovery_1_yards <-
-        if_else(
-          is.na(row$fumble_recovery_1_yards),
-          play_stats$yards[index],
-          row$fumble_recovery_1_yards
+      fumble_recovery_1_yards[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_1_yards[i]),
+          s_yards[index],
+          fumble_recovery_1_yards[i]
         )
-      row$fumble_recovery_2_player_id <-
-        if_else(
-          is.na(row$fumble_recovery_2_player_id) &
-            row$fumble_recovery_1_player_id != play_stats$player.esbId[index],
-          play_stats$player.esbId[index],
-          row$fumble_recovery_2_player_id
+      fumble_recovery_2_player_id[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_2_player_id[i]) &
+            fumble_recovery_1_player_id[i] != s_id[index],
+          s_id[index],
+          fumble_recovery_2_player_id[i]
         )
-      row$fumble_recovery_2_player_name <-
-        if_else(
-          is.na(row$fumble_recovery_2_player_name) &
-            row$fumble_recovery_1_player_name !=
-              play_stats$player.displayName[index],
-          play_stats$player.displayName[index],
-          row$fumble_recovery_2_player_name
+      fumble_recovery_2_player_name[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_2_player_name[i]) &
+            fumble_recovery_1_player_name[i] != s_name[index],
+          s_name[index],
+          fumble_recovery_2_player_name[i]
         )
-      row$fumble_recovery_2_team <-
-        if_else(
-          is.na(row$fumble_recovery_2_team) &
-            row$fumble_recovery_1_player_name !=
-              play_stats$player.displayName[index],
-          # row$fumble_recovery_1_team != play_stats$teamAbbr[index],
-          play_stats$teamAbbr[index],
-          row$fumble_recovery_2_team
+      fumble_recovery_2_team[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_2_team[i]) &
+            fumble_recovery_1_player_name[i] != s_name[index],
+          # fumble_recovery_1_team[i] != s_team[index],
+          s_team[index],
+          fumble_recovery_2_team[i]
         )
-      row$fumble_recovery_2_yards <-
-        if_else(
-          is.na(row$fumble_recovery_2_yards) &
-            row$fumble_recovery_1_player_name !=
-              play_stats$player.displayName[index],
-          # row$fumble_recovery_1_yards != play_stats$yards[index],
-          play_stats$yards[index],
-          row$fumble_recovery_2_yards
+      fumble_recovery_2_yards[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_2_yards[i]) &
+            fumble_recovery_1_player_name[i] != s_name[index],
+          # fumble_recovery_1_yards[i] != s_yards[index],
+          s_yards[index],
+          fumble_recovery_2_yards[i]
         )
     } else if (stat_id == 60) {
-      row$touchdown <- 1
-      row$return_touchdown <- 1
-      row$td_team <- play_stats$teamAbbr[index]
-      row$td_player_id <- play_stats$player.esbId[index]
-      row$td_player_name <- play_stats$player.displayName[index]
-      row$fumble <- 1
-      row$fumble_recovery_1_player_id <-
-        if_else(
-          is.na(row$fumble_recovery_1_player_id),
-          play_stats$player.esbId[index],
-          row$fumble_recovery_1_player_id
+      touchdown[i] <- 1
+      return_touchdown[i] <- 1
+      td_team[i] <- s_team[index]
+      td_player_id[i] <- s_id[index]
+      td_player_name[i] <- s_name[index]
+      fumble[i] <- 1
+      fumble_recovery_1_player_id[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_1_player_id[i]),
+          s_id[index],
+          fumble_recovery_1_player_id[i]
         )
-      row$fumble_recovery_1_player_name <-
-        if_else(
-          is.na(row$fumble_recovery_1_player_name),
-          play_stats$player.displayName[index],
-          row$fumble_recovery_1_player_name
+      fumble_recovery_1_player_name[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_1_player_name[i]),
+          s_name[index],
+          fumble_recovery_1_player_name[i]
         )
-      row$fumble_recovery_1_team <-
-        if_else(
-          is.na(row$fumble_recovery_1_team),
-          play_stats$teamAbbr[index],
-          row$fumble_recovery_1_team
+      fumble_recovery_1_team[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_1_team[i]),
+          s_team[index],
+          fumble_recovery_1_team[i]
         )
-      row$fumble_recovery_1_yards <-
-        if_else(
-          is.na(row$fumble_recovery_1_yards),
-          play_stats$yards[index],
-          row$fumble_recovery_1_yards
+      fumble_recovery_1_yards[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_1_yards[i]),
+          s_yards[index],
+          fumble_recovery_1_yards[i]
         )
-      row$fumble_recovery_2_player_id <-
-        if_else(
-          is.na(row$fumble_recovery_2_player_id) &
-            row$fumble_recovery_1_player_id != play_stats$player.esbId[index],
-          play_stats$player.esbId[index],
-          row$fumble_recovery_2_player_id
+      fumble_recovery_2_player_id[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_2_player_id[i]) &
+            fumble_recovery_1_player_id[i] != s_id[index],
+          s_id[index],
+          fumble_recovery_2_player_id[i]
         )
-      row$fumble_recovery_2_player_name <-
-        if_else(
-          is.na(row$fumble_recovery_2_player_name) &
-            row$fumble_recovery_1_player_name !=
-              play_stats$player.displayName[index],
-          play_stats$player.displayName[index],
-          row$fumble_recovery_2_player_name
+      fumble_recovery_2_player_name[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_2_player_name[i]) &
+            fumble_recovery_1_player_name[i] != s_name[index],
+          s_name[index],
+          fumble_recovery_2_player_name[i]
         )
-      row$fumble_recovery_2_team <-
-        if_else(
-          is.na(row$fumble_recovery_2_team) &
-            row$fumble_recovery_1_player_name !=
-              play_stats$player.displayName[index],
-          # row$fumble_recovery_1_team != play_stats$teamAbbr[index],
-          play_stats$teamAbbr[index],
-          row$fumble_recovery_2_team
+      fumble_recovery_2_team[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_2_team[i]) &
+            fumble_recovery_1_player_name[i] != s_name[index],
+          # fumble_recovery_1_team[i] != s_team[index],
+          s_team[index],
+          fumble_recovery_2_team[i]
         )
-      row$fumble_recovery_2_yards <-
-        if_else(
-          is.na(row$fumble_recovery_2_yards) &
-            row$fumble_recovery_1_player_name !=
-              play_stats$player.displayName[index],
-          # row$fumble_recovery_1_yards != play_stats$yards[index],
-          play_stats$yards[index],
-          row$fumble_recovery_2_yards
+      fumble_recovery_2_yards[i] <-
+        scalar_if_else(
+          is.na(fumble_recovery_2_yards[i]) &
+            fumble_recovery_1_player_name[i] != s_name[index],
+          # fumble_recovery_1_yards[i] != s_yards[index],
+          s_yards[index],
+          fumble_recovery_2_yards[i]
         )
     } else if (stat_id == 61) {
-      row$fumble <- 1
-      row$lateral_recovery <- 1
+      fumble[i] <- 1
+      lateral_recovery[i] <- 1
     } else if (stat_id == 62) {
-      row$touchdown <- 1
-      row$return_touchdown <- 1
-      row$td_team <- play_stats$teamAbbr[index]
-      row$td_player_id <- play_stats$player.esbId[index]
-      row$td_player_name <- play_stats$player.displayName[index]
-      row$fumble <- 1
-      row$lateral_recovery <- 1
+      touchdown[i] <- 1
+      return_touchdown[i] <- 1
+      td_team[i] <- s_team[index]
+      td_player_id[i] <- s_id[index]
+      td_player_name[i] <- s_name[index]
+      fumble[i] <- 1
+      lateral_recovery[i] <- 1
     } else if (stat_id == 63) {
       NULL
     } else if (stat_id == 64) {
-      row$touchdown <- 1
-      row$td_team <- play_stats$teamAbbr[index]
-      row$td_player_id <- play_stats$player.esbId[index]
-      row$td_player_name <- play_stats$player.displayName[index]
+      touchdown[i] <- 1
+      td_team[i] <- s_team[index]
+      td_player_id[i] <- s_id[index]
+      td_player_name[i] <- s_name[index]
     } else if (stat_id == 68) {
-      row$timeout <- 1
-      row$timeout_team <- play_stats$teamAbbr[index]
+      timeout[i] <- 1
+      timeout_team[i] <- s_team[index]
     } else if (stat_id == 69) {
-      row$field_goal_missed <- 1
-      row$field_goal_attempt <- 1
-      row$kicker_player_id <- play_stats$player.esbId[index]
-      row$kicker_player_name <- play_stats$player.displayName[index]
-      row$kick_distance <- play_stats$yards[index]
+      field_goal_missed[i] <- 1
+      field_goal_attempt[i] <- 1
+      kicker_player_id[i] <- s_id[index]
+      kicker_player_name[i] <- s_name[index]
+      kick_distance[i] <- s_yards[index]
     } else if (stat_id == 70) {
-      row$field_goal_made <- 1
-      row$field_goal_attempt <- 1
-      row$kicker_player_id <- play_stats$player.esbId[index]
-      row$kicker_player_name <- play_stats$player.displayName[index]
-      row$kick_distance <- play_stats$yards[index]
+      field_goal_made[i] <- 1
+      field_goal_attempt[i] <- 1
+      kicker_player_id[i] <- s_id[index]
+      kicker_player_name[i] <- s_name[index]
+      kick_distance[i] <- s_yards[index]
     } else if (stat_id == 71) {
-      row$field_goal_blocked <- 1
-      row$field_goal_attempt <- 1
-      row$kicker_player_id <- play_stats$player.esbId[index]
-      row$kicker_player_name <- play_stats$player.displayName[index]
-      row$kick_distance <- play_stats$yards[index]
+      field_goal_blocked[i] <- 1
+      field_goal_attempt[i] <- 1
+      kicker_player_id[i] <- s_id[index]
+      kicker_player_name[i] <- s_name[index]
+      kick_distance[i] <- s_yards[index]
     } else if (stat_id == 72) {
-      row$extra_point_good <- 1
-      row$extra_point_attempt <- 1
-      row$kicker_player_id <- play_stats$player.esbId[index]
-      row$kicker_player_name <- play_stats$player.displayName[index]
+      extra_point_good[i] <- 1
+      extra_point_attempt[i] <- 1
+      kicker_player_id[i] <- s_id[index]
+      kicker_player_name[i] <- s_name[index]
     } else if (stat_id == 73) {
-      row$extra_point_failed <- 1
-      row$extra_point_attempt <- 1
-      row$kicker_player_id <- play_stats$player.esbId[index]
-      row$kicker_player_name <- play_stats$player.displayName[index]
+      extra_point_failed[i] <- 1
+      extra_point_attempt[i] <- 1
+      kicker_player_id[i] <- s_id[index]
+      kicker_player_name[i] <- s_name[index]
     } else if (stat_id == 74) {
-      row$extra_point_blocked <- 1
-      row$extra_point_attempt <- 1
-      row$kicker_player_id <- play_stats$player.esbId[index]
-      row$kicker_player_name <- play_stats$player.displayName[index]
+      extra_point_blocked[i] <- 1
+      extra_point_attempt[i] <- 1
+      kicker_player_id[i] <- s_id[index]
+      kicker_player_name[i] <- s_name[index]
     } else if (stat_id == 75) {
-      row$two_point_rush_good <- 1
-      row$rush_attempt <- 1
-      row$two_point_attempt <- 1
-      row$rusher_player_id <- play_stats$player.esbId[index]
-      row$rusher_player_name <- play_stats$player.displayName[index]
+      two_point_rush_good[i] <- 1
+      rush_attempt[i] <- 1
+      two_point_attempt[i] <- 1
+      rusher_player_id[i] <- s_id[index]
+      rusher_player_name[i] <- s_name[index]
     } else if (stat_id == 76) {
-      row$two_point_rush_failed <- 1
-      row$rush_attempt <- 1
-      row$two_point_attempt <- 1
-      row$rusher_player_id <- play_stats$player.esbId[index]
-      row$rusher_player_name <- play_stats$player.displayName[index]
+      two_point_rush_failed[i] <- 1
+      rush_attempt[i] <- 1
+      two_point_attempt[i] <- 1
+      rusher_player_id[i] <- s_id[index]
+      rusher_player_name[i] <- s_name[index]
     } else if (stat_id == 77) {
-      row$two_point_pass_good <- 1
-      row$pass_attempt <- 1
-      row$two_point_attempt <- 1
-      row$passer_player_id <- play_stats$player.esbId[index]
-      row$passer_player_name <- play_stats$player.displayName[index]
+      two_point_pass_good[i] <- 1
+      pass_attempt[i] <- 1
+      two_point_attempt[i] <- 1
+      passer_player_id[i] <- s_id[index]
+      passer_player_name[i] <- s_name[index]
     } else if (stat_id == 78) {
-      row$two_point_pass_failed <- 1
-      row$pass_attempt <- 1
-      row$two_point_attempt <- 1
-      row$passer_player_id <- play_stats$player.esbId[index]
-      row$passer_player_name <- play_stats$player.displayName[index]
+      two_point_pass_failed[i] <- 1
+      pass_attempt[i] <- 1
+      two_point_attempt[i] <- 1
+      passer_player_id[i] <- s_id[index]
+      passer_player_name[i] <- s_name[index]
     } else if (stat_id == 79) {
-      row$solo_tackle <- 1
-      row$solo_tackle_1_player_id <-
-        if_else(
-          is.na(row$solo_tackle_1_player_id),
-          play_stats$player.esbId[index],
-          row$solo_tackle_1_player_id
+      solo_tackle[i] <- 1
+      solo_tackle_1_player_id[i] <-
+        scalar_if_else(
+          is.na(solo_tackle_1_player_id[i]),
+          s_id[index],
+          solo_tackle_1_player_id[i]
         )
-      row$solo_tackle_1_player_name <-
-        if_else(
-          is.na(row$solo_tackle_1_player_name),
-          play_stats$player.displayName[index],
-          row$solo_tackle_1_player_name
+      solo_tackle_1_player_name[i] <-
+        scalar_if_else(
+          is.na(solo_tackle_1_player_name[i]),
+          s_name[index],
+          solo_tackle_1_player_name[i]
         )
-      row$solo_tackle_1_team <-
-        if_else(
-          is.na(row$solo_tackle_1_team),
-          play_stats$teamAbbr[index],
-          row$solo_tackle_1_team
+      solo_tackle_1_team[i] <-
+        scalar_if_else(
+          is.na(solo_tackle_1_team[i]),
+          s_team[index],
+          solo_tackle_1_team[i]
         )
-      row$solo_tackle_2_player_id <-
-        if_else(
-          is.na(row$solo_tackle_2_player_id) &
-            row$solo_tackle_1_player_id != play_stats$player.esbId[index],
-          play_stats$player.esbId[index],
-          row$solo_tackle_2_player_id
+      solo_tackle_2_player_id[i] <-
+        scalar_if_else(
+          is.na(solo_tackle_2_player_id[i]) &
+            solo_tackle_1_player_id[i] != s_id[index],
+          s_id[index],
+          solo_tackle_2_player_id[i]
         )
-      row$solo_tackle_2_player_name <-
-        if_else(
-          is.na(row$solo_tackle_2_player_name) &
-            row$solo_tackle_1_player_name !=
-              play_stats$player.displayName[index],
-          play_stats$player.displayName[index],
-          row$solo_tackle_2_player_name
+      solo_tackle_2_player_name[i] <-
+        scalar_if_else(
+          is.na(solo_tackle_2_player_name[i]) &
+            solo_tackle_1_player_name[i] != s_name[index],
+          s_name[index],
+          solo_tackle_2_player_name[i]
         )
-      row$solo_tackle_2_team <-
-        if_else(
-          is.na(row$solo_tackle_2_team) &
-            row$solo_tackle_1_player_name !=
-              play_stats$player.displayName[index],
-          # row$solo_tackle_1_team != play_stats$teamAbbr[index],
-          play_stats$teamAbbr[index],
-          row$solo_tackle_2_team
+      solo_tackle_2_team[i] <-
+        scalar_if_else(
+          is.na(solo_tackle_2_team[i]) &
+            solo_tackle_1_player_name[i] != s_name[index],
+          # solo_tackle_1_team[i] != s_team[index],
+          s_team[index],
+          solo_tackle_2_team[i]
         )
     } else if (stat_id == 80) {
-      row$tackle_with_assist <- 1
-      row$tackle_with_assist_1_player_id <-
-        if_else(
-          is.na(row$tackle_with_assist_1_player_id),
-          play_stats$player.esbId[index],
-          row$tackle_with_assist_1_player_id
+      tackle_with_assist[i] <- 1
+      tackle_with_assist_1_player_id[i] <-
+        scalar_if_else(
+          is.na(tackle_with_assist_1_player_id[i]),
+          s_id[index],
+          tackle_with_assist_1_player_id[i]
         )
-      row$tackle_with_assist_1_player_name <-
-        if_else(
-          is.na(row$tackle_with_assist_1_player_name),
-          play_stats$player.displayName[index],
-          row$tackle_with_assist_1_player_name
+      tackle_with_assist_1_player_name[i] <-
+        scalar_if_else(
+          is.na(tackle_with_assist_1_player_name[i]),
+          s_name[index],
+          tackle_with_assist_1_player_name[i]
         )
-      row$tackle_with_assist_1_team <-
-        if_else(
-          is.na(row$tackle_with_assist_1_team),
-          play_stats$teamAbbr[index],
-          row$tackle_with_assist_1_team
+      tackle_with_assist_1_team[i] <-
+        scalar_if_else(
+          is.na(tackle_with_assist_1_team[i]),
+          s_team[index],
+          tackle_with_assist_1_team[i]
         )
-      row$tackle_with_assist_2_player_id <-
-        if_else(
-          is.na(row$tackle_with_assist_2_player_id) &
-            row$tackle_with_assist_1_player_id !=
-              play_stats$player.esbId[index],
-          play_stats$player.esbId[index],
-          row$tackle_with_assist_2_player_id
+      tackle_with_assist_2_player_id[i] <-
+        scalar_if_else(
+          is.na(tackle_with_assist_2_player_id[i]) &
+            tackle_with_assist_1_player_id[i] != s_id[index],
+          s_id[index],
+          tackle_with_assist_2_player_id[i]
         )
-      row$tackle_with_assist_2_player_name <-
-        if_else(
-          is.na(row$tackle_with_assist_2_player_name) &
-            row$tackle_with_assist_1_player_name !=
-              play_stats$player.displayName[index],
-          play_stats$player.displayName[index],
-          row$tackle_with_assist_2_player_name
+      tackle_with_assist_2_player_name[i] <-
+        scalar_if_else(
+          is.na(tackle_with_assist_2_player_name[i]) &
+            tackle_with_assist_1_player_name[i] != s_name[index],
+          s_name[index],
+          tackle_with_assist_2_player_name[i]
         )
-      row$tackle_with_assist_2_team <-
-        if_else(
-          is.na(row$tackle_with_assist_2_team) &
-            row$tackle_with_assist_1_player_name !=
-              play_stats$player.displayName[index],
-          # row$tackle_with_assist_1_team != play_stats$teamAbbr[index],
-          play_stats$teamAbbr[index],
-          row$tackle_with_assist_2_team
+      tackle_with_assist_2_team[i] <-
+        scalar_if_else(
+          is.na(tackle_with_assist_2_team[i]) &
+            tackle_with_assist_1_player_name[i] != s_name[index],
+          # tackle_with_assist_1_team[i] != s_team[index],
+          s_team[index],
+          tackle_with_assist_2_team[i]
         )
     } else if (stat_id == 82) {
       # =81
-      row$assist_tackle <- 1
-      row$assist_tackle_1_player_id <-
-        if_else(
-          is.na(row$assist_tackle_1_player_id),
-          play_stats$player.esbId[index],
-          row$assist_tackle_1_player_id
+      assist_tackle[i] <- 1
+      assist_tackle_1_player_id[i] <-
+        scalar_if_else(
+          is.na(assist_tackle_1_player_id[i]),
+          s_id[index],
+          assist_tackle_1_player_id[i]
         )
-      row$assist_tackle_1_player_name <-
-        if_else(
-          is.na(row$assist_tackle_1_player_name),
-          play_stats$player.displayName[index],
-          row$assist_tackle_1_player_name
+      assist_tackle_1_player_name[i] <-
+        scalar_if_else(
+          is.na(assist_tackle_1_player_name[i]),
+          s_name[index],
+          assist_tackle_1_player_name[i]
         )
-      row$assist_tackle_1_team <-
-        if_else(
-          is.na(row$assist_tackle_1_team),
-          play_stats$teamAbbr[index],
-          row$assist_tackle_1_team
+      assist_tackle_1_team[i] <-
+        scalar_if_else(
+          is.na(assist_tackle_1_team[i]),
+          s_team[index],
+          assist_tackle_1_team[i]
         )
-      row$assist_tackle_2_player_id <-
-        if_else(
-          is.na(row$assist_tackle_2_player_id) &
-            row$assist_tackle_1_player_id != play_stats$player.esbId[index],
-          play_stats$player.esbId[index],
-          row$assist_tackle_2_player_id
+      assist_tackle_2_player_id[i] <-
+        scalar_if_else(
+          is.na(assist_tackle_2_player_id[i]) &
+            assist_tackle_1_player_id[i] != s_id[index],
+          s_id[index],
+          assist_tackle_2_player_id[i]
         )
-      row$assist_tackle_2_player_name <-
-        if_else(
-          is.na(row$assist_tackle_2_player_name) &
-            row$assist_tackle_1_player_name !=
-              play_stats$player.displayName[index],
-          play_stats$player.displayName[index],
-          row$assist_tackle_2_player_name
+      assist_tackle_2_player_name[i] <-
+        scalar_if_else(
+          is.na(assist_tackle_2_player_name[i]) &
+            assist_tackle_1_player_name[i] != s_name[index],
+          s_name[index],
+          assist_tackle_2_player_name[i]
         )
-      row$assist_tackle_2_team <-
-        if_else(
-          is.na(row$assist_tackle_2_team) &
-            row$assist_tackle_1_player_name !=
-              play_stats$player.displayName[index],
-          # row$assist_tackle_1_team != play_stats$teamAbbr[index],
-          play_stats$teamAbbr[index],
-          row$assist_tackle_2_team
+      assist_tackle_2_team[i] <-
+        scalar_if_else(
+          is.na(assist_tackle_2_team[i]) &
+            assist_tackle_1_player_name[i] != s_name[index],
+          # assist_tackle_1_team[i] != s_team[index],
+          s_team[index],
+          assist_tackle_2_team[i]
         )
-      row$assist_tackle_3_player_id <-
-        if_else(
-          (is.na(row$assist_tackle_3_player_id) &
-            row$assist_tackle_1_player_id != play_stats$player.esbId[index] &
-            row$assist_tackle_2_player_id != play_stats$player.esbId[index]),
-          play_stats$player.esbId[index],
-          row$assist_tackle_3_player_id
+      assist_tackle_3_player_id[i] <-
+        scalar_if_else(
+          (is.na(assist_tackle_3_player_id[i]) &
+            assist_tackle_1_player_id[i] != s_id[index] &
+            assist_tackle_2_player_id[i] != s_id[index]),
+          s_id[index],
+          assist_tackle_3_player_id[i]
         )
-      row$assist_tackle_3_player_name <-
-        if_else(
-          (is.na(row$assist_tackle_3_player_name) &
-            row$assist_tackle_1_player_name !=
-              play_stats$player.displayName[index] &
-            row$assist_tackle_2_player_name !=
-              play_stats$player.displayName[index]),
-          play_stats$player.displayName[index],
-          row$assist_tackle_3_player_name
+      assist_tackle_3_player_name[i] <-
+        scalar_if_else(
+          (is.na(assist_tackle_3_player_name[i]) &
+            assist_tackle_1_player_name[i] != s_name[index] &
+            assist_tackle_2_player_name[i] != s_name[index]),
+          s_name[index],
+          assist_tackle_3_player_name[i]
         )
-      row$assist_tackle_3_team <-
-        if_else(
-          (is.na(row$assist_tackle_3_team) &
-            row$assist_tackle_1_player_name !=
-              play_stats$player.displayName[index] &
-            row$assist_tackle_2_player_name !=
-              play_stats$player.displayName[index]),
-          # row$assist_tackle_1_team != play_stats$teamAbbr[index] &
-          #  row$assist_tackle_2_team != play_stats$teamAbbr[index]),
-          play_stats$teamAbbr[index],
-          row$assist_tackle_3_team
+      assist_tackle_3_team[i] <-
+        scalar_if_else(
+          (is.na(assist_tackle_3_team[i]) &
+            assist_tackle_1_player_name[i] != s_name[index] &
+            assist_tackle_2_player_name[i] != s_name[index]),
+          # assist_tackle_1_team[i] != s_team[index] &
+          #  assist_tackle_2_team[i] != s_team[index]),
+          s_team[index],
+          assist_tackle_3_team[i]
         )
-      row$assist_tackle_4_player_id <-
-        if_else(
-          (is.na(row$assist_tackle_4_player_id) &
-            row$assist_tackle_1_player_id != play_stats$player.esbId[index] &
-            row$assist_tackle_2_player_id != play_stats$player.esbId[index] &
-            row$assist_tackle_3_player_id != play_stats$player.esbId[index]),
-          play_stats$player.esbId[index],
-          row$assist_tackle_4_player_id
+      assist_tackle_4_player_id[i] <-
+        scalar_if_else(
+          (is.na(assist_tackle_4_player_id[i]) &
+            assist_tackle_1_player_id[i] != s_id[index] &
+            assist_tackle_2_player_id[i] != s_id[index] &
+            assist_tackle_3_player_id[i] != s_id[index]),
+          s_id[index],
+          assist_tackle_4_player_id[i]
         )
-      row$assist_tackle_4_player_name <-
-        if_else(
-          (is.na(row$assist_tackle_4_player_name) &
-            row$assist_tackle_1_player_name !=
-              play_stats$player.displayName[index] &
-            row$assist_tackle_2_player_name !=
-              play_stats$player.displayName[index] &
-            row$assist_tackle_3_player_name !=
-              play_stats$player.displayName[index]),
-          play_stats$player.displayName[index],
-          row$assist_tackle_4_player_name
+      assist_tackle_4_player_name[i] <-
+        scalar_if_else(
+          (is.na(assist_tackle_4_player_name[i]) &
+            assist_tackle_1_player_name[i] != s_name[index] &
+            assist_tackle_2_player_name[i] != s_name[index] &
+            assist_tackle_3_player_name[i] != s_name[index]),
+          s_name[index],
+          assist_tackle_4_player_name[i]
         )
-      row$assist_tackle_4_team <-
-        if_else(
-          (is.na(row$assist_tackle_4_team) &
-            row$assist_tackle_1_player_name !=
-              play_stats$player.displayName[index] &
-            row$assist_tackle_2_player_name !=
-              play_stats$player.displayName[index] &
-            row$assist_tackle_3_player_name !=
-              play_stats$player.displayName[index]),
-          # row$assist_tackle_1_team != play_stats$teamAbbr[index] &
-          #  row$assist_tackle_2_team != play_stats$teamAbbr[index] &
-          #  row$assist_tackle_3_team != play_stats$teamAbbr[index]),
-          play_stats$teamAbbr[index],
-          row$assist_tackle_4_team
+      assist_tackle_4_team[i] <-
+        scalar_if_else(
+          (is.na(assist_tackle_4_team[i]) &
+            assist_tackle_1_player_name[i] != s_name[index] &
+            assist_tackle_2_player_name[i] != s_name[index] &
+            assist_tackle_3_player_name[i] != s_name[index]),
+          # assist_tackle_1_team[i] != s_team[index] &
+          #  assist_tackle_2_team[i] != s_team[index] &
+          #  assist_tackle_3_team[i] != s_team[index]),
+          s_team[index],
+          assist_tackle_4_team[i]
         )
     } else if (stat_id == 83) {
-      row$sack <- 1
-      row$sack_player_id <- play_stats$player.esbId[index]
-      row$sack_player_name <- play_stats$player.displayName[index]
+      sack[i] <- 1
+      sack_player_id[i] <- s_id[index]
+      sack_player_name[i] <- s_name[index]
     } else if (stat_id == 84) {
-      row$sack <- 1
-      row$assist_tackle <- 1
-      row$half_sack_1_player_id <-
-        if_else(
-          is.na(row$half_sack_1_player_id),
-          play_stats$player.esbId[index],
-          row$half_sack_1_player_id
+      sack[i] <- 1
+      assist_tackle[i] <- 1
+      half_sack_1_player_id[i] <-
+        scalar_if_else(
+          is.na(half_sack_1_player_id[i]),
+          s_id[index],
+          half_sack_1_player_id[i]
         )
-      row$half_sack_1_player_name <-
-        if_else(
-          is.na(row$half_sack_1_player_name),
-          play_stats$player.displayName[index],
-          row$half_sack_1_player_name
+      half_sack_1_player_name[i] <-
+        scalar_if_else(
+          is.na(half_sack_1_player_name[i]),
+          s_name[index],
+          half_sack_1_player_name[i]
         )
-      row$half_sack_2_player_id <-
-        if_else(
-          is.na(row$half_sack_2_player_id) &
-            row$half_sack_1_player_id != play_stats$player.esbId[index],
-          play_stats$player.esbId[index],
-          row$half_sack_2_player_id
+      half_sack_2_player_id[i] <-
+        scalar_if_else(
+          is.na(half_sack_2_player_id[i]) &
+            half_sack_1_player_id[i] != s_id[index],
+          s_id[index],
+          half_sack_2_player_id[i]
         )
-      row$half_sack_2_player_name <-
-        if_else(
-          is.na(row$half_sack_2_player_name) &
-            row$half_sack_1_player_name != play_stats$player.displayName[index],
-          play_stats$player.displayName[index],
-          row$half_sack_2_player_name
+      half_sack_2_player_name[i] <-
+        scalar_if_else(
+          is.na(half_sack_2_player_name[i]) &
+            half_sack_1_player_name[i] != s_name[index],
+          s_name[index],
+          half_sack_2_player_name[i]
         )
     } else if (stat_id == 85) {
-      row$pass_defense_1_player_id <-
-        if_else(
-          is.na(row$pass_defense_1_player_id),
-          play_stats$player.esbId[index],
-          row$pass_defense_1_player_id
+      pass_defense_1_player_id[i] <-
+        scalar_if_else(
+          is.na(pass_defense_1_player_id[i]),
+          s_id[index],
+          pass_defense_1_player_id[i]
         )
-      row$pass_defense_1_player_name <-
-        if_else(
-          is.na(row$pass_defense_1_player_name),
-          play_stats$player.displayName[index],
-          row$pass_defense_1_player_name
+      pass_defense_1_player_name[i] <-
+        scalar_if_else(
+          is.na(pass_defense_1_player_name[i]),
+          s_name[index],
+          pass_defense_1_player_name[i]
         )
-      row$pass_defense_2_player_id <-
-        if_else(
-          is.na(row$pass_defense_2_player_id) &
-            row$pass_defense_1_player_id != play_stats$player.esbId[index],
-          play_stats$player.esbId[index],
-          row$pass_defense_2_player_id
+      pass_defense_2_player_id[i] <-
+        scalar_if_else(
+          is.na(pass_defense_2_player_id[i]) &
+            pass_defense_1_player_id[i] != s_id[index],
+          s_id[index],
+          pass_defense_2_player_id[i]
         )
-      row$pass_defense_2_player_name <-
-        if_else(
-          is.na(row$pass_defense_2_player_name) &
-            row$pass_defense_1_player_name !=
-              play_stats$player.displayName[index],
-          play_stats$player.displayName[index],
-          row$pass_defense_2_player_name
+      pass_defense_2_player_name[i] <-
+        scalar_if_else(
+          is.na(pass_defense_2_player_name[i]) &
+            pass_defense_1_player_name[i] != s_name[index],
+          s_name[index],
+          pass_defense_2_player_name[i]
         )
     } else if (stat_id == 86) {
-      row$punt_attempt <- 1
-      row$blocked_player_id <- play_stats$player.esbId[index]
-      row$blocked_player_name <- play_stats$player.displayName[index]
+      punt_attempt[i] <- 1
+      blocked_player_id[i] <- s_id[index]
+      blocked_player_name[i] <- s_name[index]
     } else if (stat_id == 87) {
-      row$blocked_player_id <- play_stats$player.esbId[index]
-      row$blocked_player_name <- play_stats$player.displayName[index]
+      blocked_player_id[i] <- s_id[index]
+      blocked_player_name[i] <- s_name[index]
     } else if (stat_id == 88) {
-      row$field_goal_attempt <- 1
-      row$blocked_player_id <- play_stats$player.esbId[index]
-      row$blocked_player_name <- play_stats$player.displayName[index]
+      field_goal_attempt[i] <- 1
+      blocked_player_id[i] <- s_id[index]
+      blocked_player_name[i] <- s_name[index]
     } else if (stat_id == 89) {
-      row$safety <- 1
-      row$safety_player_id <- play_stats$player.esbId[index]
-      row$safety_player_name <- play_stats$player.displayName[index]
+      safety[i] <- 1
+      safety_player_id[i] <- s_id[index]
+      safety_player_name[i] <- s_name[index]
     } else if (stat_id == 91) {
-      row$fumble <- 1
-      row$forced_fumble_player_1_player_id <-
-        if_else(
-          is.na(row$forced_fumble_player_1_player_id),
-          play_stats$player.esbId[index],
-          row$forced_fumble_player_1_player_id
+      fumble[i] <- 1
+      forced_fumble_player_1_player_id[i] <-
+        scalar_if_else(
+          is.na(forced_fumble_player_1_player_id[i]),
+          s_id[index],
+          forced_fumble_player_1_player_id[i]
         )
-      row$forced_fumble_player_1_player_name <-
-        if_else(
-          is.na(row$forced_fumble_player_1_player_name),
-          play_stats$player.displayName[index],
-          row$forced_fumble_player_1_player_name
+      forced_fumble_player_1_player_name[i] <-
+        scalar_if_else(
+          is.na(forced_fumble_player_1_player_name[i]),
+          s_name[index],
+          forced_fumble_player_1_player_name[i]
         )
-      row$forced_fumble_player_1_team <-
-        if_else(
-          is.na(row$forced_fumble_player_1_team),
-          play_stats$teamAbbr[index],
-          row$forced_fumble_player_1_team
+      forced_fumble_player_1_team[i] <-
+        scalar_if_else(
+          is.na(forced_fumble_player_1_team[i]),
+          s_team[index],
+          forced_fumble_player_1_team[i]
         )
-      row$forced_fumble_player_2_player_id <-
-        if_else(
-          is.na(row$forced_fumble_player_2_player_id) &
-            row$forced_fumble_player_1_player_id !=
-              play_stats$player.esbId[index],
-          play_stats$player.esbId[index],
-          row$forced_fumble_player_2_player_id
+      forced_fumble_player_2_player_id[i] <-
+        scalar_if_else(
+          is.na(forced_fumble_player_2_player_id[i]) &
+            forced_fumble_player_1_player_id[i] != s_id[index],
+          s_id[index],
+          forced_fumble_player_2_player_id[i]
         )
-      row$forced_fumble_player_2_player_name <-
-        if_else(
-          is.na(row$forced_fumble_player_2_player_name) &
-            row$forced_fumble_player_1_player_name !=
-              play_stats$player.displayName[index],
-          play_stats$player.displayName[index],
-          row$forced_fumble_player_2_player_name
+      forced_fumble_player_2_player_name[i] <-
+        scalar_if_else(
+          is.na(forced_fumble_player_2_player_name[i]) &
+            forced_fumble_player_1_player_name[i] != s_name[index],
+          s_name[index],
+          forced_fumble_player_2_player_name[i]
         )
-      row$forced_fumble_player_2_team <-
-        if_else(
-          is.na(row$forced_fumble_player_2_team) &
-            row$forced_fumble_player_1_player_name !=
-              play_stats$player.displayName[index],
-          # row$forced_fumble_player_1_team != play_stats$teamAbbr[index],
-          play_stats$teamAbbr[index],
-          row$forced_fumble_player_2_team
+      forced_fumble_player_2_team[i] <-
+        scalar_if_else(
+          is.na(forced_fumble_player_2_team[i]) &
+            forced_fumble_player_1_player_name[i] != s_name[index],
+          # forced_fumble_player_1_team[i] != s_team[index],
+          s_team[index],
+          forced_fumble_player_2_team[i]
         )
     } else if (stat_id == 93) {
-      row$penalty <- 1
-      row$penalty_player_id <- play_stats$player.esbId[index]
-      row$penalty_player_name <- play_stats$player.displayName[index]
-      row$penalty_team <- play_stats$teamAbbr[index]
-      row$penalty_yards <- play_stats$yards[index]
+      penalty[i] <- 1
+      penalty_player_id[i] <- s_id[index]
+      penalty_player_name[i] <- s_name[index]
+      penalty_team[i] <- s_team[index]
+      penalty_yards[i] <- s_yards[index]
     } else if (stat_id == 95) {
-      row$tackled_for_loss <- 1
+      tackled_for_loss[i] <- 1
     } else if (stat_id == 96) {
-      row$extra_point_safety <- 1
-      row$extra_point_attempt <- 1
+      extra_point_safety[i] <- 1
+      extra_point_attempt[i] <- 1
     } else if (stat_id == 99) {
-      row$two_point_rush_safety <- 1
-      row$rush_attempt <- 1
-      row$two_point_attempt <- 1
-      row$rusher_player_id <- play_stats$player.esbId[index]
-      row$rusher_player_name <- play_stats$player.displayName[index]
+      two_point_rush_safety[i] <- 1
+      rush_attempt[i] <- 1
+      two_point_attempt[i] <- 1
+      rusher_player_id[i] <- s_id[index]
+      rusher_player_name[i] <- s_name[index]
     } else if (stat_id == 100) {
-      row$two_point_pass_safety <- 1
-      row$pass_attempt <- 1
-      row$two_point_attempt <- 1
-      row$passer_player_id <- play_stats$player.esbId[index]
-      row$passer_player_name <- play_stats$player.displayName[index]
+      two_point_pass_safety[i] <- 1
+      pass_attempt[i] <- 1
+      two_point_attempt[i] <- 1
+      passer_player_id[i] <- s_id[index]
+      passer_player_name[i] <- s_name[index]
     } else if (stat_id == 102) {
-      row$kickoff_downed <- 1
-      row$kickoff_attempt <- 1
+      kickoff_downed[i] <- 1
+      kickoff_attempt[i] <- 1
     } else if (stat_id == 103) {
-      row$lateral_sack_player_id <- play_stats$player.esbId[index]
-      row$lateral_sack_player_name <- play_stats$player.displayName[index]
+      lateral_sack_player_id[i] <- s_id[index]
+      lateral_sack_player_name[i] <- s_name[index]
     } else if (stat_id == 104) {
-      row$two_point_pass_reception_good <- 1
-      row$pass_attempt <- 1
-      row$two_point_attempt <- 1
-      row$receiver_player_id <- play_stats$player.esbId[index]
-      row$receiver_player_name <- play_stats$player.displayName[index]
+      two_point_pass_reception_good[i] <- 1
+      pass_attempt[i] <- 1
+      two_point_attempt[i] <- 1
+      receiver_player_id[i] <- s_id[index]
+      receiver_player_name[i] <- s_name[index]
     } else if (stat_id == 105) {
-      row$two_point_pass_reception_failed <- 1
-      row$pass_attempt <- 1
-      row$two_point_attempt <- 1
-      row$receiver_player_id <- play_stats$player.esbId[index]
-      row$receiver_player_name <- play_stats$player.displayName[index]
+      two_point_pass_reception_failed[i] <- 1
+      pass_attempt[i] <- 1
+      two_point_attempt[i] <- 1
+      receiver_player_id[i] <- s_id[index]
+      receiver_player_name[i] <- s_name[index]
     } else if (stat_id == 106) {
-      row$fumble_lost <- 1
-      row$fumble <- 1
-      row$fumbled_1_player_id <-
-        if_else(
-          is.na(row$fumbled_1_player_id),
-          play_stats$player.esbId[index],
-          row$fumbled_1_player_id
+      fumble_lost[i] <- 1
+      fumble[i] <- 1
+      fumbled_1_player_id[i] <-
+        scalar_if_else(
+          is.na(fumbled_1_player_id[i]),
+          s_id[index],
+          fumbled_1_player_id[i]
         )
-      row$fumbled_1_player_name <-
-        if_else(
-          is.na(row$fumbled_1_player_name),
-          play_stats$player.displayName[index],
-          row$fumbled_1_player_name
+      fumbled_1_player_name[i] <-
+        scalar_if_else(
+          is.na(fumbled_1_player_name[i]),
+          s_name[index],
+          fumbled_1_player_name[i]
         )
-      row$fumbled_1_team <-
-        if_else(
-          is.na(row$fumbled_1_team),
-          play_stats$teamAbbr[index],
-          row$fumbled_1_team
+      fumbled_1_team[i] <-
+        scalar_if_else(
+          is.na(fumbled_1_team[i]),
+          s_team[index],
+          fumbled_1_team[i]
         )
-      row$fumbled_2_player_id <-
-        if_else(
-          is.na(row$fumbled_2_player_id) &
-            row$fumbled_1_player_id != play_stats$player.esbId[index],
-          play_stats$player.esbId[index],
-          row$fumbled_2_player_id
+      fumbled_2_player_id[i] <-
+        scalar_if_else(
+          is.na(fumbled_2_player_id[i]) &
+            fumbled_1_player_id[i] != s_id[index],
+          s_id[index],
+          fumbled_2_player_id[i]
         )
-      row$fumbled_2_player_name <-
-        if_else(
-          is.na(row$fumbled_2_player_name) &
-            row$fumbled_1_player_name != play_stats$player.displayName[index],
-          play_stats$player.displayName[index],
-          row$fumbled_2_player_name
+      fumbled_2_player_name[i] <-
+        scalar_if_else(
+          is.na(fumbled_2_player_name[i]) &
+            fumbled_1_player_name[i] != s_name[index],
+          s_name[index],
+          fumbled_2_player_name[i]
         )
-      row$fumbled_2_team <-
-        if_else(
-          is.na(row$fumbled_2_team) &
-            row$fumbled_1_player_name != play_stats$player.displayName[index],
-          # row$fumbled_1_team != play_stats$teamAbbr[index],
-          play_stats$teamAbbr[index],
-          row$fumbled_2_team
+      fumbled_2_team[i] <-
+        scalar_if_else(
+          is.na(fumbled_2_team[i]) &
+            fumbled_1_player_name[i] != s_name[index],
+          # fumbled_1_team[i] != s_team[index],
+          s_team[index],
+          fumbled_2_team[i]
         )
     } else if (stat_id == 107) {
-      row$own_kickoff_recovery <- 1
-      row$kickoff_attempt <- 1
-      row$own_kickoff_recovery_player_id <- play_stats$player.esbId[index]
-      row$own_kickoff_recovery_player_name <- play_stats$player.displayName[
-        index
-      ]
+      own_kickoff_recovery[i] <- 1
+      kickoff_attempt[i] <- 1
+      own_kickoff_recovery_player_id[i] <- s_id[index]
+      own_kickoff_recovery_player_name[i] <- s_name[index]
     } else if (stat_id == 108) {
-      row$own_kickoff_recovery_td <- 1
-      row$touchdown <- 1
-      row$td_team <- play_stats$teamAbbr[index]
-      row$td_player_id <- play_stats$player.esbId[index]
-      row$td_player_name <- play_stats$player.displayName[index]
-      row$kickoff_attempt <- 1
-      row$own_kickoff_recovery_player_id <- play_stats$player.esbId[index]
-      row$own_kickoff_recovery_player_name <- play_stats$player.displayName[
-        index
-      ]
+      own_kickoff_recovery_td[i] <- 1
+      touchdown[i] <- 1
+      td_team[i] <- s_team[index]
+      td_player_id[i] <- s_id[index]
+      td_player_name[i] <- s_name[index]
+      kickoff_attempt[i] <- 1
+      own_kickoff_recovery_player_id[i] <- s_id[index]
+      own_kickoff_recovery_player_name[i] <- s_name[index]
     } else if (stat_id == 110) {
-      row$qb_hit <- 1
-      row$qb_hit_1_player_id <-
-        if_else(
-          is.na(row$qb_hit_1_player_id),
-          play_stats$player.esbId[index],
-          row$qb_hit_1_player_id
+      qb_hit[i] <- 1
+      qb_hit_1_player_id[i] <-
+        scalar_if_else(
+          is.na(qb_hit_1_player_id[i]),
+          s_id[index],
+          qb_hit_1_player_id[i]
         )
-      row$qb_hit_1_player_name <-
-        if_else(
-          is.na(row$qb_hit_1_player_name),
-          play_stats$player.displayName[index],
-          row$qb_hit_1_player_name
+      qb_hit_1_player_name[i] <-
+        scalar_if_else(
+          is.na(qb_hit_1_player_name[i]),
+          s_name[index],
+          qb_hit_1_player_name[i]
         )
-      row$qb_hit_2_player_id <-
-        if_else(
-          is.na(row$qb_hit_2_player_id) &
-            row$qb_hit_1_player_id != play_stats$player.esbId[index],
-          play_stats$player.esbId[index],
-          row$qb_hit_2_player_id
+      qb_hit_2_player_id[i] <-
+        scalar_if_else(
+          is.na(qb_hit_2_player_id[i]) &
+            qb_hit_1_player_id[i] != s_id[index],
+          s_id[index],
+          qb_hit_2_player_id[i]
         )
-      row$qb_hit_2_player_name <-
-        if_else(
-          is.na(row$qb_hit_2_player_name) &
-            row$qb_hit_1_player_name != play_stats$player.displayName[index],
-          play_stats$player.displayName[index],
-          row$qb_hit_2_player_name
+      qb_hit_2_player_name[i] <-
+        scalar_if_else(
+          is.na(qb_hit_2_player_name[i]) &
+            qb_hit_1_player_name[i] != s_name[index],
+          s_name[index],
+          qb_hit_2_player_name[i]
         )
     } else if (stat_id == 111) {
-      row$pass_attempt <- 1
-      row$complete_pass <- 1
-      row$passer_player_id <- play_stats$player.esbId[index]
-      row$passer_player_name <- play_stats$player.displayName[index]
-      row$air_yards <- play_stats$yards[index]
+      pass_attempt[i] <- 1
+      complete_pass[i] <- 1
+      passer_player_id[i] <- s_id[index]
+      passer_player_name[i] <- s_name[index]
+      air_yards[i] <- s_yards[index]
     } else if (stat_id == 112) {
-      row$pass_attempt <- 1
-      row$passer_player_id <- play_stats$player.esbId[index]
-      row$passer_player_name <- play_stats$player.displayName[index]
-      row$air_yards <- play_stats$yards[index]
+      pass_attempt[i] <- 1
+      passer_player_id[i] <- s_id[index]
+      passer_player_name[i] <- s_name[index]
+      air_yards[i] <- s_yards[index]
     } else if (stat_id == 113) {
-      row$pass_attempt <- 1
-      row$complete_pass <- 1
-      if (is.na(row$receiver_player_id)) {
-        row$receiver_player_id <- play_stats$player.esbId[index]
-        row$receiver_player_name <- play_stats$player.displayName[index]
+      pass_attempt[i] <- 1
+      complete_pass[i] <- 1
+      if (is.na(receiver_player_id[i])) {
+        receiver_player_id[i] <- s_id[index]
+        receiver_player_name[i] <- s_name[index]
       }
-      if (is.na(row$yards_after_catch)) {
-        row$yards_after_catch <- play_stats$yards[index]
+      if (is.na(yards_after_catch[i])) {
+        yards_after_catch[i] <- s_yards[index]
       }
     } else if (stat_id == 115) {
-      row$pass_attempt <- 1
-      row$receiver_player_id <- play_stats$player.esbId[index]
-      row$receiver_player_name <- play_stats$player.displayName[index]
+      pass_attempt[i] <- 1
+      receiver_player_id[i] <- s_id[index]
+      receiver_player_name[i] <- s_name[index]
     } else if (stat_id == 120) {
-      row$tackle_for_loss_1_player_id <-
-        if_else(
-          is.na(row$tackle_for_loss_1_player_id),
-          play_stats$player.esbId[index],
-          row$tackle_for_loss_1_player_id
+      tackle_for_loss_1_player_id[i] <-
+        scalar_if_else(
+          is.na(tackle_for_loss_1_player_id[i]),
+          s_id[index],
+          tackle_for_loss_1_player_id[i]
         )
-      row$tackle_for_loss_1_player_name <-
-        if_else(
-          is.na(row$tackle_for_loss_1_player_name),
-          play_stats$player.displayName[index],
-          row$tackle_for_loss_1_player_name
+      tackle_for_loss_1_player_name[i] <-
+        scalar_if_else(
+          is.na(tackle_for_loss_1_player_name[i]),
+          s_name[index],
+          tackle_for_loss_1_player_name[i]
         )
-      row$tackle_for_loss_2_player_id <-
-        if_else(
-          is.na(row$tackle_for_loss_2_player_id) &
-            row$tackle_for_loss_1_player_id != play_stats$player.esbId[index],
-          play_stats$player.esbId[index],
-          row$tackle_for_loss_2_player_id
+      tackle_for_loss_2_player_id[i] <-
+        scalar_if_else(
+          is.na(tackle_for_loss_2_player_id[i]) &
+            tackle_for_loss_1_player_id[i] != s_id[index],
+          s_id[index],
+          tackle_for_loss_2_player_id[i]
         )
-      row$tackle_for_loss_2_player_name <-
-        if_else(
-          is.na(row$tackle_for_loss_2_player_name) &
-            row$tackle_for_loss_1_player_name !=
-              play_stats$player.displayName[index],
-          play_stats$player.displayName[index],
-          row$tackle_for_loss_2_player_name
+      tackle_for_loss_2_player_name[i] <-
+        scalar_if_else(
+          is.na(tackle_for_loss_2_player_name[i]) &
+            tackle_for_loss_1_player_name[i] != s_name[index],
+          s_name[index],
+          tackle_for_loss_2_player_name[i]
         )
     } else if (stat_id == 301) {
-      row$extra_point_aborted <- 1
-      row$extra_point_attempt <- 1
+      extra_point_aborted[i] <- 1
+      extra_point_attempt[i] <- 1
     } else if (stat_id == 402) {
       # tackle for loss player information is recorded in stat id 120
       NULL
     } else if (stat_id == 403) {
-      row$defensive_two_point_attempt <- 1
+      defensive_two_point_attempt[i] <- 1
     } else if (stat_id == 404) {
-      row$defensive_two_point_conv <- 1
+      defensive_two_point_conv[i] <- 1
     } else if (stat_id == 405) {
-      row$defensive_extra_point_attempt <- 1
+      defensive_extra_point_attempt[i] <- 1
     } else if (stat_id == 406) {
-      row$defensive_extra_point_conv <- 1
+      defensive_extra_point_conv[i] <- 1
     } else if (stat_id == 410) {
-      row$kickoff_attempt <- 1
-      row$kicker_player_id <- play_stats$player.esbId[index]
-      row$kicker_player_name <- play_stats$player.displayName[index]
+      kickoff_attempt[i] <- 1
+      kicker_player_id[i] <- s_id[index]
+      kicker_player_name[i] <- s_name[index]
     } else if (stat_id == 420) {
-      row$two_point_return <- 1
-      row$two_point_attempt <- 1
+      two_point_return[i] <- 1
+      two_point_attempt[i] <- 1
     } else {
       NULL
     }
   }
-  return(row)
+
+  out <- list(
+    play_id = as.integer(play_ids),
+    punt_blocked = punt_blocked,
+    first_down_rush = first_down_rush,
+    first_down_pass = first_down_pass,
+    first_down_penalty = first_down_penalty,
+    third_down_converted = third_down_converted,
+    third_down_failed = third_down_failed,
+    fourth_down_converted = fourth_down_converted,
+    fourth_down_failed = fourth_down_failed,
+    incomplete_pass = incomplete_pass,
+    interception = interception,
+    punt_inside_twenty = punt_inside_twenty,
+    punt_in_endzone = punt_in_endzone,
+    punt_out_of_bounds = punt_out_of_bounds,
+    punt_downed = punt_downed,
+    punt_fair_catch = punt_fair_catch,
+    kickoff_inside_twenty = kickoff_inside_twenty,
+    kickoff_in_endzone = kickoff_in_endzone,
+    kickoff_out_of_bounds = kickoff_out_of_bounds,
+    kickoff_fair_catch = kickoff_fair_catch,
+    fumble_forced = fumble_forced,
+    fumble_not_forced = fumble_not_forced,
+    fumble_out_of_bounds = fumble_out_of_bounds,
+    timeout = timeout,
+    field_goal_missed = field_goal_missed,
+    field_goal_made = field_goal_made,
+    field_goal_blocked = field_goal_blocked,
+    extra_point_good = extra_point_good,
+    extra_point_failed = extra_point_failed,
+    extra_point_blocked = extra_point_blocked,
+    two_point_rush_good = two_point_rush_good,
+    two_point_rush_failed = two_point_rush_failed,
+    two_point_pass_good = two_point_pass_good,
+    two_point_pass_failed = two_point_pass_failed,
+    solo_tackle = solo_tackle,
+    safety = safety,
+    penalty = penalty,
+    tackled_for_loss = tackled_for_loss,
+    extra_point_safety = extra_point_safety,
+    two_point_rush_safety = two_point_rush_safety,
+    two_point_pass_safety = two_point_pass_safety,
+    kickoff_downed = kickoff_downed,
+    two_point_pass_reception_good = two_point_pass_reception_good,
+    two_point_pass_reception_failed = two_point_pass_reception_failed,
+    fumble_lost = fumble_lost,
+    own_kickoff_recovery = own_kickoff_recovery,
+    own_kickoff_recovery_td = own_kickoff_recovery_td,
+    qb_hit = qb_hit,
+    extra_point_aborted = extra_point_aborted,
+    two_point_return = two_point_return,
+    rush_attempt = rush_attempt,
+    pass_attempt = pass_attempt,
+    sack = sack,
+    touchdown = touchdown,
+    pass_touchdown = pass_touchdown,
+    rush_touchdown = rush_touchdown,
+    return_touchdown = return_touchdown,
+    extra_point_attempt = extra_point_attempt,
+    two_point_attempt = two_point_attempt,
+    field_goal_attempt = field_goal_attempt,
+    kickoff_attempt = kickoff_attempt,
+    punt_attempt = punt_attempt,
+    fumble = fumble,
+    complete_pass = complete_pass,
+    assist_tackle = assist_tackle,
+    lateral_reception = lateral_reception,
+    lateral_rush = lateral_rush,
+    lateral_return = lateral_return,
+    lateral_recovery = lateral_recovery,
+    passer_player_id = passer_player_id,
+    passer_player_name = passer_player_name,
+    receiver_player_id = receiver_player_id,
+    receiver_player_name = receiver_player_name,
+    rusher_player_id = rusher_player_id,
+    rusher_player_name = rusher_player_name,
+    lateral_receiver_player_id = lateral_receiver_player_id,
+    lateral_receiver_player_name = lateral_receiver_player_name,
+    lateral_rusher_player_id = lateral_rusher_player_id,
+    lateral_rusher_player_name = lateral_rusher_player_name,
+    lateral_sack_player_id = lateral_sack_player_id,
+    lateral_sack_player_name = lateral_sack_player_name,
+    interception_player_id = interception_player_id,
+    interception_player_name = interception_player_name,
+    lateral_interception_player_id = lateral_interception_player_id,
+    lateral_interception_player_name = lateral_interception_player_name,
+    punt_returner_player_id = punt_returner_player_id,
+    punt_returner_player_name = punt_returner_player_name,
+    lateral_punt_returner_player_id = lateral_punt_returner_player_id,
+    lateral_punt_returner_player_name = lateral_punt_returner_player_name,
+    kickoff_returner_player_name = kickoff_returner_player_name,
+    kickoff_returner_player_id = kickoff_returner_player_id,
+    lateral_kickoff_returner_player_id = lateral_kickoff_returner_player_id,
+    lateral_kickoff_returner_player_name = lateral_kickoff_returner_player_name,
+    punter_player_id = punter_player_id,
+    punter_player_name = punter_player_name,
+    kicker_player_name = kicker_player_name,
+    kicker_player_id = kicker_player_id,
+    own_kickoff_recovery_player_id = own_kickoff_recovery_player_id,
+    own_kickoff_recovery_player_name = own_kickoff_recovery_player_name,
+    blocked_player_id = blocked_player_id,
+    blocked_player_name = blocked_player_name,
+    tackle_for_loss_1_player_id = tackle_for_loss_1_player_id,
+    tackle_for_loss_1_player_name = tackle_for_loss_1_player_name,
+    tackle_for_loss_2_player_id = tackle_for_loss_2_player_id,
+    tackle_for_loss_2_player_name = tackle_for_loss_2_player_name,
+    qb_hit_1_player_id = qb_hit_1_player_id,
+    qb_hit_1_player_name = qb_hit_1_player_name,
+    qb_hit_2_player_id = qb_hit_2_player_id,
+    qb_hit_2_player_name = qb_hit_2_player_name,
+    forced_fumble_player_1_team = forced_fumble_player_1_team,
+    forced_fumble_player_1_player_id = forced_fumble_player_1_player_id,
+    forced_fumble_player_1_player_name = forced_fumble_player_1_player_name,
+    forced_fumble_player_2_team = forced_fumble_player_2_team,
+    forced_fumble_player_2_player_id = forced_fumble_player_2_player_id,
+    forced_fumble_player_2_player_name = forced_fumble_player_2_player_name,
+    solo_tackle_1_team = solo_tackle_1_team,
+    solo_tackle_2_team = solo_tackle_2_team,
+    solo_tackle_1_player_id = solo_tackle_1_player_id,
+    solo_tackle_2_player_id = solo_tackle_2_player_id,
+    solo_tackle_1_player_name = solo_tackle_1_player_name,
+    solo_tackle_2_player_name = solo_tackle_2_player_name,
+    assist_tackle_1_player_id = assist_tackle_1_player_id,
+    assist_tackle_1_player_name = assist_tackle_1_player_name,
+    assist_tackle_1_team = assist_tackle_1_team,
+    assist_tackle_2_player_id = assist_tackle_2_player_id,
+    assist_tackle_2_player_name = assist_tackle_2_player_name,
+    assist_tackle_2_team = assist_tackle_2_team,
+    assist_tackle_3_player_id = assist_tackle_3_player_id,
+    assist_tackle_3_player_name = assist_tackle_3_player_name,
+    assist_tackle_3_team = assist_tackle_3_team,
+    assist_tackle_4_player_id = assist_tackle_4_player_id,
+    assist_tackle_4_player_name = assist_tackle_4_player_name,
+    assist_tackle_4_team = assist_tackle_4_team,
+    tackle_with_assist = tackle_with_assist,
+    tackle_with_assist_1_player_id = tackle_with_assist_1_player_id,
+    tackle_with_assist_1_player_name = tackle_with_assist_1_player_name,
+    tackle_with_assist_1_team = tackle_with_assist_1_team,
+    tackle_with_assist_2_player_id = tackle_with_assist_2_player_id,
+    tackle_with_assist_2_player_name = tackle_with_assist_2_player_name,
+    tackle_with_assist_2_team = tackle_with_assist_2_team,
+    pass_defense_1_player_id = pass_defense_1_player_id,
+    pass_defense_1_player_name = pass_defense_1_player_name,
+    pass_defense_2_player_id = pass_defense_2_player_id,
+    pass_defense_2_player_name = pass_defense_2_player_name,
+    fumbled_1_team = fumbled_1_team,
+    fumbled_1_player_id = fumbled_1_player_id,
+    fumbled_1_player_name = fumbled_1_player_name,
+    fumbled_2_player_id = fumbled_2_player_id,
+    fumbled_2_player_name = fumbled_2_player_name,
+    fumbled_2_team = fumbled_2_team,
+    fumble_recovery_1_team = fumble_recovery_1_team,
+    fumble_recovery_1_yards = fumble_recovery_1_yards,
+    fumble_recovery_1_player_id = fumble_recovery_1_player_id,
+    fumble_recovery_1_player_name = fumble_recovery_1_player_name,
+    fumble_recovery_2_team = fumble_recovery_2_team,
+    fumble_recovery_2_yards = fumble_recovery_2_yards,
+    fumble_recovery_2_player_id = fumble_recovery_2_player_id,
+    fumble_recovery_2_player_name = fumble_recovery_2_player_name,
+    td_team = td_team,
+    return_team = return_team,
+    timeout_team = timeout_team,
+    yards_gained = yards_gained,
+    return_yards = return_yards,
+    air_yards = air_yards,
+    yards_after_catch = yards_after_catch,
+    penalty_team = penalty_team,
+    penalty_player_id = penalty_player_id,
+    penalty_player_name = penalty_player_name,
+    penalty_yards = penalty_yards,
+    kick_distance = kick_distance,
+    defensive_two_point_attempt = defensive_two_point_attempt,
+    defensive_two_point_conv = defensive_two_point_conv,
+    defensive_extra_point_attempt = defensive_extra_point_attempt,
+    defensive_extra_point_conv = defensive_extra_point_conv,
+    penalty_fix = penalty_fix,
+    return_penalty_fix = return_penalty_fix,
+    rushing_yards = rushing_yards,
+    lateral_rushing_yards = lateral_rushing_yards,
+    passing_yards = passing_yards,
+    receiving_yards = receiving_yards,
+    lateral_receiving_yards = lateral_receiving_yards,
+    td_player_id = td_player_id,
+    td_player_name = td_player_name,
+    sack_player_id = sack_player_id,
+    sack_player_name = sack_player_name,
+    half_sack_1_player_id = half_sack_1_player_id,
+    half_sack_1_player_name = half_sack_1_player_name,
+    half_sack_2_player_id = half_sack_2_player_id,
+    half_sack_2_player_name = half_sack_2_player_name,
+    safety_player_name = safety_player_name,
+    safety_player_id = safety_player_id
+  )
+  data.table::setDT(out)
+  out
+}
+
+# Scalar version of dplyr::if_else(): a missing condition returns NA
+scalar_if_else <- function(condition, true, false) {
+  if (is.na(condition)) {
+    NA
+  } else if (condition) {
+    true
+  } else {
+    false
+  }
 }
