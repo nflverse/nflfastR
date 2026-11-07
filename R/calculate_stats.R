@@ -198,10 +198,14 @@ calculate_stats <- function(
   # Check combination of summary_level and stat_type to set a helper that is
   # used to create the grouping variables
   grp_id <- data.table::fcase(
-    summary_level == "season" && stat_type == "player" , "10" ,
-    summary_level == "season" && stat_type == "team"   , "20" ,
-    summary_level == "week" && stat_type == "player"   , "30" ,
-    summary_level == "week" && stat_type == "team"     , "40"
+    summary_level == "season" && stat_type == "player",
+    "10",
+    summary_level == "season" && stat_type == "team",
+    "20",
+    summary_level == "week" && stat_type == "player",
+    "30",
+    summary_level == "week" && stat_type == "team",
+    "40"
   )
   # grp_vctr is used as character vector for joining pbp stats
   grp_vctr <- switch(
