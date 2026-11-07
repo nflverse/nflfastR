@@ -37,9 +37,21 @@ Steps 1 to 6 are done on branch `parser-performance`. Every rewritten function w
 | 5 | `decode_player_ids()` | 1.37 s → 0.22 s |
 | 6 | `clean_pbp()` / `add_cp()` | 3.0 s → 2.5 s / 0.70 s → 0.29 s |
 
-Whole pipeline, measured with `benchmark.R` on the same machine: 2023 season 170.1 s → 46.2 s (3.7x), single game `2023_05_KC_MIN` 1287 ms → 582 ms (2.2x).
+Ideas adopted from the `box_scores` repo (branch `static-box-scores`, which runs its own fast copies of nflfastR steps for single-game builds), again checked with `identical()`:
 
-What's left: ~14.5 s of `add_xyac()` is xgboost prediction, which is single-threaded on macOS. Splitting the prediction into chunks across `future` workers is the next lever. In single-game builds most of the remaining time is fixed dplyr overhead in `add_wp()`, `add_nflscrapr_mutations()` and `clean_pbp()`.
+| Function | Change | 2023 season before → after |
+|---|---|---|
+| `add_drive_results()`, `add_series_data()` | Plain R vectors instead of grouped dplyr; lags within `game_id`/`game_half` through a "previous row of the same group" index, so games don't need to be sorted | 2.8 s → 0.27 s |
+| `add_ep()` | The 3 EP predictions (all plays, missed FG, kickoff touchback) in one call of the model; feature matrix built directly | single game 0.48 s → 0.32 s (EP + air/yac EP + WP) |
+| `add_cp()` | Model only for valid passes; receiver regex only where `receiver_player_id` is missing | 0.30 s → 0.06 s |
+| `add_qb_epa()` | Skip the dplyr pipeline if there's no completed pass with a lost fumble | single game 18 ms → 3 ms |
+| `get_pbp_nfl()` | Stats table with `rbindlist()` instead of `tidyr::unnest()`; works for games without any stats yet (they used to fail) | 42 → 37 ms per game |
+
+Tried and dropped: cleaning text columns on their unique values (`box_scores`' `.fast_text_fix()`) was slower than our `team_name_fn()` fast path (31 ms vs 13 ms per game). The expression interpreter for `add_nflscrapr_mutations()` and `clean_pbp()` (`_fast_dplyr.R`) wasn't adopted: nflfastR owns that code and should rewrite it without dplyr instead.
+
+Whole pipeline, measured with `benchmark.R` on the same machine: 2023 season 170.1 s → 42.8 s (4.0x), single game `2023_05_KC_MIN` 1287 ms → 485 ms (2.7x).
+
+What's left: ~14.5 s of `add_xyac()` is xgboost prediction, which is single-threaded on macOS. Splitting the prediction into chunks across `future` workers is the next lever. In single-game builds most of the remaining time is fixed dplyr overhead in `add_wp()` (84 ms), `add_nflscrapr_mutations()` (63 ms) and `clean_pbp()` (47 ms).
 
 `tidy_play_stats()` was generated mechanically from the branches of the old `sum_play_stats()` (`row$x <- v` became `x[i] <- v`), so the stat rules didn't change. It is still an R loop; a C++ port would save another ~2 s per season.
 
