@@ -88,7 +88,7 @@ build_nflfastR_pbp <- function(
   # try pak::pak("nflverse/nflfastR@v5.2.0")
   game_ids <- check_for_dropped_seasons(game_ids)
 
-  game_count <- ifelse(is.vector(game_ids), length(game_ids), nrow(game_ids))
+  game_count <- if (is.vector(game_ids)) length(game_ids) else nrow(game_ids)
   builder <- TRUE
 
   if (is_verbose()) {

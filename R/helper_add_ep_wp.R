@@ -791,7 +791,7 @@ add_wp_variables <- function(pbp_data) {
   make_pat_prob <- predict_rows(
     function(data) {
       data <- as.data.frame(data)
-      data$yardline_100 <- ifelse(data$season >= 2015, 15, 3)
+      data$yardline_100 <- data.table::fifelse(data$season >= 2015, 15, 3)
       as.numeric(
         mgcv::predict.bam(
           fastrmodels::fg_model,
@@ -1251,22 +1251,26 @@ add_air_yac_ep_variables <- function(pbp_data) {
   airEP[which(pass_pbp_data$half_seconds_remaining <= 0)] <- 0
 
   ep <- pass_pbp_data$ep
-  airEPA <- ifelse(
+  airEPA <- data.table::fifelse(
     old_yrdline100 - air_yards <= 0,
     7 - ep,
-    ifelse(
+    data.table::fifelse(
       old_yrdline100 - air_yards > 99,
       -2 - ep,
-      ifelse(Turnover_Ind == 1, (-1 * airEP) - ep, airEP - ep)
+      data.table::fifelse(Turnover_Ind == 1, (-1 * airEP) - ep, airEP - ep)
     )
   )
-  airEPA <- ifelse(pass_pbp_data$two_point_attempt == 1, NA, airEPA)
+  airEPA <- data.table::fifelse(
+    pass_pbp_data$two_point_attempt == 1,
+    NA,
+    airEPA
+  )
   yacEPA <- pass_pbp_data$epa - airEPA
   no_yac <- pass_pbp_data$penalty == 0 &
     pass_pbp_data$yards_after_catch == 0 &
     pass_pbp_data$complete_pass == 1
-  yacEPA <- ifelse(no_yac, 0, yacEPA)
-  airEPA <- ifelse(no_yac, pass_pbp_data$epa, airEPA)
+  yacEPA <- data.table::fifelse(no_yac, 0, yacEPA)
+  airEPA <- data.table::fifelse(no_yac, pass_pbp_data$epa, airEPA)
 
   air_epa <- rep(NA_real_, nrow(pbp_data))
   yac_epa <- rep(NA_real_, nrow(pbp_data))
@@ -1380,14 +1384,22 @@ add_air_yac_wp_variables <- function(pbp_data) {
   )
 
   airWP <- get_preds_wp(pass_pbp_data)
-  airWP <- ifelse(Turnover_Ind == 1, 1 - airWP, airWP)
+  airWP <- data.table::fifelse(Turnover_Ind == 1, 1 - airWP, airWP)
   airWP[which(pass_pbp_data$half_seconds_remaining <= 0)] <- 0
   airWP[which(pass_pbp_data$game_seconds_remaining <= 0)] <- 0
 
   airWPA <- airWP - pass_pbp_data$wp
   yacWPA <- pass_pbp_data$wpa - airWPA
-  airWPA <- ifelse(pass_pbp_data$two_point_attempt == 1, NA, airWPA)
-  yacWPA <- ifelse(pass_pbp_data$two_point_attempt == 1, NA, yacWPA)
+  airWPA <- data.table::fifelse(
+    pass_pbp_data$two_point_attempt == 1,
+    NA,
+    airWPA
+  )
+  yacWPA <- data.table::fifelse(
+    pass_pbp_data$two_point_attempt == 1,
+    NA,
+    yacWPA
+  )
 
   ot_pass_i <- which(pass_pbp_data$qtr > 4)
   if (length(ot_pass_i) > 0) {
@@ -1405,8 +1417,8 @@ add_air_yac_wp_variables <- function(pbp_data) {
   no_yac <- pass_pbp_data$penalty == 0 &
     pass_pbp_data$yards_after_catch == 0 &
     pass_pbp_data$complete_pass == 1
-  yacWPA <- ifelse(no_yac, 0, yacWPA)
-  airWPA <- ifelse(no_yac, pass_pbp_data$wpa, airWPA)
+  yacWPA <- data.table::fifelse(no_yac, 0, yacWPA)
+  airWPA <- data.table::fifelse(no_yac, pass_pbp_data$wpa, airWPA)
 
   air_wpa <- rep(NA_real_, nrow(pbp_data))
   yac_wpa <- rep(NA_real_, nrow(pbp_data))

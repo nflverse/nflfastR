@@ -52,16 +52,9 @@ get_pbp_nfl <- function(
     home_team <- id_parts[[1]][4]
   }
 
-  weather <- ifelse(
-    is.null(raw_data$data$viewer$gameDetail$weather$shortDescription),
-    NA_character_,
-    raw_data$data$viewer$gameDetail$weather$shortDescription
-  )
-  stadium <- ifelse(
-    is.null(raw_data$data$viewer$gameDetail$stadium),
-    NA_character_,
-    raw_data$data$viewer$gameDetail$stadium
-  )
+  weather <- raw_data$data$viewer$gameDetail$weather$shortDescription %||%
+    NA_character_
+  stadium <- raw_data$data$viewer$gameDetail$stadium %||% NA_character_
   start_time <- raw_data$data$viewer$gameDetail$startTime
 
   game_info <- list(
@@ -474,7 +467,7 @@ unnest_play_stats <- function(plays) {
   }
   stats <- data.table::rbindlist(ps[has], fill = TRUE)
   pick <- function(col) {
-    if (is.null(stats[[col]])) rep(NA, nrow(stats)) else stats[[col]]
+    stats[[col]] %||% rep(NA, nrow(stats))
   }
   tibble::tibble(
     playId = rep(plays$playId[has], n[has]),
