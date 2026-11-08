@@ -9,6 +9,8 @@
 # - one game 10 times (median)
 # - the same game 10 times with `add_xyac = FALSE` (median), if the version
 #   has that argument
+# Each measurement follows an untimed warm-up run with the same arguments,
+# because the first call is always slower.
 # Every measurement runs in a fresh R process that loads the package with
 # pkgload::load_all(), alternating between the versions, so changing load on
 # the machine affects both. The script also checks that both versions return
@@ -49,7 +51,10 @@ if (identical(args[1], "worker")) {
     )))
   }
 
-  # warm up: lazy loading, models, compiled functions
+  # Warm up every measurement with an untimed run first, because the first
+  # call is slower (lazy loading, model caches, byte compilation and growth of
+  # the R heap). The warm-up of all games also gives the output to compare.
+  out <- build(ids)
   invisible(build(single_id))
   single <- vapply(
     1:10,
@@ -58,6 +63,7 @@ if (identical(args[1], "worker")) {
   )
   # older versions don't have the argument and would pass it on in `...`
   single_no_xyac <- if ("add_xyac" %in% names(formals(build_nflfastR_pbp))) {
+    invisible(build(single_id, add_xyac = FALSE))
     vapply(
       1:10,
       function(i) {
@@ -68,7 +74,7 @@ if (identical(args[1], "worker")) {
   } else {
     NA_real_
   }
-  all_games <- system.time(out <- build(ids))[["elapsed"]]
+  all_games <- system.time(build(ids))[["elapsed"]]
 
   if (save_output) {
     for (a in c("nflverse_timestamp", "nflfastR_version")) {

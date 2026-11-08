@@ -123,7 +123,7 @@ Every change was checked with `identical()` against the previous version, not on
 
 ### Benchmark workflow
 
-`.github/workflows/benchmark.yaml` runs `data-raw/parser_performance/compare_benchmark.R` on `ubuntu-latest`: `build_nflfastR_pbp()` of the branch against master (or the `base` input) on the ~100 regression games and on one game (median of 10, after a warm-up), each measurement in a fresh R process, alternating the versions. It also compares the outputs of both versions. The result is in the job summary.
+`.github/workflows/benchmark.yaml` runs `data-raw/parser_performance/compare_benchmark.R` on `ubuntu-latest`: `build_nflfastR_pbp()` of the branch against master (or the `base` input) on the ~100 regression games and on one game (median of 10), each after an untimed warm-up run with the same arguments, each measurement in a fresh R process, alternating the versions. It also compares the outputs of both versions. The result is in the job summary.
 
 - It runs on pull requests that change the parser and, once the file is on the default branch, manually (`workflow_dispatch`). A temporary `push` trigger for this branch was removed after the pull request was opened, because it ran the benchmark twice for every push (against master and against the pull request base).
 - Against master, the output check reports `xyac_median_yardage` (integer → double). That's the intended change of the base branch `regression-test-games`, not a bug.

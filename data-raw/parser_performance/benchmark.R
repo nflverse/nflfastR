@@ -53,6 +53,9 @@ run_steps <- function(ids) {
   out
 }
 
+# untimed warm-up runs, because the first call is always slower (lazy loading,
+# model caches, byte compilation and growth of the R heap)
+invisible(run_steps(ids))
 season_times <- run_steps(ids)
 invisible(run_steps(single_id))
 single_times <- apply(sapply(1:5, \(i) run_steps(single_id)), 1, stats::median)
