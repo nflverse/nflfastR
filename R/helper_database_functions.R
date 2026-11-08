@@ -104,7 +104,7 @@ update_db <- function(
     dplyr::filter(
       .data$season >= 1999,
       !is.na(.data$result),
-      !.data$game_id %in%
+      !.data$game_id %chin%
         c("1999_01_BAL_STL", "2000_06_BUF_MIA", "2000_03_SD_KC")
     ) |>
     dplyr::arrange(.data$gameday) |>
@@ -245,7 +245,7 @@ get_missing_games <- function(completed_games, dbConnection, tablename) {
     dplyr::pull("game_id")
 
   need_scrape <- completed_games[
-    !completed_games %in% c(db_ids, "9999_99_DEF_TYP")
+    !completed_games %chin% c(db_ids, "9999_99_DEF_TYP")
   ]
 
   cli::cli_alert_info(

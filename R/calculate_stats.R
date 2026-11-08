@@ -610,7 +610,7 @@ calculate_stats <- function(
 
     # load gsis_ids of RBs, FBs and HBs for RACR
     racr_ids <- player_info |>
-      dplyr::filter(.data$position %in% c("RB", "FB", "HB")) |>
+      dplyr::filter(.data$position %chin% c("RB", "FB", "HB")) |>
       dplyr::pull("player_id")
 
     stats <- stats |>
