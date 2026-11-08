@@ -420,7 +420,7 @@ fast_scraper <- function(
     cli::cli_abort("Param {.code game_ids} is not a valid vector!")
   }
 
-  if (length(game_ids) > 1 && is_sequential()) {
+  if (length(game_ids) > 1 && is_sequential() && is_verbose()) {
     cli::cli_alert_info(
       c(
         "It is recommended to use parallel processing when trying to load multiple games.",
@@ -439,20 +439,19 @@ fast_scraper <- function(
 
   suppressWarnings({
     p <- progressr::progressor(along = game_ids)
-    pbp <- furrr::future_map_dfr(
-      game_ids,
-      function(x, p, dir, ...) {
-        plays <- please_work(get_pbp_nfl)(x, dir = dir, ...)
-        p(sprintf("ID=%s", as.character(x)))
-        return(plays)
-      },
-      p,
-      dir = dir,
-      ...
-    )
+    load_game <- function(x, p, dir, ...) {
+      plays <- please_work(get_pbp_nfl)(x, dir = dir, ...)
+      p(sprintf("ID=%s", as.character(x)))
+      return(plays)
+    }
+    # furrr has a fixed overhead that isn't worth it for a single game
+    map_games <- if (length(game_ids) == 1) lapply else furrr::future_map
+    pbp <- map_games(game_ids, load_game, p, dir = dir, ...) |>
+      data.table::rbindlist(use.names = TRUE, fill = TRUE)
 
     if (length(pbp) != 0) {
       user_message("Download finished. Adding variables...", "done")
+      # from here on, all steps change this one data.table by reference
       pbp <- pbp |>
         add_game_data(...) |>
         add_nflscrapr_mutations() |>
@@ -468,9 +467,16 @@ fast_scraper <- function(
     }
   })
 
-  if (!in_builder) {
+  # build_nflfastR_pbp() continues with the data.table
+  if (in_builder && data.table::is.data.table(pbp)) {
+    return(pbp)
+  }
+  if (!in_builder && is_verbose()) {
     str <- paste0(my_time(), " | Procedure completed.")
     cli::cli_alert_success("{.field {str}}")
+  }
+  if (data.table::is.data.table(pbp)) {
+    data.table::setDF(pbp)
   }
   make_nflverse_data(pbp)
 }

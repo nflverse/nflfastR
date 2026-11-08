@@ -23,94 +23,81 @@ add_xpass <- function(pbp, ...) {
     user_message("Nothing to do. Return passed data frame.", "info")
     return(pbp)
   }
-  pbp <- pbp |> dplyr::select(-dplyr::any_of(c("xpass", "pass_oe")))
-  plays <- prepare_xpass_data(pbp)
+  by_ref <- in_pipeline(pbp, ...)
+  d <- if (by_ref) pbp else as_pbp_dt(pbp)
+  drop <- intersect(c("xpass", "pass_oe"), names(d))
+  if (length(drop) > 0) {
+    data.table::set(d, j = drop, value = NULL)
+  }
+  plays <- prepare_xpass_data(d)
+  valid <- which(plays$valid_play == 1)
 
-  if (!nrow(plays |> dplyr::filter(.data$valid_play == 1)) == 0) {
+  if (length(valid) > 0) {
     user_message("Computing xpass...", "todo")
 
-    pred <- stats::predict(
+    # the model is only needed for valid plays
+    xpass <- rep(NA_real_, nrow(d))
+    xpass[valid] <- stats::predict(
       load_model("xpass"),
-      as.matrix(plays |> dplyr::select(-"valid_play"))
-    ) |>
-      tibble::as_tibble() |>
-      dplyr::rename(xpass = "value") |>
-      dplyr::bind_cols(plays) |>
-      dplyr::select("xpass", "valid_play")
-
-    pbp <- pbp |>
-      dplyr::bind_cols(pred) |>
-      dplyr::mutate(
-        xpass = dplyr::if_else(
-          .data$valid_play == 1,
-          .data$xpass,
-          NA_real_
-        ),
-        pass_oe = dplyr::if_else(
-          !is.na(.data$xpass),
-          100 * (.data$pass - .data$xpass),
-          NA_real_
-        ),
-        pass_oe = dplyr::if_else(
-          .data$rush == 0 & .data$pass == 0,
-          NA_real_,
-          .data$pass_oe
-        )
-      ) |>
-      dplyr::select(-"valid_play")
+      model_matrix(
+        subset_columns(plays, valid, xpass_model_features),
+        xpass_model_features
+      )
+    )
+    data.table::set(d, j = "xpass", value = xpass)
+    # (fifelse() because a missing rush or pass makes pass_oe missing)
+    d[,
+      pass_oe := data.table::fifelse(
+        rush == 0 & pass == 0,
+        NA_real_,
+        100 * (pass - xpass)
+      )
+    ]
 
     message_completed("added xpass and pass_oe", ...)
   } else {
-    pbp <- pbp |>
-      dplyr::mutate(
-        xpass = NA_real_,
-        pass_oe = NA_real_
-      )
+    data.table::set(d, j = c("xpass", "pass_oe"), value = NA_real_)
     user_message(
       "No non-NA values for xpass calculation detected. xpass and pass_oe set to NA",
       "info"
     )
   }
-  return(pbp)
+  if (by_ref) d else as_input_type(d, pbp)
 }
 
+# The features of the xpass model and valid_play as list of columns
 prepare_xpass_data <- function(pbp) {
-  plays <- pbp |>
-    dplyr::mutate(
-      valid_play = dplyr::if_else(
-        .data$season >= 2006 &
-          .data$play_type %in% c("no_play", "pass", "run") &
-          !is.na(.data$posteam) &
-          !is.na(.data$down) &
-          !is.na(.data$defteam_timeouts_remaining) &
-          !is.na(.data$posteam_timeouts_remaining) &
-          !is.na(.data$yardline_100) &
-          !is.na(.data$score_differential),
-        1,
-        0
-      )
-    ) |>
-    make_model_mutations() |>
-    dplyr::select(
-      "valid_play",
-      "down",
-      "ydstogo",
-      "yardline_100",
-      "qtr",
-      "wp",
-      "vegas_wp",
-      "era2",
-      "era3",
-      "era4",
-      "score_differential",
-      "home",
-      "half_seconds_remaining",
-      "posteam_timeouts_remaining",
-      "defteam_timeouts_remaining",
-      "outdoors",
-      "retractable",
-      "dome"
-    )
-
-  return(plays)
+  # a list of columns, so make_model_mutations() doesn't change pbp
+  plays <- make_model_mutations(as.list(pbp))
+  plays$valid_play <- as.numeric(
+    plays$season >= 2006 &
+      plays$play_type %chin% c("no_play", "pass", "run") &
+      !is.na(plays$posteam) &
+      !is.na(plays$down) &
+      !is.na(plays$defteam_timeouts_remaining) &
+      !is.na(plays$posteam_timeouts_remaining) &
+      !is.na(plays$yardline_100) &
+      !is.na(plays$score_differential)
+  )
+  plays
 }
+
+xpass_model_features <- c(
+  "down",
+  "ydstogo",
+  "yardline_100",
+  "qtr",
+  "wp",
+  "vegas_wp",
+  "era2",
+  "era3",
+  "era4",
+  "score_differential",
+  "home",
+  "half_seconds_remaining",
+  "posteam_timeouts_remaining",
+  "defteam_timeouts_remaining",
+  "outdoors",
+  "retractable",
+  "dome"
+)

@@ -10,6 +10,17 @@ The regression test in `tests/testthat/test-build_nflfastR_pbp.R` compares the p
 - Never run `data-raw/test_game_selection/update_regression_test.R` without `--dry-run` unless the user explicitly asks. It uploads to a public release.
 - Never update the expected output or loosen tolerances just to make the test pass.
 
+### data.table in the `build_nflfastR_pbp()` pipeline
+
+The pipeline passes one data.table through all steps and changes it by reference. Write idiomatic data.table code, not dplyr code translated line by line:
+
+- Update the rows of an existing column that meet a condition with `dt[cond, col := value]`, not `set(dt, j = "col", value = fifelse(cond, value, dt$col))` (the `mutate(col = if_else(...))` pattern). The subset assignment only writes the matching rows. It is only equivalent if `cond` can't be `NA` where `col` isn't `NA`, because `fifelse()` writes `NA` there and the subset assignment leaves the value unchanged. Keep `fifelse()` (and say why in a comment) where that `NA` is intended.
+- Create a new column with values in some rows only (`NA` elsewhere) with `dt[cond, col := value]` as well. Don't build a full vector of `NA` and fill it.
+- Write 0/1 indicators as `as.numeric(cond)`, not `fifelse(cond, 1, 0)`.
+- Match character vectors with `%chin%` instead of `%in%` (everywhere in the package, also in dplyr code). Keep `%in%` for numbers and logicals, and for vectors that can be factors or `NULL` (e.g. user input), because `%chin%` errors on them.
+- Use `fifelse()`/`fcase()` to compute a new column from two or more values, or when all conditions must be evaluated on the original values (e.g. swapping teams).
+- Put column names used in `[.data.table` into the `utils::globalVariables()` call at the end of `R/utils.R`.
+
 ## Package development
 
 ### Key commands
@@ -59,6 +70,7 @@ There are three possible ways to run code, listed in rough order of desirability
 
 - Follow the tidyverse style guide
 - Always run `air format .` after generating code. (air is bundled with Positron so look there if you can't otherwise find it.)
+- Run `jarl check` on the files you have created. (notify the user if it isn't available on the local machine)
 - Use the base pipe operator (`|>`), not the magrittr pipe (`%>%`).
 - Use `\() ...` for single-line anonymous functions. For all other cases, use `function() {...}`.
 

@@ -47,7 +47,7 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
   rlang::check_installed("nflreadr (>= 1.3.0)", "to decode player IDs.")
 
   if (isFALSE(fast)) {
-    if (nrow(pbp) > 1000 && is_sequential()) {
+    if (nrow(pbp) > 1000 && is_sequential() && is_verbose()) {
       cli::cli_alert_info(c(
         "It is recommended to use parallel processing when trying to to decode big data frames.",
         "Please consider running {.code future::plan(\"multisession\")}! ",
@@ -67,37 +67,44 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
   id_vector <- players$gsis_id
   names(id_vector) <- players$esb_id
 
-  ret <- pbp |>
-    dplyr::mutate_at(
-      dplyr::vars(
-        dplyr::any_of(c(
-          "passer_id",
-          "rusher_id",
-          "receiver_id",
-          "id",
-          "fantasy_id"
-        )),
-        dplyr::ends_with("player_id")
-      ),
-      function(id, id_vec = id_vector) {
-        chars <- nchar(id)
-        dplyr::case_when(
-          is.na(chars) ~ NA_character_,
-          # this means it's gsis ID. 30 30 2d 30 30 translates to 00-00
-          stringr::str_sub(id, 5, 16) == "3030-2d30-30" ~ decode_gsis(id),
-          # if it's not gsis, it is likely elias. We drop names to avoid confusion
-          nchar(id) == 36 ~ unname(id_vec[extract_elias(
-            id,
-            decoder = decode_gsis
-          )]),
-          TRUE ~ id
-        )
-      }
+  decode_one <- function(id) {
+    # this means it's gsis ID. 30 30 2d 30 30 translates to 00-00
+    is_gsis <- stringi::stri_sub(id, 5, 16) == "3030-2d30-30"
+    # if it's not gsis, it is likely elias. We drop names to avoid confusion
+    is_elias <- nchar(id) == 36
+    elias_id <- unname(id_vector[extract_elias(id, decoder = decode_gsis)])
+    data.table::fcase(
+      is.na(id),
+      NA_character_,
+      is_gsis,
+      decode_gsis(id),
+      is_elias,
+      elias_id,
+      default = id
     )
+  }
+
+  by_ref <- in_pipeline(pbp, ...)
+  d <- if (by_ref) pbp else as_pbp_dt(pbp)
+  id_cols <- intersect(
+    c("passer_id", "rusher_id", "receiver_id", "id", "fantasy_id"),
+    names(d)
+  )
+  id_cols <- c(id_cols, grep("player_id$", names(d), value = TRUE))
+
+  # The same ids show up many times in many columns, so we decode every unique
+  # id only once
+  ids <- unique(unlist(lapply(id_cols, function(col) d[[col]])))
+  decoded <- decode_one(ids)
+  data.table::set(
+    d,
+    j = id_cols,
+    value = lapply(id_cols, function(col) decoded[match(d[[col]], ids)])
+  )
 
   message_completed("Decoding of player ids completed", ...)
 
-  ret
+  if (by_ref) d else as_input_type(d, pbp)
 }
 
 decode_ids <- function(var) {
@@ -105,12 +112,12 @@ decode_ids <- function(var) {
 }
 
 convert_to_gsis_id <- function(new_id) {
-  if (is.na(new_id) | stringr::str_length(new_id) != 36) {
+  if (is.na(new_id) || stringi::stri_length(new_id) != 36) {
     ret <- new_id
   } else {
     to_decode <- new_id |>
-      stringr::str_sub(5, -9) |>
-      stringr::str_replace_all("-", "")
+      stringi::stri_sub(5, -9) |>
+      stringi::stri_replace_all_fixed("-", "")
     hex_raw <- sapply(seq(1, nchar(to_decode), by = 2), function(x) {
       substr(to_decode, x, x + 1)
     })
@@ -121,8 +128,8 @@ convert_to_gsis_id <- function(new_id) {
 
 extract_elias <- function(smart_id, decoder) {
   name_abbr <- decoder(smart_id) |> substr(1, 3)
-  id_no <- stringr::str_remove_all(smart_id, "-") |>
-    stringr::str_sub(11, 16)
+  id_no <- stringi::stri_replace_all_fixed(smart_id, "-", "") |>
+    stringi::stri_sub(11, 16)
   elias_id <- paste0(name_abbr, id_no)
   elias_id
 }

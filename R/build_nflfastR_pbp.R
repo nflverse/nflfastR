@@ -26,6 +26,8 @@
 #' to learn about the output.
 #'
 #' @inheritParams fast_scraper
+#' @param add_xyac If `TRUE`, the function [add_xyac()] will be executed. Set
+#'   to `FALSE` to skip the xyac columns and save computation time.
 #' @param decode If `TRUE`, the function [decode_player_ids()] will be executed.
 #' @param rules If `FALSE`, printing of the header and footer in the console output will be suppressed.
 #' @return An nflfastR play-by-play data frame like it can be loaded from <https://github.com/nflverse/nflverse-data>.
@@ -57,6 +59,7 @@ build_nflfastR_pbp <- function(
   game_ids,
   dir = getOption("nflfastR.raw_directory", default = NULL),
   ...,
+  add_xyac = TRUE,
   decode = TRUE,
   rules = TRUE
 ) {
@@ -74,7 +77,7 @@ build_nflfastR_pbp <- function(
     )
   }
 
-  if (isTRUE(rules)) {
+  if (isTRUE(rules) && is_verbose()) {
     rule_header("Build nflfastR Play-by-Play Data")
   }
 
@@ -85,10 +88,12 @@ build_nflfastR_pbp <- function(
   # try pak::pak("nflverse/nflfastR@v5.2.0")
   game_ids <- check_for_dropped_seasons(game_ids)
 
-  game_count <- ifelse(is.vector(game_ids), length(game_ids), nrow(game_ids))
+  game_count <- if (is.vector(game_ids)) length(game_ids) else nrow(game_ids)
   builder <- TRUE
 
-  cli::cli_ul("{my_time()} | Start download of {game_count} game{?s}...")
+  if (is_verbose()) {
+    cli::cli_ul("{my_time()} | Start download of {game_count} game{?s}...")
+  }
 
   ret <- fast_scraper(
     game_ids = game_ids,
@@ -97,17 +102,25 @@ build_nflfastR_pbp <- function(
     in_builder = builder
   ) |>
     clean_pbp(in_builder = builder) |>
-    add_qb_epa(in_builder = builder) |>
-    add_xyac(in_builder = builder) |>
-    add_xpass(in_builder = builder)
+    add_qb_epa(in_builder = builder)
+
+  if (isTRUE(add_xyac)) {
+    ret <- add_xyac(ret, in_builder = builder)
+  }
+
+  ret <- add_xpass(ret, in_builder = builder)
 
   if (isTRUE(decode)) {
     ret <- decode_player_ids(ret, in_builder = builder)
   }
 
-  if (isTRUE(rules)) {
+  if (isTRUE(rules) && is_verbose()) {
     rule_footer("DONE")
   }
 
+  # the steps above changed one data.table by reference
+  if (data.table::is.data.table(ret)) {
+    data.table::setDF(ret)
+  }
   make_nflverse_data(ret)
 }

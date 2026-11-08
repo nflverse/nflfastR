@@ -1,8 +1,8 @@
 repo: nflverse/nflfastR
 tag: regression_tests
-raw: regression_raw_b6c0b4604e.tar
-raw_md5: b6c0b4604e8cfd5543298faeac243293
-games: regression_games_a05d31826e.rds
-games_md5: a05d31826eedd5ce450c123dce43a6b0
+raw: regression_raw_5935f11d79.tar
+raw_md5: 5935f11d793a8cca75e96137226e4bdc
+games: regression_games_7f2ef583f4.rds
+games_md5: 7f2ef583f4c13a0c9da3575b732a03f0
 expected: regression_expected_8b268add93.rds
 expected_md5: 8b268add934ec7de317ae93f3ac1b93e

@@ -21,36 +21,35 @@ add_game_data <- function(pbp, games = NULL, ...) {
         )
       }
 
-      out <- out |>
-        dplyr::left_join(
-          games |>
-            dplyr::select(
-              "game_id",
-              "old_game_id",
-              "away_score",
-              "home_score",
-              "location",
-              "result",
-              "total",
-              "spread_line",
-              "total_line",
-              "div_game",
-              "roof",
-              "surface",
-              "temp",
-              "wind",
-              "home_coach",
-              "away_coach",
-              "stadium",
-              "stadium_id",
-              "gameday"
-            ) |>
-            dplyr::rename(game_stadium = "stadium"),
-          by = c("game_id")
-        ) |>
-        dplyr::mutate(
-          game_date = .data$gameday
-        )
+      # add the game columns by reference. A join with [.data.table would
+      # allocate about twice the size of pbp
+      cols <- c(
+        "old_game_id",
+        "away_score",
+        "home_score",
+        "location",
+        "result",
+        "total",
+        "spread_line",
+        "total_line",
+        "div_game",
+        "roof",
+        "surface",
+        "temp",
+        "wind",
+        "home_coach",
+        "away_coach",
+        "stadium",
+        "stadium_id",
+        "gameday"
+      )
+      game_row <- match(out$game_id, games$game_id)
+      data.table::set(
+        out,
+        j = sub("^stadium$", "game_stadium", cols),
+        value = lapply(cols, function(col) games[[col]][game_row])
+      )
+      data.table::set(out, j = "game_date", value = out$gameday)
 
       user_message("added game variables", "done")
     },

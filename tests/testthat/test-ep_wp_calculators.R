@@ -3,7 +3,7 @@ test_that("calculate_expected_points works", {
   # check NOTES for multi-threading forced us to skip on cran.
   skip_on_cran()
 
-  data <- tibble::tibble(
+  data <- data.frame(
     "season" = 2018:2019,
     "home_team" = "SEA",
     "posteam" = "SEA",
@@ -18,6 +18,33 @@ test_that("calculate_expected_points works", {
   ep <- calculate_expected_points(data) |> round_double_to_digits()
   exp <- load_expectation("ep")
   expect_equal(ep, exp)
+})
+
+test_that("calculate_expected_points doesn't change its input and keeps its type", {
+  skip_on_cran()
+  expect_input_unchanged(calculate_expected_points)
+})
+
+test_that("calculate_expected_points replaces ep and keeps other columns", {
+  skip_on_cran()
+  data <- data.frame(
+    season = 2019,
+    home_team = "SEA",
+    posteam = "SEA",
+    roof = "outdoors",
+    half_seconds_remaining = 1800,
+    yardline_100 = 75,
+    down = 1,
+    ydstogo = 10,
+    posteam_timeouts_remaining = 3,
+    defteam_timeouts_remaining = 3,
+    success = 1
+  )
+  ep <- calculate_expected_points(data)
+  ep_again <- calculate_expected_points(ep)
+  expect_identical(ep_again, ep)
+  expect_identical(names(ep)[8:9], c("ep", "season"))
+  expect_identical(ep$success, 1)
 })
 
 test_that("calculate_expected_points works", {

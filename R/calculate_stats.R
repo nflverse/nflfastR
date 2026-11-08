@@ -198,10 +198,14 @@ calculate_stats <- function(
   # Check combination of summary_level and stat_type to set a helper that is
   # used to create the grouping variables
   grp_id <- data.table::fcase(
-    summary_level == "season" && stat_type == "player" , "10" ,
-    summary_level == "season" && stat_type == "team"   , "20" ,
-    summary_level == "week" && stat_type == "player"   , "30" ,
-    summary_level == "week" && stat_type == "team"     , "40"
+    summary_level == "season" && stat_type == "player",
+    "10",
+    summary_level == "season" && stat_type == "team",
+    "20",
+    summary_level == "week" && stat_type == "player",
+    "30",
+    summary_level == "week" && stat_type == "team",
+    "40"
   )
   # grp_vctr is used as character vector for joining pbp stats
   grp_vctr <- switch(
@@ -219,7 +223,7 @@ calculate_stats <- function(
   # since these depend on different player id variables and filters,
   # we create separate dfs for these stats
   passing_stats_from_pbp <- pbp |>
-    dplyr::filter(.data$play_type %in% c("pass", "qb_spike")) |>
+    dplyr::filter(.data$play_type %chin% c("pass", "qb_spike")) |>
     dplyr::select(
       "season",
       "week",
@@ -241,7 +245,7 @@ calculate_stats <- function(
     dplyr::ungroup()
 
   rushing_stats_from_pbp <- pbp |>
-    dplyr::filter(.data$play_type %in% c("run", "qb_kneel")) |>
+    dplyr::filter(.data$play_type %chin% c("run", "qb_kneel")) |>
     dplyr::select(
       "season",
       "week",
@@ -606,7 +610,7 @@ calculate_stats <- function(
 
     # load gsis_ids of RBs, FBs and HBs for RACR
     racr_ids <- player_info |>
-      dplyr::filter(.data$position %in% c("RB", "FB", "HB")) |>
+      dplyr::filter(.data$position %chin% c("RB", "FB", "HB")) |>
       dplyr::pull("player_id")
 
     stats <- stats |>
@@ -621,7 +625,7 @@ calculate_stats <- function(
           .data$receiving_air_yards == 0 ~ 0,
           # following Josh Hermsmeyer's definition, RACR stays < 0 for RBs (and FBs) and is set to
           # 0 for Receivers. The list "racr_ids" includes all known RB and FB gsis_ids
-          .data$receiving_air_yards < 0 & !.data$player_id %in% racr_ids ~ 0,
+          .data$receiving_air_yards < 0 & !.data$player_id %chin% racr_ids ~ 0,
           TRUE ~ .data$racr
         ),
         # Fantasy #####################
@@ -722,7 +726,7 @@ fg_list <- function(stat_ids, yards, collapse_id, gwfg = NULL) {
 `%ifna%` <- function(lhs, rhs) data.table::fifelse(is.na(lhs), rhs, lhs)
 
 has_id <- function(id, all_ids) {
-  stringr::str_detect(all_ids, paste0(";", id, ";", collapse = "|"))
+  stringi::stri_detect_regex(all_ids, paste0(";", id, ";", collapse = "|"))
 }
 
 td_ids <- function() {

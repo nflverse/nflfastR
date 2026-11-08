@@ -8,6 +8,7 @@ build_nflfastR_pbp(
   game_ids,
   dir = getOption("nflfastR.raw_directory", default = NULL),
   ...,
+  add_xyac = TRUE,
   decode = TRUE,
   rules = TRUE
 )
@@ -21,6 +22,9 @@ where nflfastR searches for raw game play-by-play data.
 See \code{\link[=save_raw_pbp]{save_raw_pbp()}} for additional information.}
 
 \item{...}{Additional arguments passed to the scraping functions (for internal use)}
+
+\item{add_xyac}{If \code{TRUE}, the function \code{\link[=add_xyac]{add_xyac()}} will be executed. Set
+to \code{FALSE} to skip the xyac columns and save computation time.}
 
 \item{decode}{If \code{TRUE}, the function \code{\link[=decode_player_ids]{decode_player_ids()}} will be executed.}
 

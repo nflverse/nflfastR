@@ -49,15 +49,19 @@ ot_kick_first <- c(2011L, 2016L, 2024L, 2025L)
 
 # rule, period length and kickoff regime for each game
 ot_rule_key <- function(season, season_type) {
-  post <- season_type %in% "POST"
-  rule <- dplyr::case_when(
-    post & season >= 2022 ~ "BOTH",
-    !post & season >= 2025 ~ "BOTH",
-    post & season >= 2010 ~ "MSD",
-    !post & season >= 2012 ~ "MSD",
-    TRUE ~ "SD"
+  post <- season_type %chin% "POST"
+  rule <- data.table::fcase(
+    post & season >= 2022,
+    "BOTH",
+    !post & season >= 2025,
+    "BOTH",
+    post & season >= 2010,
+    "MSD",
+    !post & season >= 2012,
+    "MSD",
+    default = "SD"
   )
-  len <- dplyr::if_else(!post & season >= 2017, 600L, 900L)
+  len <- data.table::fifelse(!post & season >= 2017, 600L, 900L)
   # kickoff regime determines where drives start
   kick <- findInterval(season, ot_kick_first) + 1L
   paste(rule, len, kick, sep = "|")
@@ -67,7 +71,11 @@ ot_rule_key <- function(season, season_type) {
 # from the week in the game id
 ot_season_type <- function(game_id, season) {
   wk <- suppressWarnings(as.integer(substr(game_id, 6, 7)))
-  dplyr::if_else(wk > dplyr::if_else(season >= 2021, 18L, 17L), "POST", "REG")
+  data.table::fifelse(
+    wk > data.table::fifelse(season >= 2021, 18L, 17L),
+    "POST",
+    "REG"
+  )
 }
 
 # Score differentials the rules can produce (receiving team, start of a
@@ -78,7 +86,15 @@ ot_map_d <- function(x) {
   vapply(x, function(z) which.min(abs(z - ot_d_set) - 1e-6 * ot_d_set), 1L)
 }
 
-ot_end_value <- function(d) dplyr::case_when(d > 0 ~ 1, d < 0 ~ 0, TRUE ~ 0.5)
+ot_end_value <- function(d) {
+  data.table::fcase(
+    d > 0,
+    1,
+    d < 0,
+    0,
+    default = 0.5
+  )
+}
 
 # Possible results of a completed possession for the team that had the ball
 # (R). Returns a list of components. Each has a weight w and either a terminal
@@ -336,7 +352,7 @@ ot_possession_number <- function(pbp) {
       if (any(k)) {
         out[k] <- cumsum(c(0, diff(x[k]) != 0))
         last <- cummax(seq_along(x) * k)
-        out <- ifelse(last > 0, out[pmax(last, 1)], 0)
+        out <- data.table::fifelse(last > 0, out[pmax(last, 1)], 0)
       }
       out
     }
@@ -372,7 +388,7 @@ ot_wp_states <- function(st, use_spread = TRUE) {
   # Postseason games don't end when the period does. The next period starts and
   # play goes on, so there is no clock pressure and the end of the period has no
   # value of its own. Value those states as if there were lots of time left.
-  secs[st$season_type %in% "POST"] <- ot_n * ot_step
+  secs[st$season_type %chin% "POST"] <- ot_n * ot_step
 
   # sanitize the state
   di <- ot_map_d(st$d)
@@ -394,7 +410,7 @@ ot_wp_states <- function(st, use_spread = TRUE) {
     # state of a fresh drive after a conversion
     y_new <- pmax(
       feat[, "yardline_100"] -
-        ifelse(feat[, "down"] == 4, feat[, "ydstogo"], 8),
+        data.table::fifelse(feat[, "down"] == 4, feat[, "ydstogo"], 8),
       1
     )
     cont_feat <- feat
@@ -404,7 +420,11 @@ ot_wp_states <- function(st, use_spread = TRUE) {
     dpred <- ot_drive_preds(feat, cont_feat)
     # teams that have to score do not punt
     must <- p[scrim] == 2 & di[scrim] > 1L
-    cc <- ifelse(feat[, "down"] == 4, ot_go_prob(feat[, "ydstogo"]), ot_go_avg)
+    cc <- data.table::fifelse(
+      feat[, "down"] == 4,
+      ot_go_prob(feat[, "ydstogo"]),
+      ot_go_avg
+    )
 
     # 4th down with a short clock: nobody punts. In range the offense kicks a
     # field goal (if that helps), otherwise it goes for it.
@@ -558,14 +578,14 @@ add_ot_air_wp <- function(pass_pbp, phase) {
     season = x$season,
     season_type = season_type,
     kind = "scrimmage",
-    yardline_100 = ifelse(to, 100 - new_y, new_y),
-    down = ifelse(to | first, 1, x$down + 1),
-    ydstogo = ifelse(to | first, 10, x$ydstogo - x$air_yards),
+    yardline_100 = data.table::fifelse(to, 100 - new_y, new_y),
+    down = data.table::fifelse(to | first, 1, x$down + 1),
+    ydstogo = data.table::fifelse(to | first, 10, x$ydstogo - x$air_yards),
     secs = x$game_seconds_remaining, # already reduced by the average pass time
-    d = ifelse(to, -x$score_differential, x$score_differential),
-    phase = ifelse(
+    d = data.table::fifelse(to, -x$score_differential, x$score_differential),
+    phase = data.table::fifelse(
       to,
-      ifelse(rule == "SD", 3, pmin(ph + 1, 3)),
+      data.table::fifelse(rule == "SD", 3, pmin(ph + 1, 3)),
       ph
     ),
     stringsAsFactors = FALSE
@@ -575,7 +595,7 @@ add_ot_air_wp <- function(pass_pbp, phase) {
   w <- ot_wp_states(st, use_spread = FALSE)
   # a turnover in the second possession while trailing ends the game
   lost <- to & ph == 2 & x$score_differential < 0 & rule != "SD"
-  w <- ifelse(to, 1 - w, w)
+  w <- data.table::fifelse(to, 1 - w, w)
   w[lost] <- 0
   # the game is over when the clock runs out in the regular season
   over <- st$secs <= 0 & season_type == "REG"

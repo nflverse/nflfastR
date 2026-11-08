@@ -5,17 +5,13 @@
 ################################################################################
 
 select_variables <- function(pbp) {
-  suppressWarnings(
-    out <-
-      pbp |>
-      dplyr::select(
-        dplyr::any_of(
-          c(nflscrapr_cols, new_cols, api_cols)
-        )
-      )
-  )
-
-  return(out)
+  keep <- intersect(c(nflscrapr_cols, new_cols, api_cols), names(pbp))
+  drop <- setdiff(names(pbp), keep)
+  if (length(drop) > 0) {
+    data.table::set(pbp, j = drop, value = NULL)
+  }
+  data.table::setcolorder(pbp, keep)
+  pbp
 }
 
 # columns that are not in gamecenter that we created

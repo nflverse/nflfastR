@@ -33,8 +33,8 @@ Imports:
     mgcv,
     nflreadr (>= 1.2.0),
     progressr (>= 0.6.0),
-    rlang (>= 0.4.7),
-    stringr (>= 1.4.0),
+    rlang (>= 0.4.10),
+    stringi,
     tibble (>= 3.0),
     tidyr (>= 1.0.0),
     xgboost (>= 1.6)
@@ -46,9 +46,10 @@ Suggests:
     purrr (>= 0.3.0),
     rmarkdown,
     RSQLite,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    withr
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-Config/roxygen2/version: 8.1.0
+Config/roxygen2/version: 8.1.1

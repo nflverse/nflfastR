@@ -31,10 +31,11 @@ get_pbp_gc <- function(
 
   game_json <- raw[[1]]
 
-  date_parse <- names(raw)[1] |> stringr::str_extract(pattern = "[0-9]{8}")
-  date_year <- stringr::str_sub(date_parse, 1, 4)
-  date_month <- stringr::str_sub(date_parse, 5, 6)
-  date_day <- stringr::str_sub(
+  date_parse <- names(raw)[1] |>
+    stringi::stri_extract_first_regex(pattern = "[0-9]{8}")
+  date_year <- stringi::stri_sub(date_parse, 1, 4)
+  date_month <- stringi::stri_sub(date_parse, 5, 6)
+  date_day <- stringi::stri_sub(
     date_parse,
     nchar(date_parse) - 1,
     nchar(date_parse)
@@ -84,7 +85,7 @@ get_pbp_gc <- function(
   plays$play_id <- uniquify_ids(plays$play_id)
 
   plays$quarter_end <- dplyr::if_else(
-    stringr::str_detect(
+    stringi::stri_detect_regex(
       plays$desc,
       "(END QUARTER)|(END GAME)|(End of quarter)"
     ),
@@ -114,8 +115,7 @@ get_pbp_gc <- function(
       playStatSeq = "sequence"
     )
 
-  pbp_stats <- lapply(unique(stats$playId), sum_play_stats, stats)
-  pbp_stats <- data.table::rbindlist(pbp_stats) |> tibble::as_tibble()
+  pbp_stats <- tidy_play_stats(stats) |> tibble::as_tibble()
 
   # drive info
   d <- tibble::tibble(drives) |>
@@ -223,11 +223,11 @@ get_pbp_gc <- function(
 
       # have to do all this nonsense to make goal_to_go and yardline_side for compatibility with later functions
       yardline_side = furrr::future_map_chr(
-        stringr::str_split(.data$yardline, " "),
+        stringi::stri_split_fixed(.data$yardline, " "),
         function(x) x[1]
       ),
       yardline_number = as.numeric(furrr::future_map_chr(
-        stringr::str_split(.data$yardline, " "),
+        stringi::stri_split_fixed(.data$yardline, " "),
         function(x) x[2]
       )),
       goal_to_go = dplyr::if_else(
@@ -296,17 +296,17 @@ get_pbp_gc <- function(
   if (gameId %in% c('2000_01_CAR_WAS', '2000_02_NE_NYJ', '2000_03_ATL_CAR')) {
     combined <- combined |>
       dplyr::mutate(
-        yardline_number = case_when(
+        yardline_number = dplyr::case_when(
           .data$yardline %in% c("WAS20", "NYJ20", "ATL20") ~ 20,
           TRUE ~ .data$yardline_number
         ),
-        yardline = case_when(
+        yardline = dplyr::case_when(
           .data$yardline == "WAS20" ~ "WAS 20",
           .data$yardline == "NYJ20" ~ "NYJ 20",
           .data$yardline == "ATL20" ~ "ATL 20",
           TRUE ~ .data$yardline
         ),
-        yardline_side = case_when(
+        yardline_side = dplyr::case_when(
           .data$yardline_side == "WAS20" ~ "WAS",
           .data$yardline_side == "NYJ20" ~ "NYJ",
           .data$yardline_side == "ATL20" ~ "ATL",
