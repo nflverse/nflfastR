@@ -382,9 +382,12 @@ apply_where <- function(condition, x, fn) {
   out
 }
 
-# stringr::str_squish(): collapse white space to single blanks and trim
+# stringr::str_squish(): collapse white space to single blanks and trim.
+# \p{WSpace} is the same set as \s in ICU regex, and the char class is faster.
 squish <- function(x) {
-  stringi::stri_trim_both(stringi::stri_replace_all_regex(x, "\\s+", " "))
+  stringi::stri_trim_both(
+    stringi::stri_replace_all_charclass(x, "\\p{WSpace}", " ", merge = TRUE)
+  )
 }
 
 # A copy of a data frame as data.table with only the attributes of a plain data
@@ -405,6 +408,7 @@ as_pbp_dt <- function(df) {
 # Columns used inside data.table calls of the parser
 utils::globalVariables(
   c(
+    "..chr",
     "..drive_cols",
     "..stat_cols",
     ".BY",

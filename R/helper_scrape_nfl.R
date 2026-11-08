@@ -433,14 +433,32 @@ fix_posteams <- function(pbp) {
 # and janitor::clean_names(), but much faster on wide data with few rows.
 # Changes the data.table dt by reference.
 normalize_raw_columns <- function(dt) {
-  for (j in seq_along(dt)) {
+  is_chr <- vapply(dt, is.character, logical(1))
+  for (j in which(!is_chr)) {
     x <- dt[[j]]
     if (is.logical(x) || is.integer(x)) {
       data.table::set(dt, j = j, value = as.numeric(x))
-    } else if (is.factor(x) || is.character(x)) {
-      # str_squish() also turns line breaks into blanks
-      x <- squish(team_name_fn(as.character(x)))
-      data.table::set(dt, j = j, value = x)
+    } else if (is.factor(x)) {
+      data.table::set(dt, j = j, value = as.character(x))
+      is_chr[j] <- TRUE
+    }
+  }
+  # The character columns have few distinct strings (many are mostly NA or
+  # repeat one value), so we clean each distinct string only once and only
+  # write the columns that contain a string that changed.
+  chr <- which(is_chr)
+  n <- nrow(dt)
+  strings <- unlist(dt[, ..chr], use.names = FALSE)
+  distinct <- unique(strings)
+  # squish() also turns line breaks into blanks
+  cleaned <- squish(team_name_fn(distinct))
+  changed <- which(cleaned != distinct)
+  if (length(changed) > 0) {
+    idx <- data.table::chmatch(strings, distinct)
+    hit <- matrix(idx %in% changed, nrow = n)
+    for (k in which(colSums(hit) > 0)) {
+      rows <- (k - 1L) * n + seq_len(n)
+      data.table::set(dt, j = chr[k], value = cleaned[idx[rows]])
     }
   }
   data.table::setnames(dt, clean_names_cached(names(dt)))

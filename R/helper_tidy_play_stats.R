@@ -218,11 +218,17 @@ tidy_play_stats <- function(stats) {
   safety_player_name <- rep(NA_character_, n)
   safety_player_id <- rep(NA_character_, n)
 
+  # switch() picks the branch by position, which is much faster than matching
+  # the stat id against the branch names. So the switch has one branch per row
+  # of stat_ids, in the same order, and the names are only labels. Stat ids
+  # that aren't in stat_ids give NA and are skipped.
+  s_branch <- match(s_stat, nflfastR::stat_ids$stat_id)
+
   for (index in seq_along(s_stat)) {
     i <- play_index[index]
-    stat_id <- s_stat[index]
     switch(
-      as.character(stat_id),
+      s_branch[index],
+      "1" = NULL,
       "2" = {
         punt_blocked[i] <- 1
         punt_attempt[i] <- 1
@@ -319,6 +325,8 @@ tidy_play_stats <- function(stats) {
         td_player_id[i] <- s_id[index]
         td_player_name[i] <- s_name[index]
       },
+      "17" = NULL,
+      "18" = NULL,
       "19" = {
         interception[i] <- 1
         pass_attempt[i] <- 1
@@ -1155,6 +1163,7 @@ tidy_play_stats <- function(stats) {
             tackle_with_assist_2_team[i]
           )
       },
+      "81" = NULL,
       "82" = {
         # =81
         assist_tackle[i] <- 1
@@ -1337,6 +1346,7 @@ tidy_play_stats <- function(stats) {
         safety_player_id[i] <- s_id[index]
         safety_player_name[i] <- s_name[index]
       },
+      "90" = NULL,
       "91" = {
         fumble[i] <- 1
         forced_fumble_player_1_player_id[i] <-
@@ -1576,10 +1586,15 @@ tidy_play_stats <- function(stats) {
             tackle_for_loss_2_player_name[i]
           )
       },
+      "201" = NULL,
+      "211" = NULL,
+      "212" = NULL,
+      "213" = NULL,
       "301" = {
         extra_point_aborted[i] <- 1
         extra_point_attempt[i] <- 1
       },
+      "401" = NULL,
       "402" = {
         # tackle for loss player information is recorded in stat id 120
         NULL
