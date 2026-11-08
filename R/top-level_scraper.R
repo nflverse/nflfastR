@@ -439,17 +439,14 @@ fast_scraper <- function(
 
   suppressWarnings({
     p <- progressr::progressor(along = game_ids)
-    pbp <- furrr::future_map(
-      game_ids,
-      function(x, p, dir, ...) {
-        plays <- please_work(get_pbp_nfl)(x, dir = dir, ...)
-        p(sprintf("ID=%s", as.character(x)))
-        return(plays)
-      },
-      p,
-      dir = dir,
-      ...
-    ) |>
+    load_game <- function(x, p, dir, ...) {
+      plays <- please_work(get_pbp_nfl)(x, dir = dir, ...)
+      p(sprintf("ID=%s", as.character(x)))
+      return(plays)
+    }
+    # furrr has a fixed overhead that isn't worth it for a single game
+    map_games <- if (length(game_ids) == 1) lapply else furrr::future_map
+    pbp <- map_games(game_ids, load_game, p, dir = dir, ...) |>
       data.table::rbindlist(use.names = TRUE, fill = TRUE)
 
     if (length(pbp) != 0) {
