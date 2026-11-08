@@ -9,20 +9,12 @@ add_nflscrapr_mutations <- function(pbp) {
   # get_pbp_nfl() already removed duplicate plays.
   d <- pbp
 
-  # Modify the time column for the quarter end:
-  data.table::set(
-    d,
-    j = "time",
-    value = data.table::fifelse(
-      d$play_description == "GAME",
-      "15:00",
-      data.table::fifelse(
-        d$quarter_end == 1 | (d$play_description == "END GAME" & is.na(d$time)),
-        "00:00",
-        d$time
-      )
-    )
-  )
+  # Modify the time column for the game start and the quarter end:
+  d[play_description == "GAME", time := "15:00"]
+  d[
+    quarter_end == 1 | (play_description == "END GAME" & is.na(time)),
+    time := "00:00"
+  ]
   # Create a column with the time in seconds remaining for the quarter:
   data.table::set(
     d,
@@ -51,20 +43,14 @@ add_nflscrapr_mutations <- function(pbp) {
     data.table::set(d, j = "tmp_order", value = NULL)
   }
   kick_yards <- "(?<=kicks )[:alpha:]{1,}.[:alpha:]{1,}(?= yards)"
-  data.table::set(
-    d,
-    j = "play_description",
-    value = data.table::fifelse(
-      stringi::stri_detect_regex(d$play_description, kick_yards),
-      stringi::stri_replace_first_regex(
-        d$play_description,
-        kick_yards,
-        as.character(d$kick_distance)
-      ),
-      d$play_description,
-      na = d$play_description
+  d[
+    stringi::stri_detect_regex(play_description, kick_yards),
+    play_description := stringi::stri_replace_first_regex(
+      play_description,
+      kick_yards,
+      as.character(kick_distance)
     )
-  )
+  ]
 
   # helper, dropped below
   data.table::set(d, j = "tmp_desc_lower", value = tolower(d$play_description))
@@ -98,16 +84,7 @@ add_nflscrapr_mutations <- function(pbp) {
     )
   )
   # If the result was a success, make the yards_gained to be 2:
-  data.table::set(
-    d,
-    j = "yards_gained",
-    value = data.table::fifelse(
-      !is.na(d$two_point_conv_result) &
-        d$two_point_conv_result == "success",
-      2,
-      d$yards_gained
-    )
-  )
+  d[two_point_conv_result %chin% "success", yards_gained := 2]
   # Fix yards_gained for plays with laterals
   passing_differs <- !is.na(d$passing_yards) &
     d$yards_gained != d$passing_yards &
@@ -127,51 +104,36 @@ add_nflscrapr_mutations <- function(pbp) {
       default = d$yards_gained
     )
   )
-  # Extract the penalty type:
-  data.table::set(
-    d,
-    j = "penalty_type",
-    value = apply_where(
-      d$penalty == 1,
-      d$play_description,
-      function(x) {
-        x |>
-          stringi::stri_extract_first_regex(
-            "(?<=PENALTY on .{1,50}, ).{1,50}(?=, [0-9]{1,2} yard)"
-          ) |>
-          # Face Mask penalties include the yardage as string (either 5 Yards or 15 Yards)
-          # We remove the 15 Yards part and just keep the additional info if it's a
-          # 5 yard Face Mask penalty
-          stringi::stri_replace_first_regex("\\([0-9]{2}+ Yards\\)", "") |>
-          squish()
-      }
-    )
-  )
+  # Extract the penalty type (NA for plays without penalty):
+  d[
+    penalty == 1,
+    penalty_type := play_description |>
+      stringi::stri_extract_first_regex(
+        "(?<=PENALTY on .{1,50}, ).{1,50}(?=, [0-9]{1,2} yard)"
+      ) |>
+      # Face Mask penalties include the yardage as string (either 5 Yards or 15 Yards)
+      # We remove the 15 Yards part and just keep the additional info if it's a
+      # 5 yard Face Mask penalty
+      stringi::stri_replace_first_regex("\\([0-9]{2}+ Yards\\)", "") |>
+      squish()
+  ]
   # The new "dynamic Kickoff" in the 2024 season introduces new penalty types
-  out_of_bounds <- d$penalty == 1 &
-    stringi::stri_detect_fixed(d$tmp_desc_lower, "kickoff out of bounds")
-  short_of_landing_zone <- d$penalty == 1 &
-    stringi::stri_detect_fixed(
-      d$tmp_desc_lower,
-      "kickoff short of landing zone"
-    )
-  data.table::set(
-    d,
-    j = "penalty_type",
-    value = data.table::fcase(
-      out_of_bounds,
-      "Kickoff Out of Bounds",
-      short_of_landing_zone,
-      "Kickoff Short of Landing Zone",
-      default = d$penalty_type
-    )
-  )
+  # (out of bounds wins if a play has both)
+  d[
+    penalty == 1 &
+      stringi::stri_detect_fixed(
+        tmp_desc_lower,
+        "kickoff short of landing zone"
+      ),
+    penalty_type := "Kickoff Short of Landing Zone"
+  ]
+  d[
+    penalty == 1 &
+      stringi::stri_detect_fixed(tmp_desc_lower, "kickoff out of bounds"),
+    penalty_type := "Kickoff Out of Bounds"
+  ]
   # Make plays marked with down == 0 as NA:
-  data.table::set(
-    d,
-    j = "down",
-    value = data.table::fifelse(d$down == 0, NA_real_, d$down)
-  )
+  d[down == 0, down := NA_real_]
   # Using the field goal indicators make a column with the field goal result
   # (later conditions win):
   fg <- d$field_goal_attempt == 1
@@ -236,25 +198,9 @@ add_nflscrapr_mutations <- function(pbp) {
   # models are applied. That's done with a temporary copy of kickoff_attempt.
   # See #556, #202, #199 for example
   data.table::set(d, j = "copy_of_kickoff_attempt", value = d$kickoff_attempt)
-  data.table::set(
-    d,
-    j = "kickoff_attempt",
-    value = data.table::fifelse(
-      d$lead_ko == 1,
-      1,
-      d$kickoff_attempt
-    )
-  )
+  d[lead_ko == 1, kickoff_attempt := 1]
   # https://github.com/nflverse/nflfastR/issues/199#issuecomment-792321171
-  data.table::set(
-    d,
-    j = "kickoff_attempt",
-    value = data.table::fifelse(
-      d$game_id == "2014_02_ATL_CIN" & d$play_id == 3498,
-      1,
-      d$kickoff_attempt
-    )
-  )
+  d[game_id == "2014_02_ATL_CIN" & play_id == 3498, kickoff_attempt := 1]
   # Make the possession team for kickoffs be the return team, since that is
   # more intuitive from the EPA / WPA point of view:
   is_kickoff <- d$lead_ko == 1 |
@@ -290,18 +236,13 @@ add_nflscrapr_mutations <- function(pbp) {
   ]
   # remove posteam from END Q2 plays or END Q4 plays (when game goes in OT)
   # because it doesn't make sense and breaks fixed_drive and fixed_drive_result
-  data.table::set(
-    d,
-    j = "posteam",
-    value = data.table::fifelse(
-      stringi::stri_detect_regex(
-        d$play_description,
-        "(END QUARTER 2)|(END QUARTER 4)"
-      ),
-      NA_character_,
-      d$posteam
-    )
-  )
+  d[
+    stringi::stri_detect_regex(
+      play_description,
+      "(END QUARTER 2)|(END QUARTER 4)"
+    ),
+    posteam := NA_character_
+  ]
   # Denote whether the home or away team has possession:
   data.table::set(
     d,
@@ -315,12 +256,10 @@ add_nflscrapr_mutations <- function(pbp) {
   # Prior two plays were delay info that shouldn't have posteam in order
   # to get correct fixed drive results #529
   # https://github.com/nflverse/nflfastR/issues/529
-  data.table::set(
-    d,
-    i = which(d$game_id == "2025_01_CAR_JAX" & d$play_id %in% c(1282, 1303)),
-    j = "posteam",
-    value = NA_character_
-  )
+  d[
+    game_id == "2025_01_CAR_JAX" & play_id %in% c(1282, 1303),
+    posteam := NA_character_
+  ]
   # Column denoting which team is on defense:
   data.table::set(
     d,
@@ -331,15 +270,7 @@ add_nflscrapr_mutations <- function(pbp) {
       d$home_team
     )
   )
-  data.table::set(
-    d,
-    j = "yardline",
-    value = data.table::fifelse(
-      stringi::stri_detect_fixed(d$yardline, "50"),
-      "MID 50",
-      d$yardline
-    )
-  )
+  d[stringi::stri_detect_fixed(yardline, "50"), yardline := "MID 50"]
   d[,
     yardline := data.table::fifelse(
       nchar(yardline) == 0 | yardline == "NULL" | is.na(yardline),
@@ -348,15 +279,8 @@ add_nflscrapr_mutations <- function(pbp) {
     ),
     by = "game_id"
   ]
-  data.table::set(
-    d,
-    j = "yardline_number",
-    value = data.table::fifelse(
-      d$yardline == "MID 50",
-      50,
-      d$yardline_number
-    )
-  )
+  # (yardline_number is NA where yardline is NA)
+  d[yardline == "MID 50", yardline_number := 50]
   data.table::set(
     d,
     j = "yardline_100",
@@ -367,15 +291,7 @@ add_nflscrapr_mutations <- function(pbp) {
     )
   )
   # Set the kick_distance for extra points by adding 18 to the yardline_100:
-  data.table::set(
-    d,
-    j = "kick_distance",
-    value = data.table::fifelse(
-      d$extra_point_attempt == 1,
-      d$yardline_100 + 18,
-      d$kick_distance
-    )
-  )
+  d[extra_point_attempt == 1, kick_distance := yardline_100 + 18]
   # Create a column with the time in seconds remaining for each half:
   data.table::set(
     d,
@@ -425,52 +341,27 @@ add_nflscrapr_mutations <- function(pbp) {
       NA_character_
     )
   )
-  # Create the column denoting the categorical description of the pass length:
-  data.table::set(
-    d,
-    j = "pass_length",
-    value = apply_where(
-      d$two_point_attempt == 0 &
-        d$sack == 0 &
-        d$pass_attempt == 1,
-      d$play_description,
-      function(x) {
-        x |>
-          stringi::stri_extract_first_regex(
-            "pass (incomplete )?(short|deep)"
-          ) |>
-          stringi::stri_extract_first_regex("short|deep")
-      }
+  # Create the columns denoting the categorical description of the pass length
+  # and location (NA for other plays):
+  d[
+    two_point_attempt == 0 & sack == 0 & pass_attempt == 1,
+    c("pass_length", "pass_location") := list(
+      play_description |>
+        stringi::stri_extract_first_regex("pass (incomplete )?(short|deep)") |>
+        stringi::stri_extract_first_regex("short|deep"),
+      play_description |>
+        stringi::stri_extract_first_regex("(short|deep) (left|middle|right)") |>
+        stringi::stri_extract_first_regex("left|middle|right")
     )
-  )
-  # Create the column denoting the categorical location of the pass:
-  data.table::set(
-    d,
-    j = "pass_location",
-    value = apply_where(
-      d$two_point_attempt == 0 &
-        d$sack == 0 &
-        d$pass_attempt == 1,
-      d$play_description,
-      function(x) {
-        x |>
-          stringi::stri_extract_first_regex(
-            "(short|deep) (left|middle|right)"
-          ) |>
-          stringi::stri_extract_first_regex("left|middle|right")
-      }
-    )
-  )
+  ]
   # Indicator columns for both QB kneels, spikes, scrambles,
   # no huddle, shotgun plays:
   data.table::set(
     d,
     j = "qb_kneel",
-    value = data.table::fifelse(
+    value = as.numeric(
       stringi::stri_detect_fixed(d$play_description, " kneels ") &
-        d$kickoff_attempt != 1,
-      1,
-      0
+        d$kickoff_attempt != 1
     )
   )
   flags <- c(
@@ -511,43 +402,22 @@ add_nflscrapr_mutations <- function(pbp) {
   data.table::set(
     d,
     j = "qb_dropback",
-    value = data.table::fifelse(
-      d$play_type == "pass" |
-        (d$play_type == "run" &
-          d$qb_scramble == 1),
-      1,
-      0
+    value = as.numeric(
+      d$play_type == "pass" | (d$play_type == "run" & d$qb_scramble == 1)
     )
   )
-  # Columns denoting the run location and gap:
-  data.table::set(
-    d,
-    j = "run_location",
-    value = apply_where(
-      d$two_point_attempt == 0 &
-        d$rush_attempt == 1,
-      d$play_description,
-      function(x) {
-        x |>
-          stringi::stri_extract_first_regex(" (left|middle|right) ") |>
-          stringi::stri_trim_both()
-      }
+  # Columns denoting the run location and gap (NA for other plays):
+  d[
+    two_point_attempt == 0 & rush_attempt == 1,
+    c("run_location", "run_gap") := list(
+      play_description |>
+        stringi::stri_extract_first_regex(" (left|middle|right) ") |>
+        stringi::stri_trim_both(),
+      play_description |>
+        stringi::stri_extract_first_regex(" (guard|tackle|end) ") |>
+        stringi::stri_trim_both()
     )
-  )
-  data.table::set(
-    d,
-    j = "run_gap",
-    value = apply_where(
-      d$two_point_attempt == 0 &
-        d$rush_attempt == 1,
-      d$play_description,
-      function(x) {
-        x |>
-          stringi::stri_extract_first_regex(" (guard|tackle|end) ") |>
-          stringi::stri_trim_both()
-      }
-    )
-  )
+  ]
   data.table::set(
     d,
     j = "game_half",
@@ -566,20 +436,13 @@ add_nflscrapr_mutations <- function(pbp) {
   # Initialize both home and away to have 3 timeouts for each
   # half except overtime where they have 2:
   # extract timeouts from failed challenges when it's not otherwise there
-  challenge_timeout <- d$replay_or_challenge == 1 &
-    d$timeout == 1 &
-    is.na(d$timeout_team)
-  data.table::set(
-    d,
-    j = "timeout_team",
-    value = data.table::fifelse(
-      challenge_timeout,
-      apply_where(challenge_timeout, d$play_description, function(x) {
-        stringi::stri_extract_first_regex(x, "(?<=by\\s)[:upper:]{2,3}(?=\\s)")
-      }),
-      d$timeout_team
+  d[
+    replay_or_challenge == 1 & timeout == 1 & is.na(timeout_team),
+    timeout_team := stringi::stri_extract_first_regex(
+      play_description,
+      "(?<=by\\s)[:upper:]{2,3}(?=\\s)"
     )
-  )
+  ]
   timeouts_per_half <- data.table::fifelse(d$quarter %in% c(1, 2, 3, 4), 3, 2)
   data.table::set(
     d,
@@ -613,21 +476,15 @@ add_nflscrapr_mutations <- function(pbp) {
   # was in the variable drive_start_yard_line in the games
   # "2000_01_CAR_WAS", "2000_02_NE_NYJ", and "2000_03_ATL_CAR"
   for (col in c("yardline", "drive_start_yard_line", "drive_end_yard_line")) {
-    x <- d[[col]]
-    x[!is.na(x) & x == ""] <- NA
-    data.table::set(
-      d,
-      j = col,
-      value = data.table::fifelse(
-        stringi::stri_detect_regex(x, "[:upper:]{2,3}(?=[:digit:]{1,2})"),
-        paste(
-          stringi::stri_extract_first_regex(x, "[:upper:]{2,3}"),
-          stringi::stri_extract_first_regex(x, "[:digit:]{1,2}")
-        ),
-        x,
-        na = x
-      )
-    )
+    d[x == "", x := NA_character_, env = list(x = col)]
+    d[
+      stringi::stri_detect_regex(x, "[:upper:]{2,3}(?=[:digit:]{1,2})"),
+      x := paste(
+        stringi::stri_extract_first_regex(x, "[:upper:]{2,3}"),
+        stringi::stri_extract_first_regex(x, "[:digit:]{1,2}")
+      ),
+      env = list(x = col)
+    ]
   }
 
   # Create cumulative timeouts used for both the home and away teams per game
@@ -762,11 +619,7 @@ add_nflscrapr_mutations <- function(pbp) {
   )
   # There are a few plays with air_yards prior 2006 (most likely accidently)
   # To not crash the air_yac ep and wp calculation they are being set to NA
-  data.table::set(
-    d,
-    j = "air_yards",
-    value = data.table::fifelse(d$season < 2006, NA_real_, d$air_yards)
-  )
+  d[season < 2006, air_yards := NA_real_]
 
   data.table::setnames(
     d,
@@ -790,21 +643,17 @@ add_nflscrapr_mutations <- function(pbp) {
   # kick distance is NA on kickoffs and punts that result in touchbacks
   # (unless the kick/punt) was caught between endzones
   # we use yardline_100 to add it in those cases
-  is_relevant_touchback <- is.na(d$kick_distance) &
-    d$touchback == 1 &
-    d$play_type %chin% c("punt", "kickoff")
-  data.table::set(
-    d,
-    j = "kick_distance",
-    value = data.table::fcase(
-      is_relevant_touchback & d$kickoff_attempt == 0,
-      d$yardline_100,
-      # gotta reverse yardline_100 on kickoffs
-      is_relevant_touchback & d$kickoff_attempt == 1,
-      100 - d$yardline_100,
-      default = d$kick_distance
+  d[
+    is.na(kick_distance) &
+      touchback == 1 &
+      play_type %chin% c("punt", "kickoff"),
+    # gotta reverse yardline_100 on kickoffs
+    kick_distance := data.table::fifelse(
+      kickoff_attempt == 1,
+      100 - yardline_100,
+      yardline_100
     )
-  )
+  ]
   # drop helper variables
   data.table::set(d, j = "tmp_desc_lower", value = NULL)
 
@@ -857,11 +706,11 @@ kickoff_finder <- "(Offside on Free Kick)|(Delay of Kickoff)|(Onside Kick format
 ##some steps to prepare the data for the EP/WP/CP/FG models
 make_model_mutations <- function(pbp) {
   #for EP, CP, and WP model, xgb needs 0/1 for eras
-  era0 <- data.table::fifelse(pbp$season <= 2001, 1, 0)
-  era1 <- data.table::fifelse(pbp$season > 2001 & pbp$season <= 2005, 1, 0)
-  era2 <- data.table::fifelse(pbp$season > 2005 & pbp$season <= 2013, 1, 0)
-  era3 <- data.table::fifelse(pbp$season > 2013 & pbp$season <= 2017, 1, 0)
-  era4 <- data.table::fifelse(pbp$season > 2017, 1, 0)
+  era0 <- as.numeric(pbp$season <= 2001)
+  era1 <- as.numeric(pbp$season > 2001 & pbp$season <= 2005)
+  era2 <- as.numeric(pbp$season > 2005 & pbp$season <= 2013)
+  era3 <- as.numeric(pbp$season > 2013 & pbp$season <= 2017)
+  era4 <- as.numeric(pbp$season > 2017)
   model_roof <- as.factor(data.table::fifelse(
     is.na(pbp$roof) | pbp$roof == "open" | pbp$roof == "closed",
     "retractable",
@@ -884,15 +733,15 @@ make_model_mutations <- function(pbp) {
       era3 == 1 | era4 == 1,
       3
     )),
-    down1 = data.table::fifelse(pbp$down == 1, 1, 0),
-    down2 = data.table::fifelse(pbp$down == 2, 1, 0),
-    down3 = data.table::fifelse(pbp$down == 3, 1, 0),
-    down4 = data.table::fifelse(pbp$down == 4, 1, 0),
-    home = data.table::fifelse(pbp$posteam == pbp$home_team, 1, 0),
+    down1 = as.numeric(pbp$down == 1),
+    down2 = as.numeric(pbp$down == 2),
+    down3 = as.numeric(pbp$down == 3),
+    down4 = as.numeric(pbp$down == 4),
+    home = as.numeric(pbp$posteam == pbp$home_team),
     model_roof = model_roof,
-    retractable = data.table::fifelse(model_roof == "retractable", 1, 0),
-    dome = data.table::fifelse(model_roof == "dome", 1, 0),
-    outdoors = data.table::fifelse(model_roof == "outdoors", 1, 0)
+    retractable = as.numeric(model_roof == "retractable"),
+    dome = as.numeric(model_roof == "dome"),
+    outdoors = as.numeric(model_roof == "outdoors")
   )
   if (data.table::is.data.table(pbp)) {
     data.table::set(pbp, j = names(cols), value = cols)
@@ -909,16 +758,7 @@ fix_scrambles <- function(pbp) {
     return(pbp)
   }
 
-  scramble_id <- paste0(pbp$game_id, "_", pbp$play_id)
-  data.table::set(
-    pbp,
-    j = "qb_scramble",
-    value = data.table::fifelse(
-      scramble_id %chin% scramble_fix,
-      1,
-      pbp$qb_scramble
-    )
-  )
+  pbp[paste0(game_id, "_", play_id) %chin% scramble_fix, qb_scramble := 1]
   pbp
 
   # Some notes on the scramble_fix:

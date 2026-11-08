@@ -23,14 +23,7 @@ add_cp <- function(pbp) {
     data.table::set(
       pbp,
       j = c("cp", "cpoe"),
-      value = list(
-        cp,
-        data.table::fifelse(
-          !is.na(cp),
-          100 * (pbp$complete_pass - cp),
-          NA_real_
-        )
-      )
+      value = list(cp, 100 * (pbp$complete_pass - cp))
     )
     user_message("added cp and cpoe", "done")
   } else {
@@ -63,8 +56,8 @@ prepare_cp_data <- function(pbp) {
   passes <- lapply(stats::setNames(nm = cp_model_features), function(f) {
     pbp[[f]]
   })
-  passes$pass_middle <- data.table::fifelse(pbp$pass_location == "middle", 1, 0)
-  passes$air_is_zero <- data.table::fifelse(pbp$air_yards == 0, 1, 0)
+  passes$pass_middle <- as.numeric(pbp$pass_location == "middle")
+  passes$air_is_zero <- as.numeric(pbp$air_yards == 0)
   passes$distance_to_sticks <- pbp$air_yards - pbp$ydstogo
   # a valid pass also has an intended receiver
   passes$valid_pass <- valid &

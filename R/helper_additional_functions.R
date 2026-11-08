@@ -78,28 +78,17 @@ clean_pbp <- function(pbp, ...) {
         "$1"
       )
     )
-    data.table::set(
-      d,
-      j = "success",
-      value = data.table::fifelse(d$epa > 0, 1, 0)
-    )
+    data.table::set(d, j = "success", value = as.numeric(d$epa > 0))
     new_cols <- extract_name_and_number(d$desc, pass_finder, "passer")
     data.table::set(d, j = names(new_cols), value = new_cols)
     new_cols <- extract_name_and_number(d$desc, rush_finder, "rusher")
     data.table::set(d, j = names(new_cols), value = new_cols)
     #get rusher_player_name as a measure of last resort
     #finds things like aborted snaps and "F.Last to NYG 44."
-    data.table::set(
-      d,
-      j = "rusher",
-      value = data.table::fifelse(
-        is.na(d$rusher) &
-          is.na(d$passer) &
-          !is.na(d$rusher_player_name),
-        d$rusher_player_name,
-        d$rusher
-      )
-    )
+    d[
+      is.na(rusher) & is.na(passer) & !is.na(rusher_player_name),
+      rusher := rusher_player_name
+    ]
     data.table::set(
       d,
       j = "receiver",
@@ -123,103 +112,49 @@ clean_pbp <- function(pbp, ...) {
     #overwrite all these weird plays messing with the parser
     is_abnormal <- stringi::stri_detect_regex(d$desc, abnormal_play)
     for (role in c("receiver", "rusher", "passer")) {
-      official_name <- d[[paste0(role, "_player_name")]]
-      data.table::set(
-        d,
-        j = role,
-        value = data.table::fifelse(
-          is_abnormal & !is.na(official_name),
-          official_name,
-          d[[role]],
-          na = d[[role]]
-        )
-      )
+      d[
+        is_abnormal & !is.na(official_name),
+        role := official_name,
+        env = list(role = role, official_name = paste0(role, "_player_name"))
+      ]
     }
     # fix the plays where scramble was fixed using charting data from 1999 to 2005
-    data.table::set(
-      d,
-      j = "passer",
-      value = data.table::fcase(
-        is.na(d$passer) &
-          d$qb_scramble == 1 &
-          !is.na(d$rusher) &
-          d$season <= 2005,
-        d$rusher,
-        default = d$passer
-      )
-    )
+    d[
+      is.na(passer) & qb_scramble == 1 & !is.na(rusher) & season <= 2005,
+      passer := rusher
+    ]
     # finally, for rusher, if there was already a passer (eg from scramble), set rusher to NA
-    data.table::set(
-      d,
-      j = "rusher",
-      value = data.table::fifelse(
-        !is.na(d$passer),
-        NA_character_,
-        d$rusher
-      )
-    )
+    d[!is.na(passer), rusher := NA_character_]
     # if no pass is thrown, there shouldn't be a receiver
-    data.table::set(
-      d,
-      j = "receiver",
-      value = data.table::fifelse(
-        stringi::stri_detect_fixed(d$desc, " pass "),
-        d$receiver,
-        NA_character_
-      )
-    )
+    d[!stringi::stri_detect_fixed(desc, " pass "), receiver := NA_character_]
     # if there's a pass, sack, or scramble, it's a pass play...
     data.table::set(
       d,
       j = "pass",
-      value = data.table::fifelse(
+      value = as.numeric(
         stringi::stri_detect_regex(d$desc, "( pass )|(sacked)|(scramble)") |
-          d$qb_scramble == 1,
-        1,
-        0
+          d$qb_scramble == 1
       )
     )
     # ...unless it says "backward(s) pass" or "lateral pass" and there's a rusher
-    data.table::set(
-      d,
-      j = "pass",
-      value = data.table::fifelse(
-        stringi::stri_detect_regex(
-          stringi::stri_trans_tolower(d$desc, locale = "en"),
-          "(backward pass)|(backwards pass)|(lateral pass)"
-        ) &
-          !is.na(d$rusher),
-        0,
-        d$pass
-      )
-    )
+    d[
+      stringi::stri_detect_regex(
+        stringi::stri_trans_tolower(desc, locale = "en"),
+        "(backward pass)|(backwards pass)|(lateral pass)"
+      ) &
+        !is.na(rusher),
+      pass := 0
+    ]
     # and make sure there's no pass on a kickoff (sometimes there's forward pass on kickoff but that's not a pass play)
-    data.table::set(
-      d,
-      j = "pass",
-      value = data.table::fifelse(
-        d$kickoff_attempt == 1,
-        0,
-        d$pass,
-        na = d$pass
-      )
-    )
+    d[kickoff_attempt == 1, pass := 0]
     # in very rare cases, the pass logic can fail. We do a hard coded overwrite here because it's not worth the time
     # to overthink the logic to catch weird play descriptions.
-    data.table::set(
-      d,
-      j = "pass",
-      value = fix_weird_pass_plays(d$pass, d$game_id, d$play_id)
-    )
+    d[paste(game_id, play_id, sep = "_") %chin% weird_pass_plays, pass := 0]
     #if there's a rusher and it wasn't a QB kneel or pass play, it's a run play
     data.table::set(
       d,
       j = "rush",
-      value = data.table::fifelse(
-        !is.na(d$rusher) & d$qb_kneel == 0 & d$pass == 0,
-        1,
-        0
-      )
+      value = as.numeric(!is.na(d$rusher) & d$qb_kneel == 0 & d$pass == 0)
     )
     #fix some common QBs with inconsistent names
     data.table::set(
@@ -272,12 +207,10 @@ clean_pbp <- function(pbp, ...) {
     data.table::set(
       d,
       j = "first_down",
-      value = data.table::fifelse(
+      value = as.numeric(
         d$first_down_rush == 1 |
           d$first_down_pass == 1 |
-          d$first_down_penalty == 1,
-        1,
-        0
+          d$first_down_penalty == 1
       )
     )
     # easy filter: play is 1 if a "special teams" play, or 0 otherwise
@@ -285,11 +218,8 @@ clean_pbp <- function(pbp, ...) {
     data.table::set(
       d,
       j = "special",
-      value = data.table::fifelse(
-        d$play_type %chin%
-          c("extra_point", "field_goal", "kickoff", "punt"),
-        1,
-        0
+      value = as.numeric(
+        d$play_type %chin% c("extra_point", "field_goal", "kickoff", "punt")
       )
     )
     # easy filter: play is 1 if a "normal" play (including penalties), or 0 otherwise
@@ -297,14 +227,12 @@ clean_pbp <- function(pbp, ...) {
     data.table::set(
       d,
       j = "play",
-      value = data.table::fifelse(
+      value = as.numeric(
         !is.na(d$epa) &
           !is.na(d$posteam) &
           d$desc != "*** play under review ***" &
           !startsWith(d$desc, "Timeout ") &
-          d$play_type %chin% c("no_play", "pass", "run"),
-        1,
-        0
+          d$play_type %chin% c("no_play", "pass", "run")
       )
     )
 
@@ -368,28 +296,14 @@ clean_pbp <- function(pbp, ...) {
     # if there's an aborted snap and qb didn't get a pass off,
     # then charge it to whoever charged with the fumble
     # this has to go after all the custom_mode stuff or it gets messed up
-    data.table::set(
-      d,
-      j = "rusher",
-      value = data.table::fifelse(
-        d$aborted_play == 1 &
-          is.na(d$passer) &
-          !is.na(d$fumbled_1_player_name),
-        d$fumbled_1_player_name,
-        d$rusher
-      )
-    )
-    data.table::set(
-      d,
-      j = "rusher_id",
-      value = data.table::fifelse(
-        d$aborted_play == 1 &
-          is.na(d$passer) &
-          !is.na(d$fumbled_1_player_id),
-        d$fumbled_1_player_id,
-        d$rusher_id
-      )
-    )
+    d[
+      aborted_play == 1 & is.na(passer) & !is.na(fumbled_1_player_name),
+      rusher := fumbled_1_player_name
+    ]
+    d[
+      aborted_play == 1 & is.na(passer) & !is.na(fumbled_1_player_id),
+      rusher_id := fumbled_1_player_id
+    ]
     data.table::set(
       d,
       j = c("name", "jersey_number", "id"),
@@ -434,18 +348,14 @@ clean_pbp <- function(pbp, ...) {
     data.table::set(
       d,
       j = "out_of_bounds",
-      value = data.table::fifelse(
-        stringi::stri_detect_regex(d$desc, "(ran ob)|(pushed ob)|(sacked ob)"),
-        1,
-        0
+      value = as.numeric(
+        stringi::stri_detect_regex(d$desc, "(ran ob)|(pushed ob)|(sacked ob)")
       )
     )
 
     d[,
-      home_opening_kickoff := data.table::fifelse(
-        home_team == posteam[!is.na(posteam)][1L],
-        1,
-        0
+      home_opening_kickoff := as.numeric(
+        home_team == posteam[!is.na(posteam)][1L]
       ),
       by = "game_id"
     ]
@@ -650,29 +560,25 @@ add_qb_epa <- function(pbp, ...) {
   if (by_ref) d else as_input_type(d, pbp)
 }
 
-# Function that fixes false "pass" positives in some hard coded plays where
+# False "pass" positives (game_id and play_id) in some hard coded plays where
 # the parser logic reached its limit
-fix_weird_pass_plays <- function(pass, game_id, play_id) {
-  combined_id <- paste(game_id, play_id, sep = "_")
-  false_positives <- c(
-    "1999_01_ARI_PHI_1611",
-    "1999_01_SF_JAX_1788",
-    "1999_01_SF_JAX_2081",
-    "1999_11_ATL_TB_1740",
-    "2001_09_MIN_PHI_1307",
-    "2001_14_NE_BUF_452",
-    "2002_16_PIT_TB_527",
-    "2003_02_HOU_NO_3924",
-    "2003_15_PIT_NYJ_873",
-    "2004_05_BUF_NYJ_2555",
-    "2005_07_SD_PHI_321",
-    "2011_02_STL_NYG_1369",
-    "2016_05_NE_CLE_912",
-    "2016_06_CAR_NO_2690",
-    "2020_10_BAL_NE_2013"
-  )
-  data.table::fifelse(combined_id %chin% false_positives, 0, pass)
-}
+weird_pass_plays <- c(
+  "1999_01_ARI_PHI_1611",
+  "1999_01_SF_JAX_1788",
+  "1999_01_SF_JAX_2081",
+  "1999_11_ATL_TB_1740",
+  "2001_09_MIN_PHI_1307",
+  "2001_14_NE_BUF_452",
+  "2002_16_PIT_TB_527",
+  "2003_02_HOU_NO_3924",
+  "2003_15_PIT_NYJ_873",
+  "2004_05_BUF_NYJ_2555",
+  "2005_07_SD_PHI_321",
+  "2011_02_STL_NYG_1369",
+  "2016_05_NE_CLE_912",
+  "2016_06_CAR_NO_2690",
+  "2020_10_BAL_NE_2013"
+)
 
 # Consistent names of some common QBs (used for passer and rusher)
 fix_qb_names <- function(name, posteam, season) {

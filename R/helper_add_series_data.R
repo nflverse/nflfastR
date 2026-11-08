@@ -43,11 +43,7 @@ add_series_data <- function(d) {
   data.table::set(
     d,
     j = "series_success",
-    value = data.table::fifelse(
-      d$series_result %chin% c("Touchdown", "First down"),
-      1,
-      0
-    )
+    value = as.numeric(d$series_result %chin% c("Touchdown", "First down"))
   )
   data.table::set(
     d,

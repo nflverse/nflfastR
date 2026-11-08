@@ -198,10 +198,8 @@ get_pbp_nfl <- function(
       # have to do all this nonsense to make goal_to_go and yardline_side for compatibility with later functions
       yardline_side = str_split_and_extract(yardline, " ", 1),
       yardline_number = as.numeric(str_split_and_extract(yardline, " ", 2)),
-      quarter_end = data.table::fifelse(
-        stringi::stri_detect_fixed(play_description, "END QUARTER"),
-        1,
-        0
+      quarter_end = as.numeric(
+        stringi::stri_detect_fixed(play_description, "END QUARTER")
       ),
       game_year = SEASON,
       season = SEASON,
@@ -273,43 +271,18 @@ get_pbp_nfl <- function(
 
   # nfl didn't fill in first downs on this game
   if (id == "2018_01_ATL_PHI") {
-    combined[,
-      `:=`(
-        first_down_pass = data.table::fifelse(
-          pass_attempt == 1 & first_down == 1,
-          1,
-          first_down_pass
-        ),
-        first_down_rush = data.table::fifelse(
-          rush_attempt == 1 & first_down == 1,
-          1,
-          first_down_rush
-        ),
-        third_down_converted = data.table::fifelse(
-          first_down == 1 & down == 3,
-          1,
-          third_down_converted
-        ),
-        fourth_down_converted = data.table::fifelse(
-          first_down == 1 & down == 4,
-          1,
-          fourth_down_converted
-        ),
-        third_down_failed = data.table::fifelse(
-          first_down == 0 & down == 3,
-          1,
-          third_down_failed
-        ),
-        fourth_down_failed = data.table::fifelse(
-          first_down == 0 &
-            down == 4 &
-            play_type_nfl != "FIELD_GOAL" &
-            play_type_nfl != "PUNT" &
-            play_type_nfl != "PENALTY",
-          1,
-          fourth_down_failed
-        )
-      )
+    combined[pass_attempt == 1 & first_down == 1, first_down_pass := 1]
+    combined[rush_attempt == 1 & first_down == 1, first_down_rush := 1]
+    combined[first_down == 1 & down == 3, third_down_converted := 1]
+    combined[first_down == 1 & down == 4, fourth_down_converted := 1]
+    combined[first_down == 0 & down == 3, third_down_failed := 1]
+    combined[
+      first_down == 0 &
+        down == 4 &
+        play_type_nfl != "FIELD_GOAL" &
+        play_type_nfl != "PUNT" &
+        play_type_nfl != "PENALTY",
+      fourth_down_failed := 1
     ]
   }
 
@@ -367,56 +340,55 @@ td_team_fixes <- data.frame(
 # helper function to manually fill in fields for problematic games. Changes pbp
 # by reference.
 fix_bad_games <- function(pbp) {
+  # (fifelse() because a missing drive_how_ended_description makes td_team
+  # missing)
   pbp[,
-    c("td_team", "return_team", "fumble_recovery_1_team", "timeout_team") := {
-      # the team that doesn't have the ball
-      other_team <- data.table::fifelse(
-        posteam == home_team,
-        away_team,
-        home_team
-      )
+    td_team := {
       #if team has the ball and scored, make them the scoring team
       td <- data.table::fifelse(
         drive_how_ended_description == "Touchdown" & !is.na(td_team),
         posteam,
         td_team
       )
-      #if team defensive team score, fill in the right team
-      td <- data.table::fifelse(
+      #if team defensive team score, fill in the right team (the team that
+      #doesn't have the ball)
+      data.table::fifelse(
         drive_how_ended_description != "Touchdown" & !is.na(td),
-        other_team,
+        data.table::fifelse(posteam == home_team, away_team, home_team),
         td
       )
-      list(
-        td,
-        # fill in return team. this is before we flip posteam for kickoffs
-        data.table::fifelse(!is.na(return_team), other_team, return_team),
-        # assign possession based on fumble_lost
-        data.table::fifelse(
-          !is.na(fumble_recovery_1_team),
-          data.table::fcase(
-            fumble_lost == 1 & posteam == home_team,
-            away_team,
-            fumble_lost == 1 & posteam == away_team,
-            home_team,
-            fumble_lost == 0 & posteam == home_team,
-            home_team,
-            fumble_lost == 0 & posteam == away_team,
-            away_team
-          ),
-          fumble_recovery_1_team
-        ),
-        # extract timeouts in the affected seasons from the play description
-        data.table::fifelse(
-          !is.na(timeout_team),
-          stringi::stri_extract_first_regex(
-            play_description,
-            "(?<=Timeout #[1-3] by )[:upper:]+"
-          ),
-          timeout_team
-        )
-      )
     }
+  ]
+  # fill in return team. this is before we flip posteam for kickoffs
+  pbp[
+    !is.na(return_team),
+    return_team := data.table::fifelse(
+      posteam == home_team,
+      away_team,
+      home_team
+    )
+  ]
+  # assign possession based on fumble_lost
+  pbp[
+    !is.na(fumble_recovery_1_team),
+    fumble_recovery_1_team := data.table::fcase(
+      fumble_lost == 1 & posteam == home_team,
+      away_team,
+      fumble_lost == 1 & posteam == away_team,
+      home_team,
+      fumble_lost == 0 & posteam == home_team,
+      home_team,
+      fumble_lost == 0 & posteam == away_team,
+      away_team
+    )
+  ]
+  # extract timeouts in the affected seasons from the play description
+  pbp[
+    !is.na(timeout_team),
+    timeout_team := stringi::stri_extract_first_regex(
+      play_description,
+      "(?<=Timeout #[1-3] by )[:upper:]+"
+    )
   ]
   pbp[]
 }

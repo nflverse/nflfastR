@@ -44,13 +44,15 @@ add_xpass <- function(pbp, ...) {
         xpass_model_features
       )
     )
-    pass_oe <- data.table::fifelse(
-      !is.na(xpass),
-      100 * (d$pass - xpass),
-      NA_real_
-    )
-    pass_oe <- data.table::fifelse(d$rush == 0 & d$pass == 0, NA_real_, pass_oe)
-    data.table::set(d, j = c("xpass", "pass_oe"), value = list(xpass, pass_oe))
+    data.table::set(d, j = "xpass", value = xpass)
+    # (fifelse() because a missing rush or pass makes pass_oe missing)
+    d[,
+      pass_oe := data.table::fifelse(
+        rush == 0 & pass == 0,
+        NA_real_,
+        100 * (pass - xpass)
+      )
+    ]
 
     message_completed("added xpass and pass_oe", ...)
   } else {
@@ -67,7 +69,7 @@ add_xpass <- function(pbp, ...) {
 prepare_xpass_data <- function(pbp) {
   # a list of columns, so make_model_mutations() doesn't change pbp
   plays <- make_model_mutations(as.list(pbp))
-  plays$valid_play <- data.table::fifelse(
+  plays$valid_play <- as.numeric(
     plays$season >= 2006 &
       plays$play_type %chin% c("no_play", "pass", "run") &
       !is.na(plays$posteam) &
@@ -75,9 +77,7 @@ prepare_xpass_data <- function(pbp) {
       !is.na(plays$defteam_timeouts_remaining) &
       !is.na(plays$posteam_timeouts_remaining) &
       !is.na(plays$yardline_100) &
-      !is.na(plays$score_differential),
-    1,
-    0
+      !is.na(plays$score_differential)
   )
   plays
 }

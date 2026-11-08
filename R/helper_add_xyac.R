@@ -259,7 +259,7 @@ predict_ep <- function(
   if (length(season) == 0) {
     return(numeric())
   }
-  indicator <- function(x) data.table::fifelse(x, 1, 0)
+  indicator <- as.numeric
   model_roof <- data.table::fifelse(
     is.na(roof) | roof == "open" | roof == "closed",
     "retractable",
@@ -326,12 +326,8 @@ prepare_xyac_data <- function(pbp) {
       )
     }
   )
-  passes$pass_middle <- data.table::fifelse(
-    passes$pass_location == "middle",
-    1,
-    0
-  )
-  passes$air_is_zero <- data.table::fifelse(passes$air_yards == 0, 1, 0)
+  passes$pass_middle <- as.numeric(passes$pass_location == "middle")
+  passes$air_is_zero <- as.numeric(passes$air_yards == 0)
   passes$distance_to_sticks <- passes$air_yards - passes$ydstogo
   passes$distance_to_goal <- passes$yardline_100 - passes$air_yards
   # a valid pass also has an intended receiver

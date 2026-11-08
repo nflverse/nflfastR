@@ -240,19 +240,12 @@ prepare_wp_data <- function(pbp) {
     cli::cli_alert_warning(
       "If you see this, please reach out to the package maintainers {.url https://github.com/nflverse/nflfastR/issues}"
     )
-    data.table::set(
-      pbp,
-      i = which(is.na(pbp$spread_line)),
-      j = "spread_line",
-      value = 1.5
-    )
+    pbp[is.na(spread_line), spread_line := 1.5]
   }
 
   pbp[,
-    receive_2h_ko := data.table::fifelse(
-      qtr <= 2 & posteam == defteam[!is.na(defteam)][1L],
-      1,
-      0
+    receive_2h_ko := as.numeric(
+      qtr <= 2 & posteam == defteam[!is.na(defteam)][1L]
     ),
     by = "game_id"
   ]
@@ -559,78 +552,56 @@ add_ep_variables <- function(pbp_data) {
     home_epa := data.table::shift(home_ep, type = "lead") - home_ep,
     by = "game_id"
   ]
-  ep <- pbp_data$ep
-  epa <- data.table::fifelse(
-    pbp_data$tmp_posteam == pbp_data$home_team,
-    pbp_data$home_epa,
-    -pbp_data$home_epa
+  data.table::set(
+    pbp_data,
+    j = "epa",
+    value = data.table::fifelse(
+      pbp_data$tmp_posteam == pbp_data$home_team,
+      pbp_data$home_epa,
+      -pbp_data$home_epa
+    )
   )
-  td_team <- pbp_data$td_team
-  no_td <- is.na(td_team)
+  # scoring plays (later updates win)
   # td
-  epa <- data.table::fifelse(
-    !no_td,
-    data.table::fifelse(td_team == pbp_data$posteam, 7 - ep, -7 - ep),
-    epa
-  )
+  pbp_data[
+    !is.na(td_team),
+    epa := data.table::fifelse(td_team == posteam, 7 - ep, -7 - ep)
+  ]
   # Offense field goal:
-  epa <- data.table::fifelse(
-    no_td & pbp_data$field_goal_made == 1,
-    3 - ep,
-    epa,
-    na = epa
-  )
+  pbp_data[is.na(td_team) & field_goal_made == 1, epa := 3 - ep]
   # Offense extra-point:
-  epa <- data.table::fifelse(
-    no_td & pbp_data$field_goal_made == 0 & pbp_data$extra_point_good == 1,
-    1 - ep,
-    epa,
-    na = epa
-  )
+  pbp_data[
+    is.na(td_team) & field_goal_made == 0 & extra_point_good == 1,
+    epa := 1 - ep
+  ]
   # Offense two-point conversion:
-  epa <- data.table::fifelse(
-    no_td &
-      pbp_data$field_goal_made == 0 &
-      pbp_data$extra_point_good == 0 &
-      (pbp_data$two_point_rush_good == 1 |
-        pbp_data$two_point_pass_good == 1 |
-        pbp_data$two_point_pass_reception_good == 1),
-    2 - ep,
-    epa,
-    na = epa
-  )
+  pbp_data[
+    is.na(td_team) &
+      field_goal_made == 0 &
+      extra_point_good == 0 &
+      (two_point_rush_good == 1 |
+        two_point_pass_good == 1 |
+        two_point_pass_reception_good == 1),
+    epa := 2 - ep
+  ]
   # Failed PAT (both 1 and 2):
-  epa <- data.table::fifelse(
-    no_td &
-      pbp_data$field_goal_made == 0 &
-      pbp_data$extra_point_good == 0 &
-      ((pbp_data$extra_point_failed == 1 |
-        pbp_data$extra_point_blocked == 1 |
-        pbp_data$extra_point_aborted == 1) |
-        (pbp_data$two_point_rush_failed == 1 |
-          pbp_data$two_point_pass_failed == 1 |
-          pbp_data$two_point_pass_reception_failed == 1)),
-    0 - ep,
-    epa,
-    na = epa
-  )
+  pbp_data[
+    is.na(td_team) &
+      field_goal_made == 0 &
+      extra_point_good == 0 &
+      ((extra_point_failed == 1 |
+        extra_point_blocked == 1 |
+        extra_point_aborted == 1) |
+        (two_point_rush_failed == 1 |
+          two_point_pass_failed == 1 |
+          two_point_pass_reception_failed == 1)),
+    epa := 0 - ep
+  ]
   # Opponent scores defensive 2 point:
-  epa <- data.table::fifelse(
-    pbp_data$defensive_two_point_conv == 1,
-    -2 - ep,
-    epa,
-    na = epa
-  )
+  pbp_data[defensive_two_point_conv == 1, epa := -2 - ep]
   # Safety:
-  safety_team <- pbp_data$safety_team
-  epa <- data.table::fcase(
-    !is.na(safety_team) & safety_team == pbp_data$posteam,
-    2 - ep,
-    !is.na(safety_team) & safety_team == pbp_data$defteam,
-    -2 - ep,
-    default = epa
-  )
-  data.table::set(pbp_data, j = "epa", value = epa)
+  pbp_data[safety_team == defteam, epa := -2 - ep]
+  pbp_data[safety_team == posteam, epa := 2 - ep]
 
   # Now rename each of the expected points columns to match the style of
   # the updated code:
@@ -664,14 +635,10 @@ add_ep_variables <- function(pbp_data) {
   data.table::set(
     pbp_data,
     j = "end_game",
-    value = ifelse(
-      stringi::stri_detect_regex(
-        tolower(pbp_data$desc),
-        "(end of game)|(end game)"
-      ),
-      1,
-      0
-    )
+    value = as.numeric(stringi::stri_detect_regex(
+      tolower(pbp_data$desc),
+      "(end of game)|(end game)"
+    ))
   )
 
   # Change epa for plays occurring at end of half with no scoring plays to be
@@ -685,39 +652,40 @@ add_ep_variables <- function(pbp_data) {
     ),
     by = "game_id"
   ]
-  end_game <- pbp_data$end_game
-  epa <- data.table::fifelse(
-    ((pbp_data$qtr == 2 &
-      (pbp_data$tmp_next_qtr == 3 |
-        pbp_data$tmp_next_desc == "END QUARTER 2")) |
-      (pbp_data$qtr == 4 &
-        (pbp_data$tmp_next_qtr == 5 |
-          pbp_data$tmp_next_desc == "END QUARTER 4" |
-          pbp_data$tmp_next_end_game == 1))) &
-      pbp_data$sp == 0 &
-      !is.na(pbp_data$play_type),
-    0 - ep,
-    epa
-  )
+  # (fifelse() because a missing condition makes epa missing)
+  pbp_data[,
+    epa := data.table::fifelse(
+      ((qtr == 2 & (tmp_next_qtr == 3 | tmp_next_desc == "END QUARTER 2")) |
+        (qtr == 4 &
+          (tmp_next_qtr == 5 |
+            tmp_next_desc == "END QUARTER 4" |
+            tmp_next_end_game == 1))) &
+        sp == 0 &
+        !is.na(play_type),
+      0 - ep,
+      epa
+    )
+  ]
   # last play of OT
-  epa <- data.table::fifelse(
-    pbp_data$qtr > 4 & pbp_data$tmp_next_end_game == 1 & pbp_data$sp == 0,
-    0 - ep,
-    epa
-  )
-  end_q2 <- pbp_data$desc == "END QUARTER 2"
-  epa <- data.table::fifelse(end_q2, NA_real_, epa)
-  epa <- data.table::fifelse(end_game == 1, NA_real_, epa)
-  ep <- data.table::fifelse(end_q2, NA_real_, ep)
-  ep <- data.table::fifelse(end_game == 1, NA_real_, ep)
+  pbp_data[,
+    epa := data.table::fifelse(
+      qtr > 4 & tmp_next_end_game == 1 & sp == 0,
+      0 - ep,
+      epa
+    )
+  ]
+  pbp_data[
+    desc == "END QUARTER 2" | end_game == 1,
+    c("epa", "ep") := NA_real_
+  ]
   data.table::set(
     pbp_data,
-    j = c("epa", "ep", "tmp_next_qtr", "tmp_next_desc", "tmp_next_end_game"),
-    value = list(epa, ep, NULL, NULL, NULL)
+    j = c("tmp_next_qtr", "tmp_next_desc", "tmp_next_end_game"),
+    value = NULL
   )
 
   # Create columns with cumulative epa totals for both teams:
-  add_team_totals(pbp_data, epa, "epa")
+  add_team_totals(pbp_data, pbp_data$epa, "epa")
 }
 
 # The value x from the point of view of the home and away team (0 if missing),
@@ -1051,10 +1019,8 @@ add_wp_variables <- function(pbp_data) {
   data.table::set(
     pbp_data,
     j = "end_game",
-    value = ifelse(
-      stringi::stri_detect_regex(desc_lower, "(end of game)|(end game)"),
-      1,
-      0
+    value = as.numeric(
+      stringi::stri_detect_regex(desc_lower, "(end of game)|(end game)")
     )
   )
   # convenience for marking home win prob on last line
@@ -1071,44 +1037,13 @@ add_wp_variables <- function(pbp_data) {
     )
   )
   #make 1 or 0 the final win prob
-  data.table::set(
-    pbp_data,
-    j = "vegas_home_wp",
-    value = data.table::fifelse(
-      pbp_data$end_game == 1,
-      pbp_data$final_value,
-      pbp_data$vegas_home_wp
-    )
-  )
-  data.table::set(
-    pbp_data,
-    j = "home_wp",
-    value = data.table::fifelse(
-      pbp_data$end_game == 1,
-      pbp_data$final_value,
-      pbp_data$home_wp
-    )
-  )
+  pbp_data[
+    end_game == 1,
+    c("vegas_home_wp", "home_wp") := list(final_value, final_value)
+  ]
   data.table::set(pbp_data, j = "away_wp", value = 1 - pbp_data$home_wp)
   # make wp of posteam on last line NA because there's no posteam
-  data.table::set(
-    pbp_data,
-    j = "vegas_wp",
-    value = data.table::fifelse(
-      pbp_data$end_game == 1,
-      NA_real_,
-      pbp_data$vegas_wp
-    )
-  )
-  data.table::set(
-    pbp_data,
-    j = "wp",
-    value = data.table::fifelse(
-      pbp_data$end_game == 1,
-      NA_real_,
-      pbp_data$wp
-    )
-  )
+  pbp_data[end_game == 1, c("vegas_wp", "wp") := NA_real_]
   data.table::set(pbp_data, j = "def_wp", value = 1 - pbp_data$wp)
 
   # make wpa
@@ -1130,15 +1065,7 @@ add_wp_variables <- function(pbp_data) {
       -pbp_data$vegas_home_wpa
     )
   )
-  data.table::set(
-    pbp_data,
-    j = "vegas_wpa",
-    value = data.table::fifelse(
-      kneel_or_end,
-      NA_real_,
-      pbp_data$vegas_wpa
-    )
-  )
+  pbp_data[kneel_or_end, vegas_wpa := NA_real_]
   # home wpa isn't saved but needed for next line
   pbp_data[,
     home_wpa := data.table::shift(home_wp, type = "lead") - home_wp,
@@ -1153,16 +1080,12 @@ add_wp_variables <- function(pbp_data) {
       -pbp_data$home_wpa
     )
   )
-  data.table::set(
-    pbp_data,
-    j = "wpa",
-    value = data.table::fifelse(kneel_or_end, NA_real_, pbp_data$wpa)
-  )
+  pbp_data[kneel_or_end, wpa := NA_real_]
 
   # Home and Away post:
 
   # same team that wpa is relative to
-  post_team <- ifelse(
+  post_team <- data.table::fifelse(
     is.na(pbp_data$posteam),
     NA_character_,
     pbp_data$tmp_posteam
@@ -1170,7 +1093,7 @@ add_wp_variables <- function(pbp_data) {
   data.table::set(
     pbp_data,
     j = "home_wp_post",
-    value = ifelse(
+    value = data.table::fifelse(
       post_team == pbp_data$home_team,
       pbp_data$home_wp + pbp_data$wpa,
       pbp_data$home_wp - pbp_data$wpa
@@ -1179,7 +1102,7 @@ add_wp_variables <- function(pbp_data) {
   data.table::set(
     pbp_data,
     j = "away_wp_post",
-    value = ifelse(
+    value = data.table::fifelse(
       post_team == pbp_data$away_team,
       pbp_data$away_wp + pbp_data$wpa,
       pbp_data$away_wp - pbp_data$wpa
@@ -1219,32 +1142,22 @@ add_wp_variables <- function(pbp_data) {
   end_of_game <- pbp_data$end_game == 1
   two_no_plays <- data.table::shift(pbp_data$play_type) == "no_play" &
     pbp_data$play_type == "no_play"
-  data.table::set(
-    pbp_data,
-    j = "home_wp_post",
-    value = ifelse(
-      end_of_game,
-      data.table::shift(pbp_data$home_wp_post),
-      ifelse(
-        two_no_plays,
-        data.table::shift(pbp_data$home_wp_post),
-        pbp_data$home_wp_post
+  # (fifelse() because a missing two_no_plays makes the values missing)
+  use_prior <- end_of_game | two_no_plays
+  pbp_data[,
+    c("home_wp_post", "away_wp_post") := list(
+      data.table::fifelse(
+        use_prior,
+        data.table::shift(home_wp_post),
+        home_wp_post
+      ),
+      data.table::fifelse(
+        use_prior,
+        data.table::shift(away_wp_post),
+        away_wp_post
       )
     )
-  )
-  data.table::set(
-    pbp_data,
-    j = "away_wp_post",
-    value = ifelse(
-      end_of_game,
-      data.table::shift(pbp_data$away_wp_post),
-      ifelse(
-        two_no_plays,
-        data.table::shift(pbp_data$away_wp_post),
-        pbp_data$away_wp_post
-      )
-    )
-  )
+  ]
 
   # Generate columns to keep track of cumulative rushing and passing WPA
   # values within each game:
