@@ -7,7 +7,7 @@
 - nflfastR no longer depends on stringr. It uses stringi directly.
 - New option `nflfastR.verbose`. Set `options(nflfastR.verbose = FALSE)` to turn off the progress messages of `build_nflfastR_pbp()` and the functions it calls.
 - `build_nflfastR_pbp()` gained the argument `add_xyac`. Set `add_xyac = FALSE` to skip `add_xyac()` and save computation time.
-- `build_nflfastR_pbp()` is now about 4 times faster, on a full season as well as on a single game. The output is unchanged.
+- `build_nflfastR_pbp()` is now about 5 times faster on a single game and up to 8 times faster on many games. The output is unchanged.
 - `build_nflfastR_pbp()` no longer drops games whose raw data doesn't contain any play stats yet, e.g. right before kickoff.
 - `calculate_expected_points()` no longer removes unrelated columns like `success`, `passer` or `first_down` from its input and replaces existing `ep` and probability columns instead of adding duplicates. It now returns the type of its input (tibble, data.frame or data.table) instead of always a data.frame.
 
