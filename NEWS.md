@@ -1,5 +1,8 @@
 # nflfastR (development version)
 
+- Completely rebuilt the overtime win probability model (`wp`, `vegas_wp` and the derived `wpa`, `air_wpa`, `yac_wpa` variables for overtime plays). The previous model treated every overtime play like a next-score problem, ignored the clock and valued ties as losses for both teams. The new model predicts how the current drive ends and values each outcome with a dynamic program that knows the overtime rules in force for the game: sudden death (regular season through 2011, postseason through 2009), modified sudden death (regular season 2012-2024, postseason 2010-2021) and both teams being guaranteed a possession (postseason since 2022, regular season since 2025). It also knows the length of the period (15 minutes in the regular season through 2016, 10 minutes since 2017, 15 minute playoff periods) and that only regular season games can end in a tie, which is worth half a win. `wp` ignores the spread, `vegas_wp` includes it. (#617)
+- Overtime `xpass` and `pass_oe` change slightly on overtime rows because they use the new win probability. (#617)
+- `home_wp_post` and `away_wp_post` after a final overtime play that ends in a tie are now 0.5 (they used to be 0). (#617)
 - `xyac_median_yardage` is now always a double. It used to be an integer unless the data had no valid pass plays, which didn't match the column type in pbp databases.
 - nflfastR no longer depends on stringr. It uses stringi directly.
 - New option `nflfastR.verbose`. Set `options(nflfastR.verbose = FALSE)` to turn off the progress messages of `build_nflfastR_pbp()` and the functions it calls.
@@ -20,11 +23,6 @@
 - nflfastR now loads raw play-by-play data from season based releases in the `nflverse/nflverse-pbp` GitHub repository. The legacy repository `nflverse/nflfastR-raw` is deprecated and won't update in future seasons. This means that previous nflfastR versions won't be able to download 2026+ seasons! (#589)
 - The legacy player stats functions `calculate_player_stats*()` have been deprecated in 2024 with the release of nflfastR 5.0. They are now defunct and calling them will throw an error. (#590)
 
-## Overtime win probability
-
-- Completely rebuilt the overtime win probability model (`wp`, `vegas_wp` and the derived `wpa`, `air_wpa`, `yac_wpa` variables for overtime plays). The previous model treated every overtime play like a next-score problem, ignored the clock and valued ties as losses for both teams. The new model predicts how the current drive ends and values each outcome with a dynamic program that knows the overtime rules in force for the game: sudden death (regular season through 2011, postseason through 2009), modified sudden death (regular season 2012-2024, postseason 2010-2021) and both teams being guaranteed a possession (postseason since 2022, regular season since 2025). It also knows the length of the period (15 minutes in the regular season through 2016, 10 minutes since 2017, 15 minute playoff periods) and that only regular season games can end in a tie, which is worth half a win. `wp` ignores the spread, `vegas_wp` includes it. (#617)
-- Overtime `xpass` and `pass_oe` change slightly on overtime rows because they use the new win probability. (#617)
-- `home_wp_post` and `away_wp_post` after a final overtime play that ends in a tie are now 0.5 (they used to be 0). (#617)
 
 ## Minor changes and improvements
 
