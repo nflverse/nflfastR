@@ -222,3 +222,51 @@ test_that("overtime: a 4th down field goal that wins is always an option", {
   st$p_fg <- 0.02
   expect_lt(ot_wp_states(st, use_spread = FALSE), 0.6)
 })
+
+test_that("calculate_win_probability() values overtime rows with the overtime model", {
+  data <- tibble::tibble(
+    receive_2h_ko = 0,
+    home_team = "SEA",
+    posteam = "SEA",
+    score_differential = c(0, 0, -3, 0),
+    half_seconds_remaining = 450,
+    game_seconds_remaining = 450,
+    spread_line = c(0, 7, 0, 0),
+    down = 1,
+    ydstogo = 10,
+    yardline_100 = 70,
+    posteam_timeouts_remaining = 2,
+    defteam_timeouts_remaining = 2,
+    qtr = c(5, 5, 5, 4),
+    season = 2025,
+    season_type = "REG",
+    ot_possession = c(1, 1, 2, NA)
+  )
+  wp <- calculate_win_probability(data)
+  ot <- ot_wp_states(
+    ot_state(
+      season = 2025,
+      kind = "scrimmage",
+      d = c(0, 0, -3),
+      phase = c(1, 1, 2),
+      secs = 450,
+      spread = c(0, 7, 0),
+      y = 70
+    ),
+    use_spread = TRUE
+  )
+  expect_equal(wp$vegas_wp[1:3], ot)
+  # wp ignores the spread
+  expect_equal(wp$wp[1], wp$wp[2])
+  # regulation rows are unchanged
+  expect_equal(
+    wp$vegas_wp[4],
+    calculate_win_probability(data[4, ] |> dplyr::select(-qtr))$vegas_wp
+  )
+  # without a possession number overtime rows can't be valued
+  expect_warning(
+    no_poss <- calculate_win_probability(dplyr::select(data, -ot_possession)),
+    "possession number"
+  )
+  expect_equal(is.na(no_poss$vegas_wp), c(TRUE, TRUE, TRUE, FALSE))
+})

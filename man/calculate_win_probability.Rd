@@ -43,6 +43,21 @@ must be present:
 \item{posteam_timeouts_remaining}
 \item{defteam_timeouts_remaining}
 }
+
+Overtime: if \code{pbp_data} has a \code{qtr} column, rows with \code{qtr > 4} are valued
+with the rule aware overtime model that \code{build_nflfastR_pbp()} uses
+(\code{game_seconds_remaining} is then the time left in the overtime period).
+These rows also need:
+\itemize{
+\item{season (the overtime rules changed over time)}
+\item{ot_possession (1 for the first possession of overtime, 2 for the
+second and 3 for any later possession). If it is missing and \code{pbp_data} has
+\code{game_id} and \code{drive}, it is derived from the drives like in
+\code{build_nflfastR_pbp()}.}
+}
+and can have \code{season_type} (\code{"REG"} or \code{"POST"}, derived from \code{game_id} if
+missing, otherwise \code{"REG"}) and \code{roof} (for the field goal make probability).
+Overtime rows without a possession number get \code{NA}.
 }
 \examples{
 \donttest{
