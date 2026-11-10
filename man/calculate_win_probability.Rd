@@ -43,6 +43,10 @@ must be present:
 \item{posteam_timeouts_remaining}
 \item{defteam_timeouts_remaining}
 }
+Optional: season. \code{vegas_wp} can't be higher than the win probability after
+scoring a touchdown on the play (with more than 5 minutes left in the game).
+The season decides where the next possession starts after the kickoff. If it
+is missing, the current kickoff rules are assumed.
 }
 \examples{
 \donttest{

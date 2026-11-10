@@ -382,6 +382,19 @@ ot_wp_states <- function(st, use_spread = TRUE) {
   p[p == 1 & di != 1L] <- 2
   p[p == 3 & di != 1L] <- 2
 
+  # A kickoff is valued as the receiving team's 1st and 10 at the typical start
+  # after a kickoff (the spot the regulation model uses as well). Averaging the
+  # drive model over all drive starts instead overvalued the receiving team
+  # compared to its first snap.
+  ko <- which(st$kind == "kickoff")
+  if (length(ko) > 0) {
+    st$kind[ko] <- "scrimmage"
+    st$yardline_100[ko] <- wp_kickoff_start(st$season[ko])
+    st$down[ko] <- 1
+    st$ydstogo[ko] <- 10
+    if ("p_fg" %in% names(st)) st$p_fg[ko] <- NA_real_
+  }
+
   scrim <- which(st$kind == "scrimmage")
   if (length(scrim) > 0) {
     feat <- cbind(
@@ -474,8 +487,6 @@ ot_wp_states <- function(st, use_spread = TRUE) {
         )
         out[i] <- max(out[i], kick_val)
       }
-    } else if (k == "kickoff") {
-      out[i] <- ot_q_interp(dp$Q[1, p[i], di[i], , ], s[i], secs[i] / ot_step)
     } else if (k == "pat") {
       pm <- st$p_make[i]
       out[i] <- pm *

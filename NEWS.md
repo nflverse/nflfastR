@@ -16,6 +16,13 @@
 - Overtime `xpass` and `pass_oe` change slightly on overtime rows because they use the new win probability. (#617)
 - `home_wp_post` and `away_wp_post` after a final overtime play that ends in a tie are now 0.5 (they used to be 0). (#617)
 
+## Regulation win probability
+
+- Rebuilt the regulation win probability model with the Vegas line (`vegas_wp` and the derived `vegas_home_wp`, `vegas_wpa` and `vegas_home_wpa`). It is a probit model of the final margin, scaled by how much the margin can still move with the time left, with monotone xgboost corrections on top. The number of trees used depends on the clock: few early in the game and many in the last minutes. Out of sample (season grouped cross validation and seasons 2021+) it is better calibrated and has lower log loss than the previous model. It also changes smoothly when only the clock runs, a team's win probability no longer drops after it scores a touchdown, and win probability no longer jumps on punts. The model is stored in `R/sysdata.rda` and built by `data-raw/wp_vegas_model.R`.
+- `vegas_wp` can't be higher than the win probability after scoring a touchdown on the play, unless there are less than 5 minutes left (late in a game not scoring can be the better play).
+- Kickoffs and the possession after a PAT are now valued at the receiving team's typical first snap under the kickoff rules of the season (its own 28 through 2010, 22 in 2011-2015, 25 in 2016-2023, 30 in 2024 and 31 since 2025) instead of always its own 20 (through 2015) or 25. This changes `wp` and `vegas_wp` on regulation kickoff and PAT rows and on overtime kickoffs, where the previous value overrated the receiving team compared to its first snap.
+- `xpass` and `pass_oe` change slightly because the xpass model uses `vegas_wp`.
+
 ## Minor changes and improvements
 
 - Added `"game_id"` to the output `calculate_stats()` if `summary_level == "week"`. (#566)

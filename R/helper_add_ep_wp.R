@@ -135,14 +135,9 @@ get_preds_wp <- function(pbp) {
 }
 
 #get predictions for a set of pbp data
-#for predict stage
+#for predict stage. See R/helper_add_vegas_wp.R for the model
 get_preds_wp_spread <- function(pbp) {
-  preds <- stats::predict(
-    load_model("wp_spread"),
-    as.matrix(pbp |> wp_spread_model_select())
-  )
-
-  return(preds)
+  wp_vegas_predict(pbp)
 }
 
 
@@ -195,27 +190,6 @@ wp_model_select <- function(pbp) {
   return(pbp)
 }
 
-#get the columns needed for wp predictions
-#making sure they're in the right order
-wp_spread_model_select <- function(pbp) {
-  pbp <- pbp |>
-    dplyr::select(
-      "receive_2h_ko",
-      "spread_time",
-      "home",
-      "half_seconds_remaining",
-      "game_seconds_remaining",
-      "Diff_Time_Ratio",
-      "score_differential",
-      "down",
-      "ydstogo",
-      "yardline_100",
-      "posteam_timeouts_remaining",
-      "defteam_timeouts_remaining"
-    )
-
-  return(pbp)
-}
 prepare_wp_data <- function(pbp) {
   if (any(is.na(pbp$spread_line))) {
     broken_games <- pbp |>
@@ -823,9 +797,14 @@ add_wp_variables <- function(pbp_data) {
   # df of just the regulation plays:
   regular_df <- pbp_data[regular_i, ]
 
-  # do predictions for the regular df
+  # do predictions for the regular df. Rows without a down are set to NA below
+  # anyway, so the vegas_wp model only needs the rows with a down
   OffWinProb[regular_i] <- get_preds_wp(regular_df)
-  OffWinProb_spread[regular_i] <- get_preds_wp_spread(regular_df)
+  OffWinProb_spread[regular_i] <- wp_preds_rows(
+    get_preds_wp_spread,
+    regular_df,
+    which(!is.na(regular_df$down))
+  )
 
   ## set to NA WP for plays down is missing
   # for kickoffs and PATs, these will get overwritten by the fixes after this
@@ -905,7 +884,8 @@ add_wp_variables <- function(pbp_data) {
         .data$away_team,
         .data$home_team
       ),
-      yardline_100 = 75
+      # the other team's first snap after the kickoff
+      yardline_100 = wp_kickoff_start(.data$season)
     ) |>
     dplyr::mutate(
       home = case_when(
@@ -922,17 +902,23 @@ add_wp_variables <- function(pbp_data) {
     )
 
   ## start with spread version
-  # get pat if 0, 1, or 2
-  pat_0 <- get_preds_wp_spread(pat_data |> add_esdtr())
-  pat_1 <- get_preds_wp_spread(
+  # get pat if 0, 1, or 2. Only the PAT rows are needed (the vegas_wp model is
+  # comparatively expensive to evaluate)
+  pat_rows <- sort(unique(c(pat_i, two_pt_i)))
+  pat_0 <- wp_preds_rows(get_preds_wp_spread, pat_data |> add_esdtr(), pat_rows)
+  pat_1 <- wp_preds_rows(
+    get_preds_wp_spread,
     pat_data |>
       dplyr::mutate(score_differential = .data$score_differential - 1) |>
-      add_esdtr()
+      add_esdtr(),
+    pat_rows
   )
-  pat_2 <- get_preds_wp_spread(
+  pat_2 <- wp_preds_rows(
+    get_preds_wp_spread,
     pat_data |>
       dplyr::mutate(score_differential = .data$score_differential - 2) |>
-      add_esdtr()
+      add_esdtr(),
+    pat_rows
   )
 
   # Using nflscrapR version of 2pt make prob on 2nd line here
@@ -965,11 +951,12 @@ add_wp_variables <- function(pbp_data) {
 
   ## end PAT fix
 
-  ## now we need to fix WP on kickoffs, which will be WP associated with touchback
+  ## now we need to fix WP on kickoffs, which will be the WP of the receiving
+  ## team's first snap: 1st and 10 at the typical start after a kickoff in the
+  ## kickoff rules of that season (see wp_kickoff_start())
   kickoff_data <- pbp_data
 
-  # Change the yard line to be 80 for 2009-2015 and 75 otherwise
-  kickoff_data$yardline_100 <- with(kickoff_data, ifelse(season < 2016, 80, 75))
+  kickoff_data$yardline_100 <- wp_kickoff_start(kickoff_data$season)
   # Now first down:
   kickoff_data$down <- rep(1, nrow(pbp_data))
   kickoff_data$down1 <- rep(1, nrow(pbp_data))
@@ -979,14 +966,18 @@ add_wp_variables <- function(pbp_data) {
   # 10 ydstogo:
   kickoff_data$ydstogo <- rep(10, nrow(pbp_data))
 
-  # Get the new predicted probabilites:
-  kickoff_preds <- get_preds_wp(kickoff_data)
-  kickoff_preds_spread <- get_preds_wp_spread(kickoff_data)
-
   # Find the kickoffs in regulation:
   kickoff_i <- which(
     (pbp_data$play_type == "kickoff" | pbp_data$kickoff_attempt == 1) &
       pbp_data$qtr <= 4
+  )
+
+  # Get the new predicted probabilites:
+  kickoff_preds <- get_preds_wp(kickoff_data)
+  kickoff_preds_spread <- wp_preds_rows(
+    get_preds_wp_spread,
+    kickoff_data,
+    kickoff_i
   )
 
   # Now update the probabilities:
@@ -1296,6 +1287,15 @@ add_wp_variables <- function(pbp_data) {
     dplyr::ungroup()
 }
 
+
+# predictions of `fun` for rows `i` of `data` (NA elsewhere)
+wp_preds_rows <- function(fun, data, i) {
+  out <- rep(NA_real_, nrow(data))
+  if (length(i) > 0) {
+    out[i] <- fun(data[i, , drop = FALSE])
+  }
+  out
+}
 
 # helper function to get expected score diff to time ratio
 # needed after flipping teams in WP for getting PAT WP
