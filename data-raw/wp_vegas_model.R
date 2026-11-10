@@ -59,10 +59,28 @@ params <- list(
 # ---- data -------------------------------------------------------------------
 pbp <- nflreadr::load_pbp(1999:nflreadr::most_recent_season()) |>
   select(
-    game_id, play_id, season, qtr, posteam, defteam, home_team, away_team,
-    home_score, away_score, result, spread_line, roof, down, ydstogo,
-    yardline_100, play_type, kickoff_attempt, game_seconds_remaining,
-    half_seconds_remaining, score_differential, posteam_timeouts_remaining,
+    game_id,
+    play_id,
+    season,
+    qtr,
+    posteam,
+    defteam,
+    home_team,
+    away_team,
+    home_score,
+    away_score,
+    result,
+    spread_line,
+    roof,
+    down,
+    ydstogo,
+    yardline_100,
+    play_type,
+    kickoff_attempt,
+    game_seconds_remaining,
+    half_seconds_remaining,
+    score_differential,
+    posteam_timeouts_remaining,
     defteam_timeouts_remaining
   )
 
@@ -110,7 +128,13 @@ model_data <- pbp |>
     winner = if_else(home_score > away_score, home_team, away_team),
     label = as.numeric(posteam == winner)
   )
-cat("training rows:", nrow(model_data), " games:", n_distinct(model_data$game_id), "\n")
+cat(
+  "training rows:",
+  nrow(model_data),
+  " games:",
+  n_distinct(model_data$game_id),
+  "\n"
+)
 
 # ---- offset -------------------------------------------------------------------
 off_fit <- stats::glm.fit(

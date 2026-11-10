@@ -48,8 +48,22 @@ test_that("vegas_wp is monotone in score differential and spread", {
   )
   base <- vegas_state(g$t, g$sd, g$spread, g$down, 10, g$yl)
   p <- wp_vegas_predict(base)
-  up_sd <- wp_vegas_predict(vegas_state(g$t, g$sd + 1, g$spread, g$down, 10, g$yl))
-  up_spread <- wp_vegas_predict(vegas_state(g$t, g$sd, g$spread + 1, g$down, 10, g$yl))
+  up_sd <- wp_vegas_predict(vegas_state(
+    g$t,
+    g$sd + 1,
+    g$spread,
+    g$down,
+    10,
+    g$yl
+  ))
+  up_spread <- wp_vegas_predict(vegas_state(
+    g$t,
+    g$sd,
+    g$spread + 1,
+    g$down,
+    10,
+    g$yl
+  ))
   expect_true(all(up_sd >= p - 1e-9))
   expect_true(all(up_spread >= p - 1e-9))
 })
@@ -85,7 +99,11 @@ test_that("the tree margin uses all trees when asked to", {
   k <- wp_vegas_model$constants
   b <- wp_vegas_booster()
   X <- wp_vegas_tree_matrix(vegas_state(c(3000, 1700, 100), c(0, 3, -4)), k)
-  full <- as.numeric(stats::predict(b, xgboost::xgb.DMatrix(X), outputmargin = TRUE))
+  full <- as.numeric(stats::predict(
+    b,
+    xgboost::xgb.DMatrix(X),
+    outputmargin = TRUE
+  ))
   expect_equal(
     wp_vegas_tree_margin(b, X, k$n_trees, wp_vegas_inclusive_range(b)),
     full
