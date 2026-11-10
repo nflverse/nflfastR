@@ -245,7 +245,11 @@ ot_drive_preds <- function(feat, cont_feat) {
     function(o) {
       oh <- matrix(0, nrow(feat), length(ot_outcomes))
       oh[, o] <- 1
-      pmax(stats::predict(b$dur, cbind(feat, oh)) - 5, 3)
+      # the duration model predicts in units of `dur_unit` seconds
+      pmax(
+        stats::predict(b$dur, cbind(feat, oh)) * ot_wp_models$dur_unit - 5,
+        3
+      )
     },
     numeric(nrow(feat))
   )
