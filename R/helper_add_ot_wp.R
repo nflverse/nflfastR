@@ -594,3 +594,88 @@ add_ot_air_wp <- function(pass_pbp, phase) {
   air_wp[i] <- w
   air_wp
 }
+
+# Overtime rows (qtr > 4) of calculate_win_probability(). `pbp_data` is the
+# user's data, `model_data` the same rows with `posteam_spread` added. Returns
+# NULL without overtime rows, otherwise list(i, wp, vegas_wp) where `i` are the
+# overtime rows.
+calculate_ot_win_probability <- function(pbp_data, model_data) {
+  if (!"qtr" %in% names(pbp_data)) {
+    return(NULL)
+  }
+  i <- which(pbp_data$qtr > 4)
+  if (length(i) == 0) {
+    return(NULL)
+  }
+  if (!"season" %in% names(pbp_data)) {
+    cli::cli_abort(
+      "{.arg pbp_data} needs a {.field season} column to value overtime rows."
+    )
+  }
+  x <- model_data[i, , drop = FALSE]
+  season_type <- if ("season_type" %in% names(x)) {
+    toupper(x$season_type)
+  } else if ("game_id" %in% names(x)) {
+    ot_season_type(x$game_id, x$season)
+  } else {
+    rep("REG", length(i))
+  }
+  phase <- if ("ot_possession" %in% names(x)) {
+    x$ot_possession
+  } else if (all(c("game_id", "drive") %in% names(pbp_data))) {
+    ot_possession_number(pbp_data)[i]
+  } else {
+    rep(NA_real_, length(i))
+  }
+  # rows that are a snap (have a down and a team with the ball) but no
+  # possession number can't be valued
+  no_poss <- is.na(phase) & !is.na(x$down) & !is.na(x$posteam)
+  if (any(no_poss)) {
+    cli::cli_warn(c(
+      "Can't value {sum(no_poss)} overtime row{?s} without a possession number.",
+      "i" = "Add an {.field ot_possession} column (1, 2 or 3 for later possessions)."
+    ))
+  }
+  # probability that a field goal from the current spot is good, for the option
+  # to kick at the end of the period or on 4th down
+  fg <- x
+  if (!"roof" %in% names(fg)) {
+    fg$roof <- NA_character_
+  }
+  fg$yardline_100 <- dplyr::coalesce(fg$yardline_100, 50)
+  p_fg <- as.numeric(mgcv::predict.bam(
+    fastrmodels::fg_model,
+    newdata = make_model_mutations(fg),
+    type = "response"
+  ))
+  p_fg[is.na(x$yardline_100)] <- NA_real_
+  st <- data.frame(
+    season = x$season,
+    season_type = season_type,
+    kind = ifelse(is.na(x$down) | is.na(x$posteam), NA, "scrimmage"),
+    yardline_100 = x$yardline_100,
+    down = x$down,
+    ydstogo = x$ydstogo,
+    secs = x$game_seconds_remaining,
+    d = x$score_differential,
+    spread = x$posteam_spread,
+    phase = phase,
+    p_make = NA_real_,
+    p_fg = p_fg,
+    stringsAsFactors = FALSE
+  )
+  # rows without a state (no team, down, score or clock) get NA
+  ok <- which(
+    !is.na(st$kind) & !is.na(st$phase) & !is.na(st$d) & !is.na(st$secs)
+  )
+  out <- list(
+    i = i,
+    wp = rep(NA_real_, length(i)),
+    vegas_wp = rep(NA_real_, length(i))
+  )
+  if (length(ok) > 0) {
+    out$wp[ok] <- ot_wp_states(st[ok, , drop = FALSE], use_spread = FALSE)
+    out$vegas_wp[ok] <- ot_wp_states(st[ok, , drop = FALSE], use_spread = TRUE)
+  }
+  out
+}
