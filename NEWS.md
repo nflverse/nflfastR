@@ -22,6 +22,7 @@
 - `vegas_wp` can't be higher than the win probability after scoring a touchdown on the play, unless there are less than 5 minutes left (late in a game not scoring can be the better play). (#625)
 - Kickoffs and the possession after a PAT are now valued at the receiving team's typical first snap under the kickoff rules of the season (its own 28 through 2010, 22 in 2011-2015, 25 in 2016-2023, 30 in 2024 and 31 since 2025) instead of always its own 20 (through 2015) or 25. This changes `wp` and `vegas_wp` on regulation kickoff and PAT rows and on overtime kickoffs, where the previous value overrated the receiving team compared to its first snap. (#625)
 - `xpass` and `pass_oe` change slightly because the xpass model uses `vegas_wp`. (#625)
+- Fixed `air_wpa` and `yac_wpa` in regulation. The state at the catch point now moves the ball by the air yards (with a new set of downs if it reaches the line to gain), like `air_epa`. On a 4th down throw short of the line to gain the whole state now belongs to the other team (field, score, home and 2nd half kickoff, not only the timeouts), a catch in the end zone is valued as a touchdown, and a pass that ends regulation is valued by the score. Before, `air_wpa` was essentially unrelated to air yards. (#624, #625)
 
 ## Minor changes and improvements
 

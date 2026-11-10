@@ -1575,22 +1575,72 @@ add_air_yac_wp_variables <- function(pbp_data) {
   )
   pass_pbp_data <- pbp_data[pass_plays_i, ]
 
+  # time of the pass (overtime below uses these rows with the reduced clock and
+  # moves the ball itself)
   pass_pbp_data <- pass_pbp_data |>
     dplyr::mutate(
       half_seconds_remaining = .data$half_seconds_remaining - 5.704673,
       game_seconds_remaining = .data$game_seconds_remaining - 5.704673,
-      Diff_Time_Ratio = .data$score_differential /
-        (exp(-4 * .data$elapsed_share)),
       Turnover_Ind = dplyr::if_else(
         .data$down == 4 & .data$air_yards < .data$ydstogo,
         1,
         0
-      ),
-      Diff_Time_Ratio = dplyr::if_else(
+      )
+    )
+
+  # The state where the ball is caught (or lands): the ball moves by the air
+  # yards, which is a first down if it reaches the line to gain. On a 4th down
+  # throw short of the line to gain the other team takes over, so the whole
+  # state is seen from its side and the WP is flipped back below. The same as in
+  # add_air_yac_ep_variables() and, for overtime, add_ot_air_wp().
+  air_state <- pass_pbp_data |>
+    dplyr::mutate(
+      first_down_air = .data$air_yards >= .data$ydstogo,
+      new_yardline = .data$yardline_100 - .data$air_yards,
+      yardline_100 = dplyr::if_else(
         .data$Turnover_Ind == 1,
-        -1 * .data$Diff_Time_Ratio,
-        .data$Diff_Time_Ratio
+        100 - .data$new_yardline,
+        .data$new_yardline
       ),
+      # a throw into the end zone (or behind the own goal line) is valued at
+      # the 1 (or the 99)
+      yardline_100 = pmin(pmax(.data$yardline_100, 1), 99),
+      down = dplyr::if_else(
+        .data$first_down_air | .data$Turnover_Ind == 1,
+        1,
+        .data$down + 1
+      ),
+      ydstogo = dplyr::if_else(
+        .data$first_down_air | .data$Turnover_Ind == 1,
+        10,
+        .data$ydstogo - .data$air_yards
+      ),
+      ydstogo = pmin(.data$ydstogo, .data$yardline_100),
+      # the end of the first half: the value with no time left in it
+      half_seconds_remaining = pmax(.data$half_seconds_remaining, 0),
+      game_seconds_remaining = dplyr::if_else(
+        .data$qtr <= 2,
+        pmax(.data$game_seconds_remaining, 1800),
+        .data$game_seconds_remaining
+      ),
+      score_differential = dplyr::if_else(
+        .data$Turnover_Ind == 1,
+        -.data$score_differential,
+        .data$score_differential
+      ),
+      home = dplyr::if_else(
+        .data$Turnover_Ind == 1,
+        1 - .data$home,
+        .data$home
+      ),
+      receive_2h_ko = dplyr::if_else(
+        .data$Turnover_Ind == 1 & .data$qtr <= 2,
+        1 - .data$receive_2h_ko,
+        .data$receive_2h_ko
+      ),
+      elapsed_share = (3600 - pmax(.data$game_seconds_remaining, 0)) / 3600,
+      Diff_Time_Ratio = .data$score_differential /
+        (exp(-4 * .data$elapsed_share)),
       posteam_timeouts_remaining = dplyr::if_else(
         .data$Turnover_Ind == 1,
         .data$defeam_timeouts_pre,
@@ -1604,7 +1654,7 @@ add_air_yac_wp_variables <- function(pbp_data) {
     )
 
   # Calculate the airWP:
-  pass_pbp_data$airWP <- get_preds_wp(pass_pbp_data)
+  pass_pbp_data$airWP <- get_preds_wp(air_state)
 
   # Now for plays marked with Turnover_Ind, use 1 - airWP to flip back to the original
   # team with possession:
@@ -1614,9 +1664,62 @@ add_air_yac_wp_variables <- function(pbp_data) {
     pass_pbp_data$airWP
   )
 
-  # For the plays that have TimeSecs_Remaining 0 or less, set airWP to 0:
-  pass_pbp_data$airWP[which(pass_pbp_data$half_seconds_remaining <= 0)] <- 0
-  pass_pbp_data$airWP[which(pass_pbp_data$game_seconds_remaining <= 0)] <- 0
+  # A throw caught in the end zone is a touchdown. Value it like the PAT fix in
+  # add_wp_variables(): after the try the other team has the ball at the
+  # typical start after a kickoff.
+  ez <- which(
+    pass_pbp_data$Turnover_Ind == 0 &
+      pass_pbp_data$yardline_100 - pass_pbp_data$air_yards <= 0 &
+      pass_pbp_data$qtr <= 4
+  )
+  if (length(ez) > 0) {
+    x <- pass_pbp_data[ez, ]
+    after_td <- function(pts) {
+      s <- x |>
+        dplyr::mutate(
+          score_differential = -(.data$score_differential + pts),
+          home = 1 - .data$home,
+          receive_2h_ko = dplyr::if_else(
+            .data$qtr <= 2,
+            1 - .data$receive_2h_ko,
+            .data$receive_2h_ko
+          ),
+          yardline_100 = wp_kickoff_start(.data$season),
+          down = 1,
+          ydstogo = 10,
+          posteam_timeouts_remaining = .data$defeam_timeouts_pre,
+          defteam_timeouts_remaining = .data$posteam_timeouts_pre,
+          half_seconds_remaining = pmax(.data$half_seconds_remaining, 0),
+          game_seconds_remaining = dplyr::if_else(
+            .data$qtr <= 2,
+            pmax(.data$game_seconds_remaining, 1800),
+            .data$game_seconds_remaining
+          ),
+          elapsed_share = (3600 - pmax(.data$game_seconds_remaining, 0)) /
+            3600,
+          Diff_Time_Ratio = .data$score_differential /
+            (exp(-4 * .data$elapsed_share))
+        )
+      get_preds_wp(s)
+    }
+    pass_pbp_data$airWP[ez] <- 1 - (0.94 * after_td(7) + 0.06 * after_td(6))
+  }
+
+  # If the game clock runs out in regulation the game is decided by the score
+  # (a tie goes to overtime, valued as a coin flip)
+  end_reg <- which(
+    pass_pbp_data$qtr == 4 & pass_pbp_data$game_seconds_remaining <= 0
+  )
+  if (length(end_reg) > 0) {
+    result_value <- function(sd) ifelse(sd > 0, 1, ifelse(sd < 0, 0, 0.5))
+    sd <- pass_pbp_data$score_differential[end_reg]
+    pass_pbp_data$airWP[end_reg] <- ifelse(
+      end_reg %in% ez,
+      # touchdown at the gun: the try is still played
+      0.94 * result_value(sd + 7) + 0.06 * result_value(sd + 6),
+      result_value(sd)
+    )
+  }
 
   # Calculate the airWPA and yacWPA:
   pass_pbp_data <- dplyr::mutate(
