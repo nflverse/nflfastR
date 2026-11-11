@@ -298,8 +298,23 @@ wp_vegas_raw <- function(x, model = wp_vegas_model) {
     w <- pmin(pmax((40 - over) / 30, 0), 1)
     p[kn] <- pmax(p[kn], (1 - w) * p[kn] + w * wp_kneel_value)
   }
+  # A team behind inside its own 40 with seconds left rarely wins: down 1-3
+  # there with 10-20 seconds left the trees gave 8-11% and those teams won 3-6%,
+  # with 5 seconds or less none of 108 won. WP moves to 0 over the last
+  # wp_behind_t seconds. From the own 40 on the trees are right.
+  bh <- which(
+    !is.na(p) &
+      !is.na(x$down) &
+      x$score_differential < 0 &
+      x$yardline_100 > 60 &
+      t > 0 &
+      t < wp_behind_t
+  )
+  p[bh] <- p[bh] * t[bh] / wp_behind_t
   p
 }
+wp_behind_t <- 20
+wp_last_kick <- TRUE
 
 # Seconds a team can run off by kneeling: each kneel takes about 3 seconds and
 # 40 more run off between kneels unless the other team stops the clock (its
@@ -372,17 +387,51 @@ wp_fg_value <- function(x, model, dt = 5) {
   v_made <- 1 - wp_vegas_raw(made, model)
   v_miss <- 1 - wp_vegas_raw(miss, model)
   # A kick at the end of the game decides it: made, the team wins if it is
-  # ahead; missed, the score stands (a tie goes to overtime, a coin flip). The
-  # model doesn't know that the game ends, so with up to wp_fg_end_t seconds
-  # left after the kick its value is blended toward the final result.
+  # ahead; missed, the score stands (a tie goes to overtime). The model doesn't
+  # know that the game ends, so with up to wp_fg_end_t seconds left after the
+  # kick its value is blended toward the final result.
   w <- ifelse(
     first,
     1,
     pmin(pmax(x$game_seconds_remaining - dt, 0) / wp_fg_end_t, 1)
   )
-  v_made <- w * v_made + (1 - w) * wp_end_value(x$score_differential + 3)
-  v_miss <- w * v_miss + (1 - w) * wp_end_value(x$score_differential)
+  tie <- rep(0.5, nrow(x))
+  end <- which(w < 1)
+  if (length(end) > 0) {
+    tie[end] <- wp_ot_start(x[end, , drop = FALSE])
+  }
+  v_made <- w * v_made + (1 - w) * wp_end_value(x$score_differential + 3, tie)
+  v_miss <- w * v_miss + (1 - w) * wp_end_value(x$score_differential, tie)
   p_fg * v_made + (1 - p_fg) * v_miss
+}
+
+# WP of the team with the ball at the start of overtime, before the coin toss:
+# the average of receiving and kicking the overtime kickoff (overtime model)
+wp_ot_start <- function(x) {
+  n <- nrow(x)
+  season <- if (is.null(x[["season"]])) rep(NA_real_, n) else x[["season"]]
+  season[is.na(season)] <- nflreadr::most_recent_season()
+  type <- if (is.null(x[["season_type"]])) {
+    rep("REG", n)
+  } else {
+    dplyr::coalesce(x[["season_type"]], "REG")
+  }
+  st <- data.frame(
+    season = season,
+    season_type = type,
+    kind = "kickoff",
+    yardline_100 = NA_real_,
+    down = NA_real_,
+    ydstogo = NA_real_,
+    secs = ifelse(type == "POST" | season < 2017, 900, 600),
+    d = 0,
+    spread = x$posteam_spread,
+    phase = 1,
+    p_make = NA_real_
+  )
+  receive <- ot_wp_states(st)
+  st$spread <- -x$posteam_spread
+  0.5 * receive + 0.5 * (1 - ot_wp_states(st))
 }
 
 # seconds left after a kick at the end of the game below which the field goal
@@ -391,8 +440,11 @@ wp_fg_value <- function(x, model, dt = 5) {
 # which win 3% of the time, and doesn't know a kick at 0:04 ends the game)
 wp_fg_end_t <- 15
 
-# value of the final score of regulation for the team with the ball
-wp_end_value <- function(sd) ifelse(sd > 0, 1, ifelse(sd < 0, 0, 0.5))
+# value of the final score of regulation for the team with the ball (a tie
+# goes to overtime)
+wp_end_value <- function(sd, tie = 0.5) {
+  ifelse(sd > 0, 1, ifelse(sd < 0, 0, tie))
+}
 
 # vegas_wp of the team with the ball (regulation). WP is at least the value of
 # kicking a field goal on this snap. It is capped at the value of scoring a
@@ -407,6 +459,23 @@ wp_vegas_predict <- function(x, model = wp_vegas_model, pat = 0.94, dt = 6) {
   if (length(fl) > 0) {
     xf <- x[fl, , drop = FALSE]
     w[fl] <- pmax(w[fl], wp_fg_value(xf, model), na.rm = TRUE)
+  }
+  # Down 1 to 3 on 4th down in field goal range in the last 30 seconds, the
+  # team kicks: WP moves to the value of the kick over the last 30 to 10
+  # seconds. The trees valued these states above the kick (a tying kick at
+  # 0:05 at 0.6, when a make only buys overtime).
+  g <- x$game_seconds_remaining
+  lc <- which(
+    !is.na(w) &
+      x$down %in% 4 &
+      g < 30 &
+      x$score_differential %in% -3:-1 &
+      x$yardline_100 <= 54
+  )
+  if (wp_last_kick && length(lc) > 0) {
+    wt <- pmin(pmax((30 - g[lc]) / 20, 0), 1)
+    fv <- wp_fg_value(x[lc, , drop = FALSE], model)
+    w[lc] <- (1 - wt) * w[lc] + wt * fv
   }
   cap <- which(
     x$game_seconds_remaining > 300 &

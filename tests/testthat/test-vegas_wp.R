@@ -180,7 +180,8 @@ test_that("a field goal that ends the game is valued by the result", {
   # tied, 4th and 5 at the opponent's 35: a make wins, a miss goes to overtime
   x <- vegas_state(t = 1:5, down = 4, ytg = 5, yl = 35)
   p <- fg_make_prob(2025, NULL, 35)
-  expect_true(all(wp_vegas_predict(x) >= p + (1 - p) / 2 - 1e-9))
+  ot <- wp_ot_start(x)
+  expect_true(all(wp_vegas_predict(x) >= p + (1 - p) * ot - 1e-9))
   # and the value changes smoothly once there is time left after the kick
   y <- wp_vegas_predict(vegas_state(t = 1:30, down = 4, ytg = 5, yl = 35))
   expect_lt(max(abs(diff(y))), 0.015)
@@ -194,4 +195,23 @@ test_that("a team ahead that can kneel out the clock wins", {
   # with 3 timeouts it can't from 1:30, and WP is the model's again
   x$defteam_timeouts_remaining <- 3
   expect_lt(wp_vegas_predict(x)[2], 0.99)
+})
+
+test_that("a tie at the end of regulation is worth the start of overtime", {
+  x <- vegas_state(t = 3, spread = c(-7, 0, 7))
+  ot <- wp_ot_start(x)
+  expect_lt(abs(ot[2] - 0.5), 0.03)
+  expect_true(ot[1] < ot[2] && ot[2] < ot[3])
+})
+
+test_that("down 1-3 on 4th down at the end, WP is the value of the kick", {
+  x <- vegas_state(t = c(3, 8), sd = -3, down = 4, ytg = 5, yl = 10)
+  expect_equal(wp_vegas_predict(x), wp_fg_value(x, wp_vegas_model))
+})
+
+test_that("a team behind deep in its own half with seconds left rarely wins", {
+  x <- vegas_state(t = c(3, 10, 30), sd = -1, yl = 80)
+  wp <- wp_vegas_predict(x)
+  expect_lt(wp[1], 0.02)
+  expect_true(wp[1] < wp[2] && wp[2] < wp[3])
 })
