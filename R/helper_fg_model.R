@@ -5,8 +5,9 @@
 # in distance for every kicking era and roof (outdoors or not), corrected for
 # selection at long range (only teams who trust their kicker attempt long field
 # goals, so the observed make rate out there is too high for the average team),
-# falling with distance, and zero beyond 71 yards. Rows are yardline_100 1 to
-# 99, columns are era x roof.
+# falling with distance, fading to zero from 65 to 75 yards and zero beyond.
+# Rows are yardline_100 1 to 99 (a kick of yardline_100 + 18 yards), columns
+# are era x roof.
 
 # Kicking has improved steadily since 1999. The eras are recency buckets, not
 # rule changes. The last two are the ones nfl4th uses.

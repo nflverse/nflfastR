@@ -6,9 +6,15 @@ test_that("scores are right in games with broken team fields in the raw data", {
     games = g
   ))
   fin <- tapply(pbp$total_home_score, pbp$game_id, max, na.rm = TRUE)
-  expect_equal(as.vector(fin[c("2002_05_PHI_JAX", "2011_13_DET_NO")]), c(28, 31))
+  expect_equal(
+    as.vector(fin[c("2002_05_PHI_JAX", "2011_13_DET_NO")]),
+    c(28, 31)
+  )
   fin <- tapply(pbp$total_away_score, pbp$game_id, max, na.rm = TRUE)
-  expect_equal(as.vector(fin[c("2002_05_PHI_JAX", "2011_13_DET_NO")]), c(25, 17))
+  expect_equal(
+    as.vector(fin[c("2002_05_PHI_JAX", "2011_13_DET_NO")]),
+    c(25, 17)
+  )
 
   # 2002: the raw data name PHI on every play. Jacksonville's touchdowns and
   # penalties belong to Jacksonville

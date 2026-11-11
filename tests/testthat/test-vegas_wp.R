@@ -78,9 +78,11 @@ test_that("scoring a touchdown never lowers vegas_wp with more than 5 minutes le
   )
   x <- vegas_state(g$t, g$sd, g$spread, g$down, g$yl, g$yl)
   pre <- wp_vegas_predict(x)
-  post <- 0.94 *
+  # the PAT is a 33 yard field goal
+  pat <- fg_make_prob(2025, NULL, 15)
+  post <- pat *
     (1 - wp_vegas_raw(wp_post_td_state(x, 7))) +
-    0.06 * (1 - wp_vegas_raw(wp_post_td_state(x, 6)))
+    (1 - pat) * (1 - wp_vegas_raw(wp_post_td_state(x, 6)))
   expect_true(all(pre <= post + 1e-9))
 })
 
@@ -214,4 +216,23 @@ test_that("a team behind deep in its own half with seconds left rarely wins", {
   wp <- wp_vegas_predict(x)
   expect_lt(wp[1], 0.02)
   expect_true(wp[1] < wp[2] && wp[2] < wp[3])
+})
+
+test_that("the end of game rules don't make cliffs along the field", {
+  # down 1, 4th & 10: the last kick rule fades out with the make probability
+  # as the kick gets long rather than stopping at one yard line
+  x <- vegas_state(t = 8, sd = -1, down = 4, ytg = 10, yl = 30:65)
+  expect_lt(max(abs(diff(wp_vegas_predict(x)))), 0.06)
+  # down 1, 1st & 10: the behind rule fades in from the own 45 to the own 35
+  for (t in c(2, 5, 10, 15)) {
+    x <- vegas_state(t = t, sd = -1, yl = 45:80)
+    expect_lt(max(abs(diff(wp_vegas_predict(x)))), 0.06)
+  }
+})
+
+test_that("the end of game rules apply to an untimed down at 0:00", {
+  x <- vegas_state(t = c(0, 1), sd = 1, yl = 80)
+  expect_true(all(wp_vegas_predict(x) >= 0.999))
+  x <- vegas_state(t = c(0, 1), sd = -1, yl = 80)
+  expect_true(all(wp_vegas_predict(x) < 0.01))
 })

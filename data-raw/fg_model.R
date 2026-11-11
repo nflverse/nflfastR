@@ -13,8 +13,11 @@
 #    on 4th downs tells how selected the kicks at each distance are; where it
 #    falls, the curve is blended in log odds toward a curve fit on the range
 #    where (almost) everyone kicks. The blend can only lower the probability.
-# 3. Make probability falls with distance, and is tapered to zero from 62 to
-#    71 yards, where there is too little data to say anything.
+# 3. Make probability falls with distance. Past 62 yards there are too few
+#    attempts to fit a curve, so it continues from there with the log odds
+#    slope of the unselected curve (step 2). No one has made a 71+ yard field
+#    goal in a game, and 68-70 yard kicks are rare heaves (1 of 5 since 2023),
+#    so from 65 yards it fades linearly to zero at 75.
 #
 # Run from the package root. Loads one season at a time, takes a few minutes.
 
@@ -23,9 +26,13 @@ source("R/helper_fg_model.R")
 
 WEIGHT_FLOOR <- 0.80 # a distance is "unselected" while the attempt rate is
 # at least this share of the group's plateau
-TAPER_FROM <- 62 # yards; last distance with enough data to say anything
-TAPER_ZERO <- 71 # yards; beyond here, call it zero
+TAIL_FROM <- 62 # yards; last distance with enough data to fit a curve
+TAIL_FADE <- 65 # yards; from here the tail fades linearly ...
+TAIL_END <- 75 # yards; ... to zero here
 PLATEAU_MAX <- 51 # yards; every group is still unselected below this
+# kick distance: the line of scrimmage, 10 yards of end zone and the hold 8
+# yards behind the line (kick_distance is yardline_100 + 18 on 90% of attempts)
+KICK_YARDS <- 18
 
 # ---- data: field goal attempts and 4th downs ---------------------------------
 pbp <- bind_rows(lapply(1999:nflreadr::most_recent_season(), function(s) {
@@ -51,7 +58,7 @@ pbp <- bind_rows(lapply(1999:nflreadr::most_recent_season(), function(s) {
       ifelse(is.na(roof) | roof == "outdoors", "_outdoors", "_indoors")
     ),
     fg_group = factor(fg_group, levels = sort(unique(fg_group))),
-    fg_dist = yardline_100 + 17
+    fg_dist = yardline_100 + KICK_YARDS
   )
 
 kicks <- pbp |>
@@ -132,15 +139,15 @@ logit <- function(p) log(p / (1 - p))
 inv_logit <- function(x) 1 / (1 + exp(-x))
 squeeze <- function(p) pmin(pmax(p, 1e-6), 1 - 1e-6)
 
-# Only compute out to TAPER_ZERO; the spline would extrapolate nonsensically
+# Only compute out to TAIL_END; the spline would extrapolate nonsensically
 # past the data and everything beyond is zero anyway.
 fg <- tidyr::expand_grid(
-  yardline_100 = 1:(TAPER_ZERO - 17),
+  yardline_100 = 1:(TAIL_END - KICK_YARDS),
   fg_group = levels(kicks$fg_group)
 ) |>
   mutate(
     fg_group = factor(fg_group, levels = levels(kicks$fg_group)),
-    fg_dist = yardline_100 + 17
+    fg_dist = yardline_100 + KICK_YARDS
   ) |>
   left_join(
     propensity |> select(fg_dist, fg_group, weight),
@@ -181,17 +188,27 @@ fg <- fg |>
   arrange(fg_group, yardline_100) |>
   group_by(fg_group) |>
   # make probability has to fall with distance
-  mutate(p = cummin(p), anchor = p[fg_dist == TAPER_FROM]) |>
-  ungroup() |>
   mutate(
-    p = case_when(
-      fg_dist <= TAPER_FROM ~ p,
-      fg_dist >= TAPER_ZERO ~ 0,
-      TRUE ~ anchor * (TAPER_ZERO - fg_dist) / (TAPER_ZERO - TAPER_FROM)
-    )
+    p = cummin(p),
+    anchor = p[fg_dist == TAIL_FROM],
+    anchor_unselected = p_unselected[fg_dist == TAIL_FROM]
+  ) |>
+  ungroup() |>
+  # past TAIL_FROM: the unselected curve's log odds slope, from the anchor
+  mutate(
+    p = ifelse(
+      fg_dist <= TAIL_FROM,
+      p,
+      inv_logit(
+        logit(squeeze(anchor)) +
+          logit(squeeze(p_unselected)) -
+          logit(squeeze(anchor_unselected))
+      )
+    ),
+    p = p * pmin(pmax((TAIL_END - fg_dist) / (TAIL_END - TAIL_FADE), 0), 1)
   )
 
-# yardline_100 1 to 99 by group, zero past TAPER_ZERO
+# yardline_100 1 to 99 by group, zero from TAIL_END
 fg_prob_table <- matrix(
   0,
   nrow = 99,
@@ -221,8 +238,10 @@ stopifnot(
 cat("\nmake probability by distance:\n")
 print(
   data.frame(
-    dist = c(25, 30, 35, 40, 45, 50, 55, 60, 65),
-    fg_prob_table[c(25, 30, 35, 40, 45, 50, 55, 60, 65) - 17, ]
+    dist = c(25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 72, 74),
+    fg_prob_table[
+      c(25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 72, 74) - KICK_YARDS,
+    ]
   ),
   digits = 2
 )

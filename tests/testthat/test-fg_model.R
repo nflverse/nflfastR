@@ -3,14 +3,16 @@ test_that("kicking eras follow the season", {
   expect_equal(fg_era(s), c(1, 1, 2, 2, 3, 3, 4, 4, 5, 5))
 })
 
-test_that("field goal make probability falls with distance and ends at 71 yards", {
+test_that("field goal make probability falls with distance and ends at 75 yards", {
   for (season in c(2000, 2010, 2018, 2025)) {
     for (roof in c("outdoors", "dome")) {
       p <- fg_make_prob(season, roof, 1:99)
       expect_true(all(p >= 0 & p <= 1))
       expect_true(all(diff(p) <= 0))
-      # a 72+ yard field goal is never good
-      expect_equal(p[55:99], rep(0, 45))
+      # a 75+ yard field goal (yardline_100 + 18) is never good
+      expect_equal(p[57:99], rep(0, 43))
+      # and the tail fades out rather than dropping off a cliff
+      expect_true(all(-diff(p) < 0.08))
     }
   }
 })

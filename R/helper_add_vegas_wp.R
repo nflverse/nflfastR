@@ -290,7 +290,7 @@ wp_vegas_raw <- function(x, model = wp_vegas_model) {
   # A team ahead with the ball wins if it can kneel out the clock, and nearly
   # always if it is a few seconds short
   kn <- which(
-    !is.na(p) & !is.na(x$down) & x$score_differential > 0 & t > 0 & t < 300
+    !is.na(p) & !is.na(x$down) & x$score_differential > 0 & t >= 0 & t < 300
   )
   if (length(kn) > 0) {
     over <- t[kn] -
@@ -298,23 +298,26 @@ wp_vegas_raw <- function(x, model = wp_vegas_model) {
     w <- pmin(pmax((40 - over) / 30, 0), 1)
     p[kn] <- pmax(p[kn], (1 - w) * p[kn] + w * wp_kneel_value)
   }
-  # A team behind inside its own 40 with seconds left rarely wins: down 1-3
-  # there with 10-20 seconds left the trees gave 8-11% and those teams won 3-6%,
-  # with 5 seconds or less none of 108 won. WP moves to 0 over the last
-  # wp_behind_t seconds. From the own 40 on the trees are right.
+  # A team behind deep in its own half with seconds left rarely wins: down 1-3
+  # inside its own 40 with 10-20 seconds left the trees gave 8-11% and those
+  # teams won 3-6%, with 5 seconds or less none of 108 won. WP moves to 0 over
+  # the last wp_behind_t seconds. From the own 40 on the trees are right, so
+  # the rule fades in from the own 45 to the own 35 (no cliff along the field).
   bh <- which(
     !is.na(p) &
       !is.na(x$down) &
       x$score_differential < 0 &
-      x$yardline_100 > 60 &
-      t > 0 &
+      x$yardline_100 > 55 &
+      t >= 0 &
       t < wp_behind_t
   )
-  p[bh] <- p[bh] * t[bh] / wp_behind_t
+  if (length(bh) > 0) {
+    wy <- pmin((x$yardline_100[bh] - 55) / 10, 1)
+    p[bh] <- p[bh] * (1 - wy * (1 - t[bh] / wp_behind_t))
+  }
   p
 }
 wp_behind_t <- 20
-wp_last_kick <- TRUE
 
 # Seconds a team can run off by kneeling: each kneel takes about 3 seconds and
 # 40 more run off between kneels unless the other team stops the clock (its
@@ -450,11 +453,11 @@ wp_end_value <- function(sd, tie = 0.5) {
 # touchdown on this snap, except in the last five minutes (where not scoring
 # can be the better play) and in the last seconds of a half (where the next
 # possession is not a kickoff return).
-wp_vegas_predict <- function(x, model = wp_vegas_model, pat = 0.94, dt = 6) {
+wp_vegas_predict <- function(x, model = wp_vegas_model, dt = 6) {
   x <- as.data.frame(x)
   w <- wp_vegas_raw(x, model)
-  # a field goal of more than 71 yards is never good
-  fl <- which(x$yardline_100 <= 54 & !is.na(w))
+  p_fg <- fg_make_prob(x[["season"]], x[["roof"]], x$yardline_100)
+  fl <- which(p_fg > 0 & !is.na(w))
   if (length(fl) > 0) {
     xf <- x[fl, , drop = FALSE]
     w[fl] <- pmax(w[fl], wp_fg_value(xf, model), na.rm = TRUE)
@@ -462,17 +465,21 @@ wp_vegas_predict <- function(x, model = wp_vegas_model, pat = 0.94, dt = 6) {
   # Down 1 to 3 on 4th down in field goal range in the last 30 seconds, the
   # team kicks: WP moves to the value of the kick over the last 30 to 10
   # seconds. The trees valued these states above the kick (a tying kick at
-  # 0:05 at 0.6, when a make only buys overtime).
+  # 0:05 at 0.6, when a make only buys overtime). The rule fades out as the
+  # kick gets long (make probability from 0.3 to 0.1), where the team may
+  # rather throw. Down 3 at 4th and goal it applies too: going for the win is
+  # an option there, but 7 of 8 such teams since 1999 kicked.
   g <- x$game_seconds_remaining
   lc <- which(
     !is.na(w) &
       x$down %in% 4 &
       g < 30 &
       x$score_differential %in% -3:-1 &
-      x$yardline_100 <= 54
+      p_fg > 0.1
   )
-  if (wp_last_kick && length(lc) > 0) {
-    wt <- pmin(pmax((30 - g[lc]) / 20, 0), 1)
+  if (length(lc) > 0) {
+    wt <- pmin(pmax((30 - g[lc]) / 20, 0), 1) *
+      pmin((p_fg[lc] - 0.1) / 0.2, 1)
     fv <- wp_fg_value(x[lc, , drop = FALSE], model)
     w[lc] <- (1 - wt) * w[lc] + wt * fv
   }
@@ -483,6 +490,14 @@ wp_vegas_predict <- function(x, model = wp_vegas_model, pat = 0.94, dt = 6) {
   )
   if (length(cap) > 0) {
     xc <- x[cap, , drop = FALSE]
+    # the PAT is a field goal from the 15 since 2015 (the 3 before)
+    season <- if (is.null(xc[["season"]])) NA_real_ else xc[["season"]]
+    pat_yl <- ifelse(
+      dplyr::coalesce(season, nflreadr::most_recent_season()) >= 2015,
+      15,
+      3
+    )
+    pat <- fg_make_prob(season, xc[["roof"]], pat_yl)
     post <- pat *
       (1 - wp_vegas_raw(wp_post_td_state(xc, 7, dt), model)) +
       (1 - pat) * (1 - wp_vegas_raw(wp_post_td_state(xc, 6, dt), model))
