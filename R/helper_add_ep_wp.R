@@ -815,11 +815,11 @@ add_wp_variables <- function(pbp_data) {
 
   ## start PAT fix
 
-  # the PAT is a field goal from the 15 since 2015 (the 3 before)
+  # the PAT is a field goal from the 15 since 2015 (the 2 before)
   make_pat_prob <- fg_make_prob(
     pbp_data$season,
     pbp_data$roof,
-    ifelse(pbp_data$season >= 2015, 15, 3)
+    ifelse(pbp_data$season >= 2015, 15, 2)
   )
 
   # plays with 1 point PAT attempts

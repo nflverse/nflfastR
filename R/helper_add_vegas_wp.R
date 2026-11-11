@@ -506,12 +506,12 @@ wp_vegas_predict <- function(x, model = wp_vegas_model, dt = 6) {
   )
   if (length(cap) > 0) {
     xc <- x[cap, , drop = FALSE]
-    # the PAT is a field goal from the 15 since 2015 (the 3 before)
+    # the PAT is a field goal from the 15 since 2015 (the 2 before)
     season <- if (is.null(xc[["season"]])) NA_real_ else xc[["season"]]
     pat_yl <- ifelse(
       dplyr::coalesce(season, nflreadr::most_recent_season()) >= 2015,
       15,
-      3
+      2
     )
     pat <- fg_make_prob(season, xc[["roof"]], pat_yl)
     post <- pat *
