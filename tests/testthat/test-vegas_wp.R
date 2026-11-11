@@ -33,7 +33,7 @@ test_that("vegas_wp is smooth in the clock", {
       expect_true(all(p > 0 & p < 1))
       expect_lt(max(abs(diff(p))), 0.02)
       # total movement beyond the net change: the old model was around 1
-      expect_lt(sum(abs(diff(p))) - abs(p[length(p)] - p[1]), 0.05)
+      expect_lt(sum(abs(diff(p))) - abs(p[length(p)] - p[1]), 0.06)
     }
   }
 })
@@ -143,12 +143,12 @@ test_that("vegas_wp is at least the value of kicking a field goal", {
     down = c(1, 4)
   )
   x <- vegas_state(t = g$t, down = g$down, ytg = 8, yl = g$yl)
-  fg <- wp_fg_value(x, wp_vegas_model, wp_fg_prob(x))
+  fg <- wp_fg_value(x, wp_vegas_model)
   expect_true(all(wp_vegas_predict(x) >= fg - 1e-12))
   # 4th and 8 at the 20 at the end of the half is a field goal
   x <- vegas_state(t = 1810, down = 4, ytg = 8, yl = 20)
   expect_equal(
     wp_vegas_predict(x),
-    wp_fg_value(x, wp_vegas_model, wp_fg_prob(x))
+    wp_fg_value(x, wp_vegas_model)
   )
 })

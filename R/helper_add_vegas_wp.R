@@ -26,7 +26,11 @@
 #    minutes not scoring (kneeling, running clock) can be the better play.
 # 5. A team can't be worse off than if it kicked a field goal on this snap: WP
 #    is at least the value of the attempt (made: 3 points and a kickoff, missed:
-#    the other team takes over at the spot of the kick).
+#    the other team takes over at the spot of the kick, 8 yards behind the line
+#    of scrimmage).
+#
+# Field goal make probabilities (here and in the end of half terms) come from
+# the package's field goal model, see R/helper_fg_model.R.
 #
 # Built by data-raw/wp_vegas_model.R and stored in R/sysdata.rda as
 # `wp_vegas_model` (list with the xgboost model as raw UBJSON, the probit
@@ -96,7 +100,7 @@ wp_vegas_design <- function(x, k) {
   # closer only needs the time to kick)...
   left <- pmin(h / wp_fg_range_time(yl), 1)
   # ... toward the value of a field goal from here
-  fg_eoh <- (1 - left) * 3 * wp_fg_make(yl)
+  fg_eoh <- (1 - left) * 3 * fg_make_prob(x[["season"]], x[["roof"]], yl)
   # The other team's chance of a field goal before halftime: it takes over
   # after a punt and needs the time to get into range. This possession ends
   # after the downs that are left. The defense stops the clock after each play
@@ -139,12 +143,6 @@ wp_vegas_design <- function(x, k) {
 # 35) and kick
 wp_fg_range_time <- function(yl) {
   10 + 2 * pmax(yl - 35, 0)
-}
-
-# smooth field goal make probability for the backbone (fastrmodels::fg_model,
-# current era, outdoors)
-wp_fg_make <- function(yl) {
-  stats::plogis(4.26 - 0.111 * yl)
 }
 
 # weight of the whole offset
@@ -295,39 +293,15 @@ wp_post_td_state <- function(x, pts, dt = 6) {
   y
 }
 
-# probability that a field goal from the current spot is good, from
-# fastrmodels::fg_model like everywhere else in the package. Without a season
-# the current kicking era is used, without a roof the model's level for an
-# unknown roof
-wp_fg_prob <- function(x) {
-  n <- nrow(x)
-  fg <- data.frame(
-    season = if (is.null(x[["season"]])) NA_real_ else x[["season"]],
-    roof = if (is.null(x[["roof"]])) {
-      NA_character_
-    } else {
-      as.character(x[["roof"]])
-    },
-    yardline_100 = dplyr::coalesce(x$yardline_100, 50),
-    down = 1,
-    posteam = "A",
-    home_team = "A"
-  )[seq_len(n), , drop = FALSE]
-  fg$season[is.na(fg$season)] <- nflreadr::most_recent_season()
-  as.numeric(mgcv::predict.bam(
-    fastrmodels::fg_model,
-    newdata = make_model_mutations(fg),
-    type = "response"
-  ))
-}
-
 # vegas_wp of kicking a field goal on this snap: made, the other team receives
-# the kickoff; missed, it takes over at the spot of the kick (or its 20)
-wp_fg_value <- function(x, model, p_fg, dt = 5) {
+# the kickoff; missed, it takes over at the spot of the kick, 8 yards behind the
+# line of scrimmage (or its 20)
+wp_fg_value <- function(x, model, dt = 5) {
+  p_fg <- fg_make_prob(x[["season"]], x[["roof"]], x$yardline_100)
   made <- wp_post_td_state(x, 3, dt)
   miss <- made
   miss$score_differential <- -x$score_differential
-  miss$yardline_100 <- pmin(100 - (x$yardline_100 + 7), 80)
+  miss$yardline_100 <- pmin(100 - (x$yardline_100 + 8), 80)
   # a kick at the end of the 1st half ends the half: value it just before
   # halftime, where the 2nd half kickoff still counts
   first <- x$game_seconds_remaining > 1800
@@ -352,11 +326,11 @@ wp_fg_value <- function(x, model, p_fg, dt = 5) {
 wp_vegas_predict <- function(x, model = wp_vegas_model, pat = 0.94, dt = 6) {
   x <- as.data.frame(x)
   w <- wp_vegas_raw(x, model)
-  # from behind the own 40 (77+ yard kicks) the floor never binds
-  fl <- which(x$yardline_100 <= 60 & !is.na(w))
+  # a field goal of more than 71 yards is never good
+  fl <- which(x$yardline_100 <= 54 & !is.na(w))
   if (length(fl) > 0) {
     xf <- x[fl, , drop = FALSE]
-    w[fl] <- pmax(w[fl], wp_fg_value(xf, model, wp_fg_prob(xf)), na.rm = TRUE)
+    w[fl] <- pmax(w[fl], wp_fg_value(xf, model), na.rm = TRUE)
   }
   cap <- which(
     x$game_seconds_remaining > 300 &

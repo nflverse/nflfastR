@@ -642,17 +642,7 @@ calculate_ot_win_probability <- function(pbp_data, model_data) {
   }
   # probability that a field goal from the current spot is good, for the option
   # to kick at the end of the period or on 4th down
-  fg <- x
-  if (!"roof" %in% names(fg)) {
-    fg$roof <- NA_character_
-  }
-  fg$yardline_100 <- dplyr::coalesce(fg$yardline_100, 50)
-  p_fg <- as.numeric(mgcv::predict.bam(
-    fastrmodels::fg_model,
-    newdata = make_model_mutations(fg),
-    type = "response"
-  ))
-  p_fg[is.na(x$yardline_100)] <- NA_real_
+  p_fg <- fg_make_prob(x[["season"]], x[["roof"]], x$yardline_100)
   st <- data.frame(
     season = x$season,
     season_type = season_type,

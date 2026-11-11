@@ -26,6 +26,11 @@
 - `xpass` and `pass_oe` change slightly because the xpass model uses `vegas_wp`. (#625)
 - Fixed `air_wpa` and `yac_wpa` in regulation. The state at the catch point now moves the ball by the air yards (with a new set of downs if it reaches the line to gain), like `air_epa`. On a 4th down throw short of the line to gain the whole state now belongs to the other team (field, score, home and 2nd half kickoff, not only the timeouts), a catch in the end zone is valued as a touchdown, and a pass that ends regulation is valued by the score. Before, `air_wpa` was essentially unrelated to air yards. (#624, #625)
 
+## Field goal probability
+
+- Replaced `fastrmodels::fg_model` with a field goal make probability table built the same way as nfl4th's field goal model (nfl4th#63): a smooth curve in distance for five kicking eras (1999-2003, 2004-2008, 2009-2013, 2014-2022, since 2023) and for outdoors or not, corrected downward at long range because only teams that trust their kicker attempt long field goals, and zero beyond 71 yards. `fastrmodels::fg_model`'s newest era started in 2014, so it understated today's kickers from 45+ yards. It is used for `ep` (and so `epa`) on field goal attempts, the PAT make probability in `wp` and `vegas_wp`, the overtime model's field goal option, and the end of half terms and field goal floor of `vegas_wp`. The table is stored in `R/sysdata.rda` and built by `data-raw/fg_model.R`. nflfastR no longer imports mgcv. (#625)
+- The field goal floor of `vegas_wp` gives the other team the ball 8 yards behind the line of scrimmage after a miss (the spot of the kick, as in 88% of misses), like `ep`. (#625)
+
 ## Minor changes and improvements
 
 - Added `"game_id"` to the output `calculate_stats()` if `summary_level == "week"`. (#566)

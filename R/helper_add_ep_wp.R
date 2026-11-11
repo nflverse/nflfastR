@@ -278,11 +278,11 @@ add_ep_variables <- function(pbp_data) {
   missed_fg_ep_preds[end_game_i, "No_Score"] <- 1
 
   # Get the probability of making the field goal:
-  make_fg_prob <- as.numeric(mgcv::predict.bam(
-    fastrmodels::fg_model,
-    newdata = pbp_data,
-    type = "response"
-  ))
+  make_fg_prob <- fg_make_prob(
+    pbp_data$season,
+    pbp_data$roof,
+    pbp_data$yardline_100
+  )
 
   # Multiply each value of the missed_fg_ep_preds by the 1 - make_fg_prob
   missed_fg_ep_preds <- missed_fg_ep_preds * (1 - make_fg_prob)
@@ -815,15 +815,11 @@ add_wp_variables <- function(pbp_data) {
 
   ## start PAT fix
 
-  make_pat_prob <- as.numeric(
-    mgcv::predict.bam(
-      fastrmodels::fg_model,
-      newdata = pbp_data |>
-        mutate(
-          yardline_100 = ifelse(.data$season >= 2015, 15, 3)
-        ),
-      type = "response"
-    )
+  # the PAT is a field goal from the 15 since 2015 (the 3 before)
+  make_pat_prob <- fg_make_prob(
+    pbp_data$season,
+    pbp_data$roof,
+    ifelse(pbp_data$season >= 2015, 15, 3)
   )
 
   # plays with 1 point PAT attempts
@@ -995,15 +991,11 @@ add_wp_variables <- function(pbp_data) {
   if (length(ot_i) > 0) {
     # probability that a field goal from the current spot is good
     fg_prob_ot <- rep(NA_real_, nrow(pbp_data))
-    fg_prob_ot[ot_i] <- as.numeric(
-      mgcv::predict.bam(
-        fastrmodels::fg_model,
-        newdata = pbp_data[ot_i, ] |>
-          dplyr::mutate(yardline_100 = dplyr::coalesce(.data$yardline_100, 50)),
-        type = "response"
-      )
+    fg_prob_ot[ot_i] <- fg_make_prob(
+      pbp_data$season[ot_i],
+      pbp_data$roof[ot_i],
+      pbp_data$yardline_100[ot_i]
     )
-    fg_prob_ot[is.na(pbp_data$yardline_100)] <- NA_real_
     ot_wp <- add_ot_wp_vectors(
       pbp_data,
       kickoff_i = kickoff_i_ot,

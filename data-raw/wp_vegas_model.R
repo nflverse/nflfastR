@@ -19,6 +19,14 @@ source("R/helper_add_nflscrapr_mutations.R")
 source("R/helper_add_ep_wp.R")
 source("R/helper_add_ot_wp.R")
 source("R/helper_add_vegas_wp.R")
+source("R/helper_fg_model.R")
+# the field goal model (data-raw/fg_model.R) is used by the end of half terms
+local({
+  e <- new.env()
+  load("R/sysdata.rda", envir = e)
+  fg_prob_table <<- e$fg_prob_table
+})
+stopifnot(exists("fg_prob_table"))
 set.seed(2013)
 
 constants <- list(
