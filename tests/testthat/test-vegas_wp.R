@@ -152,3 +152,46 @@ test_that("vegas_wp is at least the value of kicking a field goal", {
     wp_fg_value(x, wp_vegas_model)
   )
 })
+
+test_that("vegas_wp is smooth in the clock at the end of the game", {
+  g <- expand.grid(
+    t = 1:240,
+    sd = c(-8, -3, 0, 3),
+    down = c(1, 4),
+    yl = c(5, 35, 60, 95)
+  )
+  x <- vegas_state(t = g$t, sd = g$sd, down = g$down, ytg = 5, yl = g$yl)
+  x$wp <- wp_vegas_predict(x)
+  x <- x[
+    order(
+      x$score_differential,
+      x$down,
+      x$yardline_100,
+      x$game_seconds_remaining
+    ),
+  ]
+  same <- c(FALSE, diff(x$game_seconds_remaining) == 1)
+  step <- abs(diff(x$wp))[same[-1]]
+  # one second never moves WP by more than a few points
+  expect_lt(max(step), 0.04)
+})
+
+test_that("a field goal that ends the game is valued by the result", {
+  # tied, 4th and 5 at the opponent's 35: a make wins, a miss goes to overtime
+  x <- vegas_state(t = 1:5, down = 4, ytg = 5, yl = 35)
+  p <- fg_make_prob(2025, NULL, 35)
+  expect_true(all(wp_vegas_predict(x) >= p + (1 - p) / 2 - 1e-9))
+  # and the value changes smoothly once there is time left after the kick
+  y <- wp_vegas_predict(vegas_state(t = 1:30, down = 4, ytg = 5, yl = 35))
+  expect_lt(max(abs(diff(y))), 0.015)
+})
+
+test_that("a team ahead that can kneel out the clock wins", {
+  # up 1, 1st down, the other team has no timeouts: four kneels run off 2:12
+  x <- vegas_state(t = c(30, 90, 119), sd = 1)
+  x$defteam_timeouts_remaining <- 0
+  expect_true(all(wp_vegas_predict(x) >= 0.999))
+  # with 3 timeouts it can't from 1:30, and WP is the model's again
+  x$defteam_timeouts_remaining <- 3
+  expect_lt(wp_vegas_predict(x)[2], 0.99)
+})

@@ -233,7 +233,7 @@ wp_vegas_tree_margin <- function(booster, X, n, inclusive) {
 }
 
 # vegas_wp of the team with the ball, without the touchdown cap
-wp_vegas_raw <- function(x, model = wp_vegas_model) {
+wp_vegas_logit <- function(x, model = wp_vegas_model) {
   k <- model$constants
   n <- nrow(x)
   if (n == 0) {
@@ -247,18 +247,73 @@ wp_vegas_raw <- function(x, model = wp_vegas_model) {
   j <- pmin(findInterval(g, sch$t), nrow(sch) - 1L)
   j[is.na(j)] <- 1L
   w <- (g - sch$t[j]) / (sch$t[j + 1L] - sch$t[j])
-  ns <- unique(sch$n)
+  # only the tree counts these rows need
+  ns <- unique(c(sch$n[unique(j)], sch$n[unique(j) + 1L]))
   F <- lapply(ns, function(nt) wp_vegas_tree_margin(booster, X, nt, inclusive))
   names(F) <- as.character(ns)
   tm <- numeric(n)
-  for (jj in seq_len(nrow(sch) - 1L)) {
+  for (jj in unique(j)) {
     i <- which(j == jj)
     a <- F[[as.character(sch$n[jj])]][i]
     b <- F[[as.character(sch$n[jj + 1L])]][i]
     tm[i] <- (1 - w[i]) * a + w[i] * b
   }
-  stats::plogis(wp_vegas_offset(x, model$beta, k) + tm)
+  wp_vegas_offset(x, model$beta, k) + tm
 }
+
+# In the last minutes of the game the trees (up to 1,200, with few plays per
+# state) put steps of several points between consecutive seconds. The clock at
+# the snap and the length of a play vary by more than that, so there the logit
+# is averaged over +-wp_end_smooth seconds around the clock. The window
+# narrows to nothing at 0:00 and at wp_end_window seconds left. In season
+# grouped CV this lowers log loss in the last 4 minutes (16 seconds was about
+# the best width; 32 and more blur real structure).
+wp_end_smooth <- 16
+wp_end_window <- 240
+
+wp_vegas_raw <- function(x, model = wp_vegas_model) {
+  l <- wp_vegas_logit(x, model)
+  t <- x$game_seconds_remaining
+  i <- which(!is.na(l) & !is.na(t) & t > 0 & t < wp_end_window)
+  if (length(i) > 0) {
+    xi <- x[i, , drop = FALSE]
+    r <- pmin(wp_end_smooth, t[i], wp_end_window - t[i])
+    u <- seq(-1, 1, length.out = 11)
+    acc <- 0
+    for (uu in u) {
+      xi$game_seconds_remaining <- xi$half_seconds_remaining <- t[i] + uu * r
+      acc <- acc + wp_vegas_logit(xi, model)
+    }
+    l[i] <- acc / length(u)
+  }
+  p <- stats::plogis(l)
+  # A team ahead with the ball wins if it can kneel out the clock, and nearly
+  # always if it is a few seconds short
+  kn <- which(
+    !is.na(p) & !is.na(x$down) & x$score_differential > 0 & t > 0 & t < 300
+  )
+  if (length(kn) > 0) {
+    over <- t[kn] -
+      wp_kneel_time(t[kn], x$down[kn], x$defteam_timeouts_remaining[kn])
+    w <- pmin(pmax((40 - over) / 30, 0), 1)
+    p[kn] <- pmax(p[kn], (1 - w) * p[kn] + w * wp_kneel_value)
+  }
+  p
+}
+
+# Seconds a team can run off by kneeling: each kneel takes about 3 seconds and
+# 40 more run off between kneels unless the other team stops the clock (its
+# timeouts, and the 2 minute warning once). Since 1999 teams ahead with the
+# ball and at most 10 seconds more than this left won all but 3 of 7,093 snaps
+# (the trees gave them 93-98% when up 1-3); 10-40 seconds more they won
+# 95-100%, past that the trees are right. So WP is the kneel value up to 10
+# seconds beyond, moving to the model's value at 40.
+wp_kneel_time <- function(t, down, dto) {
+  n <- 5 - down
+  stops <- dto + as.numeric(t > 120)
+  3 * n + 40 * pmax(n - 1 - stops, 0)
+}
+wp_kneel_value <- 0.9998
 
 # where the receiving team's first snap typically is after a kickoff, by
 # kickoff rule regime (the regimes of the overtime model, see ot_kick_first)
@@ -313,10 +368,30 @@ wp_fg_value <- function(x, model, dt = 5) {
   g <- ifelse(first, 1800 + h, made$game_seconds_remaining)
   made$half_seconds_remaining <- miss$half_seconds_remaining <- h
   made$game_seconds_remaining <- miss$game_seconds_remaining <- g
-  p_fg *
-    (1 - wp_vegas_raw(made, model)) +
-    (1 - p_fg) * (1 - wp_vegas_raw(miss, model))
+  v_made <- 1 - wp_vegas_raw(made, model)
+  v_miss <- 1 - wp_vegas_raw(miss, model)
+  # A kick at the end of the game decides it: made, the team wins if it is
+  # ahead; missed, the score stands (a tie goes to overtime, a coin flip). The
+  # model doesn't know that the game ends, so with up to wp_fg_end_t seconds
+  # left after the kick its value is blended toward the final result.
+  w <- ifelse(
+    first,
+    1,
+    pmin(pmax(x$game_seconds_remaining - dt, 0) / wp_fg_end_t, 1)
+  )
+  v_made <- w * v_made + (1 - w) * wp_end_value(x$score_differential + 3)
+  v_miss <- w * v_miss + (1 - w) * wp_end_value(x$score_differential)
+  p_fg * v_made + (1 - p_fg) * v_miss
 }
+
+# seconds left after a kick at the end of the game below which the field goal
+# value moves toward the final result (the model gets the last seconds of a
+# game wrong: it gives a team down 1-3 in its own half 7% with 5 seconds left,
+# which win 3% of the time, and doesn't know a kick at 0:04 ends the game)
+wp_fg_end_t <- 15
+
+# value of the final score of regulation for the team with the ball
+wp_end_value <- function(sd) ifelse(sd > 0, 1, ifelse(sd < 0, 0, 0.5))
 
 # vegas_wp of the team with the ball (regulation). WP is at least the value of
 # kicking a field goal on this snap. It is capped at the value of scoring a
