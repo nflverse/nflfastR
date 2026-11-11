@@ -117,3 +117,38 @@ test_that("vegas_wp works without a season column", {
   expect_length(p, 2)
   expect_true(all(p > 0 & p < 1))
 })
+
+test_that("field goal range keeps its value at the end of the 1st half", {
+  # 1st and 10 at the opponent's 20 with 10 seconds left is close to a free
+  # field goal, while at the own 5 the half is as good as over
+  fg_range <- wp_vegas_predict(vegas_state(t = 1810, yl = 20))
+  backed_up <- wp_vegas_predict(vegas_state(t = 1810, yl = 95))
+  expect_gt(fg_range - backed_up, 0.1)
+  # and it doesn't fade over the last two minutes
+  two_min <- wp_vegas_predict(vegas_state(t = 1920, yl = 20))
+  expect_lt(abs(two_min - fg_range), 0.01)
+})
+
+test_that("being backed up before halftime is worse than reaching halftime", {
+  # with a minute left the other team can get the ball back in field goal range
+  minute <- wp_vegas_predict(vegas_state(t = 1860, yl = 95))
+  halftime <- wp_vegas_predict(vegas_state(t = 1801, yl = 95))
+  expect_lt(minute, halftime)
+})
+
+test_that("vegas_wp is at least the value of kicking a field goal", {
+  g <- expand.grid(
+    t = c(3000, 1920, 1830, 1810, 1803, 600, 30, 3),
+    yl = c(5, 20, 35, 45),
+    down = c(1, 4)
+  )
+  x <- vegas_state(t = g$t, down = g$down, ytg = 8, yl = g$yl)
+  fg <- wp_fg_value(x, wp_vegas_model, wp_fg_prob(x))
+  expect_true(all(wp_vegas_predict(x) >= fg - 1e-12))
+  # 4th and 8 at the 20 at the end of the half is a field goal
+  x <- vegas_state(t = 1810, down = 4, ytg = 8, yl = 20)
+  expect_equal(
+    wp_vegas_predict(x),
+    wp_fg_value(x, wp_vegas_model, wp_fg_prob(x))
+  )
+})

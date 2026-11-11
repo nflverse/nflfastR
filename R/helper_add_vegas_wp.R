@@ -10,6 +10,10 @@
 #    the monotone trees can correct their slope in the direction they are
 #    allowed to. Possession, field position, down and distance stay at full
 #    strength.
+#    At the end of a half a possession is worth the field goals still in play:
+#    the possession terms fade, by the time needed to get into field goal
+#    range, toward the value of a field goal from the current spot, minus the
+#    other team's chance of a field goal if it gets the ball back in time.
 # 2. fade(t): the whole offset fades over the last minutes so the trees can
 #    learn the end game staircase in score differential (a field goal ties, one
 #    score games) that a smooth offset can't represent.
@@ -20,6 +24,9 @@
 # 4. A team can't be worse off after scoring a touchdown on this snap: with more
 #    than five minutes left, WP is capped at the value of a TD + PAT. In the last
 #    minutes not scoring (kneeling, running clock) can be the better play.
+# 5. A team can't be worse off than if it kicked a field goal on this snap: WP
+#    is at least the value of the attempt (made: 3 points and a kickoff, missed:
+#    the other team takes over at the spot of the kick).
 #
 # Built by data-raw/wp_vegas_model.R and stored in R/sysdata.rda as
 # `wp_vegas_model` (list with the xgboost model as raw UBJSON, the probit
@@ -84,10 +91,26 @@ wp_vegas_design <- function(x, k) {
   yl <- x$yardline_100
   dn <- x$down
   ytg <- pmin(x$ydstogo, 20)
-  # possession value fades when the half runs out. The time needed to use a
-  # possession grows with the distance to the end zone
-  left <- pmin(h / (2.4 * yl + 15), 1)
+  # The possession terms fade when the half runs out, by the time needed to get
+  # into field goal range (scoring before halftime from the opponent's 35 or
+  # closer only needs the time to kick)...
+  left <- pmin(h / wp_fg_range_time(yl), 1)
+  # ... toward the value of a field goal from here
+  fg_eoh <- (1 - left) * 3 * wp_fg_make(yl)
+  # The other team's chance of a field goal before halftime: it takes over
+  # after a punt and needs the time to get into range. This possession ends
+  # after the downs that are left. The defense stops the clock after each play
+  # while it has timeouts; without timeouts a play takes about 40 seconds.
+  opp_start <- pmin(140 - yl, 80)
+  plays <- 4 - dn
+  dto <- x$defteam_timeouts_remaining
+  t_end <- 5 + 6 * pmin(plays, dto) + 40 * pmax(plays - dto, 0)
+  opp_reach <- (1 - left) *
+    pmin(pmax(h - t_end, 0) / wp_fg_range_time(opp_start), 1)
+  # timeouts and the clock matter at the end of either half. In the 2nd half
+  # half seconds and game seconds are the same
   late <- exp(-g / 300)
+  late1 <- exp(-h / 300) * as.numeric(g > 1800)
   to_diff <- x$posteam_timeouts_remaining - x$defteam_timeouts_remaining
   Z <- cbind(
     sd = x$score_differential,
@@ -102,9 +125,26 @@ wp_vegas_design <- function(x, k) {
     ytg = (ytg - 10) / 10 * left,
     r2h = x$receive_2h_ko * as.numeric(g > 1800),
     to_diff_late = to_diff * late,
-    const_late = late
+    const_late = late,
+    to_diff_late1 = to_diff * late1,
+    const_late1 = late1,
+    fg_eoh = fg_eoh,
+    opp_eoh4 = (dn == 4) * opp_reach,
+    opp_eoh13 = (dn < 4) * opp_reach
   )
   Z / s
+}
+
+# seconds needed to get from yardline_100 into field goal range (the opponent's
+# 35) and kick
+wp_fg_range_time <- function(yl) {
+  10 + 2 * pmax(yl - 35, 0)
+}
+
+# smooth field goal make probability for the backbone (fastrmodels::fg_model,
+# current era, outdoors)
+wp_fg_make <- function(yl) {
+  stats::plogis(4.26 - 0.111 * yl)
 }
 
 # weight of the whole offset
@@ -255,13 +295,69 @@ wp_post_td_state <- function(x, pts, dt = 6) {
   y
 }
 
-# vegas_wp of the team with the ball (regulation). WP is capped at the value of
-# scoring a touchdown on this snap, except in the last five minutes (where not
-# scoring can be the better play) and in the last seconds of a half (where the
-# next possession is not a kickoff return).
+# probability that a field goal from the current spot is good, from
+# fastrmodels::fg_model like everywhere else in the package. Without a season
+# the current kicking era is used, without a roof the model's level for an
+# unknown roof
+wp_fg_prob <- function(x) {
+  n <- nrow(x)
+  fg <- data.frame(
+    season = if (is.null(x[["season"]])) NA_real_ else x[["season"]],
+    roof = if (is.null(x[["roof"]])) {
+      NA_character_
+    } else {
+      as.character(x[["roof"]])
+    },
+    yardline_100 = dplyr::coalesce(x$yardline_100, 50),
+    down = 1,
+    posteam = "A",
+    home_team = "A"
+  )[seq_len(n), , drop = FALSE]
+  fg$season[is.na(fg$season)] <- nflreadr::most_recent_season()
+  as.numeric(mgcv::predict.bam(
+    fastrmodels::fg_model,
+    newdata = make_model_mutations(fg),
+    type = "response"
+  ))
+}
+
+# vegas_wp of kicking a field goal on this snap: made, the other team receives
+# the kickoff; missed, it takes over at the spot of the kick (or its 20)
+wp_fg_value <- function(x, model, p_fg, dt = 5) {
+  made <- wp_post_td_state(x, 3, dt)
+  miss <- made
+  miss$score_differential <- -x$score_differential
+  miss$yardline_100 <- pmin(100 - (x$yardline_100 + 7), 80)
+  # a kick at the end of the 1st half ends the half: value it just before
+  # halftime, where the 2nd half kickoff still counts
+  first <- x$game_seconds_remaining > 1800
+  h <- ifelse(
+    first,
+    pmax(x$half_seconds_remaining - dt, 1),
+    made$half_seconds_remaining
+  )
+  g <- ifelse(first, 1800 + h, made$game_seconds_remaining)
+  made$half_seconds_remaining <- miss$half_seconds_remaining <- h
+  made$game_seconds_remaining <- miss$game_seconds_remaining <- g
+  p_fg *
+    (1 - wp_vegas_raw(made, model)) +
+    (1 - p_fg) * (1 - wp_vegas_raw(miss, model))
+}
+
+# vegas_wp of the team with the ball (regulation). WP is at least the value of
+# kicking a field goal on this snap. It is capped at the value of scoring a
+# touchdown on this snap, except in the last five minutes (where not scoring
+# can be the better play) and in the last seconds of a half (where the next
+# possession is not a kickoff return).
 wp_vegas_predict <- function(x, model = wp_vegas_model, pat = 0.94, dt = 6) {
   x <- as.data.frame(x)
   w <- wp_vegas_raw(x, model)
+  # from behind the own 40 (77+ yard kicks) the floor never binds
+  fl <- which(x$yardline_100 <= 60 & !is.na(w))
+  if (length(fl) > 0) {
+    xf <- x[fl, , drop = FALSE]
+    w[fl] <- pmax(w[fl], wp_fg_value(xf, model, wp_fg_prob(xf)), na.rm = TRUE)
+  }
   cap <- which(
     x$game_seconds_remaining > 300 &
       x$half_seconds_remaining > dt &

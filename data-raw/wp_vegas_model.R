@@ -57,32 +57,39 @@ params <- list(
 )
 
 # ---- data -------------------------------------------------------------------
-pbp <- nflreadr::load_pbp(1999:nflreadr::most_recent_season()) |>
-  select(
-    game_id,
-    play_id,
-    season,
-    qtr,
-    posteam,
-    defteam,
-    home_team,
-    away_team,
-    home_score,
-    away_score,
-    result,
-    spread_line,
-    roof,
-    down,
-    ydstogo,
-    yardline_100,
-    play_type,
-    kickoff_attempt,
-    game_seconds_remaining,
-    half_seconds_remaining,
-    score_differential,
-    posteam_timeouts_remaining,
-    defteam_timeouts_remaining
-  )
+# one season at a time: all columns of all seasons at once need several GB
+pbp_cols <- function(p) {
+  p |>
+    select(
+      game_id,
+      play_id,
+      season,
+      qtr,
+      posteam,
+      defteam,
+      home_team,
+      away_team,
+      home_score,
+      away_score,
+      result,
+      spread_line,
+      roof,
+      down,
+      ydstogo,
+      yardline_100,
+      play_type,
+      kickoff_attempt,
+      game_seconds_remaining,
+      half_seconds_remaining,
+      score_differential,
+      posteam_timeouts_remaining,
+      defteam_timeouts_remaining
+    )
+}
+pbp <- bind_rows(lapply(
+  1999:nflreadr::most_recent_season(),
+  function(s) pbp_cols(nflreadr::load_pbp(s))
+))
 
 # where the receiving team's first snap is after a regulation kickoff, by the
 # kickoff rule regimes of the overtime model (ot_kick_first)
