@@ -262,14 +262,24 @@ wp_vegas_logit <- function(x, model = wp_vegas_model) {
 }
 
 # In the last minutes of the game the trees (up to 1,200, with few plays per
-# state) put steps of several points between consecutive seconds. The clock at
-# the snap and the length of a play vary by more than that, so there the logit
-# is averaged over +-wp_end_smooth seconds around the clock. The window
-# narrows to nothing at 0:00 and at wp_end_window seconds left. In season
-# grouped CV this lowers log loss in the last 4 minutes (16 seconds was about
-# the best width; 32 and more blur real structure).
+# state) put steps of several points between consecutive seconds, and between
+# adjacent yard lines (8 points between the opponent's 41 and 42 with 8 seconds
+# left). The clock at the snap and the length of a play vary by more than a
+# second, and the spot by more than a yard, so there the logit is averaged over
+# 11 points within +-wp_end_smooth seconds and +-wp_end_yards yards. Each
+# point has its own clock and yard offset (each yard offset is used 2 or 3
+# times, symmetric around the state and uncorrelated with the clock offset),
+# which smooths about as well as all 55 combinations at the cost of 11. The
+# clock window narrows to nothing at 0:00 and at wp_end_window seconds left,
+# the yard window at either goal line. In season grouped CV this lowers log
+# loss in the last 4 minutes (16 seconds was about the best width, 32 and
+# more blur real structure; 2 yards is level with 1, both a little better
+# than none).
 wp_end_smooth <- 16
+wp_end_yards <- 2
 wp_end_window <- 240
+wp_end_u <- seq(-1, 1, length.out = 11)
+wp_end_v <- c(1, -2, 0, 2, -1, 0, 1, -2, 0, 2, -1) / 2
 
 wp_vegas_raw <- function(x, model = wp_vegas_model) {
   l <- wp_vegas_logit(x, model)
@@ -278,13 +288,19 @@ wp_vegas_raw <- function(x, model = wp_vegas_model) {
   if (length(i) > 0) {
     xi <- x[i, , drop = FALSE]
     r <- pmin(wp_end_smooth, t[i], wp_end_window - t[i])
-    u <- seq(-1, 1, length.out = 11)
+    yl <- xi$yardline_100
+    ytg <- xi$ydstogo
+    ry <- pmin(wp_end_yards, yl - 1, 99 - yl)
+    ry[is.na(ry)] <- 0
     acc <- 0
-    for (uu in u) {
-      xi$game_seconds_remaining <- xi$half_seconds_remaining <- t[i] + uu * r
+    for (k in seq_along(wp_end_u)) {
+      xi$game_seconds_remaining <- xi$half_seconds_remaining <- t[i] +
+        wp_end_u[k] * r
+      xi$yardline_100 <- yl + round(wp_end_v[k] * ry)
+      xi$ydstogo <- pmin(ytg, xi$yardline_100)
       acc <- acc + wp_vegas_logit(xi, model)
     }
-    l[i] <- acc / length(u)
+    l[i] <- acc / length(wp_end_u)
   }
   p <- stats::plogis(l)
   # A team ahead with the ball wins if it can kneel out the clock, and nearly

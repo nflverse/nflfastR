@@ -230,6 +230,16 @@ test_that("the end of game rules don't make cliffs along the field", {
   }
 })
 
+test_that("vegas_wp is smooth along the field at the end of the game", {
+  # 1st & 10 everywhere between the 5s, last minute: the trees alone had an 8
+  # point step between the opponent's 41 and 42 with 8 seconds left
+  g <- expand.grid(yl = 5:95, t = c(3, 8, 15, 30, 60), sd = c(-3, -1, 0))
+  x <- vegas_state(t = g$t, sd = g$sd, yl = g$yl)
+  g$wp <- wp_vegas_predict(x)
+  step <- unlist(lapply(split(g, list(g$t, g$sd)), function(z) diff(z$wp)))
+  expect_lt(max(abs(step)), 0.045)
+})
+
 test_that("the end of game rules apply to an untimed down at 0:00", {
   x <- vegas_state(t = c(0, 1), sd = 1, yl = 80)
   expect_true(all(wp_vegas_predict(x) >= 0.999))
