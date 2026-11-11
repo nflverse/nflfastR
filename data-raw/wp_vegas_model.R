@@ -91,13 +91,49 @@ pbp_cols <- function(p) {
       half_seconds_remaining,
       score_differential,
       posteam_timeouts_remaining,
-      defteam_timeouts_remaining
+      defteam_timeouts_remaining,
+      total_home_score,
+      total_away_score
     )
 }
 pbp <- bind_rows(lapply(
   1999:nflreadr::most_recent_season(),
   function(s) pbp_cols(nflreadr::load_pbp(s))
 ))
+
+# Games whose running score doesn't end at the final score were parsed with
+# bugs fixed in nflfastR 6.0.0 (every Jacksonville home game of 2001 and 2002
+# credited the home team's touchdowns and safeties to the visitors, and
+# 2011_13_DET_NO had two touchdowns twice). Until the released data are
+# rebuilt, rebuild those games here with this version of the package.
+bad <- pbp |>
+  group_by(game_id) |>
+  summarise(
+    ok = max(total_home_score, na.rm = TRUE) == first(home_score) &
+      max(total_away_score, na.rm = TRUE) == first(away_score),
+    .groups = "drop"
+  ) |>
+  filter(!ok) |>
+  pull(game_id)
+cat(
+  "games rebuilt because the running score doesn't end at the final:",
+  length(bad),
+  "\n"
+)
+if (length(bad) > 0) {
+  pkgload::load_all(".", quiet = TRUE)
+  rebuilt <- nflfastR::build_nflfastR_pbp(bad) |>
+    pbp_cols()
+  still <- rebuilt |>
+    group_by(game_id) |>
+    summarise(
+      ok = max(total_home_score, na.rm = TRUE) == first(home_score) &
+        max(total_away_score, na.rm = TRUE) == first(away_score),
+      .groups = "drop"
+    )
+  stopifnot(all(still$ok))
+  pbp <- bind_rows(filter(pbp, !game_id %in% bad), rebuilt)
+}
 
 # where the receiving team's first snap is after a regulation kickoff, by the
 # kickoff rule regimes of the overtime model (ot_kick_first)

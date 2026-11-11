@@ -326,7 +326,8 @@ ot_possession_number <- function(pbp) {
   } else {
     rep(FALSE, nrow(pbp))
   }
-  team <- match(pbp$posteam, unique(pbp$posteam))
+  # rows without a team (timeouts, end of period) don't change possession
+  team <- match(pbp$posteam, unique(stats::na.omit(pbp$posteam)))
   team[!ot | is_kick] <- NA
   dr[!ot] <- NA
   # counts changes of posteam within a drive

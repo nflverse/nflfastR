@@ -304,9 +304,10 @@ wp_vegas_raw <- function(x, model = wp_vegas_model) {
 # Seconds a team can run off by kneeling: each kneel takes about 3 seconds and
 # 40 more run off between kneels unless the other team stops the clock (its
 # timeouts, and the 2 minute warning once). Since 1999 teams ahead with the
-# ball and at most 10 seconds more than this left won all but 3 of 7,093 snaps
-# (the trees gave them 93-98% when up 1-3); 10-40 seconds more they won
-# 95-100%, past that the trees are right. So WP is the kneel value up to 10
+# ball and at most 10 seconds more than this left lost 2 of 3,872 games (one is
+# a data error, the other the 2022 MIN-BUF fumble at the 1); the trees gave
+# them 95-97% when up 1-3. 10-40 seconds more they won 99% (96% when up 1-3,
+# trees 94%), past that the trees are right. So WP is the kneel value up to 10
 # seconds beyond, moving to the model's value at 40.
 wp_kneel_time <- function(t, down, dto) {
   n <- 5 - down

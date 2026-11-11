@@ -15,6 +15,7 @@
 - Completely rebuilt the overtime win probability model (`wp`, `vegas_wp` and the derived `wpa`, `air_wpa`, `yac_wpa` variables for overtime plays). The previous model treated every overtime play like a next-score problem, ignored the clock and valued ties as losses for both teams. The new model predicts how the current drive ends and values each outcome with a dynamic program that knows the overtime rules in force for the game: sudden death (regular season through 2011, postseason through 2009), modified sudden death (regular season 2012-2024, postseason 2010-2021) and both teams being guaranteed a possession (postseason since 2022, regular season since 2025). It also knows the length of the period (15 minutes in the regular season through 2016, 10 minutes since 2017, 15 minute playoff periods) and that only regular season games can end in a tie, which is worth half a win. `wp` ignores the spread, `vegas_wp` includes it. (#617)
 - Overtime `xpass` and `pass_oe` change slightly on overtime rows because they use the new win probability. (#617)
 - `home_wp_post` and `away_wp_post` after a final overtime play that ends in a tie are now 0.5 (they used to be 0). (#617)
+- Fixed the overtime possession number, which counted a timeout (a row without a team) as a change of possession. After a timeout the possession team looked like it was on a later possession, where a field goal ends the game, so a first possession field goal had WP near 1 before the kick and a large negative WPA. On made overtime field goals since 2016, WPA below -2 WP points went from 15 of 103 to 1. (#561, #625)
 - `calculate_win_probability()` values overtime rows (`qtr > 4`) with the overtime model. They need `season` and an `ot_possession` column (1, 2, or 3 for later possessions), which is derived from `game_id` and `drive` when those are present. `season_type` and `roof` are optional. This lets nfl4th value overtime decisions. (#625)
 
 ## Regulation win probability
@@ -33,6 +34,8 @@
 - The field goal floor of `vegas_wp` gives the other team the ball 8 yards behind the line of scrimmage after a miss (the spot of the kick, as in 88% of misses), like `ep`. (#625)
 
 ## Minor changes and improvements
+
+- Fixed the score in every Jacksonville home game of 2001 and 2002. The raw data name the visiting team on every play (as the possession team, the scoring team and the team of every stat), so Jacksonville's touchdowns, safeties and penalties went to the visitors and the running score, `score_differential` and everything derived from it were wrong (in 6 of the 16 games the running score had the wrong winner). Such games are now detected and repaired like the games where the raw home and away teams are the same. Also removed two touchdowns that are in the raw data twice in `2011_13_DET_NO`. (#625)
 
 - Added `"game_id"` to the output `calculate_stats()` if `summary_level == "week"`. (#566)
 - Fixed a bug where `fixed_drive` did not increment after a muffed blocked field goal attempt. Yes this happened in `"2025_10_NO_CAR"`, play id 2504. (#567)

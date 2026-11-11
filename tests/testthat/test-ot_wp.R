@@ -300,3 +300,15 @@ test_that("calculate_win_probability() derives the overtime possession from the 
   expect_equal(derived$wp, given$wp)
   expect_false(anyNA(derived$vegas_wp))
 })
+
+test_that("a timeout doesn't start a new overtime possession", {
+  # one drive with timeouts (no team) in the middle, then the other team
+  x <- data.frame(
+    game_id = "2021_04_TEN_NYJ",
+    qtr = 5,
+    fixed_drive = c(25, 25, 25, 25, 25, 26, 26),
+    posteam = c("NYJ", "NYJ", NA, "NYJ", NA, "TEN", "TEN"),
+    kickoff_attempt = c(1, 0, 0, 0, 0, 1, 0)
+  )
+  expect_equal(ot_possession_number(x)[c(2, 4, 7)], c(1, 1, 2))
+})
