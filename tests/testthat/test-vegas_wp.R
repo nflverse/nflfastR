@@ -204,6 +204,16 @@ test_that("a tie at the end of regulation is worth the start of overtime", {
   ot <- wp_ot_start(x)
   expect_lt(abs(ot[2] - 0.5), 0.03)
   expect_true(ot[1] < ot[2] && ot[2] < ot[3])
+  # out of field goal range vegas_wp is the overtime value at 0:00 and moves
+  # toward it over the last seconds
+  x <- vegas_state(t = 0, spread = c(-7, 0, 7), yl = 80)
+  expect_equal(wp_vegas_predict(x), wp_ot_start(x))
+  w <- wp_vegas_predict(vegas_state(t = 0:12, spread = -7, yl = 80))
+  expect_lt(w[1], 0.5)
+  expect_lt(max(abs(diff(w))), 0.02)
+  # in range it is the value of the kick
+  x <- vegas_state(t = 0, down = 4, yl = 20)
+  expect_gt(wp_vegas_predict(x), wp_ot_start(x) + 0.3)
 })
 
 test_that("down 1-3 on 4th down at the end, WP is the value of the kick", {
