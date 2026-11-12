@@ -142,6 +142,25 @@ drop.cols <- c(
 #' \item{posteam_timeouts_remaining}
 #' \item{defteam_timeouts_remaining}
 #' }
+#' Optional: season. `vegas_wp` can't be higher than the win probability after
+#' scoring a touchdown on the play (with more than 5 minutes left in the game).
+#' The season decides where the next possession starts after the kickoff. If it
+#' is missing, the current kickoff rules are assumed.
+#'
+#' Overtime: if `pbp_data` has a `qtr` column, rows with `qtr > 4` are valued
+#' with the rule aware overtime model that `build_nflfastR_pbp()` uses
+#' (`game_seconds_remaining` is then the time left in the overtime period).
+#' These rows also need:
+#' \itemize{
+#' \item{season (the overtime rules changed over time)}
+#' \item{ot_possession (1 for the first possession of overtime, 2 for the
+#' second and 3 for any later possession). If it is missing and `pbp_data` has
+#' `game_id` and `drive`, it is derived from the drives like in
+#' `build_nflfastR_pbp()`.}
+#' }
+#' and can have `season_type` (`"REG"` or `"POST"`, derived from `game_id` if
+#' missing, otherwise `"REG"`) and `roof` (for the field goal make probability).
+#' Overtime rows without a possession number get `NA`.
 #' @return The original pbp_data with the following columns appended to it:
 #' \describe{
 #' \item{wp}{win probability.}
@@ -197,6 +216,13 @@ calculate_win_probability <- function(pbp_data) {
   wp_spread <- get_preds_wp_spread(model_data) |>
     tibble::as_tibble() |>
     dplyr::rename(vegas_wp = "value")
+
+  # overtime has its own rule aware model
+  ot <- calculate_ot_win_probability(pbp_data, model_data)
+  if (!is.null(ot)) {
+    wp$wp[ot$i] <- ot$wp
+    wp_spread$vegas_wp[ot$i] <- ot$vegas_wp
+  }
 
   preds <- dplyr::bind_cols(
     pbp_data,

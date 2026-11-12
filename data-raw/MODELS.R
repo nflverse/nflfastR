@@ -170,6 +170,10 @@ cp_model <- xgboost::xgboost(
 
 ################################################################################
 # Estimate WP model: spread
+# NOTE: nflfastR no longer uses this model (fastrmodels::wp_model_spread).
+# vegas_wp comes from the model built by data-raw/wp_vegas_model.R, which is
+# stored in R/sysdata.rda. The data prepared here is still used by the WP model
+# without the spread below.
 ################################################################################
 
 model_data <-

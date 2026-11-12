@@ -77,6 +77,23 @@ get_pbp_nfl <- function(
   plays <- raw_data$data$viewer$gameDetail$plays |>
     dplyr::mutate(game_id = as.character(game_id))
 
+  # In some games (every Jacksonville home game of 2001 and 2002) the raw data
+  # name the same team on every play: as the possession team, the scoring team
+  # and the team of every stat, so the home team's touchdowns went to the
+  # visitors. posteam is repaired from the play text (fix_posteams()), the
+  # other team fields like in the games above.
+  pos_teams <- unique(stats::na.omit(plays[["possessionTeam.abbreviation"]]))
+  if (length(pos_teams) == 1) {
+    bad_game <- 1
+  }
+
+  # duplicated touchdown records (one for each team) that count the points
+  # twice
+  if (id == "2011_13_DET_NO") {
+    plays <- plays |>
+      dplyr::filter(!.data$playId %in% c(1152, 1655))
+  }
+
   # We have this issue https://github.com/nflverse/nflfastR/issues/309 with 2013 postseason games
   # where the driveSequenceNumber in the plays df is NA for all plays. That prevents drive information
   # from being joined.
@@ -378,6 +395,28 @@ fix_bad_games <- function(pbp) {
           .data$home_team
         ),
         .data$td_team
+      ),
+      # the penalized team is in the play text
+      penalty_team = dplyr::if_else(
+        !is.na(.data$penalty_team),
+        dplyr::coalesce(
+          team_name_fn(stringr::str_extract(
+            .data$play_description,
+            "(?<=PENALTY on )[A-Z]{2,3}(?=[-,])"
+          )),
+          .data$penalty_team
+        ),
+        .data$penalty_team
+      ),
+      # a safety goes to the team without the ball
+      safety_team = dplyr::if_else(
+        !is.na(.data$safety_team),
+        dplyr::if_else(
+          .data$posteam == .data$home_team,
+          .data$away_team,
+          .data$home_team
+        ),
+        .data$safety_team
       ),
       # fill in return team
       return_team = dplyr::if_else(

@@ -30,13 +30,13 @@ Imports:
     glue,
     janitor,
     lifecycle,
-    mgcv,
     nflreadr (>= 1.2.0),
     progressr (>= 0.6.0),
     rlang (>= 0.4.7),
     stringr (>= 1.4.0),
     tibble (>= 3.0),
     tidyr (>= 1.0.0),
+    vctrs,
     xgboost (>= 1.6)
 Suggests: 
     DBI,
