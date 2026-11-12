@@ -232,33 +232,43 @@ wp_vegas_tree_margin <- function(booster, X, n, inclusive) {
   ))
 }
 
-# vegas_wp of the team with the ball, without the touchdown cap
-wp_vegas_logit <- function(x, model = wp_vegas_model) {
-  k <- model$constants
-  n <- nrow(x)
-  if (n == 0) {
+# Tree margin of each row of the tree matrix X, interpolated between the tree
+# counts of the two schedule knots around its clock. A row is only predicted at
+# its own two counts, and rows that repeat (the same state valued more than
+# once) only once. Trees value each row on its own, so neither changes a row's
+# result.
+wp_vegas_trees <- function(X, model = wp_vegas_model) {
+  if (nrow(X) == 0) {
     return(numeric(0))
   }
+  k <- model$constants
   booster <- wp_vegas_booster(model)
   inclusive <- wp_vegas_inclusive_range(booster, model)
-  X <- wp_vegas_tree_matrix(x, k)
+  id <- vctrs::vec_group_id(as.data.frame(X))
+  u <- which(!duplicated(id))
+  X <- X[u, , drop = FALSE]
   sch <- k$schedule[order(k$schedule$t), ]
-  g <- pmin(pmax(x$game_seconds_remaining, min(sch$t)), max(sch$t))
+  g <- pmin(
+    pmax(X[, "game_seconds_remaining"], min(sch$t)),
+    max(sch$t)
+  )
   j <- pmin(findInterval(g, sch$t), nrow(sch) - 1L)
   j[is.na(j)] <- 1L
   w <- (g - sch$t[j]) / (sch$t[j + 1L] - sch$t[j])
-  # only the tree counts these rows need
-  ns <- unique(c(sch$n[unique(j)], sch$n[unique(j) + 1L]))
-  F <- lapply(ns, function(nt) wp_vegas_tree_margin(booster, X, nt, inclusive))
-  names(F) <- as.character(ns)
-  tm <- numeric(n)
-  for (jj in unique(j)) {
-    i <- which(j == jj)
-    a <- F[[as.character(sch$n[jj])]][i]
-    b <- F[[as.character(sch$n[jj + 1L])]][i]
-    tm[i] <- (1 - w[i]) * a + w[i] * b
+  n_lo <- sch$n[j]
+  n_hi <- sch$n[j + 1L]
+  a <- b <- numeric(length(u))
+  for (nt in unique(c(n_lo, n_hi))) {
+    i <- which(n_lo == nt | n_hi == nt)
+    f <- wp_vegas_tree_margin(booster, X[i, , drop = FALSE], nt, inclusive)
+    lo <- n_lo[i] == nt
+    hi <- n_hi[i] == nt
+    a[i[lo]] <- f[lo]
+    b[i[hi]] <- f[hi]
   }
-  wp_vegas_offset(x, model$beta, k) + tm
+  tm <- (1 - w) * a + w * b
+  # vec_group_id numbers the groups in order of first appearance
+  tm[id]
 }
 
 # In the last minutes of the game the trees (up to 1,200, with few plays per
@@ -281,26 +291,79 @@ wp_end_window <- 240
 wp_end_u <- seq(-1, 1, length.out = 11)
 wp_end_v <- c(1, -2, 0, 2, -1, 0, 1, -2, 0, 2, -1) / 2
 
+# vegas_wp of the team with the ball, without the field goal and touchdown
+# rules of wp_vegas_predict()
 wp_vegas_raw <- function(x, model = wp_vegas_model) {
-  l <- wp_vegas_logit(x, model)
+  wp_vegas_raw_run(list(wp_vegas_raw_prep(x, model)), model)[[1]]
+}
+
+# wp_vegas_raw() of several sets of states, prepared by wp_vegas_raw_prep(). The
+# trees of all of them are predicted in one go.
+wp_vegas_raw_run <- function(preps, model = wp_vegas_model) {
+  rows <- vapply(preps, function(p) nrow(p$X), 1L)
+  tm <- wp_vegas_trees(do.call(rbind, lapply(preps, function(p) p$X)), model)
+  start <- cumsum(c(0L, rows))
+  lapply(seq_along(preps), function(q) {
+    wp_vegas_raw_finish(preps[[q]], tm[start[q] + seq_len(rows[q])])
+  })
+}
+
+# The part of wp_vegas_raw() before the trees: the offsets, and the tree
+# matrix of the states and (in the last minutes) of their shifted copies. Each
+# offset is computed on the same rows as when the states are valued on their
+# own (a matrix product over other rows could round differently).
+wp_vegas_raw_prep <- function(x, model = wp_vegas_model) {
+  k <- model$constants
+  n <- nrow(x)
   t <- x$game_seconds_remaining
-  i <- which(!is.na(l) & !is.na(t) & t > 0 & t < wp_end_window)
-  if (length(i) > 0) {
+  off <- wp_vegas_offset(x, model$beta, k)
+  # the trees give every row with a clock a value, so the logit is missing
+  # where the offset is
+  i <- which(!is.na(off) & !is.na(t) & t > 0 & t < wp_end_window)
+  m <- length(i)
+  K <- length(wp_end_u)
+  X <- list(wp_vegas_tree_matrix(x, k))
+  off_i <- NULL
+  if (m > 0) {
     xi <- x[i, , drop = FALSE]
     r <- pmin(wp_end_smooth, t[i], wp_end_window - t[i])
     yl <- xi$yardline_100
     ytg <- xi$ydstogo
     ry <- pmin(wp_end_yards, yl - 1, 99 - yl)
     ry[is.na(ry)] <- 0
-    acc <- 0
-    for (k in seq_along(wp_end_u)) {
+    off_i <- vector("list", K)
+    for (kk in seq_len(K)) {
       xi$game_seconds_remaining <- xi$half_seconds_remaining <- t[i] +
-        wp_end_u[k] * r
-      xi$yardline_100 <- yl + round(wp_end_v[k] * ry)
+        wp_end_u[kk] * r
+      xi$yardline_100 <- yl + round(wp_end_v[kk] * ry)
       xi$ydstogo <- pmin(ytg, xi$yardline_100)
-      acc <- acc + wp_vegas_logit(xi, model)
+      off_i[[kk]] <- wp_vegas_offset(xi, model$beta, k)
+      X[[kk + 1L]] <- wp_vegas_tree_matrix(xi, k)
     }
-    l[i] <- acc / length(wp_end_u)
+  }
+  list(x = x, off = off, i = i, off_i = off_i, X = do.call(rbind, X))
+}
+
+# The part of wp_vegas_raw() after the trees. `tm` are the tree margins of the
+# rows of prep$X.
+wp_vegas_raw_finish <- function(prep, tm) {
+  x <- prep$x
+  n <- nrow(x)
+  if (n == 0) {
+    return(numeric(0))
+  }
+  t <- x$game_seconds_remaining
+  i <- prep$i
+  m <- length(i)
+  K <- length(wp_end_u)
+  off_i <- prep$off_i
+  l <- prep$off + tm[seq_len(n)]
+  if (m > 0) {
+    acc <- 0
+    for (kk in seq_len(K)) {
+      acc <- acc + (off_i[[kk]] + tm[n + (kk - 1L) * m + seq_len(m)])
+    }
+    l[i] <- acc / K
   }
   p <- stats::plogis(l)
   # A team ahead with the ball wins if it can kneel out the clock, and nearly
@@ -385,8 +448,17 @@ wp_post_td_state <- function(x, pts, dt = 6) {
 # vegas_wp of kicking a field goal on this snap: made, the other team receives
 # the kickoff; missed, it takes over at the spot of the kick, 8 yards behind the
 # line of scrimmage (or its 20)
-wp_fg_value <- function(x, model, dt = 5) {
-  p_fg <- fg_make_prob(x[["season"]], x[["roof"]], x$yardline_100)
+wp_fg_value <- function(x, model = wp_vegas_model, dt = 5) {
+  s <- wp_fg_states(x, dt)
+  r <- wp_vegas_raw_run(
+    list(wp_vegas_raw_prep(s$made, model), wp_vegas_raw_prep(s$miss, model)),
+    model
+  )
+  wp_fg_combine(x, r[[1]], r[[2]], dt)
+}
+
+# the states after the kick of wp_fg_value()
+wp_fg_states <- function(x, dt = 5) {
   made <- wp_post_td_state(x, 3, dt)
   miss <- made
   miss$score_differential <- -x$score_differential
@@ -402,8 +474,15 @@ wp_fg_value <- function(x, model, dt = 5) {
   g <- ifelse(first, 1800 + h, made$game_seconds_remaining)
   made$half_seconds_remaining <- miss$half_seconds_remaining <- h
   made$game_seconds_remaining <- miss$game_seconds_remaining <- g
-  v_made <- 1 - wp_vegas_raw(made, model)
-  v_miss <- 1 - wp_vegas_raw(miss, model)
+  list(made = made, miss = miss)
+}
+
+# the value of the kick from wp_vegas_raw() of the states of wp_fg_states()
+wp_fg_combine <- function(x, raw_made, raw_miss, dt = 5) {
+  p_fg <- fg_make_prob(x[["season"]], x[["roof"]], x$yardline_100)
+  first <- x$game_seconds_remaining > 1800
+  v_made <- 1 - raw_made
+  v_miss <- 1 - raw_miss
   # A kick at the end of the game decides it: made, the team wins if it is
   # ahead; missed, the score stands (a tie goes to overtime). The model doesn't
   # know that the game ends, so with up to wp_fg_end_t seconds left after the
@@ -428,7 +507,9 @@ wp_fg_value <- function(x, model, dt = 5) {
 wp_ot_start <- function(x) {
   n <- nrow(x)
   season <- if (is.null(x[["season"]])) rep(NA_real_, n) else x[["season"]]
-  season[is.na(season)] <- nflreadr::most_recent_season()
+  if (anyNA(season)) {
+    season[is.na(season)] <- nflreadr::most_recent_season()
+  }
   type <- if (is.null(x[["season_type"]])) {
     rep("REG", n)
   } else {
@@ -447,9 +528,10 @@ wp_ot_start <- function(x) {
     phase = 1,
     p_make = NA_real_
   )
-  receive <- ot_wp_states(st)
-  st$spread <- -x$posteam_spread
-  0.5 * receive + 0.5 * (1 - ot_wp_states(st))
+  kick <- st
+  kick$spread <- -x$posteam_spread
+  w <- ot_wp_states(rbind(st, kick))
+  0.5 * w[seq_len(n)] + 0.5 * (1 - w[n + seq_len(n)])
 }
 
 # seconds left after a kick at the end of the game below which the field goal
@@ -471,13 +553,16 @@ wp_end_value <- function(sd, tie = 0.5) {
 # possession is not a kickoff return).
 wp_vegas_predict <- function(x, model = wp_vegas_model, dt = 6) {
   x <- as.data.frame(x)
-  w <- wp_vegas_raw(x, model)
+  g <- x$game_seconds_remaining
+  px <- wp_vegas_raw_prep(x, model)
+  # Raw WP is missing exactly where the offset is, and the floor never makes it
+  # missing (the last kick rows, under 30 seconds, are never capped). So the
+  # rows each rule below applies to are known before the trees run, and the
+  # trees of all the states are predicted in one go.
+  ok <- !is.na(px$off)
   p_fg <- fg_make_prob(x[["season"]], x[["roof"]], x$yardline_100)
-  fl <- which(p_fg > 0 & !is.na(w))
-  if (length(fl) > 0) {
-    xf <- x[fl, , drop = FALSE]
-    w[fl] <- pmax(w[fl], wp_fg_value(xf, model), na.rm = TRUE)
-  }
+  # WP is at least the value of kicking a field goal
+  fl <- which(p_fg > 0 & ok)
   # Down 1 to 3 on 4th down in field goal range in the last 30 seconds, the
   # team kicks: WP moves to the value of the kick over the last 30 to 10
   # seconds. The trees valued these states above the kick (a tying kick at
@@ -485,38 +570,65 @@ wp_vegas_predict <- function(x, model = wp_vegas_model, dt = 6) {
   # kick gets long (make probability from 0.3 to 0.1), where the team may
   # rather throw. Down 3 at 4th and goal it applies too: going for the win is
   # an option there, but 7 of 8 such teams since 1999 kicked.
-  g <- x$game_seconds_remaining
   lc <- which(
-    !is.na(w) &
+    ok &
       x$down %in% 4 &
       g < 30 &
       x$score_differential %in% -3:-1 &
       p_fg > 0.1
   )
-  if (length(lc) > 0) {
-    wt <- pmin(pmax((30 - g[lc]) / 20, 0), 1) *
-      pmin((p_fg[lc] - 0.1) / 0.2, 1)
-    fv <- wp_fg_value(x[lc, , drop = FALSE], model)
-    w[lc] <- (1 - wt) * w[lc] + wt * fv
-  }
+  # capped at the value of a touchdown
   cap <- which(
     x$game_seconds_remaining > 300 &
       x$half_seconds_remaining > dt &
-      !is.na(w)
+      ok
   )
+  xf <- x[fl, , drop = FALSE]
+  xl <- x[lc, , drop = FALSE]
+  xc <- x[cap, , drop = FALSE]
+  # states to value (none for an empty set of rows)
+  none <- x[0, , drop = FALSE]
+  sf <- if (length(fl) > 0) wp_fg_states(xf) else list(made = none, miss = none)
+  sl <- if (length(lc) > 0) wp_fg_states(xl) else list(made = none, miss = none)
+  td <- if (length(cap) > 0) {
+    list(wp_post_td_state(xc, 7, dt), wp_post_td_state(xc, 6, dt))
+  } else {
+    list(none, none)
+  }
+  r <- wp_vegas_raw_run(
+    c(
+      list(px),
+      lapply(
+        list(sf$made, sf$miss, sl$made, sl$miss, td[[1]], td[[2]]),
+        wp_vegas_raw_prep,
+        model = model
+      )
+    ),
+    model
+  )
+  w <- r[[1]]
+  if (length(fl) > 0) {
+    w[fl] <- pmax(w[fl], wp_fg_combine(xf, r[[2]], r[[3]]), na.rm = TRUE)
+  }
+  if (length(lc) > 0) {
+    wt <- pmin(pmax((30 - g[lc]) / 20, 0), 1) *
+      pmin((p_fg[lc] - 0.1) / 0.2, 1)
+    fv <- wp_fg_combine(xl, r[[4]], r[[5]])
+    w[lc] <- (1 - wt) * w[lc] + wt * fv
+  }
   if (length(cap) > 0) {
-    xc <- x[cap, , drop = FALSE]
     # the PAT is a field goal from the 15 since 2015 (the 2 before)
     season <- if (is.null(xc[["season"]])) NA_real_ else xc[["season"]]
-    pat_yl <- ifelse(
-      dplyr::coalesce(season, nflreadr::most_recent_season()) >= 2015,
-      15,
-      2
-    )
+    if (anyNA(season)) {
+      season_now <- dplyr::coalesce(season, nflreadr::most_recent_season())
+    } else {
+      season_now <- season
+    }
+    pat_yl <- ifelse(season_now >= 2015, 15, 2)
     pat <- fg_make_prob(season, xc[["roof"]], pat_yl)
     post <- pat *
-      (1 - wp_vegas_raw(wp_post_td_state(xc, 7, dt), model)) +
-      (1 - pat) * (1 - wp_vegas_raw(wp_post_td_state(xc, 6, dt), model))
+      (1 - r[[6]]) +
+      (1 - pat) * (1 - r[[7]])
     w[cap] <- pmin(w[cap], post)
   }
   w

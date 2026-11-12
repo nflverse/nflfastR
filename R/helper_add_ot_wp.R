@@ -78,7 +78,13 @@ ot_map_d <- function(x) {
   vapply(x, function(z) which.min(abs(z - ot_d_set) - 1e-6 * ot_d_set), 1L)
 }
 
-ot_end_value <- function(d) dplyr::case_when(d > 0 ~ 1, d < 0 ~ 0, TRUE ~ 0.5)
+# 1 ahead, 0 behind, 0.5 tied (or unknown)
+ot_end_value <- function(d) {
+  v <- rep(0.5, length(d))
+  v[which(d > 0)] <- 1
+  v[which(d < 0)] <- 0
+  v
+}
 
 # Possible results of a completed possession for the team that had the ball
 # (R). Returns a list of components. Each has a weight w and either a terminal
@@ -168,12 +174,11 @@ ot_tempo <- function(secs) {
 }
 
 ot_pmf <- function(mu, shape) {
-  j <- seq_len(ot_n)
-  up <- (j + 0.5) * ot_step
-  lo <- c(0, (j[-1] - 0.5) * ot_step)
+  up <- (seq_len(ot_n) + 0.5) * ot_step
   scale <- max(mu, 3) / shape
-  stats::pgamma(up, shape, scale = scale) -
-    stats::pgamma(lo, shape, scale = scale)
+  cdf <- stats::pgamma(up, shape, scale = scale)
+  # each node starts where the one before ends (and the first one at 0)
+  cdf - c(0, cdf[-ot_n])
 }
 
 ot_cache <- new.env(parent = emptyenv())
@@ -239,51 +244,85 @@ ot_collapse_preds <- function(p6) {
 # `cont_feat` are the states of a drive that continues after a conversion
 ot_drive_preds <- function(feat, cont_feat) {
   b <- ot_load_boosters()
-  cp <- ot_collapse_preds(ot_predict_matrix(b$out, feat))
-  mu <- vapply(
-    seq_along(ot_outcomes),
-    function(o) {
-      oh <- matrix(0, nrow(feat), length(ot_outcomes))
-      oh[, o] <- 1
-      # the duration model predicts in units of `dur_unit` seconds
-      pmax(
-        stats::predict(b$dur, cbind(feat, oh)) * ot_wp_models$dur_unit - 5,
-        3
-      )
-    },
-    numeric(nrow(feat))
+  n <- nrow(feat)
+  # one call per model (each row is predicted on its own): the outcome model for
+  # both feature sets, the duration model for every outcome
+  p6 <- ot_predict_matrix(b$out, rbind(feat, cont_feat))
+  cp <- ot_collapse_preds(p6[seq_len(n), , drop = FALSE])
+  r <- ot_collapse_preds(p6[n + seq_len(n), , drop = FALSE])$P
+  K <- length(ot_outcomes)
+  oh <- diag(K)[rep(seq_len(K), each = n), , drop = FALSE]
+  dur <- stats::predict(
+    b$dur,
+    cbind(feat[rep(seq_len(n), K), , drop = FALSE], oh)
   )
-  if (is.vector(mu)) {
-    mu <- matrix(mu, nrow = nrow(feat))
-  }
-  r <- ot_collapse_preds(ot_predict_matrix(b$out, cont_feat))$P
+  # the duration model predicts in units of `dur_unit` seconds
+  mu <- matrix(pmax(dur * ot_wp_models$dur_unit - 5, 3), nrow = n)
   list(P = cp$P, pun = cp$pun, mu = mu, r1 = r[, 1], r2 = r[, 2])
 }
 
-# value to the team with the ball in the middle of a possession
-ot_row_scrimmage <- function(dp, rule, p, di, secs, s, P, mu) {
+# ot_q_interp() for many rows at once: spread s[r] and the times in row r of
+# the matrix tn. Returns a matrix like tn.
+ot_q_interp_rows <- function(Qm, s, tn) {
+  S <- length(ot_s_store)
+  sc <- pmin(pmax(s, ot_s_store[1]), ot_s_store[S])
+  pos <- (sc - ot_s_store[1]) / (ot_s_store[2] - ot_s_store[1]) + 1
+  i0 <- pmin(floor(pos), S - 1L)
+  fs <- pos - i0
+  rows <- Qm[i0, , drop = FALSE] * (1 - fs) + Qm[i0 + 1L, , drop = FALSE] * fs
+  nt <- ncol(Qm)
+  tp <- pmin(pmax(tn / ot_t_stride, 0), nt - 1) + 1
+  k0 <- pmin(floor(tp), nt - 1L)
+  ft <- tp - k0
+  r <- c(row(tn))
+  k0 <- c(k0)
+  matrix(
+    rows[cbind(r, k0)] * (1 - c(ft)) + rows[cbind(r, k0 + 1L)] * c(ft),
+    nrow(tn)
+  )
+}
+
+# value to the team with the ball in the middle of a possession, for rows that
+# share the rules, possession number and score (dp, rule, p, di) and differ in
+# clock (secs), spread (s), outcome probabilities (P, one row each) and drive
+# times (mu). Row by row this is the same arithmetic as valuing each row on its
+# own: sums run over the nodes in the same order (rowSums() and sum() both
+# accumulate in long double), with nodes past the clock adding 0.
+ot_rows_scrimmage <- function(dp, rule, p, di, secs, s, P, mu) {
   shape <- ot_wp_models$shape
   d <- ot_d_set[di]
-  j <- seq_len(ot_n)
+  m <- length(secs)
+  j <- matrix(seq_len(ot_n), m, ot_n, byrow = TRUE)
   # the last snap of a possession has to happen before the clock expires, so a
   # possession can still finish up to one play after time has run out
-  tleft <- pmax(secs / ot_step - j, 0)
-  ok <- secs / ot_step - j > -1
+  tt <- secs / ot_step - j
+  tleft <- pmax(tt, 0)
+  past <- !(tt > -1)
+  up <- matrix((seq_len(ot_n) + 0.5) * ot_step, m, ot_n, byrow = TRUE)
+  tempo <- ot_tempo(secs)
   val <- 0
   for (o in c(1L, 2L, 5L)) {
     kind <- ot_outcomes[o]
-    pm <- ot_pmf(mu[o] * ot_tempo(secs), shape[[kind]])
+    # ot_pmf() for each row
+    scale <- pmax(mu[, o] * tempo, 3) / shape[[kind]]
+    cdf <- matrix(stats::pgamma(up, shape[[kind]], scale = scale), m)
+    pm <- cdf - cbind(0, cdf[, -ot_n, drop = FALSE])
+    pm_in <- pm
+    pm_in[past] <- 0
+    pm_sum <- rowSums(pm_in)
     comps <- ot_trans(rule, p, d, kind)
     v <- 0
     for (cp in comps) {
       if (is.na(cp$val)) {
-        qv <- ot_q_interp(dp$Q[cp$ty, cp$p, cp$di, , ], -s, tleft[ok])
-        v <- v + cp$w * sum(pm[ok] * (1 - qv))
+        qv <- ot_q_interp_rows(dp$Q[cp$ty, cp$p, cp$di, , ], -s, tleft)
+        cont <- pm * (1 - qv)
+        cont[past] <- 0
+        v <- v + cp$w * rowSums(cont)
       } else {
-        v <- v + cp$w * cp$val * sum(pm[ok])
+        v <- v + cp$w * cp$val * pm_sum
       }
     }
-    val <- val + P[o] * (v + (1 - sum(pm[ok])) * ot_end_value(d))
+    val <- val + P[, o] * (v + (1 - pm_sum) * ot_end_value(d))
   }
   # SAF / OPPTD: the other team scored and wins
   val
@@ -362,7 +401,39 @@ ot_possession_number <- function(pbp) {
 # ball), spread (spread of the team with the ball, only if use_spread), phase
 # (possession number), p_make (PAT make prob). Optional: p_fg (probability that
 # a field goal from here is good). If use_spread is FALSE the spread is ignored.
+# A state that occurs more than once (the overtime kickoff valued for every
+# kick at the end of regulation, say) is valued once.
 ot_wp_states <- function(st, use_spread = TRUE) {
+  n <- nrow(st)
+  if (n == 0) {
+    return(rep(NA_real_, n))
+  }
+  cols <- intersect(
+    c(
+      "season",
+      "season_type",
+      "kind",
+      "yardline_100",
+      "down",
+      "ydstogo",
+      "secs",
+      "d",
+      if (use_spread) "spread",
+      "phase",
+      "p_make",
+      "p_fg"
+    ),
+    names(st)
+  )
+  id <- vctrs::vec_group_id(st[cols])
+  u <- which(!duplicated(id))
+  if (length(u) == n) {
+    return(ot_wp_states_unique(st, use_spread))
+  }
+  ot_wp_states_unique(st[u, , drop = FALSE], use_spread)[id]
+}
+
+ot_wp_states_unique <- function(st, use_spread) {
   n <- nrow(st)
   out <- rep(NA_real_, n)
   if (n == 0) {
@@ -456,43 +527,51 @@ ot_wp_states <- function(st, use_spread = TRUE) {
     }
   }
 
-  for (i in seq_len(n)) {
-    dp <- ot_wp_dp[[key[i]]]
-    if (is.null(dp) || is.na(secs[i]) || is.na(di[i])) {
-      next
-    }
-    k <- st$kind[i]
-    if (k == "scrimmage") {
+  has_dp <- !vapply(key, function(kk) is.null(ot_wp_dp[[kk]]), TRUE)
+  valid <- has_dp & !is.na(secs) & !is.na(di)
+  # scrimmage rows: in groups that share the rules, possession and score, in
+  # chunks to bound the size of the [rows x time nodes] matrices
+  sc <- which(valid & st$kind %in% "scrimmage")
+  pf <- if ("p_fg" %in% names(st)) st$p_fg else rep(NA_real_, n)
+  groups <- split(sc, list(key[sc], p[sc], di[sc]), drop = TRUE)
+  for (g in groups) {
+    for (i in split(g, ceiling(seq_along(g) / 2000))) {
+      dp <- ot_wp_dp[[key[i[1]]]]
       ii <- match(i, scrim)
-      out[i] <- ot_row_scrimmage(
+      out[i] <- ot_rows_scrimmage(
         dp,
-        rule[i],
-        p[i],
-        di[i],
+        rule[i[1]],
+        p[i[1]],
+        di[i[1]],
         secs[i],
         s[i],
-        dpred$P[ii, ],
-        dpred$mu[ii, ]
+        dpred$P[ii, , drop = FALSE],
+        dpred$mu[ii, , drop = FALSE]
       )
       # The offense can always kick a field goal instead. On 4th down that is
       # the usual choice, and with a play or two left it is the choice on any
       # down. Value that option with the rules (a miss gives the other team the
       # ball, or ends the game) and never go below it.
-      pfi <- if ("p_fg" %in% names(st)) st$p_fg[i] else NA_real_
-      if (!is.na(pfi) && (st$down[i] == 4 || secs[i] <= 12)) {
-        kick_val <- ot_row_scrimmage(
+      kk <- i[which(!is.na(pf[i]) & (st$down[i] == 4 | secs[i] <= 12))]
+      if (length(kk) > 0) {
+        kick_val <- ot_rows_scrimmage(
           dp,
-          rule[i],
-          p[i],
-          di[i],
-          secs[i],
-          s[i],
-          c(0, pfi, 0, 0, 1 - pfi),
-          rep(4, 5)
+          rule[i[1]],
+          p[i[1]],
+          di[i[1]],
+          secs[kk],
+          s[kk],
+          cbind(0, pf[kk], 0, 0, 1 - pf[kk]),
+          matrix(4, length(kk), 5)
         )
-        out[i] <- max(out[i], kick_val)
+        out[kk] <- pmax(out[kk], kick_val)
       }
-    } else if (k == "pat") {
+    }
+  }
+  for (i in which(valid & !st$kind %in% "scrimmage")) {
+    dp <- ot_wp_dp[[key[i]]]
+    k <- st$kind[i]
+    if (k == "pat") {
       pm <- st$p_make[i]
       out[i] <- pm *
         ot_row_post_score(dp, rule[i], p[i], st$d[i] + 1, secs[i], s[i]) +

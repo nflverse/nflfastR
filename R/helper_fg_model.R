@@ -26,7 +26,9 @@ fg_make_prob <- function(season, roof, yardline_100) {
     rep_len(as.character(roof), n)
   }
   yardline_100 <- rep_len(yardline_100, n)
-  season[is.na(season)] <- nflreadr::most_recent_season()
+  if (anyNA(season)) {
+    season[is.na(season)] <- nflreadr::most_recent_season()
+  }
   outdoors <- is.na(roof) | roof == "outdoors"
   col <- paste0(
     "era",
