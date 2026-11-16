@@ -4,5 +4,5 @@ raw: regression_raw_5935f11d79.tar
 raw_md5: 5935f11d793a8cca75e96137226e4bdc
 games: regression_games_7f2ef583f4.rds
 games_md5: 7f2ef583f4c13a0c9da3575b732a03f0
-expected: regression_expected_5ce62dcb73.rds
-expected_md5: 5ce62dcb73020417738d848dbdf3e2af
+expected: regression_expected_aa96f21d51.rds
+expected_md5: aa96f21d51038b35d7f40fca9259ed4a
