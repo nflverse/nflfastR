@@ -88,14 +88,16 @@ if (new_games) {
 }
 
 pkgload::load_all(".", quiet = TRUE)
-future::plan("multisession", workers = max(1, parallel::detectCores() - 1))
+# Build sequentially like the test does. Parallel workers (multisession) would
+# load the installed nflfastR instead of this code, so the parsing step would
+# use the installed parser.
+future::plan("sequential")
 pbp <- build_nflfastR_pbp(
   game_ids,
   dir = raw_dir,
   games = readRDS(games_file),
   rules = FALSE
 )
-future::plan("sequential")
 
 # drop attributes that change with every build (timestamp, version)
 attrs <- names(attributes(pbp))
