@@ -22,11 +22,14 @@ test_that("scores are right in games with broken team fields in the raw data", {
   td <- jax[jax$touchdown %in% 1, ]
   expect_equal(td$td_team[grepl("Brunell|Mack", td$desc)], c("JAX", "JAX"))
   pen <- jax[!is.na(jax$penalty_team), ]
-  in_desc <- stringr::str_extract(
+  in_desc <- stringi::stri_extract_first_regex(
     pen$desc,
     "(?<=PENALTY on )[A-Z]{2,3}(?=[-,])"
   )
-  expect_equal(pen$penalty_team, ifelse(in_desc == "JAC", "JAX", in_desc))
+  expect_equal(
+    pen$penalty_team,
+    data.table::fifelse(in_desc == "JAC", "JAX", in_desc)
+  )
   # PHI trailed 28-18 before its last touchdown
   last_td <- jax[jax$touchdown %in% 1 & jax$qtr == 4, ]
   expect_equal(utils::tail(last_td$score_differential, 1), -10)
