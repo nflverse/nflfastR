@@ -8,12 +8,22 @@
 #'
 #' @param pbp_data Play-by-play dataset to estimate expected points for.
 #' @details Computes expected points for provided plays. Returns the data with
-#' probabilities of each scoring event and EP added. The following columns
+#' probabilities of each scoring event and EP added. Scoring events are valued
+#' as the points scored minus the expected points of the possession the other
+#' team gets afterwards (a kickoff touchback, which depends on the season and
+#' the clock). The clock is `half_seconds_remaining`, which is all that is
+#' needed, since it is equivalent to the quarter and the time remaining in the
+#' quarter (a half is two quarters). In overtime, the value of a score also
+#' depends on the overtime rules and the possession, which is used if the data
+#' has `qtr`, `game_id`, `drive` and `score_differential`. The possessions are
+#' counted from the lowest `drive` of each overtime game, so all of the
+#' overtime plays of a game from its start have to be in the data. The following columns
 #' must be present:
 #' \itemize{
 #' \item{season}
 #' \item{home_team}
 #' \item{posteam}
+#' \item{location (optional: 'Neutral' for a neutral site game, in which both teams are treated as away teams)}
 #' \item{roof (coded as 'outdoors', 'dome', or 'open'/'closed'/NA (retractable))}
 #' \item{half_seconds_remaining}
 #' \item{yardline_100}
@@ -65,16 +75,21 @@ calculate_expected_points <- function(pbp_data) {
 
   # a list of columns, so make_model_mutations() doesn't change d
   model_data <- make_model_mutations(as.list(d))
-  preds <- stats::predict(
-    load_model("ep"),
-    model_matrix(model_data, ep_model_features)
-  )
+  # (neutral site games are treated as away games)
+  preds <- get_preds(model_data)
 
-  # xgboost v3 returns a matrix of predictions instead of a vector as returned
-  # by xgboost v1.
-  if (is.vector(preds)) {
-    preds <- matrix(preds, ncol = 7, byrow = TRUE)
-  }
+  # The value of the possession that follows a score depends on the clock, the
+  # season (kickoff rules) and, in overtime, the rules (if the data has what
+  # is needed to tell overtime possessions apart: game_id, drive, qtr, and
+  # score_differential). See get_kickoff_values().
+  score_vals <- cbind(
+    get_kickoff_values(
+      model_data,
+      exact_w = ep_exact_w(preds$Safety, preds$Opp_Safety)
+    ),
+    ep_continue_factors(model_data)
+  ) |>
+    score_values(model_data$season)
 
   prob_cols <- c(
     "td_prob",
@@ -85,15 +100,20 @@ calculate_expected_points <- function(pbp_data) {
     "opp_safety_prob",
     "no_score_prob"
   )
-  d[, (prob_cols) := data.table::as.data.table(preds)]
-  d[,
-    ep := (-3 * opp_fg_prob) +
-      (-2 * opp_safety_prob) +
-      (-7 * opp_td_prob) +
-      (3 * fg_prob) +
-      (2 * safety_prob) +
-      (7 * td_prob)
-  ]
+  d[, (prob_cols) := as.list(preds)]
+  data.table::set(
+    d,
+    j = "ep",
+    value = ep_from_probs(
+      d$td_prob,
+      d$opp_td_prob,
+      d$fg_prob,
+      d$opp_fg_prob,
+      d$safety_prob,
+      d$opp_safety_prob,
+      score_vals
+    )
+  )
   # the predictions in the first columns
   data.table::setcolorder(d, c(prob_cols, "ep"))
 
