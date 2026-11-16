@@ -300,7 +300,7 @@ completed_game_ids <- function(seasons) {
   scheds <- nflreadr::load_schedules(seasons = seasons)
   scheds <- data.table::setDT(scheds)
   scheds[
-    !is.na(result) & !game_id %in% missing_raw_games,
+    !is.na(result) & !game_id %chin% missing_raw_games,
     game_id
   ]
 }

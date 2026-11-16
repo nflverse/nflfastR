@@ -17,6 +17,31 @@ test_that("build_nflfastR_pbp works (outside CRAN)", {
   expect_pbp_unchanged(pbp, load_expected_pbp(), diff_name = "pbp_download")
 })
 
+test_that("build_nflfastR_pbp is quiet with option nflfastR.verbose = FALSE", {
+  skip_if_not_installed("gsisdecoder")
+  withr::local_options(nflfastR.verbose = FALSE)
+  g <- readRDS(file.path(test_dir, "games.rds"))
+  expect_no_message(
+    build_nflfastR_pbp(game_ids, dir = test_dir, games = g, rules = FALSE)
+  )
+})
+
+test_that("build_nflfastR_pbp skips xyac with add_xyac = FALSE", {
+  g <- readRDS(file.path(test_dir, "games.rds"))
+  pbp <- build_nflfastR_pbp(
+    game_ids,
+    dir = test_dir,
+    games = g,
+    add_xyac = FALSE,
+    decode = FALSE
+  ) |>
+    suppressMessages()
+  expected <- load_expected_pbp()
+  xyac_cols <- grep("^xyac_", names(expected), value = TRUE)
+  expect_length(intersect(xyac_cols, names(pbp)), 0)
+  expect_identical(nrow(pbp), nrow(expected))
+})
+
 test_that("default_play is synced with build_nflfastR_pbp", {
   # `default_play` is a table of 1 row that initializes the data table in pbp
   # DBs, so it must match the column names and types of build_nflfastR_pbp()

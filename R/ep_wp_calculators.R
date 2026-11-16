@@ -56,28 +56,27 @@
 #' })
 #' }
 calculate_expected_points <- function(pbp_data) {
+  d <- as_pbp_dt(pbp_data)
   # drop existing values of ep and the probs before making new ones
-  pbp_data <- pbp_data |> dplyr::select(-dplyr::any_of(drop.cols))
+  drop <- intersect(drop.cols.ep, names(d))
+  if (length(drop) > 0) {
+    d[, (drop) := NULL]
+  }
 
-  suppressWarnings(
-    model_data <- pbp_data |>
-      make_model_mutations() |>
-      ep_model_select()
+  # a list of columns, so make_model_mutations() doesn't change d
+  model_data <- make_model_mutations(as.list(d))
+  preds <- stats::predict(
+    load_model("ep"),
+    model_matrix(model_data, ep_model_features)
   )
-
-  preds <- stats::predict(load_model("ep"), as.matrix(model_data))
 
   # xgboost v3 returns a matrix of predictions instead of a vector as returned
   # by xgboost v1.
   if (is.vector(preds)) {
-    preds <- preds |>
-      matrix(ncol = 7, byrow = TRUE) |>
-      as.data.frame()
-  } else if (is.matrix(preds)) {
-    preds <- as.data.frame(preds)
+    preds <- matrix(preds, ncol = 7, byrow = TRUE)
   }
 
-  colnames(preds) <- c(
+  prob_cols <- c(
     "td_prob",
     "opp_td_prob",
     "fg_prob",
@@ -86,23 +85,23 @@ calculate_expected_points <- function(pbp_data) {
     "opp_safety_prob",
     "no_score_prob"
   )
+  d[, (prob_cols) := data.table::as.data.table(preds)]
+  d[,
+    ep := (-3 * opp_fg_prob) +
+      (-2 * opp_safety_prob) +
+      (-7 * opp_td_prob) +
+      (3 * fg_prob) +
+      (2 * safety_prob) +
+      (7 * td_prob)
+  ]
+  # the predictions in the first columns
+  data.table::setcolorder(d, c(prob_cols, "ep"))
 
-  preds <- preds |>
-    dplyr::mutate(
-      ep = (-3 * .data$opp_fg_prob) +
-        (-2 * .data$opp_safety_prob) +
-        (-7 * .data$opp_td_prob) +
-        (3 * .data$fg_prob) +
-        (2 * .data$safety_prob) +
-        (7 * .data$td_prob)
-    ) |>
-    dplyr::bind_cols(pbp_data)
-
-  return(preds)
+  as_input_type(d, pbp_data)
 }
 
 # helper column for ep calculator
-drop.cols <- c(
+drop.cols.ep <- c(
   "ep",
   "td_prob",
   "opp_td_prob",

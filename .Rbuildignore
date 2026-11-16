@@ -24,6 +24,7 @@
 ^revdep$
 ^CRAN-SUBMISSION$
 ^[.]?air[.]toml$
+^[.]?jarl[.]toml$
 ^\.vscode$
 ^\.git-blame-ignore-revs$
 ^\.positai$

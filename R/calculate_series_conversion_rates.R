@@ -121,10 +121,10 @@ calculate_series_conversion_rates <- function(pbp, weekly = FALSE) {
       off_scr_4th = mean(.data$last_down == 4 * .data$conversion),
       off_1st = mean(.data$result == "First down"),
       off_td = mean(.data$result == "Touchdown"),
-      off_fg = mean(.data$result %in% c("Field goal", "Missed field goal")),
+      off_fg = mean(.data$result %chin% c("Field goal", "Missed field goal")),
       off_punt = mean(.data$result == "Punt"),
       off_to = mean(
-        .data$result %in%
+        .data$result %chin%
           c(
             "Turnover on downs",
             "Turnover",
@@ -168,10 +168,10 @@ calculate_series_conversion_rates <- function(pbp, weekly = FALSE) {
       def_scr_4th = mean(.data$last_down == 4 * .data$conversion),
       def_1st = mean(.data$result == "First down"),
       def_td = mean(.data$result == "Touchdown"),
-      def_fg = mean(.data$result %in% c("Field goal", "Missed field goal")),
+      def_fg = mean(.data$result %chin% c("Field goal", "Missed field goal")),
       def_punt = mean(.data$result == "Punt"),
       def_to = mean(
-        .data$result %in%
+        .data$result %chin%
           c(
             "Turnover on downs",
             "Turnover",

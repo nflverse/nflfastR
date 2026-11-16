@@ -1,6 +1,9 @@
 # The function `message_completed` to create the green "...completed" message
 # only exists to hide the option `in_builder` in dots
 message_completed <- function(x, in_builder = FALSE) {
+  if (!is_verbose()) {
+    return(invisible())
+  }
   if (isFALSE(in_builder)) {
     str <- paste0(my_time(), " | ", x)
     cli::cli_alert_success("{.field {str}}")
@@ -10,6 +13,9 @@ message_completed <- function(x, in_builder = FALSE) {
 }
 
 user_message <- function(x, type) {
+  if (!is_verbose()) {
+    return(invisible())
+  }
   if (type == "done") {
     cli::cli_alert_success("{my_time()} | {x}")
   } else if (type == "todo") {
@@ -44,7 +50,7 @@ custom_mode <- function(x, na.rm = TRUE) {
 rule_header <- function(x) {
   print(cli::rule(
     left = cli::style_bold(x),
-    right = paste("nflfastR version", utils::packageVersion("nflfastR")),
+    right = paste("nflfastR version", utils::packageVersion("nflfastR"))
   ))
 }
 
@@ -71,7 +77,11 @@ maybe_valid <- function(id) {
     substr(id, 1, 4) %in%
       seq.int(1999, as.integer(format(Sys.Date(), "%Y")) + 1, 1),
     as.integer(substr(id, 6, 7)) %in% seq_len(22),
-    stringr::str_extract_all(id, "(?<=_)[:upper:]{2,3}")[[1]] %in%
+    stringi::stri_extract_all_regex(
+      id,
+      "(?<=_)[:upper:]{2,3}",
+      omit_no_match = TRUE
+    )[[1]] %in%
       c(nflfastR::teams_colors_logos$team_abbr, "OAK", "SD", "STL")
   )
 }
@@ -160,7 +170,12 @@ make_nflverse_data <- function(data, type = c("play by play")) {
 }
 
 str_split_and_extract <- function(string, pattern, i) {
-  split_list <- stringr::str_split(string, pattern, simplify = TRUE, n = i + 1)
+  split_list <- stringi::stri_split_regex(
+    string,
+    pattern,
+    simplify = TRUE,
+    n = i + 1
+  )
   split_list[, i]
 }
 
@@ -192,7 +207,7 @@ fetch_raw <- function(
 
     fetched <- curl::curl_fetch_memory(to_load)
 
-    if (fetched$status_code == 404 & maybe_valid(game_id)) {
+    if (fetched$status_code == 404 && maybe_valid(game_id)) {
       cli::cli_abort(
         "The requested GameID {.val {game_id}} is not loaded yet, please try again later!"
       )
@@ -233,7 +248,15 @@ release_bullets <- function() {
   )
 }
 
+# Cache for objects that are expensive to create, e.g. loaded models
+nflfastR_cache <- new.env(parent = emptyenv())
+
 load_model <- function(name) {
+  key <- paste0("model_", name)
+  if (!is.null(nflfastR_cache[[key]])) {
+    return(nflfastR_cache[[key]])
+  }
+
   model <- switch(
     name,
     "ep" = fastrmodels::ep_model,
@@ -252,6 +275,7 @@ load_model <- function(name) {
   } else {
     model
   }
+  assign(key, out, envir = nflfastR_cache)
   out
 }
 
@@ -347,4 +371,240 @@ raw_pbp_urls <- function(game_ids) {
     paste0(game_ids, ".rds"),
     fsep = "/"
   )
+}
+
+# Same as dplyr::if_else(condition, fn(x), NA) but fn() only runs on the
+# elements where condition is TRUE. Useful for expensive regular expressions.
+apply_where <- function(condition, x, fn) {
+  out <- rep(NA_character_, length(x))
+  i <- which(condition)
+  out[i] <- fn(x[i])
+  out
+}
+
+# stringr::str_squish(): collapse white space to single blanks and trim.
+# \p{WSpace} is the same set as \s in ICU regex, and the char class is faster.
+squish <- function(x) {
+  stringi::stri_trim_both(
+    stringi::stri_replace_all_charclass(x, "\\p{WSpace}", " ", merge = TRUE)
+  )
+}
+
+# A copy of a data frame as data.table with only the attributes of a plain data
+# frame (like the output of dplyr verbs). It's a copy, so modifying it by
+# reference never changes the input.
+as_pbp_dt <- function(df) {
+  dt <- data.table::as.data.table(df)
+  extra <- setdiff(
+    names(attributes(dt)),
+    c("names", "row.names", "class", ".internal.selfref")
+  )
+  for (a in extra) {
+    data.table::setattr(dt, a, NULL)
+  }
+  dt
+}
+
+# Columns used inside data.table calls of the parser
+utils::globalVariables(
+  c(
+    "..chr",
+    "..drive_cols",
+    "..stat_cols",
+    ".BY",
+    ".GRP",
+    ".N",
+    ".SD",
+    "ExpPts",
+    "GAME_ID",
+    "SEASON",
+    "SEASON_TYPE",
+    "WEEK",
+    "aborted_play",
+    "air_yards",
+    "away_points_scored",
+    "away_team",
+    "away_timeout_used",
+    "away_wp_post",
+    "csum",
+    "cum_prob",
+    "defensive_two_point_conv",
+    "defteam",
+    "desc",
+    "down",
+    "driveSequenceNumber",
+    "driveTimeOfPossession",
+    "drive_how_ended_description",
+    "drive_real_start_time",
+    "end_game",
+    "ep",
+    "epa",
+    "extra_point_aborted",
+    "extra_point_attempt",
+    "extra_point_blocked",
+    "extra_point_failed",
+    "extra_point_good",
+    "extra_point_result",
+    "fg_prob",
+    "field_goal_made",
+    "field_goal_result",
+    "final_value",
+    "first_down",
+    "first_down_pass",
+    "first_down_penalty",
+    "first_down_rush",
+    "fixed_drive",
+    "fixed_drive_result",
+    "fourth_down_converted",
+    "fourth_down_failed",
+    "fumble_lost",
+    "fumble_recovery_1_team",
+    "fumbled_1_player_id",
+    "fumbled_1_player_name",
+    "game_id",
+    "goal_to_go",
+    "home_ep",
+    "home_epa",
+    "home_opening_kickoff",
+    "home_points_scored",
+    "home_team",
+    "home_timeout_used",
+    "home_wp",
+    "home_wp_post",
+    "home_wpa",
+    "is_timeout",
+    "kick_distance",
+    "kickoff_attempt",
+    "lag_below_half",
+    "lag_cum_prob",
+    "lead_ko",
+    "med",
+    "new_drive",
+    "new_series",
+    "official_name",
+    "opp_fg_prob",
+    "opp_safety_prob",
+    "opp_td_prob",
+    "own_kickoff_recovery",
+    "pass",
+    "pass_attempt",
+    "pass_oe",
+    "passer",
+    "penalty",
+    "penalty_type",
+    "playDescription",
+    "playDescriptionWithJerseyNumbers",
+    "playStats",
+    "play_clock",
+    "play_description",
+    "play_id",
+    "play_type",
+    "play_type_nfl",
+    "posteam",
+    "posteam_id",
+    "pre_play_by_play",
+    "qb_scramble",
+    "qtr",
+    "quarter_end",
+    "receive_2h_ko",
+    "receiver",
+    "replay_or_challenge",
+    "return_team",
+    "rush",
+    "rush_attempt",
+    "rusher",
+    "rusher_id",
+    "rusher_player_name",
+    "sack",
+    "safety",
+    "safety_prob",
+    "safety_team",
+    "scoring_team_abbreviation",
+    "season",
+    "series",
+    "series_result",
+    "sp",
+    "spread_line",
+    "st_play_type",
+    "success",
+    "td_prob",
+    "td_team",
+    "third_down_converted",
+    "third_down_failed",
+    "time",
+    "timeout",
+    "timeout_team",
+    "tmp_desc_lower",
+    "tmp_next_desc",
+    "tmp_next_end_game",
+    "tmp_next_qtr",
+    "tmp_posteam",
+    "tmp_result",
+    "touchback",
+    "touchdown",
+    "two_point_attempt",
+    "two_point_conv_result",
+    "two_point_pass_failed",
+    "two_point_pass_good",
+    "two_point_pass_reception_failed",
+    "two_point_pass_reception_good",
+    "two_point_rush_failed",
+    "two_point_rush_good",
+    "vegas_home_wp",
+    "vegas_home_wpa",
+    "vegas_wp",
+    "vegas_wpa",
+    "wp",
+    "wpa",
+    "x",
+    "yardline",
+    "yardline_100",
+    "yardline_number",
+    "yardline_side",
+    "yards",
+    "yardsPenalized",
+    "yards_gained",
+    "ydsnet"
+  ),
+  add = TRUE
+)
+
+# Progress messages can be turned off with options(nflfastR.verbose = FALSE)
+is_verbose <- function() {
+  !isFALSE(getOption("nflfastR.verbose", default = TRUE))
+}
+
+# Inside build_nflfastR_pbp() the steps change one data.table by reference.
+# The exported steps can also be called by users. Then they work on a copy and
+# return the type of the input (user input of class nflverse_data inherits
+# from data.table, so is.data.table() alone isn't enough).
+in_pipeline <- function(pbp, ...) {
+  isTRUE(list(...)[["in_builder"]]) && data.table::is.data.table(pbp)
+}
+
+# Turn the data.table dt into the type of input (class and attributes), like
+# the output of dplyr verbs
+as_input_type <- function(dt, input) {
+  data.table::setDF(dt)
+  if (
+    data.table::is.data.table(input) &&
+      identical(class(input), c("data.table", "data.frame"))
+  ) {
+    return(data.table::setDT(dt))
+  }
+  keep <- setdiff(
+    names(attributes(input)),
+    c("names", "row.names", ".internal.selfref")
+  )
+  for (a in keep) {
+    data.table::setattr(dt, a, attr(input, a))
+  }
+  dt
+}
+
+# Model input: a matrix of the feature columns of data, in the given order
+model_matrix <- function(data, features) {
+  m <- do.call(cbind, lapply(features, function(f) data[[f]]))
+  colnames(m) <- features
+  m
 }

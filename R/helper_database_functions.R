@@ -104,7 +104,7 @@ update_db <- function(
     dplyr::filter(
       .data$season >= 1999,
       !is.na(.data$result),
-      !.data$game_id %in%
+      !.data$game_id %chin%
         c("1999_01_BAL_STL", "2000_06_BUF_MIA", "2000_03_SD_KC")
     ) |>
     dplyr::arrange(.data$gameday) |>
@@ -120,7 +120,7 @@ update_db <- function(
       tblname,
       connection,
       show_message = FALSE,
-      rebuild = as.numeric(unique(stringr::str_sub(missing, 1, 4)))
+      rebuild = as.numeric(unique(stringi::stri_sub(missing, 1, 4)))
     )
     missing <- get_missing_games(completed_games, connection, tblname)
   }
@@ -186,7 +186,7 @@ build_db <- function(
     )
   } else if (is.numeric(rebuild) & all(rebuild %in% valid_seasons$season)) {
     # s <- glue::glue_collapse(rebuild, sep = ", ", last = ", and ")
-    # string <- stringr::str_c(stringr::str_sub(s, 1, 11), "...", stringr::str_sub(s, -16, -1))
+    # string <- stringi::stri_c(stringi::stri_sub(s, 1, 11), "...", stringi::stri_sub(s, -16, -1))
     if (show_message) {
       cli::cli_ul(
         "{my_time()} | Purging
@@ -245,7 +245,7 @@ get_missing_games <- function(completed_games, dbConnection, tablename) {
     dplyr::pull("game_id")
 
   need_scrape <- completed_games[
-    !completed_games %in% c(db_ids, "9999_99_DEF_TYP")
+    !completed_games %chin% c(db_ids, "9999_99_DEF_TYP")
   ]
 
   cli::cli_alert_info(

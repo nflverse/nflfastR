@@ -117,6 +117,18 @@ For more information how to work with progress handlers please see \link[progres
 For more information on \code{.Rprofile} please see
 \href{https://rstats.wtf/r-startup.html}{this book chapter}.
 }
+
+\subsection{Turn Off Messages}{
+
+The functions that build play-by-play data print a message for every step.
+To turn them off, e.g. when building single games repeatedly, set
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{options(nflfastR.verbose = FALSE)
+}\if{html}{\out{</div>}}
+
+Warnings and errors are still shown. This also skips a few milliseconds per
+message.
+}
 }
 
 \seealso{

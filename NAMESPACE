@@ -29,11 +29,11 @@ export(report)
 export(save_raw_pbp)
 export(update_db)
 export(update_pbp_db)
-import(dplyr)
 import(fastrmodels)
 importFrom(data.table,
   "%between%",
-  "%chin%"
+  "%chin%",
+  ":="
 )
 importFrom(nflreadr,
   load_pbp,
@@ -46,7 +46,6 @@ importFrom(nflreadr,
 )
 importFrom(rlang,
   "%||%",
-  ":=",
   .data,
   .env
 )
