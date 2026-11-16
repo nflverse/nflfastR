@@ -1984,7 +1984,9 @@ add_air_yac_wp_variables <- function(pbp_data) {
 
   # A throw caught in the end zone is a touchdown. Value it like the PAT fix in
   # add_wp_variables(): after the try the other team has the ball at the
-  # typical start after a kickoff.
+  # typical start after a kickoff. The try adds a point with the expected net
+  # points of the conversion that EP uses for a touchdown (conversion_value()).
+  conversion <- conversion_value(pass_pbp_data$season)
   ez <- which(
     Turnover_Ind == 0 &
       pass_pbp_data$yardline_100 - pass_pbp_data$air_yards <= 0 &
@@ -2009,7 +2011,8 @@ add_air_yac_wp_variables <- function(pbp_data) {
       s$defteam_timeouts_remaining <- posteam_timeouts_pre[ez]
       get_preds_wp(air_clock(s, qtr[ez]))
     }
-    airWP[ez] <- 1 - (0.94 * after_td(7) + 0.06 * after_td(6))
+    airWP[ez] <- 1 -
+      (conversion[ez] * after_td(7) + (1 - conversion[ez]) * after_td(6))
   }
 
   # If the game clock runs out in regulation the game is decided by the score
@@ -2023,7 +2026,9 @@ add_air_yac_wp_variables <- function(pbp_data) {
     airWP[end_reg] <- data.table::fifelse(
       end_reg %in% ez,
       # touchdown at the gun: the try is still played
-      0.94 * result_value(sd + 7) + 0.06 * result_value(sd + 6),
+      conversion[end_reg] *
+        result_value(sd + 7) +
+        (1 - conversion[end_reg]) * result_value(sd + 6),
       result_value(sd)
     )
   }
