@@ -35,10 +35,18 @@ add_xyac <- function(pbp, ...) {
   if (length(passes$index) > 0) {
     user_message("Computing xyac...", "todo")
 
+    # Value of the possession that follows each kind of score, at the clock
+    # after the catch. It is the same for every yac outcome of a pass, so it is
+    # computed once per pass (see xyac_score_values())
+    factors <- ep_continue_factors(d)
+    passes[names(factors)] <- lapply(factors, `[`, passes$index)
+    sv <- xyac_score_values(passes)
+    passes[paste0("sv_", names(sv))] <- sv
+
     # Every pass is expanded to one row per possible yac value, so the passes
     # are processed in chunks to limit the memory use of big builds. The
     # results of a pass don't depend on other passes. Passes at the same time
-    # of the half often lead to the same game states, which predict_ep()
+    # of the half often lead to the same game states, which predict_ep_probs()
     # predicts only once per chunk, so the chunks are built in that order.
     by_time <- order(passes$half_seconds_remaining, passes$index)
     chunk <- ceiling(seq_along(by_time) / xyac_chunk_size)
@@ -178,27 +186,63 @@ summarize_xyac <- function(passes, preds) {
     as.integer(ydstogo)
   )
 
-  # a touchdown is worth 7 points, no need to predict it
-  touchdown <- yardline_100 == 0 & !is.na(yardline_100)
-  ep <- rep(NA_real_, length(yac))
-  ep[!touchdown] <- predict_ep(
-    season = per_pass(passes$season)[!touchdown],
-    half_seconds_remaining = half_seconds_remaining[!touchdown],
-    yardline_100 = yardline_100[!touchdown],
-    home = data.table::fifelse(
-      per_pass(passes$posteam) == per_pass(passes$home_team),
-      1,
-      0
-    )[!touchdown],
-    roof = per_pass(passes$roof)[!touchdown],
-    ydstogo = ydstogo[!touchdown],
-    down = down[!touchdown],
-    posteam_timeouts_remaining = posteam_timeouts_remaining[!touchdown],
-    defteam_timeouts_remaining = defteam_timeouts_remaining[!touchdown]
+  # the other team has the ball after a turnover, which matters for home field
+  # in the EP model
+  posteam <- data.table::fifelse(
+    turnover == 1,
+    per_pass(passes$defteam),
+    per_pass(passes$posteam)
   )
-  is_turnover <- turnover == 1 & !is.na(turnover)
+  # The probabilities are also needed for touchdowns, because they decide
+  # which passes need the exact free kick value
+  ep_probs <- predict_ep_probs(
+    season = per_pass(passes$season),
+    half_seconds_remaining = half_seconds_remaining,
+    yardline_100 = yardline_100,
+    home = data.table::fifelse(posteam == per_pass(passes$home_team), 1, 0),
+    roof = per_pass(passes$roof),
+    ydstogo = ydstogo,
+    down = down,
+    posteam_timeouts_remaining = posteam_timeouts_remaining,
+    defteam_timeouts_remaining = defteam_timeouts_remaining
+  )
+
+  # The score values of the passes are computed with the shortcut for the free
+  # kick value. For the passes where a safety is likely in any of the outcomes
+  # (the same rule as in the play-by-play, see ep_exact_w()) they come from
+  # the model.
+  pass_sv <- passes[paste0("sv_", score_value_names)]
+  names(pass_sv) <- score_value_names
+  flagged <- unique(pass_row[ep_exact_w(ep_probs[, 5], ep_probs[, 6])])
+  if (length(flagged) > 0) {
+    exact <- xyac_score_values(lapply(passes, `[`, flagged), exact_w = TRUE)
+    for (nm in score_value_names) {
+      pass_sv[[nm]][flagged] <- exact[[nm]]
+    }
+  }
+  sv <- lapply(pass_sv, per_pass)
+
+  # EP from the view of the team with the ball in the new state (the other
+  # team after a turnover on downs)
+  swapped_sv <- swap_score_values(sv)
+  ep <- ep_from_probs(
+    ep_probs[, 1],
+    ep_probs[, 2],
+    ep_probs[, 3],
+    ep_probs[, 4],
+    ep_probs[, 5],
+    ep_probs[, 6],
+    lapply(
+      stats::setNames(nm = score_value_names),
+      function(nm) {
+        data.table::fifelse(turnover == 1, swapped_sv[[nm]], sv[[nm]])
+      }
+    )
+  )
+  touchdown <- yardline_100 == 0 & !is.na(yardline_100)
+  is_turnover <- turnover == 1 & !is.na(turnover) & !touchdown
   ep[is_turnover] <- -1 * ep[is_turnover]
-  ep[touchdown] <- 7
+  ep[touchdown] <- sv$td_own[touchdown]
 
   original_ep <- per_pass(passes$ep)
   epa <- ep - original_ep
@@ -243,9 +287,51 @@ summarize_xyac <- function(passes, preds) {
   )
 }
 
-# EP of the possession team, computed like calculate_expected_points() but from
-# plain vectors and with one prediction per unique combination of features
-predict_ep <- function(
+# The value of each kind of score for the passes (a list of columns of
+# prepare_xyac_data() with the columns of ep_continue_factors()), at the clock
+# after the catch
+xyac_score_values <- function(passes, exact_w = FALSE) {
+  catch_data <- passes
+  catch_data$half_seconds_remaining <- data.table::fifelse(
+    passes$half_seconds_remaining <= 6,
+    0,
+    passes$half_seconds_remaining - 6
+  )
+  kv <- c(
+    get_kickoff_values(catch_data, exact_w = exact_w),
+    passes[ep_continue_factor_names]
+  )
+  as.list(score_values(kv, passes$season))
+}
+
+score_value_names <- c(
+  "td_own",
+  "fg_own",
+  "saf_own",
+  "td_opp",
+  "fg_opp",
+  "saf_opp"
+)
+
+ep_continue_factor_names <- c(
+  "c_td_own",
+  "c_fg_own",
+  "c_saf_own",
+  "c_td_opp",
+  "c_fg_opp",
+  "c_saf_opp",
+  "k_td_own",
+  "k_td_opp",
+  "two_td_own",
+  "two_td_opp",
+  "two_try"
+)
+
+# Probabilities of the next scoring event for the possession team (a matrix
+# with the columns of the EP model), computed like calculate_expected_points()
+# but from plain vectors and with one prediction per unique combination of
+# features
+predict_ep_probs <- function(
   season,
   half_seconds_remaining,
   yardline_100,
@@ -257,7 +343,7 @@ predict_ep <- function(
   defteam_timeouts_remaining
 ) {
   if (length(season) == 0) {
-    return(numeric())
+    return(matrix(numeric(), ncol = 7))
   }
   indicator <- as.numeric
   model_roof <- data.table::fifelse(
@@ -297,14 +383,7 @@ predict_ep <- function(
   if (is.vector(preds)) {
     preds <- matrix(preds, ncol = 7, byrow = TRUE)
   }
-  preds <- preds[match(combo, combo[unique_rows]), , drop = FALSE]
-  # same order of operations as in calculate_expected_points()
-  (-3 * preds[, 4]) +
-    (-2 * preds[, 6]) +
-    (-7 * preds[, 2]) +
-    (3 * preds[, 3]) +
-    (2 * preds[, 5]) +
-    (7 * preds[, 1])
+  preds[match(combo, combo[unique_rows]), , drop = FALSE]
 }
 
 ### helper function for getting the data ready
@@ -334,7 +413,7 @@ prepare_xyac_data <- function(pbp) {
   rows <- which(
     valid & !is.na(receiver_player_name) & passes$distance_to_goal != 0
   )
-  lapply(passes[xyac_pass_columns], `[`, rows)
+  lapply(passes[intersect(xyac_pass_columns, names(passes))], `[`, rows)
 }
 
 
@@ -365,10 +444,13 @@ xyac_model_features <- c(
 xyac_pass_columns <- unique(c(
   "index",
   xyac_model_features,
+  ep_model_features,
+  "location",
   "season",
   "half_seconds_remaining",
   "down",
   "posteam",
+  "defteam",
   "home_team",
   "roof",
   "posteam_timeouts_remaining",
