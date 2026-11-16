@@ -5,6 +5,7 @@ teams <- nflreadr::load_teams()
 purrr::walk(teams$team_abbr, function(x) {
   load <- glue::glue(
     "https://upload.wikimedia.org/wikipedia/commons/4/44/LA_Rams_wordmark.png"
+    # "https://static.www.nfl.com/league/apps/clubs/wordmarks/{x}_fullcolor.png"
   ) |>
     magick::image_read() |>
     magick::image_trim()

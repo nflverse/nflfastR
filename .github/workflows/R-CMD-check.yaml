@@ -54,3 +54,21 @@ jobs:
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
+
+      - name: Find pbp test differences
+        id: diff
+        if: failure()
+        shell: Rscript {0}
+        run: |
+          cat(
+            "dir=", tools::R_user_dir("nflfastR", which = "cache"), "\n",
+            sep = "", file = Sys.getenv("GITHUB_OUTPUT"), append = TRUE
+          )
+
+      - name: Upload pbp test differences
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pbp-diff-${{ matrix.config.os }}-${{ matrix.config.r }}
+          path: ${{ steps.diff.outputs.dir }}/*_diff.csv
+          if-no-files-found: ignore

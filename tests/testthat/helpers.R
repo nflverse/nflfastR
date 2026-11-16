@@ -5,41 +5,35 @@ test_dir <- getwd()
 
 pbp_cache <- tempfile("pbp_cache", fileext = ".rds")
 
-load_test_pbp <- function(pbp = pbp_cache, dir = test_dir) {
-  if (file.exists(pbp) && !is.null(dir)) {
-    if (interactive()) {
-      cli::cli_alert_info("Will return pbp from cache")
-    }
-    return(readRDS(pbp))
+# Builds pbp of the two sample games, from the local raw files (cached for the
+# test session) or, with `dir = NULL`, from downloaded raw files
+load_test_pbp <- function(dir = test_dir) {
+  if (!is.null(dir) && file.exists(pbp_cache)) {
+    return(readRDS(pbp_cache))
   }
-
-  g <- readRDS(file.path(test_dir, paste0("games.rds")))
-
-  # model output differs across machines so we round to 4 significant digits
-  # to prevent failing tests
-  pbp_data <- build_nflfastR_pbp(game_ids, dir = dir, games = g)
+  g <- readRDS(file.path(test_dir, "games.rds"))
+  pbp_data <- build_nflfastR_pbp(game_ids, dir = dir, games = g) |>
+    suppressMessages()
   if (!is.null(dir)) {
-    saveRDS(pbp_data, pbp)
+    saveRDS(pbp_data, pbp_cache)
   }
   pbp_data
 }
 
-save_test_object <- function(object) {
-  obj_name <- deparse(substitute(object))
-  tmp_file <- tempfile(obj_name, fileext = ".csv")
-  modify_digits <- dplyr::mutate_if(object, is.numeric, signif, digits = 3)
-  data.table::fwrite(modify_digits, tmp_file, na = "NA")
-  invisible(tmp_file)
+# Expected output of load_test_pbp(). Regenerate after an intentional output
+# change with
+# saveRDS(strip_nflverse_attributes(load_test_pbp()), file.path(test_dir, "expected_pbp.rds"), compress = "xz")
+load_expected_pbp <- function() {
+  readRDS(file.path(test_dir, "expected_pbp.rds"))
 }
 
 load_expectation <- function(
-  type = c("pbp", "sc", "sc_weekly", "ep", "wp"),
+  type = c("sc", "sc_weekly", "ep", "wp"),
   dir = test_dir
 ) {
   type <- match.arg(type)
   file_name <- switch(
     type,
-    "pbp" = "expected_pbp.rds",
     "sc" = "expected_sc.rds",
     "sc_weekly" = "expected_sc_weekly.rds",
     "ep" = "expected_ep.rds",
@@ -99,4 +93,191 @@ relevant_variables <- function() {
     dplyr::ends_with("wpa"),
     dplyr::starts_with("xyac")
   )
+}
+
+# Compare pbp against expected pbp and report differences per column.
+# Plays are matched by game_id and play_id. Every value is compared on its own:
+# non-doubles exactly, doubles with a relative tolerance and model output with
+# a looser relative tolerance, because model output differs slightly across
+# platforms. The model tolerance of 1e-3 matches the 3 significant digits the
+# old tests rounded to (6 and 4 digits failed on some OSes). `abs_tolerance`
+# only matters for values close to zero, where relative noise is meaningless.
+# Outside CRAN, all value differences are written to `<diff_name>_diff.csv`,
+# see write_pbp_diff().
+expect_pbp_unchanged <- function(
+  pbp,
+  exp,
+  tolerance = 1e-6,
+  model_tolerance = 1e-3,
+  abs_tolerance = 1e-6,
+  n_examples = 3,
+  diff_name = "pbp"
+) {
+  act <- tibble::as_tibble(strip_nflverse_attributes(pbp))
+  exp <- tibble::as_tibble(strip_nflverse_attributes(exp))
+  model_cols <- regression_model_columns(exp)
+  msg <- character()
+
+  # columns
+  missing_cols <- setdiff(names(exp), names(act))
+  new_cols <- setdiff(names(act), names(exp))
+  if (length(missing_cols)) {
+    msg <- c(msg, paste("Missing columns:", toString(missing_cols)))
+  }
+  if (length(new_cols)) {
+    msg <- c(msg, paste("New columns:", toString(new_cols)))
+  }
+  common_cols <- intersect(names(exp), names(act))
+  if (!identical(common_cols, intersect(names(act), names(exp)))) {
+    msg <- c(msg, "Column order changed")
+  }
+
+  # plays
+  key <- function(df) paste(df$game_id, df$play_id)
+  k_act <- key(act)
+  k_exp <- key(exp)
+  if (anyDuplicated(k_act)) {
+    msg <- c(
+      msg,
+      paste("Duplicated plays:", toString(head(k_act[duplicated(k_act)], 10)))
+    )
+  }
+  missing_plays <- setdiff(k_exp, k_act)
+  new_plays <- setdiff(k_act, k_exp)
+  if (length(missing_plays)) {
+    msg <- c(
+      msg,
+      sprintf(
+        "%d missing plays, e.g. %s",
+        length(missing_plays),
+        toString(head(missing_plays, n_examples))
+      )
+    )
+  }
+  if (length(new_plays)) {
+    msg <- c(
+      msg,
+      sprintf(
+        "%d new plays, e.g. %s",
+        length(new_plays),
+        toString(head(new_plays, n_examples))
+      )
+    )
+  }
+  common <- intersect(k_exp, k_act)
+
+  # values of common plays and columns
+  a <- act[match(common, k_act), ]
+  e <- exp[match(common, k_exp), ]
+  diffs <- list()
+  for (col in common_cols) {
+    x <- a[[col]]
+    y <- e[[col]]
+    if (!identical(class(x), class(y))) {
+      msg <- c(
+        msg,
+        sprintf(
+          "%s: type changed from %s to %s",
+          col,
+          toString(class(y)),
+          toString(class(x))
+        )
+      )
+      next
+    }
+    tol <- if (col %in% model_cols) model_tolerance else tolerance
+    diff <- values_differ(x, y, tol, abs_tolerance)
+    if (!any(diff)) {
+      next
+    }
+    i <- which(diff)
+    diffs[[col]] <- data.frame(
+      column = col,
+      game_id = a$game_id[i],
+      play_id = a$play_id[i],
+      expected = as.character(y[i]),
+      actual = as.character(x[i])
+    )
+    ex <- head(i, n_examples)
+    msg <- c(
+      msg,
+      sprintf(
+        "%s: %d values changed in %d games, e.g.\n    %s",
+        col,
+        length(i),
+        length(unique(a$game_id[i])),
+        paste(
+          sprintf(
+            "%s (expected %s, got %s)",
+            common[ex],
+            format(y[ex]),
+            format(x[ex])
+          ),
+          collapse = "\n    "
+        )
+      )
+    )
+  }
+
+  path <- write_pbp_diff(diffs, diff_name)
+  if (!is.null(path)) {
+    msg <- c(msg, paste("All value differences written to", path))
+  }
+
+  testthat::expect(
+    length(msg) == 0,
+    paste(
+      c("pbp differs from expected output:", paste("-", msg)),
+      collapse = "\n"
+    )
+  )
+  invisible(pbp)
+}
+
+regression_model_columns <- function(pbp) {
+  c(
+    names(dplyr::select(pbp, relevant_variables())),
+    intersect(c("extra_point_prob", "two_point_conversion_prob"), names(pbp))
+  )
+}
+
+values_differ <- function(x, y, tolerance, abs_tolerance) {
+  both <- !is.na(x) & !is.na(y)
+  diff <- xor(is.na(x), is.na(y))
+  if (is.double(x)) {
+    diff[both] <- abs(x[both] - y[both]) >
+      tolerance * abs(y[both]) + abs_tolerance
+  } else {
+    diff[both] <- x[both] != y[both]
+  }
+  diff
+}
+
+# Writes the value differences to the nflfastR user cache, where CI picks
+# them up to upload them as artifacts, and returns the path. A comparison
+# without differences removes an old file. Does nothing on CRAN, where nobody
+# could read the file.
+write_pbp_diff <- function(diffs, name) {
+  if (is_on_cran()) {
+    return(NULL)
+  }
+  dir <- tools::R_user_dir("nflfastR", which = "cache")
+  path <- file.path(dir, paste0(name, "_diff.csv"))
+  unlink(path)
+  if (length(diffs) == 0) {
+    return(NULL)
+  }
+  dir.create(dir, recursive = TRUE, showWarnings = FALSE)
+  utils::write.csv(do.call(rbind, diffs), path, row.names = FALSE)
+  path
+}
+
+# Same logic as the internal testthat:::on_cran()
+is_on_cran <- function() {
+  env <- Sys.getenv("NOT_CRAN")
+  if (identical(env, "")) {
+    !interactive()
+  } else {
+    !isTRUE(as.logical(env))
+  }
 }
