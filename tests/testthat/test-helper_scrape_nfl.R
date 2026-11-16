@@ -100,13 +100,23 @@ test_that("fix_bad_games assigns teams by possession", {
     fumble_recovery_1_team = c(NA, NA, "NYJ"),
     fumble_lost = c(0, 0, 1),
     timeout_team = c(NA, NA, "KC"),
-    play_description = c("pass", "punt", "Timeout #2 by NYJ at 1:00")
+    penalty_team = c("KC", NA, "KC"),
+    safety_team = c(NA, "NYJ", NA),
+    play_description = c(
+      "pass PENALTY on NYJ-12 holding",
+      "punt",
+      "Timeout #2 by NYJ at 1:00"
+    )
   )
   fix_bad_games(pbp)
   expect_identical(pbp$td_team, c("KC", "NYJ", NA))
   expect_identical(pbp$return_team, c(NA, "NYJ", NA))
   expect_identical(pbp$fumble_recovery_1_team, c(NA, NA, "KC"))
   expect_identical(pbp$timeout_team, c(NA, NA, "NYJ"))
+  # the penalized team from the play text (kept without one)
+  expect_identical(pbp$penalty_team, c("NYJ", NA, "KC"))
+  # the safety goes to the team without the ball
+  expect_identical(pbp$safety_team, c(NA, "NYJ", NA))
 })
 
 test_that("clean_names_cached gives the names of janitor", {

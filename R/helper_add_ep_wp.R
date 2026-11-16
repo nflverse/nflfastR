@@ -204,25 +204,6 @@ conversion_value <- function(season) {
 # line since 2004, leaving out kneel downs and botched one point tries
 two_point_make_prob <- 0.49
 
-# Where the receiving team's drive starts after a kickoff, as yardline_100, by
-# season. Through 2024 this is the touchback spot, which changes with the
-# kickoff rules (own 20 through 2015, own 25 for 2016-2023, own 30 in 2024) and
-# is within 0.7 yards of the average start. Since 2025 most kicks are returned
-# (17-21% are touchbacks, to the own 35), so the average start is used instead:
-# own 31 (yardline_100 69.4 in 2025 and 2026, 4.4 yards worse than the touchback)
-kickoff_start_yardline <- function(season) {
-  data.table::fcase(
-    season < 2016,
-    80,
-    season < 2024,
-    75,
-    season == 2024,
-    70,
-    season > 2024,
-    69
-  )
-}
-
 # Where the scoring team's drive starts after a safety free kick, as
 # yardline_100 for the receiving (scoring) team. This is a data-informed guess:
 # the first scrimmage play after the free kick was on average at yardline_100
@@ -334,7 +315,7 @@ get_kickoff_values <- function(
     d
   }
 
-  ko_yardline <- kickoff_start_yardline(pbp_data$season[can_kick])
+  ko_yardline <- wp_kickoff_start(pbp_data$season[can_kick])
   late <- which(exact_w[can_kick])
   fk_yardline <- rep(safety_free_kick_yardline, length(late))
   states <- list(ko_opp = state(ko_yardline, flip = TRUE))
@@ -573,12 +554,11 @@ get_preds_wp <- function(pbp) {
 }
 
 #get predictions for a set of pbp data
-#for predict stage
+#for predict stage. See R/helper_add_vegas_wp.R for the model
 get_preds_wp_spread <- function(pbp) {
-  stats::predict(
-    load_model("wp_spread"),
-    model_matrix(pbp, wp_spread_model_features)
-  )
+  # only the columns the model uses (the scenario data have all columns)
+  cols <- intersect(wp_input_columns, names(pbp))
+  wp_vegas_predict(lapply(stats::setNames(nm = cols), function(col) pbp[[col]]))
 }
 
 
@@ -598,21 +578,14 @@ wp_model_features <- c(
   "defteam_timeouts_remaining"
 )
 
-#get the columns needed for wp predictions
-#making sure they're in the right order
-wp_spread_model_features <- c(
-  "receive_2h_ko",
-  "spread_time",
-  "home",
-  "half_seconds_remaining",
-  "game_seconds_remaining",
-  "Diff_Time_Ratio",
-  "score_differential",
-  "down",
-  "ydstogo",
-  "yardline_100",
-  "posteam_timeouts_remaining",
-  "defteam_timeouts_remaining"
+# the columns that get_preds_wp() and get_preds_wp_spread() need (season,
+# roof and season_type are optional for the vegas_wp model)
+wp_input_columns <- c(
+  wp_model_features,
+  "posteam_spread",
+  "season",
+  "roof",
+  "season_type"
 )
 prepare_wp_data <- function(pbp) {
   if (anyNA(pbp$spread_line)) {
@@ -715,9 +688,10 @@ add_ep_variables <- function(pbp_data) {
   # also the possession team's kickoff state in get_kickoff_values()
   kickoff_data <- as.list(pbp_data)
 
-  # Change the yard line to the start spot, which depends on the kickoff rules
-  # in the season (see kickoff_start_yardline())
-  kickoff_data$yardline_100 <- kickoff_start_yardline(kickoff_data$season)
+  # Change the yard line to the receiving team's typical first snap after a
+  # kickoff, which depends on the kickoff rules in the season (see
+  # wp_kickoff_start())
+  kickoff_data$yardline_100 <- wp_kickoff_start(kickoff_data$season)
   # Now first down:
   kickoff_data$down1 <- rep(1, nrow(pbp_data))
   kickoff_data$down2 <- rep(0, nrow(pbp_data))
@@ -780,17 +754,11 @@ add_ep_variables <- function(pbp_data) {
   # if the half ends, no one scored
   missed_fg_ep_preds[end_game_i, "No_Score"] <- 1
 
-  # Get the probability of making the field goal:
-  make_fg_prob <- predict_rows(
-    function(data) {
-      as.numeric(mgcv::predict.bam(
-        fastrmodels::fg_model,
-        newdata = as.data.frame(data),
-        type = "response"
-      ))
-    },
-    pbp_data,
-    sort(unique(c(fg_attempt_i, extrapoint_i)))
+  # Get the probability of making the field goal (see R/helper_fg_model.R):
+  make_fg_prob <- fg_make_prob(
+    pbp_data$season,
+    pbp_data$roof,
+    pbp_data$yardline_100
   )
 
   # Multiply each value of the missed_fg_ep_preds by the 1 - make_fg_prob
@@ -1259,13 +1227,17 @@ add_wp_variables <- function(pbp_data) {
   #regulation plays
   regular_i <- which(pbp_data$qtr <= 4)
 
-  # the features of just the regulation plays (all WP features are features of
-  # the spread model):
-  regular_df <- subset_columns(pbp_data, regular_i, wp_spread_model_features)
+  # the model inputs of just the regulation plays
+  regular_df <- subset_columns(pbp_data, regular_i, wp_input_columns)
 
-  # do predictions for the regular df
+  # do predictions for the regular df. Rows without a down are set to NA below
+  # anyway, so the vegas_wp model only needs the rows with a down
   OffWinProb[regular_i] <- get_preds_wp(regular_df)
-  OffWinProb_spread[regular_i] <- get_preds_wp_spread(regular_df)
+  OffWinProb_spread[regular_i] <- predict_rows(
+    get_preds_wp_spread,
+    regular_df,
+    which(!is.na(regular_df$down))
+  )
 
   ## set to NA WP for plays down is missing
   # for kickoffs and PATs, these will get overwritten by the fixes after this
@@ -1305,21 +1277,12 @@ add_wp_variables <- function(pbp_data) {
   # so we remove them in the next line
   pat_i <- pat_i[!pat_i %in% two_pt_i]
 
-  # PAT make probability, only needed for PATs (also in overtime)
-  make_pat_prob <- predict_rows(
-    function(data) {
-      data <- as.data.frame(data)
-      data$yardline_100 <- data.table::fifelse(data$season >= 2015, 15, 3)
-      as.numeric(
-        mgcv::predict.bam(
-          fastrmodels::fg_model,
-          newdata = data,
-          type = "response"
-        )
-      )
-    },
-    pbp_data,
-    pat_i
+  # PAT make probability (also in overtime): the PAT is a field goal from the
+  # 15 since 2015 (the 2 before)
+  make_pat_prob <- fg_make_prob(
+    pbp_data$season,
+    pbp_data$roof,
+    data.table::fifelse(pbp_data$season >= 2015, 15, 2)
   )
 
   # overtime has its own win probability model (see add_ot_wp_vectors()), the
@@ -1355,7 +1318,8 @@ add_wp_variables <- function(pbp_data) {
     pbp_data$away_team,
     pbp_data$home_team
   )
-  pat_data$yardline_100 <- rep(75, nrow(pbp_data))
+  # the other team's first snap after the kickoff
+  pat_data$yardline_100 <- wp_kickoff_start(pbp_data$season)
   pat_data$home <- data.table::fcase(
     pbp_data$home == 0,
     1,
@@ -1413,15 +1377,11 @@ add_wp_variables <- function(pbp_data) {
 
   ## end PAT fix
 
-  ## now we need to fix WP on kickoffs, which will be WP associated with touchback
+  ## now we need to fix WP on kickoffs, which will be the WP of the receiving
+  ## team's first snap: 1st and 10 at the typical start after a kickoff in the
+  ## kickoff rules of that season (see wp_kickoff_start())
   kickoff_data <- as.list(pbp_data)
-
-  # Change the yard line to be 80 for 2009-2015 and 75 otherwise
-  kickoff_data$yardline_100 <- data.table::fifelse(
-    kickoff_data$season < 2016,
-    80,
-    75
-  )
+  kickoff_data$yardline_100 <- wp_kickoff_start(kickoff_data$season)
   # Now first down:
   kickoff_data$down <- rep(1, nrow(pbp_data))
   kickoff_data$down1 <- rep(1, nrow(pbp_data))
@@ -1460,16 +1420,11 @@ add_wp_variables <- function(pbp_data) {
   if (length(ot_i) > 0) {
     # probability that a field goal from the current spot is good
     fg_prob_ot <- rep(NA_real_, nrow(pbp_data))
-    ot_data <- as.data.frame(pbp_data[ot_i])
-    ot_data$yardline_100[is.na(ot_data$yardline_100)] <- 50
-    fg_prob_ot[ot_i] <- as.numeric(
-      mgcv::predict.bam(
-        fastrmodels::fg_model,
-        newdata = ot_data,
-        type = "response"
-      )
+    fg_prob_ot[ot_i] <- fg_make_prob(
+      pbp_data$season[ot_i],
+      pbp_data$roof[ot_i],
+      pbp_data$yardline_100[ot_i]
     )
-    fg_prob_ot[is.na(pbp_data$yardline_100)] <- NA_real_
     ot_wp <- add_ot_wp_vectors(
       pbp_data,
       kickoff_i = kickoff_i_ot,
@@ -1929,7 +1884,6 @@ add_air_yac_wp_variables <- function(pbp_data) {
     pass_plays_i,
     c(
       wp_model_features,
-      "elapsed_share",
       "air_yards",
       "wp",
       "wpa",
@@ -1945,37 +1899,139 @@ add_air_yac_wp_variables <- function(pbp_data) {
   )
   posteam_timeouts_pre <- pass_pbp_data$posteam_timeouts_remaining
   defeam_timeouts_pre <- pass_pbp_data$defteam_timeouts_remaining
+  # time of the pass (overtime below uses these rows with the reduced clock and
+  # moves the ball itself)
   pass_pbp_data$half_seconds_remaining <- pass_pbp_data$half_seconds_remaining -
     5.704673
   pass_pbp_data$game_seconds_remaining <- pass_pbp_data$game_seconds_remaining -
     5.704673
-  Diff_Time_Ratio <- pass_pbp_data$score_differential /
-    (exp(-4 * pass_pbp_data$elapsed_share))
   Turnover_Ind <- data.table::fifelse(
     pass_pbp_data$down == 4 & pass_pbp_data$air_yards < pass_pbp_data$ydstogo,
     1,
     0
   )
-  pass_pbp_data$Diff_Time_Ratio <- data.table::fifelse(
-    Turnover_Ind == 1,
-    -1 * Diff_Time_Ratio,
-    Diff_Time_Ratio
+  turnover <- Turnover_Ind == 1
+  qtr <- pass_pbp_data$qtr
+  # the end of the first half: the value with no time left in it (qtr is the
+  # quarter of the rows of x)
+  air_clock <- function(x, qtr) {
+    x$half_seconds_remaining <- pmax(x$half_seconds_remaining, 0)
+    x$game_seconds_remaining <- data.table::fifelse(
+      qtr <= 2,
+      pmax(x$game_seconds_remaining, 1800),
+      x$game_seconds_remaining
+    )
+    elapsed_share <- (3600 - pmax(x$game_seconds_remaining, 0)) / 3600
+    x$Diff_Time_Ratio <- x$score_differential / (exp(-4 * elapsed_share))
+    x
+  }
+
+  # The state where the ball is caught (or lands): the ball moves by the air
+  # yards, which is a first down if it reaches the line to gain. On a 4th down
+  # throw short of the line to gain the other team takes over, so the whole
+  # state is seen from its side and the WP is flipped back below. The same as in
+  # add_air_yac_ep_variables() and, for overtime, add_ot_air_wp().
+  air_state <- pass_pbp_data
+  first_down_air <- pass_pbp_data$air_yards >= pass_pbp_data$ydstogo
+  new_yardline <- pass_pbp_data$yardline_100 - pass_pbp_data$air_yards
+  # a throw into the end zone (or behind the own goal line) is valued at the 1
+  # (or the 99)
+  air_state$yardline_100 <- pmin(
+    pmax(data.table::fifelse(turnover, 100 - new_yardline, new_yardline), 1),
+    99
   )
-  pass_pbp_data$posteam_timeouts_remaining <- data.table::fifelse(
-    Turnover_Ind == 1,
+  air_state$down <- data.table::fifelse(
+    first_down_air | turnover,
+    1,
+    as.numeric(pass_pbp_data$down) + 1
+  )
+  air_state$ydstogo <- pmin(
+    data.table::fifelse(
+      first_down_air | turnover,
+      10,
+      pass_pbp_data$ydstogo - pass_pbp_data$air_yards
+    ),
+    air_state$yardline_100
+  )
+  air_state$score_differential <- data.table::fifelse(
+    turnover,
+    -pass_pbp_data$score_differential,
+    pass_pbp_data$score_differential
+  )
+  air_state$home <- data.table::fifelse(
+    turnover,
+    1 - pass_pbp_data$home,
+    pass_pbp_data$home
+  )
+  air_state$receive_2h_ko <- data.table::fifelse(
+    turnover & qtr <= 2,
+    1 - pass_pbp_data$receive_2h_ko,
+    pass_pbp_data$receive_2h_ko
+  )
+  air_state$posteam_timeouts_remaining <- data.table::fifelse(
+    turnover,
     defeam_timeouts_pre,
     posteam_timeouts_pre
   )
-  pass_pbp_data$defteam_timeouts_remaining <- data.table::fifelse(
-    Turnover_Ind == 1,
+  air_state$defteam_timeouts_remaining <- data.table::fifelse(
+    turnover,
     posteam_timeouts_pre,
     defeam_timeouts_pre
   )
 
-  airWP <- get_preds_wp(pass_pbp_data)
-  airWP <- data.table::fifelse(Turnover_Ind == 1, 1 - airWP, airWP)
-  airWP[which(pass_pbp_data$half_seconds_remaining <= 0)] <- 0
-  airWP[which(pass_pbp_data$game_seconds_remaining <= 0)] <- 0
+  airWP <- get_preds_wp(air_clock(air_state, qtr))
+  airWP <- data.table::fifelse(turnover, 1 - airWP, airWP)
+
+  # A throw caught in the end zone is a touchdown. Value it like the PAT fix in
+  # add_wp_variables(): after the try the other team has the ball at the
+  # typical start after a kickoff. The try adds a point with the expected net
+  # points of the conversion that EP uses for a touchdown (conversion_value()).
+  conversion <- conversion_value(pass_pbp_data$season)
+  ez <- which(
+    Turnover_Ind == 0 &
+      pass_pbp_data$yardline_100 - pass_pbp_data$air_yards <= 0 &
+      qtr <= 4
+  )
+  if (length(ez) > 0) {
+    x <- lapply(pass_pbp_data, `[`, ez)
+    n_ez <- length(ez)
+    after_td <- function(pts) {
+      s <- x
+      s$score_differential <- -(x$score_differential + pts)
+      s$home <- 1 - x$home
+      s$receive_2h_ko <- data.table::fifelse(
+        qtr[ez] <= 2,
+        1 - x$receive_2h_ko,
+        x$receive_2h_ko
+      )
+      s$yardline_100 <- wp_kickoff_start(x$season)
+      s$down <- rep(1, n_ez)
+      s$ydstogo <- rep(10, n_ez)
+      s$posteam_timeouts_remaining <- defeam_timeouts_pre[ez]
+      s$defteam_timeouts_remaining <- posteam_timeouts_pre[ez]
+      get_preds_wp(air_clock(s, qtr[ez]))
+    }
+    airWP[ez] <- 1 -
+      (conversion[ez] * after_td(7) + (1 - conversion[ez]) * after_td(6))
+  }
+
+  # If the game clock runs out in regulation the game is decided by the score
+  # (a tie goes to overtime, valued as a coin flip)
+  end_reg <- which(qtr == 4 & pass_pbp_data$game_seconds_remaining <= 0)
+  if (length(end_reg) > 0) {
+    result_value <- function(sd) {
+      data.table::fcase(sd > 0, 1, sd < 0, 0, !is.na(sd), 0.5)
+    }
+    sd <- pass_pbp_data$score_differential[end_reg]
+    airWP[end_reg] <- data.table::fifelse(
+      end_reg %in% ez,
+      # touchdown at the gun: the try is still played
+      conversion[end_reg] *
+        result_value(sd + 7) +
+        (1 - conversion[end_reg]) * result_value(sd + 6),
+      result_value(sd)
+    )
+  }
 
   airWPA <- airWP - pass_pbp_data$wp
   yacWPA <- pass_pbp_data$wpa - airWPA

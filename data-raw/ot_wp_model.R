@@ -90,7 +90,10 @@ ot_build_dp <- function(rule, len, kick, models, starts) {
         function(o) {
           oh <- matrix(0, nrow(feat), 5)
           oh[, o] <- 1
-          mu <- pmax(stats::predict(dur_mod, cbind(feat, oh)) - 5, 3)
+          mu <- pmax(
+            stats::predict(dur_mod, cbind(feat, oh)) * models$dur_unit - 5,
+            3
+          )
           sum(pr[, o] * mu) / sum(pr[, o])
         },
         numeric(1)
@@ -234,6 +237,11 @@ y <- match(tr$outcome, classes) - 1
 # early stopping on held out games
 test_g <- sample(unique(tr$game_id), length(unique(tr$game_id)) * 0.15)
 is_te <- tr$game_id %in% test_g
+# Both models use the fixed intercept base_score = 0.5. xgboost 3 otherwise
+# estimates one from the labels (a vector with one value per class here) and
+# stores it in a format xgboost 1.x can't read: it silently uses 0.5 instead and
+# gives wrong predictions. A scalar 0.5 is read the same by every version. For
+# the softmax model a constant intercept for all classes has no effect.
 par <- list(
   objective = "multi:softprob",
   num_class = 6,
@@ -241,7 +249,8 @@ par <- list(
   max_depth = 4,
   min_child_weight = 200,
   subsample = 0.8,
-  eval_metric = "mlogloss"
+  eval_metric = "mlogloss",
+  base_score = 0.5
 )
 m0 <- xgb.train(
   par,
@@ -263,20 +272,32 @@ out_model <- xgb.train(
 Dm <- function(df) {
   cbind(X(df), sapply(classes5, function(k) as.numeric(df$outcome5 == k)))
 }
+# The label is measured in units of twice its mean so that its mean is 0.5,
+# the fixed intercept (see above). Predictions are multiplied by `dur_unit`.
+# Without the scaling 300 rounds can't move the intercept from 0.5 to ~120
+# seconds. With it the model matches the one with an estimated intercept.
+dur_unit <- 2 * mean(tr$rem + 5)
 dur <- xgb.train(
   list(
     objective = "reg:gamma",
     eta = 0.05,
     max_depth = 4,
     min_child_weight = 200,
-    subsample = 0.8
+    subsample = 0.8,
+    base_score = 0.5
   ),
-  xgb.DMatrix(Dm(tr), label = tr$rem + 5),
+  xgb.DMatrix(Dm(tr), label = (tr$rem + 5) / dur_unit),
   nrounds = 300,
   verbose = 0
 )
-ratio <- (tr$rem + 5) / predict(dur, xgb.DMatrix(Dm(tr)))
+ratio <- (tr$rem + 5) / (predict(dur, xgb.DMatrix(Dm(tr))) * dur_unit)
 shape <- as.list(tapply(ratio, tr$outcome5, function(r) 1 / var(r)))
+
+# make sure no model got an estimated intercept (see above)
+for (m in list(out_model, dur)) {
+  bs <- xgb.config(m)$learner$learner_model_param$base_score
+  stopifnot(all(as.numeric(strsplit(gsub("\\[|\\]", "", bs), ",")[[1]]) == 0.5))
+}
 
 # The models are stored as raw UBJSON, which is meant to be stable across
 # xgboost versions (unlike the legacy binary format). Say so explicitly instead
@@ -284,6 +305,7 @@ shape <- as.list(tapply(ratio, tr$outcome5, function(r) 1 / var(r)))
 ot_wp_models <- list(
   out_raw = xgb.save.raw(out_model, raw_format = "ubj"),
   dur_raw = xgb.save.raw(dur, raw_format = "ubj"),
+  dur_unit = dur_unit,
   shape = shape,
   xgboost_version = as.character(utils::packageVersion("xgboost"))
 )

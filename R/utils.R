@@ -262,8 +262,6 @@ load_model <- function(name) {
     "ep" = fastrmodels::ep_model,
     "cp" = fastrmodels::cp_model,
     "wp" = fastrmodels::wp_model,
-    "wp_spread" = fastrmodels::wp_model_spread,
-    "fg" = fastrmodels::fg_model,
     "xpass" = fastrmodels::xpass_model,
     "xyac" = fastrmodels::xyac_model
   )
@@ -466,6 +464,7 @@ utils::globalVariables(
     "fourth_down_failed",
     "fumble_lost",
     "fumble_recovery_1_team",
+    "grp",
     "fumbled_1_player_id",
     "fumbled_1_player_name",
     "game_id",
@@ -498,9 +497,11 @@ utils::globalVariables(
     "pass_oe",
     "passer",
     "penalty",
+    "penalty_team",
     "penalty_type",
     "playDescription",
     "playDescriptionWithJerseyNumbers",
+    "playId",
     "playStats",
     "play_clock",
     "play_description",

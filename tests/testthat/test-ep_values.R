@@ -9,10 +9,11 @@ test_that("the conversion value follows the seasons", {
 test_that("the kickoff start spot follows the kickoff rules", {
   seasons <- c(2009, 2015, 2016, 2023, 2024, 2025, 2026)
   expect_equal(
-    kickoff_start_yardline(seasons),
-    c(80, 80, 75, 75, 70, 69, 69)
+    wp_kickoff_start(seasons),
+    c(72, 78, 75, 75, 70, 69, 69)
   )
-  expect_equal(kickoff_start_yardline(NA_real_), NA_real_)
+  # without a season the current rules
+  expect_equal(wp_kickoff_start(NA_real_), 69)
 })
 
 test_that("overtime rules are inferred from season and game id", {
@@ -149,7 +150,7 @@ test_that("kickoff values come from the clock, season and teams", {
   # reusing the predictions for the possession team's kickoff state gives the
   # same values
   ko <- data
-  ko$yardline_100 <- kickoff_start_yardline(ko$season)
+  ko$yardline_100 <- wp_kickoff_start(ko$season)
   ko$down1 <- 1
   ko$down2 <- 0
   ko$down3 <- 0
@@ -200,12 +201,12 @@ test_that("kickoff values solve their own equations", {
   # the free kick is worth the kickoff plus the extra field position (when
   # more than 5 minutes are left in the half)
   v <- kv$v
-  yards <- kickoff_start_yardline(data$season) - safety_free_kick_yardline
+  yards <- wp_kickoff_start(data$season) - safety_free_kick_yardline
   expect_equal(kv$w, v + safety_free_kick_ep_per_yard * yards)
 
   # V = a + b V + d W on the average of the two teams' kickoff states
   ko <- data
-  ko$yardline_100 <- kickoff_start_yardline(ko$season)
+  ko$yardline_100 <- wp_kickoff_start(ko$season)
   ko$down1 <- 1
   ko$down2 <- 0
   ko$down3 <- 0
@@ -244,7 +245,7 @@ test_that("expected points at the kickoff state match the kickoff value", {
   kv <- get_kickoff_values(data)
 
   ko <- data
-  ko$yardline_100 <- kickoff_start_yardline(ko$season)
+  ko$yardline_100 <- wp_kickoff_start(ko$season)
   ko$down1 <- 1
   ko$down2 <- 0
   ko$down3 <- 0
@@ -328,7 +329,7 @@ test_that("the exact free kick value solves the equations of both states", {
       d = sf
     )
   }
-  k <- coefs(kickoff_start_yardline(data$season))
+  k <- coefs(wp_kickoff_start(data$season))
   f <- coefs(safety_free_kick_yardline)
 
   # V and W solve the equations of the kickoff state and the free kick state
