@@ -702,7 +702,7 @@ load_playstats <- function(seasons = nflreadr::most_recent_season()) {
     ".rds"
   )
 
-  out <- nflreadr::load_from_url(urls, seasons = TRUE, nflverse = FALSE)
+  out <- stats_load_from_url(urls)
 
   out
 }
@@ -712,6 +712,10 @@ load_playstats <- function(seasons = nflreadr::most_recent_season()) {
 stats_load_pbp <- function(seasons) nflreadr::load_pbp(seasons = seasons)
 
 stats_load_players <- function() nflreadr::load_players()
+
+stats_load_from_url <- function(urls) {
+  nflreadr::load_from_url(urls, seasons = TRUE, nflverse = FALSE)
+}
 
 fg_list <- function(stat_ids, yards, collapse_id, gwfg = NULL) {
   if (is.null(gwfg)) {

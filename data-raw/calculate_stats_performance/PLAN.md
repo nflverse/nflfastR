@@ -6,7 +6,7 @@ Seasons 1999 and 2000 are deprecated. They are not used anywhere in this plan: n
 
 ## Status and how to resume
 
-Work happens on branch `calculate-stats-performance`. Done: 0.1, 0.2, 0.3, 0.4, 0.5. Next: 0.6.
+Work happens on branch `calculate-stats-performance`. Done: 0.1–0.6. Next: 0.7.
 
 Files in this folder:
 
@@ -196,7 +196,7 @@ Shuffled play stats are not part of the test: the output of the current `calcula
 
 Status: done. `local_stats_regression()` and `stats_regression_run()` in `helper-regression.R` download the assets, mock the three loaders for the calling test and run the outputs named like the expected list. `expect_stats_unchanged()` compares named lists of outputs and writes all value differences of one call to one CSV (column `output` names the output). It was checked on mutated outputs: value changes of 1e-7, `NA` → `NaN`, integer → double, class, `custom_pbp` attribute, row and column order, missing and duplicated rows and character and list column values are reported; a relative change of 1e-12 isn't. The snapshot of the empty-filter warning passes `seasons = 2023` with pbp of 2023, so it should survive the message change of step 4. `devtools::test(filter = "calculate_stats")` passes (30 expectations).
 
-Open for 0.6: the regression test mocks `load_playstats()`, so its body (`seasons = TRUE`, the URLs, `nflreadr::load_from_url()`) is only reached by the snapshot of the `stopifnot()` check and the live tests. 100% line coverage from the regression test alone needs a mockable wrapper of `nflreadr::load_from_url()` (like `stats_load_pbp()` in 0.1), which is a change of `R/calculate_stats.R`; ask the user first.
+`local_stats_regression()` mocks `stats_load_from_url()` (added in 0.6), not `load_playstats()`, so the body of `load_playstats()` runs in the regression test.
 
 ### 0.6 Check the test setup
 
@@ -206,6 +206,14 @@ Step 0 is done when:
 2. `select_games.R` reports no checklist gaps (other than documented unreachable ones).
 3. Mutation spot checks fail the test, each on its own: change `15:16` to `15` in `completions`, drop `has_id(106, more_stats)` from `rushing_fumbles_lost`, swap `dplyr::first()` and `dplyr::last()` for `recent_team`, change the `racr` RB rule, change the `pt_touchback * 20L`, remove the `na_if()` step. Revert after each.
 4. `devtools::test(filter = "calculate_stats")` passes.
+
+Status: done.
+
+- The user approved one more change of `R/calculate_stats.R` in step 0: `load_playstats()` calls the new wrapper `stats_load_from_url()` instead of `nflreadr::load_from_url()`, so tests can mock the download and still run `load_playstats()`. A new test checks the URLs for given seasons and for `seasons = TRUE`.
+- Coverage of `R/calculate_stats.R` from the offline tests alone (the regression tests and snapshots, without the two live tests): 99.45% of 544 lines. Uncovered are only the bodies of the three loader wrappers (`stats_load_pbp()`, `stats_load_players()`, `stats_load_from_url()`), which the offline tests mock and the live tests run.
+- Checklist on the pinned inputs: 779 of 783 items; the gaps are the unreachable `fg_missed_0_19 != 0` (see 0.4).
+- Mutation spot checks: each of the six mutations makes the regression test fail (completions `15:16` → `15`, no `has_id(106, more_stats)` in `rushing_fumbles_lost`, `recent_team` with `first()`, negated `racr` RB rule, `pt_touchback * 25L`, no `na_if()`).
+- `devtools::test(filter = "calculate_stats")` passes (32 expectations).
 
 ### 0.7 Full-season comparison
 

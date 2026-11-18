@@ -103,7 +103,7 @@ local_stats_regression <- function(env = parent.frame()) {
   testthat::skip_if(is.null(reg), "download of regression test data failed")
   inputs <- readRDS(reg$stats_inputs)
   testthat::local_mocked_bindings(
-    load_playstats = function(...) inputs$playstats,
+    stats_load_from_url = function(urls) inputs$playstats,
     stats_load_players = function() inputs$players,
     stats_load_pbp = function(seasons) inputs$pbp,
     .env = env

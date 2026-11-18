@@ -156,3 +156,14 @@ test_that("load_playstats checks seasons", {
   expect_snapshot(load_playstats(1998), error = TRUE)
   expect_snapshot(load_playstats("2023"), error = TRUE)
 })
+
+test_that("load_playstats loads the seasons of the play stats release", {
+  local_mocked_bindings(stats_load_from_url = function(urls) urls)
+  url <- "https://github.com/nflverse/nflverse-pbp/releases/download/playstats/play_stats_%d.rds"
+
+  expect_identical(load_playstats(2022:2023), sprintf(url, 2022:2023))
+  expect_identical(
+    load_playstats(TRUE),
+    sprintf(url, seq(1999, nflreadr::most_recent_season()))
+  )
+})
