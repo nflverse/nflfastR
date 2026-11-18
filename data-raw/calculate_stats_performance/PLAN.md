@@ -6,7 +6,7 @@ Seasons 1999 and 2000 are deprecated. They are not used anywhere in this plan: n
 
 ## Status and how to resume
 
-Work happens on branch `calculate-stats-performance`. Done: 0.1–0.6. Next: 0.7.
+Work happens on branch `calculate-stats-performance`. Done: step 0 (0.1–0.7). Next: step 1.
 
 Files in this folder:
 
@@ -18,6 +18,9 @@ Files in this folder:
 | `select_games.R` | Greedy game selection and the checklist on the selected games (0.3). |
 | `selected_games.csv` | The 60 selected games (committed; the input of 0.4). |
 | `update_stats_regression.R` | Builds and uploads the pinned inputs and expected output (0.4). |
+| `calculate_stats_old.R` | Frozen copy of the old `calculate_stats()` and its helpers (0.7). Don't edit. |
+| `compare.R` | Old vs. new on full seasons, all 12 combinations (0.7). |
+| `benchmark.R` | Old vs. new timings on 2023 (0.7). |
 | `hits/` | Git-ignored. Downloaded data and checklist results per season. |
 
 `hits/` doesn't survive a fresh clone. Rebuild it with `sh data-raw/calculate_stats_performance/run_all.sh 2025 4` (about 15 minutes on 4 cores plus downloads; it skips seasons that are done), but only if you need to repeat the selection. 0.4 only needs the seasons in `selected_games.csv` and should download them itself (see 0.4).
@@ -222,6 +225,19 @@ The regression test uses ~60 games. The rewrite is also checked on full seasons,
 - `calculate_stats_old.R`: verbatim copy of the current `calculate_stats()` and its helpers with the suffix `_old`, sourced after `devtools::load_all()`.
 - `compare.R`: for the seasons 2001, 2012, 2023 and the most recent complete season, all 12 combinations, runs old and new on the same locally cached pbp, playstats and players and reports `identical()` per combination; if not identical, it prints the differences with the logic of `expect_stats_unchanged()`. Doubles that differ only within the tolerance are listed for review, not silently accepted.
 - `benchmark.R`: times all four combinations on 2023 with data in memory (median of 3 warmed-up runs), old vs. new, and writes a table for this file.
+
+Status: done.
+
+- `calculate_stats_old.R` was generated from commit `5f6c00d`: `R/calculate_stats.R` without roxygen and `globalVariables()`, plus `custom_mode()`, `team_name_fn()` and its patterns, all with the suffix `_old`. `source_calculate_stats_old()` evaluates it in an environment whose parent is the nflfastR namespace; the old code uses no object of the package.
+- `compare.R` on 2001, 2012, 2023 and 2025 with the unchanged code: 48 of 48 combinations `identical()`. With `pt_touchback * 25L` it reports the changed `pt_net_yards` values, so it does find differences. The seasons can be passed as an argument (e.g. `compare.R 2023` for a quick check).
+- `benchmark.R` before the rewrite (2023, median of 3 runs, seconds); old and new are the same code, so this is the baseline:
+
+| `summary_level` / `stat_type` | Old | New |
+|---|---|---|
+| season / player | 5.07 | 5.19 |
+| season / team | 3.54 | 3.56 |
+| week / player | 17.25 | 16.99 |
+| week / team | 3.88 | 3.91 |
 
 ## Step 1: slim input and play information
 
