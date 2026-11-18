@@ -88,3 +88,47 @@ regression_data <- function(
   }
   list(raw_dir = raw_dir, games = paths$games, expected = paths$expected)
 }
+
+# calculate_stats() regression data -------------------------------------------
+
+# Downloads (or reuses) the stats regression data, mocks the loaders of
+# calculate_stats() with the pinned inputs for the calling test and returns a
+# list with `inputs` (pbp, playstats, players) and `expected` (named list of
+# outputs, see stats_regression_run()). Skips if the download fails.
+local_stats_regression <- function(env = parent.frame()) {
+  reg <- regression_data(
+    testthat::test_path("regression_data.dcf"),
+    set = "stats"
+  )
+  testthat::skip_if(is.null(reg), "download of regression test data failed")
+  inputs <- readRDS(reg$stats_inputs)
+  testthat::local_mocked_bindings(
+    load_playstats = function(...) inputs$playstats,
+    stats_load_players = function() inputs$players,
+    stats_load_pbp = function(seasons) inputs$pbp,
+    .env = env
+  )
+  list(inputs = inputs, expected = readRDS(reg$stats_expected))
+}
+
+# Runs calculate_stats() for the outputs named like the expected output:
+# "<summary_level>/<stat_type>/<season_type>", with the prefix "pbp_null/"
+# for calls without custom pbp
+stats_regression_run <- function(names, pbp) {
+  out <- lapply(names, function(name) {
+    parts <- strsplit(name, "/", fixed = TRUE)[[1]]
+    pbp_null <- parts[[1]] == "pbp_null"
+    if (pbp_null) {
+      parts <- parts[-1]
+    }
+    suppressMessages(calculate_stats(
+      seasons = sort(unique(pbp$season)),
+      summary_level = parts[[1]],
+      stat_type = parts[[2]],
+      season_type = parts[[3]],
+      pbp = if (!pbp_null) pbp
+    ))
+  })
+  names(out) <- names
+  out
+}

@@ -6,7 +6,7 @@ Seasons 1999 and 2000 are deprecated. They are not used anywhere in this plan: n
 
 ## Status and how to resume
 
-Work happens on branch `calculate-stats-performance`. Done: 0.1, 0.2, 0.3, 0.4. Next: 0.5.
+Work happens on branch `calculate-stats-performance`. Done: 0.1, 0.2, 0.3, 0.4, 0.5. Next: 0.6.
 
 Files in this folder:
 
@@ -187,10 +187,16 @@ In `tests/testthat/test-calculate_stats.R`, next to the existing tests (which st
 
 - "calculate_stats output is unchanged for the regression games": download the assets with `regression_data()`, mock `load_playstats()`, `stats_load_players()` and `stats_load_pbp()`, run all 12 combinations and compare with `expect_stats_unchanged()`.
 - The same comparison for the input variants of one combination: shuffled pbp rows, shuffled playstats rows, a grouped tibble, a data.table and an `nflverse_data` object. The output must be the same as for the plain input.
+
+Shuffled play stats are not part of the test: the output of the current `calculate_stats()` depends on their row order, and the real play stats aren't sorted by any key (neither `game_id`/`play_id` nor season, week, game). Order dependent are `recent_team` (last row), `team`, `game_id` and `opponent_team` of week summaries (first row), `target_share` / `air_yards_share` / `wopr` of players with two teams (first row's team values), `player_name` ties in `custom_mode()`, the `season_type` collapse (`"REG+POST"` or `"POST+REG"`) and the order of the entries in the `fg_*_list` columns. The user decided (2026-11-18): the rewrite keeps exactly this order dependence (process play stats in their given order; the regression test pins it). An order-independent output would be a separate, deliberate output change.
 - Snapshots (`expect_snapshot()`) of the empty-filter warning, the `stats_validate_pbp()` error and the `load_playstats()` input check.
 - The `pbp = NULL` path has no `custom_pbp` attribute; custom `pbp` has it.
 
 `expect_stats_unchanged()` goes into `tests/testthat/helpers.R`, modeled on `expect_pbp_unchanged()`. It matches rows by the grouping variables and reports missing or new columns, changed column order, changed classes and attributes, missing, new or duplicated rows, type changes and changed values: non-doubles exactly, doubles with a relative tolerance of 1e-9 (sums and means can change in the last bits when the summation order changes, e.g. GForce `mean()` vs. base `mean()`). It writes all differences to `stats_diff.csv` in `tools::R_user_dir("nflfastR", which = "cache")`.
+
+Status: done. `local_stats_regression()` and `stats_regression_run()` in `helper-regression.R` download the assets, mock the three loaders for the calling test and run the outputs named like the expected list. `expect_stats_unchanged()` compares named lists of outputs and writes all value differences of one call to one CSV (column `output` names the output). It was checked on mutated outputs: value changes of 1e-7, `NA` → `NaN`, integer → double, class, `custom_pbp` attribute, row and column order, missing and duplicated rows and character and list column values are reported; a relative change of 1e-12 isn't. The snapshot of the empty-filter warning passes `seasons = 2023` with pbp of 2023, so it should survive the message change of step 4. `devtools::test(filter = "calculate_stats")` passes (30 expectations).
+
+Open for 0.6: the regression test mocks `load_playstats()`, so its body (`seasons = TRUE`, the URLs, `nflreadr::load_from_url()`) is only reached by the snapshot of the `stopifnot()` check and the live tests. 100% line coverage from the regression test alone needs a mockable wrapper of `nflreadr::load_from_url()` (like `stats_load_pbp()` in 0.1), which is a change of `R/calculate_stats.R`; ask the user first.
 
 ### 0.6 Check the test setup
 
