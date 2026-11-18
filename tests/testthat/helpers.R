@@ -290,3 +290,190 @@ is_on_cran <- function() {
     !isTRUE(as.logical(env))
   }
 }
+
+# Compare outputs of calculate_stats() with the expected outputs. `act` and
+# `exp` are named lists of outputs. Rows are matched by the grouping variables
+# (season, week, player_id or team). Reports differences of class and
+# attributes, columns and their order, rows and their order, column types
+# and values: non-doubles exactly, doubles with a relative tolerance, because
+# sums and means can change in the last bits when the summation order changes.
+# NA and NaN are different values. Outside CRAN, all value differences are
+# written to `<diff_name>_diff.csv`, see write_pbp_diff().
+expect_stats_unchanged <- function(act, exp, ..., diff_name = "stats") {
+  msg <- character()
+  diffs <- list()
+  missing_out <- setdiff(names(exp), names(act))
+  if (length(missing_out)) {
+    msg <- c(msg, paste("Missing outputs:", toString(missing_out)))
+  }
+  for (name in intersect(names(exp), names(act))) {
+    res <- stats_differences(act[[name]], exp[[name]], ...)
+    if (length(res$messages)) {
+      msg <- c(msg, paste0(name, ": ", res$messages))
+    }
+    diffs <- c(
+      diffs,
+      lapply(res$diffs, \(d) cbind(output = name, d))
+    )
+  }
+  path <- write_pbp_diff(diffs, diff_name)
+  if (!is.null(path)) {
+    msg <- c(msg, paste("All value differences written to", path))
+  }
+
+  testthat::expect(
+    length(msg) == 0,
+    paste(
+      c("stats differ from expected output:", paste("-", msg)),
+      collapse = "\n"
+    )
+  )
+  invisible(act)
+}
+
+stats_differences <- function(act, exp, tolerance = 1e-9, n_examples = 3) {
+  msg <- character()
+
+  # class and attributes other than names and row names
+  attrs <- function(x) {
+    # sorted like identical() does: attributes are a set
+    a <- attributes(x)
+    a[sort(setdiff(names(a), c("names", "row.names")))]
+  }
+  if (!identical(attrs(act), attrs(exp))) {
+    msg <- c(
+      msg,
+      paste(
+        "Class or attributes changed:",
+        paste(utils::capture.output(str(attrs(exp))), collapse = " "),
+        "->",
+        paste(utils::capture.output(str(attrs(act))), collapse = " ")
+      )
+    )
+  }
+
+  # columns
+  missing_cols <- setdiff(names(exp), names(act))
+  new_cols <- setdiff(names(act), names(exp))
+  if (length(missing_cols)) {
+    msg <- c(msg, paste("Missing columns:", toString(missing_cols)))
+  }
+  if (length(new_cols)) {
+    msg <- c(msg, paste("New columns:", toString(new_cols)))
+  }
+  common_cols <- intersect(names(exp), names(act))
+  if (!identical(common_cols, intersect(names(act), names(exp)))) {
+    msg <- c(msg, "Column order changed")
+  }
+
+  # rows, matched by the grouping variables
+  key_cols <- intersect(c("season", "week", "player_id"), names(exp))
+  if (!"player_id" %in% key_cols) {
+    key_cols <- c(key_cols, "team")
+  }
+  key <- function(df) {
+    if (!all(key_cols %in% names(df))) {
+      return(rep(NA_character_, nrow(df)))
+    }
+    do.call(paste, c(unname(as.list(df[key_cols])), sep = " "))
+  }
+  k_act <- key(act)
+  k_exp <- key(exp)
+  if (sum(duplicated(k_act)) != sum(duplicated(k_exp))) {
+    msg <- c(
+      msg,
+      paste("Duplicated rows:", toString(head(k_act[duplicated(k_act)], 10)))
+    )
+  }
+  missing_rows <- setdiff(k_exp, k_act)
+  new_rows <- setdiff(k_act, k_exp)
+  if (length(missing_rows)) {
+    msg <- c(
+      msg,
+      sprintf(
+        "%d missing rows, e.g. %s",
+        length(missing_rows),
+        toString(head(missing_rows, n_examples))
+      )
+    )
+  }
+  if (length(new_rows)) {
+    msg <- c(
+      msg,
+      sprintf(
+        "%d new rows, e.g. %s",
+        length(new_rows),
+        toString(head(new_rows, n_examples))
+      )
+    )
+  }
+  common <- intersect(k_exp, k_act)
+  if (!identical(k_act[k_act %in% common], k_exp[k_exp %in% common])) {
+    msg <- c(msg, "Row order changed")
+  }
+
+  # values of common rows and columns
+  a <- act[match(common, k_act), ]
+  e <- exp[match(common, k_exp), ]
+  diffs <- list()
+  for (col in common_cols) {
+    x <- a[[col]]
+    y <- e[[col]]
+    if (!identical(class(x), class(y)) || !identical(typeof(x), typeof(y))) {
+      msg <- c(
+        msg,
+        sprintf(
+          "%s: type changed from %s to %s",
+          col,
+          typeof(y),
+          typeof(x)
+        )
+      )
+      next
+    }
+    diff <- stats_values_differ(x, y, tolerance)
+    if (!any(diff)) {
+      next
+    }
+    i <- which(diff)
+    diffs[[col]] <- data.frame(
+      column = col,
+      row = common[i],
+      expected = as.character(y[i]),
+      actual = as.character(x[i])
+    )
+    ex <- head(i, n_examples)
+    msg <- c(
+      msg,
+      sprintf(
+        "%s: %d values changed, e.g.\n    %s",
+        col,
+        length(i),
+        paste(
+          sprintf(
+            "%s (expected %s, got %s)",
+            common[ex],
+            format(y[ex], digits = 15),
+            format(x[ex], digits = 15)
+          ),
+          collapse = "\n    "
+        )
+      )
+    )
+  }
+
+  list(messages = msg, diffs = diffs)
+}
+
+stats_values_differ <- function(x, y, tolerance) {
+  both <- !is.na(x) & !is.na(y)
+  diff <- xor(is.na(x), is.na(y))
+  if (is.double(x)) {
+    diff <- diff | xor(is.nan(x), is.nan(y))
+    diff[both] <- abs(x[both] - y[both]) >
+      tolerance * pmax(abs(x[both]), abs(y[both]))
+  } else {
+    diff[both] <- x[both] != y[both]
+  }
+  diff
+}

@@ -54,7 +54,7 @@ calculate_stats <- function(
   custom_pbp <- !is.null(pbp)
 
   if (!custom_pbp) {
-    pbp <- nflreadr::load_pbp(seasons = seasons)
+    pbp <- stats_load_pbp(seasons = seasons)
   }
 
   # make sure (custom) pbp includes all required variables.
@@ -598,7 +598,7 @@ calculate_stats <- function(
     # need newer version of nflreadr to use load_players
     rlang::check_installed("nflreadr (>= 1.3.0)", "to join player information.")
 
-    player_info <- nflreadr::load_players() |>
+    player_info <- stats_load_players() |>
       dplyr::select(
         "player_id" = "gsis_id",
         "player_display_name" = "display_name",
@@ -702,9 +702,19 @@ load_playstats <- function(seasons = nflreadr::most_recent_season()) {
     ".rds"
   )
 
-  out <- nflreadr::load_from_url(urls, seasons = TRUE, nflverse = FALSE)
+  out <- stats_load_from_url(urls)
 
   out
+}
+
+# Wrappers of the nflreadr loaders, so tests can mock them with
+# local_mocked_bindings() without modifying the nflreadr namespace
+stats_load_pbp <- function(seasons) nflreadr::load_pbp(seasons = seasons)
+
+stats_load_players <- function() nflreadr::load_players()
+
+stats_load_from_url <- function(urls) {
+  nflreadr::load_from_url(urls, seasons = TRUE, nflverse = FALSE)
 }
 
 fg_list <- function(stat_ids, yards, collapse_id, gwfg = NULL) {
