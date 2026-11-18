@@ -6,7 +6,7 @@ Seasons 1999 and 2000 are deprecated. They are not used anywhere in this plan: n
 
 ## Status and how to resume
 
-Work happens on branch `calculate-stats-performance`. Done: 0.1, 0.2, 0.3. Next: 0.4.
+Work happens on branch `calculate-stats-performance`. Done: 0.1, 0.2, 0.3, 0.4. Next: 0.5.
 
 Files in this folder:
 
@@ -17,6 +17,7 @@ Files in this folder:
 | `season_hits.R`, `run_all.sh` | Download one / all seasons and run the checklist per season (0.3). |
 | `select_games.R` | Greedy game selection and the checklist on the selected games (0.3). |
 | `selected_games.csv` | The 60 selected games (committed; the input of 0.4). |
+| `update_stats_regression.R` | Builds and uploads the pinned inputs and expected output (0.4). |
 | `hits/` | Git-ignored. Downloaded data and checklist results per season. |
 
 `hits/` doesn't survive a fresh clone. Rebuild it with `sh data-raw/calculate_stats_performance/run_all.sh 2025 4` (about 15 minutes on 4 cores plus downloads; it skips seasons that are done), but only if you need to repeat the selection. 0.4 only needs the seasons in `selected_games.csv` and should download them itself (see 0.4).
@@ -27,6 +28,7 @@ Practical notes from earlier sessions:
 - `readRDS()` of a URL (and with it `nflreadr::load_pbp()`, `load_players()` and `load_playstats()`) times out after 60 s on slow connections. Download with `curl::curl_download()` to a file, like `download_rds()` in `season_hits.R`.
 - `return()` inside `j` of a data.table call at the top level of a script fails ("no function to return from"). Put the code in a function.
 - Grouped data.table calls whose `j` is `if (...) .(...)` return a table without the `j` columns when no group matches. Check `nrow()` before using the result.
+- Rscript reads a script while it runs it. Don't edit or `air format` a script while it's running, or the rest is read from shifted offsets (parse error near a random word).
 - R messages on this machine are in German (`Fehler` = error, `Ausführung angehalten` = execution halted). Don't filter them away when you grep the output.
 - A full season of the checklist takes ~45 s (8 calls of the current `calculate_stats()`).
 - The `calculate_stats` tests need the network and take long; skip them (`devtools::test(filter = "calculate_stats", invert = TRUE)`) only when working on other parts of the package, not here.
@@ -170,6 +172,14 @@ Details for the implementation:
 - Expected output: run the current `calculate_stats()` for all 12 combinations (with `load_playstats()` and `stats_load_players()` mocked to the pinned inputs) and for `pbp = NULL` (also `stats_load_pbp()` mocked). Store them in a named list, e.g. `"season/player/REG"`.
 - Reuse the manifest helpers in `tests/testthat/helper-regression.R` and the upload code of `data-raw/test_game_selection/update_regression_test.R` (asset names with md5, `gh release upload`). Watch out: `write_regression_manifest()` writes only the fields of `regression_kinds` (`raw`, `games`, `expected`), and `regression_data()` downloads all of them, including the large raw tarball. Extend both so they handle the stats kinds and keep each other's fields: updating the pbp regression data must not drop the stats entries and vice versa, and the stats test should download only the stats assets. The README in `data-raw/test_game_selection/` describes the manifest; add the stats assets there.
 - Show the user the asset sizes and the dry-run output before asking for the upload.
+
+Status: done. The assets are uploaded and in `regression_data.dcf`. `--new-inputs` downloads into `hits/pin_download` and reuses it. The dry run result:
+
+- Removed from the pinned players: `00-0025944` (Steven Hauschka, K, with negative receiving air yards) and `00-0021182` (Maurice Morris, RB).
+- Checklist on the pinned inputs: 779 of 783 items, the gaps are the 4 unreachable `fg_missed_0_19 != 0`.
+- Expected output: 12 combinations plus `pbp_null/season/player/REG`, from 60 games.
+- Assets: `regression_stats_inputs_4dbcca1781.rds` (340 kB), `regression_stats_expected_b1c7f2f016.rds` (360 kB). The checksums are the same on a second run.
+- `helper-regression.R`: `regression_kinds` is now a list of the sets `pbp` and `stats`, `regression_data(set = "stats")` downloads only the stats assets, and `write_regression_manifest()` writes the fields of both sets that are in the manifest. `update_regression_test.R` already keeps the other entries of the old manifest.
 
 ### 0.5 Tests
 

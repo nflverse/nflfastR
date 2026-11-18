@@ -6,3 +6,7 @@ games: regression_games_7f2ef583f4.rds
 games_md5: 7f2ef583f4c13a0c9da3575b732a03f0
 expected: regression_expected_80c22685de.rds
 expected_md5: 80c22685de08fb2b0e280a2fca27b6aa
+stats_inputs: regression_stats_inputs_4dbcca1781.rds
+stats_inputs_md5: 4dbcca1781b44f2e19a03a3bdb291f20
+stats_expected: regression_stats_expected_b1c7f2f016.rds
+stats_expected_md5: b1c7f2f0167acb0d2ba2161ec5515210
