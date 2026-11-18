@@ -10,6 +10,10 @@ The regression test in `tests/testthat/test-build_nflfastR_pbp.R` compares the p
 - Never run `data-raw/test_game_selection/update_regression_test.R` without `--dry-run` unless the user explicitly asks. It uploads to a public release.
 - Never update the expected output or loosen tolerances just to make the test pass.
 
+### Rewrite of `calculate_stats()`
+
+`calculate_stats()` is being rewritten with data.table on branch `calculate-stats-performance`. Before working on it, read `data-raw/calculate_stats_performance/PLAN.md`: its status section says which step is next, and its rules apply (test setup before any change of the computation, no 1999/2000 seasons, no uploads without `--dry-run` unless the user explicitly asks).
+
 ### data.table in the `build_nflfastR_pbp()` pipeline
 
 The pipeline passes one data.table through all steps and changes it by reference. Write idiomatic data.table code, not dplyr code translated line by line:

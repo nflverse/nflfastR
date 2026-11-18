@@ -25,6 +25,34 @@
 
 library(data.table)
 
+# Columns of pbp that calculate_stats() uses: the ones stats_validate_pbp()
+# requires plus posteam_type and defteam_score (used for game winning field
+# goals, but not validated)
+checklist_pbp_columns <- c(
+  "season",
+  "game_id",
+  "play_id",
+  "posteam",
+  "defteam",
+  "special",
+  "season_type",
+  "away_score",
+  "home_score",
+  "field_goal_attempt",
+  "fixed_drive",
+  "score_differential",
+  "play_type",
+  "week",
+  "passer_player_id",
+  "qb_epa",
+  "cpoe",
+  "rusher_player_id",
+  "epa",
+  "receiver_player_id",
+  "posteam_type",
+  "defteam_score"
+)
+
 checklist_combos <- function() {
   # week summaries ignore season_type, so they only need one combination
   rbind(
