@@ -6,7 +6,7 @@ Seasons 1999 and 2000 are deprecated. They are not used anywhere in this plan: n
 
 ## Status and how to resume
 
-Work happens on branch `calculate-stats-performance`. Done: steps 0–5. The rewrite of `calculate_stats()` is complete. Step 6 (dependencies) is a separate effort.
+Steps 0–5 were done on branch `calculate-stats-performance` (step 0 in #630, steps 1–5 in #631). Done: steps 0–5. The rewrite of `calculate_stats()` is complete. Step 6 (dependencies) is a separate effort.
 
 Files in this folder:
 

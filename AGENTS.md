@@ -10,9 +10,12 @@ The regression test in `tests/testthat/test-build_nflfastR_pbp.R` compares the p
 - Never run `data-raw/test_game_selection/update_regression_test.R` without `--dry-run` unless the user explicitly asks. It uploads to a public release.
 - Never update the expected output or loosen tolerances just to make the test pass.
 
-### Rewrite of `calculate_stats()`
+### `calculate_stats()`
 
-`calculate_stats()` is being rewritten with data.table on branch `calculate-stats-performance`. Before working on it, read `data-raw/calculate_stats_performance/PLAN.md`: its status section says which step is next, and its rules apply (test setup before any change of the computation, no 1999/2000 seasons, no uploads without `--dry-run` unless the user explicitly asks).
+`calculate_stats()` was rewritten with data.table (steps 0–5 of `data-raw/calculate_stats_performance/PLAN.md`). Before changing it, read that plan: its notes explain non-obvious choices (e.g. the output depends on the row order of the play stats), and its rules apply (no 1999/2000 seasons, no uploads without `--dry-run` unless the user explicitly asks).
+
+- Check a change with the `calculate_stats` tests and `Rscript data-raw/calculate_stats_performance/compare.R 2023` (old vs. new on a full season). Differences of doubles within the tolerance of the tests are accepted; anything else is a bug until the user decides otherwise.
+- Step 6 of the plan (dropping dplyr, tidyr, tibble and janitor from the package) is open. Each function needs its own test setup like step 0 before it changes.
 
 ### data.table in the `build_nflfastR_pbp()` pipeline
 
