@@ -65,8 +65,10 @@ test_that("xpass only uses the game situation", {
   )
 })
 
-test_that("xpass covers all seasons and only uses their era", {
-  expect_all_true(!is.na(xpass_state(season = 1999:2030)))
+test_that("xpass covers all seasons since 2001 and only uses their era", {
+  expect_all_true(!is.na(xpass_state(season = 2001:2030)))
+  expect_all_true(is.na(xpass_state(season = 1999:2000)))
   expect_equal(xpass_state(season = 2018), xpass_state(season = 2030))
   expect_equal(xpass_state(season = 2006), xpass_state(season = 2013))
+  expect_equal(xpass_state(season = 2001), xpass_state(season = 2005))
 })

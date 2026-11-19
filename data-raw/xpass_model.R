@@ -1,9 +1,10 @@
 # Builds the expected dropback model (xpass) that lives in R/sysdata.rda
 # (object `xpass_model`). See R/helper_add_xpass.R for what the model is.
 #
-# Training rows are all plays with a down since 1999 that are a dropback or a
+# Training rows are all plays with a down since 2001 that are a dropback or a
 # run, including plays with a penalty (`play_type` "no_play") and without kneels
-# and spikes. These are the rows that get `pass_oe`.
+# and spikes. These are the rows that get `pass_oe`. 1999 and 2000 are not used
+# because nflfastR doesn't support these seasons anymore (#568).
 #
 # Model choices were made with season grouped cross validation (7 folds) and by
 # predicting each season since 2014 from the seasons before it, see the PR that
@@ -33,7 +34,7 @@ params <- list(
 # ---- data -------------------------------------------------------------------
 # one season at a time: all columns of all seasons at once need several GB
 pbp <- bind_rows(lapply(
-  1999:nflreadr::most_recent_season(),
+  2001:nflreadr::most_recent_season(),
   function(s) {
     nflreadr::load_pbp(s) |>
       select(any_of(c(

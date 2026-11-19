@@ -71,9 +71,13 @@ add_xpass <- function(pbp, ...) {
 prepare_xpass_data <- function(pbp) {
   # a list of columns, so make_model_mutations() doesn't change pbp
   plays <- make_model_mutations(as.list(pbp))
+  # 2001 is the only supported season of era0, so here it belongs to era1
+  plays$era1 <- as.numeric(plays$season <= 2005)
+  # no xpass in 1999 and 2000: these seasons aren't supported anymore (#568)
   plays$valid_play <- as.numeric(
-    plays$play_type %chin%
-      c("no_play", "pass", "run") &
+    plays$season >= 2001 &
+      plays$play_type %chin%
+        c("no_play", "pass", "run") &
       !is.na(plays$posteam) &
       !is.na(plays$down) &
       !is.na(plays$defteam_timeouts_remaining) &
@@ -86,10 +90,13 @@ prepare_xpass_data <- function(pbp) {
 
 # The expected dropback model is an xgboost model of `pass` on all plays with a
 # down that are a dropback or a run (penalties included, kneels and spikes not)
-# since 1999. It only knows the game situation and the era of the season (the
-# eras of the other models, see make_model_mutations()), which lets it follow
-# league-wide trends. It has no team strength (pregame line) and no win
-# probability, so it doesn't change when a win probability model does.
+# since 2001. It only knows the game situation and the era of the season, which
+# lets it follow league-wide trends. The eras are the ones of the other models
+# (see make_model_mutations()), except that 2001 belongs to era1 (2001 to 2005)
+# and there is no era0: 1999 and 2000 aren't supported anymore (#568), which
+# would leave era0 with a single season. It has no team strength (pregame line)
+# and no win probability, so it doesn't change when a win probability model
+# does.
 #
 # Built by data-raw/xpass_model.R and stored in R/sysdata.rda as `xpass_model`
 # (list with the xgboost model as raw UBJSON).
@@ -103,7 +110,6 @@ xpass_model_features <- c(
   "posteam_timeouts_remaining",
   "defteam_timeouts_remaining",
   "qtr",
-  "era0",
   "era1",
   "era2",
   "era3",
