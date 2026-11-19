@@ -55,6 +55,18 @@ as_test_tibble <- function(df) {
   df
 }
 
+# A data.table with the class of nflreadr data, like nflreadr::load_pbp()
+as_nflreadr_data <- function(df) {
+  dt <- data.table::as.data.table(df)
+  data.table::setattr(dt, "nflverse_type", "play by play")
+  data.table::setattr(
+    dt,
+    "class",
+    c("nflverse_data", "tbl_df", "tbl", "data.table", "data.frame")
+  )
+  dt
+}
+
 test_tibble <- function(...) {
   as_test_tibble(data.frame(..., check.names = FALSE))
 }

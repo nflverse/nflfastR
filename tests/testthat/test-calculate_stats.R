@@ -65,7 +65,8 @@ test_that("calculate_stats output doesn't depend on the input type and order", {
   variants <- list(
     shuffled_pbp = shuffled_pbp,
     data.table = data.table::as.data.table(pbp),
-    nflverse_data = make_nflverse_data(data.table::as.data.table(pbp))
+    nflverse_data = make_nflverse_data(data.table::copy(pbp)),
+    nflreadr_data = as_nflreadr_data(pbp)
   )
   for (v in names(variants)) {
     out <- stats_regression_run(name, variants[[v]])

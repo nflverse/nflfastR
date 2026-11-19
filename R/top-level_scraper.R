@@ -474,9 +474,6 @@ fast_scraper <- function(
     str <- paste0(my_time(), " | Procedure completed.")
     cli::cli_alert_success("{.field {str}}")
   }
-  if (data.table::is.data.table(pbp)) {
-    data.table::setDF(pbp)
-  }
   make_nflverse_data(pbp)
 }
 

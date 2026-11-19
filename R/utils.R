@@ -141,11 +141,14 @@ write_pbp <- function(seasons, dbConnection, tablename) {
   }
 }
 
+# A data frame with the class of a tibble (not a data.table, so that users get
+# the subsetting rules of data frames even without tibble loaded)
 make_nflverse_data <- function(data, type = c("play by play")) {
+  data.table::setDF(data)
   attr(data, "nflverse_timestamp") <- Sys.time()
   attr(data, "nflverse_type") <- type
   attr(data, "nflfastR_version") <- utils::packageVersion("nflfastR")
-  class(data) <- c("nflverse_data", "tbl_df", "tbl", "data.table", "data.frame")
+  class(data) <- c("nflverse_data", "tbl_df", "tbl", "data.frame")
   data
 }
 
