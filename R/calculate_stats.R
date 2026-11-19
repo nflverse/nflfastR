@@ -416,7 +416,8 @@ calculate_stats <- function(
 
   # Stats that aren't sums. Each is computed only for the summaries that
   # output it, and without R code per group where possible. They depend on
-  # the row order of the play stats (see PLAN.md).
+  # the row order of the play stats (see
+  # data-raw/calculate_stats_performance/README.md).
   # First values per group with GForce:
   # - season_type of week summaries. It's REG or POST depending on the
   #   argument season_type. Season summaries collapse it below.

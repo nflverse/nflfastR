@@ -1,4 +1,4 @@
-# Case checklist for the calculate_stats() test data (step 0.2 of PLAN.md)
+# Case checklist for the calculate_stats() test data (see README.md)
 #
 # Line coverage is not enough for calculate_stats(): the big summarise() call
 # is one expression, so every stat counts as covered whether or not any row
