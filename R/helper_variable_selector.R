@@ -1,9 +1,3 @@
-################################################################################
-# Author: Ben Baldwin, Sebastian Carl
-# Purpose: Build the final output of the pbp functions
-# Code Style Guide: styler::tidyverse_style()
-################################################################################
-
 select_variables <- function(pbp) {
   keep <- intersect(c(nflscrapr_cols, new_cols, api_cols), names(pbp))
   drop <- setdiff(names(pbp), keep)

@@ -1,6 +1,6 @@
 ################################################################################
 # Author: Ben Baldwin
-# Purpose: Estimate nflfastR models for EP, CP, Field Goals, and WP
+# Purpose: Estimate nflfastR models for EP, CP, and WP
 ################################################################################
 
 library(tidyverse)
@@ -108,25 +108,6 @@ ep_model <- xgboost::xgboost(
   data = full_train,
   nrounds = nrounds,
   verbose = 2
-)
-
-################################################################################
-# Estimate FG model
-################################################################################
-
-fg_model_data <- pbp_data |>
-  filter(
-    play_type %in%
-      c("field_goal", "extra_point", "run") &
-      (!is.na(extra_point_result) | !is.na(field_goal_result))
-  ) |>
-  make_model_mutations()
-
-#estimate model
-fg_model <- mgcv::bam(
-  sp ~ s(yardline_100, by = interaction(era, model_roof)) + model_roof + era,
-  data = fg_model_data,
-  family = "binomial"
 )
 
 ################################################################################
@@ -290,7 +271,6 @@ usethis::use_data(
   ep_model,
   wp_model,
   wp_model_spread,
-  fg_model,
   cp_model,
   internal = TRUE,
   overwrite = TRUE

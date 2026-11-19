@@ -1,12 +1,6 @@
-################################################################################
-# Author: Sebastian Carl
-# Purpose: Functions to add ep(a) and wp(a) variables
-# Code Style Guide: styler::tidyverse_style()
-################################################################################
-
 add_ep <- function(pbp) {
   out <- pbp |> add_ep_variables()
-  user_message("added ep variables", "done")
+  cli_message("added ep variables", .cli_fct = cli::cli_alert_success)
   return(out)
 }
 
@@ -35,20 +29,17 @@ add_air_yac_ep <- function(pbp) {
       "total_away_raw_yac_epa"
     )
     data.table::set(pbp, j = cols, value = NA_real_)
-    user_message(
-      "No non-NA air_yards detected. air_yac_ep variables set to NA",
-      "info"
-    )
+    cli_message("No non-NA air_yards detected. air_yac_ep variables set to NA")
   } else {
     pbp <- add_air_yac_ep_variables(pbp)
-    user_message("added air_yac_ep variables", "done")
+    cli_message("added air_yac_ep variables", .cli_fct = cli::cli_alert_success)
   }
   pbp
 }
 
 add_wp <- function(pbp) {
   out <- pbp |> add_wp_variables()
-  user_message("added wp variables", "done")
+  cli_message("added wp variables", .cli_fct = cli::cli_alert_success)
   return(out)
 }
 
@@ -77,13 +68,10 @@ add_air_yac_wp <- function(pbp) {
       "total_away_raw_yac_wpa"
     )
     data.table::set(pbp, j = cols, value = NA_real_)
-    user_message(
-      "No non-NA air_yards detected. air_yac_wp variables set to NA",
-      "info"
-    )
+    cli_message("No non-NA air_yards detected. air_yac_wp variables set to NA")
   } else {
     pbp <- add_air_yac_wp_variables(pbp)
-    user_message("added air_yac_wp variables", "done")
+    cli_message("added air_yac_wp variables", .cli_fct = cli::cli_alert_success)
   }
   pbp
 }
@@ -641,9 +629,6 @@ prepare_wp_data <- function(pbp) {
 #add ep variables
 #All of these are heavily borrowed from nflscrapR (Maksim Horowitz, Ronald Yurko, and Samuel Ventura)
 add_ep_variables <- function(pbp_data) {
-  #testing
-  #pbp_data <- g
-
   # ----------------------------------------------------------------------------
   # ---- special case: deal with FG attempts
   # Now make another dataset that to get the EP probabilities from a missed FG:
@@ -1214,9 +1199,6 @@ add_team_totals <- function(pbp, x, type) {
 #################################################################
 # Calculate WP and WPA:
 add_wp_variables <- function(pbp_data) {
-  #testing only
-  # pbp_data <- g
-
   # Initialize the df to store predicted win probability
   OffWinProb <- rep(NA_real_, nrow(pbp_data))
   OffWinProb_spread <- rep(NA_real_, nrow(pbp_data))

@@ -1,9 +1,3 @@
-################################################################################
-# Author: Ben Baldwin
-# Purpose: Function to add Lee Sharpe's game data
-# Code Style Guide: styler::tidyverse_style()
-################################################################################
-
 # Thanks Lee!
 add_game_data <- function(pbp, games = NULL, ...) {
   out <- pbp
@@ -51,7 +45,7 @@ add_game_data <- function(pbp, games = NULL, ...) {
       )
       data.table::set(out, j = "game_date", value = out$gameday)
 
-      user_message("added game variables", "done")
+      cli_message("added game variables", .cli_fct = cli::cli_alert_success)
     },
     error = function(e) {
       message("The following error has occured:")

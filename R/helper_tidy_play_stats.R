@@ -1,10 +1,3 @@
-################################################################################
-# Author: Sebastian Carl
-# Purpose: Create one row with all play stats per play, built in the scraper
-#          functions
-# Stlyeguide: styler::tidyverse_style()
-################################################################################
-
 # Build one row per play for a tidy data structure
 #
 # This is a sub-function of get_pbp_nfl().

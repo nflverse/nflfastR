@@ -8,3 +8,19 @@
       i It was saved with xgboost "0.0.1" and you have "<installed>".
       x boom
 
+# cli_message interpolates in the caller and respects verbose
+
+    Code
+      f()
+    Message
+      * <time> | 2 seasons and more
+      v <time> | done
+      ! <time> | careful
+
+---
+
+    Code
+      f()
+    Message
+      ! <time> | careful
+

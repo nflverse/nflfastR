@@ -1,8 +1,3 @@
-################################################################################
-# Author: Ben Baldwin, Sebastian Carl, Tan Ho
-# Stlyeguide: styler::tidyverse_style()
-################################################################################
-
 #' Clean Play by Play Data
 #'
 #' @param pbp is a Data frame of play-by-play data scraped using [fast_scraper()].
@@ -50,10 +45,10 @@
 #' @export
 clean_pbp <- function(pbp, ...) {
   if (nrow(pbp) == 0) {
-    user_message("Nothing to clean. Return passed data frame.", "info")
+    cli_message("Nothing to clean. Return passed data frame.")
     r <- pbp
   } else {
-    user_message("Cleaning up play-by-play...", "todo")
+    cli_message("Cleaning up play-by-play...", .cli_fct = cli::cli_ul)
 
     by_ref <- in_pipeline(pbp, ...)
     d <- if (by_ref) pbp else as_pbp_dt(pbp)
@@ -368,7 +363,7 @@ clean_pbp <- function(pbp, ...) {
     }
   }
 
-  message_completed("Cleaning completed", ...)
+  cli_message("Cleaning completed", .cli_fct = cli::cli_alert_success)
 
   return(r)
 }
@@ -484,7 +479,7 @@ team_name_fn <- function(var) {
 #' @export
 add_qb_epa <- function(pbp, ...) {
   if (nrow(pbp) == 0) {
-    user_message("Nothing to do. Return passed data frame.", "info")
+    cli_message("Nothing to do. Return passed data frame.")
     return(pbp)
   }
   by_ref <- in_pipeline(pbp, ...)
@@ -561,7 +556,7 @@ add_qb_epa <- function(pbp, ...) {
   }
   data.table::set(d, j = "qb_epa", value = qb_epa)
 
-  message_completed("added qb_epa", ...)
+  cli_message("added qb_epa", .cli_fct = cli::cli_alert_success)
   if (by_ref) d else as_input_type(d, pbp)
 }
 

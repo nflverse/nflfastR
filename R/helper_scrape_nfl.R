@@ -1,9 +1,3 @@
-################################################################################
-# Author: Sebastian Carl, Ben Baldwin
-# Purpose: Function for scraping pbp data from the new NFL web site
-# Code Style Guide: styler::tidyverse_style()
-################################################################################
-
 # Build a tidy version of scraped NFL data as a data.table
 #
 # @param id Specifies the game

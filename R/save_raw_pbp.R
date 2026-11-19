@@ -155,35 +155,10 @@ raw_pbp_load_schedules <- function(seasons) {
 }
 
 verify_game_ids <- function(game_ids) {
-  # game_ids <- c(
-  #   "2021_02_LAC_KC",
-  #   "Hello World",
-  #   "2028_01_LAC_JAX",
-  #   "2022_27_LAC_BUF",
-  #   "2021_02_LAC_KAC"
-  # )
-  season_check <- substr(game_ids, 1, 4) %in%
-    seq.int(1999, as.integer(format(Sys.Date(), "%Y")) + 1, 1)
-  week_check <- as.integer(substr(game_ids, 6, 7)) %in% seq_len(22)
-  team_name_check <-
-    vapply(
-      stringi::stri_extract_all_regex(
-        game_ids,
-        "(?<=_)[:upper:]{2,3}",
-        omit_no_match = TRUE
-      ),
-      function(t) {
-        all(
-          t %chin% c(nflfastR::teams_colors_logos$team_abbr, "OAK", "SD", "STL")
-        )
-      },
-      FUN.VALUE = logical(1L)
-    )
-  combined_check <- season_check & week_check & team_name_check
-
-  if (!all(combined_check)) {
+  valid <- is_valid_game_id(game_ids)
+  if (!all(valid)) {
     cli::cli_abort(
-      "The game IDs {.val {game_ids[!combined_check]}} seem to be invalid!"
+      "The game IDs {.val {game_ids[!valid]}} seem to be invalid!"
     )
   }
 
