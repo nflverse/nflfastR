@@ -128,8 +128,8 @@ load_raw_game <- function(
     # cli::cli_progress_step("Load locally from {.path {local_file}}")
     raw <- readRDS(local_file)
   } else {
-    to_load <- raw_pbp_urls(game_id)
-    raw <- nflreadr::rds_from_url(to_load)
+    # nflreadr::rds_from_url() turns the list into a data.table
+    raw <- fetch_raw(game_id, dir = NULL)
   }
 
   raw
@@ -633,6 +633,7 @@ utils::globalVariables(
     "td_prob",
     "td_team",
     "team",
+    "team_abbr",
     "team_air_yards",
     "team_play_air_yards",
     "team_targets",
