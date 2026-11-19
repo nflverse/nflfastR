@@ -363,7 +363,26 @@ Check: regression test passes (18 expectations), `compare.R` on all seasons: 48 
 | week / player | 16.87 | 0.53 | 31.9x |
 | week / team | 3.81 | 0.40 | 9.5x |
 
-Open from the review: items 3–12 (small cleanups: duplicated `fg_long_yards` / `pt_long_yards`, the `grp_id` codes, one join instead of two for the play information, a redundant `setcolorder()` in `stats_player_info()`, `%chin%`, and more).
+## Review of #631: items 3–12
+
+Small cleanups, no change of the output:
+
+- `fg_long` and `pt_long` are the maximums of the contributions `fg_made_distance` and `pt_yards`; the duplicated `fg_long_yards` and `pt_long_yards` are gone. The GForce call sums `.SDcols = !grp_vctr`.
+- The grouping variables come from the logicals `week` and `player` (`c("season", if (week) "week", if (player) "player_id" else "team")`) instead of the codes `"10"`–`"40"`; `stats_output_columns()` takes `player` and `week`.
+- The play information is added with one update join, then `playstats[!is.na(is_gwfg_attempt)]` keeps the rows of plays in pbp in their order (`is_gwfg_attempt` is never `NA` for a play in pbp). Before, a `which = TRUE` join selected the rows first.
+- `stats_player_info()` no longer orders its columns; the `setcolorder()` after the join does that.
+- Columns are selected by reference (`set(value = NULL)` and `setcolorder()`) instead of copying the table with `[, ..out_cols]`. A comment explains that `setorderv()` only moves `NA` groups to the end, because `keyby` already sorted the rows.
+- `stat_id %in% td_ids()` is computed once (`is_td`).
+- `%chin%` for the `season_type` argument, `setdiff()` in `stats_validate_pbp()`, no temporary variable in `load_playstats()`.
+
+Check: regression test passes, `compare.R` on all seasons: 48 of 48 identical or within tolerance (12 identical, as before). `benchmark.R` (2023, median of 3 runs, seconds):
+
+| `summary_level` / `stat_type` | Old | New | Speedup |
+|---|---|---|---|
+| season / player | 4.95 | 0.50 | 9.8x |
+| season / team | 3.52 | 0.38 | 9.2x |
+| week / player | 16.54 | 0.50 | 33.1x |
+| week / team | 3.76 | 0.38 | 10.0x |
 
 ## Step 6 (separate effort): dependencies
 

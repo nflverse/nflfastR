@@ -74,7 +74,7 @@ calculate_stats <- function(
   # columns to it, so it never changes the user's pbp by reference.
   pbp <- as_pbp_dt(.subset(pbp, stats_pbp_columns()))
 
-  if (season_type %in% c("REG", "POST") && summary_level == "season") {
+  if (season_type %chin% c("REG", "POST") && summary_level == "season") {
     keep_type <- season_type
     pbp <- pbp[season_type == keep_type]
     if (nrow(pbp) == 0) {
@@ -120,16 +120,11 @@ calculate_stats <- function(
   )]
 
   # load_playstats defined below
-  # Keep only the play stats of plays in pbp (it may be a custom subset), in
-  # the row order of the play stats, and add the play information.
+  # Add the play information to the play stats and keep only the play stats
+  # of plays in pbp (it may be a custom subset), in the row order of the play
+  # stats. is_gwfg_attempt is never NA for plays in pbp, so it's NA exactly
+  # in the rows without a play.
   playstats <- data.table::as.data.table(load_playstats(seasons_in_pbp))
-  in_pbp <- playstats[
-    plays,
-    on = c("game_id", "play_id"),
-    which = TRUE,
-    nomatch = NULL
-  ]
-  playstats <- playstats[sort(unique(in_pbp))]
   playstats[
     plays,
     on = c("game_id", "play_id"),
@@ -141,6 +136,7 @@ calculate_stats <- function(
       i.is_gwfg_attempt
     )
   ]
+  playstats <- playstats[!is.na(is_gwfg_attempt)]
   data.table::setnames(
     playstats,
     c("gsis_player_id", "team_abbr"),
@@ -200,11 +196,9 @@ calculate_stats <- function(
   # compute team targets and team air yards for calculation of target share
   # and air yard share. Since it's relative, we need to be careful with the
   # groups depending on summary level
-  share_by <- if (summary_level == "season") {
-    c("season", "team")
-  } else {
-    c("season", "week", "team")
-  }
+  week <- summary_level == "week"
+  player <- stat_type == "player"
+  share_by <- c("season", if (week) "week", "team")
   playstats[,
     c("team_targets", "team_air_yards") := list(
       sum(targets),
@@ -213,36 +207,17 @@ calculate_stats <- function(
     by = share_by
   ]
 
-  # Check combination of summary_level and stat_type to set a helper that is
-  # used to create the grouping variables
-  grp_id <- data.table::fcase(
-    summary_level == "season" && stat_type == "player",
-    "10",
-    summary_level == "season" && stat_type == "team",
-    "20",
-    summary_level == "week" && stat_type == "player",
-    "30",
-    summary_level == "week" && stat_type == "team",
-    "40"
-  )
   # grp_vctr are the grouping variables
-  grp_vctr <- switch(
-    grp_id,
-    "10" = c("season", "player_id"),
-    "20" = c("season", "team"),
-    "30" = c("season", "week", "player_id"),
-    "40" = c("season", "week", "team")
-  )
-  week <- summary_level == "week"
-  player <- stat_type == "player"
+  grp_vctr <- c("season", if (week) "week", if (player) "player_id" else "team")
 
   # Aggregation #####################
   # Every stat that is a sum is a contribution of each row, computed once on
   # the whole columns and summed by group in one GForce call, together with
-  # the maximums fg_long and pt_long. Columns that only some summaries
+  # the maximums fg_long and pt_long (see below). Columns that only some summaries
   # output are computed for all and dropped when the columns are selected.
   # passing_air_yards, punt_return_yards and targets are columns of playstats
   # already (see above).
+  is_td <- playstats$stat_id %in% td_ids()
   contributions <- playstats[,
     c(
       .SD,
@@ -301,7 +276,7 @@ calculate_stats <- function(
         receiving_20 = (stat_id %in% 21:24) * (yards >= 20),
         receiving_40 = (stat_id %in% 21:24) * (yards >= 40),
 
-        special_teams_tds = (special == 1) & stat_id %in% td_ids(),
+        special_teams_tds = (special == 1) & is_td,
 
         # Defense #####################
         def_tackles_solo = stat_id == 79,
@@ -319,7 +294,7 @@ calculate_stats <- function(
         def_interceptions = stat_id %in% 25:26,
         def_interception_yards = (stat_id %in% 25:28) * yards,
         def_pass_defended = stat_id == 85,
-        def_tds = team == def & special != 1 & stat_id %in% td_ids(),
+        def_tds = team == def & special != 1 & is_td,
         # stat ID 54 is a fumble out of bounds. It's never counted alone,
         # always in combination with 52 or 53.
         def_fumbles = (team == def) & stat_id %in% 52:53,
@@ -419,11 +394,7 @@ calculate_stats <- function(
         pt_returned = (stat_id %in% c(2, 29, 31, 32)) & a_punt_returned,
         pt_return_yards = (stat_id %in% c(2, 29, 31, 32)) *
           play_punt_return_yards,
-        pt_return_tds = (stat_id %in% c(2, 29, 31, 32)) & a_punt_return_td,
-
-        # maximums, not sums
-        fg_long_yards = (stat_id == 70) * yards,
-        pt_long_yards = (stat_id %in% c(29, 32)) * yards
+        pt_return_tds = (stat_id %in% c(2, 29, 31, 32)) & a_punt_return_td
       )
     ),
     .SDcols = c(
@@ -433,17 +404,14 @@ calculate_stats <- function(
       "targets"
     )
   ]
-  sum_cols <- setdiff(
-    names(contributions),
-    c(grp_vctr, "fg_long_yards", "pt_long_yards")
-  )
+  # fg_long and pt_long are the maximums of fg_made_distance and pt_yards
   stats <- contributions[,
     c(
       lapply(.SD, sum),
-      list(fg_long = max(fg_long_yards), pt_long = max(pt_long_yards))
+      list(fg_long = max(fg_made_distance), pt_long = max(pt_yards))
     ),
     keyby = grp_vctr,
-    .SDcols = sum_cols
+    .SDcols = !grp_vctr
   ]
   rm(contributions)
 
@@ -555,7 +523,7 @@ calculate_stats <- function(
   }
 
   # Derived stats #####################
-  if (stat_type == "team") {
+  if (!player) {
     stats[, receiving_air_yards := passing_air_yards]
   }
   stats[,
@@ -634,13 +602,15 @@ calculate_stats <- function(
     receiving_epa := i.receiving_epa
   ]
 
-  out_cols <- stats_output_columns(grp_vctr, grp_id, summary_level)
-  stats <- stats[, ..out_cols]
-  # C locale and NA last, like dplyr::arrange()
+  out_cols <- stats_output_columns(grp_vctr, player, week)
+  data.table::set(stats, j = setdiff(names(stats), out_cols), value = NULL)
+  data.table::setcolorder(stats, out_cols)
+  # C locale and NA last, like dplyr::arrange(). keyby already sorted the
+  # rows, this only moves NA groups to the end.
   data.table::setorderv(stats, grp_vctr, na.last = TRUE)
 
   # Apply Player Modifications #####################
-  if (stat_type == "player") {
+  if (player) {
     # need newer version of nflreadr to use load_players
     rlang::check_installed("nflreadr (>= 1.3.0)", "to join player information.")
 
@@ -734,9 +704,7 @@ load_playstats <- function(seasons = nflreadr::most_recent_season()) {
     ".rds"
   )
 
-  out <- stats_load_from_url(urls)
-
-  out
+  stats_load_from_url(urls)
 }
 
 # Wrappers of the nflreadr loaders, so tests can mock them with
@@ -750,15 +718,13 @@ stats_load_from_url <- function(urls) {
 }
 
 # Output columns of calculate_stats() before the player information, in order.
-stats_output_columns <- function(grp_vctr, grp_id, summary_level) {
-  player <- grp_id %in% c("10", "30")
-  week <- summary_level == "week"
+stats_output_columns <- function(grp_vctr, player, week) {
   cols <- c(
     if (player) "player_name",
     "season_type",
     if (week) "game_id",
-    if (grp_id == "10") "recent_team",
-    if (grp_id == "30") "team",
+    if (player && !week) "recent_team",
+    if (player && week) "team",
     if (week) "opponent_team",
     if (!week) "games",
     "completions",
@@ -920,16 +886,6 @@ stats_player_info <- function(players, call = rlang::caller_env()) {
     c("gsis_id", "display_name", "headshot"),
     c("player_id", "player_display_name", "headshot_url")
   )
-  data.table::setcolorder(
-    players,
-    c(
-      "player_id",
-      "player_display_name",
-      "position",
-      "position_group",
-      "headshot_url"
-    )
-  )
   players
 }
 
@@ -967,9 +923,7 @@ td_ids <- function() {
 }
 
 stats_validate_pbp <- function(pbp) {
-  required_names <- stats_pbp_columns()
-  available_names <- names(pbp)
-  missing <- required_names[!required_names %in% available_names]
+  missing <- setdiff(stats_pbp_columns(), names(pbp))
   if (length(missing) > 0) {
     cli::cli_abort(
       "You have passed custom pbp to the argument {.arg pbp} but \\
