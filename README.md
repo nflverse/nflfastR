@@ -37,7 +37,7 @@ data. `nflfastR` expands upon the features of nflscrapR:
   very quick access
 - Features models for Expected Points, Win Probability, Completion
   Probability, and Yards After the Catch (see section below)
-- Includes a function `update_db()` that creates and updates a database
+- Includes a function `update_pbp_db()` that creates and updates a database
 
 We owe a debt of gratitude to the original
 [`nflscrapR`](https://github.com/maksimhorowitz/nflscrapR) team, Maksim

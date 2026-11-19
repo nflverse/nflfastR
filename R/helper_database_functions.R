@@ -6,6 +6,11 @@
 
 #' Update or Create a nflfastR Play-by-Play Database
 #'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' This function is deprecated. Please use [update_pbp_db()] instead.
+#'
 #' `update_db` updates or creates a database with `nflfastR`
 #' play by play data of all completed games since 1999.
 #'
@@ -43,6 +48,7 @@
 #' of or the complete play by play data table within the database (please see details for further information)
 #' @param db_connection A `DBIConnection` object, as returned by
 #' [DBI::dbConnect()] (please see details for further information)
+#' @keywords internal
 #' @export
 update_db <- function(
   dbdir = getOption("nflfastR.dbdirectory", default = "."),
@@ -51,6 +57,8 @@ update_db <- function(
   force_rebuild = FALSE,
   db_connection = NULL
 ) {
+  lifecycle::deprecate_warn("6.1.0", "update_db()", "update_pbp_db()")
+
   rule_header("Update nflfastR Play-by-Play Database")
 
   if (
