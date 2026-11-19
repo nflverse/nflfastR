@@ -6,7 +6,7 @@ Seasons 1999 and 2000 are deprecated. They are not used anywhere in this plan: n
 
 ## Status and how to resume
 
-Work happens on branch `calculate-stats-performance`. Done: step 0 (0.1–0.7), steps 1–3. Next: step 4.
+Work happens on branch `calculate-stats-performance`. Done: step 0 (0.1–0.7), steps 1–4. Next: step 5.
 
 Files in this folder:
 
@@ -304,6 +304,25 @@ Status: done. Regression test passes, `compare.R` on all seasons reports 48 of 4
 - Column names used in `[.data.table` go into `utils::globalVariables()` at the end of `R/utils.R`; remove the separate call in `R/calculate_stats.R`.
 
 Check: regression test, `compare.R`, `benchmark.R`, `devtools::check()`.
+
+Status: done. Regression test passes, `compare.R 2023` reports 12 of 12 combinations `identical()`. `devtools::check()`: 0 warnings, 0 notes; the only test failure was the changed validation snapshot (waiting for the user's review).
+
+- `passing_cpoe` uses `base::mean()`: data.table optimizes `mean()` (GForce `gmean()`) to a one-pass mean that differs from base `mean()` by up to ~1e-13 relative. `compare.R` found it; the tests' tolerance wouldn't have. The sums with GForce `gsum()` are identical.
+- EPA stats: one aggregation per stat on the slim pbp, added with update joins (`NA` keys match, like `left_join()`). The EPA columns are part of `stats_output_columns()`, which replaces the `select()` that moved them.
+- Sort with `setorderv(na.last = TRUE)`: C locale and `NA` last, like `arrange()`.
+- `pacr` / `racr` with `fcase()` (all conditions on the original values; `default` can be a vector). Fantasy points with `- 2 *` instead of `+ -2 *` (exactly the same in floating point; fixes the jarl warnings).
+- Player information: `stats_player_info()` errors if `load_players()` returned data without the needed columns (new snapshot test). The join `player_info[stats, on = "player_id", allow.cartesian = TRUE]` keeps the order of stats and duplicates rows for duplicated `gsis_id`s like `left_join()`.
+- The empty-filter warning prints `seasons_in_pbp` (the snapshot doesn't change: the test passes `seasons = 2023`).
+- `stats_validate_pbp()` also requires `posteam_type` and `defteam_score` (`stats_pbp_columns()` is the one list).
+- Output: `setDF()` and the class `c("tbl_df", "tbl", "data.frame")`. Only `tibble::tibble()` for the empty result remains (step 5).
+- `benchmark.R` (2023, median of 3 runs, seconds):
+
+| `summary_level` / `stat_type` | Old | New | Speedup |
+|---|---|---|---|
+| season / player | 4.93 | 0.66 | 7.5x |
+| season / team | 3.50 | 0.56 | 6.3x |
+| week / player | 16.89 | 1.21 | 14.0x |
+| week / team | 3.78 | 0.58 | 6.5x |
 
 ## Step 5: wrap-up
 

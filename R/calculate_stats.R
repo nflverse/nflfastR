@@ -72,7 +72,7 @@ calculate_stats <- function(
     pbp <- pbp[season_type == keep_type]
     if (nrow(pbp) == 0) {
       cli::cli_alert_warning(
-        "Filtering {.val {seasons}} data to {.arg season_type} == \\
+        "Filtering {.val {seasons_in_pbp}} data to {.arg season_type} == \\
         {.val {season_type}} resulted in 0 rows. Returning empty tibble."
       )
       return(tibble::tibble())
@@ -204,7 +204,7 @@ calculate_stats <- function(
     summary_level == "week" && stat_type == "team",
     "40"
   )
-  # grp_vctr is used as character vector for joining pbp stats
+  # grp_vctr are the grouping variables
   grp_vctr <- switch(
     grp_id,
     "10" = c("season", "player_id"),
@@ -212,64 +212,6 @@ calculate_stats <- function(
     "30" = c("season", "week", "player_id"),
     "40" = c("season", "week", "team")
   )
-  # grp_vars is used as grouping variables
-  grp_vars <- rlang::data_syms(grp_vctr)
-
-  # Stats from PBP #####################
-  # we want passing epa, rushing epa, and receiving epa
-  # since these depend on different player id variables and filters,
-  # we create separate dfs for these stats
-  passing_stats_from_pbp <- pbp |>
-    dplyr::filter(.data$play_type %chin% c("pass", "qb_spike")) |>
-    dplyr::select(
-      "season",
-      "week",
-      "team" = "posteam",
-      "player_id" = "passer_player_id",
-      "qb_epa",
-      "cpoe"
-    ) |>
-    dplyr::group_by(!!!grp_vars) |>
-    dplyr::summarise(
-      passing_epa = sum(.data$qb_epa, na.rm = TRUE),
-      # mean will return NaN if all values are NA, because we remove NA
-      passing_cpoe = if (any(!is.na(.data$cpoe))) {
-        mean(.data$cpoe, na.rm = TRUE)
-      } else {
-        NA_real_
-      }
-    ) |>
-    dplyr::ungroup()
-
-  rushing_stats_from_pbp <- pbp |>
-    dplyr::filter(.data$play_type %chin% c("run", "qb_kneel")) |>
-    dplyr::select(
-      "season",
-      "week",
-      "team" = "posteam",
-      "player_id" = "rusher_player_id",
-      "epa"
-    ) |>
-    dplyr::group_by(!!!grp_vars) |>
-    dplyr::summarise(
-      rushing_epa = sum(.data$epa, na.rm = TRUE)
-    ) |>
-    dplyr::ungroup()
-
-  receiving_stats_from_pbp <- pbp |>
-    dplyr::filter(!is.na(.data$receiver_player_id)) |>
-    dplyr::select(
-      "season",
-      "week",
-      "team" = "posteam",
-      "player_id" = "receiver_player_id",
-      "epa"
-    ) |>
-    dplyr::group_by(!!!grp_vars) |>
-    dplyr::summarise(
-      receiving_epa = sum(.data$epa, na.rm = TRUE)
-    ) |>
-    dplyr::ungroup()
 
   # Aggregation #####################
   # Every stat that is a sum is a contribution of each row, computed once on
@@ -564,101 +506,140 @@ calculate_stats <- function(
   stats[fg_long == 0L, fg_long := NA_integer_]
   stats[pt_long == 0L, pt_long := NA_integer_]
 
+  # "" (e.g. fg lists without field goals) -> NA
+  for (col in names(stats)[vapply(stats, is.character, logical(1))]) {
+    data.table::set(
+      stats,
+      i = which(stats[[col]] == ""),
+      j = col,
+      value = NA_character_
+    )
+  }
+
+  # Stats from PBP #####################
+  # we want passing epa, rushing epa, and receiving epa
+  # since these depend on different player id variables and filters,
+  # we aggregate them separately and add them with update joins
+  passing_stats_from_pbp <- pbp[
+    play_type %chin% c("pass", "qb_spike"),
+    list(
+      season,
+      week,
+      team = posteam,
+      player_id = passer_player_id,
+      qb_epa,
+      cpoe
+    )
+  ][,
+    list(
+      passing_epa = sum(qb_epa, na.rm = TRUE),
+      # mean is NaN if all values are NA, because we remove NA.
+      # base::mean() because data.table optimizes mean() to a one-pass mean
+      # that differs from base::mean() in the last bits.
+      passing_cpoe = base::mean(cpoe, na.rm = TRUE)
+    ),
+    by = grp_vctr
+  ]
+  passing_stats_from_pbp[is.nan(passing_cpoe), passing_cpoe := NA_real_]
+
+  rushing_stats_from_pbp <- pbp[
+    play_type %chin% c("run", "qb_kneel"),
+    list(season, week, team = posteam, player_id = rusher_player_id, epa)
+  ][, list(rushing_epa = sum(epa, na.rm = TRUE)), by = grp_vctr]
+
+  receiving_stats_from_pbp <- pbp[
+    !is.na(receiver_player_id),
+    list(season, week, team = posteam, player_id = receiver_player_id, epa)
+  ][, list(receiving_epa = sum(epa, na.rm = TRUE)), by = grp_vctr]
+
+  # Joins match NA keys, like the left_join() of dplyr
+  stats[
+    passing_stats_from_pbp,
+    on = grp_vctr,
+    c("passing_epa", "passing_cpoe") := list(i.passing_epa, i.passing_cpoe)
+  ]
+  stats[rushing_stats_from_pbp, on = grp_vctr, rushing_epa := i.rushing_epa]
+  stats[
+    receiving_stats_from_pbp,
+    on = grp_vctr,
+    receiving_epa := i.receiving_epa
+  ]
+
   out_cols <- stats_output_columns(grp_vctr, grp_id, summary_level)
   stats <- stats[, ..out_cols]
-  stats <- tibble::as_tibble(data.table::setDF(stats))
-
-  stats <- stats |>
-    dplyr::mutate_if(
-      .predicate = is.character,
-      .funs = ~ dplyr::na_if(.x, "")
-    ) |>
-    # Join PBP Stats #####################
-    dplyr::left_join(passing_stats_from_pbp, by = grp_vctr) |>
-    dplyr::left_join(rushing_stats_from_pbp, by = grp_vctr) |>
-    dplyr::left_join(receiving_stats_from_pbp, by = grp_vctr) |>
-    # relocate epa variables. This could be done with dplyr::relocate
-    # but we want to be compatible with older dplyr versions
-    dplyr::select(
-      "season":"passing_first_downs",
-      "passing_epa",
-      "passing_cpoe",
-      "passing_2pt_conversions":"rushing_first_downs",
-      "rushing_epa",
-      "rushing_2pt_conversions":"receiving_first_downs",
-      "receiving_epa",
-      dplyr::everything()
-    ) |>
-    dplyr::arrange(!!!grp_vars)
+  # C locale and NA last, like dplyr::arrange()
+  data.table::setorderv(stats, grp_vctr, na.last = TRUE)
 
   # Apply Player Modifications #####################
   if (stat_type == "player") {
     # need newer version of nflreadr to use load_players
     rlang::check_installed("nflreadr (>= 1.3.0)", "to join player information.")
 
-    player_info <- stats_load_players() |>
-      dplyr::select(
-        "player_id" = "gsis_id",
-        "player_display_name" = "display_name",
-        # "player_name" = "short_name",
-        "position",
-        "position_group",
-        "headshot_url" = "headshot"
-      )
+    player_info <- stats_player_info(stats_load_players())
 
     # load gsis_ids of RBs, FBs and HBs for RACR
-    racr_ids <- player_info |>
-      dplyr::filter(.data$position %chin% c("RB", "FB", "HB")) |>
-      dplyr::pull("player_id")
+    racr_ids <- player_info[position %chin% c("RB", "FB", "HB"), player_id]
 
-    stats <- stats |>
-      dplyr::mutate(
-        pacr = dplyr::case_when(
-          is.nan(.data$pacr) ~ NA_real_,
-          .data$passing_air_yards <= 0 ~ 0,
-          TRUE ~ .data$pacr
+    # all conditions on the original values, so fcase()
+    stats[,
+      c("pacr", "racr") := list(
+        data.table::fcase(
+          is.nan(pacr),
+          NA_real_,
+          passing_air_yards <= 0,
+          0,
+          default = pacr
         ),
-        racr = dplyr::case_when(
-          is.nan(.data$racr) ~ NA_real_,
-          .data$receiving_air_yards == 0 ~ 0,
-          # following Josh Hermsmeyer's definition, RACR stays < 0 for RBs (and FBs) and is set to
-          # 0 for Receivers. The list "racr_ids" includes all known RB and FB gsis_ids
-          .data$receiving_air_yards < 0 & !.data$player_id %chin% racr_ids ~ 0,
-          TRUE ~ .data$racr
-        ),
-        # Fantasy #####################
-        fantasy_points = 1 /
-          25 *
-          .data$passing_yards +
-          4 * .data$passing_tds +
-          -2 * .data$passing_interceptions +
-          1 / 10 * (.data$rushing_yards + .data$receiving_yards) +
-          6 *
-            (.data$rushing_tds +
-              .data$receiving_tds +
-              .data$special_teams_tds) +
-          2 *
-            (.data$passing_2pt_conversions +
-              .data$rushing_2pt_conversions +
-              .data$receiving_2pt_conversions) +
-          -2 *
-            (.data$sack_fumbles_lost +
-              .data$rushing_fumbles_lost +
-              .data$receiving_fumbles_lost),
+        data.table::fcase(
+          is.nan(racr),
+          NA_real_,
+          receiving_air_yards == 0,
+          0,
+          # following Josh Hermsmeyer's definition, RACR stays < 0 for RBs
+          # (and FBs) and is set to 0 for Receivers. The list "racr_ids"
+          # includes all known RB and FB gsis_ids
+          receiving_air_yards < 0 & !player_id %chin% racr_ids,
+          0,
+          default = racr
+        )
+      )
+    ]
+    # Fantasy #####################
+    stats[,
+      fantasy_points := 1 /
+        25 *
+        passing_yards +
+        4 * passing_tds -
+        2 * passing_interceptions +
+        1 / 10 * (rushing_yards + receiving_yards) +
+        6 * (rushing_tds + receiving_tds + special_teams_tds) +
+        2 *
+          (passing_2pt_conversions +
+            rushing_2pt_conversions +
+            receiving_2pt_conversions) -
+        2 * (sack_fumbles_lost + rushing_fumbles_lost + receiving_fumbles_lost)
+    ]
+    stats[, fantasy_points_ppr := fantasy_points + receptions]
 
-        fantasy_points_ppr = .data$fantasy_points + .data$receptions
-      ) |>
-      dplyr::left_join(player_info, by = "player_id") |>
-      dplyr::select(
+    # Like a left_join(): keeps the order of stats, NA matches NA and a
+    # duplicated gsis_id duplicates rows
+    stats <- player_info[stats, on = "player_id", allow.cartesian = TRUE]
+    data.table::setcolorder(
+      stats,
+      c(
         "player_id",
         "player_name",
         "player_display_name",
         "position",
         "position_group",
-        "headshot_url",
-        dplyr::everything()
+        "headshot_url"
       )
+    )
   }
+
+  # a tibble without importing tibble
+  data.table::setDF(stats)
+  data.table::setattr(stats, "class", c("tbl_df", "tbl", "data.frame"))
 
   if (custom_pbp) {
     attr(stats, "custom_pbp") <- TRUE
@@ -666,19 +647,6 @@ calculate_stats <- function(
 
   stats
 }
-
-# Silence global vars NOTE
-# We do this differently here because it's only a bunch of variables
-# and the code is more readable
-utils::globalVariables(c(
-  "stat_id",
-  "yards",
-  "team",
-  "def",
-  "off",
-  "special",
-  "is_gwfg_attempt"
-))
 
 load_playstats <- function(seasons = nflreadr::most_recent_season()) {
   if (isTRUE(seasons)) {
@@ -712,7 +680,7 @@ stats_load_from_url <- function(urls) {
   nflreadr::load_from_url(urls, seasons = TRUE, nflverse = FALSE)
 }
 
-# Output columns of the aggregation in calculate_stats(), in order.
+# Output columns of calculate_stats() before the player information, in order.
 stats_output_columns <- function(grp_vctr, grp_id, summary_level) {
   player <- grp_id %in% c("10", "30")
   week <- summary_level == "week"
@@ -736,6 +704,8 @@ stats_output_columns <- function(grp_vctr, grp_id, summary_level) {
     "passing_air_yards",
     "passing_yards_after_catch",
     "passing_first_downs",
+    "passing_epa",
+    "passing_cpoe",
     "passing_2pt_conversions",
     if (player) "pacr",
     "passing_10",
@@ -748,6 +718,7 @@ stats_output_columns <- function(grp_vctr, grp_id, summary_level) {
     "rushing_fumbles",
     "rushing_fumbles_lost",
     "rushing_first_downs",
+    "rushing_epa",
     "rushing_2pt_conversions",
     "rushing_10",
     "rushing_12",
@@ -762,6 +733,7 @@ stats_output_columns <- function(grp_vctr, grp_id, summary_level) {
     "receiving_air_yards",
     "receiving_yards_after_catch",
     "receiving_first_downs",
+    "receiving_epa",
     "receiving_2pt_conversions",
     "receiving_10",
     "receiving_16",
@@ -858,6 +830,40 @@ stats_output_columns <- function(grp_vctr, grp_id, summary_level) {
   c(grp_vctr, cols)
 }
 
+# The player information of calculate_stats() from load_players(), with a
+# clear error if it failed (nflreadr returns empty data with a warning)
+stats_player_info <- function(players, call = rlang::caller_env()) {
+  cols <- c("gsis_id", "display_name", "position", "position_group", "headshot")
+  missing <- setdiff(cols, names(players))
+  if (length(missing) > 0) {
+    cli::cli_abort(
+      c(
+        "Failed to load the player information with \\
+        {.fun nflreadr::load_players}.",
+        "i" = "It is missing the variable{?s} {.val {missing}}."
+      ),
+      call = call
+    )
+  }
+  players <- data.table::as.data.table(.subset(players, cols))
+  data.table::setnames(
+    players,
+    c("gsis_id", "display_name", "headshot"),
+    c("player_id", "player_display_name", "headshot_url")
+  )
+  data.table::setcolorder(
+    players,
+    c(
+      "player_id",
+      "player_display_name",
+      "position",
+      "position_group",
+      "headshot_url"
+    )
+  )
+  players
+}
+
 fg_list <- function(stat_ids, yards, collapse_id, gwfg = NULL) {
   if (is.null(gwfg)) {
     paste(
@@ -905,14 +911,8 @@ td_ids <- function() {
   )
 }
 
-# Columns of pbp that calculate_stats() uses. defteam_score and posteam_type
-# aren't validated because they weren't required before.
-stats_pbp_columns <- function() {
-  c(stats_required_pbp_columns(), "defteam_score", "posteam_type")
-}
-
 stats_validate_pbp <- function(pbp) {
-  required_names <- stats_required_pbp_columns()
+  required_names <- stats_pbp_columns()
   available_names <- names(pbp)
   missing <- required_names[!required_names %in% available_names]
   if (length(missing) > 0) {
@@ -927,7 +927,8 @@ stats_validate_pbp <- function(pbp) {
     as.vector()
 }
 
-stats_required_pbp_columns <- function() {
+# Columns of pbp that calculate_stats() uses
+stats_pbp_columns <- function() {
   c(
     "season",
     "game_id",
@@ -938,6 +939,8 @@ stats_required_pbp_columns <- function() {
     "season_type",
     "away_score",
     "home_score",
+    "posteam_type",
+    "defteam_score",
     "field_goal_attempt",
     "fixed_drive",
     "score_differential",
