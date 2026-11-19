@@ -5,17 +5,33 @@ test_that("calculate_series_conversion_rates works", {
 
   pbp <- load_test_pbp()
 
-  sc <- calculate_series_conversion_rates(pbp = pbp, weekly = FALSE) |>
-    round_double_to_digits()
-  sc_weekly <- calculate_series_conversion_rates(pbp = pbp, weekly = TRUE) |>
-    round_double_to_digits()
-
-  exp_sc <- load_expectation("sc")
-  exp_sc_weekly <- load_expectation("sc_weekly")
+  sc <- calculate_series_conversion_rates(pbp = pbp, weekly = FALSE)
+  sc_weekly <- calculate_series_conversion_rates(pbp = pbp, weekly = TRUE)
 
   expect_s3_class(sc, "tbl_df")
   expect_s3_class(sc_weekly, "tbl_df")
 
-  expect_equal(sc, exp_sc)
-  expect_equal(sc_weekly, exp_sc_weekly)
+  expect_identical(sc, load_expected_sc("sc"))
+  expect_identical(sc_weekly, load_expected_sc("sc_weekly"))
+})
+
+test_that("calculate_series_conversion_rates covers all series cases", {
+  pbp <- series_test_pbp()
+
+  expect_snapshot_value(
+    calculate_series_conversion_rates(pbp, weekly = FALSE),
+    style = "deparse"
+  )
+  expect_snapshot_value(
+    calculate_series_conversion_rates(pbp, weekly = TRUE),
+    style = "deparse"
+  )
+})
+
+test_that("calculate_series_conversion_rates checks the columns of pbp", {
+  pbp <- series_test_pbp()
+  pbp$series <- NULL
+  pbp$down <- NULL
+
+  expect_snapshot(calculate_series_conversion_rates(pbp), error = TRUE)
 })

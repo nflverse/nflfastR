@@ -84,10 +84,24 @@ try({# to avoid CRAN test problems
   pbp <- nflfastR::load_pbp(2021)
 
   weekly <- calculate_series_conversion_rates(pbp, weekly = TRUE)
-  dplyr::glimpse(weekly)
+  # one line per column, like dplyr::glimpse()
+  str(
+    weekly,
+    list.len = ncol(weekly),
+    vec.len = 10,
+    give.attr = FALSE,
+    strict.width = "cut"
+  )
 
   overall <- calculate_series_conversion_rates(pbp, weekly = FALSE)
-  dplyr::glimpse(overall)
+  # one line per column, like dplyr::glimpse()
+  str(
+    overall,
+    list.len = ncol(overall),
+    vec.len = 10,
+    give.attr = FALSE,
+    strict.width = "cut"
+  )
 })
 }
 }
