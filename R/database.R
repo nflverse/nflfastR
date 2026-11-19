@@ -201,12 +201,14 @@ update_pbp_db <- function(
     )
     # Let user know that some games are still missing
     still_missing <- setdiff(missing_games, new_ids)
-    vec <- cli::cli_vec(still_missing, list("vec-trunc" = 5L))
-    cli_message(
-      "Raw pbp data for the following {cli::no(length(still_missing))} game{?s} \\
-      still missing: {.val {vec}}. Please try again in about 10 minutes.",
-      .cli_fct = cli::cli_alert_warning
-    )
+    if (length(still_missing) > 0) {
+      vec <- cli::cli_vec(still_missing, list("vec-trunc" = 5L))
+      cli_message(
+        "Raw pbp data for the following {cli::no(length(still_missing))} game{?s} \\
+        still missing: {.val {vec}}. Please try again in about 10 minutes.",
+        .cli_fct = cli::cli_alert_warning
+      )
+    }
   }
 
   # Remove Dummy ------------------------------------------------------------

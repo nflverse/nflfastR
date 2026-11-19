@@ -41,8 +41,6 @@
       verify_game_ids(c("2021_02_LAC_KC", "Hello World", "2028_01_LAC_JAX",
         "2022_27_LAC_BUF", "2021_02_LAC_KAC"))
     Condition
-      Warning in `as.integer(substr(game_ids, 6, 7)) %in% seq_len(22)`:
-      NAs introduced by coercion
       Error in `verify_game_ids()`:
       ! The game IDs "Hello World", "2028_01_LAC_JAX", "2022_27_LAC_BUF", and "2021_02_LAC_KAC" seem to be invalid!
 

@@ -14,7 +14,7 @@
 #' @export
 add_xyac <- function(pbp, ...) {
   if (nrow(pbp) == 0) {
-    user_message("Nothing to do. Return passed data frame.", "info")
+    cli_message("Nothing to do. Return passed data frame.")
     return(pbp)
   }
   by_ref <- in_pipeline(pbp, ...)
@@ -28,7 +28,7 @@ add_xyac <- function(pbp, ...) {
   data.table::set(d, j = drop.cols.xyac, value = NA_real_)
 
   if (length(passes$index) > 0) {
-    user_message("Computing xyac...", "todo")
+    cli_message("Computing xyac...", .cli_fct = cli::cli_ul)
 
     # Value of the possession that follows each kind of score, at the clock
     # after the catch. It is the same for every yac outcome of a pass, so it is
@@ -57,12 +57,11 @@ add_xyac <- function(pbp, ...) {
       value = as.list(xyac_vars)[drop.cols.xyac]
     )
 
-    message_completed("added xyac variables", ...)
+    cli_message("added xyac variables", .cli_fct = cli::cli_alert_success)
   } else {
     # means no valid pass plays in the pbp
-    user_message(
-      "No non-NA values for xyac calculation detected. xyac variables set to NA",
-      "info"
+    cli_message(
+      "No non-NA values for xyac calculation detected. xyac variables set to NA"
     )
   }
 

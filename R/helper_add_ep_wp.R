@@ -1,6 +1,6 @@
 add_ep <- function(pbp) {
   out <- pbp |> add_ep_variables()
-  user_message("added ep variables", "done")
+  cli_message("added ep variables", .cli_fct = cli::cli_alert_success)
   return(out)
 }
 
@@ -29,20 +29,17 @@ add_air_yac_ep <- function(pbp) {
       "total_away_raw_yac_epa"
     )
     data.table::set(pbp, j = cols, value = NA_real_)
-    user_message(
-      "No non-NA air_yards detected. air_yac_ep variables set to NA",
-      "info"
-    )
+    cli_message("No non-NA air_yards detected. air_yac_ep variables set to NA")
   } else {
     pbp <- add_air_yac_ep_variables(pbp)
-    user_message("added air_yac_ep variables", "done")
+    cli_message("added air_yac_ep variables", .cli_fct = cli::cli_alert_success)
   }
   pbp
 }
 
 add_wp <- function(pbp) {
   out <- pbp |> add_wp_variables()
-  user_message("added wp variables", "done")
+  cli_message("added wp variables", .cli_fct = cli::cli_alert_success)
   return(out)
 }
 
@@ -71,13 +68,10 @@ add_air_yac_wp <- function(pbp) {
       "total_away_raw_yac_wpa"
     )
     data.table::set(pbp, j = cols, value = NA_real_)
-    user_message(
-      "No non-NA air_yards detected. air_yac_wp variables set to NA",
-      "info"
-    )
+    cli_message("No non-NA air_yards detected. air_yac_wp variables set to NA")
   } else {
     pbp <- add_air_yac_wp_variables(pbp)
-    user_message("added air_yac_wp variables", "done")
+    cli_message("added air_yac_wp variables", .cli_fct = cli::cli_alert_success)
   }
   pbp
 }

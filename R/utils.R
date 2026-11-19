@@ -1,39 +1,19 @@
-# The function `message_completed` to create the green "...completed" message
-# only exists to hide the option `in_builder` in dots
-message_completed <- function(x, in_builder = FALSE) {
-  if (!is_verbose()) {
-    return(invisible())
-  }
-  if (isFALSE(in_builder)) {
-    str <- paste0(my_time(), " | ", x)
-    cli::cli_alert_success("{.field {str}}")
-  } else if (in_builder) {
-    cli::cli_alert_success("{my_time()} | {x}")
-  }
-}
-
-user_message <- function(x, type) {
-  if (!is_verbose()) {
-    return(invisible())
-  }
-  if (type == "done") {
-    cli::cli_alert_success("{my_time()} | {x}")
-  } else if (type == "todo") {
-    cli::cli_ul("{my_time()} | {x}")
-  } else if (type == "info") {
-    cli::cli_alert_info("{my_time()} | {x}")
-  } else if (type == "oops") {
-    cli::cli_alert_danger("{my_time()} | {x}")
-  }
-}
-
+# Print msg (cli markup, interpolated in .envir) with a time stamp, e.g.
+# cli_message("added {n} rows", .cli_fct = cli::cli_alert_success).
+# options(nflfastR.verbose = FALSE) turns the messages off, except warnings and
+# dangers.
 cli_message <- function(
   msg,
-  ...,
   .cli_fct = cli::cli_alert_info,
   .envir = parent.frame()
 ) {
-  .cli_fct(c(my_time(), " | ", msg), ..., .envir = .envir)
+  is_warning <- identical(.cli_fct, cli::cli_alert_warning) ||
+    identical(.cli_fct, cli::cli_alert_danger)
+  if (!is_verbose() && !is_warning) {
+    return(invisible())
+  }
+  # One string, because cli_ul() makes one bullet per element
+  .cli_fct(paste0(my_time(), " | ", paste(msg, collapse = "")), .envir = .envir)
 }
 
 my_time <- function() strftime(Sys.time(), format = "%H:%M:%S")
@@ -68,22 +48,24 @@ read_raw_rds <- function(raw) {
   ret
 }
 
-# helper to make sure the output of the
-# schedule scraper is not named 'invalid' if the source file not yet exists
-maybe_valid <- function(id) {
-  all(
-    length(id) == 1,
-    is.character(id),
-    substr(id, 1, 4) %in%
-      seq.int(1999, as.integer(format(Sys.Date(), "%Y")) + 1, 1),
-    as.integer(substr(id, 6, 7)) %in% seq_len(22),
+# TRUE for each game ID with a plausible season, week and team abbreviations,
+# e.g. "2021_02_LAC_KC"
+is_valid_game_id <- function(game_ids) {
+  seasons <- seq.int(1999, as.integer(format(Sys.Date(), "%Y")) + 1)
+  teams <- c(nflfastR::teams_colors_logos$team_abbr, "OAK", "SD", "STL")
+  team_check <- vapply(
     stringi::stri_extract_all_regex(
-      id,
+      game_ids,
       "(?<=_)[:upper:]{2,3}",
       omit_no_match = TRUE
-    )[[1]] %in%
-      c(nflfastR::teams_colors_logos$team_abbr, "OAK", "SD", "STL")
+    ),
+    \(t) all(t %chin% teams),
+    logical(1L)
   )
+  substr(game_ids, 1, 4) %in%
+    seasons &
+    substr(game_ids, 6, 7) %chin% sprintf("%02d", 1:22) &
+    team_check
 }
 
 # check if a package is installed
@@ -188,7 +170,7 @@ fetch_raw <- function(
 
     fetched <- curl::curl_fetch_memory(to_load)
 
-    if (fetched$status_code == 404 && maybe_valid(game_id)) {
+    if (fetched$status_code == 404 && isTRUE(is_valid_game_id(game_id))) {
       cli::cli_abort(
         "The requested GameID {.val {game_id}} is not loaded yet, please try again later!"
       )

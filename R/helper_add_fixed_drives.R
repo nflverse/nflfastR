@@ -135,7 +135,7 @@ add_drive_results <- function(d) {
     value = NULL
   )
 
-  user_message("added fixed drive variables", "done")
+  cli_message("added fixed drive variables", .cli_fct = cli::cli_alert_success)
   d
 }
 

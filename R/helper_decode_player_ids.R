@@ -54,7 +54,7 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
     decode_gsis <- gsisdecoder::decode_ids
   }
 
-  user_message("Decode player ids...", "todo")
+  cli_message("Decode player ids...", .cli_fct = cli::cli_ul)
 
   players <- nflreadr::load_players()
 
@@ -96,7 +96,10 @@ decode_player_ids <- function(pbp, ..., fast = TRUE) {
     value = lapply(id_cols, function(col) decoded[match(d[[col]], ids)])
   )
 
-  message_completed("Decoding of player ids completed", ...)
+  cli_message(
+    "Decoding of player ids completed",
+    .cli_fct = cli::cli_alert_success
+  )
 
   if (by_ref) d else as_input_type(d, pbp)
 }

@@ -85,9 +85,10 @@ build_nflfastR_pbp <- function(
   game_count <- if (is.vector(game_ids)) length(game_ids) else nrow(game_ids)
   builder <- TRUE
 
-  if (is_verbose()) {
-    cli::cli_ul("{my_time()} | Start download of {game_count} game{?s}...")
-  }
+  cli_message(
+    "Start download of {game_count} game{?s}...",
+    .cli_fct = cli::cli_ul
+  )
 
   ret <- fast_scraper(
     game_ids = game_ids,

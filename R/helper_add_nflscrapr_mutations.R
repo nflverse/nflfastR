@@ -654,7 +654,7 @@ add_nflscrapr_mutations <- function(pbp) {
   d <- fix_scrambles(d)
   d <- make_model_mutations(d)
 
-  user_message("added nflscrapR variables", "done")
+  cli_message("added nflscrapR variables", .cli_fct = cli::cli_alert_success)
   d
 }
 

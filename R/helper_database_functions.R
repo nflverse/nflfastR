@@ -77,8 +77,9 @@ update_db <- function(
   }
 
   if (!dir.exists(dbdir) & is.null(db_connection)) {
-    cli::cli_alert_danger(
-      "{my_time()} | Directory {.file {dbdir}} doesn't exist yet. Try creating..."
+    cli_message(
+      "Directory {.file {dbdir}} doesn't exist yet. Try creating...",
+      .cli_fct = cli::cli_alert_danger
     )
     dir.create(dbdir)
   }
@@ -99,7 +100,7 @@ update_db <- function(
   }
 
   # get completed games using Lee's file (thanks Lee!)
-  user_message("Checking for missing completed games...", "todo")
+  cli_message("Checking for missing completed games...", .cli_fct = cli::cli_ul)
   # completed games since 1999, excluding the broken games
   completed_games <- data.table::setDT(load_schedules())[
     season >= 1999 & !is.na(result) & !game_id %chin% missing_raw_games
@@ -125,12 +126,12 @@ update_db <- function(
     new_pbp <- build_nflfastR_pbp(missing, rules = FALSE)
 
     if (nrow(new_pbp) == 0) {
-      user_message(
+      cli_message(
         "Raw data of new games are not yet ready. Please try again in about 10 minutes.",
-        "oops"
+        .cli_fct = cli::cli_alert_danger
       )
     } else {
-      user_message("Appending new data to database...", "todo")
+      cli_message("Appending new data to database...", .cli_fct = cli::cli_ul)
       DBI::dbWriteTable(connection, tblname, new_pbp, append = TRUE)
     }
   }
@@ -145,10 +146,8 @@ update_db <- function(
     )
   )
 
-  message_completed("Database update completed", in_builder = TRUE)
-  cli::cli_alert_info(
-    "{my_time()} | Path to your db: {.file {DBI::dbGetInfo(connection)$dbname}}"
-  )
+  cli_message("Database update completed", .cli_fct = cli::cli_alert_success)
+  cli_message("Path to your db: {.file {DBI::dbGetInfo(connection)$dbname}}")
   if (is.null(db_connection)) {
     DBI::dbDisconnect(connection)
   }
@@ -168,23 +167,26 @@ build_db <- function(
   ]
 
   if (all(rebuild == TRUE)) {
-    cli::cli_ul(
-      "{my_time()} | Purging the complete data table {.val {tblname}}
-                in your connected database..."
+    cli_message(
+      "Purging the complete data table {.val {tblname}}
+                in your connected database...",
+      .cli_fct = cli::cli_ul
     )
     DBI::dbRemoveTable(db_conn, tblname)
     seasons <- valid_seasons
-    cli::cli_ul(
-      "{my_time()} | Starting download of {length(seasons)} seasons
-                between {min(seasons)} and {max(seasons)}..."
+    cli_message(
+      "Starting download of {length(seasons)} seasons
+                between {min(seasons)} and {max(seasons)}...",
+      .cli_fct = cli::cli_ul
     )
   } else if (is.numeric(rebuild) & all(rebuild %in% valid_seasons)) {
     if (show_message) {
-      cli::cli_ul(
-        "{my_time()} | Purging
+      cli_message(
+        "Purging
                                   {cli::qty(length(rebuild))}season{?s} {rebuild}
                                   from the data table {.val {tblname}} in your
-                                  connected database..."
+                                  connected database...",
+        .cli_fct = cli::cli_ul
       )
     }
     DBI::dbExecute(
@@ -196,25 +198,28 @@ build_db <- function(
       )
     )
     seasons <- valid_seasons[valid_seasons %in% rebuild]
-    cli::cli_ul(
-      "{my_time()} | Starting download of the {length(rebuild)}
-                season{?s} {rebuild}"
+    cli_message(
+      "Starting download of the {length(rebuild)}
+                season{?s} {rebuild}",
+      .cli_fct = cli::cli_ul
     )
   } else if (all(rebuild == "NEW")) {
-    cli::cli_alert_info(
-      "{my_time()} | Can't find the data table {.val {tblname}}
+    cli_message(
+      "Can't find the data table {.val {tblname}}
                         in your database. Will load the play by play data from
                         scratch."
     )
     seasons <- valid_seasons
-    cli::cli_ul(
-      "{my_time()} | Starting download of {length(seasons)} seasons
-                between {min(seasons)} and {max(seasons)}..."
+    cli_message(
+      "Starting download of {length(seasons)} seasons
+                between {min(seasons)} and {max(seasons)}...",
+      .cli_fct = cli::cli_ul
     )
   } else {
     seasons <- NULL
-    cli::cli_alert_danger(
-      "{my_time()} | At least one invalid value passed to argument {.arg force_rebuild}. Please try again with valid input."
+    cli_message(
+      "At least one invalid value passed to argument {.arg force_rebuild}. Please try again with valid input.",
+      .cli_fct = cli::cli_alert_danger
     )
   }
 
@@ -240,8 +245,8 @@ get_missing_games <- function(completed_games, dbConnection, tablename) {
     !completed_games %chin% c(db_ids, "9999_99_DEF_TYP")
   ]
 
-  cli::cli_alert_info(
-    "{my_time()} | You have {length(db_ids)} game{?s} and are missing {length(need_scrape)}."
+  cli_message(
+    "You have {length(db_ids)} game{?s} and are missing {length(need_scrape)}."
   )
   return(need_scrape)
 }

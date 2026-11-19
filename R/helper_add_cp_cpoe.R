@@ -21,12 +21,11 @@ add_cp <- function(pbp) {
       j = c("cp", "cpoe"),
       value = list(cp, 100 * (pbp$complete_pass - cp))
     )
-    user_message("added cp and cpoe", "done")
+    cli_message("added cp and cpoe", .cli_fct = cli::cli_alert_success)
   } else {
     data.table::set(pbp, j = c("cp", "cpoe"), value = NA_real_)
-    user_message(
-      "No non-NA values for cp calculation detected. cp and cpoe set to NA",
-      "info"
+    cli_message(
+      "No non-NA values for cp calculation detected. cp and cpoe set to NA"
     )
   }
 

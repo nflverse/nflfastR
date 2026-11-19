@@ -19,7 +19,7 @@
 - nflfastR no longer depends on stringr. It uses stringi directly.
 - nflfastR no longer depends on dplyr, janitor, tibble and tidyr. The package uses data.table and stringi internally.
 - nflfastR now requires nflreadr 1.5.0 or newer, curl 5.0.0 or newer, and rlang 1.0.0 or newer. Older versions lack functions the package uses.
-- New option `nflfastR.verbose`. Set `options(nflfastR.verbose = FALSE)` to turn off the progress messages of `build_nflfastR_pbp()` and the functions it calls.
+- New option `nflfastR.verbose`. Set `options(nflfastR.verbose = FALSE)` to turn off the progress messages of `build_nflfastR_pbp()`, `update_pbp_db()` and the other functions of the package. Warnings, e.g. about games that are still missing, are still shown.
 - `build_nflfastR_pbp()` gained the argument `add_xyac`. Set `add_xyac = FALSE` to skip `add_xyac()` and save computation time.
 - `build_nflfastR_pbp()` is now about 5 times faster on a single game and up to 8 times faster on many games. The output is unchanged.
 - `build_nflfastR_pbp()` no longer drops games whose raw data doesn't contain any play stats yet, e.g. right before kickoff.
@@ -31,6 +31,7 @@
 - `calculate_standings()` is now defunct and errors. It was deprecated in nflfastR 5.1.0. Please use `nflseedR::nfl_standings()` instead. nflfastR no longer suggests nflseedR. (#510)
 - `calculate_win_probability()` values overtime rows (`qtr > 4`) with the overtime model. They need `season` and an `ot_possession` column (1, 2, or 3 for later possessions), which is derived from `game_id` and `drive` when those are present. `season_type` and `roof` are optional. This lets nfl4th value overtime decisions. (#625)
 - `update_db()` is deprecated. Please use `update_pbp_db()` instead, which writes to any `DBIConnection` and updates only the most recent season by default.
+- `update_pbp_db()` no longer warns about raw pbp data that is still missing when all missing games could be added.
 
 # nflfastR 6.0.0
 

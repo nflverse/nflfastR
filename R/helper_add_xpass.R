@@ -17,7 +17,7 @@
 #' @export
 add_xpass <- function(pbp, ...) {
   if (nrow(pbp) == 0) {
-    user_message("Nothing to do. Return passed data frame.", "info")
+    cli_message("Nothing to do. Return passed data frame.")
     return(pbp)
   }
   by_ref <- in_pipeline(pbp, ...)
@@ -30,7 +30,7 @@ add_xpass <- function(pbp, ...) {
   valid <- which(plays$valid_play == 1)
 
   if (length(valid) > 0) {
-    user_message("Computing xpass...", "todo")
+    cli_message("Computing xpass...", .cli_fct = cli::cli_ul)
 
     # the model is only needed for valid plays
     xpass <- rep(NA_real_, nrow(d))
@@ -51,12 +51,11 @@ add_xpass <- function(pbp, ...) {
       )
     ]
 
-    message_completed("added xpass and pass_oe", ...)
+    cli_message("added xpass and pass_oe", .cli_fct = cli::cli_alert_success)
   } else {
     data.table::set(d, j = c("xpass", "pass_oe"), value = NA_real_)
-    user_message(
-      "No non-NA values for xpass calculation detected. xpass and pass_oe set to NA",
-      "info"
+    cli_message(
+      "No non-NA values for xpass calculation detected. xpass and pass_oe set to NA"
     )
   }
   if (by_ref) d else as_input_type(d, pbp)

@@ -45,6 +45,6 @@ add_series_data <- function(d) {
     value = NULL
   )
 
-  user_message("added series variables", "done")
+  cli_message("added series variables", .cli_fct = cli::cli_alert_success)
   d
 }

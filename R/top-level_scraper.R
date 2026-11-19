@@ -443,7 +443,10 @@ fast_scraper <- function(
       data.table::rbindlist(use.names = TRUE, fill = TRUE)
 
     if (length(pbp) != 0) {
-      user_message("Download finished. Adding variables...", "done")
+      cli_message(
+        "Download finished. Adding variables...",
+        .cli_fct = cli::cli_alert_success
+      )
       # from here on, all steps change this one data.table by reference
       pbp <- pbp |>
         add_game_data(...) |>
@@ -464,9 +467,8 @@ fast_scraper <- function(
   if (in_builder && data.table::is.data.table(pbp)) {
     return(pbp)
   }
-  if (!in_builder && is_verbose()) {
-    str <- paste0(my_time(), " | Procedure completed.")
-    cli::cli_alert_success("{.field {str}}")
+  if (!in_builder) {
+    cli_message("Procedure completed.", .cli_fct = cli::cli_alert_success)
   }
   make_nflverse_data(pbp)
 }

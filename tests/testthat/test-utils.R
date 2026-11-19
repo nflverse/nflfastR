@@ -34,3 +34,35 @@ test_that("load_sysdata_booster names the model and the xgboost versions", {
   )
   expect_null(nflfastR_cache$sysdata_test_error)
 })
+
+test_that("is_valid_game_id checks season, week and teams", {
+  expect_identical(
+    is_valid_game_id(c(
+      "2021_02_LAC_KC",
+      "2002_17_OAK_SD",
+      "Hello World",
+      "2028_01_LAC_JAX",
+      "2022_27_LAC_BUF",
+      "2021_02_LAC_KAC"
+    )),
+    c(TRUE, TRUE, FALSE, FALSE, FALSE, FALSE)
+  )
+})
+
+test_that("cli_message interpolates in the caller and respects verbose", {
+  f <- function() {
+    n <- 2
+    cli_message(
+      "{n} season{?s} \\
+      and more",
+      .cli_fct = cli::cli_ul
+    )
+    cli_message("done", .cli_fct = cli::cli_alert_success)
+    cli_message("careful", .cli_fct = cli::cli_alert_warning)
+  }
+  mask_time <- \(x) gsub("[0-9]{2}:[0-9]{2}:[0-9]{2}", "<time>", x)
+  withr::local_options(nflfastR.verbose = TRUE)
+  expect_snapshot(f(), transform = mask_time)
+  withr::local_options(nflfastR.verbose = FALSE)
+  expect_snapshot(f(), transform = mask_time)
+})
