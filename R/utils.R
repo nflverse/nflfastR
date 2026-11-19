@@ -245,7 +245,6 @@ load_model <- function(name) {
     "ep" = fastrmodels::ep_model,
     "cp" = fastrmodels::cp_model,
     "wp" = fastrmodels::wp_model,
-    "xpass" = fastrmodels::xpass_model,
     "xyac" = fastrmodels::xyac_model
   )
 
@@ -258,6 +257,30 @@ load_model <- function(name) {
   }
   assign(key, out, envir = nflfastR_cache)
   out
+}
+
+# Loads an xgboost model that is stored as raw vector in R/sysdata.rda and
+# caches it under `key`. `version` is the xgboost version that saved the model
+# and `what` its name in the error message.
+load_sysdata_booster <- function(key, raw, version, what) {
+  key <- paste0("sysdata_", key)
+  if (is.null(nflfastR_cache[[key]])) {
+    booster <- tryCatch(
+      xgboost::xgb.load.raw(raw),
+      error = function(e) {
+        cli::cli_abort(
+          c(
+            "Can't load the {what}.",
+            "i" = "It was saved with xgboost {.val {version}} and you have {.val {as.character(utils::packageVersion('xgboost'))}}.",
+            "x" = conditionMessage(e)
+          ),
+          call = NULL
+        )
+      }
+    )
+    assign(key, booster, envir = nflfastR_cache)
+  }
+  nflfastR_cache[[key]]
 }
 
 my_rhub_check <- function() {
