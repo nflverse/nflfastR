@@ -335,7 +335,7 @@ Check: regression test, `compare.R` on all seasons, `benchmark.R`, `devtools::ch
 
 Status: done. Regression test passes (18 expectations), `compare.R` on all seasons: 48 of 48 combinations identical or within tolerance (12 identical; the others differ only in `passing_cpoe`, at most 3.6e-13 relative, from GForce `mean()`). `devtools::check()`: 0 errors, 0 warnings, 0 notes. `jarl check R/calculate_stats.R`: all checks passed.
 
-- `R/calculate_stats.R` uses no dplyr, tibble or rlang data masks any more. The empty result is `structure(data.frame(), class = c("tbl_df", "tbl", "data.frame"))`, `identical()` to `tibble::tibble()`. Only the roxygen example still calls `dplyr::glimpse()`.
+- `R/calculate_stats.R` uses no dplyr, tibble or rlang data masks any more. The empty result is `structure(data.frame(), class = c("tbl_df", "tbl", "data.frame"))`, `identical()` to `tibble::tibble()`. The roxygen example uses `str()` instead of `dplyr::glimpse()`.
 - `compare.R` reports "identical", "within tolerance" or "DIFFERENT" and accepts the first two.
 - Two NEWS bullets: the speedup, and the `load_players()` error, the two new required pbp columns and the seasons in the empty-filter warning.
 - Final `benchmark.R` (2023, median of 3 runs, seconds):
@@ -346,6 +346,24 @@ Status: done. Regression test passes (18 expectations), `compare.R` on all seaso
 | season / team | 3.47 | 0.55 | 6.3x |
 | week / player | 16.74 | 1.18 | 14.1x |
 | week / team | 3.75 | 0.57 | 6.5x |
+
+## Review of #631: items 1 and 2
+
+A review after step 5 found two remaining hotspots. Profile of week / player on 2023: the grouped `others` call took 56% of the time, because `custom_mode()`, `paste()`, `fg_list()` and `uniqueN()` kept GForce off for the whole call and ran R code for each of the ~18.6k groups.
+
+- Item 1: the stats that aren't sums are split into separate calls, each only for the summaries that output it. First values per group (`season_type` and `game_id` of week summaries, `off`, `def`, the first `team`, `team_targets`, `team_air_yards`) come from one GForce call with `lapply(.SD, data.table::first)`. `x[.N]` isn't GForce, `data.table::last()` is; a grouping column in `j` turns GForce off, so `team` is only in `.SDcols` for player stats. `opponent_team` is a vectorized `fifelse()` on those columns. Season summaries: the `season_type` collapse uses `paste()` only for groups with more than one season type, `games` counts unique `game_id`s, `recent_team` uses `data.table::last()`. `player_name` (player stats only): counts per group and name, sorted by count with the stable `setorderv()` (`by` keeps the order of first appearance), so ties go to the first name like `custom_mode()`. The `fg_*_list` columns paste only the rows of the kicks and join; groups without kicks get `NA` from the join, so the `""` → `NA` loop and `fg_list()` are gone (the play stats of 2001–2025 have no `""` strings and no `NA` stat IDs).
+- Item 2: `passing_air_yards`, `punt_return_yards` and `targets` are row columns of `playstats`, used by the grouped `:=` totals (`team_play_air_yards`, `play_punt_return_yards`, `team_targets`, `team_air_yards`) and as contributions. `sum(col)` with `:=` and `by` uses GForce, `sum(expression)` doesn't.
+
+Check: regression test passes (18 expectations), `compare.R` on all seasons: 48 of 48 identical or within tolerance (12 identical, the others only `passing_cpoe` as before). `jarl check`: all passed. `benchmark.R` (2023, median of 3 runs, seconds):
+
+| `summary_level` / `stat_type` | Old | New | Speedup |
+|---|---|---|---|
+| season / player | 4.96 | 0.55 | 9.1x |
+| season / team | 3.53 | 0.40 | 8.8x |
+| week / player | 16.87 | 0.53 | 31.9x |
+| week / team | 3.81 | 0.40 | 9.5x |
+
+Open from the review: items 3–12 (small cleanups: duplicated `fg_long_yards` / `pt_long_yards`, the `grp_id` codes, one join instead of two for the play information, a redundant `setcolorder()` in `stats_player_info()`, `%chin%`, and more).
 
 ## Step 6 (separate effort): dependencies
 

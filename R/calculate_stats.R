@@ -179,12 +179,22 @@ calculate_stats <- function(
     )
   )
 
+  # Row values that the totals below sum and that are also contributions of
+  # the aggregation. As plain columns, the grouped sums use GForce.
   playstats[,
-    team_play_air_yards := sum((stat_id %in% 111:112) * yards),
+    c("passing_air_yards", "punt_return_yards", "targets") := list(
+      # includes incompletions (111 = complete, 112 = incomplete)
+      (stat_id %in% 111:112) * yards,
+      (stat_id %in% 33:36) * yards,
+      stat_id == 115
+    )
+  ]
+  playstats[,
+    team_play_air_yards := sum(passing_air_yards),
     by = c("season", "week", "play_id", "team")
   ]
   playstats[,
-    play_punt_return_yards := sum((stat_id %in% 33:36) * yards),
+    play_punt_return_yards := sum(punt_return_yards),
     by = c("game_id", "play_id")
   ]
   # compute team targets and team air yards for calculation of target share
@@ -197,8 +207,8 @@ calculate_stats <- function(
   }
   playstats[,
     c("team_targets", "team_air_yards") := list(
-      sum(stat_id == 115),
-      sum((stat_id %in% 111:112) * yards)
+      sum(targets),
+      sum(passing_air_yards)
     ),
     by = share_by
   ]
@@ -223,12 +233,16 @@ calculate_stats <- function(
     "30" = c("season", "week", "player_id"),
     "40" = c("season", "week", "team")
   )
+  week <- summary_level == "week"
+  player <- stat_type == "player"
 
   # Aggregation #####################
   # Every stat that is a sum is a contribution of each row, computed once on
   # the whole columns and summed by group in one GForce call, together with
   # the maximums fg_long and pt_long. Columns that only some summaries
   # output are computed for all and dropped when the columns are selected.
+  # passing_air_yards, punt_return_yards and targets are columns of playstats
+  # already (see above).
   contributions <- playstats[,
     c(
       .SD,
@@ -243,8 +257,6 @@ calculate_stats <- function(
         sack_yards_lost = (stat_id == 20) * yards,
         sack_fumbles = stat_id == 20 & p_fumble,
         sack_fumbles_lost = stat_id == 20 & p_fumble_lost,
-        # includes incompletions (111 = complete, 112 = incomplete)
-        passing_air_yards = (stat_id %in% 111:112) * yards,
         # air yards of completed passes, for passing_yards_after_catch
         passing_air_yards_complete = (stat_id == 111) * yards,
         passing_first_downs = (stat_id %in% 15:16) & t_first_down_pass,
@@ -269,7 +281,6 @@ calculate_stats <- function(
         rushing_40 = (stat_id %in% 10:13) * (yards >= 40),
 
         receptions = stat_id %in% 21:22,
-        targets = stat_id == 115,
         receiving_yards = (stat_id %in% 21:24) * yards,
         receiving_tds = stat_id %in% c(22, 24),
         receiving_fumbles = (stat_id %in% 21:22) & p_fumble,
@@ -354,7 +365,6 @@ calculate_stats <- function(
 
         # Returning #####################
         punt_returns = stat_id %in% 33:34,
-        punt_return_yards = (stat_id %in% 33:36) * yards,
         # punt return tds are counted in special teams tds atm
         kickoff_returns = stat_id %in% 45:46,
         kickoff_return_yards = (stat_id %in% 45:48) * yards,
@@ -416,7 +426,12 @@ calculate_stats <- function(
         pt_long_yards = (stat_id %in% c(29, 32)) * yards
       )
     ),
-    .SDcols = grp_vctr
+    .SDcols = c(
+      grp_vctr,
+      "passing_air_yards",
+      "punt_return_yards",
+      "targets"
+    )
   ]
   sum_cols <- setdiff(
     names(contributions),
@@ -432,56 +447,111 @@ calculate_stats <- function(
   ]
   rm(contributions)
 
-  # Stats that aren't sums. All computed for every summary, see above.
-  # custom_mode() returns character(0) if all names are NA; [1L] makes it NA.
-  # season_type: if summary level is week, then we have to use the season
-  # type variable from playstats as it could be REG or POST depending on the
-  # value of the argument season_type. If summary level is season, then we
-  # collapse the values of season_type. This will make sure that season_type
-  # is only REG+POST if the user asked for it AND if postseason data is
-  # available.
-  # game_id: it's not strictly necessary to output game_id because we have
-  # season, week, team, and opponent information but it is convenient to add
-  # this here. Only makes sense in case of weekly stats of course.
-  # recent_team for season summaries of player stats, first_team (output as
-  # team) for week summaries of player stats, opponent_team for week
-  # summaries, games for season summaries.
-  others <- playstats[,
-    list(
-      player_name = custom_mode(player_name, na.rm = TRUE)[1L],
-      season_type = if (summary_level == "week") {
-        season_type[1L]
-      } else {
-        paste(unique(season_type), collapse = "+")
-      },
-      game_id = game_id[1L],
-      recent_team = team[.N],
-      first_team = team[1L],
-      opponent_team = data.table::fifelse(
-        team[1L] == off[1L],
-        def[1L],
-        off[1L]
-      ),
-      games = data.table::uniqueN(game_id),
-      fg_made_list = fg_list(stat_id, yards, collapse_id = 70),
-      fg_missed_list = fg_list(stat_id, yards, collapse_id = 69),
-      fg_blocked_list = fg_list(stat_id, yards, collapse_id = 71),
-      gwfg_distance_list = fg_list(
-        stat_id,
-        yards,
-        collapse_id = 69:71,
-        gwfg = is_gwfg_attempt
-      ),
-      team_targets = team_targets[1L],
-      team_air_yards = team_air_yards[1L]
+  # Stats that aren't sums. Each is computed only for the summaries that
+  # output it, and without R code per group where possible. They depend on
+  # the row order of the play stats (see PLAN.md).
+  # First values per group with GForce:
+  # - season_type of week summaries. It's REG or POST depending on the
+  #   argument season_type. Season summaries collapse it below.
+  # - game_id of week summaries: not strictly necessary because we have
+  #   season, week, team and opponent information, but convenient.
+  # - off and def for opponent_team of week summaries.
+  # - team of player stats: the first team, output as team by week / player.
+  #   For team stats, team is a grouping variable.
+  # - team_targets and team_air_yards for target_share and air_yards_share
+  #   (computed for team stats as well, where they aren't output).
+  first_cols <- setdiff(
+    c(
+      if (week) c("season_type", "game_id", "off", "def"),
+      "team",
+      "team_targets",
+      "team_air_yards"
     ),
-    keyby = grp_vctr
+    grp_vctr
+  )
+  firsts <- playstats[,
+    lapply(.SD, data.table::first),
+    keyby = grp_vctr,
+    .SDcols = first_cols
   ]
   # both are keyed by the same groups, so the rows match
-  stats <- cbind(stats, others[, !..grp_vctr])
-  rm(others)
-  if (grp_id == "30") {
-    data.table::setnames(stats, "first_team", "team")
+  stats <- cbind(stats, firsts[, !..grp_vctr])
+  rm(firsts)
+
+  if (week) {
+    stats[, opponent_team := data.table::fifelse(team == off, def, off)]
+  } else {
+    # Season types in the order of the play stats, collapsed with "+". This
+    # makes sure that season_type is only REG+POST if the user asked for it
+    # AND if postseason data is available. paste() only runs for the groups
+    # with more than one season type.
+    season_types <- unique(playstats[,
+      c(grp_vctr, "season_type"),
+      with = FALSE
+    ])
+    season_types[, n := .N, by = grp_vctr]
+    season_types <- rbind(
+      season_types[n == 1L, !"n"],
+      season_types[
+        n > 1L,
+        list(season_type = paste(season_type, collapse = "+")),
+        by = grp_vctr
+      ]
+    )
+    stats[season_types, on = grp_vctr, season_type := i.season_type]
+
+    games <- unique(playstats[, c(grp_vctr, "game_id"), with = FALSE])[,
+      list(games = .N),
+      by = grp_vctr
+    ]
+    stats[games, on = grp_vctr, games := i.games]
+
+    if (player) {
+      recent <- playstats[,
+        list(recent_team = data.table::last(team)),
+        keyby = grp_vctr
+      ]
+      stats[recent, on = grp_vctr, recent_team := i.recent_team]
+    }
+  }
+
+  if (player) {
+    # The most common name. Ties go to the name that comes first, like
+    # custom_mode(): `by` keeps the groups in the order of their first row
+    # and setorderv() is stable. Groups without names get NA from the join.
+    name_counts <- playstats[
+      !is.na(player_name),
+      list(n = .N),
+      by = c(grp_vctr, "player_name")
+    ]
+    data.table::setorderv(
+      name_counts,
+      c(grp_vctr, "n"),
+      order = c(rep(1L, length(grp_vctr)), -1L)
+    )
+    name_counts <- unique(name_counts, by = grp_vctr)
+    stats[name_counts, on = grp_vctr, player_name := i.player_name]
+  }
+
+  # Field goal distances in the order of the play stats, separated by ";".
+  # Groups without such kicks get NA from the join.
+  fg_lists <- list(
+    fg_made_list = playstats$stat_id == 70,
+    fg_missed_list = playstats$stat_id == 69,
+    fg_blocked_list = playstats$stat_id == 71
+  )
+  if (!week) {
+    fg_lists$gwfg_distance_list <- playstats$stat_id %in%
+      69:71 &
+      playstats$is_gwfg_attempt == 1L
+  }
+  for (col in names(fg_lists)) {
+    fg_list <- playstats[
+      fg_lists[[col]],
+      list(distances = paste(yards, collapse = ";")),
+      by = grp_vctr
+    ]
+    stats[fg_list, on = grp_vctr, (col) := i.distances]
   }
 
   # Derived stats #####################
@@ -516,16 +586,6 @@ calculate_stats <- function(
   stats[pat_att > 0, pat_pct := pat_made / pat_att]
   stats[fg_long == 0L, fg_long := NA_integer_]
   stats[pt_long == 0L, pt_long := NA_integer_]
-
-  # "" (e.g. fg lists without field goals) -> NA
-  for (col in names(stats)[vapply(stats, is.character, logical(1))]) {
-    data.table::set(
-      stats,
-      i = which(stats[[col]] == ""),
-      j = col,
-      value = NA_character_
-    )
-  }
 
   # Stats from PBP #####################
   # we want passing epa, rushing epa, and receiving epa
@@ -871,20 +931,6 @@ stats_player_info <- function(players, call = rlang::caller_env()) {
     )
   )
   players
-}
-
-fg_list <- function(stat_ids, yards, collapse_id, gwfg = NULL) {
-  if (is.null(gwfg)) {
-    paste(
-      yards[stat_ids == collapse_id],
-      collapse = ";"
-    )
-  } else {
-    paste(
-      yards[stat_ids %in% collapse_id & gwfg == 1L],
-      collapse = ";"
-    )
-  }
 }
 
 # Adds a logical column per element of flags: TRUE in all rows of the groups
