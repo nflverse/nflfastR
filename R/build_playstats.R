@@ -1,6 +1,7 @@
 # Not called inside the package, but needed: the nflverse workflows call
 # nflfastR:::build_playstats() to build the play stats that calculate_stats()
 # loads with load_playstats() (release "playstats" of nflverse/nflverse-pbp).
+# jarl-ignore unused_function: called by the nflverse workflows
 build_playstats <- function(
   seasons = nflreadr::most_recent_season(),
   stat_ids = 1:1000,
