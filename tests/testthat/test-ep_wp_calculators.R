@@ -52,7 +52,7 @@ test_that("calculate_win_probability works", {
   # check NOTES for multi-threading forced us to skip on cran.
   skip_on_cran()
 
-  data <- tibble::tibble(
+  data <- test_tibble(
     "receive_2h_ko" = 0,
     "home_team" = "SEA",
     "posteam" = "SEA",
@@ -76,7 +76,7 @@ test_that("calculate_win_probability doesn't change its input and keeps its type
   data <- wp_calculator_input()
   inputs <- list(
     data.frame = data,
-    tibble = tibble::as_tibble(data),
+    tibble = as_test_tibble(data),
     data.table = data.table::as.data.table(data)
   )
   for (x in inputs) {

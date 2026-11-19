@@ -360,7 +360,12 @@ clean_pbp <- function(pbp, ...) {
       by = "game_id"
     ]
 
-    r <- if (by_ref) d else tibble::as_tibble(data.table::setDF(d))
+    r <- d
+    if (!by_ref) {
+      # a tibble without importing tibble
+      data.table::setDF(r)
+      data.table::setattr(r, "class", c("tbl_df", "tbl", "data.frame"))
+    }
   }
 
   message_completed("Cleaning completed", ...)

@@ -1,5 +1,5 @@
 # Create or update the data of the calculate_stats() regression test
-# (step 0.4 of PLAN.md)
+# (see README.md)
 #
 # Pins the inputs of calculate_stats() for the games in selected_games.csv
 # (pbp, play stats and players) and stores the output of the current
@@ -154,7 +154,7 @@ if (new_inputs) {
 
 # The checklist on the pinned inputs. Upstream data can change between the
 # game selection and the pinning, so stop if anything is uncovered other than
-# the unreachable fg_missed_0_19 bucket (see PLAN.md, 0.3).
+# the unreachable fg_missed_0_19 bucket (see README.md).
 out <- checklist_outputs(inputs$pbp, inputs$playstats, inputs$players)
 items <- checklist_items(inputs$pbp, inputs$playstats, inputs$players, out)
 gaps <- checklist_report(items)

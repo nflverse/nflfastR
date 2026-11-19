@@ -21,29 +21,36 @@ Depends:
     R (>= 4.1.0)
 Imports: 
     cli (>= 3.0.0),
-    curl,
+    curl (>= 5.0.0),
     data.table (>= 1.15.0),
-    dplyr (>= 1.0.0),
     fastrmodels (>= 2.1.0),
     furrr,
     future,
     glue,
-    janitor,
     lifecycle,
-    nflreadr (>= 1.2.0),
+    nflreadr (>= 1.5.0),
     progressr (>= 0.6.0),
-    rlang (>= 0.4.10),
+    rlang (>= 1.0.0),
     stringi,
-    tibble (>= 3.0),
     xgboost (>= 1.6)
 Suggests: 
     DBI,
     duckdb,
     gsisdecoder,
-    rmarkdown,
     RSQLite,
     testthat (>= 3.0.0),
     withr
+Config/Needs/website:
+    dplyr,
+    DT,
+    ggplot2,
+    ggrepel,
+    knitr,
+    nflverse/nflplotR,
+    ragg,
+    rmarkdown,
+    scales,
+    tidyverse
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true

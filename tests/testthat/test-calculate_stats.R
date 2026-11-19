@@ -37,7 +37,7 @@ test_that("calculate_stats output columns are documented", {
 
 test_that("calculate_stats output is unchanged for the regression games", {
   # The regression games are picked to cover every data case of
-  # calculate_stats(), see data-raw/calculate_stats_performance/PLAN.md. Their
+  # calculate_stats(), see data-raw/calculate_stats_performance/README.md. Their
   # inputs and the expected output are downloaded from a GitHub release (see
   # helper-regression.R).
   skip_on_cran()
@@ -60,13 +60,13 @@ test_that("calculate_stats output doesn't depend on the input type and order", {
 
   # The output depends on the row order of the play stats (first and last
   # team, name ties, list order), so only the order of pbp is shuffled. See
-  # data-raw/calculate_stats_performance/PLAN.md.
+  # data-raw/calculate_stats_performance/README.md.
   shuffled_pbp <- withr::with_seed(1, pbp[sample(nrow(pbp)), ])
   variants <- list(
     shuffled_pbp = shuffled_pbp,
-    grouped = dplyr::group_by(pbp, game_id),
     data.table = data.table::as.data.table(pbp),
-    nflverse_data = make_nflverse_data(data.table::as.data.table(pbp))
+    nflverse_data = make_nflverse_data(data.table::copy(pbp)),
+    nflreadr_data = as_nflreadr_data(pbp)
   )
   for (v in names(variants)) {
     out <- stats_regression_run(name, variants[[v]])
@@ -97,7 +97,7 @@ test_that("calculate_stats warns about an empty season_type filter", {
   expect_snapshot(
     out <- calculate_stats(2023, "season", "team", "POST", pbp = pbp)
   )
-  expect_identical(out, tibble::tibble())
+  expect_identical(out, test_tibble())
 })
 
 test_that("calculate_stats validates custom pbp", {

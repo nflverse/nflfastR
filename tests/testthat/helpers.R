@@ -47,6 +47,30 @@ load_expectation <- function(
 
 # strip nflverse attributes for tests because timestamp and version cause failures
 # .internal.selfref is a data.table attribute that is not necessary in this case
+# A data frame with the class of a tibble, like the output of nflfastR
+# functions that return tibbles. The tibble package isn't needed.
+as_test_tibble <- function(df) {
+  df <- as.data.frame(df)
+  class(df) <- c("tbl_df", "tbl", "data.frame")
+  df
+}
+
+# A data.table with the class of nflreadr data, like nflreadr::load_pbp()
+as_nflreadr_data <- function(df) {
+  dt <- data.table::as.data.table(df)
+  data.table::setattr(dt, "nflverse_type", "play by play")
+  data.table::setattr(
+    dt,
+    "class",
+    c("nflverse_data", "tbl_df", "tbl", "data.table", "data.frame")
+  )
+  dt
+}
+
+test_tibble <- function(...) {
+  as_test_tibble(data.frame(..., check.names = FALSE))
+}
+
 strip_nflverse_attributes <- function(df) {
   input_attrs <- names(attributes(df))
   input_remove <- input_attrs[grepl(
@@ -58,41 +82,32 @@ strip_nflverse_attributes <- function(df) {
 }
 
 round_double_to_digits <- function(df, digits = 3) {
-  dplyr::mutate(
-    df,
-    dplyr::across(
-      .cols = relevant_variables(),
-      .fns = function(vec) {
-        formatC(vec, digits = digits, format = "fg") |>
-          as.numeric() |>
-          suppressWarnings()
-      }
-    )
-  )
+  for (col in relevant_variables(names(df))) {
+    df[[col]] <- formatC(df[[col]], digits = digits, format = "fg") |>
+      as.numeric() |>
+      suppressWarnings()
+  }
+  df
 }
 
-relevant_variables <- function() {
-  c(
-    dplyr::any_of(c(
-      "no_score_prob",
-      "opp_fg_prob",
-      "opp_safety_prob",
-      "opp_td_prob",
-      "fg_prob",
-      "safety_prob",
-      "td_prob",
-      "ep",
-      "cp",
-      "cpoe",
-      "pass_oe",
-      "xpass"
-    )),
-    dplyr::ends_with("epa"),
-    dplyr::ends_with("wp"),
-    dplyr::ends_with("wp_post"),
-    dplyr::ends_with("wpa"),
-    dplyr::starts_with("xyac")
+relevant_variables <- function(names) {
+  fixed <- c(
+    "no_score_prob",
+    "opp_fg_prob",
+    "opp_safety_prob",
+    "opp_td_prob",
+    "fg_prob",
+    "safety_prob",
+    "td_prob",
+    "ep",
+    "cp",
+    "cpoe",
+    "pass_oe",
+    "xpass"
   )
+  patterns <- c("epa$", "wp$", "wp_post$", "wpa$", "^xyac")
+  matched <- lapply(patterns, \(p) grep(p, names, value = TRUE))
+  unique(c(fixed[fixed %chin% names], unlist(matched)))
 }
 
 # Compare pbp against expected pbp and report differences per column.
@@ -134,8 +149,8 @@ pbp_differences <- function(
   abs_tolerance = 1e-6,
   n_examples = 3
 ) {
-  act <- tibble::as_tibble(strip_nflverse_attributes(pbp))
-  exp <- tibble::as_tibble(strip_nflverse_attributes(exp))
+  act <- as.data.frame(strip_nflverse_attributes(pbp))
+  exp <- as.data.frame(strip_nflverse_attributes(exp))
   model_cols <- regression_model_columns(exp)
   msg <- character()
 
@@ -245,7 +260,7 @@ pbp_differences <- function(
 
 regression_model_columns <- function(pbp) {
   c(
-    names(dplyr::select(pbp, relevant_variables())),
+    relevant_variables(names(pbp)),
     intersect(c("extra_point_prob", "two_point_conversion_prob"), names(pbp))
   )
 }
