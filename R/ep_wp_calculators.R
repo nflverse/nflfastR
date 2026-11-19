@@ -41,28 +41,27 @@
 #' \item{opp_td_prob}{probability of next score opponent touchdown this half.}
 #' \item{fg_prob}{probability next score field goal this half.}
 #' \item{safety_prob}{probability next score safety this half.}
-#' \item{td_prob}{probability text score touchdown this half.}
+#' \item{td_prob}{probability next score touchdown this half.}
 #' }
 #' @export
 #' @examples
 #' \donttest{
 #' try({# to avoid CRAN test problems
-#' library(dplyr)
-#' data <- tibble::tibble(
-#' "season" = 1999:2019,
+#' data <- data.frame(
+#' "season" = 2001:2019,
 #' "home_team" = "SEA",
 #' "posteam" = "SEA",
 #' "roof" = "outdoors",
 #' "half_seconds_remaining" = 1800,
-#' "yardline_100" = c(rep(80, 17), rep(75, 4)),
+#' "yardline_100" = c(rep(80, 15), rep(75, 4)),
 #' "down" = 1,
 #' "ydstogo" = 10,
 #' "posteam_timeouts_remaining" = 3,
 #' "defteam_timeouts_remaining" = 3
 #' )
 #'
-#' nflfastR::calculate_expected_points(data) |>
-#'   dplyr::select(season, yardline_100, td_prob, ep)
+#' ep <- nflfastR::calculate_expected_points(data)
+#' ep[c("season", "yardline_100", "td_prob", "ep")]
 #' })
 #' }
 calculate_expected_points <- function(pbp_data) {
@@ -189,8 +188,7 @@ drop.cols.ep <- c(
 #' @examples
 #' \donttest{
 #' try({# to avoid CRAN test problems
-#' library(dplyr)
-#' data <- tibble::tibble(
+#' data <- data.frame(
 #' "receive_2h_ko" = 0,
 #' "home_team" = "SEA",
 #' "posteam" = "SEA",
@@ -205,51 +203,39 @@ drop.cols.ep <- c(
 #' "defteam_timeouts_remaining" = 3
 #' )
 #'
-#' nflfastR::calculate_win_probability(data) |>
-#'   dplyr::select(spread_line, wp, vegas_wp)
+#' wp <- nflfastR::calculate_win_probability(data)
+#' wp[c("spread_line", "wp", "vegas_wp")]
 #' })
 #' }
 calculate_win_probability <- function(pbp_data) {
-  # drop existing values of ep and the probs before making new ones
-  pbp_data <- pbp_data |> dplyr::select(-dplyr::any_of(drop.cols.wp))
-
-  suppressWarnings(
-    model_data <- pbp_data |>
-      dplyr::mutate(
-        home = dplyr::if_else(.data$posteam == .data$home_team, 1, 0),
-        posteam_spread = dplyr::if_else(
-          .data$home == 1,
-          .data$spread_line,
-          -1 * .data$spread_line
-        ),
-        elapsed_share = (3600 - .data$game_seconds_remaining) / 3600,
-        spread_time = .data$posteam_spread * exp(-4 * .data$elapsed_share),
-        Diff_Time_Ratio = .data$score_differential /
-          (exp(-4 * .data$elapsed_share))
-      )
-  )
-
-  wp <- get_preds_wp(model_data) |>
-    tibble::as_tibble() |>
-    dplyr::rename(wp = "value")
-  wp_spread <- get_preds_wp_spread(model_data) |>
-    tibble::as_tibble() |>
-    dplyr::rename(vegas_wp = "value")
-
-  # overtime has its own rule aware model
-  ot <- calculate_ot_win_probability(pbp_data, model_data)
-  if (!is.null(ot)) {
-    wp$wp[ot$i] <- ot$wp
-    wp_spread$vegas_wp[ot$i] <- ot$vegas_wp
+  d <- as_pbp_dt(pbp_data)
+  # drop existing values of wp and vegas_wp before making new ones
+  drop <- intersect(drop.cols.wp, names(d))
+  if (length(drop) > 0) {
+    d[, (drop) := NULL]
   }
 
-  preds <- dplyr::bind_cols(
-    pbp_data,
-    wp,
-    wp_spread
+  # a list of columns, so the model columns aren't added to d
+  model_data <- as.list(d)
+  home <- as.numeric(d$posteam == d$home_team)
+  model_data[c("home", "posteam_spread", "Diff_Time_Ratio")] <- list(
+    home,
+    data.table::fifelse(home == 1, 1, -1) * d$spread_line,
+    d$score_differential / exp(-4 * (3600 - d$game_seconds_remaining) / 3600)
   )
 
-  return(preds)
+  wp <- get_preds_wp(model_data)
+  vegas_wp <- get_preds_wp_spread(model_data)
+
+  # overtime has its own rule aware model
+  ot <- calculate_ot_win_probability(d, model_data)
+  if (!is.null(ot)) {
+    wp[ot$i] <- ot$wp
+    vegas_wp[ot$i] <- ot$vegas_wp
+  }
+
+  data.table::set(d, j = c("wp", "vegas_wp"), value = list(wp, vegas_wp))
+  as_input_type(d, pbp_data)
 }
 
 # helper column for wp calculator
