@@ -1,9 +1,3 @@
-################################################################################
-# Author: Sebastian Carl
-# Purpose: Create and update database with nflfastR pbp data
-# Code Style Guide: styler::tidyverse_style()
-################################################################################
-
 #' Update or Create a nflfastR Play-by-Play Database
 #'
 #' @description
@@ -185,8 +179,6 @@ build_db <- function(
                 between {min(seasons)} and {max(seasons)}..."
     )
   } else if (is.numeric(rebuild) & all(rebuild %in% valid_seasons)) {
-    # s <- glue::glue_collapse(rebuild, sep = ", ", last = ", and ")
-    # string <- stringi::stri_c(stringi::stri_sub(s, 1, 11), "...", stringi::stri_sub(s, -16, -1))
     if (show_message) {
       cli::cli_ul(
         "{my_time()} | Purging

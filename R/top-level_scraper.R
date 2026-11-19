@@ -1,9 +1,3 @@
-################################################################################
-# Author: Sebastian Carl
-# Purpose: Top-Level functions which will be made available through the package
-# Code Style Guide: styler::tidyverse_style()
-################################################################################
-
 # pbp ---------------------------------------------------------------------
 
 #' Get NFL Play by Play Data

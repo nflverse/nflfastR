@@ -1,9 +1,3 @@
-################################################################################
-# Author: Sebastian Carl
-# Purpose: Wrapper around multiple nflfastR functions
-# Code Style Guide: styler::tidyverse_style()
-################################################################################
-
 # The idea for this wrapper as well as some helper functions and the documentation
 # style are heavily borrowed from the r-lib package pkgdown (https://github.com/r-lib/pkgdown/blob/master/R/build.r)
 

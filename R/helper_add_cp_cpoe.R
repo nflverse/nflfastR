@@ -1,9 +1,5 @@
-################################################################################
-# Author: Ben Baldwin, Sebastian Carl
-# Purpose: Function to add cp and cpoe variables.
-# CP model created by Zach Feldman: https://github.com/z-feldman/Expected_Completion_NFL
-# Code Style Guide: styler::tidyverse_style()
-################################################################################
+# CP model created by Zach Feldman:
+# https://github.com/z-feldman/Expected_Completion_NFL
 
 add_cp <- function(pbp) {
   # pbp is the data.table of build_nflfastR_pbp(), changed by reference

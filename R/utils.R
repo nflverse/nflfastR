@@ -95,8 +95,6 @@ load_raw_game <- function(
   dir = getOption("nflfastR.raw_directory", default = NULL),
   skip_local = FALSE
 ) {
-  # game_id <- "2022_19_LAC_JAX"
-
   season <- substr(game_id, 1, 4)
 
   local_file <- file.path(
@@ -221,6 +219,9 @@ fetch_raw <- function(
   out
 }
 
+# Not called inside the package, but needed: devtools::release() calls it and
+# adds these bullets to the release checklist. my_rhub_check(),
+# rhub_check_platforms() and nflverse_thanks() are only used from there.
 release_bullets <- function() {
   c(
     '`devtools::check_mac_release()`',

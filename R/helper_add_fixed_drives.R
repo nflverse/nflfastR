@@ -1,9 +1,3 @@
-################################################################################
-# Author: Sebastian Carl, Ben Baldwin
-# Purpose: Function to add drive variables
-# Code Style Guide: styler::tidyverse_style()
-################################################################################
-
 ## fixed_drive =
 ##  starts at 1, each new drive, numbers shared across both teams
 ## fixed_drive_result =

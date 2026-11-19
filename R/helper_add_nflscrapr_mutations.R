@@ -1,9 +1,3 @@
-################################################################################
-# Author: Sebastian Carl, Ben Baldwin (Code mostly extracted from nflscrapR)
-# Purpose: Add variables mostly needed for ep(a) and wp(a) calculation
-# Code Style Guide: styler::tidyverse_style()
-################################################################################
-
 add_nflscrapr_mutations <- function(pbp) {
   # pbp is the data.table of build_nflfastR_pbp(), changed by reference.
   # get_pbp_nfl() already removed duplicate plays.
@@ -703,7 +697,7 @@ points_scored <- function(d, team) {
 kickoff_finder <- "(Offside on Free Kick)|(Delay of Kickoff)|(Onside Kick formation)|(kicks onside)|( kicks [:digit:]+ yards from)"
 
 
-##some steps to prepare the data for the EP/WP/CP/FG models
+##some steps to prepare the data for the EP/WP/CP models
 make_model_mutations <- function(pbp) {
   #for EP, CP, and WP model, xgb needs 0/1 for eras
   era0 <- as.numeric(pbp$season <= 2001)
@@ -711,34 +705,22 @@ make_model_mutations <- function(pbp) {
   era2 <- as.numeric(pbp$season > 2005 & pbp$season <= 2013)
   era3 <- as.numeric(pbp$season > 2013 & pbp$season <= 2017)
   era4 <- as.numeric(pbp$season > 2017)
-  model_roof <- as.factor(data.table::fifelse(
+  model_roof <- data.table::fifelse(
     is.na(pbp$roof) | pbp$roof == "open" | pbp$roof == "closed",
     "retractable",
     as.character(pbp$roof)
-  ))
+  )
   cols <- list(
     era0 = era0,
     era1 = era1,
     era2 = era2,
     era3 = era3,
     era4 = era4,
-    #for fg model, an era factor
-    era = as.factor(data.table::fcase(
-      era0 == 1,
-      0,
-      era1 == 1,
-      1,
-      era2 == 1,
-      2,
-      era3 == 1 | era4 == 1,
-      3
-    )),
     down1 = as.numeric(pbp$down == 1),
     down2 = as.numeric(pbp$down == 2),
     down3 = as.numeric(pbp$down == 3),
     down4 = as.numeric(pbp$down == 4),
     home = as.numeric(pbp$posteam == pbp$home_team),
-    model_roof = model_roof,
     retractable = as.numeric(model_roof == "retractable"),
     dome = as.numeric(model_roof == "dome"),
     outdoors = as.numeric(model_roof == "outdoors")

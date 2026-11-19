@@ -1,9 +1,3 @@
-################################################################################
-# Author: Sebastian Carl
-# Purpose: Functions to add ep(a) and wp(a) variables
-# Code Style Guide: styler::tidyverse_style()
-################################################################################
-
 add_ep <- function(pbp) {
   out <- pbp |> add_ep_variables()
   user_message("added ep variables", "done")
@@ -641,9 +635,6 @@ prepare_wp_data <- function(pbp) {
 #add ep variables
 #All of these are heavily borrowed from nflscrapR (Maksim Horowitz, Ronald Yurko, and Samuel Ventura)
 add_ep_variables <- function(pbp_data) {
-  #testing
-  #pbp_data <- g
-
   # ----------------------------------------------------------------------------
   # ---- special case: deal with FG attempts
   # Now make another dataset that to get the EP probabilities from a missed FG:
@@ -1214,9 +1205,6 @@ add_team_totals <- function(pbp, x, type) {
 #################################################################
 # Calculate WP and WPA:
 add_wp_variables <- function(pbp_data) {
-  #testing only
-  # pbp_data <- g
-
   # Initialize the df to store predicted win probability
   OffWinProb <- rep(NA_real_, nrow(pbp_data))
   OffWinProb_spread <- rep(NA_real_, nrow(pbp_data))

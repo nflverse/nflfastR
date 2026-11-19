@@ -155,13 +155,6 @@ raw_pbp_load_schedules <- function(seasons) {
 }
 
 verify_game_ids <- function(game_ids) {
-  # game_ids <- c(
-  #   "2021_02_LAC_KC",
-  #   "Hello World",
-  #   "2028_01_LAC_JAX",
-  #   "2022_27_LAC_BUF",
-  #   "2021_02_LAC_KAC"
-  # )
   season_check <- substr(game_ids, 1, 4) %in%
     seq.int(1999, as.integer(format(Sys.Date(), "%Y")) + 1, 1)
   week_check <- as.integer(substr(game_ids, 6, 7)) %in% seq_len(22)

@@ -1,9 +1,3 @@
-################################################################################
-# Author: Sebastian Carl
-# Purpose: Function to decode play-by-play player IDs.
-# Code Style Guide: styler::tidyverse_style()
-################################################################################
-
 #' Decode the player IDs in nflfastR play-by-play data
 #'
 #' @inheritParams clean_pbp

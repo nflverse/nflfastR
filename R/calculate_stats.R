@@ -1,7 +1,3 @@
-################################################################################
-# Author: Sebastian Carl
-################################################################################
-
 #' Calculate NFL Stats
 #'
 #' Compute various NFL stats based off nflverse Play-by-Play data.

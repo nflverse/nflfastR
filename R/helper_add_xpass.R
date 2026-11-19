@@ -1,8 +1,3 @@
-################################################################################
-# Author: Ben Baldwin
-# Stlyeguide: styler::tidyverse_style()
-################################################################################
-
 #' Add expected pass columns
 #'
 #' @inheritParams clean_pbp

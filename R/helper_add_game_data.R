@@ -1,9 +1,3 @@
-################################################################################
-# Author: Ben Baldwin
-# Purpose: Function to add Lee Sharpe's game data
-# Code Style Guide: styler::tidyverse_style()
-################################################################################
-
 # Thanks Lee!
 add_game_data <- function(pbp, games = NULL, ...) {
   out <- pbp

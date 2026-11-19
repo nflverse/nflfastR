@@ -1,8 +1,3 @@
-################################################################################
-# Author: Ben Baldwin, Sebastian Carl
-# Purpose: Function to add expected yac variables.
-# Code Style Guide: styler::tidyverse_style()
-################################################################################
 #' Add expected yards after completion (xyac) variables
 #'
 #' @inheritParams clean_pbp

@@ -1,9 +1,3 @@
-################################################################################
-# Author: Sebastian Carl
-# Purpose: Documenting Data Files
-# Code Style Guide: styler::tidyverse_style()
-################################################################################
-
 #' NFL Team names, colors and logo urls.
 #'
 #' @docType data

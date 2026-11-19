@@ -1,8 +1,3 @@
-################################################################################
-# Author: Ben Baldwin, Sebastian Carl, Tan Ho
-# Stlyeguide: styler::tidyverse_style()
-################################################################################
-
 #' Clean Play by Play Data
 #'
 #' @param pbp is a Data frame of play-by-play data scraped using [fast_scraper()].

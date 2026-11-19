@@ -1,9 +1,3 @@
-################################################################################
-# Author: Sebastian Carl, Ben Baldwin
-# Purpose: Function to add series variables analogue Lee Sharpe's Version
-# Code Style Guide: styler::tidyverse_style()
-################################################################################
-
 ## series =
 ##  starts at 1, each new first down increments, numbers shared across both teams
 ##  NA: kickoffs, extra point/two point conversion attempts, non-plays, no posteam
