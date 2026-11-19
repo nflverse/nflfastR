@@ -28,6 +28,7 @@
 - `calculate_stats()` now fails with a clear error if `nflreadr::load_players()` couldn't load the player information. Its check of custom `pbp` also requires `posteam_type` and `defteam_score`, which it used without checking, and its warning about an empty `season_type` filter names the seasons in `pbp` instead of the `seasons` argument.
 - `calculate_standings()` is now defunct and errors. It was deprecated in nflfastR 5.1.0. Please use `nflseedR::nfl_standings()` instead. nflfastR no longer suggests nflseedR. (#510)
 - `calculate_win_probability()` values overtime rows (`qtr > 4`) with the overtime model. They need `season` and an `ot_possession` column (1, 2, or 3 for later possessions), which is derived from `game_id` and `drive` when those are present. `season_type` and `roof` are optional. This lets nfl4th value overtime decisions. (#625)
+- `update_db()` is deprecated. Please use `update_pbp_db()` instead, which writes to any `DBIConnection` and updates only the most recent season by default.
 
 # nflfastR 6.0.0
 

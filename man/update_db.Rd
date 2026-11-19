@@ -27,6 +27,10 @@ of or the complete play by play data table within the database (please see detai
 \code{\link[DBI:dbConnect]{DBI::dbConnect()}} (please see details for further information)}
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+This function is deprecated. Please use \code{\link[=update_pbp_db]{update_pbp_db()}} instead.
+
 \code{update_db} updates or creates a database with \code{nflfastR}
 play by play data of all completed games since 1999.
 }
@@ -59,3 +63,4 @@ the arguments \code{dbdir} and \code{dbname} are dropped in case a \code{db_conn
 is provided but the argument \code{tblname} will still be used to write the
 data table into the database.
 }
+\keyword{internal}

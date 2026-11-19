@@ -111,7 +111,6 @@ reference:
   - title: Main Functions
     contents:
       - build_nflfastR_pbp
-      - update_db
       - update_pbp_db
   - title: Load Functions
     desc: >
