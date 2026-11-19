@@ -15,6 +15,10 @@ The test data is not stored in git. It lives as assets of the pre-release [`regr
 | `regression_raw_<hash>.tar` | Raw pbp of the regression games |
 | `regression_games_<hash>.rds` | Pinned schedule rows of these games |
 | `regression_expected_<hash>.rds` | Expected output of `build_nflfastR_pbp()` |
+| `regression_stats_inputs_<hash>.rds` | Pinned pbp, play stats and players of the `calculate_stats()` regression games |
+| `regression_stats_expected_<hash>.rds` | Expected output of `calculate_stats()` |
+
+The two `regression_stats_*` assets belong to the regression test of `calculate_stats()` in `tests/testthat/test-calculate_stats.R`. They're built by `data-raw/calculate_stats_performance/update_stats_regression.R` (same usage and rules as `update_regression_test.R`, see `data-raw/calculate_stats_performance/PLAN.md`). Both scripts keep the other's entries in the manifest, and `regression_data(set = "stats")` downloads only the stats assets.
 
 `tests/testthat/regression_data.dcf` (the manifest, a [DCF](https://stat.ethz.ch/R-manual/R-devel/library/base/html/dcf.html) file that base R reads with `read.dcf()`) is the only file in git. It names the release tag and the assets the current commit uses, together with their md5 checksums. Asset names contain the checksum, so assets are never overwritten and every commit keeps pointing to its own data.
 

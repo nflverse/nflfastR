@@ -1,0 +1,61 @@
+game_id,round,gain,unit,season,playstats_rows
+2023_01_BUF_NYJ,1,417,same play_id in two games of a week,2023,672
+2023_01_DAL_NYG,1,417,same play_id in two games of a week,2023,634
+2022_01_PIT_CIN,1,28,season summary with season_type REG+POST,2022,848
+2022_19_BAL_CIN,1,28,season summary with season_type REG+POST,2022,644
+2002_04_CLE_PIT,1,11,,2002,593
+2017_02_MIA_LAC,1,8,player with targets for two teams in a season,2017,721
+2017_11_PHI_DAL,1,8,player with targets for two teams in a season,2017,606
+2022_04_MIN_NO,1,5,,2022,678
+2018_04_PHI_TEN,1,5,player with two names in a season,2018,836
+2018_07_LA_SF,1,5,player with two names in a season,2018,623
+2016_02_NYJ_BUF,1,3,player name tie in a season,2016,661
+2016_13_KC_ATL,1,3,player name tie in a season,2016,625
+2002_01_IND_JAX,1,2,team season summary with season_type REG+POST,2002,520
+2002_18_IND_NYJ,1,2,team season summary with season_type REG+POST,2002,467
+2003_07_TB_SF,1,1,,2003,455
+2015_01_SEA_STL,2,13,season summary with season_type REG+POST,2015,754
+2015_18_SEA_MIN,2,13,season summary with season_type REG+POST,2015,591
+2010_01_MIA_BUF,2,7,player with two names in a season,2010,689
+2010_04_NYJ_BUF,2,7,player with two names in a season,2010,609
+2018_05_TEN_BUF,2,4,player with targets for two teams in a season,2018,564
+2003_01_JAX_CAR,2,4,team season summary with season_type REG+POST,2003,477
+2003_19_CAR_STL,2,4,team season summary with season_type REG+POST,2003,511
+2025_01_PIT_NYJ,2,3,player name tie in a season,2025,646
+2025_06_DEN_NYJ,2,3,player name tie in a season,2025,595
+2006_01_ATL_CAR,2,2,same play_id in two games of a week,2006,558
+2006_01_SEA_DET,2,2,same play_id in two games of a week,2006,574
+2010_15_BUF_MIA,3,8,player with targets for two teams in a season,2010,635
+2010_18_BAL_KC,3,8,player with targets for two teams in a season,2010,585
+2025_10_CLE_NYJ,3,5,player with two names in a season,2025,619
+2018_01_SEA_DEN,3,3,player name tie in a season,2018,705
+2018_17_LAC_DEN,3,3,player name tie in a season,2018,687
+2002_01_ARI_WAS,3,2,same play_id in two games of a week,2002,539
+2020_14_BAL_CLE,4,11,,2020,712
+2015_01_MIN_SF,4,7,season summary with season_type REG+POST,2015,604
+2022_06_DEN_LAC,4,6,player with targets for two teams in a season,2022,784
+2003_18_DAL_CAR,4,5,team season summary with season_type REG+POST,2003,432
+2016_02_BAL_CLE,4,3,player with two names in a season,2016,711
+2016_08_NYJ_CLE,4,3,player with two names in a season,2016,728
+2002_01_KC_CLE,4,2,same play_id in two games of a week,2002,540
+2001_04_DAL_OAK,4,1,,2001,507
+2012_07_PIT_CIN,4,1,,2012,632
+2023_19_PIT_BUF,5,11,season summary with season_type REG+POST,2023,674
+2006_01_NYJ_TEN,5,8,same play_id in two games of a week,2006,659
+2016_01_NE_ARI,5,6,player with two names in a season,2016,682
+2016_03_ARI_BUF,5,6,player with two names in a season,2016,752
+2024_10_DEN_KC,5,4,,2024,687
+2002_02_JAX_KC,5,2,player with targets for two teams in a season,2002,517
+2006_18_DAL_SEA,5,2,team season summary with season_type REG+POST,2006,576
+2012_01_PIT_DEN,5,1,player with two names in a season,2012,648
+2014_14_STL_WAS,6,8,,2014,649
+2012_02_WAS_STL,6,5,,2012,669
+2024_01_LV_LAC,6,3,team season summary with season_type REG+POST,2024,617
+2024_19_LAC_HOU,6,3,team season summary with season_type REG+POST,2024,695
+2025_03_LA_PHI,6,2,,2025,677
+2003_01_ARI_DET,6,1,same play_id in two games of a week,2003,447
+2003_16_DET_CAR,6,1,player name tie in a season,2003,416
+2009_04_DET_CHI,6,1,,2009,705
+2024_13_IND_NE,7,9,,2024,642
+2002_08_HOU_JAX,7,5,player with targets for two teams in a season,2002,533
+2003_01_NYJ_WAS,7,1,same play_id in two games of a week,2003,388
