@@ -23,7 +23,6 @@ Imports:
     cli (>= 3.0.0),
     curl,
     data.table (>= 1.15.0),
-    dplyr (>= 1.0.0),
     fastrmodels (>= 2.1.0),
     furrr,
     future,
@@ -40,10 +39,20 @@ Suggests:
     DBI,
     duckdb,
     gsisdecoder,
-    rmarkdown,
     RSQLite,
     testthat (>= 3.0.0),
     withr
+Config/Needs/website:
+    dplyr,
+    DT,
+    ggplot2,
+    ggrepel,
+    knitr,
+    nflverse/nflplotR,
+    ragg,
+    rmarkdown,
+    scales,
+    tidyverse
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true

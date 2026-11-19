@@ -261,11 +261,11 @@ test_that("calculate_win_probability() values overtime rows with the overtime mo
   # regulation rows are unchanged
   expect_equal(
     wp$vegas_wp[4],
-    calculate_win_probability(data[4, ] |> dplyr::select(-qtr))$vegas_wp
+    calculate_win_probability(data[4, names(data) != "qtr"])$vegas_wp
   )
   # without a possession number overtime rows can't be valued
   expect_warning(
-    no_poss <- calculate_win_probability(dplyr::select(data, -ot_possession)),
+    no_poss <- calculate_win_probability(data[names(data) != "ot_possession"]),
     "possession number"
   )
   expect_equal(is.na(no_poss$vegas_wp), c(TRUE, TRUE, TRUE, FALSE))
@@ -292,10 +292,8 @@ test_that("calculate_win_probability() derives the overtime possession from the 
     defteam_timeouts_remaining = 2
   )
   derived <- calculate_win_probability(data)
-  given <- calculate_win_probability(dplyr::mutate(
-    data,
-    ot_possession = c(1, 1, 2)
-  ))
+  data$ot_possession <- c(1, 1, 2)
+  given <- calculate_win_probability(data)
   expect_equal(derived$vegas_wp, given$vegas_wp)
   expect_equal(derived$wp, given$wp)
   expect_false(anyNA(derived$vegas_wp))

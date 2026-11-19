@@ -402,11 +402,10 @@ fast_scraper(c("2019_01_GB_CHI", "2013_21_SEA_DEN"))
 
 
 # It is also possible to directly use the
-# output of `fast_scraper_schedules` as input
+# output of `nflreadr::load_schedules()` as input
 try({# to avoid CRAN test problems
-library(dplyr, warn.conflicts = FALSE)
-fast_scraper_schedules(2020) |>
-  slice_tail(n = 3) |>
+nflreadr::load_schedules(2020) |>
+  subset(game_type \%in\% c("CON", "SB")) |>
   fast_scraper()
 })
 

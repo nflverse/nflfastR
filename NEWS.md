@@ -18,6 +18,7 @@
 - `home_wp_post` and `away_wp_post` after a final overtime play that ends in a tie are now 0.5 (they used to be 0). (#617)
 - `xyac_median_yardage` is now always a double. It used to be an integer unless the data had no valid pass plays, which didn't match the column type in pbp databases.
 - nflfastR no longer depends on stringr. It uses stringi directly.
+- nflfastR no longer depends on dplyr and tidyr. The package uses data.table internally.
 - New option `nflfastR.verbose`. Set `options(nflfastR.verbose = FALSE)` to turn off the progress messages of `build_nflfastR_pbp()` and the functions it calls.
 - `build_nflfastR_pbp()` gained the argument `add_xyac`. Set `add_xyac = FALSE` to skip `add_xyac()` and save computation time.
 - `build_nflfastR_pbp()` is now about 5 times faster on a single game and up to 8 times faster on many games. The output is unchanged.

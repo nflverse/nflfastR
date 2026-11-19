@@ -64,7 +64,6 @@ test_that("calculate_stats output doesn't depend on the input type and order", {
   shuffled_pbp <- withr::with_seed(1, pbp[sample(nrow(pbp)), ])
   variants <- list(
     shuffled_pbp = shuffled_pbp,
-    grouped = dplyr::group_by(pbp, game_id),
     data.table = data.table::as.data.table(pbp),
     nflverse_data = make_nflverse_data(data.table::as.data.table(pbp))
   )

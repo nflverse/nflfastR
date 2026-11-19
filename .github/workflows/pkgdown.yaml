@@ -38,14 +38,7 @@ jobs:
           extra-packages: |
             r-lib/pkgdown
             nflverse/fastrmodels
-            nflverse/nflplotR
             nflverse/nflreadr
-            any::tidyverse
-            any::ggrepel
-            any::knitr
-            any::tictoc
-            any::ragg
-            any::DT
             local::.
           needs: website
 
