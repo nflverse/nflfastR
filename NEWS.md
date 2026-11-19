@@ -19,6 +19,7 @@
 - `xyac_median_yardage` is now always a double. It used to be an integer unless the data had no valid pass plays, which didn't match the column type in pbp databases.
 - nflfastR no longer depends on stringr. It uses stringi directly.
 - nflfastR no longer depends on dplyr, janitor, tibble and tidyr. The package uses data.table and stringi internally.
+- nflfastR now requires nflreadr 1.5.0 or newer, curl 5.0.0 or newer, and rlang 1.0.0 or newer. Older versions lack functions the package uses.
 - New option `nflfastR.verbose`. Set `options(nflfastR.verbose = FALSE)` to turn off the progress messages of `build_nflfastR_pbp()` and the functions it calls.
 - `build_nflfastR_pbp()` gained the argument `add_xyac`. Set `add_xyac = FALSE` to skip `add_xyac()` and save computation time.
 - `build_nflfastR_pbp()` is now about 5 times faster on a single game and up to 8 times faster on many games. The output is unchanged.

@@ -21,16 +21,16 @@ Depends:
     R (>= 4.1.0)
 Imports: 
     cli (>= 3.0.0),
-    curl,
+    curl (>= 5.0.0),
     data.table (>= 1.15.0),
     fastrmodels (>= 2.1.0),
     furrr,
     future,
     glue,
     lifecycle,
-    nflreadr (>= 1.2.0),
+    nflreadr (>= 1.5.0),
     progressr (>= 0.6.0),
-    rlang (>= 0.4.10),
+    rlang (>= 1.0.0),
     stringi,
     xgboost (>= 1.6)
 Suggests: 
