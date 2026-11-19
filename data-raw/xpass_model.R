@@ -14,7 +14,6 @@
 
 library(dplyr)
 library(xgboost)
-source("R/helper_add_nflscrapr_mutations.R")
 source("R/helper_add_xpass.R")
 `%chin%` <- data.table::`%chin%`
 set.seed(2013)
@@ -43,8 +42,6 @@ pbp <- bind_rows(lapply(
         "season",
         "play_type",
         "posteam",
-        "home_team",
-        "roof",
         "pass",
         "rush"
       )))
@@ -81,36 +78,13 @@ xpass_model <- list(
 
 # sanity check: the stored model gives the predictions of this session
 chk <- sample(nrow(X), 2000)
-xpass_cache$booster <- NULL
-p_stored <- predict(xpass_booster(xpass_model), X[chk, ])
-xpass_cache$booster <- NULL
-stopifnot(
-  all(p_stored > 0 & p_stored < 1),
-  isTRUE(all.equal(p_stored, predict(trees, X[chk, ])))
-)
+stopifnot(isTRUE(all.equal(
+  predict(xgb.load.raw(xpass_model$trees_raw), X[chk, ]),
+  predict(trees, X[chk, ])
+)))
 
 # ---- save, keeping the other internal data ----------------------------------
-# R/sysdata.rda holds other objects. Load them and write them back untouched so
-# that only this model changes. Do NOT rebuild or re-serialize anything else
-# here (in particular no xgboost models) because a different xgboost version on
-# the machine running this script would change those bytes too.
-e <- new.env()
-load("R/sysdata.rda", envir = e)
-untouched <- setdiff(ls(e), "xpass_model")
-before <- mget(untouched, envir = e)
-e$xpass_model <- xpass_model
-save(
-  list = ls(e),
-  file = "R/sysdata.rda",
-  envir = e,
-  compress = "bzip2",
-  version = 2
-)
-# make sure we did not change anything else
-e2 <- new.env()
-load("R/sysdata.rda", envir = e2)
-stopifnot(all(vapply(
-  untouched,
-  function(n) identical(before[[n]], e2[[n]]),
-  TRUE
-)))
+# (see data-raw/save_sysdata.R: nothing else in R/sysdata.rda may be rebuilt or
+# re-serialized here)
+source("data-raw/save_sysdata.R")
+save_sysdata(xpass_model = xpass_model)

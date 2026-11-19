@@ -387,28 +387,7 @@ stopifnot(max_err < 0.006)
 ot_wp_dp <- lapply(ot_wp_dp, function(x) list(Q = round(ot_thin_q(x$Q), 4)))
 
 # ---- save, keeping the other internal data ----------------------------------
-# R/sysdata.rda holds other objects. Load them and write them back untouched so
-# that only the overtime objects change. Do NOT rebuild or re-serialize anything
-# else here (in particular no xgboost models) because a different xgboost
-# version on the machine running this script would change those bytes too.
-e <- new.env()
-load("R/sysdata.rda", envir = e)
-untouched <- setdiff(ls(e), c("ot_wp_models", "ot_wp_dp"))
-before <- mget(untouched, envir = e)
-e$ot_wp_models <- ot_wp_models
-e$ot_wp_dp <- ot_wp_dp
-save(
-  list = ls(e),
-  file = "R/sysdata.rda",
-  envir = e,
-  compress = "bzip2",
-  version = 2
-)
-# make sure we did not change anything else
-e2 <- new.env()
-load("R/sysdata.rda", envir = e2)
-stopifnot(all(vapply(
-  untouched,
-  function(n) identical(before[[n]], e2[[n]]),
-  TRUE
-)))
+# (see data-raw/save_sysdata.R: nothing else in R/sysdata.rda may be rebuilt or
+# re-serialized here)
+source("data-raw/save_sysdata.R")
+save_sysdata(ot_wp_models = ot_wp_models, ot_wp_dp = ot_wp_dp)

@@ -69,10 +69,14 @@ add_xpass <- function(pbp, ...) {
 
 # The features of the xpass model and valid_play as list of columns
 prepare_xpass_data <- function(pbp) {
-  # a list of columns, so make_model_mutations() doesn't change pbp
-  plays <- make_model_mutations(as.list(pbp))
-  # 2001 is the only supported season of era0, so here it belongs to era1
+  # a list of columns, so the era columns don't change pbp
+  plays <- as.list(pbp)
+  # the eras of make_model_mutations(), except that 2001 belongs to era1: it is
+  # the only supported season of era0
   plays$era1 <- as.numeric(plays$season <= 2005)
+  plays$era2 <- as.numeric(plays$season > 2005 & plays$season <= 2013)
+  plays$era3 <- as.numeric(plays$season > 2013 & plays$season <= 2017)
+  plays$era4 <- as.numeric(plays$season > 2017)
   # no xpass in 1999 and 2000: these seasons aren't supported anymore (#568)
   plays$valid_play <- as.numeric(
     plays$season >= 2001 &
@@ -116,22 +120,11 @@ xpass_model_features <- c(
   "era4"
 )
 
-xpass_cache <- new.env(parent = emptyenv())
-
-xpass_booster <- function(model = xpass_model) {
-  if (is.null(xpass_cache$booster)) {
-    xpass_cache$booster <- tryCatch(
-      xgboost::xgb.load.raw(model$trees_raw),
-      error = function(e) {
-        cli::cli_abort(
-          c(
-            "Can't load the expected pass model.",
-            "i" = "It was saved with xgboost {.val {model$xgboost_version}} and you have {.val {as.character(utils::packageVersion('xgboost'))}}.",
-            "x" = conditionMessage(e)
-          )
-        )
-      }
-    )
-  }
-  xpass_cache$booster
+xpass_booster <- function() {
+  load_sysdata_booster(
+    "xpass",
+    xpass_model$trees_raw,
+    xpass_model$xgboost_version,
+    "expected pass model"
+  )
 }

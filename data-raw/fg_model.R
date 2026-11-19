@@ -247,25 +247,5 @@ print(
 )
 
 # ---- save, keeping the other internal data ----------------------------------
-# R/sysdata.rda holds other objects. Load them and write them back untouched so
-# that only this table changes.
-e <- new.env()
-load("R/sysdata.rda", envir = e)
-untouched <- setdiff(ls(e), "fg_prob_table")
-before <- mget(untouched, envir = e)
-e$fg_prob_table <- fg_prob_table
-save(
-  list = ls(e),
-  file = "R/sysdata.rda",
-  envir = e,
-  compress = "bzip2",
-  version = 2
-)
-# make sure we did not change anything else
-e2 <- new.env()
-load("R/sysdata.rda", envir = e2)
-stopifnot(all(vapply(
-  untouched,
-  function(n) identical(before[[n]], e2[[n]]),
-  TRUE
-)))
+source("data-raw/save_sysdata.R")
+save_sysdata(fg_prob_table = fg_prob_table)

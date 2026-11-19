@@ -194,27 +194,21 @@ ot_pmf <- function(mu, shape) {
   cdf - c(0, cdf[-ot_n])
 }
 
-ot_cache <- new.env(parent = emptyenv())
-
 ot_load_boosters <- function() {
-  if (is.null(ot_cache$out)) {
-    tryCatch(
-      {
-        ot_cache$out <- xgboost::xgb.load.raw(ot_wp_models$out_raw)
-        ot_cache$dur <- xgboost::xgb.load.raw(ot_wp_models$dur_raw)
-      },
-      error = function(e) {
-        cli::cli_abort(
-          c(
-            "Can't load the overtime win probability models.",
-            "i" = "They were saved with xgboost {.val {ot_wp_models$xgboost_version}} and you have {.val {as.character(utils::packageVersion('xgboost'))}}.",
-            "x" = conditionMessage(e)
-          )
-        )
-      }
+  list(
+    out = load_sysdata_booster(
+      "ot_wp_out",
+      ot_wp_models$out_raw,
+      ot_wp_models$xgboost_version,
+      "overtime win probability model (drive outcome)"
+    ),
+    dur = load_sysdata_booster(
+      "ot_wp_dur",
+      ot_wp_models$dur_raw,
+      ot_wp_models$xgboost_version,
+      "overtime win probability model (drive duration)"
     )
-  }
-  ot_cache
+  )
 }
 
 ot_predict_matrix <- function(model, x) {
