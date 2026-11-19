@@ -6,7 +6,7 @@ Seasons 1999 and 2000 are deprecated. They are not used anywhere in this plan: n
 
 ## Status and how to resume
 
-Work happens on branch `calculate-stats-performance`. Done: step 0 (0.1–0.7), steps 1–4. Next: step 5.
+Work happens on branch `calculate-stats-performance`. Done: steps 0–5. The rewrite of `calculate_stats()` is complete. Step 6 (dependencies) is a separate effort.
 
 Files in this folder:
 
@@ -307,7 +307,7 @@ Check: regression test, `compare.R`, `benchmark.R`, `devtools::check()`.
 
 Status: done. Regression test passes, `compare.R 2023` reports 12 of 12 combinations `identical()`. `devtools::check()`: 0 warnings, 0 notes; the only test failure was the changed validation snapshot (waiting for the user's review).
 
-- `passing_cpoe` uses `base::mean()`: data.table optimizes `mean()` (GForce `gmean()`) to a one-pass mean that differs from base `mean()` by up to ~1e-13 relative. `compare.R` found it; the tests' tolerance wouldn't have. The sums with GForce `gsum()` are identical.
+- `passing_cpoe` uses GForce `mean()` (`gmean()`), a one-pass mean that differs from base `mean()` by up to ~1e-13 relative. The user accepted this for performance (first done with `base::mean()` to stay identical, reverted in step 5). `compare.R` reports it as within tolerance. The sums with GForce `gsum()` are identical.
 - EPA stats: one aggregation per stat on the slim pbp, added with update joins (`NA` keys match, like `left_join()`). The EPA columns are part of `stats_output_columns()`, which replaces the `select()` that moved them.
 - Sort with `setorderv(na.last = TRUE)`: C locale and `NA` last, like `arrange()`.
 - `pacr` / `racr` with `fcase()` (all conditions on the original values; `default` can be a vector). Fantasy points with `- 2 *` instead of `+ -2 *` (exactly the same in floating point; fixes the jarl warnings).
@@ -333,6 +333,20 @@ Status: done. Regression test passes, `compare.R 2023` reports 12 of 12 combinat
 
 Check: regression test, `compare.R` on all seasons, `benchmark.R`, `devtools::check()`.
 
+Status: done. Regression test passes (18 expectations), `compare.R` on all seasons: 48 of 48 combinations identical or within tolerance (12 identical; the others differ only in `passing_cpoe`, at most 3.6e-13 relative, from GForce `mean()`). `devtools::check()`: 0 errors, 0 warnings, 0 notes. `jarl check R/calculate_stats.R`: all checks passed.
+
+- `R/calculate_stats.R` uses no dplyr, tibble or rlang data masks any more. The empty result is `structure(data.frame(), class = c("tbl_df", "tbl", "data.frame"))`, `identical()` to `tibble::tibble()`. Only the roxygen example still calls `dplyr::glimpse()`.
+- `compare.R` reports "identical", "within tolerance" or "DIFFERENT" and accepts the first two.
+- Two NEWS bullets: the speedup, and the `load_players()` error, the two new required pbp columns and the seasons in the empty-filter warning.
+- Final `benchmark.R` (2023, median of 3 runs, seconds):
+
+| `summary_level` / `stat_type` | Old | New | Speedup |
+|---|---|---|---|
+| season / player | 4.89 | 0.64 | 7.6x |
+| season / team | 3.47 | 0.55 | 6.3x |
+| week / player | 16.74 | 1.18 | 14.1x |
+| week / team | 3.75 | 0.57 | 6.5x |
+
 ## Step 6 (separate effort): dependencies
 
 Rewriting `calculate_stats()` alone doesn't drop dplyr. Remaining users: `calculate_standings()` (23 calls), `calculate_series_conversion_rates()` (21), `R/helper_database_functions.R` (17), `R/ep_wp_calculators.R` (9), `build_playstats()` (13, plus tidyr, janitor and purrr), `R/helper_scrape_gc.R` (35, deprecated) and single calls in `R/utils.R`, `R/save_raw_pbp.R`, `R/helper_scrape_nfl.R`, `R/build_nflfastR_pbp.R` and `R/helper_tidy_play_stats.R`. The parser also uses `janitor::make_clean_names()`. Without dplyr, tidyr, tibble and janitor, the recursive dependencies drop from 44 to 27 packages (cpp11, dplyr, generics, hms, janitor, lubridate, pillar, pkgconfig, R6, snakecase, stringr, tibble, tidyr, tidyselect, timechange, utf8, withr). `build_playstats()` is internal and only builds release data; it could move to `data-raw/` or the nflverse-pbp repo instead of being rewritten. Each function needs its own test setup like step 0 before it changes.
@@ -341,7 +355,7 @@ Rewriting `calculate_stats()` alone doesn't drop dplyr. Remaining users: `calcul
 
 - Don't change the computation before step 0 is complete and checked (0.6).
 - Never use seasons 1999 or 2000.
-- After every step: the regression test passes and `compare.R 2023` reports `identical()` for all combinations. After step 3 and step 5, run `compare.R` on all seasons (no argument). The tests compare doubles with a tolerance; `compare.R` checks `identical()` on full seasons, which catches small changes of doubles, class and attributes, and row-order effects. A difference is a bug in the rewrite until the user decides otherwise.
+- After every step: the regression test passes and `compare.R 2023` reports `identical()` or "within tolerance" for all combinations. Doubles that differ only within the tolerance of the tests (relative 1e-6) are accepted: performance matters more than the last digits (decided by the user after step 4, about `passing_cpoe`). After step 3 and step 5, run `compare.R` on all seasons (no argument). The tests compare doubles with a tolerance; `compare.R` checks `identical()` on full seasons, which catches small changes of doubles, class and attributes, and row-order effects. A difference is a bug in the rewrite until the user decides otherwise.
 - Never update the expected stats output or loosen the tolerance to make the test pass. Show the user the differences and let them decide.
 - Never upload to the `regression_tests` release without the user's explicit request; use `--dry-run`.
 - Follow the data.table rules in AGENTS.md (`dt[cond, col := value]`, `as.numeric(cond)`, `%chin%`, `fifelse()` / `fcase()`, `globalVariables()`).

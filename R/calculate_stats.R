@@ -75,7 +75,11 @@ calculate_stats <- function(
         "Filtering {.val {seasons_in_pbp}} data to {.arg season_type} == \\
         {.val {season_type}} resulted in 0 rows. Returning empty tibble."
       )
-      return(tibble::tibble())
+      # an empty tibble without importing tibble
+      return(structure(
+        data.frame(),
+        class = c("tbl_df", "tbl", "data.frame")
+      ))
     }
   }
 
@@ -533,10 +537,8 @@ calculate_stats <- function(
   ][,
     list(
       passing_epa = sum(qb_epa, na.rm = TRUE),
-      # mean is NaN if all values are NA, because we remove NA.
-      # base::mean() because data.table optimizes mean() to a one-pass mean
-      # that differs from base::mean() in the last bits.
-      passing_cpoe = base::mean(cpoe, na.rm = TRUE)
+      # mean is NaN if all values are NA, because we remove NA
+      passing_cpoe = mean(cpoe, na.rm = TRUE)
     ),
     by = grp_vctr
   ]

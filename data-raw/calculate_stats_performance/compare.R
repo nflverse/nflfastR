@@ -9,8 +9,9 @@
 # summary_level, stat_type and season_type, old and new run on the same
 # pbp, play stats and players (loaders mocked, no download in the calls).
 # Reports identical() per combination. If not identical, it prints the
-# differences found by stats_differences() (tests/testthat/helpers.R) and
-# the columns whose doubles differ only within its tolerance, for review.
+# differences found by stats_differences() (tests/testthat/helpers.R) or,
+# if there are none, the columns whose doubles differ only within its
+# tolerance. Differences within the tolerance are accepted.
 #
 # Data: hits/data_<season>.rds (pbp with checklist_pbp_columns and play
 # stats, as written by season_hits.R) and hits/players.rds. Missing files are
@@ -149,14 +150,21 @@ for (season in seasons) {
     new <- run_new(dat$pbp, dat$playstats, combo)
     exp <- run_old(dat$pbp, dat$playstats, combo)
     same <- identical(new, exp)
-    cli::cli_inform("{name}: {if (same) 'identical' else 'DIFFERENT'}")
     msg <- character()
+    status <- "identical"
     if (!same) {
       res <- stats_differences(new, exp)
       msg <- res$messages
+      status <- "DIFFERENT"
+      # doubles within the tolerance of the tests are accepted (the user
+      # doesn't care about differences in the last digits)
       if (length(msg) == 0L) {
         msg <- paste("Within tolerance:", toString(within_tolerance(new, exp)))
+        status <- "within tolerance"
       }
+    }
+    cli::cli_inform("{name}: {status}")
+    if (length(msg) > 0L) {
       cat(paste("  -", msg), sep = "\n")
     }
     results[[name]] <- data.table(
@@ -167,6 +175,7 @@ for (season in seasons) {
         combo$season_type
       ),
       identical = same,
+      ok = status != "DIFFERENT",
       rows = nrow(new),
       differences = paste(msg, collapse = " | ")
     )
@@ -175,5 +184,6 @@ for (season in seasons) {
 results <- rbindlist(results)
 fwrite(results, file.path(hits_dir, "compare_results.csv"))
 cli::cli_inform(
-  "{sum(results$identical)} of {nrow(results)} combinations identical."
+  "{sum(results$identical)} of {nrow(results)} combinations identical, \\
+  {sum(results$ok)} identical or within tolerance."
 )
