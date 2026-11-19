@@ -6,7 +6,7 @@ Seasons 1999 and 2000 are deprecated. They are not used anywhere in this plan: n
 
 ## Status and how to resume
 
-Work happens on branch `calculate-stats-performance`. Done: step 0 (0.1–0.7), steps 1 and 2. Next: step 3.
+Work happens on branch `calculate-stats-performance`. Done: step 0 (0.1–0.7), steps 1–3. Next: step 4.
 
 Files in this folder:
 
@@ -275,6 +275,21 @@ Status: done. Regression test passes, `compare.R 2023` reports 12 of 12 combinat
 - Derived stats on the aggregated columns: `passing_yards_after_catch`, `pacr`, `racr`, `target_share`, `air_yards_share`, `wopr`, `def_sacks`, `def_sack_yards`, `fg_pct`, `pat_pct`, `pt_net_yards`, fantasy points. `fifelse()` / `fcase()`, `NaN` handling as now.
 
 Check: regression test, `compare.R` on all seasons, `benchmark.R`.
+
+Status: done. Regression test passes, `compare.R` on all seasons reports 48 of 48 combinations `identical()`.
+
+- One GForce call on a table of contributions: `c(lapply(.SD, sum), list(fg_long = max(...), pt_long = max(...)))` with `keyby`. Logical contributions stay logical; `gsum()` returns integer, like `sum()`.
+- The other stats in one grouped call (`others`), also with `keyby`, so the rows match and `cbind()` joins them. data.table doesn't drop `NULL` items of a grouped `j` (it errors), so every per-group value is computed for all summaries; `stats_output_columns()` selects and orders the columns like the old `summarise()`. The first team is `first_team` (renamed to `team` for week / player) so it doesn't collide with the grouping column `team`.
+- `custom_mode()` returns `character(0)` when all names are `NA` (the `NA` `player_id` group); dplyr made it `NA`, now `[1L]` does.
+- `fg_pct` / `pat_pct` with `dt[att > 0, pct := ...]`; `fg_long` / `pt_long` 0 → `NA` with a subset assignment. `%0%` removed.
+- `benchmark.R` (2023, median of 3 runs, seconds):
+
+| `summary_level` / `stat_type` | Old | New | Speedup |
+|---|---|---|---|
+| season / player | 5.16 | 0.98 | 5.3x |
+| season / team | 3.51 | 0.59 | 6.0x |
+| week / player | 17.26 | 1.28 | 13.5x |
+| week / team | 3.85 | 0.65 | 6.0x |
 
 ## Step 4: pbp stats, player information, output
 

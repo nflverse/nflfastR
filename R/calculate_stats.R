@@ -271,303 +271,304 @@ calculate_stats <- function(
     ) |>
     dplyr::ungroup()
 
-  stats <- playstats |>
-    dplyr::group_by(!!!grp_vars) |>
-    dplyr::summarise(
-      player_name = if (.env$stat_type == "player") {
-        custom_mode(.data$player_name, na.rm = TRUE)
-      } else {
-        NULL
-      },
-      # Season Type #####################
-      # if summary level is week, then we have to use the season type variable
-      # from playstats as it could be REG or POST depending on the value of
-      # the argument season_type
-      # if summary level is season, then we collapse the values of season_type
-      # this will make sure that season_type is only REG+POST if the user asked
-      # for it AND if postseason data is available
-      season_type = if (.env$summary_level == "week") {
-        dplyr::first(.data$season_type)
-      } else {
-        paste(unique(.data$season_type), collapse = "+")
-      },
+  # Aggregation #####################
+  # Every stat that is a sum is a contribution of each row, computed once on
+  # the whole columns and summed by group in one GForce call, together with
+  # the maximums fg_long and pt_long. Columns that only some summaries
+  # output are computed for all and dropped when the columns are selected.
+  contributions <- playstats[,
+    c(
+      .SD,
+      list(
+        # Offense #####################
+        completions = stat_id %in% 15:16,
+        attempts = stat_id %in% c(14:16, 19),
+        passing_yards = (stat_id %in% 15:16) * yards,
+        passing_tds = stat_id == 16,
+        passing_interceptions = stat_id == 19,
+        sacks_suffered = stat_id == 20,
+        sack_yards_lost = (stat_id == 20) * yards,
+        sack_fumbles = stat_id == 20 & p_fumble,
+        sack_fumbles_lost = stat_id == 20 & p_fumble_lost,
+        # includes incompletions (111 = complete, 112 = incomplete)
+        passing_air_yards = (stat_id %in% 111:112) * yards,
+        # air yards of completed passes, for passing_yards_after_catch
+        passing_air_yards_complete = (stat_id == 111) * yards,
+        passing_first_downs = (stat_id %in% 15:16) & t_first_down_pass,
+        passing_2pt_conversions = stat_id == 77,
+        # "Explosives" (see #550 for discussion about the definition)
+        passing_10 = (stat_id %in% 15:16) * (yards >= 10),
+        passing_16 = (stat_id %in% 15:16) * (yards >= 16),
+        passing_20 = (stat_id %in% 15:16) * (yards >= 20),
+        passing_40 = (stat_id %in% 15:16) * (yards >= 40),
 
-      # Game ID #####################
-      # it's not strictly necessary to output game_id because we have
-      # season, week, team, and opponent information but it is convenient
-      # to add this here
-      # Only makes sense in case of weekly stats of course
-      game_id = if (.env$summary_level == "week") {
-        dplyr::first(.data$game_id)
-      } else {
-        NULL
-      },
+        carries = stat_id %in% 10:11,
+        rushing_yards = (stat_id %in% 10:13) * yards,
+        rushing_tds = stat_id %in% c(11, 13),
+        rushing_fumbles = (stat_id %in% 10:11) & p_fumble,
+        rushing_fumbles_lost = (stat_id %in% 10:11) & p_fumble_lost,
+        rushing_first_downs = (stat_id %in% 10:11) & t_first_down_rush,
+        rushing_2pt_conversions = stat_id == 75,
+        # "Explosives" (see #550 for discussion about the definition)
+        rushing_10 = (stat_id %in% 10:13) * (yards >= 10),
+        rushing_12 = (stat_id %in% 10:13) * (yards >= 12),
+        rushing_20 = (stat_id %in% 10:13) * (yards >= 20),
+        rushing_40 = (stat_id %in% 10:13) * (yards >= 40),
 
-      # Team Info #####################
-      # recent_team if we do a season summary of player stats
-      # team if we do a week summary of player stats
-      recent_team = if (.env$grp_id == "10") dplyr::last(.data$team) else NULL,
-      team = if (.env$grp_id == "30") dplyr::first(.data$team) else NULL,
-      # opponent team if we do week summaries
-      opponent_team = if (.env$summary_level == "week") {
-        data.table::fifelse(
-          dplyr::first(.data$team) == dplyr::first(.data$off),
-          dplyr::first(.data$def),
-          dplyr::first(.data$off)
-        )
-      } else {
-        NULL
-      },
+        receptions = stat_id %in% 21:22,
+        targets = stat_id == 115,
+        receiving_yards = (stat_id %in% 21:24) * yards,
+        receiving_tds = stat_id %in% c(22, 24),
+        receiving_fumbles = (stat_id %in% 21:22) & p_fumble,
+        receiving_fumbles_lost = (stat_id %in% 21:22) & p_fumble_lost,
+        # air_yards are counted in 111:112 but it is a passer stat not a
+        # receiver stat so we count team air yards when a player accounted
+        # for a reception. team air yards will always equal the correct air
+        # yards as 111 and 112 cannot appear more than once per play.
+        # If this ever changes, we can use pbp instead.
+        # Team stats use passing_air_yards instead (see below).
+        receiving_air_yards = (stat_id == 115) * team_play_air_yards,
+        receiving_yards_after_catch = (stat_id == 113) * yards,
+        receiving_first_downs = (stat_id %in% 21:22) & t_first_down_pass,
+        receiving_2pt_conversions = stat_id == 104,
+        # "Explosives" (see #550 for discussion about the definition)
+        receiving_10 = (stat_id %in% 21:24) * (yards >= 10),
+        receiving_16 = (stat_id %in% 21:24) * (yards >= 16),
+        receiving_20 = (stat_id %in% 21:24) * (yards >= 20),
+        receiving_40 = (stat_id %in% 21:24) * (yards >= 40),
 
-      # number of games is only relevant if we summarise the season
-      games = if (.env$summary_level == "season") {
-        dplyr::n_distinct(.data$game_id)
-      } else {
-        NULL
-      },
+        special_teams_tds = (special == 1) & stat_id %in% td_ids(),
 
-      # Offense #####################
-      completions = sum(stat_id %in% 15:16),
-      attempts = sum(stat_id %in% c(14:16, 19)),
-      passing_yards = sum((stat_id %in% 15:16) * yards),
-      passing_tds = sum(stat_id == 16),
-      passing_interceptions = sum(stat_id == 19),
-      sacks_suffered = sum(stat_id == 20),
-      sack_yards_lost = sum((stat_id == 20) * yards),
-      sack_fumbles = sum(stat_id == 20 & p_fumble),
-      sack_fumbles_lost = sum(stat_id == 20 & p_fumble_lost),
-      # includes incompletions (111 = complete, 112 = incomplete)
-      passing_air_yards = sum((stat_id %in% 111:112) * yards),
-      # passing yac equals passing yards - air yards on completed passes
-      passing_yards_after_catch = .data$passing_yards -
-        sum((stat_id == 111) * yards),
-      passing_first_downs = sum((stat_id %in% 15:16) & t_first_down_pass),
-      passing_2pt_conversions = sum(stat_id == 77),
-      # this is a player stat and we skip it in team stats
-      pacr = if (.env$stat_type == "player") {
-        .data$passing_yards / .data$passing_air_yards
-      } else {
-        NULL
-      },
-      # "Explosives" (see #550 for discussion about the definition)
-      passing_10 = sum((stat_id %in% 15:16) * (yards >= 10)),
-      passing_16 = sum((stat_id %in% 15:16) * (yards >= 16)),
-      passing_20 = sum((stat_id %in% 15:16) * (yards >= 20)),
-      passing_40 = sum((stat_id %in% 15:16) * (yards >= 40)),
-      # dakota = requires pbp,
+        # Defense #####################
+        def_tackles_solo = stat_id == 79,
+        def_tackles_with_assist = stat_id == 80,
+        def_tackle_assists = stat_id == 82,
+        def_tackles_for_loss = stat_id == 402,
+        def_tackles_for_loss_yards = (stat_id == 402) * yards,
+        def_fumbles_forced = stat_id == 91,
+        # full and half sacks, for def_sacks and def_sack_yards
+        def_sacks_full = stat_id == 83,
+        def_sacks_half = stat_id == 84,
+        def_sack_yards_full = (stat_id == 83) * -yards,
+        def_sack_yards_half = (stat_id == 84) * -yards,
+        def_qb_hits = stat_id == 110,
+        def_interceptions = stat_id %in% 25:26,
+        def_interception_yards = (stat_id %in% 25:28) * yards,
+        def_pass_defended = stat_id == 85,
+        def_tds = team == def & special != 1 & stat_id %in% td_ids(),
+        # stat ID 54 is a fumble out of bounds. It's never counted alone,
+        # always in combination with 52 or 53.
+        def_fumbles = (team == def) & stat_id %in% 52:53,
+        def_safeties = stat_id == 89,
+        def_punt_blocks = stat_id == 86,
+        def_pat_blocks = stat_id == 87,
+        def_fg_blocks = stat_id == 88,
+        def_2pt_atts = stat_id == 403,
+        def_2pt_made = stat_id == 404,
 
-      carries = sum(stat_id %in% 10:11),
-      rushing_yards = sum((stat_id %in% 10:13) * yards),
-      rushing_tds = sum(stat_id %in% c(11, 13)),
-      rushing_fumbles = sum((stat_id %in% 10:11) & p_fumble),
-      rushing_fumbles_lost = sum(
-        (stat_id %in% 10:11) & p_fumble_lost
+        # Misc #####################
+        # mostly yards gained after blocked punts or fgs
+        misc_yards = (stat_id %in% 63:64) * yards,
+        fumble_recovery_own = stat_id %in% 55:56,
+        # 57, 58 don't count as recovery because player received a
+        # lateral after recovery by other player
+        fumble_recovery_yards_own = (stat_id %in% 55:58) * yards,
+        fumble_recovery_opp = stat_id %in% 59:60,
+        # 61, 62 don't count as recovery because player received a
+        # lateral after recovery by other player
+        fumble_recovery_yards_opp = (stat_id %in% 59:62) * yards,
+        fumble_recovery_tds = stat_id %in% c(56, 58, 60, 62),
+        penalties = stat_id == 93,
+        penalty_yards = (stat_id == 93) * yards,
+        # team stats only
+        timeouts = stat_id == 68,
+        # we are missing some fumbles on offense (see 515) so we just add
+        # totals here. These fumble stats count all fumbles regardless of
+        # the unit the player was on. This means that all above fumble stats
+        # are included here but we make sure not to loose any fumbles, esp.
+        # on offense
+        fumbles_forced_by_opp = stat_id == 52,
+        fumbles_not_forced = stat_id == 53,
+        fumbles_out_of_bounds = stat_id == 54,
+        # we could tell users to just add the above three stats but fumbles
+        # are a bit confusing overall so it is ok to add a total counter that
+        # doesn't miss any fumbles.
+        # stat ID 54 is a fumble out of bounds. It's never counted alone,
+        # always in combination with 52 or 53. So we cannot add it to the
+        # total.
+        fumbles_total = stat_id %in% 52:53,
+        fumbles_lost_total = stat_id == 106,
+
+        # Returning #####################
+        punt_returns = stat_id %in% 33:34,
+        punt_return_yards = (stat_id %in% 33:36) * yards,
+        # punt return tds are counted in special teams tds atm
+        kickoff_returns = stat_id %in% 45:46,
+        kickoff_return_yards = (stat_id %in% 45:48) * yards,
+        # kickoff return tds are counted in special teams tds atm
+
+        # Kicking #####################
+        fg_made = stat_id == 70,
+        fg_att = stat_id %in% 69:71,
+        fg_missed = stat_id == 69,
+        fg_blocked = stat_id == 71,
+        fg_made_0_19 = (stat_id == 70) * (yards %between% c(0, 19)),
+        fg_made_20_29 = (stat_id == 70) * (yards %between% c(20, 29)),
+        fg_made_30_39 = (stat_id == 70) * (yards %between% c(30, 39)),
+        fg_made_40_49 = (stat_id == 70) * (yards %between% c(40, 49)),
+        fg_made_50_59 = (stat_id == 70) * (yards %between% c(50, 59)),
+        fg_made_60_ = (stat_id == 70) * (yards >= 60),
+        fg_missed_0_19 = (stat_id == 69) * (yards %between% c(0, 19)),
+        fg_missed_20_29 = (stat_id == 69) * (yards %between% c(20, 29)),
+        fg_missed_30_39 = (stat_id == 69) * (yards %between% c(30, 39)),
+        fg_missed_40_49 = (stat_id == 69) * (yards %between% c(40, 49)),
+        fg_missed_50_59 = (stat_id == 69) * (yards %between% c(50, 59)),
+        fg_missed_60_ = (stat_id == 69) * (yards >= 60),
+        fg_made_distance = (stat_id == 70) * yards,
+        fg_missed_distance = (stat_id == 69) * yards,
+        fg_blocked_distance = (stat_id == 71) * yards,
+        pat_made = stat_id == 72,
+        pat_att = stat_id %in% 72:74,
+        pat_missed = stat_id == 73,
+        pat_blocked = stat_id == 74,
+        gwfg_made = (stat_id == 70) * is_gwfg_attempt,
+        gwfg_att = (stat_id %in% 69:71) * is_gwfg_attempt,
+        gwfg_missed = (stat_id == 69) * is_gwfg_attempt,
+        gwfg_blocked = (stat_id == 71) * is_gwfg_attempt,
+        # week summaries only
+        gwfg_distance = (stat_id %in% 69:71) * is_gwfg_attempt * yards,
+
+        # Punts #####################
+        # stat ID 2 counts blocked punts that do not count as punt
+        pt_att = stat_id %in% c(29, 31, 32), # 31 probably unnecessary
+        pt_blocked = stat_id == 2,
+        pt_yards = (stat_id %in% c(29, 32)) * yards,
+        pt_inside_20 = stat_id == 30,
+        # the following stats are a bit special as we need opponent team
+        # stats to get the counts right. That's what the a_punt_* flags are
+        # for. stat IDs 37, 38, 39 (punts oob, downed, fair caught) are
+        # assigned to the receiving team (or to the receiver in case of 39)
+        # Also the number of returns, return TDs and the yardage
+        pt_out_of_bounds = (stat_id == 29) & a_punt_oob,
+        pt_downed = (stat_id == 29) & a_punt_downed,
+        pt_touchback = stat_id == 32,
+        pt_fair_caught = (stat_id == 29) & a_punt_fair_catch,
+        pt_returned = (stat_id %in% c(2, 29, 31, 32)) & a_punt_returned,
+        pt_return_yards = (stat_id %in% c(2, 29, 31, 32)) *
+          play_punt_return_yards,
+        pt_return_tds = (stat_id %in% c(2, 29, 31, 32)) & a_punt_return_td,
+
+        # maximums, not sums
+        fg_long_yards = (stat_id == 70) * yards,
+        pt_long_yards = (stat_id %in% c(29, 32)) * yards
+      )
+    ),
+    .SDcols = grp_vctr
+  ]
+  sum_cols <- setdiff(
+    names(contributions),
+    c(grp_vctr, "fg_long_yards", "pt_long_yards")
+  )
+  stats <- contributions[,
+    c(
+      lapply(.SD, sum),
+      list(fg_long = max(fg_long_yards), pt_long = max(pt_long_yards))
+    ),
+    keyby = grp_vctr,
+    .SDcols = sum_cols
+  ]
+  rm(contributions)
+
+  # Stats that aren't sums. All computed for every summary, see above.
+  # custom_mode() returns character(0) if all names are NA; [1L] makes it NA.
+  # season_type: if summary level is week, then we have to use the season
+  # type variable from playstats as it could be REG or POST depending on the
+  # value of the argument season_type. If summary level is season, then we
+  # collapse the values of season_type. This will make sure that season_type
+  # is only REG+POST if the user asked for it AND if postseason data is
+  # available.
+  # game_id: it's not strictly necessary to output game_id because we have
+  # season, week, team, and opponent information but it is convenient to add
+  # this here. Only makes sense in case of weekly stats of course.
+  # recent_team for season summaries of player stats, first_team (output as
+  # team) for week summaries of player stats, opponent_team for week
+  # summaries, games for season summaries.
+  others <- playstats[,
+    list(
+      player_name = custom_mode(player_name, na.rm = TRUE)[1L],
+      season_type = if (summary_level == "week") {
+        season_type[1L]
+      } else {
+        paste(unique(season_type), collapse = "+")
+      },
+      game_id = game_id[1L],
+      recent_team = team[.N],
+      first_team = team[1L],
+      opponent_team = data.table::fifelse(
+        team[1L] == off[1L],
+        def[1L],
+        off[1L]
       ),
-      rushing_first_downs = sum((stat_id %in% 10:11) & t_first_down_rush),
-      rushing_2pt_conversions = sum(stat_id == 75),
-      # "Explosives" (see #550 for discussion about the definition)
-      rushing_10 = sum((stat_id %in% 10:13) * (yards >= 10)),
-      rushing_12 = sum((stat_id %in% 10:13) * (yards >= 12)),
-      rushing_20 = sum((stat_id %in% 10:13) * (yards >= 20)),
-      rushing_40 = sum((stat_id %in% 10:13) * (yards >= 40)),
-
-      receptions = sum(stat_id %in% 21:22),
-      targets = sum(stat_id == 115),
-      receiving_yards = sum((stat_id %in% 21:24) * yards),
-      receiving_tds = sum(stat_id %in% c(22, 24)),
-      receiving_fumbles = sum((stat_id %in% 21:22) & p_fumble),
-      receiving_fumbles_lost = sum(
-        (stat_id %in% 21:22) & p_fumble_lost
-      ),
-      # air_yards are counted in 111:112 but it is a passer stat not a receiver stat
-      # so we count team air yards when a player accounted for a reception
-      # team air yards will always equal the correct air yards as 111 and 112
-      # cannot appear more than once per play.
-      # If this ever changes, we can use pbp instead.
-      receiving_air_yards = if (.env$stat_type == "player") {
-        sum((stat_id == 115) * .data$team_play_air_yards)
-      } else {
-        .data$passing_air_yards
-      },
-      receiving_yards_after_catch = sum((stat_id == 113) * yards),
-      receiving_first_downs = sum((stat_id %in% 21:22) & t_first_down_pass),
-      receiving_2pt_conversions = sum(stat_id == 104),
-      # "Explosives" (see #550 for discussion about the definition)
-      receiving_10 = sum((stat_id %in% 21:24) * (yards >= 10)),
-      receiving_16 = sum((stat_id %in% 21:24) * (yards >= 16)),
-      receiving_20 = sum((stat_id %in% 21:24) * (yards >= 20)),
-      receiving_40 = sum((stat_id %in% 21:24) * (yards >= 40)),
-      # these are player stats and we skip them in team stats
-      racr = if (.env$stat_type == "player") {
-        .data$receiving_yards / .data$receiving_air_yards
-      } else {
-        NULL
-      },
-      target_share = if (.env$stat_type == "player") {
-        .data$targets / dplyr::first(.data$team_targets)
-      } else {
-        NULL
-      },
-      air_yards_share = if (.env$stat_type == "player") {
-        .data$receiving_air_yards / dplyr::first(.data$team_air_yards)
-      } else {
-        NULL
-      },
-      wopr = if (.env$stat_type == "player") {
-        1.5 * .data$target_share + 0.7 * .data$air_yards_share
-      } else {
-        NULL
-      },
-
-      special_teams_tds = sum((special == 1) & stat_id %in% td_ids()),
-
-      # Defense #####################
-      # def_tackles = ,
-      def_tackles_solo = sum(stat_id == 79),
-      def_tackles_with_assist = sum(stat_id == 80),
-      def_tackle_assists = sum(stat_id == 82),
-      def_tackles_for_loss = sum(stat_id == 402),
-      def_tackles_for_loss_yards = sum((stat_id == 402) * yards),
-      def_fumbles_forced = sum(stat_id == 91),
-      def_sacks = sum(stat_id == 83) + 1 / 2 * sum(stat_id == 84),
-      def_sack_yards = sum((stat_id == 83) * -yards) +
-        1 / 2 * sum((stat_id == 84) * -yards),
-      def_qb_hits = sum(stat_id == 110),
-      def_interceptions = sum(stat_id %in% 25:26),
-      def_interception_yards = sum((stat_id %in% 25:28) * yards),
-      def_pass_defended = sum(stat_id == 85),
-      def_tds = sum(team == def & special != 1 & stat_id %in% td_ids()),
-      # stat ID 54 is a fumble out of bounds. It's never counted alone,
-      # always in combination with 52 or 53.
-      def_fumbles = sum((team == def) & stat_id %in% 52:53),
-      def_safeties = sum(stat_id == 89),
-      def_punt_blocks = sum(stat_id == 86),
-      def_pat_blocks = sum(stat_id == 87),
-      def_fg_blocks = sum(stat_id == 88),
-      def_2pt_atts = sum(stat_id == 403),
-      def_2pt_made = sum(stat_id == 404),
-
-      # Misc #####################
-      # mostly yards gained after blocked punts or fgs
-      misc_yards = sum((stat_id %in% 63:64) * yards),
-      fumble_recovery_own = sum(stat_id %in% 55:56),
-      # 57, 58 don't count as recovery because player received a
-      # lateral after recovery by other player
-      fumble_recovery_yards_own = sum((stat_id %in% 55:58) * yards),
-      fumble_recovery_opp = sum(stat_id %in% 59:60),
-      # 61, 62 don't count as recovery because player received a
-      # lateral after recovery by other player
-      fumble_recovery_yards_opp = sum((stat_id %in% 59:62) * yards),
-      fumble_recovery_tds = sum(stat_id %in% c(56, 58, 60, 62)),
-      penalties = sum(stat_id == 93),
-      penalty_yards = sum((stat_id == 93) * yards),
-      timeouts = if (.env$stat_type == "team") sum(stat_id == 68) else NULL,
-      # we are missing some fumbles on offense (see 515) so we just add
-      # totals here. These fumble stats count all fumbles regardless of
-      # the unit the player was on. This means that all above fumble stats
-      # are included here but we make sure not to loose any fumbles, esp. on offense
-      fumbles_forced_by_opp = sum(stat_id == 52),
-      fumbles_not_forced = sum(stat_id == 53),
-      fumbles_out_of_bounds = sum(stat_id == 54),
-      # we could tell users to just add the above three stats but fumbles are
-      # a bit confusing overall so it is ok to add a total counter that doesn't
-      # miss any fumbles.
-      # stat ID 54 is a fumble out of bounds. It's never counted alone,
-      # always in combination with 52 or 53. So we cannot add it to the total.
-      fumbles_total = sum(stat_id %in% 52:53),
-      fumbles_lost_total = sum(stat_id == 106),
-
-      # Returning #####################
-      punt_returns = sum(stat_id %in% 33:34),
-      punt_return_yards = sum((stat_id %in% 33:36) * yards),
-      # punt return tds are counted in special teams tds atm
-      # punt_return_tds = sum(stat_id %in% c(34, 36)),
-      kickoff_returns = sum(stat_id %in% 45:46),
-      kickoff_return_yards = sum((stat_id %in% 45:48) * yards),
-      # kickoff return tds are counted in special teams tds atm
-      # kickoff_return_tds = sum(stat_id %in% c(46, 48)),
-
-      # Kicking #####################
-      fg_made = sum(stat_id == 70),
-      fg_att = sum(stat_id %in% 69:71),
-      fg_missed = sum(stat_id == 69),
-      fg_blocked = sum(stat_id == 71),
-      fg_long = max((stat_id == 70) * yards) %0% NA_integer_,
-      # avoid 0/0 = NaN
-      fg_pct = if (.data$fg_att > 0) .data$fg_made / .data$fg_att else NA_real_,
-      fg_made_0_19 = sum((stat_id == 70) * (yards %between% c(0, 19))),
-      fg_made_20_29 = sum((stat_id == 70) * (yards %between% c(20, 29))),
-      fg_made_30_39 = sum((stat_id == 70) * (yards %between% c(30, 39))),
-      fg_made_40_49 = sum((stat_id == 70) * (yards %between% c(40, 49))),
-      fg_made_50_59 = sum((stat_id == 70) * (yards %between% c(50, 59))),
-      fg_made_60_ = sum((stat_id == 70) * (yards >= 60)),
-      fg_missed_0_19 = sum((stat_id == 69) * (yards %between% c(0, 19))),
-      fg_missed_20_29 = sum((stat_id == 69) * (yards %between% c(20, 29))),
-      fg_missed_30_39 = sum((stat_id == 69) * (yards %between% c(30, 39))),
-      fg_missed_40_49 = sum((stat_id == 69) * (yards %between% c(40, 49))),
-      fg_missed_50_59 = sum((stat_id == 69) * (yards %between% c(50, 59))),
-      fg_missed_60_ = sum((stat_id == 69) * (yards >= 60)),
+      games = data.table::uniqueN(game_id),
       fg_made_list = fg_list(stat_id, yards, collapse_id = 70),
       fg_missed_list = fg_list(stat_id, yards, collapse_id = 69),
       fg_blocked_list = fg_list(stat_id, yards, collapse_id = 71),
-      fg_made_distance = sum((stat_id == 70) * yards),
-      fg_missed_distance = sum((stat_id == 69) * yards),
-      fg_blocked_distance = sum((stat_id == 71) * yards),
-      pat_made = sum(stat_id == 72),
-      pat_att = sum(stat_id %in% 72:74),
-      pat_missed = sum(stat_id == 73),
-      pat_blocked = sum(stat_id == 74),
-      # avoid 0/0 = NaN
-      pat_pct = if (.data$pat_att > 0) {
-        .data$pat_made / .data$pat_att
-      } else {
-        NA_real_
-      },
-      gwfg_made = sum((stat_id == 70) * is_gwfg_attempt),
-      gwfg_att = sum((stat_id %in% 69:71) * is_gwfg_attempt),
-      gwfg_missed = sum((stat_id == 69) * is_gwfg_attempt),
-      gwfg_blocked = sum((stat_id == 71) * is_gwfg_attempt),
-      gwfg_distance = if (.env$summary_level == "week") {
-        sum((stat_id %in% 69:71) * is_gwfg_attempt * yards)
-      } else {
-        NULL
-      },
-      gwfg_distance_list = if (.env$summary_level == "season") {
-        fg_list(stat_id, yards, collapse_id = 69:71, gwfg = is_gwfg_attempt)
-      } else {
-        NULL
-      },
+      gwfg_distance_list = fg_list(
+        stat_id,
+        yards,
+        collapse_id = 69:71,
+        gwfg = is_gwfg_attempt
+      ),
+      team_targets = team_targets[1L],
+      team_air_yards = team_air_yards[1L]
+    ),
+    keyby = grp_vctr
+  ]
+  # both are keyed by the same groups, so the rows match
+  stats <- cbind(stats, others[, !..grp_vctr])
+  rm(others)
+  if (grp_id == "30") {
+    data.table::setnames(stats, "first_team", "team")
+  }
 
-      # Punts #####################
-      # stat ID 2 counts blocked punts that do not count as punt
-      pt_att = sum(stat_id %in% c(29, 31, 32)), # 31 probably unnecessary
-      pt_blocked = sum(stat_id == 2),
-      pt_long = max(stat_id %in% c(29, 32) * yards) %0% NA_integer_,
-      pt_yards = sum(stat_id %in% c(29, 32) * yards),
-      pt_inside_20 = sum(stat_id == 30),
-      # the following stats are a bit special as we need opponent team stats
-      # to get the counts right. That's what the a_punt_* flags are for
-      # stat IDs 37, 38, 39 (punts oob, downed, fair caught) are assigned to
-      # the receiving team (or to the receiver in case of 39)
-      # Also the number of returns, return TDs and the yardage
-      pt_out_of_bounds = sum((stat_id == 29) & a_punt_oob),
-      pt_downed = sum((stat_id == 29) & a_punt_downed),
-      pt_touchback = sum(stat_id == 32),
-      pt_fair_caught = sum((stat_id == 29) & a_punt_fair_catch),
-      pt_returned = sum(
-        (stat_id %in% c(2, 29, 31, 32)) & a_punt_returned
-      ),
-      pt_return_yards = sum(
-        (stat_id %in% c(2, 29, 31, 32)) * .data$play_punt_return_yards
-      ),
-      pt_return_tds = sum(
-        (stat_id %in% c(2, 29, 31, 32)) & a_punt_return_td
-      ),
-      pt_net_yards = .data$pt_yards -
-        .data$pt_return_yards -
-        .data$pt_touchback * 20L
-    ) |>
-    dplyr::ungroup() |>
+  # Derived stats #####################
+  if (stat_type == "team") {
+    stats[, receiving_air_yards := passing_air_yards]
+  }
+  stats[,
+    c(
+      "passing_yards_after_catch",
+      "pacr",
+      "racr",
+      "target_share",
+      "air_yards_share",
+      "def_sacks",
+      "def_sack_yards",
+      "pt_net_yards"
+    ) := list(
+      # passing yac equals passing yards - air yards on completed passes
+      passing_yards - passing_air_yards_complete,
+      passing_yards / passing_air_yards,
+      receiving_yards / receiving_air_yards,
+      targets / team_targets,
+      receiving_air_yards / team_air_yards,
+      def_sacks_full + 1 / 2 * def_sacks_half,
+      def_sack_yards_full + 1 / 2 * def_sack_yards_half,
+      pt_yards - pt_return_yards - pt_touchback * 20L
+    )
+  ]
+  stats[, wopr := 1.5 * target_share + 0.7 * air_yards_share]
+  # avoid 0/0 = NaN
+  stats[fg_att > 0, fg_pct := fg_made / fg_att]
+  stats[pat_att > 0, pat_pct := pat_made / pat_att]
+  stats[fg_long == 0L, fg_long := NA_integer_]
+  stats[pt_long == 0L, pt_long := NA_integer_]
+
+  out_cols <- stats_output_columns(grp_vctr, grp_id, summary_level)
+  stats <- stats[, ..out_cols]
+  stats <- tibble::as_tibble(data.table::setDF(stats))
+
+  stats <- stats |>
     dplyr::mutate_if(
       .predicate = is.character,
       .funs = ~ dplyr::na_if(.x, "")
@@ -711,6 +712,152 @@ stats_load_from_url <- function(urls) {
   nflreadr::load_from_url(urls, seasons = TRUE, nflverse = FALSE)
 }
 
+# Output columns of the aggregation in calculate_stats(), in order.
+stats_output_columns <- function(grp_vctr, grp_id, summary_level) {
+  player <- grp_id %in% c("10", "30")
+  week <- summary_level == "week"
+  cols <- c(
+    if (player) "player_name",
+    "season_type",
+    if (week) "game_id",
+    if (grp_id == "10") "recent_team",
+    if (grp_id == "30") "team",
+    if (week) "opponent_team",
+    if (!week) "games",
+    "completions",
+    "attempts",
+    "passing_yards",
+    "passing_tds",
+    "passing_interceptions",
+    "sacks_suffered",
+    "sack_yards_lost",
+    "sack_fumbles",
+    "sack_fumbles_lost",
+    "passing_air_yards",
+    "passing_yards_after_catch",
+    "passing_first_downs",
+    "passing_2pt_conversions",
+    if (player) "pacr",
+    "passing_10",
+    "passing_16",
+    "passing_20",
+    "passing_40",
+    "carries",
+    "rushing_yards",
+    "rushing_tds",
+    "rushing_fumbles",
+    "rushing_fumbles_lost",
+    "rushing_first_downs",
+    "rushing_2pt_conversions",
+    "rushing_10",
+    "rushing_12",
+    "rushing_20",
+    "rushing_40",
+    "receptions",
+    "targets",
+    "receiving_yards",
+    "receiving_tds",
+    "receiving_fumbles",
+    "receiving_fumbles_lost",
+    "receiving_air_yards",
+    "receiving_yards_after_catch",
+    "receiving_first_downs",
+    "receiving_2pt_conversions",
+    "receiving_10",
+    "receiving_16",
+    "receiving_20",
+    "receiving_40",
+    if (player) c("racr", "target_share", "air_yards_share", "wopr"),
+    "special_teams_tds",
+    "def_tackles_solo",
+    "def_tackles_with_assist",
+    "def_tackle_assists",
+    "def_tackles_for_loss",
+    "def_tackles_for_loss_yards",
+    "def_fumbles_forced",
+    "def_sacks",
+    "def_sack_yards",
+    "def_qb_hits",
+    "def_interceptions",
+    "def_interception_yards",
+    "def_pass_defended",
+    "def_tds",
+    "def_fumbles",
+    "def_safeties",
+    "def_punt_blocks",
+    "def_pat_blocks",
+    "def_fg_blocks",
+    "def_2pt_atts",
+    "def_2pt_made",
+    "misc_yards",
+    "fumble_recovery_own",
+    "fumble_recovery_yards_own",
+    "fumble_recovery_opp",
+    "fumble_recovery_yards_opp",
+    "fumble_recovery_tds",
+    "penalties",
+    "penalty_yards",
+    if (!player) "timeouts",
+    "fumbles_forced_by_opp",
+    "fumbles_not_forced",
+    "fumbles_out_of_bounds",
+    "fumbles_total",
+    "fumbles_lost_total",
+    "punt_returns",
+    "punt_return_yards",
+    "kickoff_returns",
+    "kickoff_return_yards",
+    "fg_made",
+    "fg_att",
+    "fg_missed",
+    "fg_blocked",
+    "fg_long",
+    "fg_pct",
+    "fg_made_0_19",
+    "fg_made_20_29",
+    "fg_made_30_39",
+    "fg_made_40_49",
+    "fg_made_50_59",
+    "fg_made_60_",
+    "fg_missed_0_19",
+    "fg_missed_20_29",
+    "fg_missed_30_39",
+    "fg_missed_40_49",
+    "fg_missed_50_59",
+    "fg_missed_60_",
+    "fg_made_list",
+    "fg_missed_list",
+    "fg_blocked_list",
+    "fg_made_distance",
+    "fg_missed_distance",
+    "fg_blocked_distance",
+    "pat_made",
+    "pat_att",
+    "pat_missed",
+    "pat_blocked",
+    "pat_pct",
+    "gwfg_made",
+    "gwfg_att",
+    "gwfg_missed",
+    "gwfg_blocked",
+    if (week) "gwfg_distance" else "gwfg_distance_list",
+    "pt_att",
+    "pt_blocked",
+    "pt_long",
+    "pt_yards",
+    "pt_inside_20",
+    "pt_out_of_bounds",
+    "pt_downed",
+    "pt_touchback",
+    "pt_fair_caught",
+    "pt_returned",
+    "pt_return_yards",
+    "pt_return_tds",
+    "pt_net_yards"
+  )
+  c(grp_vctr, cols)
+}
+
 fg_list <- function(stat_ids, yards, collapse_id, gwfg = NULL) {
   if (is.null(gwfg)) {
     paste(
@@ -724,8 +871,6 @@ fg_list <- function(stat_ids, yards, collapse_id, gwfg = NULL) {
     )
   }
 }
-
-`%0%` <- function(lhs, rhs) if (lhs != 0) lhs else rhs
 
 # Adds a logical column per element of flags: TRUE in all rows of the groups
 # (by) that have one of the stat IDs of that element. Joins match NA keys like
