@@ -38,7 +38,14 @@
 #' \donttest{
 #' try({# to avoid CRAN test problems
 #' stats <- calculate_stats(2023, "season", "player")
-#' dplyr::glimpse(stats)
+#' # one line per column, like dplyr::glimpse()
+#' str(
+#'   stats,
+#'   list.len = ncol(stats),
+#'   vec.len = 10,
+#'   give.attr = FALSE,
+#'   strict.width = "cut"
+#' )
 #' })
 #' }
 calculate_stats <- function(
