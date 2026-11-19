@@ -8,27 +8,32 @@ Seasons 1999 and 2000 are deprecated. They are not used anywhere in this plan: n
 
 Steps 0–5 were done on branch `calculate-stats-performance` (step 0 in #630, steps 1–5 in #631). Done: steps 0–5. The rewrite of `calculate_stats()` is complete. Step 6 (dependencies) is a separate effort.
 
+After the rewrite, the scripts that were only needed for it were removed: the game selection (`season_hits.R`, `run_all.sh`, `select_games.R`) and the old-vs-new comparison with a frozen copy of the old code (`calculate_stats_old.R`, `compare.R`, `benchmark.R`). The steps below still name them; they are in the git history (e.g. commit c1359e8). `compare_versions.R` replaces `compare.R` and `benchmark.R`: it compares two versions of the package (e.g. a git worktree of master and the current checkout), so it stays correct after intended output changes.
+
 Files in this folder:
 
 | File | Purpose |
 |---|---|
 | `PLAN.md` | This plan. Update the status here after every step. |
 | `checklist.R` | Case checklist (0.2): `checklist_pbp_columns`, `checklist_outputs()`, `checklist_items()`, `checklist_report()`. Source after `devtools::load_all()`. |
-| `season_hits.R`, `run_all.sh` | Download one / all seasons and run the checklist per season (0.3). |
-| `select_games.R` | Greedy game selection and the checklist on the selected games (0.3). |
 | `selected_games.csv` | The 60 selected games (committed; the input of 0.4). |
-| `update_stats_regression.R` | Builds and uploads the pinned inputs and expected output (0.4). |
-| `calculate_stats_old.R` | Frozen copy of the old `calculate_stats()` and its helpers (0.7). Don't edit. |
-| `compare.R` | Old vs. new on full seasons, all 12 combinations (0.7). |
-| `benchmark.R` | Old vs. new timings on 2023 (0.7). |
-| `hits/` | Git-ignored. Downloaded data and checklist results per season. |
+| `update_stats_regression.R` | Builds and uploads the pinned inputs and expected output (0.4). Uses `checklist.R`. |
+| `compare_versions.R` | Two versions of the package on full seasons: all 12 combinations compared, the four `summary_level` / `stat_type` combinations timed. |
+| `hits/` | Git-ignored. Downloaded data per season and the results of `compare_versions.R`. `compare_versions.R` downloads missing seasons. |
 
-`hits/` doesn't survive a fresh clone. Rebuild it with `sh data-raw/calculate_stats_performance/run_all.sh 2025 4` (about 15 minutes on 4 cores plus downloads; it skips seasons that are done), but only if you need to repeat the selection. 0.4 only needs the seasons in `selected_games.csv` and should download them itself (see 0.4).
+Compare a branch with master:
+
+```sh
+git worktree add ../nflfastR-master master
+Rscript data-raw/calculate_stats_performance/compare_versions.R ../nflfastR-master . 2023
+```
+
+The third argument takes comma separated seasons (default 2001, 2012, 2023 and the most recent complete season), the fourth the number of timed runs (default 3, 0 skips the timing). Each version runs in a fresh R process with `pkgload::load_all()`. Both versions need the loader wrappers `stats_load_from_url()` and `stats_load_players()` (since #630).
 
 Practical notes from earlier sessions:
 
 - Use `Rscript` from the package root. `checklist_outputs()` mocks `load_playstats()` and `stats_load_players()` with `testthat::local_mocked_bindings(.package = "nflfastR")`, so nothing is downloaded during a checklist run.
-- `readRDS()` of a URL (and with it `nflreadr::load_pbp()`, `load_players()` and `load_playstats()`) times out after 60 s on slow connections. Download with `curl::curl_download()` to a file, like `download_rds()` in `season_hits.R`.
+- `readRDS()` of a URL (and with it `nflreadr::load_pbp()`, `load_players()` and `load_playstats()`) times out after 60 s on slow connections. Download with `curl::curl_download()` to a file, like `download_rds()` in `compare_versions.R`.
 - `return()` inside `j` of a data.table call at the top level of a script fails ("no function to return from"). Put the code in a function.
 - Grouped data.table calls whose `j` is `if (...) .(...)` return a table without the `j` columns when no group matches. Check `nrow()` before using the result.
 - Rscript reads a script while it runs it. Don't edit or `air format` a script while it's running, or the rest is read from shifted offsets (parse error near a random word).
@@ -392,7 +397,7 @@ Rewriting `calculate_stats()` alone doesn't drop dplyr. Remaining users: `calcul
 
 - Don't change the computation before step 0 is complete and checked (0.6).
 - Never use seasons 1999 or 2000.
-- After every step: the regression test passes and `compare.R 2023` reports `identical()` or "within tolerance" for all combinations. Doubles that differ only within the tolerance of the tests (relative 1e-6) are accepted: performance matters more than the last digits (decided by the user after step 4, about `passing_cpoe`). After step 3 and step 5, run `compare.R` on all seasons (no argument). The tests compare doubles with a tolerance; `compare.R` checks `identical()` on full seasons, which catches small changes of doubles, class and attributes, and row-order effects. A difference is a bug in the rewrite until the user decides otherwise.
+- After every step: the regression test passes and `compare.R 2023` reports `identical()` or "within tolerance" for all combinations. Doubles that differ only within the tolerance of the tests (relative 1e-6) are accepted: performance matters more than the last digits (decided by the user after step 4, about `passing_cpoe`). After step 3 and step 5, run `compare.R` on all seasons (no argument). The tests compare doubles with a tolerance; `compare.R` checks `identical()` on full seasons, which catches small changes of doubles, class and attributes, and row-order effects. A difference is a bug in the rewrite until the user decides otherwise. For changes after the rewrite, `compare_versions.R` against master does the same.
 - Never update the expected stats output or loosen the tolerance to make the test pass. Show the user the differences and let them decide.
 - Never upload to the `regression_tests` release without the user's explicit request; use `--dry-run`.
 - Follow the data.table rules in AGENTS.md (`dt[cond, col := value]`, `as.numeric(cond)`, `%chin%`, `fifelse()` / `fcase()`, `globalVariables()`).
