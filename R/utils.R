@@ -130,18 +130,15 @@ time_to_seconds <- function(time) {
 # write season pbp to a connected db
 write_pbp <- function(seasons, dbConnection, tablename) {
   p <- progressr::progressor(along = seasons)
-  purrr::walk(
-    seasons,
-    function(x, p) {
-      pbp <- nflreadr::load_pbp(x)
-      if (!DBI::dbExistsTable(dbConnection, tablename)) {
-        pbp <- dplyr::bind_rows(default_play, pbp)
-      }
-      DBI::dbWriteTable(dbConnection, tablename, pbp, append = TRUE)
-      p("loading...")
-    },
-    p
-  )
+  for (x in seasons) {
+    pbp <- load_pbp(x)
+    if (!DBI::dbExistsTable(dbConnection, tablename)) {
+      # the default play defines the column types of the new table
+      pbp <- data.table::rbindlist(list(default_play, pbp), fill = TRUE)
+    }
+    DBI::dbWriteTable(dbConnection, tablename, pbp, append = TRUE)
+    p("loading...")
+  }
 }
 
 make_nflverse_data <- function(data, type = c("play by play")) {
@@ -477,6 +474,7 @@ utils::globalVariables(
     "fumbled_1_player_id",
     "fumbled_1_player_name",
     "game_id",
+    "gameday",
     "goal_to_go",
     "home_ep",
     "home_epa",

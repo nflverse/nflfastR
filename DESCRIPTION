@@ -41,7 +41,6 @@ Suggests:
     DBI,
     duckdb,
     gsisdecoder,
-    purrr (>= 0.3.0),
     rmarkdown,
     RSQLite,
     testthat (>= 3.0.0),

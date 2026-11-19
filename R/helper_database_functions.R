@@ -63,11 +63,10 @@ update_db <- function(
 
   if (
     !is_installed("DBI") |
-      !is_installed("purrr") |
       (!is_installed("RSQLite") & is.null(db_connection))
   ) {
     cli::cli_abort(
-      "{my_time()} | Packages {.pkg DBI}, {.pkg RSQLite} and {.pkg purrr} required for database communication. Please install them."
+      "{my_time()} | Packages {.pkg DBI} and {.pkg RSQLite} required for database communication. Please install them."
     )
   }
 
@@ -107,16 +106,10 @@ update_db <- function(
 
   # get completed games using Lee's file (thanks Lee!)
   user_message("Checking for missing completed games...", "todo")
-  completed_games <- nflreadr::load_schedules() |>
-    # completed games since 1999, excluding the broken games
-    dplyr::filter(
-      .data$season >= 1999,
-      !is.na(.data$result),
-      !.data$game_id %chin%
-        c("1999_01_BAL_STL", "2000_06_BUF_MIA", "2000_03_SD_KC")
-    ) |>
-    dplyr::arrange(.data$gameday) |>
-    dplyr::pull(.data$game_id)
+  # completed games since 1999, excluding the broken games
+  completed_games <- data.table::setDT(load_schedules())[
+    season >= 1999 & !is.na(result) & !game_id %chin% missing_raw_games
+  ][order(gameday), game_id]
 
   # function below
   missing <- get_missing_games(completed_games, connection, tblname)
@@ -175,11 +168,10 @@ build_db <- function(
   rebuild = FALSE,
   show_message = TRUE
 ) {
-  valid_seasons <- nflreadr::load_schedules() |>
-    dplyr::filter(.data$season >= 1999 & !is.na(.data$result)) |>
-    dplyr::group_by(.data$season) |>
-    dplyr::summarise() |>
-    dplyr::ungroup()
+  valid_seasons <- data.table::setDT(load_schedules())[
+    season >= 1999 & !is.na(result),
+    sort(unique(season))
+  ]
 
   if (all(rebuild == TRUE)) {
     cli::cli_ul(
@@ -187,12 +179,12 @@ build_db <- function(
                 in your connected database..."
     )
     DBI::dbRemoveTable(db_conn, tblname)
-    seasons <- valid_seasons |> dplyr::pull("season")
+    seasons <- valid_seasons
     cli::cli_ul(
       "{my_time()} | Starting download of {length(seasons)} seasons
                 between {min(seasons)} and {max(seasons)}..."
     )
-  } else if (is.numeric(rebuild) & all(rebuild %in% valid_seasons$season)) {
+  } else if (is.numeric(rebuild) & all(rebuild %in% valid_seasons)) {
     # s <- glue::glue_collapse(rebuild, sep = ", ", last = ", and ")
     # string <- stringi::stri_c(stringi::stri_sub(s, 1, 11), "...", stringi::stri_sub(s, -16, -1))
     if (show_message) {
@@ -211,9 +203,7 @@ build_db <- function(
         .con = db_conn
       )
     )
-    seasons <- valid_seasons |>
-      dplyr::filter(.data$season %in% rebuild) |>
-      dplyr::pull("season")
+    seasons <- valid_seasons[valid_seasons %in% rebuild]
     cli::cli_ul(
       "{my_time()} | Starting download of the {length(rebuild)}
                 season{?s} {rebuild}"
@@ -224,7 +214,7 @@ build_db <- function(
                         in your database. Will load the play by play data from
                         scratch."
     )
-    seasons <- valid_seasons |> dplyr::pull("season")
+    seasons <- valid_seasons
     cli::cli_ul(
       "{my_time()} | Starting download of {length(seasons)} seasons
                 between {min(seasons)} and {max(seasons)}..."
@@ -245,12 +235,14 @@ build_db <- function(
 # this is a helper function to check a list of completed games
 # against the games that exist in a database connection
 get_missing_games <- function(completed_games, dbConnection, tablename) {
-  db_ids <- dplyr::tbl(dbConnection, tablename) |>
-    dplyr::select("game_id") |>
-    dplyr::filter(.data$game_id != "9999_99_DEF_TYP") |>
-    dplyr::distinct() |>
-    dplyr::collect() |>
-    dplyr::pull("game_id")
+  db_ids <- DBI::dbGetQuery(
+    dbConnection,
+    glue::glue_sql(
+      "SELECT DISTINCT game_id FROM {`tablename`} WHERE game_id != {dummy}",
+      dummy = "9999_99_DEF_TYP",
+      .con = dbConnection
+    )
+  )[["game_id"]]
 
   need_scrape <- completed_games[
     !completed_games %chin% c(db_ids, "9999_99_DEF_TYP")
