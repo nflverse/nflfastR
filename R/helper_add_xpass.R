@@ -12,7 +12,7 @@
 #' timeouts, and the era of the season (for league-wide trends). It doesn't
 #' know anything about the teams. Must be run on a dataframe that has already had
 #' [clean_pbp()] run on it. Note that the functions [build_nflfastR_pbp()] and
-#' the database function [update_db()] already include this function.
+#' the database function [update_pbp_db()] already include this function.
 #' @return The input Data Frame of the parameter `pbp` with the following columns
 #' added:
 #' \describe{

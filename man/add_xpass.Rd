@@ -26,5 +26,5 @@ situation only: down, distance, field position, score, time remaining,
 timeouts, and the era of the season (for league-wide trends). It doesn't
 know anything about the teams. Must be run on a dataframe that has already had
 \code{\link[=clean_pbp]{clean_pbp()}} run on it. Note that the functions \code{\link[=build_nflfastR_pbp]{build_nflfastR_pbp()}} and
-the database function \code{\link[=update_db]{update_db()}} already include this function.
+the database function \code{\link[=update_pbp_db]{update_pbp_db()}} already include this function.
 }
