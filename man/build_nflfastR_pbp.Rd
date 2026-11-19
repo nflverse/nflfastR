@@ -63,7 +63,7 @@ build_nflfastR_pbp(c("2018_21_NE_LA", "2019_21_SF_KC"))
 # output of `load_schedules` as input
 try({# to avoid CRAN test problems
 nflreadr::load_schedules(2025) |>
-  dplyr::slice_tail(n = 3) |>
+  subset(game_type \%in\% c("CON", "SB")) |>
   build_nflfastR_pbp()
 })
 

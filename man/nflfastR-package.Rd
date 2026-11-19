@@ -60,7 +60,7 @@ this should be the appropriate plan but please make sure it truly is.
 After the session is freshly restarted please check if the above method worked
 by running the next line. If the output is \code{FALSE} you successfully set up a
 default non-sequential \code{\link[future:plan]{future::plan()}}. If the output is \code{TRUE} all functions
-will behave like they were called with \code{\link[purrr:map]{purrr::map()}} and NOT in multisession.
+will behave like they were called with \code{purrr::map()} and NOT in multisession.
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{inherits(future::plan(), "sequential")
 }\if{html}{\out{</div>}}

@@ -35,14 +35,11 @@ Imports:
     rlang (>= 0.4.10),
     stringi,
     tibble (>= 3.0),
-    tidyr (>= 1.0.0),
     xgboost (>= 1.6)
 Suggests: 
     DBI,
     duckdb,
     gsisdecoder,
-    nflseedR (>= 2.0.0),
-    purrr (>= 0.3.0),
     rmarkdown,
     RSQLite,
     testthat (>= 3.0.0),

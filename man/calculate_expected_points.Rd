@@ -19,7 +19,7 @@ The original pbp_data with the following columns appended to it:
 \item{opp_td_prob}{probability of next score opponent touchdown this half.}
 \item{fg_prob}{probability next score field goal this half.}
 \item{safety_prob}{probability next score safety this half.}
-\item{td_prob}{probability text score touchdown this half.}
+\item{td_prob}{probability next score touchdown this half.}
 }
 }
 \description{
@@ -59,22 +59,21 @@ must be present:
 \examples{
 \donttest{
 try({# to avoid CRAN test problems
-library(dplyr)
-data <- tibble::tibble(
-"season" = 1999:2019,
+data <- data.frame(
+"season" = 2001:2019,
 "home_team" = "SEA",
 "posteam" = "SEA",
 "roof" = "outdoors",
 "half_seconds_remaining" = 1800,
-"yardline_100" = c(rep(80, 17), rep(75, 4)),
+"yardline_100" = c(rep(80, 15), rep(75, 4)),
 "down" = 1,
 "ydstogo" = 10,
 "posteam_timeouts_remaining" = 3,
 "defteam_timeouts_remaining" = 3
 )
 
-nflfastR::calculate_expected_points(data) |>
-  dplyr::select(season, yardline_100, td_prob, ep)
+ep <- nflfastR::calculate_expected_points(data)
+ep[c("season", "yardline_100", "td_prob", "ep")]
 })
 }
 }

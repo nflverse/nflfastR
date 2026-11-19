@@ -47,7 +47,7 @@ test_that("calculate_expected_points replaces ep and keeps other columns", {
   expect_identical(ep$success, 1)
 })
 
-test_that("calculate_expected_points works", {
+test_that("calculate_win_probability works", {
   # This test used to run on CRAN but their changes to env vars which cause
   # check NOTES for multi-threading forced us to skip on cran.
   skip_on_cran()
@@ -69,4 +69,31 @@ test_that("calculate_expected_points works", {
   wp <- calculate_win_probability(data) |> round_double_to_digits()
   exp <- load_expectation("wp")
   expect_equal(wp, exp)
+})
+
+test_that("calculate_win_probability doesn't change its input and keeps its type", {
+  skip_on_cran()
+  data <- wp_calculator_input()
+  inputs <- list(
+    data.frame = data,
+    tibble = tibble::as_tibble(data),
+    data.table = data.table::as.data.table(data)
+  )
+  for (x in inputs) {
+    before <- rlang::duplicate(x, shallow = FALSE)
+    out <- calculate_win_probability(x)
+    expect_identical(x, before)
+    expect_identical(class(out), class(x))
+  }
+})
+
+test_that("calculate_win_probability replaces wp and keeps other columns", {
+  skip_on_cran()
+  data <- wp_calculator_input()
+  data$home <- 5
+  wp <- calculate_win_probability(data)
+  wp_again <- calculate_win_probability(wp)
+  expect_identical(wp_again, wp)
+  expect_identical(names(wp), c(names(data), "wp", "vegas_wp"))
+  expect_identical(wp$home, 5)
 })

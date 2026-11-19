@@ -49,7 +49,6 @@ Compute various NFL stats based off nflverse Play-by-Play data.
 \donttest{
 try({# to avoid CRAN test problems
 stats <- calculate_stats(2023, "season", "player")
-# one line per column, like dplyr::glimpse()
 str(
   stats,
   list.len = ncol(stats),

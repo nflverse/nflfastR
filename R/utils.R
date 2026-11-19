@@ -86,23 +86,6 @@ maybe_valid <- function(id) {
   )
 }
 
-# some 2000 games have play_ids like 2767.375 and 2767.703 which results in
-# duplicates that can be fixed. We save play IDs as numeric first and then
-# check whether or not there are duplicates when we convert them to integer
-# If there are duplicates, we multiply all play IDs by 10 and check again
-# If there are still duplicates, we multiply all play IDs by 100 and so on
-# As soon as play IDs are unique, we save them as integer and go on
-uniquify_ids <- function(ids) {
-  ids <- as.numeric(ids)
-  int_ids <- as.integer(ids)
-  mult <- 10
-  while (anyDuplicated(int_ids) > 0) {
-    int_ids <- as.integer(ids * mult)
-    mult <- mult * 10
-  }
-  int_ids
-}
-
 # check if a package is installed
 is_installed <- function(pkg) requireNamespace(pkg, quietly = TRUE)
 
@@ -147,18 +130,15 @@ time_to_seconds <- function(time) {
 # write season pbp to a connected db
 write_pbp <- function(seasons, dbConnection, tablename) {
   p <- progressr::progressor(along = seasons)
-  purrr::walk(
-    seasons,
-    function(x, p) {
-      pbp <- nflreadr::load_pbp(x)
-      if (!DBI::dbExistsTable(dbConnection, tablename)) {
-        pbp <- dplyr::bind_rows(default_play, pbp)
-      }
-      DBI::dbWriteTable(dbConnection, tablename, pbp, append = TRUE)
-      p("loading...")
-    },
-    p
-  )
+  for (x in seasons) {
+    pbp <- load_pbp(x)
+    if (!DBI::dbExistsTable(dbConnection, tablename)) {
+      # the default play defines the column types of the new table
+      pbp <- data.table::rbindlist(list(default_play, pbp), fill = TRUE)
+    }
+    DBI::dbWriteTable(dbConnection, tablename, pbp, append = TRUE)
+    p("loading...")
+  }
 }
 
 make_nflverse_data <- function(data, type = c("play by play")) {
@@ -194,7 +174,7 @@ please_work <- function(.f, otherwise = data.frame(), quiet = FALSE) {
   }
 }
 
-# THIS IS CALLED FROM INSIDE get_pbp_gc AND get_pbp_nfl
+# THIS IS CALLED FROM INSIDE get_pbp_nfl
 # MODIFY WITH CAUTION
 fetch_raw <- function(
   game_id,
@@ -517,6 +497,7 @@ utils::globalVariables(
     "fumbled_1_player_id",
     "fumbled_1_player_name",
     "game_id",
+    "gameday",
     "goal_to_go",
     "home_ep",
     "home_epa",

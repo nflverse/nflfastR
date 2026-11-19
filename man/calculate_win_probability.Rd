@@ -66,8 +66,7 @@ Overtime rows without a possession number get \code{NA}.
 \examples{
 \donttest{
 try({# to avoid CRAN test problems
-library(dplyr)
-data <- tibble::tibble(
+data <- data.frame(
 "receive_2h_ko" = 0,
 "home_team" = "SEA",
 "posteam" = "SEA",
@@ -82,8 +81,8 @@ data <- tibble::tibble(
 "defteam_timeouts_remaining" = 3
 )
 
-nflfastR::calculate_win_probability(data) |>
-  dplyr::select(spread_line, wp, vegas_wp)
+wp <- nflfastR::calculate_win_probability(data)
+wp[c("spread_line", "wp", "vegas_wp")]
 })
 }
 }
