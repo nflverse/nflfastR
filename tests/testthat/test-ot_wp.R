@@ -224,7 +224,7 @@ test_that("overtime: a 4th down field goal that wins is always an option", {
 })
 
 test_that("calculate_win_probability() values overtime rows with the overtime model", {
-  data <- tibble::tibble(
+  data <- test_tibble(
     receive_2h_ko = 0,
     home_team = "SEA",
     posteam = "SEA",
@@ -272,7 +272,7 @@ test_that("calculate_win_probability() values overtime rows with the overtime mo
 })
 
 test_that("calculate_win_probability() derives the overtime possession from the drives", {
-  data <- tibble::tibble(
+  data <- test_tibble(
     game_id = "2025_05_KC_SEA",
     season = 2025,
     season_type = "REG",

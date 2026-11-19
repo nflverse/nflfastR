@@ -116,7 +116,7 @@ test_that("score values are net of the other team's possession", {
 
 test_that("kickoff values come from the clock, season and teams", {
   skip_on_cran()
-  data <- tibble::tibble(
+  data <- test_tibble(
     "season" = c(2015, 2018, 2025, 2025, 2025, 2025),
     "home_team" = "SEA",
     "posteam" = c("SEA", "SEA", "SEA", "SEA", "SEA", "DEN"),
@@ -161,7 +161,7 @@ test_that("kickoff values come from the clock, season and teams", {
 
 test_that("expected points are net of the next possession", {
   skip_on_cran()
-  data <- tibble::tibble(
+  data <- test_tibble(
     "season" = 2025,
     "home_team" = "SEA",
     "posteam" = "SEA",
@@ -183,7 +183,7 @@ test_that("expected points are net of the next possession", {
 
 test_that("kickoff values solve their own equations", {
   skip_on_cran()
-  data <- tibble::tibble(
+  data <- test_tibble(
     "season" = c(2015, 2020, 2025, 2025),
     "home_team" = "SEA",
     "posteam" = c("SEA", "DEN", "SEA", "DEN"),
@@ -228,7 +228,7 @@ test_that("expected points at the kickoff state match the kickoff value", {
   skip_on_cran()
   # at a neutral site both teams are the same, so the kickoff possession is
   # worth exactly what the EP formula gives at the touchback spot
-  data <- tibble::tibble(
+  data <- test_tibble(
     "season" = c(2015, 2020, 2025),
     "home_team" = "SEA",
     "posteam" = "SEA",
@@ -269,7 +269,7 @@ test_that("expected points at the kickoff state match the kickoff value", {
 
 test_that("calculate_expected_points treats neutral sites as away games", {
   skip_on_cran()
-  data <- tibble::tibble(
+  data <- test_tibble(
     "season" = 2025,
     "home_team" = "SEA",
     "posteam" = c("SEA", "SEA", "DEN"),
@@ -291,7 +291,7 @@ test_that("calculate_expected_points treats neutral sites as away games", {
 
 test_that("the exact free kick value solves the equations of both states", {
   skip_on_cran()
-  data <- tibble::tibble(
+  data <- test_tibble(
     "season" = c(2025, 2025, 2025, 2019),
     "home_team" = "SEA",
     "posteam" = c("SEA", "DEN", "SEA", "SEA"),
@@ -381,7 +381,7 @@ test_that("a second possession touchdown down 7 in overtime always goes for two"
 
 test_that("the free kick value comes from the model where a safety matters", {
   skip_on_cran()
-  data <- tibble::tibble(
+  data <- test_tibble(
     "season" = c(2010, 2010, 2025),
     "home_team" = "SEA",
     "posteam" = "SEA",
@@ -418,7 +418,7 @@ test_that("the exact free kick value is selected from the probabilities only", {
 test_that("the calculator uses the same free kick value as the play-by-play", {
   skip_on_cran()
   # a state where a safety is likely, so the exact free kick value is used
-  data <- tibble::tibble(
+  data <- test_tibble(
     "season" = 2025,
     "home_team" = "SEA",
     "posteam" = "SEA",

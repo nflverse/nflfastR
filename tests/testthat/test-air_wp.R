@@ -6,7 +6,7 @@ air_pass <- function(
   qtr = 2
 ) {
   g <- 1800 + 600
-  tibble::tibble(
+  test_tibble(
     game_id = "2025_01_KC_LAC",
     season = 2025,
     qtr = qtr,

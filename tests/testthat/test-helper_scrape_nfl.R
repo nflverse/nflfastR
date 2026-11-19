@@ -12,7 +12,7 @@ test_that("unnest_play_stats returns one row per stat", {
   )
   expect_identical(
     unnest_play_stats(plays),
-    tibble::tibble(
+    data.table::data.table(
       playId = 1,
       statId = 10,
       yards = 5L,

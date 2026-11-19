@@ -47,6 +47,18 @@ load_expectation <- function(
 
 # strip nflverse attributes for tests because timestamp and version cause failures
 # .internal.selfref is a data.table attribute that is not necessary in this case
+# A data frame with the class of a tibble, like the output of nflfastR
+# functions that return tibbles. The tibble package isn't needed.
+as_test_tibble <- function(df) {
+  df <- as.data.frame(df)
+  class(df) <- c("tbl_df", "tbl", "data.frame")
+  df
+}
+
+test_tibble <- function(...) {
+  as_test_tibble(data.frame(..., check.names = FALSE))
+}
+
 strip_nflverse_attributes <- function(df) {
   input_attrs <- names(attributes(df))
   input_remove <- input_attrs[grepl(
@@ -125,8 +137,8 @@ pbp_differences <- function(
   abs_tolerance = 1e-6,
   n_examples = 3
 ) {
-  act <- tibble::as_tibble(strip_nflverse_attributes(pbp))
-  exp <- tibble::as_tibble(strip_nflverse_attributes(exp))
+  act <- as.data.frame(strip_nflverse_attributes(pbp))
+  exp <- as.data.frame(strip_nflverse_attributes(exp))
   model_cols <- regression_model_columns(exp)
   msg <- character()
 

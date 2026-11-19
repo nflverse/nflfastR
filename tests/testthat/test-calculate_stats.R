@@ -96,7 +96,7 @@ test_that("calculate_stats warns about an empty season_type filter", {
   expect_snapshot(
     out <- calculate_stats(2023, "season", "team", "POST", pbp = pbp)
   )
-  expect_identical(out, tibble::tibble())
+  expect_identical(out, test_tibble())
 })
 
 test_that("calculate_stats validates custom pbp", {

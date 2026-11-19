@@ -510,7 +510,7 @@ unnest_play_stats <- function(plays) {
   n <- vapply(ps, NROW, integer(1))
   has <- which(n > 0)
   if (length(has) == 0) {
-    return(tibble::tibble(
+    return(data.table::data.table(
       playId = plays$playId[0],
       statId = numeric(),
       yards = integer(),
@@ -523,7 +523,7 @@ unnest_play_stats <- function(plays) {
   pick <- function(col) {
     stats[[col]] %||% rep(NA, nrow(stats))
   }
-  tibble::tibble(
+  data.table::data.table(
     playId = rep(plays$playId[has], n[has]),
     statId = as.numeric(pick("statId")),
     yards = as.integer(pick("yards")),

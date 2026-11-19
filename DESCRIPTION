@@ -32,7 +32,6 @@ Imports:
     progressr (>= 0.6.0),
     rlang (>= 0.4.10),
     stringi,
-    tibble (>= 3.0),
     xgboost (>= 1.6)
 Suggests: 
     DBI,

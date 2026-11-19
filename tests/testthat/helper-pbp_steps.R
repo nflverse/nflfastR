@@ -7,7 +7,7 @@ pbp_input_types <- function() {
   class(plain) <- "data.frame"
   list(
     nflverse_data = pbp,
-    tibble = tibble::as_tibble(plain),
+    tibble = as_test_tibble(plain),
     data.frame = plain,
     data.table = data.table::as.data.table(plain)
   )
