@@ -74,7 +74,9 @@ test_that("plays with a missing feature are NA and don't change the others", {
 
 test_that("the blocks of plays don't change the predictions", {
   yl <- rep(1:99, 30)
-  expect_identical(ep_state(yl = yl, block = 7L), ep_state(yl = yl))
+  # equal up to rounding: with an optimized BLAS the matrix products can round
+  # the last digit differently for different block sizes
+  expect_equal(ep_state(yl = yl, block = 7L), ep_state(yl = yl))
 })
 
 test_that("the model only uses the era of a season", {
