@@ -166,24 +166,13 @@ wp_vegas_offset <- function(x, beta, k) {
     stats::qlogis(pmin(pmax(p, 1e-6), 1 - 1e-6))
 }
 
-wp_vegas_cache <- new.env(parent = emptyenv())
-
 wp_vegas_booster <- function(model = wp_vegas_model) {
-  if (is.null(wp_vegas_cache$booster)) {
-    wp_vegas_cache$booster <- tryCatch(
-      xgboost::xgb.load.raw(model$trees_raw),
-      error = function(e) {
-        cli::cli_abort(
-          c(
-            "Can't load the win probability model.",
-            "i" = "It was saved with xgboost {.val {model$xgboost_version}} and you have {.val {as.character(utils::packageVersion('xgboost'))}}.",
-            "x" = conditionMessage(e)
-          )
-        )
-      }
-    )
-  }
-  wp_vegas_cache$booster
+  load_sysdata_booster(
+    "wp_vegas",
+    model$trees_raw,
+    model$xgboost_version,
+    "win probability model"
+  )
 }
 
 # xgboost changed `iterationrange` from a half open [start, end) range (1.x) to
@@ -191,7 +180,7 @@ wp_vegas_booster <- function(model = wp_vegas_model) {
 # comparing the first n_trees rounds with the full model (they are the same
 # model only if the range is inclusive).
 wp_vegas_inclusive_range <- function(booster, model = wp_vegas_model) {
-  if (is.null(wp_vegas_cache$inclusive)) {
+  if (is.null(nflfastR_cache$wp_vegas_inclusive_range)) {
     k <- model$constants
     x <- data.frame(
       game_seconds_remaining = c(3000, 1500, 400, 90),
@@ -214,12 +203,12 @@ wp_vegas_inclusive_range <- function(booster, model = wp_vegas_model) {
       outputmargin = TRUE,
       iterationrange = c(1L, k$n_trees)
     )
-    wp_vegas_cache$inclusive <- isTRUE(all.equal(
+    nflfastR_cache$wp_vegas_inclusive_range <- isTRUE(all.equal(
       as.numeric(full),
       as.numeric(upto)
     ))
   }
-  wp_vegas_cache$inclusive
+  nflfastR_cache$wp_vegas_inclusive_range
 }
 
 # margin of the first n trees. The model is stored with base_score 0.5, so the

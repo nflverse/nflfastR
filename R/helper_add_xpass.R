@@ -6,11 +6,13 @@
 #' Add expected pass columns
 #'
 #' @inheritParams clean_pbp
-#' @description Build columns from the expected dropback model. Will return
-#' `NA` on data prior to 2006 since that was before NFL started marking scrambles.
-#' Must be run on a dataframe that has already had [clean_pbp()] run on it.
-#' Note that the functions [build_nflfastR_pbp()] and
-#' the database function [update_db()] already include this function.
+#' @description Build columns from the expected dropback model. The model
+#' gives the probability of a dropback (a pass, sack, or scramble) from the game
+#' situation only: down, distance, field position, score, time remaining,
+#' timeouts, and the era of the season (for league-wide trends). It doesn't
+#' know anything about the teams. Must be run on a dataframe that has already had
+#' [clean_pbp()] run on it. Note that the functions [build_nflfastR_pbp()] and
+#' the database function [update_pbp_db()] already include this function.
 #' @return The input Data Frame of the parameter `pbp` with the following columns
 #' added:
 #' \describe{
@@ -38,7 +40,7 @@ add_xpass <- function(pbp, ...) {
     # the model is only needed for valid plays
     xpass <- rep(NA_real_, nrow(d))
     xpass[valid] <- stats::predict(
-      load_model("xpass"),
+      xpass_booster(),
       model_matrix(
         subset_columns(plays, valid, xpass_model_features),
         xpass_model_features
@@ -67,11 +69,19 @@ add_xpass <- function(pbp, ...) {
 
 # The features of the xpass model and valid_play as list of columns
 prepare_xpass_data <- function(pbp) {
-  # a list of columns, so make_model_mutations() doesn't change pbp
-  plays <- make_model_mutations(as.list(pbp))
+  # a list of columns, so the era columns don't change pbp
+  plays <- as.list(pbp)
+  # the eras of make_model_mutations(), except that 2001 belongs to era1: it is
+  # the only supported season of era0
+  plays$era1 <- as.numeric(plays$season <= 2005)
+  plays$era2 <- as.numeric(plays$season > 2005 & plays$season <= 2013)
+  plays$era3 <- as.numeric(plays$season > 2013 & plays$season <= 2017)
+  plays$era4 <- as.numeric(plays$season > 2017)
+  # no xpass in 1999 and 2000: these seasons aren't supported anymore (#568)
   plays$valid_play <- as.numeric(
-    plays$season >= 2006 &
-      plays$play_type %chin% c("no_play", "pass", "run") &
+    plays$season >= 2001 &
+      plays$play_type %chin%
+        c("no_play", "pass", "run") &
       !is.na(plays$posteam) &
       !is.na(plays$down) &
       !is.na(plays$defteam_timeouts_remaining) &
@@ -82,22 +92,39 @@ prepare_xpass_data <- function(pbp) {
   plays
 }
 
+# The expected dropback model is an xgboost model of `pass` on all plays with a
+# down that are a dropback or a run (penalties included, kneels and spikes not)
+# since 2001. It only knows the game situation and the era of the season, which
+# lets it follow league-wide trends. The eras are the ones of the other models
+# (see make_model_mutations()), except that 2001 belongs to era1 (2001 to 2005)
+# and there is no era0: 1999 and 2000 aren't supported anymore (#568), which
+# would leave era0 with a single season. It has no team strength (pregame line)
+# and no win probability, so it doesn't change when a win probability model
+# does.
+#
+# Built by data-raw/xpass_model.R and stored in R/sysdata.rda as `xpass_model`
+# (list with the xgboost model as raw UBJSON).
 xpass_model_features <- c(
   "down",
   "ydstogo",
   "yardline_100",
-  "qtr",
-  "wp",
-  "vegas_wp",
-  "era2",
-  "era3",
-  "era4",
   "score_differential",
-  "home",
   "half_seconds_remaining",
+  "game_seconds_remaining",
   "posteam_timeouts_remaining",
   "defteam_timeouts_remaining",
-  "outdoors",
-  "retractable",
-  "dome"
+  "qtr",
+  "era1",
+  "era2",
+  "era3",
+  "era4"
 )
+
+xpass_booster <- function() {
+  load_sysdata_booster(
+    "xpass",
+    xpass_model$trees_raw,
+    xpass_model$xgboost_version,
+    "expected pass model"
+  )
+}

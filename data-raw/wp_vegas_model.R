@@ -15,6 +15,7 @@
 
 library(dplyr)
 library(xgboost)
+source("R/utils.R")
 source("R/helper_add_nflscrapr_mutations.R")
 source("R/helper_add_ep_wp.R")
 source("R/helper_add_ot_wp.R")
@@ -223,33 +224,13 @@ wp_vegas_model <- list(
 
 # sanity check: predictions in this session match the stored model
 chk <- model_data[sample(nrow(model_data), 2000), ]
-wp_vegas_cache$booster <- NULL
-wp_vegas_cache$inclusive <- NULL
+# (a booster cached earlier in this session is not the one of this model)
+rm(list = ls(nflfastR_cache), envir = nflfastR_cache)
 p_stored <- wp_vegas_raw(chk, wp_vegas_model)
 stopifnot(all(is.finite(p_stored)), all(p_stored > 0 & p_stored < 1))
 
 # ---- save, keeping the other internal data ----------------------------------
-# R/sysdata.rda holds other objects. Load them and write them back untouched so
-# that only this model changes. Do NOT rebuild or re-serialize anything else
-# here (in particular no xgboost models) because a different xgboost version on
-# the machine running this script would change those bytes too.
-e <- new.env()
-load("R/sysdata.rda", envir = e)
-untouched <- setdiff(ls(e), "wp_vegas_model")
-before <- mget(untouched, envir = e)
-e$wp_vegas_model <- wp_vegas_model
-save(
-  list = ls(e),
-  file = "R/sysdata.rda",
-  envir = e,
-  compress = "bzip2",
-  version = 2
-)
-# make sure we did not change anything else
-e2 <- new.env()
-load("R/sysdata.rda", envir = e2)
-stopifnot(all(vapply(
-  untouched,
-  function(n) identical(before[[n]], e2[[n]]),
-  TRUE
-)))
+# (see data-raw/save_sysdata.R: nothing else in R/sysdata.rda may be rebuilt or
+# re-serialized here)
+source("data-raw/save_sysdata.R")
+save_sysdata(wp_vegas_model = wp_vegas_model)
