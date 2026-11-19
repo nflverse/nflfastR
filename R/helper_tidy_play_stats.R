@@ -7,7 +7,7 @@
 
 # Build one row per play for a tidy data structure
 #
-# This is a sub-function for the get_pbp_nfl and get_pbp_gc functions.
+# This is a sub-function of get_pbp_nfl().
 #
 # @param stats A data frame with one row per gsis stat and the columns playId,
 # statId, yards, teamAbbr, player.displayName and player.esbId
