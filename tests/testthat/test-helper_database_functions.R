@@ -22,7 +22,7 @@ test_that("update_db() creates the database and appends missing games", {
   expect_all_true(vapply(res[other], \(x) all(is.na(x)), logical(1)))
 
   con <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
-  on.exit(DBI::dbDisconnect(con))
+  on.exit(DBI::dbDisconnect(con), add = TRUE)
   DBI::dbWriteTable(con, "nflfastR_pbp", default_play)
   expect_identical(
     db_test_columns(dir),
@@ -96,7 +96,7 @@ test_that("update_db() uses and keeps a given connection", {
   ids <- db_test_schedule()$game_id
   local_update_db_mocks(available = ids[1:40])
   con <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
-  on.exit(DBI::dbDisconnect(con))
+  on.exit(DBI::dbDisconnect(con), add = TRUE)
 
   quiet_update_db(tblname = "pbp", db_connection = con)
 
