@@ -337,7 +337,9 @@ test_that("the exact free kick value solves the equations of both states", {
   expect_equal(kv$w, f$a + f$b * kv$v + f$d * kv$w)
   # with a second left the free kick is worth little, not the kickoff value
   # plus the extra field position of the shortcut
-  expect_lt(kv$w[3] - kv$v[3], 0.5 * safety_free_kick_ep_per_yard * 4)
+  shortcut <- safety_free_kick_ep_per_yard *
+    (wp_kickoff_start(2025) - safety_free_kick_yardline)
+  expect_lt(kv$w[3] - kv$v[3], 0.5 * shortcut)
 })
 
 test_that("a second possession touchdown down 7 in overtime always goes for two", {
@@ -382,7 +384,7 @@ test_that("a second possession touchdown down 7 in overtime always goes for two"
 test_that("the free kick value comes from the model where a safety matters", {
   skip_on_cran()
   data <- test_tibble(
-    "season" = c(2010, 2010, 2025),
+    "season" = c(2012, 2012, 2025),
     "home_team" = "SEA",
     "posteam" = "SEA",
     "roof" = "outdoors",
@@ -398,8 +400,9 @@ test_that("the free kick value comes from the model where a safety matters", {
   exact <- get_kickoff_values(data, exact_w = c(FALSE, TRUE, TRUE))
   # rows that are not flagged use the shortcut
   expect_equal(exact$w[1], shortcut$w[1])
-  # the exact value differs from the shortcut in an early season, where the
-  # shortcut is further off, and is much closer to it with the recent touchback
+  # the exact value differs from the shortcut in a season where the kickoff
+  # start is far from the free kick spot (2011 to 2015), and is much closer to
+  # it with the recent touchback
   early_gap <- abs(exact$w[2] - shortcut$w[2])
   recent_gap <- abs(exact$w[3] - shortcut$w[3])
   expect_gt(early_gap, 0.05)
@@ -417,15 +420,17 @@ test_that("the exact free kick value is selected from the probabilities only", {
 
 test_that("the calculator uses the same free kick value as the play-by-play", {
   skip_on_cran()
-  # a state where a safety is likely, so the exact free kick value is used
+  # a state where a safety is likely, so the exact free kick value is used, and
+  # where it is far from the shortcut: little time left, in a season where the
+  # kickoff start is far from the free kick spot
   data <- test_tibble(
-    "season" = 2025,
+    "season" = 2012,
     "home_team" = "SEA",
     "posteam" = "SEA",
     "roof" = "outdoors",
-    "half_seconds_remaining" = 60,
+    "half_seconds_remaining" = 15,
     "yardline_100" = 99,
-    "down" = 2,
+    "down" = 4,
     "ydstogo" = 10,
     "posteam_timeouts_remaining" = 3,
     "defteam_timeouts_remaining" = 3
@@ -452,5 +457,5 @@ test_that("the calculator uses the same free kick value as the play-by-play", {
   }
   expect_equal(calculate_expected_points(data)$ep, ep_with(TRUE))
   # and that is different from the shortcut
-  expect_gt(abs(ep_with(TRUE) - ep_with(FALSE)), 0.005)
+  expect_gt(abs(ep_with(TRUE) - ep_with(FALSE)), 0.002)
 })

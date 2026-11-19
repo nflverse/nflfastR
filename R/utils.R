@@ -226,7 +226,6 @@ load_model <- function(name) {
 
   model <- switch(
     name,
-    "ep" = fastrmodels::ep_model,
     "cp" = fastrmodels::cp_model,
     "wp" = fastrmodels::wp_model,
     "xyac" = fastrmodels::xyac_model

@@ -105,30 +105,9 @@ expand_rows <- function(preds, n, i) {
   out
 }
 
-# The features of the EP model, in the order the model expects
-ep_model_features <- c(
-  "half_seconds_remaining",
-  "yardline_100",
-  "home",
-  "retractable",
-  "dome",
-  "outdoors",
-  "ydstogo",
-  "era0",
-  "era1",
-  "era2",
-  "era3",
-  "era4",
-  "down1",
-  "down2",
-  "down3",
-  "down4",
-  "posteam_timeouts_remaining",
-  "defteam_timeouts_remaining"
-)
-
-# EP predictions for several data frames with one call of the model. Returns a
-# list with a data frame of probabilities for each data frame.
+# EP predictions for several data frames with one call of the model (see
+# R/helper_ep_model.R). Returns a list with a data frame of probabilities for
+# each data frame.
 get_preds_stacked <- function(data_list) {
   matrices <- lapply(data_list, function(pbp) {
     m <- model_matrix(pbp, ep_model_features)
@@ -137,23 +116,7 @@ get_preds_stacked <- function(data_list) {
     }
     m
   })
-  preds <- stats::predict(load_model("ep"), do.call(rbind, matrices))
-
-  # xgboost v3 returns a matrix of predictions instead of a vector as returned
-  # by xgboost v1.
-  if (is.vector(preds)) {
-    preds <- matrix(preds, ncol = 7, byrow = TRUE)
-  }
-  preds <- as.data.frame(preds)
-  colnames(preds) <- c(
-    "Touchdown",
-    "Opp_Touchdown",
-    "Field_Goal",
-    "Opp_Field_Goal",
-    "Safety",
-    "Opp_Safety",
-    "No_Score"
-  )
+  preds <- as.data.frame(ep_model_predict(do.call(rbind, matrices)))
   part <- rep(seq_along(matrices), vapply(matrices, nrow, integer(1)))
   lapply(seq_along(matrices), function(k) {
     out <- preds[part == k, , drop = FALSE]
