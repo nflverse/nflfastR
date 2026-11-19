@@ -106,6 +106,19 @@ test_that("calculate_stats validates custom pbp", {
   expect_snapshot(calculate_stats(pbp = pbp), error = TRUE)
 })
 
+test_that("calculate_stats errors if load_players fails", {
+  skip_on_cran()
+  skip_if_offline("github.com")
+
+  reg <- local_stats_regression()
+  local_mocked_bindings(stats_load_players = function() data.frame())
+
+  expect_snapshot(
+    calculate_stats(stat_type = "player", pbp = reg$inputs$pbp),
+    error = TRUE
+  )
+})
+
 test_that("load_playstats checks seasons", {
   expect_snapshot(load_playstats(1998), error = TRUE)
   expect_snapshot(load_playstats("2023"), error = TRUE)

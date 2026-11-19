@@ -6,7 +6,7 @@ Seasons 1999 and 2000 are deprecated. They are not used anywhere in this plan: n
 
 ## Status and how to resume
 
-Work happens on branch `calculate-stats-performance`. Done: step 0 (0.1–0.7). Next: step 1.
+Steps 0–5 were done on branch `calculate-stats-performance` (step 0 in #630, steps 1–5 in #631). Done: steps 0–5. The rewrite of `calculate_stats()` is complete. Step 6 (dependencies) is a separate effort.
 
 Files in this folder:
 
@@ -247,11 +247,25 @@ Status: done.
 
 Check: regression test, `compare.R`.
 
+Status: done. Regression test passes, `compare.R` reports 48 of 48 combinations `identical()`.
+
+- `pbp` becomes `as_pbp_dt(.subset(pbp, stats_pbp_columns()))`. `.subset()` drops dplyr groups and avoids `[.data.table` (a character `i` would be a join). The code only adds columns (`last_drive`), so the user's pbp is never changed by reference (checked).
+- `stats_pbp_columns()` is `stats_required_pbp_columns()` (the validated list) plus `defteam_score` and `posteam_type`, which the gwfg logic uses but `stats_validate_pbp()` never required. Adding them to the validation changes the snapshot, so it happens in step 4 (agreed with the user).
+- Playstats use `as.data.table()` (a copy), not `setDT()`: `setDT()` would change the class of the object returned by the loader, which may be cached (memoise, test mocks).
+- The filter keeps the row order of playstats (`sort(unique())` of the `which = TRUE` join). A plain `nomatch = NULL` join returns pbp order, which would change `first()`, `last()`, `custom_mode()` ties and the `fg_*_list` order.
+- `is_gwfg_attempt` stays integer (`as.integer(fcoalesce(cond, FALSE))`), so the gwfg stats stay integer. `NA` conditions count as no attempt, like `case_when(... ~ 1L, TRUE ~ 0L)`.
+
 ## Step 2: flags instead of collapsed strings
 
 Replace `more_stats`, `team_stats`, `all_stats` and `has_id()` by logical flag columns computed by group (same grouping keys as now), e.g. `p_fumble`, `p_fumble_lost`, `t_first_down_pass`, `t_first_down_rush`, `a_punt_oob`, `a_punt_downed`, `a_punt_fair_catch`, `a_punt_returned`, `a_punt_return_td`. `team_play_air_yards`, `play_punt_return_yards`, `team_targets` and `team_air_yards` become grouped `:=` columns.
 
 Check: regression test, `compare.R`.
+
+Status: done. Regression test passes, `compare.R 2023` reports 12 of 12 combinations `identical()`.
+
+- `flag_groups()` sets each flag to `FALSE`, then to `TRUE` with a join on the unique keys of the rows with the stat IDs. No R code per group. Joins match `NA` keys like dplyr's `NA` group (e.g. `player_id` `NA` across games with the same `play_id` in a week), and an `NA` `stat_id` never sets a flag, like `has_id()` on the pasted `"NA"`.
+- Same grouping keys as before, also where they look odd: the player and team flags group by `season`, `week`, `play_id` without `game_id`.
+- `by` of a data.table call must be `c()`, a list or a variable: an `if` there errors, so the target share groups are in `share_by`.
 
 ## Step 3: aggregation
 
@@ -260,7 +274,22 @@ Check: regression test, `compare.R`.
 - Stats that aren't sums in one grouped call: `player_name` (most common, ties as in `custom_mode()`), `season_type` collapse, `game_id`, `team` (first), `recent_team` (last), `opponent_team`, `games` (`uniqueN()`), the `fg_*_list` columns, first `team_targets` / `team_air_yards`.
 - Derived stats on the aggregated columns: `passing_yards_after_catch`, `pacr`, `racr`, `target_share`, `air_yards_share`, `wopr`, `def_sacks`, `def_sack_yards`, `fg_pct`, `pat_pct`, `pt_net_yards`, fantasy points. `fifelse()` / `fcase()`, `NaN` handling as now.
 
-Check: regression test, `compare.R`, `benchmark.R`.
+Check: regression test, `compare.R` on all seasons, `benchmark.R`.
+
+Status: done. Regression test passes, `compare.R` on all seasons reports 48 of 48 combinations `identical()`.
+
+- One GForce call on a table of contributions: `c(lapply(.SD, sum), list(fg_long = max(...), pt_long = max(...)))` with `keyby`. Logical contributions stay logical; `gsum()` returns integer, like `sum()`.
+- The other stats in one grouped call (`others`), also with `keyby`, so the rows match and `cbind()` joins them. data.table doesn't drop `NULL` items of a grouped `j` (it errors), so every per-group value is computed for all summaries; `stats_output_columns()` selects and orders the columns like the old `summarise()`. The first team is `first_team` (renamed to `team` for week / player) so it doesn't collide with the grouping column `team`.
+- `custom_mode()` returns `character(0)` when all names are `NA` (the `NA` `player_id` group); dplyr made it `NA`, now `[1L]` does.
+- `fg_pct` / `pat_pct` with `dt[att > 0, pct := ...]`; `fg_long` / `pt_long` 0 → `NA` with a subset assignment. `%0%` removed.
+- `benchmark.R` (2023, median of 3 runs, seconds):
+
+| `summary_level` / `stat_type` | Old | New | Speedup |
+|---|---|---|---|
+| season / player | 5.16 | 0.98 | 5.3x |
+| season / team | 3.51 | 0.59 | 6.0x |
+| week / player | 17.26 | 1.28 | 13.5x |
+| week / team | 3.85 | 0.65 | 6.0x |
 
 ## Step 4: pbp stats, player information, output
 
@@ -271,9 +300,29 @@ Check: regression test, `compare.R`, `benchmark.R`.
 - Output: `setDF()` and the class `c("tbl_df", "tbl", "data.frame")`, like `make_nflverse_data()` does without importing tibble. The output must stay `identical()` in class and attributes.
 - `load_players()` failures: fail with a clear error instead of "Column `gsis_id` doesn't exist" (new snapshot test).
 - The empty-filter warning prints `{seasons}`, which is the default season for custom pbp. Print the seasons in pbp instead (snapshot changes; show the user).
+- `stats_validate_pbp()`: also require `defteam_score` and `posteam_type` (used by the gwfg logic, see step 1), so `stats_pbp_columns()` and `stats_required_pbp_columns()` become one list. The "validates custom pbp" snapshot changes; show the user. Agreed with the user.
 - Column names used in `[.data.table` go into `utils::globalVariables()` at the end of `R/utils.R`; remove the separate call in `R/calculate_stats.R`.
 
 Check: regression test, `compare.R`, `benchmark.R`, `devtools::check()`.
+
+Status: done. Regression test passes, `compare.R 2023` reports 12 of 12 combinations `identical()`. `devtools::check()`: 0 warnings, 0 notes; the only test failure was the changed validation snapshot (waiting for the user's review).
+
+- `passing_cpoe` uses GForce `mean()` (`gmean()`), a one-pass mean that differs from base `mean()` by up to ~1e-13 relative. The user accepted this for performance (first done with `base::mean()` to stay identical, reverted in step 5). `compare.R` reports it as within tolerance. The sums with GForce `gsum()` are identical.
+- EPA stats: one aggregation per stat on the slim pbp, added with update joins (`NA` keys match, like `left_join()`). The EPA columns are part of `stats_output_columns()`, which replaces the `select()` that moved them.
+- Sort with `setorderv(na.last = TRUE)`: C locale and `NA` last, like `arrange()`.
+- `pacr` / `racr` with `fcase()` (all conditions on the original values; `default` can be a vector). Fantasy points with `- 2 *` instead of `+ -2 *` (exactly the same in floating point; fixes the jarl warnings).
+- Player information: `stats_player_info()` errors if `load_players()` returned data without the needed columns (new snapshot test). The join `player_info[stats, on = "player_id", allow.cartesian = TRUE]` keeps the order of stats and duplicates rows for duplicated `gsis_id`s like `left_join()`.
+- The empty-filter warning prints `seasons_in_pbp` (the snapshot doesn't change: the test passes `seasons = 2023`).
+- `stats_validate_pbp()` also requires `posteam_type` and `defteam_score` (`stats_pbp_columns()` is the one list).
+- Output: `setDF()` and the class `c("tbl_df", "tbl", "data.frame")`. Only `tibble::tibble()` for the empty result remains (step 5).
+- `benchmark.R` (2023, median of 3 runs, seconds):
+
+| `summary_level` / `stat_type` | Old | New | Speedup |
+|---|---|---|---|
+| season / player | 4.93 | 0.66 | 7.5x |
+| season / team | 3.50 | 0.56 | 6.3x |
+| week / player | 16.89 | 1.21 | 14.0x |
+| week / team | 3.78 | 0.58 | 6.5x |
 
 ## Step 5: wrap-up
 
@@ -281,6 +330,59 @@ Check: regression test, `compare.R`, `benchmark.R`, `devtools::check()`.
 - `air format .`, `jarl check R/calculate_stats.R`.
 - NEWS bullet with the benchmark numbers (and the `load_players()` error).
 - Update this file with the results.
+
+Check: regression test, `compare.R` on all seasons, `benchmark.R`, `devtools::check()`.
+
+Status: done. Regression test passes (18 expectations), `compare.R` on all seasons: 48 of 48 combinations identical or within tolerance (12 identical; the others differ only in `passing_cpoe`, at most 3.6e-13 relative, from GForce `mean()`). `devtools::check()`: 0 errors, 0 warnings, 0 notes. `jarl check R/calculate_stats.R`: all checks passed.
+
+- `R/calculate_stats.R` uses no dplyr, tibble or rlang data masks any more. The empty result is `structure(data.frame(), class = c("tbl_df", "tbl", "data.frame"))`, `identical()` to `tibble::tibble()`. The roxygen example uses `str()` instead of `dplyr::glimpse()`.
+- `compare.R` reports "identical", "within tolerance" or "DIFFERENT" and accepts the first two.
+- Two NEWS bullets: the speedup, and the `load_players()` error, the two new required pbp columns and the seasons in the empty-filter warning.
+- Final `benchmark.R` (2023, median of 3 runs, seconds):
+
+| `summary_level` / `stat_type` | Old | New | Speedup |
+|---|---|---|---|
+| season / player | 4.89 | 0.64 | 7.6x |
+| season / team | 3.47 | 0.55 | 6.3x |
+| week / player | 16.74 | 1.18 | 14.1x |
+| week / team | 3.75 | 0.57 | 6.5x |
+
+## Review of #631: items 1 and 2
+
+A review after step 5 found two remaining hotspots. Profile of week / player on 2023: the grouped `others` call took 56% of the time, because `custom_mode()`, `paste()`, `fg_list()` and `uniqueN()` kept GForce off for the whole call and ran R code for each of the ~18.6k groups.
+
+- Item 1: the stats that aren't sums are split into separate calls, each only for the summaries that output it. First values per group (`season_type` and `game_id` of week summaries, `off`, `def`, the first `team`, `team_targets`, `team_air_yards`) come from one GForce call with `lapply(.SD, data.table::first)`. `x[.N]` isn't GForce, `data.table::last()` is; a grouping column in `j` turns GForce off, so `team` is only in `.SDcols` for player stats. `opponent_team` is a vectorized `fifelse()` on those columns. Season summaries: the `season_type` collapse uses `paste()` only for groups with more than one season type, `games` counts unique `game_id`s, `recent_team` uses `data.table::last()`. `player_name` (player stats only): counts per group and name, sorted by count with the stable `setorderv()` (`by` keeps the order of first appearance), so ties go to the first name like `custom_mode()`. The `fg_*_list` columns paste only the rows of the kicks and join; groups without kicks get `NA` from the join, so the `""` → `NA` loop and `fg_list()` are gone (the play stats of 2001–2025 have no `""` strings and no `NA` stat IDs).
+- Item 2: `passing_air_yards`, `punt_return_yards` and `targets` are row columns of `playstats`, used by the grouped `:=` totals (`team_play_air_yards`, `play_punt_return_yards`, `team_targets`, `team_air_yards`) and as contributions. `sum(col)` with `:=` and `by` uses GForce, `sum(expression)` doesn't.
+
+Check: regression test passes (18 expectations), `compare.R` on all seasons: 48 of 48 identical or within tolerance (12 identical, the others only `passing_cpoe` as before). `jarl check`: all passed. `benchmark.R` (2023, median of 3 runs, seconds):
+
+| `summary_level` / `stat_type` | Old | New | Speedup |
+|---|---|---|---|
+| season / player | 4.96 | 0.55 | 9.1x |
+| season / team | 3.53 | 0.40 | 8.8x |
+| week / player | 16.87 | 0.53 | 31.9x |
+| week / team | 3.81 | 0.40 | 9.5x |
+
+## Review of #631: items 3–12
+
+Small cleanups, no change of the output:
+
+- `fg_long` and `pt_long` are the maximums of the contributions `fg_made_distance` and `pt_yards`; the duplicated `fg_long_yards` and `pt_long_yards` are gone. The GForce call sums `.SDcols = !grp_vctr`.
+- The grouping variables come from the logicals `week` and `player` (`c("season", if (week) "week", if (player) "player_id" else "team")`) instead of the codes `"10"`–`"40"`; `stats_output_columns()` takes `player` and `week`.
+- The play information is added with one update join, then `playstats[!is.na(is_gwfg_attempt)]` keeps the rows of plays in pbp in their order (`is_gwfg_attempt` is never `NA` for a play in pbp). Before, a `which = TRUE` join selected the rows first.
+- `stats_player_info()` no longer orders its columns; the `setcolorder()` after the join does that.
+- Columns are selected by reference (`set(value = NULL)` and `setcolorder()`) instead of copying the table with `[, ..out_cols]`. A comment explains that `setorderv()` only moves `NA` groups to the end, because `keyby` already sorted the rows.
+- `stat_id %in% td_ids()` is computed once (`is_td`).
+- `%chin%` for the `season_type` argument, `setdiff()` in `stats_validate_pbp()`, no temporary variable in `load_playstats()`.
+
+Check: regression test passes, `compare.R` on all seasons: 48 of 48 identical or within tolerance (12 identical, as before). `benchmark.R` (2023, median of 3 runs, seconds):
+
+| `summary_level` / `stat_type` | Old | New | Speedup |
+|---|---|---|---|
+| season / player | 4.95 | 0.50 | 9.8x |
+| season / team | 3.52 | 0.38 | 9.2x |
+| week / player | 16.54 | 0.50 | 33.1x |
+| week / team | 3.76 | 0.38 | 10.0x |
 
 ## Step 6 (separate effort): dependencies
 
@@ -290,7 +392,7 @@ Rewriting `calculate_stats()` alone doesn't drop dplyr. Remaining users: `calcul
 
 - Don't change the computation before step 0 is complete and checked (0.6).
 - Never use seasons 1999 or 2000.
-- After every step: the regression test passes and `compare.R` reports `identical()` for all seasons and combinations. A difference is a bug in the rewrite until the user decides otherwise.
+- After every step: the regression test passes and `compare.R 2023` reports `identical()` or "within tolerance" for all combinations. Doubles that differ only within the tolerance of the tests (relative 1e-6) are accepted: performance matters more than the last digits (decided by the user after step 4, about `passing_cpoe`). After step 3 and step 5, run `compare.R` on all seasons (no argument). The tests compare doubles with a tolerance; `compare.R` checks `identical()` on full seasons, which catches small changes of doubles, class and attributes, and row-order effects. A difference is a bug in the rewrite until the user decides otherwise.
 - Never update the expected stats output or loosen the tolerance to make the test pass. Show the user the differences and let them decide.
 - Never upload to the `regression_tests` release without the user's explicit request; use `--dry-run`.
 - Follow the data.table rules in AGENTS.md (`dt[cond, col := value]`, `as.numeric(cond)`, `%chin%`, `fifelse()` / `fcase()`, `globalVariables()`).
