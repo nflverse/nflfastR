@@ -75,10 +75,24 @@
 #'   pbp <- nflfastR::load_pbp(2021)
 #'
 #'   weekly <- calculate_series_conversion_rates(pbp, weekly = TRUE)
-#'   dplyr::glimpse(weekly)
+#'   # one line per column, like dplyr::glimpse()
+#'   str(
+#'     weekly,
+#'     list.len = ncol(weekly),
+#'     vec.len = 10,
+#'     give.attr = FALSE,
+#'     strict.width = "cut"
+#'   )
 #'
 #'   overall <- calculate_series_conversion_rates(pbp, weekly = FALSE)
-#'   dplyr::glimpse(overall)
+#'   # one line per column, like dplyr::glimpse()
+#'   str(
+#'     overall,
+#'     list.len = ncol(overall),
+#'     vec.len = 10,
+#'     give.attr = FALSE,
+#'     strict.width = "cut"
+#'   )
 #' })
 #' }
 calculate_series_conversion_rates <- function(pbp, weekly = FALSE) {
@@ -87,105 +101,104 @@ calculate_series_conversion_rates <- function(pbp, weekly = FALSE) {
   } else if (isFALSE(weekly)) {
     grp <- c("season", "team")
   }
-  grp_vars <- lapply(grp, as.symbol)
 
-  # Offense -----------------------------------------------------------------
-
-  off_series <- pbp |>
-    dplyr::filter(
-      !is.na(.data$down),
-      .data$series_result != "QB kneel"
-      # .data$rush == 1 | .data$pass == 1
-    ) |>
-    dplyr::group_by(
-      .data$season,
-      .data$week,
-      team = .data$posteam,
-      .data$series
-    ) |>
-    dplyr::summarise(
-      conversion = dplyr::first(.data$series_success),
-      result = dplyr::first(.data$series_result),
-      last_down = dplyr::last(.data$down),
-      .groups = "drop"
+  missing <- setdiff(series_pbp_columns(), names(pbp))
+  if (length(missing) > 0) {
+    cli::cli_abort(
+      "{.arg pbp} is missing the required variable{?s} {.val {missing}}."
     )
+  }
 
-  offense <- off_series |>
-    dplyr::group_by(!!!grp_vars) |>
-    dplyr::summarise(
-      off_n = dplyr::n(),
-      off_scr = mean(.data$conversion),
-      off_scr_1st = mean(.data$last_down == 1 * .data$conversion),
-      off_scr_2nd = mean(.data$last_down == 2 * .data$conversion),
-      off_scr_3rd = mean(.data$last_down == 3 * .data$conversion),
-      off_scr_4th = mean(.data$last_down == 4 * .data$conversion),
-      off_1st = mean(.data$result == "First down"),
-      off_td = mean(.data$result == "Touchdown"),
-      off_fg = mean(.data$result %chin% c("Field goal", "Missed field goal")),
-      off_punt = mean(.data$result == "Punt"),
-      off_to = mean(
-        .data$result %chin%
-          c(
-            "Turnover on downs",
-            "Turnover",
-            "Opp touchdown",
-            "Safety",
-            "End of half"
-          )
-      ),
-      .groups = "drop"
-    )
+  # A data.table of the required columns only, filtered right away, so it
+  # never changes the user's pbp by reference
+  plays <- as_pbp_dt(.subset(pbp, series_pbp_columns()))
+  plays <- plays[!is.na(down) & series_result != "QB kneel"]
 
-  # Defense -----------------------------------------------------------------
+  offense <- series_rates(plays, "posteam", "off", grp)
+  defense <- series_rates(plays, "defteam", "def", grp)
 
-  def_series <- pbp |>
-    dplyr::filter(
-      !is.na(.data$down),
-      .data$series_result != "QB kneel"
-      # .data$rush == 1 | .data$pass == 1
-    ) |>
-    dplyr::group_by(
-      .data$season,
-      .data$week,
-      team = .data$defteam,
-      .data$series
-    ) |>
-    dplyr::summarise(
-      conversion = dplyr::first(.data$series_success),
-      result = dplyr::first(.data$series_result),
-      last_down = dplyr::last(.data$down),
-      .groups = "drop"
-    )
+  # Like a full join: the rows of offense, followed by the defense rows without
+  # an offense row
+  out <- merge(offense, defense, by = grp, all = TRUE, sort = FALSE)
 
-  defense <- def_series |>
-    dplyr::group_by(!!!grp_vars) |>
-    dplyr::summarise(
-      def_n = dplyr::n(),
-      def_scr = mean(.data$conversion),
-      def_scr_1st = mean(.data$last_down == 1 * .data$conversion),
-      def_scr_2nd = mean(.data$last_down == 2 * .data$conversion),
-      def_scr_3rd = mean(.data$last_down == 3 * .data$conversion),
-      def_scr_4th = mean(.data$last_down == 4 * .data$conversion),
-      def_1st = mean(.data$result == "First down"),
-      def_td = mean(.data$result == "Touchdown"),
-      def_fg = mean(.data$result %chin% c("Field goal", "Missed field goal")),
-      def_punt = mean(.data$result == "Punt"),
-      def_to = mean(
-        .data$result %chin%
-          c(
-            "Turnover on downs",
-            "Turnover",
-            "Opp touchdown",
-            "Safety",
-            "End of half"
-          )
-      ),
-      .groups = "drop"
-    )
+  # a tibble without importing tibble
+  data.table::setDF(out)
+  data.table::setattr(out, "class", c("tbl_df", "tbl", "data.frame"))
+  out
+}
 
-  # Offense + Defense -------------------------------------------------------
+series_pbp_columns <- function() {
+  c(
+    "season",
+    "week",
+    "posteam",
+    "defteam",
+    "series",
+    "series_success",
+    "series_result",
+    "down"
+  )
+}
 
-  combined <- dplyr::full_join(offense, defense, by = grp)
+# The series rates of the team in column team_col (posteam or defteam), in
+# columns with the prefix side (off or def). The rows are ordered by grp with
+# missing teams last, like dplyr.
+series_rates <- function(plays, team_col, side, grp) {
+  series <- plays[,
+    list(
+      conversion = series_success[1],
+      result = series_result[1],
+      last_down = down[.N]
+    ),
+    by = c("season", "week", team_col, "series")
+  ]
+  data.table::setnames(series, team_col, "team")
 
-  combined
+  # The rates are sums divided by the number of series: GForce optimizes the
+  # sums, and k / n is the exactly rounded rate. mean() can differ in the last
+  # digit (base R for doubles like conversion, data.table's own mean()).
+  series[, `:=`(
+    scr = conversion,
+    scr_1st = (last_down == 1) * conversion,
+    scr_2nd = (last_down == 2) * conversion,
+    scr_3rd = (last_down == 3) * conversion,
+    scr_4th = (last_down == 4) * conversion,
+    `1st` = result == "First down",
+    td = result == "Touchdown",
+    fg = result %chin% c("Field goal", "Missed field goal"),
+    punt = result == "Punt",
+    to = result %chin%
+      c(
+        "Turnover on downs",
+        "Turnover",
+        "Opp touchdown",
+        "Safety",
+        "End of half"
+      )
+  )]
+  stat_cols <- c(
+    "scr",
+    "scr_1st",
+    "scr_2nd",
+    "scr_3rd",
+    "scr_4th",
+    "1st",
+    "td",
+    "fg",
+    "punt",
+    "to"
+  )
+  out <- series[,
+    c(list(n = .N), lapply(.SD, sum)),
+    by = grp,
+    .SDcols = stat_cols
+  ]
+  out[, (stat_cols) := lapply(.SD, function(x) x / n), .SDcols = stat_cols]
+  data.table::setnames(
+    out,
+    c("n", stat_cols),
+    paste(side, c("n", stat_cols), sep = "_")
+  )
+  data.table::setorderv(out, grp, na.last = TRUE)
+  out
 }
