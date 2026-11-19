@@ -62,12 +62,14 @@ calculate_stats <- function(
   # We'll use this to download playstats for all seasons listed in pbp.
   seasons_in_pbp <- stats_validate_pbp(pbp)
 
-  # we don't want groups to mess up something or slow us down.
-  # this is only relevant if a user supplies grouped pbp data
-  pbp <- dplyr::ungroup(pbp)
+  # A data.table of the required columns only. .subset() drops groups and
+  # works the same for data frames, tibbles and data.tables. We only add
+  # columns to it, so it never changes the user's pbp by reference.
+  pbp <- as_pbp_dt(.subset(pbp, stats_pbp_columns()))
 
   if (season_type %in% c("REG", "POST") && summary_level == "season") {
-    pbp <- dplyr::filter(pbp, .data$season_type == .env$season_type)
+    keep_type <- season_type
+    pbp <- pbp[season_type == keep_type]
     if (nrow(pbp) == 0) {
       cli::cli_alert_warning(
         "Filtering {.val {seasons}} data to {.arg season_type} == \\
@@ -77,71 +79,69 @@ calculate_stats <- function(
     }
   }
 
+  # Play information #####################
   # defensive stats require knowledge of which team is on defense
   # special teams stats require knowledge of which plays were special teams plays
-  playinfo <- pbp |>
-    dplyr::group_by(.data$game_id, .data$play_id) |>
-    dplyr::summarise(
-      off = .data$posteam,
-      def = .data$defteam,
-      special = as.integer(.data$special == 1)
-    ) |>
-    dplyr::ungroup() |>
-    dplyr::mutate_at(
-      .vars = dplyr::vars("off", "def"),
-      .funs = team_name_fn
-    )
-
-  season_type_from_pbp <- pbp |>
-    dplyr::select("game_id", "season_type") |>
-    dplyr::distinct()
-  s_type_vctr <- season_type_from_pbp$season_type |>
-    rlang::set_names(season_type_from_pbp$game_id)
-
-  gwfg_attempts_from_pbp <- pbp |>
-    dplyr::mutate(
-      # final_posteam_score = data.table::fifelse(.data$posteam_type == "home", .data$home_score, .data$away_score),
-      final_defteam_score = data.table::fifelse(
-        .data$posteam_type == "home",
-        .data$away_score,
-        .data$home_score
-      ),
-      identifier = paste(.data$game_id, .data$play_id, sep = "_")
-    ) |>
-    dplyr::group_by(.data$game_id, .data$posteam) |>
-    dplyr::mutate(
-      # A game winning field goal attempt is
-      # - a field goal attempt,
-      # - in the posteam's final drive,
-      # - where the posteam trailed the defteam by 2 points or less prior to the kick,
-      # - and the defteam did not score afterwards
-      is_gwfg_attempt = dplyr::case_when(
-        .data$field_goal_attempt == 1 &
-          .data$fixed_drive == max(.data$fixed_drive) &
-          dplyr::between(.data$score_differential, -2, 0) &
-          .data$defteam_score == .data$final_defteam_score ~ 1L,
-        TRUE ~ 0L
-      )
-    ) |>
-    dplyr::ungroup() |>
-    dplyr::filter(
-      is_gwfg_attempt == 1L
-    ) |>
-    dplyr::select("identifier", "is_gwfg_attempt")
-  gwfg_vctr <- gwfg_attempts_from_pbp$is_gwfg_attempt |>
-    rlang::set_names(gwfg_attempts_from_pbp$identifier)
+  # A game winning field goal attempt is
+  # - a field goal attempt,
+  # - in the posteam's final drive,
+  # - where the posteam trailed the defteam by 2 points or less prior to the kick,
+  # - and the defteam did not score afterwards
+  # max() is NA if a drive of the group is NA, and every NA condition counts
+  # as no attempt.
+  pbp[, last_drive := max(fixed_drive), by = c("game_id", "posteam")]
+  plays <- pbp[, list(
+    game_id,
+    play_id,
+    off = team_name_fn(posteam),
+    def = team_name_fn(defteam),
+    special = as.integer(special == 1),
+    season_type,
+    # integer, so the gwfg stats stay integer
+    is_gwfg_attempt = as.integer(data.table::fcoalesce(
+      field_goal_attempt == 1 &
+        fixed_drive == last_drive &
+        data.table::between(score_differential, -2, 0) &
+        defteam_score ==
+          data.table::fifelse(posteam_type == "home", away_score, home_score),
+      FALSE
+    ))
+  )]
 
   # load_playstats defined below
+  # Keep only the play stats of plays in pbp (it may be a custom subset), in
+  # the row order of the play stats, and add the play information.
+  playstats <- data.table::as.data.table(load_playstats(seasons_in_pbp))
+  in_pbp <- playstats[
+    plays,
+    on = c("game_id", "play_id"),
+    which = TRUE,
+    nomatch = NULL
+  ]
+  playstats <- playstats[sort(unique(in_pbp))]
+  playstats[
+    plays,
+    on = c("game_id", "play_id"),
+    c("off", "def", "special", "season_type", "is_gwfg_attempt") := list(
+      i.off,
+      i.def,
+      i.special,
+      i.season_type,
+      i.is_gwfg_attempt
+    )
+  ]
+  data.table::setnames(
+    playstats,
+    c("gsis_player_id", "team_abbr"),
+    c("player_id", "team")
+  )
+
   # more_stats = all stat IDs of one player in a single play
   # team_stats = all stat IDs of one team in a single play
   # all_stats = all stat IDs of a play, regardless of team (we need this for punting)
   # we need those to identify things like fumbles depending on playtype or
   # first downs depending on playtype
-  playstats <- load_playstats(seasons = seasons_in_pbp) |>
-    # apply filtering on play stats so that it matches only plays included
-    # in pbp in case it was provided manually
-    dplyr::semi_join(pbp, by = c("game_id", "play_id")) |>
-    dplyr::rename("player_id" = "gsis_player_id", "team" = "team_abbr") |>
+  playstats <- playstats |>
     dplyr::group_by(.data$season, .data$week, .data$play_id, .data$player_id) |>
     dplyr::mutate(
       # we wrap the collapsed string in ";" in order to search for the pattern
@@ -180,20 +180,7 @@ calculate_stats <- function(
       team_targets = sum(stat_id == 115),
       team_air_yards = sum((stat_id %in% 111:112) * yards)
     ) |>
-    dplyr::ungroup() |>
-    dplyr::left_join(
-      playinfo,
-      by = c("game_id", "play_id")
-    ) |>
-    dplyr::mutate(
-      season_type = unname(s_type_vctr[.data$game_id]),
-      is_gwfg_attempt = unname(gwfg_vctr[paste(
-        .data$game_id,
-        .data$play_id,
-        sep = "_"
-      )]) %ifna%
-        0L
-    )
+    dplyr::ungroup()
 
   # Check combination of summary_level and stat_type to set a helper that is
   # used to create the grouping variables
@@ -733,8 +720,6 @@ fg_list <- function(stat_ids, yards, collapse_id, gwfg = NULL) {
 
 `%0%` <- function(lhs, rhs) if (lhs != 0) lhs else rhs
 
-`%ifna%` <- function(lhs, rhs) data.table::fifelse(is.na(lhs), rhs, lhs)
-
 has_id <- function(id, all_ids) {
   stringi::stri_detect_regex(all_ids, paste0(";", id, ";", collapse = "|"))
 }
@@ -759,8 +744,30 @@ td_ids <- function() {
   )
 }
 
+# Columns of pbp that calculate_stats() uses. defteam_score and posteam_type
+# aren't validated because they weren't required before.
+stats_pbp_columns <- function() {
+  c(stats_required_pbp_columns(), "defteam_score", "posteam_type")
+}
+
 stats_validate_pbp <- function(pbp) {
-  required_names <- c(
+  required_names <- stats_required_pbp_columns()
+  available_names <- names(pbp)
+  missing <- required_names[!required_names %in% available_names]
+  if (length(missing) > 0) {
+    cli::cli_abort(
+      "You have passed custom pbp to the argument {.arg pbp} but \\
+      it is missing the following required variable{?s}: {.val {missing}}",
+      call = rlang::caller_env()
+    )
+  }
+  unique(pbp$season) |>
+    stats::na.omit() |>
+    as.vector()
+}
+
+stats_required_pbp_columns <- function() {
+  c(
     "season",
     "game_id",
     "play_id",
@@ -782,16 +789,4 @@ stats_validate_pbp <- function(pbp) {
     "epa",
     "receiver_player_id"
   )
-  available_names <- names(pbp)
-  missing <- required_names[!required_names %in% available_names]
-  if (length(missing) > 0) {
-    cli::cli_abort(
-      "You have passed custom pbp to the argument {.arg pbp} but \\
-      it is missing the following required variable{?s}: {.val {missing}}",
-      call = rlang::caller_env()
-    )
-  }
-  unique(pbp$season) |>
-    stats::na.omit() |>
-    as.vector()
 }

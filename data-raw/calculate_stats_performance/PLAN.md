@@ -6,7 +6,7 @@ Seasons 1999 and 2000 are deprecated. They are not used anywhere in this plan: n
 
 ## Status and how to resume
 
-Work happens on branch `calculate-stats-performance`. Done: step 0 (0.1–0.7). Next: step 1.
+Work happens on branch `calculate-stats-performance`. Done: step 0 (0.1–0.7), step 1. Next: step 2.
 
 Files in this folder:
 
@@ -247,6 +247,14 @@ Status: done.
 
 Check: regression test, `compare.R`.
 
+Status: done. Regression test passes, `compare.R` reports 48 of 48 combinations `identical()`.
+
+- `pbp` becomes `as_pbp_dt(.subset(pbp, stats_pbp_columns()))`. `.subset()` drops dplyr groups and avoids `[.data.table` (a character `i` would be a join). The code only adds columns (`last_drive`), so the user's pbp is never changed by reference (checked).
+- `stats_pbp_columns()` is `stats_required_pbp_columns()` (the validated list) plus `defteam_score` and `posteam_type`, which the gwfg logic uses but `stats_validate_pbp()` never required. Adding them to the validation changes the snapshot, so it happens in step 4 (agreed with the user).
+- Playstats use `as.data.table()` (a copy), not `setDT()`: `setDT()` would change the class of the object returned by the loader, which may be cached (memoise, test mocks).
+- The filter keeps the row order of playstats (`sort(unique())` of the `which = TRUE` join). A plain `nomatch = NULL` join returns pbp order, which would change `first()`, `last()`, `custom_mode()` ties and the `fg_*_list` order.
+- `is_gwfg_attempt` stays integer (`as.integer(fcoalesce(cond, FALSE))`), so the gwfg stats stay integer. `NA` conditions count as no attempt, like `case_when(... ~ 1L, TRUE ~ 0L)`.
+
 ## Step 2: flags instead of collapsed strings
 
 Replace `more_stats`, `team_stats`, `all_stats` and `has_id()` by logical flag columns computed by group (same grouping keys as now), e.g. `p_fumble`, `p_fumble_lost`, `t_first_down_pass`, `t_first_down_rush`, `a_punt_oob`, `a_punt_downed`, `a_punt_fair_catch`, `a_punt_returned`, `a_punt_return_td`. `team_play_air_yards`, `play_punt_return_yards`, `team_targets` and `team_air_yards` become grouped `:=` columns.
@@ -260,7 +268,7 @@ Check: regression test, `compare.R`.
 - Stats that aren't sums in one grouped call: `player_name` (most common, ties as in `custom_mode()`), `season_type` collapse, `game_id`, `team` (first), `recent_team` (last), `opponent_team`, `games` (`uniqueN()`), the `fg_*_list` columns, first `team_targets` / `team_air_yards`.
 - Derived stats on the aggregated columns: `passing_yards_after_catch`, `pacr`, `racr`, `target_share`, `air_yards_share`, `wopr`, `def_sacks`, `def_sack_yards`, `fg_pct`, `pat_pct`, `pt_net_yards`, fantasy points. `fifelse()` / `fcase()`, `NaN` handling as now.
 
-Check: regression test, `compare.R`, `benchmark.R`.
+Check: regression test, `compare.R` on all seasons, `benchmark.R`.
 
 ## Step 4: pbp stats, player information, output
 
@@ -271,6 +279,7 @@ Check: regression test, `compare.R`, `benchmark.R`.
 - Output: `setDF()` and the class `c("tbl_df", "tbl", "data.frame")`, like `make_nflverse_data()` does without importing tibble. The output must stay `identical()` in class and attributes.
 - `load_players()` failures: fail with a clear error instead of "Column `gsis_id` doesn't exist" (new snapshot test).
 - The empty-filter warning prints `{seasons}`, which is the default season for custom pbp. Print the seasons in pbp instead (snapshot changes; show the user).
+- `stats_validate_pbp()`: also require `defteam_score` and `posteam_type` (used by the gwfg logic, see step 1), so `stats_pbp_columns()` and `stats_required_pbp_columns()` become one list. The "validates custom pbp" snapshot changes; show the user. Agreed with the user.
 - Column names used in `[.data.table` go into `utils::globalVariables()` at the end of `R/utils.R`; remove the separate call in `R/calculate_stats.R`.
 
 Check: regression test, `compare.R`, `benchmark.R`, `devtools::check()`.
@@ -282,6 +291,8 @@ Check: regression test, `compare.R`, `benchmark.R`, `devtools::check()`.
 - NEWS bullet with the benchmark numbers (and the `load_players()` error).
 - Update this file with the results.
 
+Check: regression test, `compare.R` on all seasons, `benchmark.R`, `devtools::check()`.
+
 ## Step 6 (separate effort): dependencies
 
 Rewriting `calculate_stats()` alone doesn't drop dplyr. Remaining users: `calculate_standings()` (23 calls), `calculate_series_conversion_rates()` (21), `R/helper_database_functions.R` (17), `R/ep_wp_calculators.R` (9), `build_playstats()` (13, plus tidyr, janitor and purrr), `R/helper_scrape_gc.R` (35, deprecated) and single calls in `R/utils.R`, `R/save_raw_pbp.R`, `R/helper_scrape_nfl.R`, `R/build_nflfastR_pbp.R` and `R/helper_tidy_play_stats.R`. The parser also uses `janitor::make_clean_names()`. Without dplyr, tidyr, tibble and janitor, the recursive dependencies drop from 44 to 27 packages (cpp11, dplyr, generics, hms, janitor, lubridate, pillar, pkgconfig, R6, snakecase, stringr, tibble, tidyr, tidyselect, timechange, utf8, withr). `build_playstats()` is internal and only builds release data; it could move to `data-raw/` or the nflverse-pbp repo instead of being rewritten. Each function needs its own test setup like step 0 before it changes.
@@ -290,7 +301,7 @@ Rewriting `calculate_stats()` alone doesn't drop dplyr. Remaining users: `calcul
 
 - Don't change the computation before step 0 is complete and checked (0.6).
 - Never use seasons 1999 or 2000.
-- After every step: the regression test passes and `compare.R` reports `identical()` for all seasons and combinations. A difference is a bug in the rewrite until the user decides otherwise.
+- After every step: the regression test passes and `compare.R 2023` reports `identical()` for all combinations. After step 3 and step 5, run `compare.R` on all seasons (no argument). The tests compare doubles with a tolerance; `compare.R` checks `identical()` on full seasons, which catches small changes of doubles, class and attributes, and row-order effects. A difference is a bug in the rewrite until the user decides otherwise.
 - Never update the expected stats output or loosen the tolerance to make the test pass. Show the user the differences and let them decide.
 - Never upload to the `regression_tests` release without the user's explicit request; use `--dry-run`.
 - Follow the data.table rules in AGENTS.md (`dt[cond, col := value]`, `as.numeric(cond)`, `%chin%`, `fifelse()` / `fcase()`, `globalVariables()`).
