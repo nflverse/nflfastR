@@ -262,7 +262,6 @@ load_model <- function(name) {
     "ep" = fastrmodels::ep_model,
     "cp" = fastrmodels::cp_model,
     "wp" = fastrmodels::wp_model,
-    "xpass" = fastrmodels::xpass_model,
     "xyac" = fastrmodels::xyac_model
   )
 

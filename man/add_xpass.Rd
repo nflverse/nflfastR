@@ -20,9 +20,11 @@ added:
 }
 }
 \description{
-Build columns from the expected dropback model. Will return
-\code{NA} on data prior to 2006 since that was before NFL started marking scrambles.
-Must be run on a dataframe that has already had \code{\link[=clean_pbp]{clean_pbp()}} run on it.
-Note that the functions \code{\link[=build_nflfastR_pbp]{build_nflfastR_pbp()}} and
+Build columns from the expected dropback model. The model
+gives the probability of a dropback (a pass, sack, or scramble) from the game
+situation only: down, distance, field position, score, time remaining,
+timeouts, and the era of the season (for league-wide trends). It doesn't
+know anything about the teams. Must be run on a dataframe that has already had
+\code{\link[=clean_pbp]{clean_pbp()}} run on it. Note that the functions \code{\link[=build_nflfastR_pbp]{build_nflfastR_pbp()}} and
 the database function \code{\link[=update_db]{update_db()}} already include this function.
 }
