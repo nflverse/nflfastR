@@ -115,7 +115,7 @@
 ## usethis namespace: start
 #' @import fastrmodels
 #' @importFrom data.table %between% %chin% :=
-#' @importFrom rlang .data .env %||%
+#' @importFrom rlang %||%
 # We have to import something from xgboost because it is listed as dependency to
 # be able to apply models.
 #' @importFrom xgboost getinfo
