@@ -371,9 +371,9 @@ ot_row_post_score <- function(dp, rule, p, d2, secs, s) {
 # drive that is recovered right away, so a change of posteam (ignoring kickoff
 # rows, which carry the kicking team) starts a new possession as well.
 ot_possession_number <- function(pbp) {
-  dr <- if ("fixed_drive" %in% names(pbp)) pbp$fixed_drive else pbp$drive
+  dr <- if ("fixed_drive" %chin% names(pbp)) pbp$fixed_drive else pbp$drive
   ot <- pbp$qtr > 4
-  is_kick <- if ("kickoff_attempt" %in% names(pbp)) {
+  is_kick <- if ("kickoff_attempt" %chin% names(pbp)) {
     pbp$kickoff_attempt %in% 1
   } else {
     rep(FALSE, nrow(pbp))
@@ -698,7 +698,8 @@ add_ot_air_wp <- function(pass_pbp, phase) {
 }
 
 # Overtime rows (qtr > 4) of calculate_win_probability(). `pbp_data` is the
-# user's data, `model_data` the same rows with `posteam_spread` added. Returns
+# user's data, `model_data` a list of its columns with `posteam_spread` added.
+# Returns
 # NULL without overtime rows, otherwise list(i, wp, vegas_wp) where `i` are the
 # overtime rows.
 calculate_ot_win_probability <- function(pbp_data, model_data) {
@@ -714,7 +715,24 @@ calculate_ot_win_probability <- function(pbp_data, model_data) {
       "{.arg pbp_data} needs a {.field season} column to value overtime rows."
     )
   }
-  x <- model_data[i, , drop = FALSE]
+  cols <- intersect(
+    c(
+      "season",
+      "season_type",
+      "game_id",
+      "ot_possession",
+      "roof",
+      "posteam",
+      "down",
+      "ydstogo",
+      "yardline_100",
+      "game_seconds_remaining",
+      "score_differential",
+      "posteam_spread"
+    ),
+    names(model_data)
+  )
+  x <- lapply(model_data[cols], \(col) col[i])
   season_type <- if ("season_type" %chin% names(x)) {
     toupper(x$season_type)
   } else if ("game_id" %chin% names(x)) {

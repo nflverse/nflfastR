@@ -144,7 +144,7 @@ ep_model_features <- c(
 get_preds_stacked <- function(data_list) {
   matrices <- lapply(data_list, function(pbp) {
     m <- model_matrix(pbp, ep_model_features)
-    if ("location" %in% names(pbp)) {
+    if ("location" %chin% names(pbp)) {
       m[, "home"] <- data.table::fifelse(pbp$location == "Neutral", 0, pbp$home)
     }
     m

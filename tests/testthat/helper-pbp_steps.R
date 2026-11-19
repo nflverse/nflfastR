@@ -23,3 +23,20 @@ expect_input_unchanged <- function(fn, same_class = TRUE) {
     }
   }
 }
+
+wp_calculator_input <- function() {
+  data.frame(
+    receive_2h_ko = 0,
+    home_team = "SEA",
+    posteam = "SEA",
+    score_differential = 0,
+    half_seconds_remaining = 1800,
+    game_seconds_remaining = 3600,
+    spread_line = 3,
+    down = 1,
+    ydstogo = 10,
+    yardline_100 = 75,
+    posteam_timeouts_remaining = 3,
+    defteam_timeouts_remaining = 3
+  )
+}
