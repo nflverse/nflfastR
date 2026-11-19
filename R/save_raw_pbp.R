@@ -127,11 +127,10 @@ missing_raw_pbp <- function(
     unlist(use.names = FALSE) |>
     tools::file_path_sans_ext()
 
-  finished_games <- nflreadr::load_schedules(seasons = seasons) |>
-    dplyr::filter(!is.na(.data$result)) |>
-    dplyr::pull(.data$game_id)
+  schedule <- raw_pbp_load_schedules(seasons = seasons)
+  finished_games <- schedule$game_id[!is.na(schedule$result)]
 
-  local_missing_games <- finished_games[!finished_games %in% local_games]
+  local_missing_games <- finished_games[!finished_games %chin% local_games]
 
   if (length(local_missing_games) == 0) {
     cli::cli_alert_success("No missing games!")
@@ -150,6 +149,10 @@ missing_raw_pbp <- function(
   local_missing_games
 }
 
+# Mockable wrapper for tests
+raw_pbp_load_schedules <- function(seasons) {
+  nflreadr::load_schedules(seasons = seasons)
+}
 
 verify_game_ids <- function(game_ids) {
   # game_ids <- c(
@@ -171,14 +174,14 @@ verify_game_ids <- function(game_ids) {
       ),
       function(t) {
         all(
-          t %in% c(nflfastR::teams_colors_logos$team_abbr, "OAK", "SD", "STL")
+          t %chin% c(nflfastR::teams_colors_logos$team_abbr, "OAK", "SD", "STL")
         )
       },
       FUN.VALUE = logical(1L)
     )
   combined_check <- season_check & week_check & team_name_check
 
-  if (any(combined_check == FALSE)) {
+  if (!all(combined_check)) {
     cli::cli_abort(
       "The game IDs {.val {game_ids[!combined_check]}} seem to be invalid!"
     )
