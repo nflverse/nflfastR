@@ -6,7 +6,7 @@ Seasons 1999 and 2000 are deprecated. They are not used anywhere in this plan: n
 
 ## Status and how to resume
 
-Work happens on branch `calculate-stats-performance`. Done: step 0 (0.1–0.7), step 1. Next: step 2.
+Work happens on branch `calculate-stats-performance`. Done: step 0 (0.1–0.7), steps 1 and 2. Next: step 3.
 
 Files in this folder:
 
@@ -260,6 +260,12 @@ Status: done. Regression test passes, `compare.R` reports 48 of 48 combinations 
 Replace `more_stats`, `team_stats`, `all_stats` and `has_id()` by logical flag columns computed by group (same grouping keys as now), e.g. `p_fumble`, `p_fumble_lost`, `t_first_down_pass`, `t_first_down_rush`, `a_punt_oob`, `a_punt_downed`, `a_punt_fair_catch`, `a_punt_returned`, `a_punt_return_td`. `team_play_air_yards`, `play_punt_return_yards`, `team_targets` and `team_air_yards` become grouped `:=` columns.
 
 Check: regression test, `compare.R`.
+
+Status: done. Regression test passes, `compare.R 2023` reports 12 of 12 combinations `identical()`.
+
+- `flag_groups()` sets each flag to `FALSE`, then to `TRUE` with a join on the unique keys of the rows with the stat IDs. No R code per group. Joins match `NA` keys like dplyr's `NA` group (e.g. `player_id` `NA` across games with the same `play_id` in a week), and an `NA` `stat_id` never sets a flag, like `has_id()` on the pasted `"NA"`.
+- Same grouping keys as before, also where they look odd: the player and team flags group by `season`, `week`, `play_id` without `game_id`.
+- `by` of a data.table call must be `c()`, a list or a variable: an `if` there errors, so the target share groups are in `share_by`.
 
 ## Step 3: aggregation
 

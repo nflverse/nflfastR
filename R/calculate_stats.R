@@ -136,51 +136,61 @@ calculate_stats <- function(
     c("player_id", "team")
   )
 
-  # more_stats = all stat IDs of one player in a single play
-  # team_stats = all stat IDs of one team in a single play
-  # all_stats = all stat IDs of a play, regardless of team (we need this for punting)
-  # we need those to identify things like fumbles depending on playtype or
-  # first downs depending on playtype
-  playstats <- playstats |>
-    dplyr::group_by(.data$season, .data$week, .data$play_id, .data$player_id) |>
-    dplyr::mutate(
-      # we wrap the collapsed string in ";" in order to search for the pattern
-      # ";stat_id;" to avoid matching 1 with 10, 11, 21, etc.
-      more_stats = paste0(";", paste(stat_id, collapse = ";"), ";")
-    ) |>
-    dplyr::group_by(.data$season, .data$week, .data$play_id, .data$team) |>
-    dplyr::mutate(
-      # we wrap the collapsed string in ";" in order to search for the pattern
-      # ";stat_id;" to avoid matching 1 with 10, 11, 21, etc.
-      team_stats = paste0(";", paste(stat_id, collapse = ";"), ";"),
-      team_play_air_yards = sum((stat_id %in% 111:112) * yards)
-    ) |>
-    # need to group by game and play here to avoid mixing of play IDs of different
-    # games in the same week
-    dplyr::group_by(.data$game_id, .data$play_id) |>
-    dplyr::mutate(
-      # we wrap the collapsed string in ";" in order to search for the pattern
-      # ";stat_id;" to avoid matching 1 with 10, 11, 21, etc.
-      all_stats = paste0(";", paste(stat_id, collapse = ";"), ";"),
-      play_punt_return_yards = sum((stat_id %in% 33:36) * yards)
-    ) |>
-    # compute team targets and team air yards for calculation of target share
-    # and air yard share. Since it's relative, we need to be careful with the groups
-    # depending on summary level
-    dplyr::group_by(
-      !!!rlang::data_syms(
-        if (summary_level == "season") {
-          c("season", "team")
-        } else {
-          c("season", "week", "team")
-        }
-      )
-    ) |>
-    dplyr::mutate(
-      team_targets = sum(stat_id == 115),
-      team_air_yards = sum((stat_id %in% 111:112) * yards)
-    ) |>
-    dplyr::ungroup()
+  # Flags of stat IDs that other rows of the same player, team or play have.
+  # We need them to identify things like fumbles depending on playtype or first
+  # downs depending on playtype.
+  # Player in a play. season, week and play_id identify the play because a
+  # player has one game per week.
+  flag_groups(
+    playstats,
+    by = c("season", "week", "play_id", "player_id"),
+    flags = list(p_fumble = 52:54, p_fumble_lost = 106)
+  )
+  # Team in a play
+  flag_groups(
+    playstats,
+    by = c("season", "week", "play_id", "team"),
+    flags = list(t_first_down_rush = 3, t_first_down_pass = 4)
+  )
+  # Play, regardless of team (for punting). game_id is needed here to avoid
+  # mixing play IDs of different games in the same week. Stat IDs 37, 38 and 39
+  # (punts oob, downed, fair caught) are assigned to the receiving team (or to
+  # the receiver in case of 39).
+  flag_groups(
+    playstats,
+    by = c("game_id", "play_id"),
+    flags = list(
+      a_punt_oob = 37,
+      a_punt_downed = 38,
+      a_punt_fair_catch = 39,
+      a_punt_returned = 33:34,
+      a_punt_return_td = c(34, 36)
+    )
+  )
+
+  playstats[,
+    team_play_air_yards := sum((stat_id %in% 111:112) * yards),
+    by = c("season", "week", "play_id", "team")
+  ]
+  playstats[,
+    play_punt_return_yards := sum((stat_id %in% 33:36) * yards),
+    by = c("game_id", "play_id")
+  ]
+  # compute team targets and team air yards for calculation of target share
+  # and air yard share. Since it's relative, we need to be careful with the
+  # groups depending on summary level
+  share_by <- if (summary_level == "season") {
+    c("season", "team")
+  } else {
+    c("season", "week", "team")
+  }
+  playstats[,
+    c("team_targets", "team_air_yards") := list(
+      sum(stat_id == 115),
+      sum((stat_id %in% 111:112) * yards)
+    ),
+    by = share_by
+  ]
 
   # Check combination of summary_level and stat_type to set a helper that is
   # used to create the grouping variables
@@ -324,14 +334,14 @@ calculate_stats <- function(
       passing_interceptions = sum(stat_id == 19),
       sacks_suffered = sum(stat_id == 20),
       sack_yards_lost = sum((stat_id == 20) * yards),
-      sack_fumbles = sum(stat_id == 20 & has_id(52:54, more_stats)),
-      sack_fumbles_lost = sum(stat_id == 20 & has_id(106, more_stats)),
+      sack_fumbles = sum(stat_id == 20 & p_fumble),
+      sack_fumbles_lost = sum(stat_id == 20 & p_fumble_lost),
       # includes incompletions (111 = complete, 112 = incomplete)
       passing_air_yards = sum((stat_id %in% 111:112) * yards),
       # passing yac equals passing yards - air yards on completed passes
       passing_yards_after_catch = .data$passing_yards -
         sum((stat_id == 111) * yards),
-      passing_first_downs = sum((stat_id %in% 15:16) & has_id(4, team_stats)),
+      passing_first_downs = sum((stat_id %in% 15:16) & t_first_down_pass),
       passing_2pt_conversions = sum(stat_id == 77),
       # this is a player stat and we skip it in team stats
       pacr = if (.env$stat_type == "player") {
@@ -349,11 +359,11 @@ calculate_stats <- function(
       carries = sum(stat_id %in% 10:11),
       rushing_yards = sum((stat_id %in% 10:13) * yards),
       rushing_tds = sum(stat_id %in% c(11, 13)),
-      rushing_fumbles = sum((stat_id %in% 10:11) & has_id(52:54, more_stats)),
+      rushing_fumbles = sum((stat_id %in% 10:11) & p_fumble),
       rushing_fumbles_lost = sum(
-        (stat_id %in% 10:11) & has_id(106, more_stats)
+        (stat_id %in% 10:11) & p_fumble_lost
       ),
-      rushing_first_downs = sum((stat_id %in% 10:11) & has_id(3, team_stats)),
+      rushing_first_downs = sum((stat_id %in% 10:11) & t_first_down_rush),
       rushing_2pt_conversions = sum(stat_id == 75),
       # "Explosives" (see #550 for discussion about the definition)
       rushing_10 = sum((stat_id %in% 10:13) * (yards >= 10)),
@@ -365,9 +375,9 @@ calculate_stats <- function(
       targets = sum(stat_id == 115),
       receiving_yards = sum((stat_id %in% 21:24) * yards),
       receiving_tds = sum(stat_id %in% c(22, 24)),
-      receiving_fumbles = sum((stat_id %in% 21:22) & has_id(52:54, more_stats)),
+      receiving_fumbles = sum((stat_id %in% 21:22) & p_fumble),
       receiving_fumbles_lost = sum(
-        (stat_id %in% 21:22) & has_id(106, more_stats)
+        (stat_id %in% 21:22) & p_fumble_lost
       ),
       # air_yards are counted in 111:112 but it is a passer stat not a receiver stat
       # so we count team air yards when a player accounted for a reception
@@ -380,7 +390,7 @@ calculate_stats <- function(
         .data$passing_air_yards
       },
       receiving_yards_after_catch = sum((stat_id == 113) * yards),
-      receiving_first_downs = sum((stat_id %in% 21:22) & has_id(4, team_stats)),
+      receiving_first_downs = sum((stat_id %in% 21:22) & t_first_down_pass),
       receiving_2pt_conversions = sum(stat_id == 104),
       # "Explosives" (see #550 for discussion about the definition)
       receiving_10 = sum((stat_id %in% 21:24) * (yards >= 10)),
@@ -536,22 +546,22 @@ calculate_stats <- function(
       pt_yards = sum(stat_id %in% c(29, 32) * yards),
       pt_inside_20 = sum(stat_id == 30),
       # the following stats are a bit special as we need opponent team stats
-      # to get the counts right. That's what 'all_stats' is for
+      # to get the counts right. That's what the a_punt_* flags are for
       # stat IDs 37, 38, 39 (punts oob, downed, fair caught) are assigned to
       # the receiving team (or to the receiver in case of 39)
       # Also the number of returns, return TDs and the yardage
-      pt_out_of_bounds = sum((stat_id == 29) & has_id(37, all_stats)),
-      pt_downed = sum((stat_id == 29) & has_id(38, all_stats)),
+      pt_out_of_bounds = sum((stat_id == 29) & a_punt_oob),
+      pt_downed = sum((stat_id == 29) & a_punt_downed),
       pt_touchback = sum(stat_id == 32),
-      pt_fair_caught = sum((stat_id == 29) & has_id(39, all_stats)),
+      pt_fair_caught = sum((stat_id == 29) & a_punt_fair_catch),
       pt_returned = sum(
-        (stat_id %in% c(2, 29, 31, 32)) & has_id(33:34, all_stats)
+        (stat_id %in% c(2, 29, 31, 32)) & a_punt_returned
       ),
       pt_return_yards = sum(
         (stat_id %in% c(2, 29, 31, 32)) * .data$play_punt_return_yards
       ),
       pt_return_tds = sum(
-        (stat_id %in% c(2, 29, 31, 32)) & has_id(c(34, 36), all_stats)
+        (stat_id %in% c(2, 29, 31, 32)) & a_punt_return_td
       ),
       pt_net_yards = .data$pt_yards -
         .data$pt_return_yards -
@@ -662,9 +672,6 @@ calculate_stats <- function(
 utils::globalVariables(c(
   "stat_id",
   "yards",
-  "more_stats",
-  "team_stats",
-  "all_stats",
   "team",
   "def",
   "off",
@@ -720,8 +727,17 @@ fg_list <- function(stat_ids, yards, collapse_id, gwfg = NULL) {
 
 `%0%` <- function(lhs, rhs) if (lhs != 0) lhs else rhs
 
-has_id <- function(id, all_ids) {
-  stringi::stri_detect_regex(all_ids, paste0(";", id, ";", collapse = "|"))
+# Adds a logical column per element of flags: TRUE in all rows of the groups
+# (by) that have one of the stat IDs of that element. Joins match NA keys like
+# NA groups. Changes dt by reference.
+flag_groups <- function(dt, by, flags) {
+  for (flag in names(flags)) {
+    ids <- flags[[flag]]
+    keys <- unique(dt[stat_id %in% ids, ..by])
+    data.table::set(dt, j = flag, value = FALSE)
+    dt[keys, on = by, (flag) := TRUE]
+  }
+  invisible(dt)
 }
 
 td_ids <- function() {

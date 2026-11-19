@@ -406,6 +406,7 @@ as_pbp_dt <- function(df) {
 # Columns used inside data.table calls of the parser
 utils::globalVariables(
   c(
+    "..by",
     "..chr",
     "..drive_cols",
     "..stat_cols",
@@ -418,6 +419,11 @@ utils::globalVariables(
     "SEASON",
     "SEASON_TYPE",
     "WEEK",
+    "a_punt_downed",
+    "a_punt_fair_catch",
+    "a_punt_oob",
+    "a_punt_return_td",
+    "a_punt_returned",
     "aborted_play",
     "air_yards",
     "away_points_scored",
@@ -502,6 +508,8 @@ utils::globalVariables(
     "opp_safety_prob",
     "opp_td_prob",
     "own_kickoff_recovery",
+    "p_fumble",
+    "p_fumble_lost",
     "pass",
     "pass_attempt",
     "pass_oe",
@@ -548,6 +556,8 @@ utils::globalVariables(
     "spread_line",
     "st_play_type",
     "success",
+    "t_first_down_pass",
+    "t_first_down_rush",
     "td_prob",
     "td_team",
     "third_down_converted",
