@@ -75,7 +75,6 @@
 #'   pbp <- nflfastR::load_pbp(2021)
 #'
 #'   weekly <- calculate_series_conversion_rates(pbp, weekly = TRUE)
-#'   # one line per column, like dplyr::glimpse()
 #'   str(
 #'     weekly,
 #'     list.len = ncol(weekly),
@@ -85,7 +84,6 @@
 #'   )
 #'
 #'   overall <- calculate_series_conversion_rates(pbp, weekly = FALSE)
-#'   # one line per column, like dplyr::glimpse()
 #'   str(
 #'     overall,
 #'     list.len = ncol(overall),
