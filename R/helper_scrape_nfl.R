@@ -465,8 +465,8 @@ fix_posteams <- function(pbp) {
 
 # Convert logical and integer columns to double and factors to character,
 # normalize team abbreviations and white space in character columns, and
-# clean the column names. Same result as a chain of dplyr::mutate_if() calls
-# and janitor::clean_names(), but much faster on wide data with few rows.
+# clean the column names. Much faster than a chain of dplyr::mutate_if() calls
+# and janitor::clean_names() on wide data with few rows.
 # Changes the data.table dt by reference.
 normalize_raw_columns <- function(dt) {
   is_chr <- vapply(dt, is.character, logical(1))
@@ -533,14 +533,44 @@ unnest_play_stats <- function(plays) {
   )
 }
 
-# janitor::make_clean_names() is slow and the raw data of most games has the
-# same column names, so we remember the results
+# The raw data of most games has the same column names, so we remember the
+# results of clean_names()
 clean_names_cached <- function(x) {
   key <- paste0("clean_names_", rlang::hash(x))
   if (is.null(nflfastR_cache[[key]])) {
-    assign(key, janitor::make_clean_names(x), envir = nflfastR_cache)
+    assign(key, clean_names(x), envir = nflfastR_cache)
   }
   nflfastR_cache[[key]]
+}
+
+# Snake case column names like janitor::make_clean_names(): quotes are dropped,
+# % and # become "percent" and "number", other characters are transliterated
+# to ASCII, names that are empty or start with a digit get the prefix x, and
+# duplicates get a suffix _2, _3, ... (repeated until all names are unique).
+clean_names <- function(x) {
+  x <- stringi::stri_replace_all_regex(
+    x,
+    c("['\"`]", "%", "#"),
+    c("", "_percent_", "_number_"),
+    vectorize_all = FALSE
+  )
+  x <- stringi::stri_trans_general(x, "Latin-ASCII")
+  x <- stringi::stri_replace_all_regex(
+    x,
+    c("([a-z])([A-Z])", "([A-Z]+)([A-Z][a-z])", "[^A-Za-z0-9]+", "^_+|_+$"),
+    c("$1_$2", "$1_$2", "_", ""),
+    vectorize_all = FALSE
+  )
+  x <- stringi::stri_trans_tolower(x)
+  x <- stringi::stri_replace_all_regex(x, "^(?=[0-9]|$)", "x")
+  repeat {
+    n <- data.table::rowid(x)
+    dup <- n > 1L
+    if (!any(dup)) {
+      return(x)
+    }
+    x[dup] <- paste0(x[dup], "_", n[dup])
+  }
 }
 
 # Changes the data.table dt by reference

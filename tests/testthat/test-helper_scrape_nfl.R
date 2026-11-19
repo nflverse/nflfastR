@@ -119,8 +119,52 @@ test_that("fix_bad_games assigns teams by possession", {
   expect_identical(pbp$safety_team, c(NA, "NYJ", NA))
 })
 
-test_that("clean_names_cached gives the names of janitor", {
+test_that("clean_names gives snake case names like janitor", {
+  x <- c(
+    "possessionTeam.franchise.currentLogo.url",
+    "inside20",
+    "half_sack_1",
+    "HTTPServer",
+    "a2B",
+    "_x_",
+    "Play Type",
+    "Größe",
+    "don't",
+    "pct%",
+    "#plays",
+    "2ndDown",
+    "",
+    "playId",
+    "playID",
+    "play_id",
+    "play_id_2"
+  )
+  expect_identical(
+    clean_names(x),
+    c(
+      "possession_team_franchise_current_logo_url",
+      "inside20",
+      "half_sack_1",
+      "http_server",
+      "a2b",
+      "x",
+      "play_type",
+      "grosse",
+      "dont",
+      "pct_percent",
+      "number_plays",
+      "x2nd_down",
+      "x_2",
+      "play_id",
+      "play_id_2",
+      "play_id_3",
+      "play_id_2_2"
+    )
+  )
+})
+
+test_that("clean_names_cached gives the names of clean_names", {
   x <- c("Play Type", "playId", "playId")
-  expect_identical(clean_names_cached(x), janitor::make_clean_names(x))
-  expect_identical(clean_names_cached(x), janitor::make_clean_names(x))
+  expect_identical(clean_names_cached(x), clean_names(x))
+  expect_identical(clean_names_cached(x), clean_names(x))
 })
