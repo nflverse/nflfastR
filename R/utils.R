@@ -268,10 +268,20 @@ load_sysdata_booster <- function(key, raw, version, what) {
 }
 
 my_rhub_check <- function() {
-  cli::cli_text("Please run the following code")
-  cli::cli_text(
-    "{.run rhub::rhub_check(platforms = nflfastR:::rhub_check_platforms())}"
+  cli::cli_rule("Please run the following code")
+  cli::cli_code(
+    lines = c(
+      "plts <- setdiff(",
+      "  # need to query platforms every time because some may have been",
+      "  # deprecated since the last time",
+      "  rhub::rhub_platforms()$name,",
+      "  # don't run on these platforms",
+      "  c('rchk', 'nosuggests', 'valgrind')",
+      ")",
+      "rhub::rhub_check(platforms = plts)"
+    )
   )
+  cli::cli_rule()
 }
 
 rhub_check_platforms <- function() {
