@@ -6,6 +6,13 @@ test_that("the conversion value follows the seasons", {
   expect_equal(conversion_value(NA_real_), NA_real_)
 })
 
+test_that("the two point make probability depends on the spot", {
+  expect_equal(
+    two_point_prob(c(1, 2, 3, 5, 6, 15, NA)),
+    c(0.58, 0.49, 0.49, 0.49, 0.20, 0.20, 0.49)
+  )
+})
+
 test_that("the kickoff start spot follows the kickoff rules", {
   seasons <- c(2009, 2015, 2016, 2023, 2024, 2025, 2026)
   expect_equal(

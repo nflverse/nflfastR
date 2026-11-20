@@ -68,11 +68,19 @@ test_that("overtime: ties are worth a half win", {
     tolerance = 0.02
   )
   # two point conversion to win or lose in the BOTH era is worth the make prob
+  # from its spot
   twopt <- ot_wp_states(
-    ot_state(season = 2025, kind = "twopt", d = -1, phase = 2, secs = 20),
+    ot_state(
+      season = 2025,
+      kind = "twopt",
+      d = -1,
+      phase = 2,
+      secs = 20,
+      y = c(2, 1, 7)
+    ),
     use_spread = FALSE
   )
-  expect_equal(twopt, two_point_make_prob, tolerance = 1e-3)
+  expect_equal(twopt, two_point_prob(c(2, 1, 7)), tolerance = 1e-3)
 })
 
 test_that("overtime: a short clock takes away the advantage if out of range", {
