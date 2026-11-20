@@ -16,6 +16,10 @@ The regression test in `tests/testthat/test-build_nflfastR_pbp.R` compares the p
 
 - Check a change with the `calculate_stats` tests and `Rscript data-raw/calculate_stats_performance/compare_versions.R <master_dir> . 2023` (master vs. this checkout on a full season, output and speed; `<master_dir>` is e.g. a `git worktree` of master). Differences of doubles within the tolerance of the tests are accepted; anything else is a bug until the user decides otherwise.
 
+### Errors of the raw data
+
+Fix single wrong values of the raw data with a patch in `inst/pbp_patches.dcf`, not with game-specific code in the parser. Read the section on patches in `.github/CONTRIBUTING.md` first.
+
 ### data.table in the `build_nflfastR_pbp()` pipeline
 
 The pipeline passes one data.table through all steps and changes it by reference. Write idiomatic data.table code, not dplyr code translated line by line:

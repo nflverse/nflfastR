@@ -9,6 +9,7 @@
 - Replaced `fastrmodels::fg_model` with a new field goal model built like nfl4th's (nfl4th#63), which no longer understates today's kickers from 45+ yards. It is used in `ep`, `wp` and `vegas_wp`. nflfastR no longer imports mgcv. (#625)
 - Rebuilt the expected dropback model (`xpass` and `pass_oe`). It only uses the game situation and no longer the pregame line, win probability, roof or home field, so `pass_oe` compares a team with the league in the same situation. League-wide `pass_oe` since 2024 is about -0.6 instead of -1.5, and team-season `pass_oe` correlates 0.98 to 0.99 with the old values. Both variables are now also available for 2001 to 2005. (#636)
 - Fixed the score in all Jacksonville home games of 2001 and 2002, where the raw data credit every play to the visitors, and removed two duplicated touchdowns in `2011_13_DET_NO`. (#625)
+- Fixed the quarter of 11 plays in five games where the game clock went back during regulation. (#609)
 - `xyac_median_yardage` is now always a double.
 - nflfastR no longer depends on dplyr, janitor, stringr, tibble and tidyr, and now requires nflreadr >= 1.5.0, curl >= 5.0.0 and rlang >= 1.0.0.
 - New option `nflfastR.verbose`. Set `options(nflfastR.verbose = FALSE)` to turn off progress messages. Warnings are still shown.
