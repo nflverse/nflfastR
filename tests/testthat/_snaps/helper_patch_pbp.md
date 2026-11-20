@@ -1,0 +1,36 @@
+# set patches only change the value they expect
+
+    Code
+      patch_set_values(pbp, "2019_01_GB_CHI")
+    Condition
+      Warning:
+      Patch of "2019_01_GB_CHI" not applied:
+      x posteam of play_id 1 is "KC", not "CHI" as the patch expects
+      Warning:
+      Patch of "2019_01_GB_CHI" not applied:
+      x play_id 9 doesn't exist
+
+# set patches with a wrong column or value fail
+
+    Code
+      patch_set_values(pbp, "2019_01_GB_CHI")
+    Condition
+      Error in `patch_set_values()`:
+      ! Patch of "2019_01_GB_CHI": column downs doesn't exist.
+
+---
+
+    Code
+      patch_set_values(pbp, "2019_01_GB_CHI")
+    Condition
+      Error in `patch_value()`:
+      ! Patch of "2019_01_GB_CHI": "two" isn't a valid value of column down (<double>).
+
+# unknown fields of the patch file fail
+
+    Code
+      local_pbp_patches("game_id: 2019_01_GB_CHI; play: 1; reason: r")
+    Condition
+      Error in `read_pbp_patches()`:
+      ! Unknown field play in the patch file.
+
