@@ -79,6 +79,14 @@ test_that("the blocks of plays don't change the predictions", {
   expect_equal(ep_state(yl = yl, block = 7L), ep_state(yl = yl))
 })
 
+test_that("the same state gets the same prediction wherever it is", {
+  # identical, not only equal: EPA of a play that doesn't change the state has
+  # to be 0 on every platform
+  yl <- c(75, rep(1:99, 30), 75)
+  p <- ep_state(yl = yl)
+  expect_identical(p[1, ], p[length(yl), ])
+})
+
 test_that("the model only uses the era of a season", {
   expect_identical(ep_state(season = 2001), ep_state(season = 2005))
   expect_identical(ep_state(season = 2018), ep_state(season = 2021))

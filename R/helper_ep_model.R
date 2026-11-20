@@ -96,20 +96,31 @@ ep_model_activation <- function(x) {
 
 # The probabilities of the next score (one row per play, one column per
 # outcome) for a matrix with the columns `ep_model_features`. They are NA for
-# plays with a missing feature. These plays are left out of the matrix
-# products, which are much slower with missing values.
+# plays with a missing feature.
+#
+# Every distinct state is predicted once. With an optimized BLAS a matrix
+# product can round the last digit of a column differently depending on where
+# the column is in the matrix, so the same state at two places would get EP
+# that differs by about 1e-16. EPA of plays that don't change the state (e.g.
+# a touchback on a kickoff or a timeout) would then be slightly positive or
+# negative instead of 0, and `success` would depend on the platform. Plays
+# with a missing feature are left out of the matrix products, which are much
+# slower with missing values.
 ep_model_predict <- function(features, model = ep_model, block = 1024L) {
-  x <- ep_model_inputs(features)
-  complete <- !is.na(colSums(x))
   out <- matrix(
     NA_real_,
-    ncol(x),
+    nrow(features),
     length(model$classes),
     dimnames = list(NULL, model$classes)
   )
-  if (!all(complete)) {
-    x <- x[, complete, drop = FALSE]
-  }
+  # the same number for the same state, NA for a state with a missing feature
+  state <- data.table::frankv(
+    data.table::as.data.table(features),
+    ties.method = "dense",
+    na.last = "keep"
+  )
+  first <- which(!duplicated(state) & !is.na(state))
+  x <- ep_model_inputs(features[first, , drop = FALSE])
   n <- ncol(x)
   layers <- model$layers
   last <- length(layers)
@@ -125,6 +136,8 @@ ep_model_predict <- function(features, model = ep_model, block = 1024L) {
     # checks that).
     probs[, i] <- exp(layers[[last]]$weights %*% h + layers[[last]]$bias)
   }
-  out[complete, ] <- t(probs) / colSums(probs)
+  probs <- t(probs) / colSums(probs)
+  known <- which(!is.na(state))
+  out[known, ] <- probs[match(state[known], state[first]), , drop = FALSE]
   out
 }
