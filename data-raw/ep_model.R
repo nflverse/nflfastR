@@ -6,14 +6,16 @@
 #
 # 1. The teacher: boosted trees (xgboost, multiclass) on the plays with a down
 #    since 2001. This is the recipe of the previous model
-#    (`fastrmodels::ep_model`) with two changes. A play is only weighted by how
-#    close the score is and no longer by the number of drives until the next
-#    score. That weight depends on the outcome (a score on the same drive got
-#    the highest weight), which made EP 0.08 points too high on average. And
-#    the eras are different: 2001 is in the era of 2002 to 2005 instead of an
-#    era with 1999 and 2000, which the model is no longer built with, and the
-#    seasons since 2022 are an era of their own instead of being in one era
-#    with 2018 to 2021 (fewer touchdowns and more field goals are the next
+#    (`fastrmodels::ep_model`) with these changes. The trees also get the yard
+#    line and the distance separately for 2nd, 3rd and 4th down, and there are
+#    800 of them instead of 525 (see teacher_matrix()). A play is only weighted
+#    by how close the score is and no longer by the number of drives until the
+#    next score. That weight depends on the outcome (a score on the same drive
+#    got the highest weight), which made EP 0.08 points too high on average.
+#    And the eras are different: 2001 is in the era of 2002 to 2005 instead of
+#    an era with 1999 and 2000, which the model is no longer built with, and
+#    the seasons since 2022 are an era of their own instead of being in one
+#    era with 2018 to 2021 (fewer touchdowns and more field goals are the next
 #    score since 2022). And the plays are reweighted so that EP is the value
 #    of a state for an average team, see "team strength" below.
 # 2. The student: a small neural network (three hidden layers of 48 units)
@@ -76,7 +78,7 @@ teacher_play_types <- c(
   "run",
   "qb_spike"
 )
-teacher_rounds <- 525
+teacher_rounds <- 800
 teacher_params <- list(
   booster = "gbtree",
   objective = "multi:softprob",
@@ -184,12 +186,29 @@ strength_weights <- function(features, strength, roof, games) {
 # All functions take the game states as a matrix with the columns
 # `ep_model_features`.
 
-# the columns of the teacher: 2001 is in the era of 2002 to 2005. Its other
-# eras are those of `ep_model_features`
+# The columns of the teacher: 2001 is in the era of 2002 to 2005 (its other
+# eras are those of `ep_model_features`), and the yard line and the distance
+# for each of 2nd, 3rd and 4th down. States far from the average play, like
+# 3rd and long or 3rd and 4th down deep in the own territory, are reached by a
+# small share of the plays. Small trees rarely give them leaves of their own,
+# so the trees approach their outcomes slowly: with only the state columns and
+# 525 trees, EP of 3rd and 4th down in the own 1 to 10 was 0.18 and 0.24
+# points too high even on the training plays. With the yard line and the
+# distance by down one split is enough to separate them. In season grouped
+# cross validation this halves the error of these states and improves the log
+# loss. Deeper trees (depth 7) fix them about as well but fit the rest worse,
+# and so do more trees without these columns. `gamma = 0` changes nothing.
 teacher_matrix <- function(features) {
+  by_down <- function(column) {
+    out <- features[, column] * features[, c("down2", "down3", "down4")]
+    colnames(out) <- paste0(column, "_", c("down2", "down3", "down4"))
+    out
+  }
   cbind(
     features[, setdiff(ep_model_features, c("era0", "era1"))],
-    era1 = features[, "era0"] + features[, "era1"]
+    era1 = features[, "era0"] + features[, "era1"],
+    by_down("yardline_100"),
+    by_down("ydstogo")
   )
 }
 
