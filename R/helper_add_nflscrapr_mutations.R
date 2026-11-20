@@ -350,16 +350,24 @@ add_nflscrapr_mutations <- function(pbp) {
   ]
   # Indicator columns for both QB kneels, spikes, scrambles,
   # no huddle, shotgun plays:
+  # A kneel down on a two point try after a touchdown that decides the game
+  # ("rushes kneels. ATTEMPT FAILS.") stays a run, so the series still ends in
+  # the touchdown
   data.table::set(
     d,
     j = "qb_kneel",
     value = as.numeric(
-      stringi::stri_detect_fixed(d$play_description, " kneels ") &
-        d$kickoff_attempt != 1
+      is_qb_kneel(d$play_description) &
+        d$kickoff_attempt != 1 &
+        d$two_point_attempt != 1
     )
   )
+  data.table::set(
+    d,
+    j = "qb_spike",
+    value = as.numeric(is_qb_spike(d$play_description))
+  )
   flags <- c(
-    qb_spike = " spiked ",
     qb_scramble = " scrambles ",
     shotgun = "Shotgun",
     no_huddle = "No Huddle"
@@ -760,6 +768,33 @@ fix_scrambles <- function(pbp) {
   # This marks scrambles in the 1999 - 2005 season using charting data
   # Because NFL did not put scramble in play description during this season
   # Data from Aaron Schatz!
+}
+
+# Kneel downs and spikes by their description. Most say "kneels" and "spiked
+# the ball", but some feeds write "kneels," (e.g. San Diego home games until
+# 2016), and in 2001 and 2002 they are free text notes after the play: "Took a
+# knee.", "Kneel down", "dropped to one knee", "QB spikes ball", "Spiked ball"
+# (#603). Those spike notes always follow "pass incomplete.", which keeps out
+# the linebackers Takeo and Brandon Spikes ("T.Spikes"), penalties for
+# "spiking the ball after the play" and injury notes. "Fake kneel by QB" is a
+# run. Checked on every play since 2001.
+is_qb_kneel <- function(play_description) {
+  stringi::stri_detect_regex(
+    play_description,
+    paste0(
+      "(?i)(?<!fake )\\bkneel(s|ed|ing)?\\b",
+      "|\\b(take|takes|took|taking|drop|drops|dropped|dropping) ",
+      "(a |one |to one |to a )?knee\\b"
+    )
+  )
+}
+
+is_qb_spike <- function(play_description) {
+  stringi::stri_detect_fixed(play_description, " spiked ") |
+    stringi::stri_detect_regex(
+      play_description,
+      "pass incomplete\\..*(?<![A-Z]\\. ?)\\b(?i:spik(e|es|ed))\\b"
+    )
 }
 
 translate_play_type_nfl <- function(
