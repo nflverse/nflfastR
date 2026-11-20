@@ -26,11 +26,15 @@
 #    its inputs and learns the same surface without the steps. Fit to the
 #    outcomes directly it overfits, because a single outcome says very little
 #    about the probabilities, and the teacher's probabilities don't have that
-#    noise.
+#    noise. One network depends on the random draws of its fit (its synthetic
+#    states, start weights and batches): two fit with different seeds differ
+#    by 0.045 EP per play on average (plays with a down of 2024 and 2025).
+#    So there are three students, fit with different draws, and the model is
+#    the average of their probabilities. Two such averages differ by 0.026
+#    (five would differ by 0.020, but each student costs prediction time).
 #
-# Only the student is stored (about 50 KB of weights, the teacher has 10 MB).
-# Its predictions are matrix products, so they don't need xgboost, and they are
-# faster than those of the previous model.
+# Only the students are stored (about 50 KB of weights each, the teacher has
+# 10 MB). Their predictions are matrix products, so they don't need xgboost.
 #
 # Model choices were made by predicting the seasons since 2021 from the seasons
 # before them and with season grouped cross validation (7 folds), see the PR
@@ -44,8 +48,8 @@
 # then fit the game state less well: they overrated 3rd and long and backed up
 # states by another 0.04 and 0.10 points out of sample.
 #
-# Run from the package root. Takes about 15 minutes (the student is fit on a
-# single core) and 3 GB of memory.
+# Run from the package root. Takes about 15 minutes and 8 GB of memory (the
+# students are fit by three worker processes, see `student_params$workers`).
 
 library(data.table)
 library(xgboost)
@@ -102,7 +106,12 @@ student_params <- list(
   lr = 2e-3,
   lr_end = 2e-5,
   # synthetic states per play, see synthetic_states()
-  extra = 0.25
+  extra = 0.25,
+  # the number of networks the model averages, and the seed of the first
+  students = 3L,
+  seed = 2013L,
+  # worker processes that fit them, see fit_one_student()
+  workers = 3L
 )
 
 # ---- team strength ----------------------------------------------------------
@@ -278,7 +287,10 @@ fit_student <- function(features, target, params = student_params) {
   x <- t(ep_model_inputs(features))
   center <- colMeans(x)
   scale <- apply(x, 2, stats::sd)
-  x <- (x - rep(center, each = nrow(x))) / rep(scale, each = nrow(x))
+  # column by column, which needs less memory than the whole matrix at once
+  for (j in seq_len(ncol(x))) {
+    x[, j] <- (x[, j] - center[j]) / scale[j]
+  }
 
   sizes <- c(ncol(x), params$hidden, ncol(target))
   layers <- lapply(seq_len(length(sizes) - 1L), function(i) {
@@ -347,31 +359,31 @@ fit_student <- function(features, target, params = student_params) {
   # The stored layers have the layout of ep_model_predict() (weights
   # transposed) and the first one takes the inputs as they are:
   # ((x - center) / scale) %*% w = x %*% (w / scale) - center %*% (w / scale)
-  model <- list(
-    layers = lapply(seq_along(layers), function(l) {
-      weights <- layers[[l]]$weights
-      bias <- layers[[l]]$bias
-      if (l == 1L) {
-        weights <- weights / scale
-        bias <- bias - as.vector(center %*% weights)
-      }
-      list(weights = t(weights), bias = bias)
-    }),
-    classes = ep_classes
-  )
-  # the stored model predicts what the fit did
+  stored <- lapply(seq_along(layers), function(l) {
+    weights <- layers[[l]]$weights
+    bias <- layers[[l]]$bias
+    if (l == 1L) {
+      weights <- weights / scale
+      bias <- bias - as.vector(center %*% weights)
+    }
+    list(weights = t(weights), bias = bias)
+  })
+  # the stored network predicts what the fit did
   check <- sample.int(n, 5000)
-  last <- model$layers[[length(model$layers)]]
+  last <- stored[[length(stored)]]
   stopifnot(
     isTRUE(all.equal(
-      ep_model_predict(features[check, ], model),
+      ep_model_predict(
+        features[check, ],
+        list(students = list(stored), classes = ep_classes)
+      ),
       student_forward(layers, x[check, ])$probs,
       check.attributes = FALSE
     )),
     # exp() in ep_model_predict() can't overflow
     max(rowSums(abs(last$weights)) + abs(last$bias)) < 700
   )
-  model
+  stored
 }
 
 # ---- data -------------------------------------------------------------------
@@ -407,8 +419,18 @@ pbp_cols <- c(
   "total_line"
 )
 pbp <- rbindlist(lapply(seasons, function(s) {
-  setDT(nflreadr::load_pbp(s))[, ..pbp_cols]
+  setDT(nflreadr::load_pbp(s))[, c(pbp_cols, "desc"), with = FALSE]
 }))
+
+# The released data miss about 400 kneel downs (worded "Took a knee.",
+# "dropped to one knee" or "kneels," until 2016, #603) and have them as runs.
+# Find them as the package does now, so they aren't training plays of the
+# teacher, until the released data are rebuilt. Two point tries have no down,
+# so they aren't training plays anyway.
+kneels <- which(pbp$play_type %chin% "run" & is_qb_kneel(pbp$desc))
+cat("kneel downs among the runs of the released data:", length(kneels), "\n")
+pbp[kneels, play_type := "qb_kneel"]
+pbp[, desc := NULL]
 
 # Only finished games whose running score ends at the final score. The others
 # credit scores to the wrong team (see data-raw/wp_vegas_model.R: the
@@ -538,16 +560,57 @@ teacher <- fit_teacher(
   model_data$label[plays],
   closeness * strength_w / mean(strength_w)
 )
-extra <- sample.int(
-  nrow(features),
-  round(student_params$extra * nrow(features))
+# Every student has its own synthetic states, start weights and batches. The
+# networks are fit in parallel, one core each, by worker processes that get
+# the states of the plays and the teacher once and make their own synthetic
+# states. Each worker needs about 2 GB of memory on top of the 3 GB of this
+# session, so lower `workers` on a machine with less than 10 GB. (Forked
+# workers copy the memory of this session as they run and need much more.)
+fit_one_student <- function(seed) {
+  set.seed(seed)
+  extra <- sample.int(
+    nrow(features),
+    round(student_params$extra * nrow(features))
+  )
+  states <- rbind(features, synthetic_states(features[extra, , drop = FALSE]))
+  fit_student(states, teacher_probs(teacher, states))
+}
+seeds <- student_params$seed + seq_len(student_params$students) - 1L
+cluster <- parallel::makeCluster(
+  min(student_params$workers, length(seeds), parallel::detectCores())
 )
-student_states <- rbind(
-  features,
-  synthetic_states(features[extra, , drop = FALSE])
+invisible(parallel::clusterEvalQ(cluster, {
+  library(data.table)
+  library(xgboost)
+}))
+parallel::clusterExport(
+  cluster,
+  c(
+    "features",
+    "fit_one_student",
+    "synthetic_states",
+    "teacher_matrix",
+    "teacher_probs",
+    "fit_student",
+    "student_forward",
+    "student_params",
+    "ep_classes",
+    "ep_model_features",
+    "ep_model_inputs",
+    "ep_model_activation",
+    "ep_model_predict"
+  )
 )
-ep_model <- fit_student(student_states, teacher_probs(teacher, student_states))
-rm(student_states)
+# the teacher is a pointer to xgboost's memory, so it goes as its saved bytes
+teacher_raw <- xgboost::xgb.save.raw(teacher)
+parallel::clusterExport(cluster, "teacher_raw")
+invisible(parallel::clusterEvalQ(
+  cluster,
+  teacher <- xgboost::xgb.load.raw(teacher_raw)
+))
+students <- parallel::clusterApplyLB(cluster, seeds, fit_one_student)
+parallel::stopCluster(cluster)
+ep_model <- list(students = students, classes = ep_classes)
 
 # ---- checks -----------------------------------------------------------------
 log_loss <- function(probs, label) {
@@ -557,6 +620,23 @@ points <- c(7, -7, 3, -3, 2, -2, 0)
 p_teacher <- teacher_probs(teacher, features[plays, ])
 p_student <- ep_model_predict(features[plays, ], ep_model)
 actual <- points[model_data$label[plays] + 1L]
+# how far one network is from the average of all
+ep_student <- p_student %*% points
+ep_single <- vapply(
+  ep_model$students,
+  function(layers) {
+    single <- list(students = list(layers), classes = ep_classes)
+    mean(abs(
+      ep_model_predict(features[plays, ], single) %*% points - ep_student
+    ))
+  },
+  numeric(1)
+)
+cat(
+  "\nEP of one network minus EP of the model, mean absolute difference:",
+  paste(round(ep_single, 4), collapse = " "),
+  "\n"
+)
 cat(
   "\nlog loss on the training plays (in sample): teacher",
   round(log_loss(p_teacher, model_data$label[plays]), 4),

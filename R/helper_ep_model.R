@@ -2,10 +2,12 @@
 #
 # The model gives the probabilities of the seven ways the next score of the
 # half can go (a touchdown, field goal or safety for either team, or no score)
-# for a game state. It is a small neural network (three hidden layers of 48
-# units), `ep_model` in R/sysdata.rda, built in data-raw/ep_model.R: boosted
-# trees are fit to the next score of the plays since 2001, and the network is
-# fit to the probabilities of the trees. It is as accurate as the trees but a
+# for a game state. It is the average of three small neural networks (three
+# hidden layers of 48 units), `ep_model` in R/sysdata.rda, built in
+# data-raw/ep_model.R: boosted trees are fit to the next score of the plays
+# since 2001, and the networks are fit to the probabilities of the trees. One
+# network depends on the random draws of its fit, so the model averages three
+# that are fit with different draws. It is as accurate as the trees but a
 # smooth function of the game state, where trees move in steps (and often in
 # the wrong direction) when the ball moves a yard, the distance changes by a
 # yard or the clock runs.
@@ -95,8 +97,9 @@ ep_model_activation <- function(x) {
 }
 
 # The probabilities of the next score (one row per play, one column per
-# outcome) for a matrix with the columns `ep_model_features`. They are NA for
-# plays with a missing feature.
+# outcome) for a matrix with the columns `ep_model_features`: the average of the
+# probabilities of the networks in `model$students`. They are NA for plays with
+# a missing feature.
 #
 # Every distinct state is predicted once. With an optimized BLAS a matrix
 # product can round the last digit of a column differently depending on where
@@ -122,21 +125,23 @@ ep_model_predict <- function(features, model = ep_model, block = 1024L) {
   first <- which(!duplicated(state) & !is.na(state))
   x <- ep_model_inputs(features[first, , drop = FALSE])
   n <- ncol(x)
-  layers <- model$layers
-  last <- length(layers)
   probs <- matrix(0, length(model$classes), n)
   for (b in seq_len(ceiling(n / block))) {
     i <- ((b - 1L) * block + 1L):min(b * block, n)
-    h <- x[, i, drop = FALSE]
-    for (l in seq_len(last - 1L)) {
-      h <- ep_model_activation(layers[[l]]$weights %*% h + layers[[l]]$bias)
+    for (layers in model$students) {
+      last <- length(layers)
+      h <- x[, i, drop = FALSE]
+      for (l in seq_len(last - 1L)) {
+        h <- ep_model_activation(layers[[l]]$weights %*% h + layers[[l]]$bias)
+      }
+      # Softmax. exp() can't overflow: the hidden units are between -1 and 1,
+      # so the weights of the last layer bound its input (data-raw/ep_model.R
+      # checks that).
+      e <- exp(layers[[last]]$weights %*% h + layers[[last]]$bias)
+      probs[, i] <- probs[, i] + e / rep(colSums(e), each = nrow(e))
     }
-    # Softmax. exp() can't overflow: the hidden units are between -1 and 1, so
-    # the weights of the last layer bound its input (data-raw/ep_model.R
-    # checks that).
-    probs[, i] <- exp(layers[[last]]$weights %*% h + layers[[last]]$bias)
   }
-  probs <- t(probs) / colSums(probs)
+  probs <- t(probs) / length(model$students)
   known <- which(!is.na(state))
   out[known, ] <- probs[match(state[known], state[first]), , drop = FALSE]
   out
