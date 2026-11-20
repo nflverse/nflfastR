@@ -202,8 +202,8 @@ fetch_raw <- function(
 }
 
 # Not called inside the package, but needed: devtools::release() calls it and
-# adds these bullets to the release checklist. my_rhub_check(),
-# rhub_check_platforms() and nflverse_thanks() are only used from there.
+# adds these bullets to the release checklist. my_rhub_check() and
+# nflverse_thanks() are only used from there.
 # jarl-ignore unused_function: called by devtools::release()
 release_bullets <- function() {
   c(
