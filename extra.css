@@ -1,0 +1,51 @@
+/*
+Check: https://www.w3schools.com/css/css_rwd_mediaqueries.asp
+for Responsive Web Design - Media Queries
+*/
+.row > main {
+  max-width: 100%;
+}
+
+@media only screen and (min-width: 640px) {
+  main + .col-md-3 {
+    margin-left: unset;
+    padding-left: 5rem;
+    max-width: 75%;
+  }
+}
+
+h4.author,h4.date {
+  padding-top:0px;
+  margin-top:0px;
+}
+
+.navbar-brand {
+  font-weight: 300;
+  font-size: 1.5rem;
+  font-family: 'Kanit', sans-serif;
+}
+
+.me-auto {
+    color: #009E8D !important;
+}
+
+/*
+from gt custom css
+draws lines between function names on reference page
+*/
+
+dt {
+  text-decoration: underline;
+  text-decoration-style: solid;
+  text-underline-offset: 4px;
+  font-family: monospace;
+  border-top-style: dotted;
+  border-top-width: 1px;
+  border-top-color: gray;
+  margin-bottom: 5px;
+  padding-top: 5px;
+}
+
+.active .nav-link {
+  color: #F85714 !important;
+}
