@@ -340,24 +340,20 @@ predict_ep_probs <- function(
     return(matrix(numeric(), ncol = 7))
   }
   indicator <- as.numeric
-  model_roof <- data.table::fifelse(
-    is.na(roof) | roof == "open" | roof == "closed",
-    "retractable",
-    roof
-  )
+  model_roof <- model_roof_type(roof)
+  eras <- model_eras(season)
   features <- data.table::data.table(
     half_seconds_remaining = as.numeric(half_seconds_remaining),
     yardline_100 = as.numeric(yardline_100),
     home = as.numeric(home),
-    retractable = indicator(model_roof == "retractable"),
     dome = indicator(model_roof == "dome"),
     outdoors = indicator(model_roof == "outdoors"),
     ydstogo = as.numeric(ydstogo),
-    era0 = indicator(season <= 2001),
-    era1 = indicator(season > 2001 & season <= 2005),
-    era2 = indicator(season > 2005 & season <= 2013),
-    era3 = indicator(season > 2013 & season <= 2017),
-    era4 = indicator(season > 2017),
+    era0 = eras$era0,
+    era1 = eras$era1,
+    era2 = eras$era2,
+    era3 = eras$era3,
+    era5 = eras$era5,
     down1 = indicator(down == 1),
     down2 = indicator(down == 2),
     down3 = indicator(down == 3),
@@ -370,13 +366,9 @@ predict_ep_probs <- function(
   features[, combo := .GRP, by = ep_model_features]
   combo <- features$combo
   unique_rows <- !duplicated(combo)
-  preds <- stats::predict(
-    load_model("ep"),
+  preds <- ep_model_predict(
     model_matrix(features[unique_rows], ep_model_features)
   )
-  if (is.vector(preds)) {
-    preds <- matrix(preds, ncol = 7, byrow = TRUE)
-  }
   preds[match(combo, combo[unique_rows]), , drop = FALSE]
 }
 
@@ -407,7 +399,8 @@ prepare_xyac_data <- function(pbp) {
   rows <- which(
     valid & !is.na(receiver_player_name) & passes$distance_to_goal != 0
   )
-  lapply(passes[intersect(xyac_pass_columns, names(passes))], `[`, rows)
+  cols <- c(xyac_pass_columns, ep_model_features)
+  lapply(passes[intersect(cols, names(passes))], `[`, rows)
 }
 
 
@@ -434,11 +427,11 @@ xyac_model_features <- c(
   "distance_to_sticks"
 )
 
-# The columns of the passes that predict_yac() and summarize_xyac() need
+# The columns of the passes that predict_yac() and summarize_xyac() need, next
+# to the features of the EP model
 xyac_pass_columns <- unique(c(
   "index",
   xyac_model_features,
-  ep_model_features,
   "location",
   "season",
   "half_seconds_remaining",

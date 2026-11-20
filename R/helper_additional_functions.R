@@ -142,6 +142,9 @@ clean_pbp <- function(pbp, ...) {
     ]
     # and make sure there's no pass on a kickoff (sometimes there's forward pass on kickoff but that's not a pass play)
     d[kickoff_attempt == 1, pass := 0]
+    # and a spike isn't a pass play either. Since 2003 their descriptions don't
+    # say "pass", in 2001 and 2002 they do ("pass incomplete. Spiked ball", #603)
+    d[qb_spike == 1, pass := 0]
     # in very rare cases, the pass logic can fail. We do a hard coded overwrite here because it's not worth the time
     # to overthink the logic to catch weird play descriptions.
     d[paste(game_id, play_id, sep = "_") %chin% weird_pass_plays, pass := 0]
