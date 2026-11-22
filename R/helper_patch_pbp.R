@@ -14,6 +14,10 @@
 #   data anymore (e.g. the NFL fixed it) warns instead of silently doing
 #   something else. A `set` patch without `play_id` changes all plays of the
 #   game.
+#
+# A patch that doesn't fit warns, and the warning says whether the patch is
+# obsolete (the raw data was fixed). check_pbp_patches() collects these
+# warnings for all patched games.
 
 # All patches of the package, split by game ID. Read once per session.
 pbp_patches <- function() {
@@ -76,15 +80,19 @@ game_patches <- function(id, action) {
   if (any(keep)) patches[keep] else NULL
 }
 
-# Removes plays from the raw plays of a game
+# Removes plays from the raw plays of a game (a data.table)
 patch_drop_plays <- function(plays, id) {
   patches <- game_patches(id, "drop_play")
   if (is.null(patches)) {
     return(plays)
   }
-  absent <- !patches$play_id %in% plays$playId
-  if (any(absent)) {
-    patch_warn(id, "{.field play_id} {patches$play_id[absent]} doesn't exist")
+  # A missing play isn't obsolete for sure: the play IDs may have changed
+  for (i in which(!patches$play_id %in% plays$playId)) {
+    patch_warn(
+      id,
+      patches[i],
+      "{.field play_id} {patches$play_id[i]} doesn't exist"
+    )
   }
   plays[!plays$playId %in% patches$play_id]
 }
@@ -97,13 +105,16 @@ patch_drop_stats <- function(stats, id) {
   }
   drop <- logical(nrow(stats))
   for (i in seq_len(nrow(patches))) {
-    hit <- stats$playId == patches$play_id[i] &
-      stats$statId == patches$stat_id[i]
+    play <- stats$playId == patches$play_id[i]
+    hit <- play & stats$statId == patches$stat_id[i]
     if (!any(hit)) {
+      # The play still has stats, just not this one: the raw data was fixed
       patch_warn(
         id,
+        patches[i],
         "{.field play_id} {patches$play_id[i]} has no {.field stat_id} \\
-        {patches$stat_id[i]}"
+        {patches$stat_id[i]}",
+        obsolete = any(play)
       )
     }
     drop <- drop | hit
@@ -131,28 +142,31 @@ patch_set_values <- function(pbp, id) {
       which(pbp$play_id == play_id)
     }
     if (length(rows) == 0) {
-      patch_warn(id, "{.field play_id} {play_id} doesn't exist")
+      patch_warn(id, patches[i], "{.field play_id} {play_id} doesn't exist")
       next
     }
     current <- pbp[[column]][rows]
     from <- patch_value(patches$from[i], current, id, column)
     to <- patch_value(patches$to[i], current, id, column)
-    same <- if (is.na(from)) {
-      is.na(current)
-    } else {
-      !is.na(current) & current == from
-    }
-    if (!all(same)) {
+    if (!all(is_value(current, from))) {
+      # The raw data has the correct value now
       patch_warn(
         id,
+        patches[i],
         "{.field {column}} of {.field play_id} {play_id} is \\
-        {.val {unique(current)}}, not {.val {from}} as the patch expects"
+        {.val {unique(current)}}, not {.val {from}} as the patch expects",
+        obsolete = all(is_value(current, to))
       )
       next
     }
     data.table::set(pbp, i = rows, j = column, value = to)
   }
   invisible(pbp)
+}
+
+# Whether x is value, where NA is a value too
+is_value <- function(x, value) {
+  if (is.na(value)) is.na(x) else !is.na(x) & x == value
 }
 
 # Converts the text of a patch value to the class of its column
@@ -177,10 +191,51 @@ patch_value <- function(x, column_values, id, column) {
   value
 }
 
-patch_warn <- function(id, msg, .envir = parent.frame()) {
+# Warns that a patch (one row of game_patches()) wasn't applied. obsolete means
+# that the raw data was fixed, so the patch can be removed from the file.
+patch_warn <- function(
+  id,
+  patch,
+  msg,
+  obsolete = FALSE,
+  .envir = parent.frame()
+) {
   cli::cli_warn(
     c("Patch of {.val {id}} not applied:", "x" = msg),
     class = "nflfastR_patch_not_applied",
+    game_id = id,
+    patch = patch,
+    obsolete = obsolete,
     .envir = .envir
   )
+}
+
+# Applies the patches of all patched games to their raw data. Returns the
+# patches that weren't applied with the columns of the patch file, obsolete and
+# message. Used by the tests and data-raw/pbp_patches/check_patches.R.
+check_pbp_patches <- function(
+  dir = getOption("nflfastR.raw_directory", default = NULL)
+) {
+  # an empty table with the columns of the result
+  template <- read_pbp_patches()[0]
+  template[, c("obsolete", "message") := list(logical(), character())]
+  acc <- new.env(parent = emptyenv())
+  acc$rows <- list(template)
+  for (id in names(pbp_patches())) {
+    withCallingHandlers(
+      suppressMessages(get_pbp_nfl(id, dir = dir)),
+      nflfastR_patch_not_applied = function(w) {
+        row <- data.table::data.table(game_id = w$game_id, w$patch)
+        row[,
+          c("obsolete", "message") := list(
+            w$obsolete,
+            cli::ansi_strip(conditionMessage(w))
+          )
+        ]
+        acc$rows[[length(acc$rows) + 1]] <- row
+        invokeRestart("muffleWarning")
+      }
+    )
+  }
+  data.table::rbindlist(acc$rows, use.names = TRUE)
 }

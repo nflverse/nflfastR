@@ -63,7 +63,7 @@ reason: wrong game clock
 
   `from` and `to` are converted to the class of the column. The value is only changed if it is `from` on all patched plays.
 
-A patch that doesn't fit the raw data (a missing play or stat, a value other than `from`) warns with class `nflfastR_patch_not_applied` and changes nothing. `build_nflfastR_pbp()` suppresses these warnings, so `data-raw/pbp_patches/check_patches.R` (below) is what finds patches that don't fit anymore, e.g. because the NFL fixed the raw data. A `set` patch of a column that doesn't exist or with a value that can't be converted is an error, and `build_nflfastR_pbp()` skips the game, so the tests check both for the patches in the file.
+A patch that doesn't fit the raw data (a missing play or stat, a value other than `from`) warns with class `nflfastR_patch_not_applied` and changes nothing. `build_nflfastR_pbp()` suppresses these warnings, so `data-raw/pbp_patches/check_patches.R` (below) and an online test find patches that don't fit anymore, e.g. because the NFL fixed the raw data. `Rscript data-raw/pbp_patches/check_patches.R --prune` removes the patches that the raw data made obsolete: `set` patches where the raw data has the value `to` now, and `drop_stat` patches where the play still has stats, but not this stat ID. It only lists the other patches that don't fit (a missing play, a value other than `from` and `to`), because the error may still be there with other play IDs or values. A `set` patch of a column that doesn't exist or with a value that can't be converted is an error, and `build_nflfastR_pbp()` skips the game, so the tests check both for the patches in the file.
 
 ### Adding patches
 

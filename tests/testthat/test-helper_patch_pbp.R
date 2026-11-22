@@ -28,12 +28,28 @@ test_that("the patch file is valid", {
   expect_all_true(!is.na(patches$column[is_set]))
   pbp <- suppressMessages(get_pbp_nfl("2019_01_GB_CHI", dir = test_dir))
   expect_in(patches$column[is_set], names(pbp))
-  # from and to convert to the class of the column
+  # from and to convert to the class of the column and differ
   for (i in which(is_set)) {
     column <- pbp[[patches$column[i]]]
-    expect_no_error(patch_value(patches$from[i], column, "", ""))
-    expect_no_error(patch_value(patches$to[i], column, "", ""))
+    from <- expect_no_error(patch_value(patches$from[i], column, "", ""))
+    to <- expect_no_error(patch_value(patches$to[i], column, "", ""))
+    expect_false(identical(from, to))
   }
+  # a set patch of all plays doesn't overlap set patches of single plays
+  overlap <- patches[
+    is_set,
+    list(overlap = anyNA(play_id) && .N > 1),
+    by = c("game_id", "column")
+  ]
+  expect_all_false(overlap$overlap)
+  # no patch changes a play that a drop_play patch removes
+  dropped <- patches[action == "drop_play", list(game_id, play_id)]
+  on_dropped <- patches[action != "drop_play"][
+    dropped,
+    on = c("game_id", "play_id"),
+    nomatch = NULL
+  ]
+  expect_identical(nrow(on_dropped), 0L)
 
   key <- c("game_id", "play_id", "action", "stat_id", "column")
   expect_false(anyDuplicated(patches, by = key) > 0)
@@ -77,6 +93,42 @@ test_that("patches that don't fit the raw data warn", {
     expect_identical(patch_drop_stats(stats, "2019_01_GB_CHI"), stats),
     class = "nflfastR_patch_not_applied"
   )
+})
+
+test_that("patches that don't fit say whether the raw data was fixed", {
+  local_pbp_patches(
+    "game_id: 2019_01_GB_CHI; play_id: 1; action: drop_stat; stat_id: 99; reason: r",
+    "game_id: 2019_01_GB_CHI; play_id: 9; action: drop_stat; stat_id: 10; reason: r",
+    "game_id: 2019_01_GB_CHI; play_id: 1; action: set; column: posteam; from: CHI; to: GB; reason: r",
+    "game_id: 2019_01_GB_CHI; play_id: 2; action: set; column: posteam; from: CHI; to: GB; reason: r"
+  )
+  obsolete <- function(code) {
+    out <- logical()
+    withCallingHandlers(
+      code,
+      nflfastR_patch_not_applied = function(w) {
+        out <<- c(out, w$obsolete)
+        invokeRestart("muffleWarning")
+      }
+    )
+    out
+  }
+  stats <- data.table::data.table(playId = 1, statId = 10)
+  expect_identical(
+    obsolete(patch_drop_stats(stats, "2019_01_GB_CHI")),
+    c(TRUE, FALSE)
+  )
+  pbp <- data.table::data.table(play_id = c(1, 2), posteam = c("GB", "KC"))
+  expect_identical(
+    obsolete(patch_set_values(pbp, "2019_01_GB_CHI")),
+    c(TRUE, FALSE)
+  )
+})
+
+test_that("all patches fit the raw data", {
+  skip_on_cran()
+  skip_if_offline("github.com")
+  expect_identical(check_pbp_patches(dir = NULL)$message, character())
 })
 
 test_that("set patches change values of the class of the column", {
