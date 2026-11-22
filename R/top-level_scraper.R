@@ -430,38 +430,31 @@ fast_scraper <- function(
   # try pak::pak("nflverse/nflfastR@v5.2.0")
   game_ids <- check_for_dropped_seasons(game_ids)
 
-  suppressWarnings({
-    p <- progressr::progressor(along = game_ids)
-    load_game <- function(x, p, dir, ...) {
-      plays <- please_work(get_pbp_nfl)(x, dir = dir, ...)
-      p(sprintf("ID=%s", as.character(x)))
-      return(plays)
-    }
-    # furrr has a fixed overhead that isn't worth it for a single game
-    map_games <- if (length(game_ids) == 1) lapply else furrr::future_map
-    pbp <- map_games(game_ids, load_game, p, dir = dir, ...) |>
-      data.table::rbindlist(use.names = TRUE, fill = TRUE)
+  p <- progressr::progressor(along = game_ids)
+  # furrr has a fixed overhead that isn't worth it for a single game
+  map_games <- if (length(game_ids) == 1) lapply else furrr::future_map
+  pbp <- map_games(game_ids, load_game, p, dir = dir, ...) |>
+    data.table::rbindlist(use.names = TRUE, fill = TRUE)
 
-    if (length(pbp) != 0) {
-      cli_message(
-        "Download finished. Adding variables...",
-        .cli_fct = cli::cli_alert_success
-      )
-      # from here on, all steps change this one data.table by reference
-      pbp <- pbp |>
-        add_game_data(...) |>
-        add_nflscrapr_mutations() |>
-        add_ep() |>
-        add_air_yac_ep() |>
-        add_wp() |>
-        add_air_yac_wp() |>
-        add_cp() |>
-        add_drive_results() |>
-        add_series_data() |>
-        restore_kickoff_attempt() |>
-        select_variables()
-    }
-  })
+  if (length(pbp) != 0) {
+    cli_message(
+      "Download finished. Adding variables...",
+      .cli_fct = cli::cli_alert_success
+    )
+    # from here on, all steps change this one data.table by reference
+    pbp <- pbp |>
+      add_game_data(...) |>
+      add_nflscrapr_mutations() |>
+      add_ep() |>
+      add_air_yac_ep() |>
+      add_wp() |>
+      add_air_yac_wp() |>
+      add_cp() |>
+      add_drive_results() |>
+      add_series_data() |>
+      restore_kickoff_attempt() |>
+      select_variables()
+  }
 
   # build_nflfastR_pbp() continues with the data.table
   if (in_builder && data.table::is.data.table(pbp)) {
@@ -475,6 +468,15 @@ fast_scraper <- function(
 
 
 # roster ------------------------------------------------------------------
+
+# Parses one game for fast_scraper(). Defined here and not inside
+# fast_scraper(), so furrr only sends this function to the workers and not the
+# environment of fast_scraper() with its arguments.
+load_game <- function(x, p, dir, ...) {
+  plays <- please_work(get_pbp_nfl)(x, dir = dir, ...)
+  p(sprintf("ID=%s", as.character(x)))
+  plays
+}
 
 #' Load Team Rosters for Multiple Seasons
 #'
