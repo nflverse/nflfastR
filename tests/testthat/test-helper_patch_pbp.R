@@ -125,12 +125,6 @@ test_that("patches that don't fit say whether the raw data was fixed", {
   )
 })
 
-test_that("all patches fit the raw data", {
-  skip_on_cran()
-  skip_if_offline("github.com")
-  expect_identical(check_pbp_patches(dir = NULL)$message, character())
-})
-
 test_that("set patches change values of the class of the column", {
   local_pbp_patches(
     "game_id: 2019_01_GB_CHI; action: set; column: start_time; from: a; to: b; reason: r",

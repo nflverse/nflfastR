@@ -16,14 +16,18 @@
 #   game.
 #
 # A patch that doesn't fit warns, and the warning says whether the patch is
-# obsolete (the raw data was fixed). check_pbp_patches() collects these
-# warnings for all patched games.
+# obsolete (the raw data was fixed). check_pbp_patches() in
+# R/check_pbp_patches.R collects these warnings for all patched games.
 #
 # build_playstats() applies the drop_play and drop_stat patches too, so the
 # play stats of calculate_stats() agree with the pbp.
 
 # All patches of the package, split by game ID. Read once per session.
+# with_pbp_patches() replaces them temporarily.
 pbp_patches <- function() {
+  if (!is.null(patch_env$override)) {
+    return(patch_env$override)
+  }
   if (is.null(patch_env$patches)) {
     patches <- read_pbp_patches()
     patch_env$patches <- split(patches, by = "game_id", keep.by = FALSE)
@@ -32,6 +36,16 @@ pbp_patches <- function() {
 }
 
 patch_env <- new.env(parent = emptyenv())
+
+# Evaluates code with other patches (a data.table like read_pbp_patches()
+# returns) instead of those of the package. Only works sequentially: future
+# workers don't see the replacement.
+with_pbp_patches <- function(patches, code) {
+  old <- patch_env$override
+  patch_env$override <- split(patches, by = "game_id", keep.by = FALSE)
+  on.exit(assign("override", old, envir = patch_env))
+  force(code)
+}
 
 read_pbp_patches <- function(
   file = system.file("pbp_patches.dcf", package = "nflfastR")
@@ -206,39 +220,10 @@ patch_warn <- function(
   cli::cli_warn(
     c("Patch of {.val {id}} not applied:", "x" = msg),
     class = "nflfastR_patch_not_applied",
+    detail = cli::format_inline(msg, .envir = .envir),
     game_id = id,
     patch = patch,
     obsolete = obsolete,
     .envir = .envir
   )
-}
-
-# Applies the patches of all patched games to their raw data. Returns the
-# patches that weren't applied with the columns of the patch file, obsolete and
-# message. Used by the tests and data-raw/pbp_patches/check_patches.R.
-check_pbp_patches <- function(
-  dir = getOption("nflfastR.raw_directory", default = NULL)
-) {
-  # an empty table with the columns of the result
-  template <- read_pbp_patches()[0]
-  template[, c("obsolete", "message") := list(logical(), character())]
-  acc <- new.env(parent = emptyenv())
-  acc$rows <- list(template)
-  for (id in names(pbp_patches())) {
-    withCallingHandlers(
-      suppressMessages(get_pbp_nfl(id, dir = dir)),
-      nflfastR_patch_not_applied = function(w) {
-        row <- data.table::data.table(game_id = w$game_id, w$patch)
-        row[,
-          c("obsolete", "message") := list(
-            w$obsolete,
-            cli::ansi_strip(conditionMessage(w))
-          )
-        ]
-        acc$rows[[length(acc$rows) + 1]] <- row
-        invokeRestart("muffleWarning")
-      }
-    )
-  }
-  data.table::rbindlist(acc$rows, use.names = TRUE)
 }

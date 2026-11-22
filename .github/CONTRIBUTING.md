@@ -65,14 +65,31 @@ reason: wrong game clock
 
 `drop_play` and `drop_stat` patches also apply to the play stats that `calculate_stats()` uses. These are built separately (release `playstats` of nflverse/nflverse-pbp), so a new patch reaches `calculate_stats()` once they are rebuilt. `set` patches only change the play-by-play data.
 
-A patch that doesn't fit the raw data (a missing play or stat, a value other than `from`) warns with class `nflfastR_patch_not_applied` and changes nothing. `build_nflfastR_pbp()` suppresses these warnings, so `data-raw/pbp_patches/check_patches.R` (below) and an online test find patches that don't fit anymore, e.g. because the NFL fixed the raw data. `Rscript data-raw/pbp_patches/check_patches.R --prune` removes the patches that the raw data made obsolete: `set` patches where the raw data has the value `to` now, and `drop_stat` patches where the play still has stats, but not this stat ID. It only lists the other patches that don't fit (a missing play, a value other than `from` and `to`), because the error may still be there with other play IDs or values. A `set` patch of a column that doesn't exist or with a value that can't be converted is an error, and `build_nflfastR_pbp()` skips the game, so the tests check both for the patches in the file.
+A patch that doesn't fit the raw data (a missing play or stat, a value other than `from`) warns with class `nflfastR_patch_not_applied` and changes nothing. `build_nflfastR_pbp()` suppresses these warnings. A `set` patch of a column that doesn't exist or with a value that can't be converted is an error, and `build_nflfastR_pbp()` skips the game, so the tests check both for the patches in the file.
+
+### Checking and cleaning the patches
+
+The raw data and the parser change, so a patch can become unnecessary. `check_pbp_patches()` (internal) checks every patch against the current raw data and parser and lists the patches that
+
+- are **obsolete**: the raw data was fixed (a `set` patch whose column has the value `to` now, a `drop_stat` patch whose play still has stats, but not this stat ID),
+- are **unused**: they are applied, but the play-by-play data (and for `drop_stat` the play stats) is the same without them, e.g. because the parser handles the error now,
+- **don't fit** for another reason (a missing play, a value other than `from` and `to`).
+
+```r
+devtools::load_all()
+check_pbp_patches()
+# removes the obsolete and unused patches from inst/pbp_patches.dcf
+check_pbp_patches(prune = TRUE)
+```
+
+Pruning leaves the other records as they are. Patches that don't fit for another reason need a look, because the error may still be there with other play IDs or values. An online test finds patches that aren't applied on every pull request, and the workflow `check-patches.yaml` runs `check_pbp_patches()` every week, because the raw data can change without a change of nflfastR.
 
 ### Adding patches
 
 1. Fork the repository and create a branch.
 2. Add the records to `inst/pbp_patches.dcf`.
-3. `devtools::test(filter = "helper_patch_pbp")` checks the format.
-4. `Rscript data-raw/pbp_patches/check_patches.R` checks that every patch fits the raw data.
+3. `devtools::test(filter = "patch")` checks the format.
+4. `check_pbp_patches()` (after `devtools::load_all()`) checks that every patch fits the raw data and changes it.
 5. Build the patched games with `devtools::load_all()` and `build_nflfastR_pbp()`, and check the result.
 6. Open a pull request that names the patched games and why the raw data is wrong.
 
