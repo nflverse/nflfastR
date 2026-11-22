@@ -1,4 +1,52 @@
 game_id: 2011_13_DET_NO
+play_id: 786
+action: drop_play
+reason: second record of play 771, with the drive totals of an earlier
+  state of the drive (#648)
+
+game_id: 2011_13_DET_NO
+play_id: 807
+action: drop_play
+reason: second record of play 792, with the drive totals of an earlier
+  state of the drive (#648)
+
+game_id: 2011_13_DET_NO
+play_id: 972
+action: drop_play
+reason: second record of play 954, with the drive totals of an earlier
+  state of the drive (#648)
+
+game_id: 2011_13_DET_NO
+play_id: 1017
+action: drop_play
+reason: second record of play 999, with the drive totals of an earlier
+  state of the drive (#648)
+
+game_id: 2011_13_DET_NO
+play_id: 1041
+action: drop_play
+reason: second record of play 1023, with the drive totals of an earlier
+  state of the drive (#648)
+
+game_id: 2011_13_DET_NO
+play_id: 1081
+action: drop_play
+reason: second record of play 1063, with the drive totals of an earlier
+  state of the drive (#648)
+
+game_id: 2011_13_DET_NO
+play_id: 1102
+action: drop_play
+reason: second record of play 1084, with the drive totals of an earlier
+  state of the drive (#648)
+
+game_id: 2011_13_DET_NO
+play_id: 1126
+action: drop_play
+reason: second record of play 1108, with the drive totals of an earlier
+  state of the drive (#648)
+
+game_id: 2011_13_DET_NO
 play_id: 1152
 action: drop_play
 reason: duplicated touchdown record (one for each team) that counts the
