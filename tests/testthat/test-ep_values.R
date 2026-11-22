@@ -112,7 +112,7 @@ test_that("score values are net of the other team's possession", {
   two <- kv
   two$c_td_own <- 0
   two$two_td_own <- TRUE
-  expect_equal(score_values(two, 2020)$td_own, 6 + 2 * two_point_make_prob)
+  expect_equal(score_values(two, 2020)$td_own, 6 + 2 * two_point_prob_from_2)
   # extra points were more reliable before 2015 and are a bit more since 2023
   expect_equal(score_values(kv, 2010)$td_own, 6 + 0.99 - 1.1)
   expect_equal(score_values(kv, 2024)$td_own, 6 + 0.96 - 1.1)
@@ -464,5 +464,5 @@ test_that("the calculator uses the same free kick value as the play-by-play", {
   }
   expect_equal(calculate_expected_points(data)$ep, ep_with(TRUE))
   # and that is different from the shortcut
-  expect_gt(abs(ep_with(TRUE) - ep_with(FALSE)), 0.002)
+  expect_gt(abs(ep_with(TRUE) - ep_with(FALSE)), 0.005)
 })

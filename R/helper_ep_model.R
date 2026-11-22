@@ -110,12 +110,6 @@ ep_model_activation <- function(x) {
 # with a missing feature are left out of the matrix products, which are much
 # slower with missing values.
 ep_model_predict <- function(features, model = ep_model, block = 1024L) {
-  out <- matrix(
-    NA_real_,
-    nrow(features),
-    length(model$classes),
-    dimnames = list(NULL, model$classes)
-  )
   # the same number for the same state, NA for a state with a missing feature
   state <- data.table::frankv(
     data.table::as.data.table(features),
@@ -142,7 +136,7 @@ ep_model_predict <- function(features, model = ep_model, block = 1024L) {
     }
   }
   probs <- t(probs) / length(model$students)
-  known <- which(!is.na(state))
-  out[known, ] <- probs[match(state[known], state[first]), , drop = FALSE]
-  out
+  colnames(probs) <- model$classes
+  # a state with a missing feature isn't in state[first], so it gets a row of NA
+  probs[match(state, state[first]), , drop = FALSE]
 }

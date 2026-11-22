@@ -36,10 +36,6 @@ ot_n <- 180L # nodes: 0 ... 900 seconds
 ot_s_store <- ot_s_grid
 ot_t_stride <- 2L
 ot_d_set <- c(0, -3, -6, -7, -8) # score differentials of the receiving team
-# the make probability of a two point try from the 2 that a team goes for after a
-# touchdown (the same value as in EP and regulation WP). A two point try in the
-# data is valued with the probability from its spot (two_point_prob()).
-ot_2pt_prob <- two_point_make_prob
 ot_outcomes <- c("TD", "FG", "SAF", "OPPTD", "STOP")
 # the drive model has a sixth class, PUNT, that is part of STOP for durations.
 # It is only used to model teams that must score (see ot_apply_must_score())
@@ -137,9 +133,10 @@ ot_trans <- function(rule, p, d, kind) {
     }
     if (d2 == -1) {
       # TD but still trailing by one after a team scored TD + 2: go for two
+      # from the 2
       return(list(
-        cont(1L, 3, 0, w = ot_2pt_prob),
-        term(0, w = 1 - ot_2pt_prob)
+        cont(1L, 3, 0, w = two_point_prob_from_2),
+        term(0, w = 1 - two_point_prob_from_2)
       ))
     }
     return(list(term(0)))

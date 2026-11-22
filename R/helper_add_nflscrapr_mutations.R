@@ -789,6 +789,8 @@ is_qb_kneel <- function(play_description) {
   )
 }
 
+# Two checks, because one regex with " spiked " as another alternative is twice
+# as slow
 is_qb_spike <- function(play_description) {
   stringi::stri_detect_fixed(play_description, " spiked ") |
     stringi::stri_detect_regex(

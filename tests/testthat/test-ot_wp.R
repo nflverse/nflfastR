@@ -80,7 +80,7 @@ test_that("overtime: ties are worth a half win", {
     ),
     use_spread = FALSE
   )
-  expect_equal(twopt, two_point_prob(c(2, 1, 7)), tolerance = 1e-3)
+  expect_equal(twopt, c(0.49, 0.58, 0.20), tolerance = 1e-3)
 })
 
 test_that("overtime: a short clock takes away the advantage if out of range", {

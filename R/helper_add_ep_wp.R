@@ -151,11 +151,10 @@ conversion_value <- function(season) {
   )
 }
 
-# Probability of making a two point conversion: 0.49 for tries from the 2 yard
-# line since 2004, leaving out kneel downs and botched one point tries. This is
-# the value of a two point try before it is lined up (e.g. in the value of a
-# touchdown).
-two_point_make_prob <- 0.49
+# Probability of making a two point try from the 2: 0.49 since 2004, leaving out
+# kneel downs and botched one point tries. It is the value of a two point try
+# before it is lined up (e.g. in the value of a touchdown).
+two_point_prob_from_2 <- 0.49
 
 # Probability of making a two point try that starts at `yardline_100`, from the
 # same tries: 0.58 from the 1 (166 tries) and 0.20 from the 6 or further (70
@@ -168,7 +167,7 @@ two_point_prob <- function(yardline_100) {
     0.58,
     yardline_100 >= 6,
     0.20,
-    default = two_point_make_prob
+    default = two_point_prob_from_2
   )
 }
 
@@ -479,7 +478,7 @@ ep_continue_factors <- function(pbp_data) {
 # touchdown ends the game).
 score_values <- function(kv, season) {
   conv <- conversion_value(season)
-  two <- 2 * two_point_make_prob
+  two <- 2 * two_point_prob_from_2
   conv_own <- data.table::fifelse(kv$two_td_own, two, conv)
   conv_opp <- data.table::fifelse(kv$two_td_opp, two, conv)
   data.frame(
@@ -963,7 +962,7 @@ add_ep_variables <- function(pbp_data) {
     j = "ep_conversion",
     value = data.table::fifelse(
       pbp_data$ep_two_try,
-      2 * two_point_make_prob,
+      2 * two_point_prob_from_2,
       conversion_value(pbp_data$season)
     )
   )

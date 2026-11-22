@@ -323,8 +323,7 @@ ep_continue_factor_names <- c(
 
 # Probabilities of the next scoring event for the possession team (a matrix
 # with the columns of the EP model), computed like calculate_expected_points()
-# but from plain vectors and with one prediction per unique combination of
-# features
+# but from plain vectors
 predict_ep_probs <- function(
   season,
   half_seconds_remaining,
@@ -336,40 +335,25 @@ predict_ep_probs <- function(
   posteam_timeouts_remaining,
   defteam_timeouts_remaining
 ) {
-  if (length(season) == 0) {
-    return(matrix(numeric(), ncol = 7))
-  }
-  indicator <- as.numeric
   model_roof <- model_roof_type(roof)
-  eras <- model_eras(season)
-  features <- data.table::data.table(
-    half_seconds_remaining = as.numeric(half_seconds_remaining),
-    yardline_100 = as.numeric(yardline_100),
-    home = as.numeric(home),
-    dome = indicator(model_roof == "dome"),
-    outdoors = indicator(model_roof == "outdoors"),
-    ydstogo = as.numeric(ydstogo),
-    era0 = eras$era0,
-    era1 = eras$era1,
-    era2 = eras$era2,
-    era3 = eras$era3,
-    era5 = eras$era5,
-    down1 = indicator(down == 1),
-    down2 = indicator(down == 2),
-    down3 = indicator(down == 3),
-    down4 = indicator(down == 4),
-    posteam_timeouts_remaining = as.numeric(posteam_timeouts_remaining),
-    defteam_timeouts_remaining = as.numeric(defteam_timeouts_remaining)
+  features <- c(
+    model_eras(season),
+    list(
+      half_seconds_remaining = as.numeric(half_seconds_remaining),
+      yardline_100 = as.numeric(yardline_100),
+      home = as.numeric(home),
+      dome = as.numeric(model_roof == "dome"),
+      outdoors = as.numeric(model_roof == "outdoors"),
+      ydstogo = as.numeric(ydstogo),
+      down1 = as.numeric(down == 1),
+      down2 = as.numeric(down == 2),
+      down3 = as.numeric(down == 3),
+      down4 = as.numeric(down == 4),
+      posteam_timeouts_remaining = as.numeric(posteam_timeouts_remaining),
+      defteam_timeouts_remaining = as.numeric(defteam_timeouts_remaining)
+    )
   )
-  # Many rows share the same features. Predictions don't depend on other
-  # rows, so we predict every unique row once.
-  features[, combo := .GRP, by = ep_model_features]
-  combo <- features$combo
-  unique_rows <- !duplicated(combo)
-  preds <- ep_model_predict(
-    model_matrix(features[unique_rows], ep_model_features)
-  )
-  preds[match(combo, combo[unique_rows]), , drop = FALSE]
+  ep_model_predict(model_matrix(features, ep_model_features))
 }
 
 ### helper function for getting the data ready

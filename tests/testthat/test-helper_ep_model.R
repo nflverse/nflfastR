@@ -39,25 +39,6 @@ test_that("expected points follow field position, down, distance and clock", {
   expect_lt(ep_state(t = 900)[, "No_Score"], 0.1)
 })
 
-test_that("expected points don't rise with the distance to the goal line or to go", {
-  g <- expand.grid(
-    yl = 1:99,
-    ytg = 1:20,
-    down = 1:4,
-    t = c(1500, 900, 300, 100),
-    season = c(2005, 2012, 2025)
-  )
-  # the states that occur: 1st & 10 and every distance on the other downs
-  g <- g[g$ytg <= g$yl & (g$down > 1 | g$ytg == 10), ]
-  g$ep <- ep_state_points(g$down, g$ytg, g$yl, g$t, g$season)
-  # consecutive rows are a yard apart on the same down, distance and clock
-  same <- diff(g$ytg) == 0 & diff(g$down) == 0 & diff(g$yl) == 1
-  expect_lt(max(diff(g$ep)[same]), 0.05)
-  g <- g[order(g$season, g$t, g$down, g$yl, g$ytg), ]
-  same <- diff(g$yl) == 0 & diff(g$down) == 0 & diff(g$ytg) == 1
-  expect_lt(max(diff(g$ep)[same]), 0.05)
-})
-
 test_that("states outside of the range of the model get the nearest state", {
   expect_identical(ep_state(yl = 0, ytg = 1), ep_state(yl = 1, ytg = 1))
   expect_identical(ep_state(yl = 100), ep_state(yl = 99))

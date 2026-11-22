@@ -17,7 +17,7 @@ test_that("kneel downs are found in all their wordings (#603)", {
     "(:19) 33-D.Cook left end to MIN 25 for no gain (54-T.Bowser; 96-B.Washington). Fake kneel by QB",
     NA
   )
-  expect_true(all(is_qb_kneel(kneels)))
+  expect_all_true(is_qb_kneel(kneels))
   expect_identical(is_qb_kneel(others), c(FALSE, FALSE, FALSE, FALSE, NA))
 })
 
@@ -39,7 +39,7 @@ test_that("spikes are found in all their wordings (#603)", {
     "(:20) 12-T.Brady pass short left to 81-R.Moss for 6 yards, TOUCHDOWN. fake spike",
     NA
   )
-  expect_true(all(is_qb_spike(spikes)))
+  expect_all_true(is_qb_spike(spikes))
   expect_identical(
     is_qb_spike(others),
     c(FALSE, FALSE, FALSE, FALSE, FALSE, NA)
