@@ -18,6 +18,9 @@
 # A patch that doesn't fit warns, and the warning says whether the patch is
 # obsolete (the raw data was fixed). check_pbp_patches() collects these
 # warnings for all patched games.
+#
+# build_playstats() applies the drop_play and drop_stat patches too, so the
+# play stats of calculate_stats() agree with the pbp.
 
 # All patches of the package, split by game ID. Read once per session.
 pbp_patches <- function() {
