@@ -122,9 +122,15 @@ There are three possible ways to run code, listed in rough order of desirability
 
 ## Specialized skills
 
-- Do you need to deprecate a function or argument? Read `usethis::learn_tidy_skill("deprecate")`.
-- Are you adding input checking to an existing function or writing a new exported function? Read `usethis::learn_tidy_skill("arg-checking")`.
-- Are you creating a new package? Read `usethis::learn_tidy_skill("package-setup")`.
+This project uses skills from [posit-dev/skills](https://github.com/posit-dev/skills). Claude Code offers to install them from `.claude/settings.json` when the folder is trusted. Other agents install them with `npx skills add posit-dev/skills --skill <name>`. If a skill named below isn't available, tell the user how to install it instead of working without it.
+
+- Writing or changing tests? Use the `r-testthat` skill (the test style above takes precedence).
+- Deprecating, superseding or renaming a function or argument? Use the `r-lifecycle` skill.
+- Writing messages, warnings or errors with cli? Use the `r-cli` skill.
+- Adding input checking to an existing function or writing a new exported function? Read `usethis::learn_tidy_skill("arg-checking")`.
+- Preparing a CRAN release or checking CRAN results? Use the `create-release-checklist`, `r-cran-extrachecks` and `r-cran-status` skills.
+- Reviewing a change? Use the `critical-code-reviewer` skill, and the `review-testing` skill for its tests.
+- Creating a PR or addressing review comments? Use the `pr-create`, `pr-threads-address` and `pr-threads-resolve` skills.
 
 ## Git
 
