@@ -10,6 +10,6 @@ test_that("the play stats leave out the plays and stats that patches drop", {
     dir = test_dir,
     skip_local = FALSE
   )
-  expect_false(1152 %in% ps$play_id)
+  expect_disjoint(ps$play_id, 1152)
   expect_identical(ps$stat_id[ps$play_id == 1655], 3L)
 })

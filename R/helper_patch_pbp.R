@@ -16,8 +16,9 @@
 #   game.
 #
 # A patch that doesn't fit warns, and the warning says whether the patch is
-# obsolete (the raw data was fixed). check_pbp_patches() in
-# R/check_pbp_patches.R collects these warnings for all patched games.
+# obsolete (a set patch whose column has the value `to` now).
+# check_pbp_patches() in R/check_pbp_patches.R collects these warnings for all
+# patched games.
 #
 # build_playstats() applies the drop_play and drop_stat patches too, so the
 # play stats of calculate_stats() agree with the pbp.
@@ -79,10 +80,20 @@ read_pbp_patches <- function(
       x
     })
   )
-  patches[,
-    c("play_id", "stat_id") := lapply(.SD, as.numeric),
-    .SDcols = c("play_id", "stat_id")
-  ]
+  # A play_id that isn't a number would become NA, and a set patch without
+  # play_id changes all plays of the game
+  for (f in c("play_id", "stat_id")) {
+    text <- patches[[f]]
+    number <- suppressWarnings(as.numeric(text))
+    bad <- !is.na(text) & is.na(number)
+    if (any(bad)) {
+      cli::cli_abort(
+        "{.field {f}} must be a number, not {.val {text[bad]}}, in the \
+        patch file."
+      )
+    }
+    data.table::set(patches, j = f, value = number)
+  }
   patches[]
 }
 
@@ -122,16 +133,16 @@ patch_drop_stats <- function(stats, id) {
   }
   drop <- logical(nrow(stats))
   for (i in seq_len(nrow(patches))) {
-    play <- stats$playId == patches$play_id[i]
-    hit <- play & stats$statId == patches$stat_id[i]
+    hit <- stats$playId == patches$play_id[i] &
+      stats$statId == patches$stat_id[i]
+    # Not obsolete for sure even if the play is there: the NFL may have changed
+    # the stat ID and kept the error
     if (!any(hit)) {
-      # The play still has stats, just not this one: the raw data was fixed
       patch_warn(
         id,
         patches[i],
         "{.field play_id} {patches$play_id[i]} has no {.field stat_id} \\
-        {patches$stat_id[i]}",
-        obsolete = any(play)
+        {patches$stat_id[i]}"
       )
     }
     drop <- drop | hit
@@ -209,7 +220,8 @@ patch_value <- function(x, column_values, id, column) {
 }
 
 # Warns that a patch (one row of game_patches()) wasn't applied. obsolete means
-# that the raw data was fixed, so the patch can be removed from the file.
+# that the raw data was fixed (a set patch whose column has the value `to`
+# now), so the patch can be removed from the file.
 patch_warn <- function(
   id,
   patch,

@@ -71,9 +71,9 @@ A patch that doesn't fit the raw data (a missing play or stat, a value other tha
 
 The raw data and the parser change, so a patch can become unnecessary. `check_pbp_patches()` (internal) checks every patch against the current raw data and parser and lists the patches that
 
-- are **obsolete**: the raw data was fixed (a `set` patch whose column has the value `to` now, a `drop_stat` patch whose play still has stats, but not this stat ID),
+- are **obsolete**: the raw data was fixed, i.e. the column of a `set` patch has the value `to` now,
 - are **unused**: they are applied, but the play-by-play data (and for `drop_stat` the play stats) is the same without them, e.g. because the parser handles the error now,
-- **don't fit** for another reason (a missing play, a value other than `from` and `to`).
+- **don't fit** for another reason (a missing play or stat, a value other than `from` and `to`). A missing play or stat isn't obsolete for sure, because the NFL may have changed its ID and kept the error.
 
 ```r
 devtools::load_all()

@@ -34,6 +34,21 @@ test_that("check_pbp_patches() finds and prunes obsolete and unused patches", {
   )
 })
 
+test_that("patches that are only unused together aren't all unused", {
+  local_pbp_patches(
+    "game_id: 2019_01_GB_CHI; play_id: 1; action: drop_play; reason: r",
+    "game_id: 2019_01_GB_CHI; play_id: 2; action: drop_play; reason: r"
+  )
+  # the output is the same as long as one of the patches is there
+  local_mocked_bindings(
+    get_pbp_nfl = \(...) NULL,
+    patched_game_output = \(id, ...) list(pbp = id %in% names(pbp_patches()))
+  )
+  problems <- pbp_patch_problems(dir = test_dir, unused = TRUE)
+  expect_identical(problems$play_id, 1)
+  expect_identical(problems$status, "unused")
+})
+
 test_that("check_pbp_patches() only prunes the file of the checked patches", {
   local_pbp_patches(
     "game_id: 2011_13_DET_NO; play_id: 1152; action: drop_play; reason: r"

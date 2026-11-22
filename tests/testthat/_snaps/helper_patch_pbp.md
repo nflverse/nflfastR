@@ -26,6 +26,15 @@
       Error in `patch_value()`:
       ! Patch of "2019_01_GB_CHI": "two" isn't a valid value of column down (<double>).
 
+# play and stat IDs of the patch file must be numbers
+
+    Code
+      local_pbp_patches(
+        "game_id: 2019_01_GB_CHI; play_id: 12a4; action: set; column: down; from: 1; to: 2; reason: r")
+    Condition
+      Error in `read_pbp_patches()`:
+      ! play_id must be a number, not "12a4", in the patch file.
+
 # unknown fields of the patch file fail
 
     Code

@@ -11,6 +11,7 @@
 # every week, because the raw data can change without a change of nflfastR.
 
 # Checks every patch and fails if one has a problem (see pbp_patch_problems()).
+# Checks unused patches by default, unlike pbp_patch_problems().
 # With prune = TRUE, the obsolete and unused patches are removed from file
 # first, without changing the other records. The other problems need a look,
 # because the error of the raw data may still be there with other play IDs or
@@ -59,23 +60,39 @@ check_pbp_patches <- function(
 # the key columns of the patch file plus status, message and todo (what to do
 # about it). status is
 #
-# - "obsolete": not applied because the raw data was fixed (a set patch whose
-#   column has the value `to` now, a drop_stat patch whose play still has
-#   stats, but not this stat ID). Safe to remove.
-# - "not_applied": not applied for another reason (a missing play, a value
-#   other than `from` and `to`).
+# - "obsolete": a set patch that isn't applied because the raw data was fixed:
+#   the column has the value `to` now. Safe to remove.
+# - "not_applied": not applied for another reason (a missing play or stat, a
+#   value other than `from` and `to`).
 # - "unused": applied, but the pbp (and for drop_stat the play stats) is the
 #   same without it, e.g. because the parser handles the error now. Safe to
-#   remove. Only with unused = TRUE, which builds every patched game once more
-#   for each of its patches.
+#   remove, also all unused patches together: each patch is tested without the
+#   unused patches found before it. Only with unused = TRUE, which builds every
+#   patched game once more for each of its patches.
 #
-# ... is passed to build_nflfastR_pbp() (e.g. games).
+# unused is FALSE by default because the online test only needs to know
+# whether the patches fit the raw data, and the builds take a while.
+# check_pbp_patches() checks everything by default.
+#
+# Without dir, the raw data of the patched games is downloaded once into a
+# temporary directory. ... is passed to build_nflfastR_pbp() (e.g. games).
 pbp_patch_problems <- function(
   dir = getOption("nflfastR.raw_directory", default = NULL),
   unused = FALSE,
   ...
 ) {
   patches <- data.table::rbindlist(pbp_patches(), idcol = "game_id")
+  ids <- unique(patches$game_id)
+  if (is.null(dir)) {
+    dir <- tempfile("raw_pbp")
+    dir.create(dir)
+    on.exit(unlink(dir, recursive = TRUE), add = TRUE)
+    downloads <- save_raw_pbp(ids, dir = dir)
+    if (any(downloads$status_code != 200)) {
+      cli::cli_abort("Can't download the raw data of all patched games.")
+    }
+  }
+
   key <- c("game_id", "play_id", "action", "stat_id", "column")
   problems <- patches[0, key, with = FALSE]
   problems[,
@@ -88,7 +105,7 @@ pbp_patch_problems <- function(
   acc <- new.env(parent = emptyenv())
   acc$rows <- list(problems)
 
-  for (id in unique(patches$game_id)) {
+  for (id in ids) {
     withCallingHandlers(
       suppressMessages(get_pbp_nfl(id, dir = dir)),
       nflfastR_patch_not_applied = function(w) {
@@ -108,20 +125,28 @@ pbp_patch_problems <- function(
     return(problems)
   }
 
-  # The patches that were applied, game by game: a patch is unused if the
-  # output without it is the same
+  # with_pbp_patches() only reaches this process. In future workers, the
+  # builds without a patch would use all patches, and every patch would look
+  # unused.
+  old_plan <- future::plan("sequential")
+  on.exit(future::plan(old_plan), add = TRUE)
+
+  # A patch is unused if the output is the same without it and without the
+  # unused patches found before it
   applied <- patches[!problems, on = key]
+  kept <- patches
   out <- list(problems)
   for (id in unique(applied$game_id)) {
     with_all <- patched_game_output(id, dir, ...)
     for (i in which(applied$game_id == id)) {
       patch <- applied[i]
-      others <- patches[!patch, on = key]
+      others <- kept[!patch, on = key]
       without <- with_pbp_patches(others, patched_game_output(id, dir, ...))
       same <- identical(with_all$pbp, without$pbp) &&
         (patch$action != "drop_stat" ||
           identical(with_all$playstats, without$playstats))
       if (same) {
+        kept <- others
         out[[length(out) + 1]] <- patch_problem(
           patch[, key, with = FALSE],
           "unused",
