@@ -53,11 +53,34 @@ test_that("plays with a missing feature are NA and don't change the others", {
   expect_all_true(as.vector(is.na(p[2:3, ])))
 })
 
-test_that("the blocks of plays don't change the predictions", {
-  yl <- rep(1:99, 30)
-  # equal up to rounding: with an optimized BLAS the matrix products can round
-  # the last digit differently for different block sizes
-  expect_equal(ep_state(yl = yl, block = 7L), ep_state(yl = yl))
+test_that("the tables give the predictions of the terms", {
+  g <- expand.grid(
+    down = 1:4,
+    ytg = c(1, 3, 10, 25),
+    yl = c(2, 9, 33, 64, 97),
+    t = c(1790, 845, 299, 61, 4),
+    season = c(2003, 2010, 2016, 2019, 2025),
+    timeouts = 0:3
+  )
+  state <- make_model_mutations(data.frame(
+    season = g$season,
+    posteam = "A",
+    home_team = rep_len(c("A", "B"), nrow(g)),
+    roof = rep_len(c("outdoors", "dome", "closed"), nrow(g)),
+    down = g$down,
+    ydstogo = g$ytg,
+    yardline_100 = g$yl,
+    half_seconds_remaining = g$t,
+    posteam_timeouts_remaining = g$timeouts,
+    defteam_timeouts_remaining = (g$timeouts + g$down) %% 4
+  ))
+  features <- model_matrix(state, ep_model_features)
+  eta <- ep_model_eta_exact(features, ep_model$coefficients)
+  exact <- ep_model_softmax(lapply(seq_len(ncol(eta)), function(j) eta[, j]))
+  expect_equal(unname(ep_model_predict(features)), exact, tolerance = 1e-12)
+  # a yard line that isn't a whole number is computed term by term
+  ep <- ep_state_points(yl = c(40, 40.5, 41))
+  expect_lt(abs(ep[2] - (ep[1] + ep[3]) / 2), 0.01)
 })
 
 test_that("the same state gets the same prediction wherever it is", {
@@ -66,6 +89,16 @@ test_that("the same state gets the same prediction wherever it is", {
   yl <- c(75, rep(1:99, 30), 75)
   p <- ep_state(yl = yl)
   expect_identical(p[1, ], p[length(yl), ])
+})
+
+test_that("expected points are smooth in the clock", {
+  t <- 0:1800
+  for (s in list(c(1, 10, 75), c(1, 10, 35), c(3, 5, 50), c(2, 7, 20))) {
+    ep <- ep_state_points(down = s[1], ytg = s[2], yl = s[3], t = t)
+    step <- abs(diff(ep))
+    expect_lt(max(step[t[-1] > 120]), 0.01)
+    expect_lt(max(step), 0.1)
+  }
 })
 
 test_that("the model only uses the era of a season", {

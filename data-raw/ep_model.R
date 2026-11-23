@@ -18,43 +18,48 @@
 #    era with 2018 to 2021 (fewer touchdowns and more field goals are the next
 #    score since 2022). And the plays are reweighted so that EP is the value
 #    of a state for an average team, see "team strength" below.
-# 2. The student: a small neural network (three hidden layers of 48 units)
-#    that is fit to the probabilities of the teacher instead of the outcomes.
-#    The trees are accurate but jagged: EP changes in steps of uneven size and
-#    often in the wrong direction when the ball moves a yard, the distance
-#    changes by a yard or the clock runs. The network is a smooth function of
-#    its inputs and learns the same surface without the steps. Fit to the
-#    outcomes directly it overfits, because a single outcome says very little
-#    about the probabilities, and the teacher's probabilities don't have that
-#    noise. One network depends on the random draws of its fit (its synthetic
-#    states, start weights and batches): two fit with different seeds differ
-#    by 0.045 EP per play on average (plays with a down of 2024 and 2025).
-#    So there are three students, fit with different draws, and the model is
-#    the average of their probabilities. Two such averages differ by 0.026
-#    (five would differ by 0.020, but each student costs prediction time).
+# 2. The model: a multinomial logit model whose terms are cubic splines of the
+#    yard line, the distance and the clock, by down, era and timeouts (see
+#    R/helper_ep_model.R), fit to the probabilities of the teacher instead of
+#    the outcomes. The trees are accurate but jagged: EP changes in steps of
+#    uneven size and often in the wrong direction when the ball moves a yard,
+#    the distance changes by a yard or the clock runs. The splines are smooth
+#    and learn the same surface without the steps. The fit minimizes the
+#    cross entropy to the teacher's probabilities plus a penalty on the
+#    curvature of every curve (see ep_fit()). It is convex, so it has one
+#    solution: a refit with the same data gives the same model, and a refit
+#    with other random draws of the teacher moves EP by about 0.01 per play.
 #
-# Only the students are stored (about 50 KB of weights each, the teacher has
-# 10 MB). Their predictions are matrix products, so they don't need xgboost.
+# Only the coefficients are stored (3,825 per outcome, 176 KB). Predictions
+# are table lookups (see ep_model_predict()), so they don't need xgboost.
 #
-# Model choices were made by predicting the seasons since 2021 from the seasons
-# before them and with season grouped cross validation (7 folds), see the PR
-# that introduced this file for the evaluation. What was tried and dropped:
-# monotone constraints (the class probabilities are not monotone in field
-# position, only EP is), a goal to go feature, an era for the seasons since
-# 2024, kneel downs as training rows, wider and narrower networks (64 or 96
-# units are slower and not better, 32 units are worse), and team strength as
-# features of the teacher, with the student fit to the teacher averaged over
-# the matchups of real games. That gives the same average team, but the trees
-# then fit the game state less well: they overrated 3rd and long and backed up
-# states by another 0.04 and 0.10 points out of sample.
+# Model choices were made with season grouped cross validation (7 folds), see
+# the PR that introduced this file for the evaluation. What was tried and
+# dropped: monotone constraints (the class probabilities are not monotone in
+# field position, only EP is), a goal to go feature, an era for the seasons
+# since 2024, kneel downs as training rows, and team strength as features of the
+# teacher, with the model fit to the teacher averaged over the matchups of real
+# games. That gives the same average team, but the trees then fit the game state
+# less well: they overrated 3rd and long and backed up states by another 0.04
+# and 0.10 points out of sample. An average of three neural networks fit to the
+# same target fits about as well (log loss 1.30283 out of fold, this model
+# 1.30295), but it is less smooth in the clock, moves EP by 0.026 per play when
+# refit with other seeds and predicts three times slower. A lighter penalty
+# (lambda 1e-6) fits no better and has more steps in the wrong direction, a
+# heavier one (1e-4) fits worse, and so does a fit to the outcomes instead of
+# the teacher (1.30351). Finer curves of the distance fit slightly better but
+# put bumps into EP on 2nd and 10. Terms for the era by home field, by distance
+# and by the end of the half didn't help, and neither did the average of three
+# teachers as the target.
 #
-# Run from the package root. Takes about 15 minutes and 8 GB of memory (the
-# students are fit by three worker processes, see `student_params$workers`).
+# Run from the package root. Takes about 10 minutes and 6 GB of memory.
 
 library(data.table)
 library(xgboost)
 source("R/helper_add_nflscrapr_mutations.R")
 source("R/helper_ep_model.R")
+# ep_model_predict() keeps its tables there (R/utils.R in the package)
+nflfastR_cache <- new.env(parent = emptyenv())
 source("data-raw/save_sysdata.R")
 set.seed(2013)
 
@@ -98,20 +103,16 @@ teacher_params <- list(
   nthread = parallel::detectCores()
 )
 
-student_params <- list(
-  hidden = c(48L, 48L, 48L),
-  epochs = 20L,
-  batch = 4096L,
-  # learning rate of Adam, from `lr` to `lr_end` on half a cosine wave
-  lr = 2e-3,
-  lr_end = 2e-5,
+model_params <- list(
+  # the weights of the curvature penalty and of the ridge penalty of the
+  # timeout steps (relative to lambda), see ep_penalty()
+  lambda = 1e-5,
+  ridge = 1,
   # synthetic states per play, see synthetic_states()
   extra = 0.25,
-  # the number of networks the model averages, and the seed of the first
-  students = 3L,
   seed = 2013L,
-  # worker processes that fit them, see fit_one_student()
-  workers = 3L
+  # forked worker processes of the fit, see ep_fit()
+  cores = 4L
 )
 
 # ---- team strength ----------------------------------------------------------
@@ -244,11 +245,11 @@ teacher_probs <- function(teacher, features) {
   p
 }
 
-# ---- student ----------------------------------------------------------------
-# The student sees every play with a down (kneel downs too, their states are
+# ---- the model --------------------------------------------------------------
+# The model is fit to every play with a down (kneel downs too, their states are
 # valid) and synthetic states: plays whose down and distance and whose yard
 # line are swapped with those of other plays, while clock, timeouts, home
-# field, roof and era stay as they were. They teach the student the teacher's
+# field, roof and era stay as they were. They give the model the teacher's
 # values for unusual downs, distances and field positions, which the package
 # also asks for (e.g. the states after every possible gain of a pass in the
 # xYAC variables). Without them EP sometimes rises with the distance to go
@@ -264,126 +265,165 @@ synthetic_states <- function(states) {
   states
 }
 
-# The probabilities of the outcomes and the values of all layers for a matrix
-# of standardized inputs with one row per play. This is the layout of the fit.
-# ep_model_predict() has the plays in the columns.
-student_forward <- function(layers, x) {
-  values <- list(x)
-  for (l in seq_along(layers)) {
-    x <- x %*% layers[[l]]$weights + rep(layers[[l]]$bias, each = nrow(x))
-    if (l < length(layers)) {
-      x <- ep_model_activation(x)
-    }
-    values[[l + 1L]] <- x
-  }
-  x <- exp(x - x[cbind(seq_len(nrow(x)), max.col(x, "first"))])
-  list(probs = x / rowSums(x), values = values)
-}
-
-# Fits the network to the probabilities `target` of the states `features` by
-# minimizing the cross entropy with Adam on shuffled batches. Returns the model
-# as it is stored.
-fit_student <- function(features, target, params = student_params) {
-  x <- t(ep_model_inputs(features))
-  center <- colMeans(x)
-  scale <- apply(x, 2, stats::sd)
-  # column by column, which needs less memory than the whole matrix at once
-  for (j in seq_len(ncol(x))) {
-    x[, j] <- (x[, j] - center[j]) / scale[j]
-  }
-
-  sizes <- c(ncol(x), params$hidden, ncol(target))
-  layers <- lapply(seq_len(length(sizes) - 1L), function(i) {
-    list(
-      weights = matrix(
-        stats::rnorm(sizes[i] * sizes[i + 1L], sd = sqrt(1 / sizes[i])),
-        sizes[i],
-        sizes[i + 1L]
-      ),
-      bias = numeric(sizes[i + 1L])
+# The design matrix (sparse, one row per state, one column per coefficient)
+# in chunks of rows, so the entries of all rows never exist at once
+ep_design <- function(features, chunk = 50000L) {
+  sizes <- vapply(ep_spline_terms, ep_spline_term_size, 1)
+  offset <- c(0, cumsum(sizes))[seq_along(sizes)]
+  lapply(seq.int(1L, nrow(features), by = chunk), function(s) {
+    f <- features[s:min(s + chunk - 1L, nrow(features)), , drop = FALSE]
+    levels <- ep_spline_levels(f)
+    parts <- Map(
+      function(term, o) {
+        e <- ep_spline_entries(f, term, levels)
+        keep <- e$val != 0
+        list(i = row(e$val)[keep], j = e$idx[keep] + o, x = e$val[keep])
+      },
+      ep_spline_terms,
+      offset
+    )
+    Matrix::sparseMatrix(
+      i = unlist(lapply(parts, `[[`, "i")),
+      j = unlist(lapply(parts, `[[`, "j")),
+      x = unlist(lapply(parts, `[[`, "x")),
+      dims = c(nrow(f), sum(sizes))
     )
   })
-  zeros <- lapply(layers, \(l) list(weights = 0 * l$weights, bias = 0 * l$bias))
-  m <- zeros
-  v <- zeros
-  beta1 <- 0.9
-  beta2 <- 0.999
-  n <- nrow(x)
-  batches <- ceiling(n / params$batch)
-  steps <- params$epochs * batches
-  step <- 0L
-  for (epoch in seq_len(params$epochs)) {
-    order <- sample.int(n)
-    loss <- 0
-    for (b in seq_len(batches)) {
-      step <- step + 1L
-      i <- order[((b - 1L) * params$batch + 1L):min(b * params$batch, n)]
-      f <- student_forward(layers, x[i, , drop = FALSE])
-      loss <- loss - sum(target[i, ] * log(f$probs))
-      lr <- params$lr_end +
-        0.5 * (params$lr - params$lr_end) * (1 + cos(pi * step / steps))
-      # gradient of the mean cross entropy with respect to the output layer
-      delta <- (f$probs - target[i, , drop = FALSE]) / length(i)
-      for (l in rev(seq_along(layers))) {
-        gradient <- list(
-          weights = crossprod(f$values[[l]], delta),
-          bias = colSums(delta)
-        )
-        if (l > 1L) {
-          # the derivative of the activation a = x / sqrt(1 + x^2) is
-          # (1 - a^2)^1.5
-          slope <- 1 - f$values[[l]]^2
-          delta <- tcrossprod(delta, layers[[l]]$weights) * slope * sqrt(slope)
-        }
-        for (part in c("weights", "bias")) {
-          m[[l]][[part]] <- beta1 *
-            m[[l]][[part]] +
-            (1 - beta1) * gradient[[part]]
-          v[[l]][[part]] <- beta2 *
-            v[[l]][[part]] +
-            (1 - beta2) * gradient[[part]]^2
-          layers[[l]][[part]] <- layers[[l]][[part]] -
-            lr *
-              (m[[l]][[part]] / (1 - beta1^step)) /
-              (sqrt(v[[l]][[part]] / (1 - beta2^step)) + 1e-8)
-        }
-      }
+}
+
+# The penalty of the fit: lambda times the sum of the squared second
+# differences of the coefficients of every curve (along each margin of a
+# surface), per level. The terms with `ridge` (the timeout steps) also get
+# lambda * ridge times the sum of their squared coefficients. Terms without a
+# margin aren't penalized.
+ep_penalty <- function(lambda, ridge) {
+  blocks <- lapply(ep_spline_terms, function(term) {
+    k <- vapply(term$margins, function(m) ep_spline_margins[[m]]$n + 3, 1)
+    second <- function(n) crossprod(diff(diag(n), differences = 2))
+    s <- switch(
+      as.character(length(k)),
+      "0" = matrix(0, 1, 1),
+      "1" = second(k[1]),
+      "2" = kronecker(second(k[1]), diag(k[2])) +
+        kronecker(diag(k[1]), second(k[2]))
+    )
+    if (isTRUE(term$ridge)) {
+      s <- s + ridge * diag(nrow(s))
     }
-    cat(sprintf(
-      "epoch %2d  cross entropy to the teacher %.5f\n",
-      epoch,
-      loss / n
-    ))
+    Matrix::Matrix(
+      lambda * kronecker(diag(ep_spline_level_count[[term$level]]), s),
+      sparse = TRUE
+    )
+  })
+  Matrix::bdiag(blocks)
+}
+
+# Fits the coefficients: minimizes the cross entropy between the targets and
+# the model's probabilities (summed over the states and divided by their
+# number) plus half the penalty b'(S + eps I)b of every outcome's
+# coefficients b. `target` has a row per state and a column per outcome
+# (No_Score last); a row can be probabilities or a weighted outcome (a single
+# nonzero entry). `X` is the design in chunks of rows (ep_design()).
+#
+# The problem is convex but badly conditioned: neighboring functions of a
+# curve overlap, the levels of the terms overlap (e.g. a curve by down and a
+# surface by down), and the penalty is light. Plain L-BFGS takes thousands of
+# iterations. Here it works on z = R b, where R'R is the outcome's block of the
+# Hessian at the probabilities `hess_probs` (from every 4th chunk of rows),
+# and converges in about 100. Forked workers compute the loss and gradient of
+# the chunks.
+ep_fit <- function(X, target, S, hess_probs = target, cores = 4L, eps = 1e-7) {
+  rows <- vapply(X, nrow, integer(1))
+  n <- sum(rows)
+  p <- ncol(X[[1]])
+  C <- ncol(target) - 1L
+  ends <- cumsum(rows)
+  chunk_rows <- lapply(seq_along(X), function(k) {
+    (ends[k] - rows[k] + 1):ends[k]
+  })
+  Y <- lapply(chunk_rows, function(r) target[r, , drop = FALSE])
+  b0 <- matrix(0, p, C)
+  b0[1, ] <- log(colMeans(target[, 1:C]) / mean(target[, C + 1]))
+  pen <- S + eps * Matrix::Diagonal(p)
+
+  # the preconditioner
+  hess_chunks <- seq(1L, length(X), by = max(1L, round(n / 3e5)))
+  n_hess <- sum(rows[hess_chunks])
+  R <- lapply(seq_len(C), function(cl) {
+    h <- as.matrix(pen) * n_hess
+    for (k in hess_chunks) {
+      q <- hess_probs[chunk_rows[[k]], cl]
+      w <- rowSums(Y[[k]]) * q * (1 - q)
+      h <- h +
+        as.matrix(Matrix::crossprod(X[[k]], Matrix::Diagonal(x = w) %*% X[[k]]))
+      gc(verbose = FALSE)
+    }
+    chol(h / n_hess)
+  })
+  to_b <- function(z) {
+    z <- matrix(z, p, C)
+    vapply(seq_len(C), function(cl) backsolve(R[[cl]], z[, cl]), numeric(p))
   }
 
-  # The stored layers have the layout of ep_model_predict() (weights
-  # transposed) and the first one takes the inputs as they are:
-  # ((x - center) / scale) %*% w = x %*% (w / scale) - center %*% (w / scale)
-  stored <- lapply(seq_along(layers), function(l) {
-    weights <- layers[[l]]$weights
-    bias <- layers[[l]]$bias
-    if (l == 1L) {
-      weights <- weights / scale
-      bias <- bias - as.vector(center %*% weights)
+  part <- function(chunks, b) {
+    loss <- 0
+    g <- matrix(0, p, C)
+    for (k in chunks) {
+      eta <- as.matrix(X[[k]] %*% b)
+      m <- pmax(do.call(pmax, as.data.frame(eta)), 0)
+      e <- exp(eta - m)
+      e0 <- exp(-m)
+      log_total <- log(rowSums(e) + e0)
+      y <- Y[[k]]
+      loss <- loss -
+        sum(y[, 1:C] * (eta - m - log_total)) -
+        sum(y[, C + 1] * (-m - log_total))
+      g <- g +
+        as.matrix(Matrix::crossprod(
+          X[[k]],
+          e / (rowSums(e) + e0) * rowSums(y) - y[, 1:C]
+        ))
     }
-    list(weights = t(weights), bias = bias)
-  })
-  # the stored network predicts what the fit did
-  check <- sample.int(n, 5000)
-  last <- stored[[length(stored)]]
-  stopifnot(
-    isTRUE(all.equal(
-      ep_model_predict(
-        features[check, ],
-        list(students = list(stored), classes = ep_classes)
-      ),
-      student_forward(layers, x[check, ])$probs,
-      check.attributes = FALSE
-    )),
-    # exp() in ep_model_predict() can't overflow
-    max(rowSums(abs(last$weights)) + abs(last$bias)) < 700
+    list(loss = loss, g = g)
+  }
+  groups <- split(seq_along(X), rep_len(seq_len(cores), length(X)))
+  last <- new.env()
+  evaluate <- function(z) {
+    if (!identical(z, last$z)) {
+      b <- to_b(z)
+      parts <- parallel::mclapply(groups, part, b = b, mc.cores = cores)
+      pb <- as.matrix(pen %*% b)
+      gb <- Reduce(`+`, lapply(parts, `[[`, "g")) / n + pb
+      last$z <- z
+      last$f <- Reduce(`+`, lapply(parts, `[[`, "loss")) / n + 0.5 * sum(b * pb)
+      last$gb <- gb
+      last$g <- as.vector(vapply(
+        seq_len(C),
+        function(cl) backsolve(R[[cl]], gb[, cl], transpose = TRUE),
+        numeric(p)
+      ))
+    }
+    last
+  }
+  z0 <- as.vector(vapply(
+    seq_len(C),
+    function(cl) as.vector(R[[cl]] %*% b0[, cl]),
+    numeric(p)
+  ))
+  opt <- stats::optim(
+    z0,
+    function(z) evaluate(z)$f,
+    function(z) evaluate(z)$g,
+    method = "L-BFGS-B",
+    control = list(maxit = 2000, factr = 1e3, lmm = 20)
   )
-  stored
+  list(
+    coefficients = to_b(opt$par),
+    value = opt$value,
+    convergence = opt$convergence,
+    iterations = opt$counts[[1]],
+    max_gradient = max(abs(evaluate(opt$par)$gb))
+  )
 }
 
 # ---- data -------------------------------------------------------------------
@@ -560,57 +600,33 @@ teacher <- fit_teacher(
   model_data$label[plays],
   closeness * strength_w / mean(strength_w)
 )
-# Every student has its own synthetic states, start weights and batches. The
-# networks are fit in parallel, one core each, by worker processes that get
-# the states of the plays and the teacher once and make their own synthetic
-# states. Each worker needs about 2 GB of memory on top of the 3 GB of this
-# session, so lower `workers` on a machine with less than 10 GB. (Forked
-# workers copy the memory of this session as they run and need much more.)
-fit_one_student <- function(seed) {
-  set.seed(seed)
-  extra <- sample.int(
-    nrow(features),
-    round(student_params$extra * nrow(features))
-  )
-  states <- rbind(features, synthetic_states(features[extra, , drop = FALSE]))
-  fit_student(states, teacher_probs(teacher, states))
-}
-seeds <- student_params$seed + seq_len(student_params$students) - 1L
-cluster <- parallel::makeCluster(
-  min(student_params$workers, length(seeds), parallel::detectCores())
+
+# the states of the fit: all plays and synthetic states, with the teacher's
+# probabilities
+set.seed(model_params$seed)
+extra <- sample.int(nrow(features), round(model_params$extra * nrow(features)))
+states <- rbind(features, synthetic_states(features[extra, , drop = FALSE]))
+target <- teacher_probs(teacher, states)
+design <- ep_design(states)
+rm(states)
+gc(verbose = FALSE)
+fit <- ep_fit(
+  design,
+  target,
+  ep_penalty(model_params$lambda, model_params$ridge),
+  cores = model_params$cores
 )
-invisible(parallel::clusterEvalQ(cluster, {
-  library(data.table)
-  library(xgboost)
-}))
-parallel::clusterExport(
-  cluster,
-  c(
-    "features",
-    "fit_one_student",
-    "synthetic_states",
-    "teacher_matrix",
-    "teacher_probs",
-    "fit_student",
-    "student_forward",
-    "student_params",
-    "ep_classes",
-    "ep_model_features",
-    "ep_model_inputs",
-    "ep_model_activation",
-    "ep_model_predict"
-  )
+rm(design, target)
+gc(verbose = FALSE)
+cat(
+  "fit: iterations",
+  fit$iterations,
+  " largest gradient",
+  signif(fit$max_gradient, 2),
+  "\n"
 )
-# the teacher is a pointer to xgboost's memory, so it goes as its saved bytes
-teacher_raw <- xgboost::xgb.save.raw(teacher)
-parallel::clusterExport(cluster, "teacher_raw")
-invisible(parallel::clusterEvalQ(
-  cluster,
-  teacher <- xgboost::xgb.load.raw(teacher_raw)
-))
-students <- parallel::clusterApplyLB(cluster, seeds, fit_one_student)
-parallel::stopCluster(cluster)
-ep_model <- list(students = students, classes = ep_classes)
+stopifnot(fit$convergence == 0, fit$max_gradient < 1e-6)
+ep_model <- list(coefficients = fit$coefficients, classes = ep_classes)
 
 # ---- checks -----------------------------------------------------------------
 log_loss <- function(probs, label) {
@@ -618,40 +634,23 @@ log_loss <- function(probs, label) {
 }
 points <- c(7, -7, 3, -3, 2, -2, 0)
 p_teacher <- teacher_probs(teacher, features[plays, ])
-p_student <- ep_model_predict(features[plays, ], ep_model)
+p_model <- ep_model_predict(features[plays, ], ep_model)
 actual <- points[model_data$label[plays] + 1L]
-# how far one network is from the average of all
-ep_student <- p_student %*% points
-ep_single <- vapply(
-  ep_model$students,
-  function(layers) {
-    single <- list(students = list(layers), classes = ep_classes)
-    mean(abs(
-      ep_model_predict(features[plays, ], single) %*% points - ep_student
-    ))
-  },
-  numeric(1)
-)
-cat(
-  "\nEP of one network minus EP of the model, mean absolute difference:",
-  paste(round(ep_single, 4), collapse = " "),
-  "\n"
-)
 cat(
   "\nlog loss on the training plays (in sample): teacher",
   round(log_loss(p_teacher, model_data$label[plays]), 4),
-  " student",
-  round(log_loss(p_student, model_data$label[plays]), 4),
-  "\nstudent and teacher, mean absolute difference of the probabilities:",
-  round(mean(abs(p_student - p_teacher)), 4),
+  " model",
+  round(log_loss(p_model, model_data$label[plays]), 4),
+  "\nmodel and teacher, mean absolute difference of the probabilities:",
+  round(mean(abs(p_model - p_teacher)), 4),
   "\nexpected points (7 / 3 / 2) minus the points of the next score: teacher",
   round(mean(p_teacher %*% points - actual), 3),
-  " student",
-  round(mean(p_student %*% points - actual), 3),
+  " model",
+  round(mean(p_model %*% points - actual), 3),
   "\n"
 )
-# the student follows the teacher
-stopifnot(mean(abs(p_student - p_teacher)) < 0.01)
+# the model follows the teacher
+stopifnot(mean(abs(p_model - p_teacher)) < 0.01)
 
 # EP may not rise when the ball is a yard further from the goal line or when
 # there is one more yard to go. Checked on the states that occur: 1st & 10 and
