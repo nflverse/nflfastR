@@ -63,7 +63,7 @@ play_id: 1085
 action: set
 column: time
 from: 03:33
-to: 3:34
+to: 03:34
 reason: wrong game clock
 
 game_id: 2012_16_BUF_MIA
@@ -71,7 +71,7 @@ play_id: 2571
 action: set
 column: time
 from: 08:32
-to: 8:31
+to: 08:31
 reason: wrong game clock
 
 game_id: 2015_01_IND_BUF
