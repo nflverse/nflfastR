@@ -323,8 +323,7 @@ ep_continue_factor_names <- c(
 
 # Probabilities of the next scoring event for the possession team (a matrix
 # with the columns of the EP model), computed like calculate_expected_points()
-# but from plain vectors and with one prediction per unique combination of
-# features
+# but from plain vectors
 predict_ep_probs <- function(
   season,
   half_seconds_remaining,
@@ -336,48 +335,25 @@ predict_ep_probs <- function(
   posteam_timeouts_remaining,
   defteam_timeouts_remaining
 ) {
-  if (length(season) == 0) {
-    return(matrix(numeric(), ncol = 7))
-  }
-  indicator <- as.numeric
-  model_roof <- data.table::fifelse(
-    is.na(roof) | roof == "open" | roof == "closed",
-    "retractable",
-    roof
+  model_roof <- model_roof_type(roof)
+  features <- c(
+    model_eras(season),
+    list(
+      half_seconds_remaining = as.numeric(half_seconds_remaining),
+      yardline_100 = as.numeric(yardline_100),
+      home = as.numeric(home),
+      dome = as.numeric(model_roof == "dome"),
+      outdoors = as.numeric(model_roof == "outdoors"),
+      ydstogo = as.numeric(ydstogo),
+      down1 = as.numeric(down == 1),
+      down2 = as.numeric(down == 2),
+      down3 = as.numeric(down == 3),
+      down4 = as.numeric(down == 4),
+      posteam_timeouts_remaining = as.numeric(posteam_timeouts_remaining),
+      defteam_timeouts_remaining = as.numeric(defteam_timeouts_remaining)
+    )
   )
-  features <- data.table::data.table(
-    half_seconds_remaining = as.numeric(half_seconds_remaining),
-    yardline_100 = as.numeric(yardline_100),
-    home = as.numeric(home),
-    retractable = indicator(model_roof == "retractable"),
-    dome = indicator(model_roof == "dome"),
-    outdoors = indicator(model_roof == "outdoors"),
-    ydstogo = as.numeric(ydstogo),
-    era0 = indicator(season <= 2001),
-    era1 = indicator(season > 2001 & season <= 2005),
-    era2 = indicator(season > 2005 & season <= 2013),
-    era3 = indicator(season > 2013 & season <= 2017),
-    era4 = indicator(season > 2017),
-    down1 = indicator(down == 1),
-    down2 = indicator(down == 2),
-    down3 = indicator(down == 3),
-    down4 = indicator(down == 4),
-    posteam_timeouts_remaining = as.numeric(posteam_timeouts_remaining),
-    defteam_timeouts_remaining = as.numeric(defteam_timeouts_remaining)
-  )
-  # Many rows share the same features. Predictions don't depend on other
-  # rows, so we predict every unique row once.
-  features[, combo := .GRP, by = ep_model_features]
-  combo <- features$combo
-  unique_rows <- !duplicated(combo)
-  preds <- stats::predict(
-    load_model("ep"),
-    model_matrix(features[unique_rows], ep_model_features)
-  )
-  if (is.vector(preds)) {
-    preds <- matrix(preds, ncol = 7, byrow = TRUE)
-  }
-  preds[match(combo, combo[unique_rows]), , drop = FALSE]
+  ep_model_predict(model_matrix(features, ep_model_features))
 }
 
 ### helper function for getting the data ready
@@ -407,7 +383,8 @@ prepare_xyac_data <- function(pbp) {
   rows <- which(
     valid & !is.na(receiver_player_name) & passes$distance_to_goal != 0
   )
-  lapply(passes[intersect(xyac_pass_columns, names(passes))], `[`, rows)
+  cols <- c(xyac_pass_columns, ep_model_features)
+  lapply(passes[intersect(cols, names(passes))], `[`, rows)
 }
 
 
@@ -434,11 +411,11 @@ xyac_model_features <- c(
   "distance_to_sticks"
 )
 
-# The columns of the passes that predict_yac() and summarize_xyac() need
+# The columns of the passes that predict_yac() and summarize_xyac() need, next
+# to the features of the EP model
 xyac_pass_columns <- unique(c(
   "index",
   xyac_model_features,
-  ep_model_features,
   "location",
   "season",
   "half_seconds_remaining",

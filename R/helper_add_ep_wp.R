@@ -105,30 +105,9 @@ expand_rows <- function(preds, n, i) {
   out
 }
 
-# The features of the EP model, in the order the model expects
-ep_model_features <- c(
-  "half_seconds_remaining",
-  "yardline_100",
-  "home",
-  "retractable",
-  "dome",
-  "outdoors",
-  "ydstogo",
-  "era0",
-  "era1",
-  "era2",
-  "era3",
-  "era4",
-  "down1",
-  "down2",
-  "down3",
-  "down4",
-  "posteam_timeouts_remaining",
-  "defteam_timeouts_remaining"
-)
-
-# EP predictions for several data frames with one call of the model. Returns a
-# list with a data frame of probabilities for each data frame.
+# EP predictions for several data frames with one call of the model (see
+# R/helper_ep_model.R). Returns a list with a data frame of probabilities for
+# each data frame.
 get_preds_stacked <- function(data_list) {
   matrices <- lapply(data_list, function(pbp) {
     m <- model_matrix(pbp, ep_model_features)
@@ -137,23 +116,7 @@ get_preds_stacked <- function(data_list) {
     }
     m
   })
-  preds <- stats::predict(load_model("ep"), do.call(rbind, matrices))
-
-  # xgboost v3 returns a matrix of predictions instead of a vector as returned
-  # by xgboost v1.
-  if (is.vector(preds)) {
-    preds <- matrix(preds, ncol = 7, byrow = TRUE)
-  }
-  preds <- as.data.frame(preds)
-  colnames(preds) <- c(
-    "Touchdown",
-    "Opp_Touchdown",
-    "Field_Goal",
-    "Opp_Field_Goal",
-    "Safety",
-    "Opp_Safety",
-    "No_Score"
-  )
+  preds <- as.data.frame(ep_model_predict(do.call(rbind, matrices)))
   part <- rep(seq_along(matrices), vapply(matrices, nrow, integer(1)))
   lapply(seq_along(matrices), function(k) {
     out <- preds[part == k, , drop = FALSE]
@@ -188,9 +151,25 @@ conversion_value <- function(season) {
   )
 }
 
-# Probability of making a two point conversion: 0.49 for tries from the 2 yard
-# line since 2004, leaving out kneel downs and botched one point tries
-two_point_make_prob <- 0.49
+# Probability of making a two point try from the 2: 0.49 since 2004, leaving out
+# kneel downs and botched one point tries. It is the value of a two point try
+# before it is lined up (e.g. in the value of a touchdown).
+two_point_prob_from_2 <- 0.49
+
+# Probability of making a two point try that starts at `yardline_100`, from the
+# same tries: 0.58 from the 1 (166 tries) and 0.20 from the 6 or further (70
+# tries moved back by a penalty and fakes from kick formation). Other spots are
+# too rare (3 tries from the 3 to the 5), so they and a missing spot get the
+# value from the 2.
+two_point_prob <- function(yardline_100) {
+  data.table::fcase(
+    yardline_100 <= 1,
+    0.58,
+    yardline_100 >= 6,
+    0.20,
+    default = two_point_prob_from_2
+  )
+}
 
 # Where the scoring team's drive starts after a safety free kick, as
 # yardline_100 for the receiving (scoring) team. This is a data-informed guess:
@@ -499,7 +478,7 @@ ep_continue_factors <- function(pbp_data) {
 # touchdown ends the game).
 score_values <- function(kv, season) {
   conv <- conversion_value(season)
-  two <- 2 * two_point_make_prob
+  two <- 2 * two_point_prob_from_2
   conv_own <- data.table::fifelse(kv$two_td_own, two, conv)
   conv_opp <- data.table::fifelse(kv$two_td_opp, two, conv)
   data.frame(
@@ -846,8 +825,10 @@ add_ep_variables <- function(pbp_data) {
   # Assign the make_fg_probs of the extra-point PATs:
   base_ep_preds$ExPoint_Prob[extrapoint_i] <- make_fg_prob[extrapoint_i]
 
-  # Assign the TwoPoint_Prob with the historical success rate:
-  base_ep_preds$TwoPoint_Prob[twopoint_i] <- two_point_make_prob
+  # Assign the TwoPoint_Prob with the historical success rate from the spot:
+  base_ep_preds$TwoPoint_Prob[twopoint_i] <- two_point_prob(
+    pbp_data$yardline_100[twopoint_i]
+  )
 
   # ----------------------------------------------------------------------------------
   # Insert NAs for timeouts and end of play rows:
@@ -981,7 +962,7 @@ add_ep_variables <- function(pbp_data) {
     j = "ep_conversion",
     value = data.table::fifelse(
       pbp_data$ep_two_try,
-      2 * two_point_make_prob,
+      2 * two_point_prob_from_2,
       conversion_value(pbp_data$season)
     )
   )
@@ -1328,6 +1309,8 @@ add_wp_variables <- function(pbp_data) {
 
   # the predictions below are only needed for PATs in regulation
   pat_rows <- sort(c(pat_i, two_pt_i))
+  # the make probability of a two point try depends on where it starts
+  two_pt_prob <- two_point_prob(pbp_data$yardline_100)
 
   ## start with spread version
   # get pat if 0, 1, or 2
@@ -1335,10 +1318,8 @@ add_wp_variables <- function(pbp_data) {
   pat_1 <- predict_rows(get_preds_wp_spread, pat_scored(1), pat_rows)
   pat_2 <- predict_rows(get_preds_wp_spread, pat_scored(2), pat_rows)
 
-  # Using nflscrapR version of 2pt make prob on 2nd line here
   pat_go_for_1 <- 1 - (make_pat_prob * pat_1 + (1 - make_pat_prob) * pat_0)
-  pat_go_for_2 <- 1 -
-    (two_point_make_prob * pat_2 + (1 - two_point_make_prob) * pat_0)
+  pat_go_for_2 <- 1 - (two_pt_prob * pat_2 + (1 - two_pt_prob) * pat_0)
 
   OffWinProb_spread[two_pt_i] <- pat_go_for_2[two_pt_i]
   OffWinProb_spread[pat_i] <- pat_go_for_1[pat_i]
@@ -1349,10 +1330,8 @@ add_wp_variables <- function(pbp_data) {
   pat_1 <- predict_rows(get_preds_wp, pat_scored(1), pat_rows)
   pat_2 <- predict_rows(get_preds_wp, pat_scored(2), pat_rows)
 
-  # Using nflscrapR version of 2pt make prob on 2nd line here
   pat_go_for_1 <- 1 - (make_pat_prob * pat_1 + (1 - make_pat_prob) * pat_0)
-  pat_go_for_2 <- 1 -
-    (two_point_make_prob * pat_2 + (1 - two_point_make_prob) * pat_0)
+  pat_go_for_2 <- 1 - (two_pt_prob * pat_2 + (1 - two_pt_prob) * pat_0)
 
   OffWinProb[two_pt_i] <- pat_go_for_2[two_pt_i]
   OffWinProb[pat_i] <- pat_go_for_1[pat_i]

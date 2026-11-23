@@ -204,15 +204,19 @@ play_result <- function(d, series = FALSE) {
   )
 }
 
-# The result of a drive or series from the results of its plays: the last
-# non-missing result, or the first one if the last is the end of a half
+# The result of a drive or series from the results of its plays: the last one,
+# because an earlier result doesn't end it if another one follows (a team can
+# kneel to center the ball for a field goal, and a drive that starts with a
+# recovered kickoff fumble has the result "Turnover" on its first row). The end
+# of the half is only the result if there is no other one.
 drive_result <- function(result) {
   result <- result[!is.na(result)]
-  if (length(result) == 0) {
-    NA_character_
-  } else if (result[length(result)] == "End of half") {
-    result[1L]
+  decided <- result[result != "End of half"]
+  if (length(decided) > 0) {
+    decided[length(decided)]
+  } else if (length(result) > 0) {
+    "End of half"
   } else {
-    result[length(result)]
+    NA_character_
   }
 }

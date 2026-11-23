@@ -19,9 +19,6 @@ jobs:
       group: pkgdown-${{ github.event_name != 'pull_request' || github.run_id }}
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-      NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-      isPush: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
 
     steps:
       - uses: actions/checkout@v7
@@ -58,16 +55,3 @@ jobs:
           clean: true
           branch: gh-pages
           folder: docs
-
-      - name: Deploy to Netlify
-        if: contains(env.isPush, 'false')
-        id: netlify-deploy
-        uses: nwtgck/actions-netlify@v4.0
-        with:
-          publish-dir: './docs'
-          production-branch: master
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          overwrites-pull-request-comment: true
-          deploy-message:
-            'Deploy from GHA: ${{ github.event.pull_request.title || github.event.head_commit.message }} (${{ github.sha }})'
-        timeout-minutes: 1
