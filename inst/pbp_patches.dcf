@@ -1,3 +1,41 @@
+game_id: 2002_13_STL_PHI
+play_id: 1981
+action: set
+column: posteam
+from: PHI
+to: LA
+reason: injury timeout of the defense in a drive of the Rams, the wrong
+  posteam splits the drive (#496)
+
+game_id: 2010_12_CAR_CLE
+play_id: 4226
+action: set
+column: posteam
+from: CAR
+to: CLE
+reason: review in a drive of the Browns, the wrong posteam splits the
+  drive (#496)
+
+game_id: 2011_10_DET_CHI
+play_id: 2044
+action: drop_play
+reason: phantom copy of play 2080 without "ran ob" (#516)
+
+game_id: 2011_10_DET_CHI
+play_id: 2068
+action: drop_play
+reason: phantom copy of play 2079 for no gain instead of 4 yards (#516)
+
+game_id: 2011_10_DET_CHI
+play_id: 2092
+action: drop_play
+reason: phantom 3rd down sack, copy of the sack of play 2078 (#516)
+
+game_id: 2011_10_DET_CHI
+play_id: 2111
+action: drop_play
+reason: phantom copy of the incomplete pass of play 2077 (#516)
+
 game_id: 2011_13_DET_NO
 play_id: 786
 action: drop_play
