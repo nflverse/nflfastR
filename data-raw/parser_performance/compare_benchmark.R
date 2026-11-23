@@ -172,7 +172,8 @@ base_out <- readRDS(file.path(out_dir, "base_1_output.rds"))
 head_out <- readRDS(file.path(out_dir, "head_1_output.rds"))
 same_output <- identical(base_out, head_out)
 differences <- if (!same_output) {
-  test_helpers <- new.env()
+  # helpers.R uses data.table's %chin% (the package imports it)
+  test_helpers <- new.env(parent = asNamespace("data.table"))
   sys.source(
     file.path(head_dir, "tests", "testthat", "helpers.R"),
     envir = test_helpers

@@ -36,7 +36,6 @@ ot_n <- 180L # nodes: 0 ... 900 seconds
 ot_s_store <- ot_s_grid
 ot_t_stride <- 2L
 ot_d_set <- c(0, -3, -6, -7, -8) # score differentials of the receiving team
-ot_2pt_prob <- two_point_make_prob # the same value as in EP and regulation WP
 ot_outcomes <- c("TD", "FG", "SAF", "OPPTD", "STOP")
 # the drive model has a sixth class, PUNT, that is part of STOP for durations.
 # It is only used to model teams that must score (see ot_apply_must_score())
@@ -134,9 +133,10 @@ ot_trans <- function(rule, p, d, kind) {
     }
     if (d2 == -1) {
       # TD but still trailing by one after a team scored TD + 2: go for two
+      # from the 2
       return(list(
-        cont(1L, 3, 0, w = ot_2pt_prob),
-        term(0, w = 1 - ot_2pt_prob)
+        cont(1L, 3, 0, w = two_point_prob_from_2),
+        term(0, w = 1 - two_point_prob_from_2)
       ))
     }
     return(list(term(0)))
@@ -590,9 +590,11 @@ ot_wp_states_unique <- function(st, use_spread) {
         (1 - pm) *
           ot_row_post_score(dp, rule[i], p[i], st$d[i], secs[i], s[i])
     } else if (k == "twopt") {
-      out[i] <- ot_2pt_prob *
+      # a try that was lined up, so its make probability depends on the spot
+      pm <- two_point_prob(st$yardline_100[i])
+      out[i] <- pm *
         ot_row_post_score(dp, rule[i], p[i], st$d[i] + 2, secs[i], s[i]) +
-        (1 - ot_2pt_prob) *
+        (1 - pm) *
           ot_row_post_score(dp, rule[i], p[i], st$d[i], secs[i], s[i])
     }
   }

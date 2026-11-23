@@ -1,6 +1,7 @@
 ################################################################################
 # Author: Ben Baldwin
-# Purpose: Estimate nflfastR models for EP, CP, and WP
+# Purpose: Estimate nflfastR models for CP and WP (the EP model is built by
+# data-raw/ep_model.R)
 ################################################################################
 
 library(tidyverse)
@@ -10,105 +11,11 @@ source('R/helper_add_cp_cpoe.R')
 source('R/helper_add_nflscrapr_mutations.R')
 
 
-################################################################################
-# Estimate EP model
-################################################################################
-
 # from remote
 # pbp_data <- readRDS(url('https://github.com/nflverse/nflfastR-data/blob/master/models/cal_data.rds?raw=true'))
 
 # from local
 pbp_data <- readRDS('../nflfastR-data/models/cal_data.rds')
-
-#function in helper_add_ep_wp.R
-model_data <- pbp_data |>
-  make_model_mutations() |>
-  mutate(
-    label = case_when(
-      Next_Score_Half == "Touchdown" ~ 0,
-      Next_Score_Half == "Opp_Touchdown" ~ 1,
-      Next_Score_Half == "Field_Goal" ~ 2,
-      Next_Score_Half == "Opp_Field_Goal" ~ 3,
-      Next_Score_Half == "Safety" ~ 4,
-      Next_Score_Half == "Opp_Safety" ~ 5,
-      Next_Score_Half == "No_Score" ~ 6
-    ),
-    label = as.factor(label),
-    # Calculate the drive difference between the next score drive and the
-    # current play drive:
-    Drive_Score_Dist = Drive_Score_Half - drive,
-    # Create a weight column based on difference in drives between play and next score:
-    Drive_Score_Dist_W = (max(Drive_Score_Dist) - Drive_Score_Dist) /
-      (max(Drive_Score_Dist) - min(Drive_Score_Dist)),
-    # Create a weight column based on score differential:
-    ScoreDiff_W = (max(abs(score_differential), na.rm = T) -
-      abs(score_differential)) /
-      (max(abs(score_differential), na.rm = T) -
-        min(abs(score_differential), na.rm = T)),
-    # Add these weights together and scale again:
-    Total_W = Drive_Score_Dist_W + ScoreDiff_W,
-    Total_W_Scaled = (Total_W - min(Total_W, na.rm = T)) /
-      (max(Total_W, na.rm = T) - min(Total_W, na.rm = T))
-  ) |>
-  filter(
-    !is.na(defteam_timeouts_remaining),
-    !is.na(posteam_timeouts_remaining),
-    !is.na(yardline_100)
-  ) |>
-  select(
-    label,
-    half_seconds_remaining,
-    yardline_100,
-    home,
-    retractable,
-    dome,
-    outdoors,
-    ydstogo,
-    era0,
-    era1,
-    era2,
-    era3,
-    era4,
-    down1,
-    down2,
-    down3,
-    down4,
-    posteam_timeouts_remaining,
-    defteam_timeouts_remaining,
-    Total_W_Scaled
-  )
-
-nrounds <- 525
-params <-
-  list(
-    booster = "gbtree",
-    objective = "multi:softprob",
-    eval_metric = c("mlogloss"),
-    num_class = 7,
-    eta = 0.025,
-    gamma = 1,
-    subsample = 0.8,
-    colsample_bytree = 0.8,
-    max_depth = 5,
-    min_child_weight = 1
-  )
-
-model_data <- model_data |>
-  mutate(label = as.numeric(label), label = label - 1)
-
-full_train <- xgboost::xgb.DMatrix(
-  model.matrix(~ . + 0, data = model_data |> select(-label, -Total_W_Scaled)),
-  label = model_data$label,
-  weight = model_data$Total_W_Scaled
-)
-
-set.seed(2013) #GoHawks
-ep_model <- xgboost::xgboost(
-  params = params,
-  data = full_train,
-  nrounds = nrounds,
-  verbose = 2
-)
 
 ################################################################################
 # Estimate CP model
@@ -268,7 +175,6 @@ wp_model <- xgboost::xgboost(
 ################################################################################
 
 usethis::use_data(
-  ep_model,
   wp_model,
   wp_model_spread,
   cp_model,

@@ -350,16 +350,24 @@ add_nflscrapr_mutations <- function(pbp) {
   ]
   # Indicator columns for both QB kneels, spikes, scrambles,
   # no huddle, shotgun plays:
+  # A kneel down on a two point try after a touchdown that decides the game
+  # ("rushes kneels. ATTEMPT FAILS.") stays a run, so the series still ends in
+  # the touchdown
   data.table::set(
     d,
     j = "qb_kneel",
     value = as.numeric(
-      stringi::stri_detect_fixed(d$play_description, " kneels ") &
-        d$kickoff_attempt != 1
+      is_qb_kneel(d$play_description) &
+        d$kickoff_attempt != 1 &
+        d$two_point_attempt != 1
     )
   )
+  data.table::set(
+    d,
+    j = "qb_spike",
+    value = as.numeric(is_qb_spike(d$play_description))
+  )
   flags <- c(
-    qb_spike = " spiked ",
     qb_scramble = " scrambles ",
     shotgun = "Shotgun",
     no_huddle = "No Huddle"
@@ -697,33 +705,46 @@ points_scored <- function(d, team) {
 kickoff_finder <- "(Offside on Free Kick)|(Delay of Kickoff)|(Onside Kick formation)|(kicks onside)|( kicks [:digit:]+ yards from)"
 
 
+# 0/1 indicators of the eras of the EP, CP, WP and xYAC models. era5 is only
+# used by the EP model, where the seasons since 2022 are an era of their own.
+# era4 keeps these seasons, because the CP, WP and xYAC models use it.
+model_eras <- function(season) {
+  list(
+    era0 = as.numeric(season <= 2001),
+    era1 = as.numeric(season > 2001 & season <= 2005),
+    era2 = as.numeric(season > 2005 & season <= 2013),
+    era3 = as.numeric(season > 2013 & season <= 2017),
+    era4 = as.numeric(season > 2017),
+    era5 = as.numeric(season > 2021)
+  )
+}
+
+# The roof of the models: open and closed retractable roofs and a missing roof
+# are "retractable"
+model_roof_type <- function(roof) {
+  data.table::fifelse(
+    is.na(roof) | roof == "open" | roof == "closed",
+    "retractable",
+    as.character(roof)
+  )
+}
+
 ##some steps to prepare the data for the EP/WP/CP models
 make_model_mutations <- function(pbp) {
   #for EP, CP, and WP model, xgb needs 0/1 for eras
-  era0 <- as.numeric(pbp$season <= 2001)
-  era1 <- as.numeric(pbp$season > 2001 & pbp$season <= 2005)
-  era2 <- as.numeric(pbp$season > 2005 & pbp$season <= 2013)
-  era3 <- as.numeric(pbp$season > 2013 & pbp$season <= 2017)
-  era4 <- as.numeric(pbp$season > 2017)
-  model_roof <- data.table::fifelse(
-    is.na(pbp$roof) | pbp$roof == "open" | pbp$roof == "closed",
-    "retractable",
-    as.character(pbp$roof)
-  )
-  cols <- list(
-    era0 = era0,
-    era1 = era1,
-    era2 = era2,
-    era3 = era3,
-    era4 = era4,
-    down1 = as.numeric(pbp$down == 1),
-    down2 = as.numeric(pbp$down == 2),
-    down3 = as.numeric(pbp$down == 3),
-    down4 = as.numeric(pbp$down == 4),
-    home = as.numeric(pbp$posteam == pbp$home_team),
-    retractable = as.numeric(model_roof == "retractable"),
-    dome = as.numeric(model_roof == "dome"),
-    outdoors = as.numeric(model_roof == "outdoors")
+  model_roof <- model_roof_type(pbp$roof)
+  cols <- c(
+    model_eras(pbp$season),
+    list(
+      down1 = as.numeric(pbp$down == 1),
+      down2 = as.numeric(pbp$down == 2),
+      down3 = as.numeric(pbp$down == 3),
+      down4 = as.numeric(pbp$down == 4),
+      home = as.numeric(pbp$posteam == pbp$home_team),
+      retractable = as.numeric(model_roof == "retractable"),
+      dome = as.numeric(model_roof == "dome"),
+      outdoors = as.numeric(model_roof == "outdoors")
+    )
   )
   if (data.table::is.data.table(pbp)) {
     data.table::set(pbp, j = names(cols), value = cols)
@@ -747,6 +768,35 @@ fix_scrambles <- function(pbp) {
   # This marks scrambles in the 1999 - 2005 season using charting data
   # Because NFL did not put scramble in play description during this season
   # Data from Aaron Schatz!
+}
+
+# Kneel downs and spikes by their description. Most say "kneels" and "spiked
+# the ball", but some feeds write "kneels," (e.g. San Diego home games until
+# 2016), and in 2001 and 2002 they are free text notes after the play: "Took a
+# knee.", "Kneel down", "dropped to one knee", "QB spikes ball", "Spiked ball"
+# (#603). Those spike notes always follow "pass incomplete.", which keeps out
+# the linebackers Takeo and Brandon Spikes ("T.Spikes"), penalties for
+# "spiking the ball after the play" and injury notes. "Fake kneel by QB" is a
+# run. Checked on every play since 2001.
+is_qb_kneel <- function(play_description) {
+  stringi::stri_detect_regex(
+    play_description,
+    paste0(
+      "(?i)(?<!fake )\\bkneel(s|ed|ing)?\\b",
+      "|\\b(take|takes|took|taking|drop|drops|dropped|dropping) ",
+      "(a |one |to one |to a )?knee\\b"
+    )
+  )
+}
+
+# Two checks, because one regex with " spiked " as another alternative is twice
+# as slow
+is_qb_spike <- function(play_description) {
+  stringi::stri_detect_fixed(play_description, " spiked ") |
+    stringi::stri_detect_regex(
+      play_description,
+      "pass incomplete\\..*(?<![A-Z]\\. ?)\\b(?i:spik(e|es|ed))\\b"
+    )
 }
 
 translate_play_type_nfl <- function(
