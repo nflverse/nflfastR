@@ -626,7 +626,13 @@ cat(
   "\n"
 )
 stopifnot(fit$convergence == 0, fit$max_gradient < 1e-6)
-ep_model <- list(coefficients = fit$coefficients, classes = ep_classes)
+# the layout of the terms goes with the coefficients, so the package can check
+# that its code still has the terms the model was fit with
+ep_model <- list(
+  coefficients = fit$coefficients,
+  classes = ep_classes,
+  layout = ep_spline_layout()
+)
 
 # ---- checks -----------------------------------------------------------------
 log_loss <- function(probs, label) {

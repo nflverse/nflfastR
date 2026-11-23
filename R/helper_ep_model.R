@@ -271,12 +271,27 @@ ep_spline_terms <- list(
   era_down = list(margins = character(), level = "era_down")
 )
 
-# The basis of a margin for the states `features`
+# What the coefficients of a model mean: its terms, their curves and levels,
+# and the ranges of the scales (without their functions). data-raw/ep_model.R
+# stores it with the model, and ep_model_predict() checks that the code still
+# has the layout the model was fit with.
+ep_spline_layout <- function() {
+  list(
+    scales = lapply(ep_spline_scales, function(s) s[c("var", "lo", "hi")]),
+    margins = ep_spline_margins,
+    terms = ep_spline_terms,
+    level_count = ep_spline_level_count
+  )
+}
+
+# The basis of a margin for the states `features`. The state is moved into
+# the range of the scale first, because the functions of the scales aren't
+# defined everywhere (e.g. a clock below -10 s on the log scale).
 ep_spline_margin <- function(features, margin) {
   m <- ep_spline_margins[[margin]]
   s <- ep_spline_scales[[m$scale]]
   ep_spline_basis(
-    s$f(features[, s$var]),
+    s$f(pmin(pmax(features[, s$var], s$lo), s$hi)),
     s$f(s$lo),
     s$f(s$hi),
     m$n,
@@ -485,9 +500,16 @@ ep_model_tables <- function(coefficients) {
   )
 }
 
-# The tables of the coefficients, made once per session (they take a few
-# tenths of a second)
-ep_model_tables_cached <- function(coefficients) {
+# The tables of the coefficients of `model`, made once per session (they take
+# a few tenths of a second)
+ep_model_tables_cached <- function(model) {
+  stopifnot(
+    "The EP model was fit with other terms than `ep_spline_terms`" = identical(
+      model$layout,
+      ep_spline_layout()
+    )
+  )
+  coefficients <- model$coefficients
   cached <- nflfastR_cache[["ep_model_tables"]]
   if (is.null(cached) || !identical(cached$coefficients, coefficients)) {
     cached <- list(
@@ -501,17 +523,20 @@ ep_model_tables_cached <- function(coefficients) {
 
 # The probabilities of the next score (one row per play, one column per
 # outcome) for a matrix with the columns `ep_model_features`. They are NA for
-# plays with a missing feature. Plays with a yard line or distance that isn't
-# a whole number are computed term by term with ep_model_eta_exact().
+# plays with a missing feature or a down other than 1 to 4. Plays with a yard
+# line or distance that isn't a whole number are computed term by term with
+# ep_model_eta_exact().
 ep_model_predict <- function(features, model = ep_model) {
-  tables <- ep_model_tables_cached(model$coefficients)
+  tables <- ep_model_tables_cached(model)
   probs <- matrix(
     NA_real_,
     nrow(features),
     length(model$classes),
     dimnames = list(NULL, model$classes)
   )
-  ok <- stats::complete.cases(features)
+  ok <- stats::complete.cases(features) &
+    rowSums(features[, c("down1", "down2", "down3", "down4"), drop = FALSE]) ==
+      1
   yardline <- pmin(pmax(features[, "yardline_100"], 1), 99)
   ydstogo <- pmin(pmax(features[, "ydstogo"], 1), 40)
   whole <- ok & yardline == round(yardline) & ydstogo == round(ydstogo)
@@ -551,7 +576,7 @@ ep_model_predict <- function(features, model = ep_model) {
     # only the rows where the term isn't 0
     rows <- level > 0
     if (isTRUE(ep_spline_margins[[margin]]$fade)) {
-      rows <- rows & b$val[, 1] + b$val[, 2] + b$val[, 3] > 0
+      rows <- rows & rowSums(b$val) > 0
     }
     rows <- if (all(rows)) NULL else which(rows)
     if (!is.null(rows) && !length(rows)) {

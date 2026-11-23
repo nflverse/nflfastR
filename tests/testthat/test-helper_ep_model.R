@@ -45,12 +45,26 @@ test_that("states outside of the range of the model get the nearest state", {
   expect_identical(ep_state(ytg = 0), ep_state(ytg = 1))
   expect_identical(ep_state(ytg = 60), ep_state(ytg = 40))
   expect_identical(ep_state(t = -6), ep_state(t = 0))
+  expect_identical(ep_state(t = -60), ep_state(t = 0))
+  # computed term by term
+  expect_identical(ep_state(yl = 105, ytg = 2.5), ep_state(yl = 99, ytg = 2.5))
 })
 
 test_that("plays with a missing feature are NA and don't change the others", {
   p <- ep_state(down = c(1, NA, 2), yl = c(75, 50, NA), t = c(900, 900, 900))
   expect_identical(p[1, ], ep_state()[1, ])
   expect_all_true(as.vector(is.na(p[2:3, ])))
+  for (season in c(2020, 2025)) {
+    p <- ep_state(down = c(1, 5, 0), season = season)
+    expect_identical(p[1, ], ep_state(season = season)[1, ])
+    expect_all_true(as.vector(is.na(p[2:3, ])))
+  }
+})
+
+test_that("a model with another layout of the terms is an error", {
+  model <- ep_model
+  model$layout$terms <- rev(model$layout$terms)
+  expect_snapshot(ep_state(model = model), error = TRUE)
 })
 
 test_that("the tables give the predictions of the terms", {
