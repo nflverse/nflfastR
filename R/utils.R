@@ -202,8 +202,8 @@ fetch_raw <- function(
 }
 
 # Not called inside the package, but needed: devtools::release() calls it and
-# adds these bullets to the release checklist. my_rhub_check(),
-# rhub_check_platforms() and nflverse_thanks() are only used from there.
+# adds these bullets to the release checklist. my_rhub_check() and
+# nflverse_thanks() are only used from there.
 # jarl-ignore unused_function: called by devtools::release()
 release_bullets <- function() {
   c(
@@ -268,53 +268,20 @@ load_sysdata_booster <- function(key, raw, version, what) {
 }
 
 my_rhub_check <- function() {
-  cli::cli_text("Please run the following code")
-  cli::cli_text(
-    "{.run rhub::rhub_check(platforms = nflfastR:::rhub_check_platforms())}"
+  cli::cli_rule("Please run the following code")
+  cli::cli_code(
+    lines = c(
+      "plts <- setdiff(",
+      "  # need to query platforms every time because some may have been",
+      "  # deprecated since the last time",
+      "  rhub::rhub_platforms()$name,",
+      "  # don't run on these platforms",
+      "  c('rchk', 'nosuggests', 'valgrind')",
+      ")",
+      "rhub::rhub_check(platforms = plts)"
+    )
   )
-}
-
-rhub_check_platforms <- function() {
-  # plts created with
-  # out <- paste0('"', rhub::rhub_platforms()$name, '"', collapse = ",\n")
-  # cli::cli_code(paste0(
-  #   "plts <- c(\n", out, "\n)"
-  # ))
-
-  plts <- c(
-    "linux",
-    "m1-san",
-    "macos",
-    "macos-arm64",
-    "windows",
-    "atlas",
-    "c23",
-    "clang-asan",
-    "clang-ubsan",
-    "clang16",
-    "clang17",
-    "clang18",
-    "clang19",
-    "clang20",
-    "donttest",
-    "gcc-asan",
-    "gcc13",
-    "gcc14",
-    "gcc15",
-    "intel",
-    "mkl",
-    "nold",
-    "noremap",
-    "nosuggests",
-    "rchk",
-    "ubuntu-clang",
-    "ubuntu-gcc12",
-    "ubuntu-next",
-    "ubuntu-release",
-    "valgrind"
-  )
-  exclude <- c("rchk", "nosuggests", "valgrind")
-  plts[!plts %in% exclude]
+  cli::cli_rule()
 }
 
 nflverse_thanks <- function() {
