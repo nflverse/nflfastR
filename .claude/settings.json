@@ -5,5 +5,19 @@
       "Read(.Renviron)",
       "Read(.env)"
     ]
+  },
+  "extraKnownMarketplaces": {
+    "posit-dev-skills": {
+      "source": {
+        "source": "github",
+        "repo": "posit-dev/skills"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "r-lib@posit-dev-skills": true,
+    "posit-dev@posit-dev-skills": true,
+    "github@posit-dev-skills": true,
+    "open-source@posit-dev-skills": true
   }
 }

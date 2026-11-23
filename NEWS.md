@@ -20,6 +20,8 @@
 - `build_nflfastR_pbp()` gained the argument `add_xyac`. Set it to `FALSE` to skip `add_xyac()`.
 - `build_nflfastR_pbp()` no longer drops games without play stats, e.g. right before kickoff.
 - `build_nflfastR_pbp()` and `fast_scraper()` no longer add the class `data.table` to their output, which was never a data.table.
+- `build_nflfastR_pbp()` and `fast_scraper()` no longer hide all warnings of the build.
+- `build_nflfastR_pbp()` and `fast_scraper()` now fail with a clear error if the schedules can't be loaded or don't have a game. Before, a failed download led to an unrelated error in a later step, and a game missing from the schedules got missing game data (e.g. `roof` and `spread_line`) without a warning.
 - `calculate_expected_points()` no longer drops unrelated columns, replaces existing `ep` columns instead of duplicating them, and returns the type of its input.
 - `calculate_series_conversion_rates()` is now about 35 times faster and fails with a clear error if `pbp` is missing a required column.
 - `calculate_stats()` is now 9 to 30 times faster with unchanged output.
