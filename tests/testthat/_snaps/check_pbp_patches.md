@@ -21,3 +21,14 @@
       Error in `check_pbp_patches()`:
       ! '<file>' doesn't have the patches that are checked. Run `devtools::load_all()` from the root of the package first.
 
+# check_pbp_patches() reports values with braces
+
+    Code
+      check_pbp_patches(dir = test_dir)
+    Message
+      Checking the patches of 1 game
+    Condition
+      Error in `check_pbp_patches()`:
+      ! 1 patch needs a look:
+      x desc is "{a} }" (check)
+

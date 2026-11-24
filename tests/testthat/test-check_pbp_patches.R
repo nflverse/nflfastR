@@ -1,7 +1,10 @@
 test_that("all patches fit the raw data", {
   skip_on_cran()
   skip_if_offline("github.com")
-  problems <- pbp_patch_problems(dir = NULL)
+  problems <- tryCatch(
+    pbp_patch_problems(dir = NULL),
+    nflfastR_patch_download_failed = \(e) skip(conditionMessage(e))
+  )
   expect_identical(paste(problems$message, problems$todo), character())
 })
 
@@ -66,4 +69,77 @@ test_that("check_pbp_patches() only prunes the file of the checked patches", {
     error = TRUE,
     transform = \(x) gsub(other, "<file>", x, fixed = TRUE)
   )
+})
+
+test_that("pbp_patch_problems() works without patches", {
+  local_mocked_bindings(pbp_patches = \() list())
+  problems <- pbp_patch_problems(dir = test_dir, unused = TRUE)
+  expect_identical(nrow(problems), 0L)
+  expect_named(
+    problems,
+    c(
+      "game_id",
+      "play_id",
+      "action",
+      "stat_id",
+      "column",
+      "status",
+      "message",
+      "todo"
+    )
+  )
+})
+
+test_that("pbp_patch_problems() fails with a class if a download fails", {
+  local_pbp_patches(
+    "game_id: 2019_01_GB_CHI; play_id: 1; action: drop_play; reason: r"
+  )
+  local_mocked_bindings(
+    save_raw_pbp = \(...) data.frame(status_code = NA_integer_)
+  )
+  expect_error(
+    pbp_patch_problems(),
+    class = "nflfastR_patch_download_failed"
+  )
+})
+
+test_that("check_pbp_patches() reports values with braces", {
+  local_pbp_patches(
+    "game_id: 2019_01_GB_CHI; play_id: 1; action: drop_play; reason: r"
+  )
+  local_mocked_bindings(
+    pbp_patch_problems = \(...) {
+      data.table::data.table(
+        status = "not_applied",
+        message = "desc is \"{a} }\"",
+        todo = "check"
+      )
+    }
+  )
+  expect_snapshot(check_pbp_patches(dir = test_dir), error = TRUE)
+})
+
+test_that("remove_pbp_patches() splits records at lines of whitespace", {
+  file <- withr::local_tempfile(
+    lines = c(
+      "game_id: 2011_13_DET_NO",
+      "play_id: 1152",
+      "action: drop_play",
+      "reason: r",
+      "  ",
+      "game_id: 2011_13_DET_NO",
+      "play_id: 1655",
+      "action: drop_play",
+      "reason: r"
+    )
+  )
+  remove <- data.table::data.table(
+    game_id = "2011_13_DET_NO",
+    play_id = 1152,
+    action = "drop_play",
+    stat_id = NA_real_,
+    column = NA_character_
+  )
+  remove_pbp_patches(remove, file)
+  expect_identical(read_pbp_patches(file)$play_id, 1655)
 })

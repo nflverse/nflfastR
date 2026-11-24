@@ -16,8 +16,12 @@
 # first, without changing the other records. The other problems need a look,
 # because the error of the raw data may still be there with other play IDs or
 # values.
+#
+# dir is NULL by default, not the option nflfastR.raw_directory: a local copy
+# of the raw data can be outdated, and the patches are checked against the
+# current raw data.
 check_pbp_patches <- function(
-  dir = getOption("nflfastR.raw_directory", default = NULL),
+  dir = NULL,
   unused = TRUE,
   prune = FALSE,
   file = "inst/pbp_patches.dcf",
@@ -42,14 +46,13 @@ check_pbp_patches <- function(
     cli::cli_alert_success(
       "Removed {length(removed)} obsolete or unused patch{?es}:"
     )
-    cli::cli_bullets(stats::setNames(removed, rep("*", length(removed))))
+    cli::cli_bullets(escaped_bullets(removed, "*"))
     problems <- problems[!removable]
   }
   if (nrow(problems) > 0) {
-    bullets <- paste0(problems$message, " (", problems$todo, ")")
     cli::cli_abort(c(
       "{nrow(problems)} patch{?es} need{?s/} a look:",
-      stats::setNames(bullets, rep("x", length(bullets)))
+      escaped_bullets(paste0(problems$message, " (", problems$todo, ")"), "x")
     ))
   }
   cli::cli_alert_success("All patches are applied and change the data")
@@ -75,12 +78,24 @@ check_pbp_patches <- function(
 # check_pbp_patches() checks everything by default.
 #
 # Without dir, the raw data of the patched games is downloaded once into a
-# temporary directory. ... is passed to build_nflfastR_pbp() (e.g. games).
-pbp_patch_problems <- function(
-  dir = getOption("nflfastR.raw_directory", default = NULL),
-  unused = FALSE,
-  ...
-) {
+# temporary directory. If a download fails, the error has class
+# nflfastR_patch_download_failed. ... is passed to build_nflfastR_pbp() (e.g.
+# games).
+pbp_patch_problems <- function(dir = NULL, unused = FALSE, ...) {
+  key <- c("game_id", "play_id", "action", "stat_id", "column")
+  problems <- data.table::data.table(
+    game_id = character(),
+    play_id = numeric(),
+    action = character(),
+    stat_id = numeric(),
+    column = character(),
+    status = character(),
+    message = character(),
+    todo = character()
+  )
+  if (length(pbp_patches()) == 0) {
+    return(problems)
+  }
   patches <- data.table::rbindlist(pbp_patches(), idcol = "game_id")
   ids <- unique(patches$game_id)
   if (is.null(dir)) {
@@ -88,20 +103,15 @@ pbp_patch_problems <- function(
     dir.create(dir)
     on.exit(unlink(dir, recursive = TRUE), add = TRUE)
     downloads <- save_raw_pbp(ids, dir = dir)
-    if (any(downloads$status_code != 200)) {
-      cli::cli_abort("Can't download the raw data of all patched games.")
+    # %in% because a failed download can have the status code NA
+    if (!all(downloads$status_code %in% 200)) {
+      cli::cli_abort(
+        "Can't download the raw data of all patched games.",
+        class = "nflfastR_patch_download_failed"
+      )
     }
   }
 
-  key <- c("game_id", "play_id", "action", "stat_id", "column")
-  problems <- patches[0, key, with = FALSE]
-  problems[,
-    c("status", "message", "todo") := list(
-      character(),
-      character(),
-      character()
-    )
-  ]
   acc <- new.env(parent = emptyenv())
   acc$rows <- list(problems)
 
@@ -212,13 +222,22 @@ patched_game_output <- function(id, dir, ...) {
   list(pbp = columns(pbp), playstats = columns(playstats))
 }
 
+# The bullets of a cli message from text that can contain braces (e.g. values
+# of the data)
+escaped_bullets <- function(text, type) {
+  text <- gsub("}", "}}", gsub("{", "{{", text, fixed = TRUE), fixed = TRUE)
+  stats::setNames(text, rep(type, length(text)))
+}
+
 # Removes patches (rows with the key columns of the patch file) from file. The
 # other records stay as they are, with their line breaks.
 remove_pbp_patches <- function(remove, file) {
   lines <- readLines(file)
-  # a record starts at its first line after an empty line
-  record <- cumsum(lines != "" & c(TRUE, utils::head(lines, -1) == ""))
-  records <- split(lines[lines != ""], record[lines != ""])
+  # a record starts at its first line after an empty line. Like read.dcf(), a
+  # line of only whitespace is empty.
+  empty <- trimws(lines) == ""
+  record <- cumsum(!empty & c(TRUE, utils::head(empty, -1)))
+  records <- split(lines[!empty], record[!empty])
   patches <- read_pbp_patches(file)
   if (length(records) != nrow(patches)) {
     cli::cli_abort("Can't split {.path {file}} into its records.")

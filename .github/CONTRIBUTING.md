@@ -45,7 +45,7 @@ play_id: 1085
 action: set
 column: time
 from: 03:33
-to: 3:34
+to: 03:34
 reason: wrong game clock
 ```
 
@@ -59,7 +59,8 @@ reason: wrong game clock
   | `yrdln` | `yardline` |
   | `ydstogo` | `yards_to_go` |
   | `desc` | `play_description` |
-  | `play_type` | `play_type_nfl` |
+
+  `play_type` is derived later from `play_type_nfl` and the play description (e.g. kneel downs and spikes). A patch of `play_type_nfl` changes `play_type_nfl`, but not necessarily `play_type`.
 
   `from` and `to` are converted to the class of the column. The value is only changed if it is `from` on all patched plays.
 

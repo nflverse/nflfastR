@@ -135,8 +135,9 @@ patch_drop_stats <- function(stats, id) {
   }
   drop <- logical(nrow(stats))
   for (i in seq_len(nrow(patches))) {
-    hit <- stats$playId == patches$play_id[i] &
-      stats$statId == patches$stat_id[i]
+    # %in% because playId or statId can be NA
+    on_play <- stats$playId %in% patches$play_id[i]
+    hit <- on_play & stats$statId %in% patches$stat_id[i]
     # Not obsolete for sure even if the play is there: the NFL may have changed
     # the stat ID and kept the error
     if (!any(hit)) {

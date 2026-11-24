@@ -87,10 +87,13 @@ test_that("drop_play and drop_stat patches remove raw plays and stats", {
   )
   expect_identical(patch_drop_plays(plays, "2019_02_GB_CHI"), plays)
 
-  stats <- data.table::data.table(playId = c(1, 1, 2), statId = c(10, 5, 10))
+  stats <- data.table::data.table(
+    playId = c(1, 1, 1, 2),
+    statId = c(10, 5, NA, 10)
+  )
   expect_identical(
     patch_drop_stats(stats, "2019_01_GB_CHI"),
-    data.table::data.table(playId = c(1, 2), statId = c(5, 10))
+    data.table::data.table(playId = c(1, 1, 2), statId = c(5, NA, 10))
   )
 })
 
