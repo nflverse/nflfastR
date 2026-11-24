@@ -106,6 +106,15 @@ test_that("set patches change a column before anything is derived from it", {
   )
 })
 
+test_that("fast_scraper() muffles patches that don't fit the raw data", {
+  local_pbp_patches(
+    "game_id: 2019_01_GB_CHI; play_id: 99999; action: drop_play; reason: r"
+  )
+  expect_no_warning(
+    suppressMessages(load_game("2019_01_GB_CHI", p = \(...) NULL, test_dir))
+  )
+})
+
 test_that("patches that don't fit the raw data warn", {
   local_pbp_patches(
     "game_id: 2019_01_GB_CHI; play_id: 9; action: drop_play; reason: r",

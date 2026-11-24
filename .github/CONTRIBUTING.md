@@ -65,7 +65,7 @@ reason: wrong game clock
 
 `drop_play` and `drop_stat` patches also apply to the play stats that `calculate_stats()` uses. These are built separately (release `playstats` of nflverse/nflverse-pbp), so a new patch reaches `calculate_stats()` once they are rebuilt. `set` patches only change the play-by-play data.
 
-A patch that doesn't fit the raw data (a missing play or stat, a value other than `from`) warns with class `nflfastR_patch_not_applied` and changes nothing. `build_nflfastR_pbp()` suppresses these warnings. A `set` patch of a column that doesn't exist or with a value that can't be converted is an error, and `build_nflfastR_pbp()` skips the game, so the tests check both for the patches in the file.
+A patch that doesn't fit the raw data (a missing play or stat, a value other than `from`) warns with class `nflfastR_patch_not_applied` and changes nothing. `build_nflfastR_pbp()` and `fast_scraper()` muffle these warnings, because they are for the maintainers: the weekly check below reports them. A `set` patch of a column that doesn't exist or with a value that can't be converted is an error, and `build_nflfastR_pbp()` skips the game, so the tests check both for the patches in the file.
 
 ### Checking and cleaning the patches
 
