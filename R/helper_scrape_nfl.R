@@ -185,6 +185,13 @@ get_pbp_nfl <- function(
     )
   )
 
+  # errors of the raw data that are patched one by one, see
+  # inst/pbp_patches.dcf. Before anything is derived from the parsed plays, so
+  # a patch also changes what is derived from its column. Patches of the
+  # columns that later steps overwrite are applied after them (see
+  # late_patch_columns).
+  patch_set_values(combined, id)
+
   # env avoids that season, week and game_id refer to columns
   combined[,
     `:=`(
@@ -249,7 +256,7 @@ get_pbp_nfl <- function(
     fix_bad_games(combined)
   }
 
-  patch_set_values(combined, id)
+  patch_set_values(combined, id, late = TRUE)
 
   # nfl didn't fill in first downs on this game
   if (id == "2018_01_ATL_PHI") {

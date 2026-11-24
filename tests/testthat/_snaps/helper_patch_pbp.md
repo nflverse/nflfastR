@@ -5,6 +5,12 @@
     Condition
       Warning:
       Patch of "2019_01_GB_CHI" not applied:
+      x down is 2, 3, 4, 5, and NA on some plays, not 1 as the patch expects
+    Code
+      patch_set_values(pbp, "2019_01_GB_CHI", late = TRUE)
+    Condition
+      Warning:
+      Patch of "2019_01_GB_CHI" not applied:
       x posteam of play_id 1 is "KC", not "CHI" as the patch expects
       Warning:
       Patch of "2019_01_GB_CHI" not applied:

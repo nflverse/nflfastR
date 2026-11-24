@@ -8,12 +8,14 @@
 #   from it).
 # - "drop_stat" removes all rows of a stat ID on a play from the raw play stats
 #   (before tidy_play_stats() derives the stat columns from them).
-# - "set" changes a column of the parsed game (after fix_posteams() and
-#   fix_bad_games(), before duplicated plays are removed). It only changes the
-#   value if the current value is `from`, so a patch that doesn't fit the raw
-#   data anymore (e.g. the NFL fixed it) warns instead of silently doing
-#   something else. A `set` patch without `play_id` changes all plays of the
-#   game.
+# - "set" changes a column of the parsed game, before anything is derived from
+#   it (e.g. yardline_100 from yardline). Patches of the columns that
+#   get_pbp_nfl() overwrites later (late_patch_columns) are applied after
+#   fix_posteams() and fix_bad_games(). Both before duplicated plays are
+#   removed. A set patch only changes the value if the current value is
+#   `from`, so a patch that doesn't fit the raw data anymore (e.g. the NFL
+#   fixed it) warns instead of silently doing something else. A `set` patch
+#   without `play_id` changes all plays of the game.
 #
 # A patch that doesn't fit warns, and the warning says whether the patch is
 # obsolete (a set patch whose column has the value `to` now).
@@ -150,10 +152,28 @@ patch_drop_stats <- function(stats, id) {
   if (any(drop)) stats[!drop] else stats
 }
 
-# Changes values of the parsed game by reference
-patch_set_values <- function(pbp, id) {
+# Columns that get_pbp_nfl() overwrites after it applies the first set
+# patches: posteam (fix_posteams()), goal_to_go and the team columns of
+# fix_bad_games(). Their patches are applied after these steps.
+late_patch_columns <- c(
+  "posteam",
+  "goal_to_go",
+  "td_team",
+  "penalty_team",
+  "safety_team",
+  "return_team",
+  "fumble_recovery_1_team",
+  "timeout_team"
+)
+
+# Changes values of the parsed game by reference. With late = TRUE, only the
+# patches of late_patch_columns, otherwise all others.
+patch_set_values <- function(pbp, id, late = FALSE) {
   patches <- game_patches(id, "set")
-  if (is.null(patches)) {
+  if (!is.null(patches)) {
+    patches <- patches[(patches$column %chin% late_patch_columns) == late]
+  }
+  if (is.null(patches) || nrow(patches) == 0) {
     return(invisible(pbp))
   }
   for (i in seq_len(nrow(patches))) {
@@ -176,15 +196,18 @@ patch_set_values <- function(pbp, id) {
     current <- pbp[[column]][rows]
     from <- patch_value(patches$from[i], current, id, column)
     to <- patch_value(patches$to[i], current, id, column)
-    if (!all(is_value(current, from))) {
-      # The raw data has the correct value now
-      patch_warn(
-        id,
-        patches[i],
-        "{.field {column}} of {.field play_id} {play_id} is \\
-        {.val {unique(current)}}, not {.val {from}} as the patch expects",
-        obsolete = all(is_value(current, to))
-      )
+    fits <- is_value(current, from)
+    if (!all(fits)) {
+      # obsolete if the raw data has the correct value now
+      other <- cli::cli_vec(unique(current[!fits]), list("vec-trunc" = 3))
+      msg <- if (is.na(play_id)) {
+        "{.field {column}} is {.val {other}} on some plays, not \\
+        {.val {from}} as the patch expects"
+      } else {
+        "{.field {column}} of {.field play_id} {play_id} is {.val {other}}, \\
+        not {.val {from}} as the patch expects"
+      }
+      patch_warn(id, patches[i], msg, obsolete = all(is_value(current, to)))
       next
     }
     data.table::set(pbp, i = rows, j = column, value = to)

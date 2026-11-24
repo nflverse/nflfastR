@@ -51,7 +51,7 @@ reason: wrong game clock
 
 - `drop_play` removes the play from the raw plays, before anything is derived from it. Use it for plays the raw data has twice.
 - `drop_stat` removes all rows of the stat ID on the play from the raw play stats, before the stat columns (`rush_attempt`, `passer_player_id`, `td_team`, ...) are derived from them. Prefer it to `set` patches of stat columns, because one stat ID sets several columns that must agree.
-- `set` changes the value of `column` after the plays are parsed. Some columns have other names at this point than in the final data:
+- `set` changes the value of `column` after the plays are parsed, before anything is derived from it (e.g. `yardline_100` from `yrdln`). The columns that the parser computes again later (`posteam`, `goal_to_go` and the team columns `td_team`, `penalty_team`, `safety_team`, `return_team`, `fumble_recovery_1_team` and `timeout_team`) are patched after that. Some columns have other names at this point than in the final data:
 
   | final data | patch file |
   |---|---|

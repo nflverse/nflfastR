@@ -94,6 +94,18 @@ test_that("drop_play and drop_stat patches remove raw plays and stats", {
   )
 })
 
+test_that("set patches change a column before anything is derived from it", {
+  local_pbp_patches(
+    "game_id: 2019_01_GB_CHI; play_id: 260; action: set; column: yardline; from: GB 40; to: GB 35; reason: r",
+    "game_id: 2019_01_GB_CHI; play_id: 260; action: set; column: posteam; from: CHI; to: GB; reason: r"
+  )
+  pbp <- suppressMessages(get_pbp_nfl("2019_01_GB_CHI", dir = test_dir))
+  expect_identical(
+    as.list(pbp[play_id == 260, list(yardline, yardline_number, posteam)]),
+    list(yardline = "GB 35", yardline_number = 35, posteam = "GB")
+  )
+})
+
 test_that("patches that don't fit the raw data warn", {
   local_pbp_patches(
     "game_id: 2019_01_GB_CHI; play_id: 9; action: drop_play; reason: r",
@@ -137,7 +149,7 @@ test_that("patches that don't fit say whether the raw data was fixed", {
   )
   pbp <- data.table::data.table(play_id = c(1, 2), posteam = c("GB", "KC"))
   expect_identical(
-    obsolete(patch_set_values(pbp, "2019_01_GB_CHI")),
+    obsolete(patch_set_values(pbp, "2019_01_GB_CHI", late = TRUE)),
     c(TRUE, FALSE)
   )
 })
@@ -156,7 +168,10 @@ test_that("set patches change values of the class of the column", {
     posteam = "GB",
     down = c(1, 2, NA)
   )
+  # posteam is one of late_patch_columns
   patch_set_values(pbp, "2019_01_GB_CHI")
+  expect_identical(pbp$posteam, rep("GB", 3))
+  patch_set_values(pbp, "2019_01_GB_CHI", late = TRUE)
   expect_identical(
     pbp,
     data.table::data.table(
@@ -172,11 +187,20 @@ test_that("set patches change values of the class of the column", {
 test_that("set patches only change the value they expect", {
   local_pbp_patches(
     "game_id: 2019_01_GB_CHI; play_id: 1; action: set; column: posteam; from: CHI; to: GB; reason: r",
-    "game_id: 2019_01_GB_CHI; play_id: 9; action: set; column: posteam; from: CHI; to: GB; reason: r"
+    "game_id: 2019_01_GB_CHI; play_id: 9; action: set; column: posteam; from: CHI; to: GB; reason: r",
+    "game_id: 2019_01_GB_CHI; action: set; column: down; from: 1; to: 2; reason: r"
   )
-  pbp <- data.table::data.table(play_id = c(1, 2), posteam = "KC")
-  expect_snapshot(patch_set_values(pbp, "2019_01_GB_CHI"))
-  expect_identical(pbp$posteam, c("KC", "KC"))
+  pbp <- data.table::data.table(
+    play_id = 1:7,
+    posteam = "KC",
+    down = c(1, 1, 2, 3, 4, 5, NA)
+  )
+  expect_snapshot({
+    patch_set_values(pbp, "2019_01_GB_CHI")
+    patch_set_values(pbp, "2019_01_GB_CHI", late = TRUE)
+  })
+  expect_identical(pbp$posteam, rep("KC", 7))
+  expect_identical(pbp$down, c(1, 1, 2, 3, 4, 5, NA))
 })
 
 test_that("set patches with a wrong column or value fail", {
