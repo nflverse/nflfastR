@@ -192,14 +192,15 @@ ot_tempo <- function(secs) {
   )$y
 }
 
-# (used by data-raw/ot_wp_model.R, ot_rows_scrimmage() has its own version
-# for many rows)
+# probabilities that a possession with mean time mu (one row each) ends at each
+# node. data-raw/ot_wp_model.R builds the DP tables with the same function, so
+# the tables and the valuation of the current possession agree.
 ot_pmf <- function(mu, shape) {
-  up <- (seq_len(ot_n) + 0.5) * ot_step
-  scale <- max(mu, 3) / shape
-  cdf <- stats::pgamma(up, shape, scale = scale)
+  m <- length(mu)
+  up <- matrix((seq_len(ot_n) + 0.5) * ot_step, m, ot_n, byrow = TRUE)
+  cdf <- matrix(stats::pgamma(up, shape, scale = pmax(mu, 3) / shape), m)
   # each node starts where the one before ends (and the first one at 0)
-  cdf - c(0, cdf[-ot_n])
+  cdf - cbind(0, cdf[, -ot_n, drop = FALSE])
 }
 
 ot_load_boosters <- function() {
@@ -313,15 +314,11 @@ ot_rows_scrimmage <- function(dp, rule, p, di, secs, s, P, mu) {
   tt <- secs / ot_step - j
   tleft <- pmax(tt, 0)
   past <- tt <= -1
-  up <- matrix((seq_len(ot_n) + 0.5) * ot_step, m, ot_n, byrow = TRUE)
   tempo <- ot_tempo(secs)
   val <- 0
   for (o in c(1L, 2L, 5L)) {
     kind <- ot_outcomes[o]
-    # ot_pmf() for each row
-    scale <- pmax(mu[, o] * tempo, 3) / shape[[kind]]
-    cdf <- matrix(stats::pgamma(up, shape[[kind]], scale = scale), m)
-    pm <- cdf - cbind(0, cdf[, -ot_n, drop = FALSE])
+    pm <- ot_pmf(mu[, o] * tempo, shape[[kind]])
     pm_in <- pm
     pm_in[past] <- 0
     pm_sum <- rowSums(pm_in)
