@@ -107,7 +107,9 @@ with an era for the seasons since 2022. The comments at the top of
 [`data-raw/ep_model.R`](https://github.com/nflverse/nflfastR/blob/master/data-raw/ep_model.R)
 and
 [`R/helper_ep_model.R`](https://github.com/nflverse/nflfastR/blob/master/R/helper_ep_model.R)
-describe how it is built. For a more detailed description of the
+describe how it is built, and [the pull request that introduced
+it](https://github.com/nflverse/nflfastR/pull/644) summarizes how it
+differs from the previous model. For a more detailed description of the
 motivation for Expected Points models, we highly recommend this paper
 [from the nflscrapR team located
 here](https://arxiv.org/pdf/1802.00998).
