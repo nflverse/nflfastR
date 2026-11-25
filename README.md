@@ -37,7 +37,8 @@ data. `nflfastR` expands upon the features of nflscrapR:
   very quick access
 - Features models for Expected Points, Win Probability, Completion
   Probability, and Yards After the Catch (see section below)
-- Includes a function `update_pbp_db()` that creates and updates a database
+- Includes a function `update_pbp_db()` that creates and updates a
+  database
 
 We owe a debt of gratitude to the original
 [`nflscrapR`](https://github.com/maksimhorowitz/nflscrapR) team, Maksim
@@ -100,8 +101,17 @@ occurred in the postseason.
 Completion Probability, and Expected Yards After the Catch. To read
 about the models, please see [this post on Open Source
 Football](https://opensourcefootball.com/posts/2020-09-28-nflfastr-ep-wp-and-cp-models/).
-For a more detailed description of the motivation for Expected Points
-models, we highly recommend this paper [from the nflscrapR team located
+The Expected Points model has been rebuilt since that post: it is now a
+smooth spline model of the value of a game state for an average team,
+with an era for the seasons since 2022. The comments at the top of
+[`data-raw/ep_model.R`](https://github.com/nflverse/nflfastR/blob/master/data-raw/ep_model.R)
+and
+[`R/helper_ep_model.R`](https://github.com/nflverse/nflfastR/blob/master/R/helper_ep_model.R)
+describe how it is built, and [the pull request that introduced
+it](https://github.com/nflverse/nflfastR/pull/644) summarizes how it
+differs from the previous model. For a more detailed description of the
+motivation for Expected Points models, we highly recommend this paper
+[from the nflscrapR team located
 here](https://arxiv.org/pdf/1802.00998).
 
 Here is a visualization of the Expected Points model by down and
