@@ -479,6 +479,7 @@ utils::globalVariables(
     "is_timeout",
     "kick_distance",
     "kickoff_attempt",
+    "kicking_team_ball",
     "lag_below_half",
     "lag_cum_prob",
     "last_down",

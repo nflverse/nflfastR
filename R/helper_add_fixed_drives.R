@@ -6,11 +6,15 @@ add_drive_results <- function(d) {
   # d is the data.table of build_nflfastR_pbp(), changed by reference.
   # The helper columns drive_posteam and end_of_half are also used by
   # add_series_data(), which drops them.
+  kicker_ball <- kicking_team_ball(d)
+  drive_posteam <- d$posteam
+  drive_posteam[kicker_ball] <- d$defteam[kicker_ball]
   data.table::set(
     d,
-    j = c("drive_posteam", "end_of_half", "is_timeout"),
+    j = c("drive_posteam", "kicking_team_ball", "end_of_half", "is_timeout"),
     value = list(
-      drive_posteam(d),
+      drive_posteam,
+      kicker_ball,
       stringi::stri_detect_regex(
         d$desc,
         "(END QUARTER 2)|(END QUARTER 4)|(END GAME)"
@@ -99,12 +103,9 @@ add_drive_results <- function(d) {
       )
       # first observation of a half is also a new drive
       new_drive[1L] <- 1
-      # if you recovered an onside kick or muffed return, it's a new drive
-      new_drive[
-        (play_type == "kickoff" &
-          (own_kickoff_recovery == 1 | fumble_lost == 1)) %in%
-          TRUE
-      ] <- 1
+      # if you recovered an onside kick or muffed return, it's a new drive. It
+      # starts with the first kickoff if the kickoff had to be replayed.
+      new_drive[kicking_team_ball & !lag(kicking_team_ball) %in% TRUE] <- 1
       # if it's a kickoff and the prior play was a safety, it's a new drive
       new_drive[
         # safety prior play
@@ -131,7 +132,7 @@ add_drive_results <- function(d) {
   ]
   data.table::set(
     d,
-    j = c("is_timeout", "new_drive", "tmp_result"),
+    j = c("kicking_team_ball", "is_timeout", "new_drive", "tmp_result"),
     value = NULL
   )
 
@@ -139,23 +140,19 @@ add_drive_results <- function(d) {
   d
 }
 
-# The team that has the ball in terms of drives and series
-drive_posteam <- function(d) {
-  posteam <- d$posteam
-  swap <-
-    # on kickoffs the kicking team is the defteam but this should be swapped
-    # in terms of drives and series if the kickoff is recovered
-    (d$kickoff_attempt == 1 &
-      (d$own_kickoff_recovery == 1 | d$fumble_lost == 1)) %in%
-    TRUE |
-    # if a kickoff has to be replayed due to a penalty and is then
-    # recovered, the prior (reversed) kickoff shouldn't be a new drive/series
-    (stringi::stri_detect_regex(d$desc, kickoff_finder) &
-      d$own_kickoff_recovery == 0 &
-      data.table::shift(d$own_kickoff_recovery == 1, type = "lead")) %in%
-      TRUE
-  posteam[swap] <- d$defteam[swap]
-  posteam
+# Kickoffs after which the kicking team has the ball: the kicking team is the
+# defteam but has the ball in terms of drives and series if it recovers the
+# kickoff. If a kickoff has to be replayed due to a penalty and the replay is
+# recovered, the reversed kickoff belongs to the kicking team as well, so that
+# it isn't a drive or series of the receiving team.
+kicking_team_ball <- function(d) {
+  recovered <- (d$kickoff_attempt == 1 &
+    (d$own_kickoff_recovery == 1 | d$fumble_lost == 1)) %in%
+    TRUE
+  reversed <- stringi::stri_detect_regex(d$desc, kickoff_finder) &
+    !recovered &
+    data.table::shift(recovered, type = "lead")
+  recovered | reversed %in% TRUE
 }
 
 # The result of each play in terms of drives (or series with series = TRUE),
