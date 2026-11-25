@@ -43,4 +43,8 @@ test_that("verify_game_ids() flags invalid game IDs", {
     verify_game_ids(c("2021_02_LAC_KC", "Hello World")),
     error = TRUE
   )
+  expect_snapshot(
+    verify_game_ids(c("Hello World", "2028_01_LAC_JAX")),
+    error = TRUE
+  )
 })

@@ -157,8 +157,9 @@ raw_pbp_load_schedules <- function(seasons) {
 verify_game_ids <- function(game_ids) {
   valid <- is_valid_game_id(game_ids)
   if (!all(valid)) {
+    invalid <- game_ids[!valid]
     cli::cli_abort(
-      "The game IDs {.val {game_ids[!valid]}} seem to be invalid!"
+      "{cli::qty(invalid)}The game ID{?s} {.val {invalid}} seem{?s/} to be invalid!"
     )
   }
 

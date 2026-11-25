@@ -41,5 +41,13 @@
       verify_game_ids(c("2021_02_LAC_KC", "Hello World"))
     Condition
       Error in `verify_game_ids()`:
-      ! The game IDs "Hello World" seem to be invalid!
+      ! The game ID "Hello World" seems to be invalid!
+
+---
+
+    Code
+      verify_game_ids(c("Hello World", "2028_01_LAC_JAX"))
+    Condition
+      Error in `verify_game_ids()`:
+      ! The game IDs "Hello World" and "2028_01_LAC_JAX" seem to be invalid!
 
