@@ -5,7 +5,8 @@ pbp_input_types <- function(pbp = load_test_pbp()) {
   plain <- strip_nflverse_attributes(pbp)
   class(plain) <- "data.frame"
   list(
-    nflverse_data = pbp,
+    # nflverse_data for load_test_pbp(), the type of other inputs
+    input = pbp,
     nflreadr_data = as_nflreadr_data(plain),
     tibble = as_test_tibble(plain),
     data.frame = plain,

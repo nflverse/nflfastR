@@ -180,8 +180,9 @@ ot_q_interp <- function(Qm, s, tn) {
 # that requires ratio / secs to never increase. All knots are chosen so that
 # this holds (it is checked in tests/testthat/test-helper_add_ot_wp.R).
 # Without it a team with 30 seconds left looked more likely to score than the
-# same team with 60 seconds left. Note that win probability itself is not monotone in the clock:
-# more time also gives the other team a chance to answer.
+# same team with 60 seconds left. Note that win probability itself is not
+# monotone in the clock: more time also gives the other team a chance to
+# answer.
 ot_tempo <- function(secs) {
   stats::approx(
     x = c(0, 45, 75, 105, 150, 210, 270, 330),
