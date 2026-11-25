@@ -540,6 +540,7 @@ utils::globalVariables(
     "punt_return_yards",
     "qb_epa",
     "qb_scramble",
+    "qb_spike",
     "qtr",
     "quarter_end",
     "racr",
