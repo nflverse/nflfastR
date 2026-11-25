@@ -144,12 +144,15 @@ add_drive_results <- function(d) {
 # defteam but has the ball in terms of drives and series if it recovers the
 # kickoff. If a kickoff has to be replayed due to a penalty and the replay is
 # recovered, the reversed kickoff belongs to the kicking team as well, so that
-# it isn't a drive or series of the receiving team.
+# it isn't a drive or series of the receiving team. The reversed kickoff is
+# found by its play_type because its desc doesn't always describe a kick (e.g.
+# "PENALTY on ARI, Delay of Game, ... - No Play.").
 kicking_team_ball <- function(d) {
   recovered <- (d$kickoff_attempt == 1 &
     (d$own_kickoff_recovery == 1 | d$fumble_lost == 1)) %in%
     TRUE
-  reversed <- stringi::stri_detect_regex(d$desc, kickoff_finder) &
+  reversed <- d$play_type %chin%
+    "kickoff" &
     !recovered &
     data.table::shift(recovered, type = "lead")
   recovered | reversed %in% TRUE
