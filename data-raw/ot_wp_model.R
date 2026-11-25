@@ -115,7 +115,8 @@ ot_build_dp <- function(rule, len, kick, models, starts) {
           if (!o %in% c(1L, 2L, 5L)) {
             return(NULL)
           }
-          pm <- ot_pmf(PMF[[ty]][[si]][o] * h, models$shape[[ot_outcomes[o]]])
+          shape <- models$shape[[ot_outcomes[o]]]
+          pm <- ot_pmf(PMF[[ty]][[si]][o] * h, shape)[1, ]
           list(pm = pm, cum = cumsum(pm))
         })
       })
