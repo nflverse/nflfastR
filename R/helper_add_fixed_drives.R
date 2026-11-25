@@ -104,8 +104,13 @@ add_drive_results <- function(d) {
       # first observation of a half is also a new drive
       new_drive[1L] <- 1
       # if you recovered an onside kick or muffed return, it's a new drive. It
-      # starts with the first kickoff if the kickoff had to be replayed.
-      new_drive[kicking_team_ball & !lag(kicking_team_ball) %in% TRUE] <- 1
+      # starts with the first kickoff if the kickoff had to be replayed. Not if
+      # only rows without a team (the GAME row) precede it in the half: the
+      # first drive of the half already starts there.
+      team_before <- lag(cumsum(!is.na(pos)), 1L) %in% 1:.N
+      new_drive[
+        kicking_team_ball & !lag(kicking_team_ball) %in% TRUE & team_before
+      ] <- 1
       # if it's a kickoff and the prior play was a safety, it's a new drive
       new_drive[
         # safety prior play
