@@ -171,14 +171,16 @@ test_that("set patches change values of the class of the column", {
     "game_id: 2019_01_GB_CHI; action: set; column: start_time; from: a; to: b; reason: r",
     "game_id: 2019_01_GB_CHI; play_id: 1; action: set; column: quarter; from: 1; to: 2; reason: r",
     "game_id: 2019_01_GB_CHI; play_id: 2; action: set; column: posteam; from: GB; reason: r",
-    "game_id: 2019_01_GB_CHI; play_id: 3; action: set; column: down; to: 4; reason: r"
+    "game_id: 2019_01_GB_CHI; play_id: 3; action: set; column: down; to: 4; reason: r",
+    "game_id: 2019_01_GB_CHI; play_id: 3; action: set; column: yardline; to: GB 25; reason: r"
   )
   pbp <- data.table::data.table(
     play_id = c(1, 2, 3),
     start_time = "a",
     quarter = 1L,
     posteam = "GB",
-    down = c(1, 2, NA)
+    down = c(1, 2, NA),
+    yardline = c("GB 40", "GB 30", "")
   )
   # posteam is one of late_patch_columns
   patch_set_values(pbp, "2019_01_GB_CHI")
@@ -191,7 +193,8 @@ test_that("set patches change values of the class of the column", {
       start_time = "b",
       quarter = c(2L, 1L, 1L),
       posteam = c("GB", NA, "GB"),
-      down = c(1, 2, 4)
+      down = c(1, 2, 4),
+      yardline = c("GB 40", "GB 30", "GB 25")
     )
   )
 })

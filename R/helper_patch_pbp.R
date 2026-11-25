@@ -195,6 +195,11 @@ patch_set_values <- function(pbp, id, late = FALSE) {
       next
     }
     current <- pbp[[column]][rows]
+    # empty_strings_to_na() hasn't run before the early pass, so a missing
+    # value can be ""
+    if (is.character(current)) {
+      current[current %chin% ""] <- NA_character_
+    }
     from <- patch_value(patches$from[i], current, id, column)
     to <- patch_value(patches$to[i], current, id, column)
     fits <- is_value(current, from)

@@ -60,6 +60,8 @@ reason: wrong game clock
   | `ydstogo` | `yards_to_go` |
   | `desc` | `play_description` |
 
+  Columns that the parser derives from others (e.g. `yardline_number` and `yardline_side` from `yardline`, `quarter_end` from `play_description`, `season`) don't exist yet when `set` patches are applied. Patch the column they are derived from instead.
+
   `play_type` is derived later from `play_type_nfl` and the play description (e.g. kneel downs and spikes). A patch of `play_type_nfl` changes `play_type_nfl`, but not necessarily `play_type`.
 
   `from` and `to` are converted to the class of the column. The value is only changed if it is `from` on all patched plays.
