@@ -130,25 +130,9 @@ test_that("fast_scraper() muffles patches that don't fit the raw data", {
   )
 })
 
-test_that("patches that don't fit the raw data warn", {
+test_that("patches that don't fit the raw data warn whether they are obsolete", {
   local_pbp_patches(
     "game_id: 2019_01_GB_CHI; play_id: 9; action: drop_play; reason: r",
-    "game_id: 2019_01_GB_CHI; play_id: 1; action: drop_stat; stat_id: 99; reason: r"
-  )
-  plays <- data.table::data.table(playId = c(1, 2))
-  expect_warning(
-    expect_identical(patch_drop_plays(plays, "2019_01_GB_CHI"), plays),
-    class = "nflfastR_patch_not_applied"
-  )
-  stats <- data.table::data.table(playId = 1, statId = 10)
-  expect_warning(
-    expect_identical(patch_drop_stats(stats, "2019_01_GB_CHI"), stats),
-    class = "nflfastR_patch_not_applied"
-  )
-})
-
-test_that("patches that don't fit say whether the raw data was fixed", {
-  local_pbp_patches(
     "game_id: 2019_01_GB_CHI; play_id: 1; action: drop_stat; stat_id: 99; reason: r",
     "game_id: 2019_01_GB_CHI; play_id: 9; action: drop_stat; stat_id: 10; reason: r",
     "game_id: 2019_01_GB_CHI; play_id: 1; action: set; column: posteam; from: CHI; to: GB; reason: r",
@@ -165,11 +149,21 @@ test_that("patches that don't fit say whether the raw data was fixed", {
     )
     out
   }
+  plays <- data.table::data.table(playId = c(1, 2))
+  expect_identical(obsolete(patch_drop_plays(plays, "2019_01_GB_CHI")), FALSE)
+  expect_identical(
+    suppressWarnings(patch_drop_plays(plays, "2019_01_GB_CHI")),
+    plays
+  )
   # a missing stat ID isn't obsolete for sure, even if the play is there
   stats <- data.table::data.table(playId = 1, statId = 10)
   expect_identical(
     obsolete(patch_drop_stats(stats, "2019_01_GB_CHI")),
     c(FALSE, FALSE)
+  )
+  expect_identical(
+    suppressWarnings(patch_drop_stats(stats, "2019_01_GB_CHI")),
+    stats
   )
   pbp <- data.table::data.table(play_id = c(1, 2), posteam = c("GB", "KC"))
   expect_identical(
@@ -246,16 +240,13 @@ test_that("set patches with a wrong column or value fail", {
   expect_snapshot(patch_set_values(pbp, "2019_01_GB_CHI"), error = TRUE)
 })
 
-test_that("play and stat IDs of the patch file must be numbers", {
+test_that("patch files with unknown fields or IDs that aren't numbers fail", {
   expect_snapshot(
     local_pbp_patches(
       "game_id: 2019_01_GB_CHI; play_id: 12a4; action: set; column: down; from: 1; to: 2; reason: r"
     ),
     error = TRUE
   )
-})
-
-test_that("unknown fields of the patch file fail", {
   expect_snapshot(
     local_pbp_patches("game_id: 2019_01_GB_CHI; play: 1; reason: r"),
     error = TRUE

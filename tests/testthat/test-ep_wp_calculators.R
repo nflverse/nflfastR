@@ -73,18 +73,7 @@ test_that("calculate_win_probability works", {
 
 test_that("calculate_win_probability doesn't change its input and keeps its type", {
   skip_on_cran()
-  data <- wp_calculator_input()
-  inputs <- list(
-    data.frame = data,
-    tibble = as_test_tibble(data),
-    data.table = data.table::as.data.table(data)
-  )
-  for (x in inputs) {
-    before <- rlang::duplicate(x, shallow = FALSE)
-    out <- calculate_win_probability(x)
-    expect_identical(x, before)
-    expect_identical(class(out), class(x))
-  }
+  expect_input_unchanged(calculate_win_probability, wp_calculator_input())
 })
 
 test_that("calculate_win_probability replaces wp and keeps other columns", {

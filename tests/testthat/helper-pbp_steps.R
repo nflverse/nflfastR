@@ -1,8 +1,7 @@
 # The exported pbp steps work by reference inside build_nflfastR_pbp(). Called
 # by users, they must never change their input and must return the type of
 # the input.
-pbp_input_types <- function() {
-  pbp <- load_test_pbp()
+pbp_input_types <- function(pbp = load_test_pbp()) {
   plain <- strip_nflverse_attributes(pbp)
   class(plain) <- "data.frame"
   list(
@@ -14,8 +13,12 @@ pbp_input_types <- function() {
   )
 }
 
-expect_input_unchanged <- function(fn, same_class = TRUE) {
-  for (x in pbp_input_types()) {
+expect_input_unchanged <- function(
+  fn,
+  pbp = load_test_pbp(),
+  same_class = TRUE
+) {
+  for (x in pbp_input_types(pbp)) {
     before <- rlang::duplicate(x, shallow = FALSE)
     out <- fn(x)
     expect_identical(x, before)

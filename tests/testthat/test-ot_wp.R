@@ -31,6 +31,12 @@ test_that("overtime win probabilities are valid and sensible", {
   # the favorite is better off
   expect_gt(ot_wp1(spread = 7), ot_wp1(spread = 0))
   expect_gt(ot_wp1(spread = 0), ot_wp1(spread = -7))
+  # and so is a team near the goal line
+  expect_gt(ot_wp1(kind = "scrimmage", y = 2, ytg = 2, secs = 500), 0.8)
+  expect_lt(
+    ot_wp1(kind = "scrimmage", y = 90, down = 3, ytg = 20, secs = 500),
+    0.5
+  )
 })
 
 test_that("overtime: both teams get a ball (2025+ regular season)", {
@@ -83,49 +89,27 @@ test_that("overtime: ties are worth a half win", {
   expect_equal(twopt, two_point_prob(c(2, 1, 7)), tolerance = 1e-3)
 })
 
-test_that("overtime: a short clock takes away the advantage if out of range", {
-  # 1st & 10 at the offense's own 30. With 10 seconds left it is very unlikely
-  # to score, so the game is close to the 0.5 of a tie. With lots of time it
-  # is a clear advantage.
-  long <- ot_wp1(
-    season = 2025,
-    kind = "scrimmage",
-    phase = 3,
-    secs = 500,
-    y = 70,
-    down = 1
-  )
-  short <- ot_wp1(
-    season = 2025,
-    kind = "scrimmage",
-    phase = 3,
-    secs = 10,
-    y = 70,
-    down = 1
-  )
-  expect_lt(abs(short - 0.5), abs(long - 0.5))
-  expect_lt(short, 0.6)
-})
-
-test_that("overtime: a short clock does not matter if in field goal range", {
-  # 1st & 10 at the opponent's 20 with 20 seconds left: a field goal wins the
-  # game, so this is far from the 0.5 of a tie
-  in_range <- ot_wp1(
-    season = 2025,
-    kind = "scrimmage",
-    phase = 3,
-    secs = 20,
-    y = 20,
-    down = 1
-  )
-  expect_gt(in_range, 0.75)
-})
-
-test_that("overtime: situation matters", {
-  goal <- ot_wp1(kind = "scrimmage", y = 2, ytg = 2, secs = 500)
-  deep <- ot_wp1(kind = "scrimmage", y = 90, down = 3, ytg = 20, secs = 500)
-  expect_gt(goal, 0.8)
-  expect_lt(deep, 0.5)
+test_that("overtime: the clock matters out of field goal range only", {
+  # 1st & 10, tied in sudden death. At the own 30 with seconds left a score is
+  # very unlikely, so the game is close to the 0.5 of a tie, and more time is
+  # always better. This did not hold with an overly aggressive tempo curve (30
+  # seconds looked better than 60).
+  wp <- function(secs, y) {
+    ot_wp1(
+      season = 2025,
+      kind = "scrimmage",
+      phase = 3,
+      secs = secs,
+      y = y,
+      down = 1
+    )
+  }
+  expect_gt(wp(500, 70), wp(60, 70))
+  expect_gt(wp(60, 70), wp(30, 70))
+  expect_gt(wp(30, 70), wp(10, 70))
+  expect_lt(wp(10, 70), 0.6)
+  # at the opponent's 20 a field goal wins the game, even with 20 seconds left
+  expect_gt(wp(20, 20), 0.75)
 })
 
 test_that("overtime: teams that have to score do not punt", {
@@ -171,23 +155,6 @@ test_that("overtime: tempo curve never makes finishing a possession harder with 
   # no hurry with lots of time, never faster than about 6.5 seconds per play
   expect_equal(ot_tempo(600), 1)
   expect_gte(min(ot_tempo(secs)), 0.17)
-})
-
-test_that("overtime: the team with the ball has a better shot with 60 than 30 seconds", {
-  # out of field goal range, tied. This did not hold with an overly aggressive
-  # tempo curve (30 seconds looked better than 60)
-  wp <- function(secs) {
-    ot_wp1(
-      season = 2025,
-      kind = "scrimmage",
-      phase = 3,
-      secs = secs,
-      y = 70,
-      down = 1
-    )
-  }
-  expect_gt(wp(60), wp(30))
-  expect_gt(wp(30), wp(10))
 })
 
 test_that("overtime: postseason periods don't end the game", {
