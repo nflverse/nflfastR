@@ -104,7 +104,7 @@ Every change was checked with `identical()` against the previous version, not on
 - Full pipeline: `build_nflfastR_pbp()` of the 2023 season (local raw files) and of the regression games, with the old code from a `git worktree` and the new code (`pkgload::load_all()` of each), compared with `identical()` after removing the `nflverse_timestamp` attribute.
 - Single functions: old version from a copy of the `R/` files (`sys.source()` into an environment whose parent is the nflfastR namespace) against the new one, on the 2023 season, the regression games, a single game and the season with shuffled rows or games.
 - Exported steps: tibble, `nflverse_data`, data.frame and data.table input, compared with the behavior from before all changes (commit `dc5912b2`), including that the input isn't modified.
-- Tests: `devtools::test(filter = "calculate_stats", invert = TRUE)`. `tests/testthat/setup.R` runs all tests with `nflfastR.verbose = FALSE`.
+- Tests: the full suite, `devtools::test()`. `tests/testthat/setup.R` runs all tests with `nflfastR.verbose = FALSE`.
 - `jarl check` on changed files (config in `jarl.toml`). The only remaining finding in the touched files was the unused `get_pbp_gc()` (dead code from before this branch), which has since been removed.
 - R CMD check without tests must have no notes. Column names used in data.table calls go into the `utils::globalVariables()` call at the end of `R/utils.R`.
 
@@ -186,11 +186,7 @@ Do one step at a time. After each step, run the tests (see below) and compare ti
 
 - The regression test must pass after every step. Never update the expected output or loosen tolerances to make it pass. Read `data-raw/test_game_selection/README.md` before working on a failure of that test.
 - Never run `data-raw/test_game_selection/update_regression_test.R` without `--dry-run`.
-- Skip the `calculate_stats` tests. They are slow and the parser doesn't affect them:
-
-  ```r
-  devtools::test(filter = "calculate_stats", invert = TRUE)
-  ```
+- Run the full test suite (`devtools::test()`) before pushing.
 
 - Run `air format .` after changing code.
 - Keep output columns, column order and column types unchanged.

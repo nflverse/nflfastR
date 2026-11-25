@@ -60,6 +60,8 @@ pkgdown::check_pkgdown() # check website
 devtools::check()
 ```
 
+While developing, run only the tests of the R files you change (`devtools::test_active_file()`, or `devtools::test(filter = ...)` for several files), plus the regression test of `build_nflfastR_pbp()` if you change the parser. Run the full suite with `devtools::test()` before you push (see Git).
+
 ### Running R
 
 There are three possible ways to run code, listed in rough order of desirability:
@@ -137,7 +139,7 @@ This project uses skills from [posit-dev/skills](https://github.com/posit-dev/sk
 
 - If the user asks you to commit, use markdown in the commit message, and don't line wrap.
 - If the commit fixes an issue, include `Fixes #num.` on its own line.
-- Only push when the user explicitly requests it.
+- Only push when the user explicitly requests it, and run the full test suite (`devtools::test()`) first. Don't push if a test fails, unless the user decides so.
 
 ## Writing
 
