@@ -22,7 +22,17 @@
       patch_set_values(pbp, "2019_01_GB_CHI")
     Condition
       Error in `patch_set_values()`:
-      ! Patch of "2019_01_GB_CHI": column downs doesn't exist.
+      ! Patch of "2019_01_GB_CHI": column downs doesn't exist when `set` patches are applied.
+      i See the section on patches in '.github/CONTRIBUTING.md'.
+
+---
+
+    Code
+      patch_set_values(pbp, "2019_01_GB_CHI")
+    Condition
+      Error in `patch_set_values()`:
+      ! Patch of "2019_01_GB_CHI": column yardline_100 doesn't exist when `set` patches are applied.
+      i Patch yardline instead.
 
 ---
 

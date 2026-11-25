@@ -41,6 +41,9 @@ test_that("set patches of the patch file fit the parser", {
   late <- patches$column %chin% late_patch_columns
   expect_in(patches$column[!late], names(passes$early))
   expect_in(patches$column[late], names(passes$late))
+  # the columns that patch errors suggest exist, the replaced ones don't
+  expect_in(patch_source_columns, names(passes$early))
+  expect_disjoint(names(patch_source_columns), names(passes$early))
   # from and to convert to the class of the column and differ
   same <- character()
   for (i in seq_len(nrow(patches))) {
@@ -231,6 +234,10 @@ test_that("set patches with a wrong column or value fail", {
   pbp <- data.table::data.table(play_id = 1, down = 1)
   local_pbp_patches(
     "game_id: 2019_01_GB_CHI; play_id: 1; action: set; column: downs; from: 1; to: 2; reason: r"
+  )
+  expect_snapshot(patch_set_values(pbp, "2019_01_GB_CHI"), error = TRUE)
+  local_pbp_patches(
+    "game_id: 2019_01_GB_CHI; play_id: 1; action: set; column: yardline_100; from: 40; to: 35; reason: r"
   )
   expect_snapshot(patch_set_values(pbp, "2019_01_GB_CHI"), error = TRUE)
   local_pbp_patches(

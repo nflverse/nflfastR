@@ -153,6 +153,22 @@ patch_drop_stats <- function(stats, id) {
   if (any(drop)) stats[!drop] else stats
 }
 
+# Columns that don't exist when set patches are applied, with the column to
+# patch instead: those of the final data (keep in sync with the table in
+# .github/CONTRIBUTING.md) and yardline_number and yardline_side, which
+# get_pbp_nfl() derives right after the early pass
+patch_source_columns <- c(
+  desc = "play_description",
+  qtr = "quarter",
+  quarter_end = "play_description",
+  side_of_field = "yardline",
+  yardline_100 = "yardline",
+  yardline_number = "yardline",
+  yardline_side = "yardline",
+  ydstogo = "yards_to_go",
+  yrdln = "yardline"
+)
+
 # Columns that get_pbp_nfl() overwrites after it applies the first set
 # patches: posteam (fix_posteams()), goal_to_go and the team columns of
 # fix_bad_games(). Their patches are applied after these steps.
@@ -180,9 +196,16 @@ patch_set_values <- function(pbp, id, late = FALSE) {
   for (i in seq_len(nrow(patches))) {
     column <- patches$column[i]
     if (!column %chin% names(pbp)) {
-      cli::cli_abort(
-        "Patch of {.val {id}}: column {.field {column}} doesn't exist."
-      )
+      source <- patch_source_columns[column]
+      cli::cli_abort(c(
+        "Patch of {.val {id}}: column {.field {column}} doesn't exist when \\
+        {.code set} patches are applied.",
+        i = if (is.na(source)) {
+          "See the section on patches in {.file .github/CONTRIBUTING.md}."
+        } else {
+          "Patch {.field {source}} instead."
+        }
+      ))
     }
     play_id <- patches$play_id[i]
     rows <- if (is.na(play_id)) {

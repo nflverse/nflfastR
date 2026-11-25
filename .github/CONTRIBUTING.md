@@ -51,16 +51,18 @@ reason: wrong game clock
 
 - `drop_play` removes the play from the raw plays, before anything is derived from it. Use it for plays the raw data has twice.
 - `drop_stat` removes all rows of the stat ID on the play from the raw play stats, before the stat columns (`rush_attempt`, `passer_player_id`, `td_team`, ...) are derived from them. Prefer it to `set` patches of stat columns, because one stat ID sets several columns that must agree.
-- `set` changes the value of `column` after the plays are parsed, before anything is derived from it (e.g. `yardline_100` from `yrdln`). The columns that the parser computes again later (`posteam`, `goal_to_go` and the team columns `td_team`, `penalty_team`, `safety_team`, `return_team`, `fumble_recovery_1_team` and `timeout_team`) are patched after that. Some columns have other names at this point than in the final data:
+- `set` changes the value of `column` after the plays are parsed, before anything is derived from it (e.g. `yardline_100` from `yrdln`). The columns that the parser computes again later (`posteam`, `goal_to_go` and the team columns `td_team`, `penalty_team`, `safety_team`, `return_team`, `fumble_recovery_1_team` and `timeout_team`) are patched after that. Some columns of the final data don't exist at this point, because they have another name or are derived from another column. Patch the column in the right column of this table instead (the error of a patch of such a column names it too):
 
   | final data | patch file |
   |---|---|
-  | `qtr` | `quarter` |
-  | `yrdln` | `yardline` |
-  | `ydstogo` | `yards_to_go` |
   | `desc` | `play_description` |
+  | `qtr` | `quarter` |
+  | `quarter_end` | `play_description` (the text "END QUARTER") |
+  | `side_of_field`, `yardline_100` | `yardline` |
+  | `ydstogo` | `yards_to_go` |
+  | `yrdln` | `yardline` |
 
-  Columns that the parser derives from others (e.g. `yardline_number` and `yardline_side` from `yardline`, `quarter_end` from `play_description`, `season`) don't exist yet when `set` patches are applied. Patch the column they are derived from instead.
+  Columns that are derived from several others (e.g. `ep`) or from the play stats (use `drop_stat` patches) can't be patched.
 
   `play_type` is derived later from `play_type_nfl` and the play description (e.g. kneel downs and spikes). A patch of `play_type_nfl` changes `play_type_nfl`, but not necessarily `play_type`.
 
