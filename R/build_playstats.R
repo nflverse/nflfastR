@@ -56,24 +56,25 @@ build_playstats <- function(
   out
 }
 
-# One row per stat of a play: the play stats of all plays of a game are data
-# frames with the same columns, except that team stats can have the column
-# gsisPlayer instead of gsisPlayer.id. Plays without stats have no rows.
+# One row per stat of a play, after the drop_play and drop_stat patches (see
+# inst/pbp_patches.dcf), so the play stats agree with the pbp. Plays without
+# stats have no rows.
 playstats_of_game <- function(id, p, stat_ids, dir, skip_local) {
   plays <- load_raw_game(
     id,
     dir = dir,
     skip_local = skip_local
   )$data$viewer$gameDetail$plays
-  stats <- data.table::rbindlist(plays$playStats, fill = TRUE)
+  plays <- patch_drop_plays(data.table::as.data.table(plays), id)
+  stats <- patch_drop_stats(unnest_play_stats(plays), id)
   out <- data.table::data.table(
     game_id = id,
-    play_id = rep(plays$playId, vapply(plays$playStats, nrow, integer(1))),
-    stat_id = stats$statId,
+    play_id = stats$playId,
+    stat_id = as.integer(stats$statId),
     yards = stats$yards,
-    team_abbr = stats$team.abbreviation,
-    player_name = stats$playerName,
-    gsis_player_id = stats$gsisPlayer.id
+    team_abbr = stats$teamAbbr,
+    player_name = stats$player.displayName,
+    gsis_player_id = stats$player.esbId
   )
   p(sprintf("ID=%s", id))
   out[stat_id %in% stat_ids]

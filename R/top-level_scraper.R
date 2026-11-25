@@ -471,9 +471,14 @@ fast_scraper <- function(
 
 # Parses one game for fast_scraper(). Defined here and not inside
 # fast_scraper(), so furrr only sends this function to the workers and not the
-# environment of fast_scraper() with its arguments.
+# environment of fast_scraper() with its arguments. Patches that don't fit the
+# raw data anymore are for the maintainers (check_pbp_patches()), not the
+# users, so their warnings are muffled.
 load_game <- function(x, p, dir, ...) {
-  plays <- please_work(get_pbp_nfl)(x, dir = dir, ...)
+  plays <- withCallingHandlers(
+    please_work(get_pbp_nfl)(x, dir = dir, ...),
+    nflfastR_patch_not_applied = \(w) invokeRestart("muffleWarning")
+  )
   p(sprintf("ID=%s", as.character(x)))
   plays
 }

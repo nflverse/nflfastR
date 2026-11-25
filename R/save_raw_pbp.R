@@ -74,7 +74,7 @@ save_raw_pbp <- function(
     paste0(game_ids, ".rds")
   )
   dl <- curl::multi_download(to_load, save_to)
-  failed <- dl$status_code != 200
+  failed <- !dl$status_code %in% 200
   if (any(failed)) {
     cli::cli_alert_danger(
       "Failed to download: {.var {game_ids[failed]}}"

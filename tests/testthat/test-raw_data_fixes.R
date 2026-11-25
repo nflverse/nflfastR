@@ -37,4 +37,10 @@ test_that("scores are right in games with broken team fields in the raw data", {
   # 2011: two touchdowns are in the raw data twice
   no <- pbp[pbp$game_id == "2011_13_DET_NO", ]
   expect_equal(sum(no$touchdown, na.rm = TRUE), 6)
+  # and eight plays of the first half (#648). Brees' official line is 26 of 36
+  # for 342 yards.
+  brees <- no[no$passer_player_name %chin% "D.Brees", ]
+  expect_equal(sum(brees$complete_pass), 26)
+  expect_equal(sum(brees$pass_attempt - brees$sack), 36)
+  expect_equal(sum(brees$passing_yards, na.rm = TRUE), 342)
 })

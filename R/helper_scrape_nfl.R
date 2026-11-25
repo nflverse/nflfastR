@@ -77,11 +77,9 @@ get_pbp_nfl <- function(
     bad_game <- TRUE
   }
 
-  # duplicated touchdown records (one for each team) that count the points
-  # twice
-  if (id == "2011_13_DET_NO") {
-    plays <- plays[!playId %in% c(1152, 1655)]
-  }
+  # errors of the raw data that are patched one by one, see
+  # inst/pbp_patches.dcf
+  plays <- patch_drop_plays(plays, id)
 
   # We have this issue https://github.com/nflverse/nflfastR/issues/309 with 2013 postseason games
   # where the driveSequenceNumber in the plays df is NA for all plays. That prevents drive information
@@ -128,14 +126,7 @@ get_pbp_nfl <- function(
     paste0("drive_", clean_names_cached(names(drives)))
   )
 
-  stats <- unnest_play_stats(plays)
-
-  # there was a penalty on this play so these stat IDs shouldn't exist
-  if (id == "2020_10_DEN_LV") {
-    stats <- stats[
-      which(!(stats$playId == 979 & stats$statId %in% c(8, 10, 79))),
-    ]
-  }
+  stats <- patch_drop_stats(unnest_play_stats(plays), id)
 
   pbp_stats <- tidy_play_stats(stats)
 
@@ -194,6 +185,13 @@ get_pbp_nfl <- function(
     )
   )
 
+  # errors of the raw data that are patched one by one, see
+  # inst/pbp_patches.dcf. Before anything is derived from the parsed plays, so
+  # a patch also changes what is derived from its column. Patches of the
+  # columns that later steps overwrite are applied after them (see
+  # late_patch_columns).
+  patch_set_values(combined, id)
+
   # env avoids that season, week and game_id refer to columns
   combined[,
     `:=`(
@@ -235,20 +233,6 @@ get_pbp_nfl <- function(
     )
   ]
 
-  fix <- td_team_fixes[td_team_fixes$game_id == id, ]
-  if (nrow(fix) > 0) {
-    combined[
-      play_id %in% fix$play_id & td_team != "JAX",
-      td_team := fix$td_team[1]
-    ]
-  }
-
-  if (id == "2012_04_NO_GB") {
-    combined[play_id == 1085, time := "3:34"]
-  } else if (id == "2012_16_BUF_MIA") {
-    combined[play_id == 2571, time := "8:31"]
-  }
-
   empty_strings_to_na(combined)
 
   # Data in 2023 pbp introduced separate "plays" for TV timeouts and two minute
@@ -271,6 +255,8 @@ get_pbp_nfl <- function(
   if (bad_game) {
     fix_bad_games(combined)
   }
+
+  patch_set_values(combined, id, late = TRUE)
 
   # nfl didn't fill in first downs on this game
   if (id == "2018_01_ATL_PHI") {
@@ -324,21 +310,6 @@ get_pbp_nfl <- function(
   }
   combined[]
 }
-
-# Wrong td_team in old JAX games: a muffed punt TD and kickoff return TDs
-td_team_fixes <- data.frame(
-  game_id = c(
-    "2011_14_TB_JAX",
-    "2006_14_IND_JAX",
-    "2007_17_JAX_HOU",
-    "2007_17_JAX_HOU",
-    "2008_09_JAX_CIN",
-    "2009_15_IND_JAX",
-    "2010_15_JAX_IND"
-  ),
-  play_id = c(1343, 2078, 1907, 2042, 3145, 1088, 3848),
-  td_team = c("JAX", "JAX", "HOU", "HOU", "JAX", "IND", "IND")
-)
 
 # helper function to manually fill in fields for problematic games. Changes pbp
 # by reference.
