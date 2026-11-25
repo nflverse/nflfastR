@@ -20,7 +20,7 @@
 - `series_result` and `fixed_drive_result` are now the last result of the series or drive before the end of the half. When a series or drive ran into the end of the half, they used to be its first result, so a field goal after a kneel down to center the ball was a "QB kneel" series, and a drive that started with a recovered kickoff fumble and ended in a field goal right before the half was a "Turnover" drive. In the published data since 2001 this changes 79 series and 9 drives.
 - `xyac_median_yardage` is now always a double.
 - nflfastR no longer depends on dplyr, janitor, stringr, tibble and tidyr, and now requires nflreadr >= 1.5.0, curl >= 5.0.0 and rlang >= 1.0.0.
-- New option `nflfastR.verbose`. Set `options(nflfastR.verbose = FALSE)` to turn off progress messages. Warnings are still shown.
+- New option `nflfastR.verbose`. Set `options(nflfastR.verbose = FALSE)` to turn off progress messages, including the download progress of `save_raw_pbp()`. Warnings are still shown.
 - `build_nflfastR_pbp()` is now 5 to 8 times faster with unchanged output.
 - `build_nflfastR_pbp()` gained the argument `add_xyac`. Set it to `FALSE` to skip `add_xyac()`.
 - `build_nflfastR_pbp()` no longer drops games without play stats, e.g. right before kickoff.

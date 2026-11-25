@@ -1,4 +1,4 @@
-test_that("the patch file has the fields each action needs", {
+test_that("the patch file is valid, sorted and without overlaps", {
   patches <- read_pbp_patches()
   expect_named(
     patches,
@@ -17,6 +17,7 @@ test_that("the patch file has the fields each action needs", {
   expect_in(patches$action, c("drop_play", "drop_stat", "set"))
   expect_all_true(!is.na(patches$reason))
 
+  # the fields each action needs
   is_set <- patches$action == "set"
   expect_all_true(!is.na(patches$play_id[!is_set]))
   expect_all_true(is.na(patches$column[!is_set]))
@@ -26,6 +27,31 @@ test_that("the patch file has the fields each action needs", {
     patches$action != "drop_stat"
   )
   expect_all_true(!is.na(patches$column[is_set]))
+
+  # no overlaps
+  key <- c("game_id", "play_id", "action", "stat_id", "column")
+  expect_identical(anyDuplicated(patches, by = key), 0L)
+  # a set patch of all plays doesn't overlap set patches of single plays
+  overlap <- patches[
+    action == "set",
+    list(overlap = anyNA(play_id) && .N > 1),
+    by = c("game_id", "column")
+  ]
+  expect_all_false(overlap$overlap)
+  # no patch changes a play that a drop_play patch removes
+  dropped <- patches[action == "drop_play", list(game_id, play_id)]
+  on_dropped <- patches[action != "drop_play"][
+    dropped,
+    on = c("game_id", "play_id"),
+    nomatch = NULL
+  ]
+  expect_identical(nrow(on_dropped), 0L)
+
+  # sorted
+  expect_identical(
+    patches,
+    patches[order(game_id, play_id, action, stat_id, column, na.last = FALSE)]
+  )
 })
 
 test_that("set patches of the patch file fit the parser", {
@@ -56,35 +82,6 @@ test_that("set patches of the patch file fit the parser", {
     }
   }
   expect_identical(same, character())
-})
-
-test_that("patches of the patch file don't overlap", {
-  patches <- read_pbp_patches()
-  key <- c("game_id", "play_id", "action", "stat_id", "column")
-  expect_identical(anyDuplicated(patches, by = key), 0L)
-  # a set patch of all plays doesn't overlap set patches of single plays
-  overlap <- patches[
-    action == "set",
-    list(overlap = anyNA(play_id) && .N > 1),
-    by = c("game_id", "column")
-  ]
-  expect_all_false(overlap$overlap)
-  # no patch changes a play that a drop_play patch removes
-  dropped <- patches[action == "drop_play", list(game_id, play_id)]
-  on_dropped <- patches[action != "drop_play"][
-    dropped,
-    on = c("game_id", "play_id"),
-    nomatch = NULL
-  ]
-  expect_identical(nrow(on_dropped), 0L)
-})
-
-test_that("the patch file is sorted", {
-  patches <- read_pbp_patches()
-  expect_identical(
-    patches,
-    patches[order(game_id, play_id, action, stat_id, column, na.last = FALSE)]
-  )
 })
 
 test_that("drop_play and drop_stat patches remove raw plays and stats", {
@@ -130,25 +127,9 @@ test_that("fast_scraper() muffles patches that don't fit the raw data", {
   )
 })
 
-test_that("patches that don't fit the raw data warn", {
+test_that("patches that don't fit the raw data warn whether they are obsolete", {
   local_pbp_patches(
     "game_id: 2019_01_GB_CHI; play_id: 9; action: drop_play; reason: r",
-    "game_id: 2019_01_GB_CHI; play_id: 1; action: drop_stat; stat_id: 99; reason: r"
-  )
-  plays <- data.table::data.table(playId = c(1, 2))
-  expect_warning(
-    expect_identical(patch_drop_plays(plays, "2019_01_GB_CHI"), plays),
-    class = "nflfastR_patch_not_applied"
-  )
-  stats <- data.table::data.table(playId = 1, statId = 10)
-  expect_warning(
-    expect_identical(patch_drop_stats(stats, "2019_01_GB_CHI"), stats),
-    class = "nflfastR_patch_not_applied"
-  )
-})
-
-test_that("patches that don't fit say whether the raw data was fixed", {
-  local_pbp_patches(
     "game_id: 2019_01_GB_CHI; play_id: 1; action: drop_stat; stat_id: 99; reason: r",
     "game_id: 2019_01_GB_CHI; play_id: 9; action: drop_stat; stat_id: 10; reason: r",
     "game_id: 2019_01_GB_CHI; play_id: 1; action: set; column: posteam; from: CHI; to: GB; reason: r",
@@ -165,11 +146,21 @@ test_that("patches that don't fit say whether the raw data was fixed", {
     )
     out
   }
+  plays <- data.table::data.table(playId = c(1, 2))
+  expect_identical(obsolete(patch_drop_plays(plays, "2019_01_GB_CHI")), FALSE)
+  expect_identical(
+    suppressWarnings(patch_drop_plays(plays, "2019_01_GB_CHI")),
+    plays
+  )
   # a missing stat ID isn't obsolete for sure, even if the play is there
   stats <- data.table::data.table(playId = 1, statId = 10)
   expect_identical(
     obsolete(patch_drop_stats(stats, "2019_01_GB_CHI")),
     c(FALSE, FALSE)
+  )
+  expect_identical(
+    suppressWarnings(patch_drop_stats(stats, "2019_01_GB_CHI")),
+    stats
   )
   pbp <- data.table::data.table(play_id = c(1, 2), posteam = c("GB", "KC"))
   expect_identical(
@@ -246,16 +237,13 @@ test_that("set patches with a wrong column or value fail", {
   expect_snapshot(patch_set_values(pbp, "2019_01_GB_CHI"), error = TRUE)
 })
 
-test_that("play and stat IDs of the patch file must be numbers", {
+test_that("patch files with unknown fields or IDs that aren't numbers fail", {
   expect_snapshot(
     local_pbp_patches(
       "game_id: 2019_01_GB_CHI; play_id: 12a4; action: set; column: down; from: 1; to: 2; reason: r"
     ),
     error = TRUE
   )
-})
-
-test_that("unknown fields of the patch file fail", {
   expect_snapshot(
     local_pbp_patches("game_id: 2019_01_GB_CHI; play: 1; reason: r"),
     error = TRUE

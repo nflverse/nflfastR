@@ -1,29 +1,3 @@
-vegas_state <- function(
-  t = 3000,
-  sd = 0,
-  spread = 0,
-  down = 1,
-  ytg = 10,
-  yl = 75,
-  home = 1,
-  season = 2025
-) {
-  data.frame(
-    season = season,
-    game_seconds_remaining = t,
-    half_seconds_remaining = ifelse(t > 1800, t - 1800, t),
-    score_differential = sd,
-    posteam_spread = spread,
-    home = home,
-    receive_2h_ko = 0,
-    down = down,
-    ydstogo = ytg,
-    yardline_100 = yl,
-    posteam_timeouts_remaining = 3,
-    defteam_timeouts_remaining = 3
-  )
-}
-
 test_that("vegas_wp is smooth in the clock", {
   # nothing changes but the clock (first half, 5 second steps)
   t <- seq(3590, 1810, by = -5)
@@ -197,6 +171,9 @@ test_that("a team ahead that can kneel out the clock wins", {
   # with 3 timeouts it can't from 1:30, and WP is the model's again
   x$defteam_timeouts_remaining <- 3
   expect_lt(wp_vegas_predict(x)[2], 0.99)
+  # but it can with a second left or in an untimed down at 0:00
+  x <- vegas_state(t = c(0, 1), sd = 1, yl = 80)
+  expect_all_true(wp_vegas_predict(x) >= 0.999)
 })
 
 test_that("a tie at the end of regulation is worth the start of overtime", {
@@ -222,37 +199,32 @@ test_that("down 1-3 on 4th down at the end, WP is the value of the kick", {
 })
 
 test_that("a team behind deep in its own half with seconds left rarely wins", {
-  x <- vegas_state(t = c(3, 10, 30), sd = -1, yl = 80)
+  # also in an untimed down at 0:00
+  x <- vegas_state(t = c(0, 1, 3, 10, 30), sd = -1, yl = 80)
   wp <- wp_vegas_predict(x)
-  expect_lt(wp[1], 0.02)
-  expect_true(wp[1] < wp[2] && wp[2] < wp[3])
+  expect_all_true(wp[1:2] < 0.01)
+  expect_lt(wp[3], 0.02)
+  expect_true(wp[3] < wp[4] && wp[4] < wp[5])
 })
 
-test_that("the end of game rules don't make cliffs along the field", {
-  # down 1, 4th & 10: the last kick rule fades out with the make probability
+test_that("the last kick rule doesn't make a cliff along the field", {
+  # down 1, 4th & 10: the rule fades out with the make probability
   # as the kick gets long rather than stopping at one yard line
   x <- vegas_state(t = 8, sd = -1, down = 4, ytg = 10, yl = 30:65)
   expect_lt(max(abs(diff(wp_vegas_predict(x)))), 0.06)
-  # down 1, 1st & 10: the behind rule fades in from the own 45 to the own 35
-  for (t in c(2, 5, 10, 15)) {
-    x <- vegas_state(t = t, sd = -1, yl = 45:80)
-    expect_lt(max(abs(diff(wp_vegas_predict(x)))), 0.06)
-  }
 })
 
 test_that("vegas_wp is smooth along the field at the end of the game", {
   # 1st & 10 everywhere between the 5s, last minute: the trees alone had an 8
-  # point step between the opponent's 41 and 42 with 8 seconds left
-  g <- expand.grid(yl = 5:95, t = c(3, 8, 15, 30, 60), sd = c(-3, -1, 0))
+  # point step between the opponent's 41 and 42 with 8 seconds left, and the
+  # rule for a team behind fades in from the own 45 to the own 35
+  g <- expand.grid(
+    yl = 5:95,
+    t = c(2, 3, 5, 8, 10, 15, 30, 60),
+    sd = c(-3, -1, 0)
+  )
   x <- vegas_state(t = g$t, sd = g$sd, yl = g$yl)
   g$wp <- wp_vegas_predict(x)
   step <- unlist(lapply(split(g, list(g$t, g$sd)), function(z) diff(z$wp)))
   expect_lt(max(abs(step)), 0.045)
-})
-
-test_that("the end of game rules apply to an untimed down at 0:00", {
-  x <- vegas_state(t = c(0, 1), sd = 1, yl = 80)
-  expect_true(all(wp_vegas_predict(x) >= 0.999))
-  x <- vegas_state(t = c(0, 1), sd = -1, yl = 80)
-  expect_true(all(wp_vegas_predict(x) < 0.01))
 })

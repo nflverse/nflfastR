@@ -73,7 +73,7 @@ save_raw_pbp <- function(
     seasons,
     paste0(game_ids, ".rds")
   )
-  dl <- curl::multi_download(to_load, save_to)
+  dl <- curl::multi_download(to_load, save_to, progress = is_verbose())
   failed <- !dl$status_code %in% 200
   if (any(failed)) {
     cli::cli_alert_danger(
@@ -157,8 +157,9 @@ raw_pbp_load_schedules <- function(seasons) {
 verify_game_ids <- function(game_ids) {
   valid <- is_valid_game_id(game_ids)
   if (!all(valid)) {
+    invalid <- game_ids[!valid]
     cli::cli_abort(
-      "The game IDs {.val {game_ids[!valid]}} seem to be invalid!"
+      "{cli::qty(invalid)}The game ID{?s} {.val {invalid}} seem{?s/} to be invalid!"
     )
   }
 

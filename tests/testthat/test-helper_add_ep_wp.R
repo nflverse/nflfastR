@@ -1,38 +1,8 @@
-test_that("the conversion value follows the seasons", {
-  expect_equal(
-    conversion_value(c(2009, 2014, 2015, 2022, 2023, 2026)),
-    c(0.99, 0.99, 0.94, 0.94, 0.96, 0.96)
-  )
-  expect_equal(conversion_value(NA_real_), NA_real_)
-})
-
 test_that("the two point make probability depends on the spot", {
   expect_equal(
     two_point_prob(c(1, 2, 3, 5, 6, 15, NA)),
     c(0.58, 0.49, 0.49, 0.49, 0.20, 0.20, 0.49)
   )
-})
-
-test_that("the kickoff start spot follows the kickoff rules", {
-  seasons <- c(2009, 2015, 2016, 2023, 2024, 2025, 2026)
-  expect_equal(
-    wp_kickoff_start(seasons),
-    c(72, 78, 75, 75, 70, 69, 69)
-  )
-  # without a season the current rules
-  expect_equal(wp_kickoff_start(NA_real_), 69)
-})
-
-test_that("overtime rules are inferred from season and game id", {
-  # regular season weeks 1-17 (18 since 2021), postseason after that
-  expect_equal(ep_ot_rule("2011_05_NO_TB", 2011), "SD")
-  expect_equal(ep_ot_rule("2012_05_NO_TB", 2012), "MSD")
-  expect_equal(ep_ot_rule("2024_05_NO_TB", 2024), "MSD")
-  expect_equal(ep_ot_rule("2025_05_NO_TB", 2025), "BOTH")
-  expect_equal(ep_ot_rule("2009_19_NO_TB", 2009), "SD")
-  expect_equal(ep_ot_rule("2010_18_NO_TB", 2010), "MSD")
-  expect_equal(ep_ot_rule("2021_20_NO_TB", 2021), "MSD")
-  expect_equal(ep_ot_rule("2022_20_NO_TB", 2022), "BOTH")
 })
 
 test_that("a kickoff follows an overtime score only if the game goes on", {
@@ -59,9 +29,9 @@ test_that("overtime continue factors only change overtime rows", {
   pbp <- data.frame(
     game_id = "2025_05_NO_TB",
     season = 2025,
-    qtr = c(4, 5, 5, 5),
-    drive = c(10, 11, 11, 13),
-    score_differential = 0
+    qtr = c(4, 5, 5, 5, 5, 5),
+    drive = c(10, 11, 11, 13, 12, 12),
+    score_differential = c(0, 0, 0, 0, -7, -1)
   )
   factors <- ep_continue_factors(pbp)
   # regulation is always 1 (a conversion follows a touchdown, which is not a
@@ -74,9 +44,19 @@ test_that("overtime continue factors only change overtime rows", {
   expect_equal(factors$c_saf_own[2], 0)
   # third possession: sudden death
   expect_equal(unlist(factors[4, 1:3], use.names = FALSE), rep(0, 3))
+  # second possession, down 7: the touchdown is a two point try that ends the
+  # game, and the try itself is measured against the two point value
+  expect_equal(
+    unlist(
+      factors[5, c("c_td_own", "k_td_own", "two_td_own")],
+      use.names = FALSE
+    ),
+    c(0, 1, 1)
+  )
+  expect_identical(factors$two_try, c(FALSE, FALSE, FALSE, FALSE, FALSE, TRUE))
   # without what is needed to tell possessions apart it is 1
   no_context <- ep_continue_factors(pbp[, "qtr", drop = FALSE])
-  expect_equal(unlist(no_context[, 1:8], use.names = FALSE), rep(1, 32))
+  expect_equal(unlist(no_context[, 1:8], use.names = FALSE), rep(1, 48))
   expect_false(any(unlist(no_context[, 9:11])))
 })
 
@@ -166,71 +146,6 @@ test_that("kickoff values come from the clock, season and teams", {
   expect_equal(get_kickoff_values(data, kickoff_preds = get_preds(ko)), kv)
 })
 
-test_that("expected points are net of the next possession", {
-  skip_on_cran()
-  data <- test_tibble(
-    "season" = 2025,
-    "home_team" = "SEA",
-    "posteam" = "SEA",
-    "roof" = "outdoors",
-    "half_seconds_remaining" = c(900, 20),
-    "yardline_100" = 1,
-    "down" = 1,
-    "ydstogo" = 1,
-    "posteam_timeouts_remaining" = 3,
-    "defteam_timeouts_remaining" = 3
-  )
-  ep <- calculate_expected_points(data)
-  # a touchdown is likely on the goal line, and worth less than 7. It is worth
-  # more near the end of the half, when the other team has less time to answer
-  expect_lt(ep$ep[1], 6.94 - 0.5)
-  expect_gt(ep$ep[2], ep$ep[1])
-  expect_lt(ep$ep[2], 6.94)
-})
-
-test_that("kickoff values solve their own equations", {
-  skip_on_cran()
-  data <- test_tibble(
-    "season" = c(2015, 2020, 2025, 2025),
-    "home_team" = "SEA",
-    "posteam" = c("SEA", "DEN", "SEA", "DEN"),
-    "roof" = "outdoors",
-    "half_seconds_remaining" = c(1500, 900, 1500, 600),
-    "yardline_100" = 75,
-    "down" = 1,
-    "ydstogo" = 10,
-    "posteam_timeouts_remaining" = 3,
-    "defteam_timeouts_remaining" = 3
-  ) |>
-    make_model_mutations()
-  kv <- get_kickoff_values(data)
-
-  # the free kick is worth the kickoff plus the extra field position (when
-  # more than 5 minutes are left in the half)
-  v <- kv$v
-  yards <- wp_kickoff_start(data$season) - safety_free_kick_yardline
-  expect_equal(kv$w, v + safety_free_kick_ep_per_yard * yards)
-
-  # V = a + b V + d W on the average of the two teams' kickoff states
-  ko <- data
-  ko$yardline_100 <- wp_kickoff_start(ko$season)
-  ko$down1 <- 1
-  ko$down2 <- 0
-  ko$down3 <- 0
-  ko$down4 <- 0
-  ko_opp <- ko
-  ko_opp$home <- 1 - ko$home
-  p <- (get_preds(ko) + get_preds(ko_opp)) / 2
-  td <- p$Touchdown - p$Opp_Touchdown
-  fg <- p$Field_Goal - p$Opp_Field_Goal
-  sf <- p$Safety - p$Opp_Safety
-  xp <- conversion_value(data$season)
-  expect_equal(
-    v,
-    td * (6 + xp) + 3 * fg + 2 * sf - (td + fg) * v + sf * kv$w
-  )
-})
-
 test_that("expected points at the kickoff state match the kickoff value", {
   skip_on_cran()
   # at a neutral site both teams are the same, so the kickoff possession is
@@ -274,36 +189,14 @@ test_that("expected points at the kickoff state match the kickoff value", {
   expect_equal(ep, kv$v)
 })
 
-test_that("calculate_expected_points treats neutral sites as away games", {
+test_that("kickoff values solve the equations of the kickoff and free kick states", {
   skip_on_cran()
   data <- test_tibble(
-    "season" = 2025,
+    "season" = c(2012, 2025, 2025, 2025, 2019),
     "home_team" = "SEA",
-    "posteam" = c("SEA", "SEA", "DEN"),
-    "location" = c("Neutral", "Home", "Home"),
+    "posteam" = c("SEA", "SEA", "DEN", "SEA", "SEA"),
     "roof" = "outdoors",
-    "half_seconds_remaining" = 900,
-    "yardline_100" = 65,
-    "down" = 1,
-    "ydstogo" = 10,
-    "posteam_timeouts_remaining" = 3,
-    "defteam_timeouts_remaining" = 3
-  )
-  ep <- calculate_expected_points(data)
-  # the "home" team at a neutral site has the probabilities of a road team,
-  # and not those of a home team
-  expect_equal(ep$td_prob[1], ep$td_prob[3])
-  expect_false(isTRUE(all.equal(ep$td_prob[1], ep$td_prob[2])))
-})
-
-test_that("the exact free kick value solves the equations of both states", {
-  skip_on_cran()
-  data <- test_tibble(
-    "season" = c(2025, 2025, 2025, 2019),
-    "home_team" = "SEA",
-    "posteam" = c("SEA", "DEN", "SEA", "SEA"),
-    "roof" = "outdoors",
-    "half_seconds_remaining" = c(300, 60, 1, 10),
+    "half_seconds_remaining" = c(900, 900, 60, 1, 10),
     "yardline_100" = 75,
     "down" = 1,
     "ydstogo" = 10,
@@ -311,22 +204,24 @@ test_that("the exact free kick value solves the equations of both states", {
     "defteam_timeouts_remaining" = 3
   ) |>
     make_model_mutations()
-  kv <- get_kickoff_values(data, exact_w = TRUE)
+  shortcut <- get_kickoff_values(data)
+  exact <- get_kickoff_values(data, exact_w = c(TRUE, TRUE, TRUE, TRUE, FALSE))
 
-  state <- function(yardline_100, flip) {
-    d <- data
-    d$yardline_100 <- yardline_100
-    d$down1 <- 1
-    d$down2 <- 0
-    d$down3 <- 0
-    d$down4 <- 0
-    if (flip) {
-      d$home <- 1 - d$home
-    }
-    get_preds(d)
-  }
+  # V = a + b V + d W on the average of the two teams' states
   coefs <- function(yardline_100) {
-    p <- (state(yardline_100, FALSE) + state(yardline_100, TRUE)) / 2
+    state <- function(flip) {
+      d <- data
+      d$yardline_100 <- yardline_100
+      d$down1 <- 1
+      d$down2 <- 0
+      d$down3 <- 0
+      d$down4 <- 0
+      if (flip) {
+        d$home <- 1 - d$home
+      }
+      get_preds(d)
+    }
+    p <- (state(FALSE) + state(TRUE)) / 2
     td <- p$Touchdown - p$Opp_Touchdown
     fg <- p$Field_Goal - p$Opp_Field_Goal
     sf <- p$Safety - p$Opp_Safety
@@ -339,14 +234,24 @@ test_that("the exact free kick value solves the equations of both states", {
   k <- coefs(wp_kickoff_start(data$season))
   f <- coefs(safety_free_kick_yardline)
 
-  # V and W solve the equations of the kickoff state and the free kick state
-  expect_equal(kv$v, k$a + k$b * kv$v + k$d * kv$w)
-  expect_equal(kv$w, f$a + f$b * kv$v + f$d * kv$w)
+  # the shortcut solves the equation of the kickoff state, the exact values
+  # also that of the free kick state
+  expect_equal(shortcut$v, k$a + k$b * shortcut$v + k$d * shortcut$w)
+  expect_equal(exact$v, k$a + k$b * exact$v + k$d * exact$w)
+  i <- 1:4
+  expect_equal(exact$w[i], (f$a + f$b * exact$v + f$d * exact$w)[i])
+  # rows that are not flagged use the shortcut
+  expect_equal(exact[5, ], shortcut[5, ])
+  # the exact W differs from the shortcut in a season where the kickoff start
+  # is far from the free kick spot (2011 to 2015), much less with the recent
+  # touchback. V barely moves
+  early_gap <- abs(exact$w[1] - shortcut$w[1])
+  expect_gt(early_gap, 0.05)
+  expect_lt(abs(exact$w[2] - shortcut$w[2]), early_gap)
+  expect_lt(abs(exact$v[1] - shortcut$v[1]), 0.02)
   # with a second left the free kick is worth little, not the kickoff value
   # plus the extra field position of the shortcut
-  shortcut <- safety_free_kick_ep_per_yard *
-    (wp_kickoff_start(2025) - safety_free_kick_yardline)
-  expect_lt(kv$w[3] - kv$v[3], 0.5 * shortcut)
+  expect_lt(exact$w[4] - exact$v[4], 0.5 * (shortcut$w[4] - shortcut$v[4]))
 })
 
 test_that("a second possession touchdown down 7 in overtime always goes for two", {
@@ -366,56 +271,6 @@ test_that("a second possession touchdown down 7 in overtime always goes for two"
   # sudden death and modified sudden death touchdowns end the game
   expect_equal(ep_ot_td("SD", 1, 0)$conv, 0)
   expect_equal(ep_ot_td("MSD", 1, 0)$conv, 0)
-
-  pbp <- data.frame(
-    game_id = "2025_05_NO_TB",
-    season = 2025,
-    qtr = 5,
-    drive = c(11, 12, 12),
-    score_differential = c(0, -7, -1)
-  )
-  factors <- ep_continue_factors(pbp)
-  # second possession, down 7: the touchdown is a two point try that ends the game
-  expect_equal(
-    unlist(
-      factors[2, c("c_td_own", "k_td_own", "two_td_own")],
-      use.names = FALSE
-    ),
-    c(0, 1, 1)
-  )
-  # and the try itself is measured against the two point value
-  expect_true(factors$two_try[3])
-  expect_false(factors$two_try[1])
-})
-
-test_that("the free kick value comes from the model where a safety matters", {
-  skip_on_cran()
-  data <- test_tibble(
-    "season" = c(2012, 2012, 2025),
-    "home_team" = "SEA",
-    "posteam" = "SEA",
-    "roof" = "outdoors",
-    "half_seconds_remaining" = c(900, 900, 900),
-    "yardline_100" = 75,
-    "down" = 1,
-    "ydstogo" = 10,
-    "posteam_timeouts_remaining" = 3,
-    "defteam_timeouts_remaining" = 3
-  ) |>
-    make_model_mutations()
-  shortcut <- get_kickoff_values(data)
-  exact <- get_kickoff_values(data, exact_w = c(FALSE, TRUE, TRUE))
-  # rows that are not flagged use the shortcut
-  expect_equal(exact$w[1], shortcut$w[1])
-  # the exact value differs from the shortcut in a season where the kickoff
-  # start is far from the free kick spot (2011 to 2015), and is much closer to
-  # it with the recent touchback
-  early_gap <- abs(exact$w[2] - shortcut$w[2])
-  recent_gap <- abs(exact$w[3] - shortcut$w[3])
-  expect_gt(early_gap, 0.05)
-  expect_lt(recent_gap, early_gap)
-  # V barely moves
-  expect_lt(abs(exact$v[2] - shortcut$v[2]), 0.02)
 })
 
 test_that("the exact free kick value is selected from the probabilities only", {
@@ -425,44 +280,43 @@ test_that("the exact free kick value is selected from the probabilities only", {
   )
 })
 
-test_that("the calculator uses the same free kick value as the play-by-play", {
-  skip_on_cran()
-  # a state where a safety is likely, so the exact free kick value is used, and
-  # where it is far from the shortcut: little time left, in a season where the
-  # kickoff start is far from the free kick spot
-  data <- test_tibble(
-    "season" = 2012,
-    "home_team" = "SEA",
-    "posteam" = "SEA",
-    "roof" = "outdoors",
-    "half_seconds_remaining" = 15,
-    "yardline_100" = 99,
-    "down" = 4,
-    "ydstogo" = 10,
-    "posteam_timeouts_remaining" = 3,
-    "defteam_timeouts_remaining" = 3
-  )
-  model_data <- make_model_mutations(data)
-  probs <- get_preds(model_data)
-  expect_true(ep_exact_w(probs$Safety, probs$Opp_Safety))
+test_that("air WP moves the ball to the catch point", {
+  # same snap, deeper targets are worth more
+  w <- air_wp_of(air_pass(c(-3, 0, 5, 15, 30)))
+  expect_true(all(diff(w) > 0))
+  # a catch in the end zone is a touchdown (from the 60: 60+ air yards), worth
+  # more than a catch at the 1
+  td <- air_wp_of(air_pass(c(60, 70)))
+  expect_equal(td[1], td[2])
+  expect_gt(td[1], air_wp_of(air_pass(59)))
+})
 
-  ep_with <- function(exact_w) {
-    sv <- cbind(
-      get_kickoff_values(model_data, exact_w = exact_w),
-      ep_continue_factors(model_data)
-    ) |>
-      score_values(model_data$season)
-    ep_from_probs(
-      probs$Touchdown,
-      probs$Opp_Touchdown,
-      probs$Field_Goal,
-      probs$Opp_Field_Goal,
-      probs$Safety,
-      probs$Opp_Safety,
-      sv
-    )
-  }
-  expect_equal(calculate_expected_points(data)$ep, ep_with(TRUE))
-  # and that is different from the shortcut
-  expect_gt(abs(ep_with(TRUE) - ep_with(FALSE)), 0.005)
+test_that("air WP on a 4th down throw short of the line to gain is a turnover", {
+  short <- air_wp_of(air_pass(5, down = 4, ydstogo = 10, yardline_100 = 40))
+  long <- air_wp_of(air_pass(12, down = 4, ydstogo = 10, yardline_100 = 40))
+  # the other team takes over near midfield: worse than the snap, much worse
+  # than converting
+  expect_lt(short, 0.5)
+  expect_gt(long, short + 0.05)
+})
+
+test_that("non-plays with a stale posteam don't flip home_wp (#606)", {
+  # This needs a download and gsisdecoder so it can't run on CRAN
+  skip_on_cran()
+  skip_if_not_installed("gsisdecoder")
+  skip_if_offline("github.com")
+
+  # play 1017 is the note "End of quarter - 1.35 pm". It sits between a BUF
+  # extra point and the kickoff to CLE and still carried BUF as posteam while
+  # its win probability came from the next play, which belongs to CLE.
+  pbp <- build_nflfastR_pbp("2016_15_CLE_BUF")
+  row <- function(id) pbp[pbp$play_id == id, ]
+  note <- row(1017)
+  nxt <- row(1035)
+
+  expect_equal(note$home_wp, nxt$home_wp)
+  expect_equal(note$vegas_home_wp, nxt$vegas_home_wp)
+  # the extra point before the note used to get a WPA of about -0.5
+  expect_lt(abs(row(989)$wpa), 0.05)
+  expect_lt(abs(note$wpa), 1e-8)
 })

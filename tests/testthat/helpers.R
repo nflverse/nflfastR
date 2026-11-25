@@ -27,18 +27,9 @@ load_expected_pbp <- function() {
   readRDS(file.path(test_dir, "expected_pbp.rds"))
 }
 
-load_expectation <- function(
-  type = c("sc", "sc_weekly", "ep", "wp"),
-  dir = test_dir
-) {
+load_expectation <- function(type = c("ep", "wp"), dir = test_dir) {
   type <- match.arg(type)
-  file_name <- switch(
-    type,
-    "sc" = "expected_sc.rds",
-    "sc_weekly" = "expected_sc_weekly.rds",
-    "ep" = "expected_ep.rds",
-    "wp" = "expected_wp.rds",
-  )
+  file_name <- paste0("expected_", type, ".rds")
   strip_nflverse_attributes(readRDS(file.path(dir, file_name))) |>
     # we gotta round floating point numbers because of different model output
     # across platforms

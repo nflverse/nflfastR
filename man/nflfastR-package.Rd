@@ -120,8 +120,9 @@ For more information on \code{.Rprofile} please see
 
 \subsection{Turn Off Messages}{
 
-The functions that build play-by-play data print a message for every step.
-To turn them off, e.g. when building single games repeatedly, set
+The functions that build play-by-play data print a message for every step,
+and \code{\link[=save_raw_pbp]{save_raw_pbp()}} shows the progress of its downloads. To turn them off,
+e.g. when building single games repeatedly, set
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{options(nflfastR.verbose = FALSE)
 }\if{html}{\out{</div>}}

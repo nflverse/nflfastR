@@ -335,33 +335,6 @@ get_kickoff_values <- function(
   out
 }
 
-# Overtime rules, by season and regular season / postseason (the same rules
-# as in the overtime win probability model):
-#   SD   - sudden death: the first score ends the game. Regular season through
-#          2011, postseason through 2009.
-#   MSD  - modified sudden death: a touchdown on the first possession ends the
-#          game, a field goal on the first possession lets the other team
-#          answer. Regular season 2012-2024, postseason 2010-2021.
-#   BOTH - both teams are guaranteed a possession. Regular season 2025+,
-#          postseason 2022+.
-# season_type does not exist when EP is added, so it is derived from the week
-# in the game id.
-ep_ot_rule <- function(game_id, season) {
-  week <- suppressWarnings(as.integer(substr(game_id, 6, 7)))
-  post <- (week > data.table::fifelse(season >= 2021, 18L, 17L)) %in% TRUE
-  data.table::fcase(
-    post & season >= 2022,
-    "BOTH",
-    !post & season >= 2025,
-    "BOTH",
-    post & season >= 2010,
-    "MSD",
-    !post & season >= 2012,
-    "MSD",
-    default = "SD"
-  )
-}
-
 # Does a kickoff (or free kick) follow a score? In regulation always. In
 # overtime it depends on the rule, the number of the possession in which the
 # score happens (1, 2, 3 for the third and later ones) and the score
@@ -448,7 +421,10 @@ ep_continue_factors <- function(pbp_data) {
   drive <- pbp_data$drive[ot]
   first_drive <- suppressWarnings(tapply(drive, game, min, na.rm = TRUE))
   possession <- pmin(drive - as.vector(first_drive[game]) + 1, 3)
-  rule <- ep_ot_rule(game, pbp_data$season[ot])
+  # overtime rules (SD, MSD, BOTH), see ot_rule(). season_type does not exist
+  # when EP is added, so it is derived from the week in the game id.
+  season <- pbp_data$season[ot]
+  rule <- ot_rule(season, ot_season_type(game, season))
   diff <- pbp_data$score_differential[ot]
   next_possession <- pmin(possession + 1, 3)
 
