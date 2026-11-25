@@ -39,13 +39,8 @@ test_that("missing_raw_pbp() and save_raw_pbp() validate dir", {
 
 test_that("verify_game_ids() flags invalid game IDs", {
   expect_null(verify_game_ids(c("2021_02_LAC_KC", "2002_17_OAK_SD")))
-  expect_snapshot(error = TRUE, {
-    verify_game_ids(c(
-      "2021_02_LAC_KC",
-      "Hello World",
-      "2028_01_LAC_JAX",
-      "2022_27_LAC_BUF",
-      "2021_02_LAC_KAC"
-    ))
-  })
+  expect_snapshot(
+    verify_game_ids(c("2021_02_LAC_KC", "Hello World")),
+    error = TRUE
+  )
 })

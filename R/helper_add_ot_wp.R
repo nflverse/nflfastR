@@ -14,7 +14,7 @@
 # 3. The WP of any play is the probability-weighted value of the possible
 #    drive outcomes, using the rules in force for that game.
 #
-# Rules that are encoded (see ot_rule_key()):
+# Rules that are encoded (see ot_rule()):
 #   SD   - sudden death. First score wins. Regular season through 2011,
 #          postseason through 2009.
 #   MSD  - modified sudden death. A first possession TD wins, a first
@@ -46,10 +46,11 @@ ot_go_avg <- 0.45 # average 4th down conversion rate when going for it
 # training windows from the same seasons.
 ot_kick_first <- c(2011L, 2016L, 2024L, 2025L)
 
-# rule, period length and kickoff regime for each game
-ot_rule_key <- function(season, season_type) {
+# overtime rule of each game (see the top of this file). Also used by the EP
+# model
+ot_rule <- function(season, season_type) {
   post <- season_type %chin% "POST"
-  rule <- data.table::fcase(
+  data.table::fcase(
     post & season >= 2022,
     "BOTH",
     !post & season >= 2025,
@@ -60,6 +61,12 @@ ot_rule_key <- function(season, season_type) {
     "MSD",
     default = "SD"
   )
+}
+
+# rule, period length and kickoff regime for each game
+ot_rule_key <- function(season, season_type) {
+  rule <- ot_rule(season, season_type)
+  post <- season_type %chin% "POST"
   len <- data.table::fifelse(!post & season >= 2017, 600L, 900L)
   # kickoff regime determines where drives start
   kick <- findInterval(season, ot_kick_first) + 1L
@@ -662,7 +669,7 @@ add_ot_air_wp <- function(pass_pbp, phase) {
   to <- x$down == 4 & x$air_yards < x$ydstogo
   new_y <- x$yardline_100 - x$air_yards
   first <- x$air_yards >= x$ydstogo
-  rule <- sub("\\|.*$", "", ot_rule_key(x$season, season_type))
+  rule <- ot_rule(x$season, season_type)
   st <- data.frame(
     season = x$season,
     season_type = season_type,

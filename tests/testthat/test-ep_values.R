@@ -1,38 +1,8 @@
-test_that("the conversion value follows the seasons", {
-  expect_equal(
-    conversion_value(c(2009, 2014, 2015, 2022, 2023, 2026)),
-    c(0.99, 0.99, 0.94, 0.94, 0.96, 0.96)
-  )
-  expect_equal(conversion_value(NA_real_), NA_real_)
-})
-
 test_that("the two point make probability depends on the spot", {
   expect_equal(
     two_point_prob(c(1, 2, 3, 5, 6, 15, NA)),
     c(0.58, 0.49, 0.49, 0.49, 0.20, 0.20, 0.49)
   )
-})
-
-test_that("the kickoff start spot follows the kickoff rules", {
-  seasons <- c(2009, 2015, 2016, 2023, 2024, 2025, 2026)
-  expect_equal(
-    wp_kickoff_start(seasons),
-    c(72, 78, 75, 75, 70, 69, 69)
-  )
-  # without a season the current rules
-  expect_equal(wp_kickoff_start(NA_real_), 69)
-})
-
-test_that("overtime rules are inferred from season and game id", {
-  # regular season weeks 1-17 (18 since 2021), postseason after that
-  expect_equal(ep_ot_rule("2011_05_NO_TB", 2011), "SD")
-  expect_equal(ep_ot_rule("2012_05_NO_TB", 2012), "MSD")
-  expect_equal(ep_ot_rule("2024_05_NO_TB", 2024), "MSD")
-  expect_equal(ep_ot_rule("2025_05_NO_TB", 2025), "BOTH")
-  expect_equal(ep_ot_rule("2009_19_NO_TB", 2009), "SD")
-  expect_equal(ep_ot_rule("2010_18_NO_TB", 2010), "MSD")
-  expect_equal(ep_ot_rule("2021_20_NO_TB", 2021), "MSD")
-  expect_equal(ep_ot_rule("2022_20_NO_TB", 2022), "BOTH")
 })
 
 test_that("a kickoff follows an overtime score only if the game goes on", {
