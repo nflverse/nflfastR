@@ -73,7 +73,7 @@ save_raw_pbp <- function(
     seasons,
     paste0(game_ids, ".rds")
   )
-  dl <- curl::multi_download(to_load, save_to)
+  dl <- curl::multi_download(to_load, save_to, progress = is_verbose())
   failed <- !dl$status_code %in% 200
   if (any(failed)) {
     cli::cli_alert_danger(

@@ -100,8 +100,9 @@
 #'
 #' ## Turn Off Messages
 #'
-#' The functions that build play-by-play data print a message for every step.
-#' To turn them off, e.g. when building single games repeatedly, set
+#' The functions that build play-by-play data print a message for every step,
+#' and [save_raw_pbp()] shows the progress of its downloads. To turn them off,
+#' e.g. when building single games repeatedly, set
 #' ```
 #' options(nflfastR.verbose = FALSE)
 #' ```

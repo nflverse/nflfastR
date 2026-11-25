@@ -1,6 +1,6 @@
 test_that("update_pbp_db() only warns about games that are still missing", {
-  skip_if_not_installed("duckdb")
-  con <- DBI::dbConnect(duckdb::duckdb())
+  skip_if_not_installed("duckdb", "1.5.6")
+  con <- DBI::dbConnect(duckdb::duckdb(shared_home = FALSE))
   withr::defer(DBI::dbDisconnect(con, shutdown = TRUE))
   DBI::dbWriteTable(
     con,
