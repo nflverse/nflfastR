@@ -15,7 +15,9 @@
 #   removed. A set patch only changes the value if the current value is
 #   `from`, so a patch that doesn't fit the raw data anymore (e.g. the NFL
 #   fixed it) warns instead of silently doing something else. A `set` patch
-#   without `play_id` changes all plays of the game.
+#   without `play_id` changes all plays of the game. Columns that don't exist
+#   yet (e.g. yardline_100) can't be patched; patch_source_columns names the
+#   column to patch instead.
 #
 # A patch that doesn't fit warns, and the warning says whether the patch is
 # obsolete (a set patch whose column has the value `to` now).
