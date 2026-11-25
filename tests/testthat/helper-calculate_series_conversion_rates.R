@@ -1,12 +1,3 @@
-# Expected output of calculate_series_conversion_rates() on load_test_pbp(),
-# without rounding: the rates are means of counts and don't depend on models
-load_expected_sc <- function(type = c("sc", "sc_weekly")) {
-  type <- match.arg(type)
-  strip_nflverse_attributes(
-    readRDS(file.path(test_dir, paste0("expected_", type, ".rds")))
-  )
-}
-
 # Plays that reach every case of calculate_series_conversion_rates(): every
 # series result, conversions on every down, QB kneels, plays without down or
 # series result, a play without posteam, teams only on offense or only on

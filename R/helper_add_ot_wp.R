@@ -178,9 +178,9 @@ ot_q_interp <- function(Qm, s, tn) {
 # The chance that a possession finishes before the clock runs out must never
 # fall when there is more time. A possession needs `ratio * normal time`, so
 # that requires ratio / secs to never increase. All knots are chosen so that
-# this holds (it is checked in tests/testthat/test-ot_wp.R). Without it a team
-# with 30 seconds left looked more likely to score than the same team with 60
-# seconds left. Note that win probability itself is not monotone in the clock:
+# this holds (it is checked in tests/testthat/test-helper_add_ot_wp.R).
+# Without it a team with 30 seconds left looked more likely to score than the
+# same team with 60 seconds left. Note that win probability itself is not monotone in the clock:
 # more time also gives the other team a chance to answer.
 ot_tempo <- function(secs) {
   stats::approx(

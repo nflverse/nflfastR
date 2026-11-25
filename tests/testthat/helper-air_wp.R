@@ -1,3 +1,4 @@
+# A pass play (vectorized in air_yards) and the WP at its catch point
 air_pass <- function(
   air_yards,
   down = 2,
@@ -41,23 +42,3 @@ air_wp_of <- function(x) {
   out <- add_air_yac_wp_variables(data.table::as.data.table(x))
   out$air_wpa + out$wp
 }
-
-test_that("air WP moves the ball to the catch point", {
-  # same snap, deeper targets are worth more
-  w <- air_wp_of(air_pass(c(-3, 0, 5, 15, 30)))
-  expect_true(all(diff(w) > 0))
-  # a catch in the end zone is a touchdown (from the 60: 60+ air yards), worth
-  # more than a catch at the 1
-  td <- air_wp_of(air_pass(c(60, 70)))
-  expect_equal(td[1], td[2])
-  expect_gt(td[1], air_wp_of(air_pass(59)))
-})
-
-test_that("air WP on a 4th down throw short of the line to gain is a turnover", {
-  short <- air_wp_of(air_pass(5, down = 4, ydstogo = 10, yardline_100 = 40))
-  long <- air_wp_of(air_pass(12, down = 4, ydstogo = 10, yardline_100 = 40))
-  # the other team takes over near midfield: worse than the snap, much worse
-  # than converting
-  expect_lt(short, 0.5)
-  expect_gt(long, short + 0.05)
-})

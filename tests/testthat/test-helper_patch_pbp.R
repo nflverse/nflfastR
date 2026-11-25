@@ -1,4 +1,4 @@
-test_that("the patch file has the fields each action needs", {
+test_that("the patch file is valid, sorted and without overlaps", {
   patches <- read_pbp_patches()
   expect_named(
     patches,
@@ -17,6 +17,7 @@ test_that("the patch file has the fields each action needs", {
   expect_in(patches$action, c("drop_play", "drop_stat", "set"))
   expect_all_true(!is.na(patches$reason))
 
+  # the fields each action needs
   is_set <- patches$action == "set"
   expect_all_true(!is.na(patches$play_id[!is_set]))
   expect_all_true(is.na(patches$column[!is_set]))
@@ -26,6 +27,31 @@ test_that("the patch file has the fields each action needs", {
     patches$action != "drop_stat"
   )
   expect_all_true(!is.na(patches$column[is_set]))
+
+  # no overlaps
+  key <- c("game_id", "play_id", "action", "stat_id", "column")
+  expect_identical(anyDuplicated(patches, by = key), 0L)
+  # a set patch of all plays doesn't overlap set patches of single plays
+  overlap <- patches[
+    action == "set",
+    list(overlap = anyNA(play_id) && .N > 1),
+    by = c("game_id", "column")
+  ]
+  expect_all_false(overlap$overlap)
+  # no patch changes a play that a drop_play patch removes
+  dropped <- patches[action == "drop_play", list(game_id, play_id)]
+  on_dropped <- patches[action != "drop_play"][
+    dropped,
+    on = c("game_id", "play_id"),
+    nomatch = NULL
+  ]
+  expect_identical(nrow(on_dropped), 0L)
+
+  # sorted
+  expect_identical(
+    patches,
+    patches[order(game_id, play_id, action, stat_id, column, na.last = FALSE)]
+  )
 })
 
 test_that("set patches of the patch file fit the parser", {
@@ -56,35 +82,6 @@ test_that("set patches of the patch file fit the parser", {
     }
   }
   expect_identical(same, character())
-})
-
-test_that("patches of the patch file don't overlap", {
-  patches <- read_pbp_patches()
-  key <- c("game_id", "play_id", "action", "stat_id", "column")
-  expect_identical(anyDuplicated(patches, by = key), 0L)
-  # a set patch of all plays doesn't overlap set patches of single plays
-  overlap <- patches[
-    action == "set",
-    list(overlap = anyNA(play_id) && .N > 1),
-    by = c("game_id", "column")
-  ]
-  expect_all_false(overlap$overlap)
-  # no patch changes a play that a drop_play patch removes
-  dropped <- patches[action == "drop_play", list(game_id, play_id)]
-  on_dropped <- patches[action != "drop_play"][
-    dropped,
-    on = c("game_id", "play_id"),
-    nomatch = NULL
-  ]
-  expect_identical(nrow(on_dropped), 0L)
-})
-
-test_that("the patch file is sorted", {
-  patches <- read_pbp_patches()
-  expect_identical(
-    patches,
-    patches[order(game_id, play_id, action, stat_id, column, na.last = FALSE)]
-  )
 })
 
 test_that("drop_play and drop_stat patches remove raw plays and stats", {

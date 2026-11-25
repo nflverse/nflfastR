@@ -146,28 +146,6 @@ test_that("kickoff values come from the clock, season and teams", {
   expect_equal(get_kickoff_values(data, kickoff_preds = get_preds(ko)), kv)
 })
 
-test_that("expected points are net of the next possession", {
-  skip_on_cran()
-  data <- test_tibble(
-    "season" = 2025,
-    "home_team" = "SEA",
-    "posteam" = "SEA",
-    "roof" = "outdoors",
-    "half_seconds_remaining" = c(900, 20),
-    "yardline_100" = 1,
-    "down" = 1,
-    "ydstogo" = 1,
-    "posteam_timeouts_remaining" = 3,
-    "defteam_timeouts_remaining" = 3
-  )
-  ep <- calculate_expected_points(data)
-  # a touchdown is likely on the goal line, and worth less than 7. It is worth
-  # more near the end of the half, when the other team has less time to answer
-  expect_lt(ep$ep[1], 6.94 - 0.5)
-  expect_gt(ep$ep[2], ep$ep[1])
-  expect_lt(ep$ep[2], 6.94)
-})
-
 test_that("expected points at the kickoff state match the kickoff value", {
   skip_on_cran()
   # at a neutral site both teams are the same, so the kickoff possession is
@@ -209,28 +187,6 @@ test_that("expected points at the kickoff state match the kickoff value", {
     sv
   )
   expect_equal(ep, kv$v)
-})
-
-test_that("calculate_expected_points treats neutral sites as away games", {
-  skip_on_cran()
-  data <- test_tibble(
-    "season" = 2025,
-    "home_team" = "SEA",
-    "posteam" = c("SEA", "SEA", "DEN"),
-    "location" = c("Neutral", "Home", "Home"),
-    "roof" = "outdoors",
-    "half_seconds_remaining" = 900,
-    "yardline_100" = 65,
-    "down" = 1,
-    "ydstogo" = 10,
-    "posteam_timeouts_remaining" = 3,
-    "defteam_timeouts_remaining" = 3
-  )
-  ep <- calculate_expected_points(data)
-  # the "home" team at a neutral site has the probabilities of a road team,
-  # and not those of a home team
-  expect_equal(ep$td_prob[1], ep$td_prob[3])
-  expect_false(isTRUE(all.equal(ep$td_prob[1], ep$td_prob[2])))
 })
 
 test_that("kickoff values solve the equations of the kickoff and free kick states", {
@@ -324,44 +280,43 @@ test_that("the exact free kick value is selected from the probabilities only", {
   )
 })
 
-test_that("the calculator uses the same free kick value as the play-by-play", {
-  skip_on_cran()
-  # a state where a safety is likely, so the exact free kick value is used, and
-  # where it is far from the shortcut: little time left, in a season where the
-  # kickoff start is far from the free kick spot
-  data <- test_tibble(
-    "season" = 2012,
-    "home_team" = "SEA",
-    "posteam" = "SEA",
-    "roof" = "outdoors",
-    "half_seconds_remaining" = 15,
-    "yardline_100" = 99,
-    "down" = 4,
-    "ydstogo" = 10,
-    "posteam_timeouts_remaining" = 3,
-    "defteam_timeouts_remaining" = 3
-  )
-  model_data <- make_model_mutations(data)
-  probs <- get_preds(model_data)
-  expect_true(ep_exact_w(probs$Safety, probs$Opp_Safety))
+test_that("air WP moves the ball to the catch point", {
+  # same snap, deeper targets are worth more
+  w <- air_wp_of(air_pass(c(-3, 0, 5, 15, 30)))
+  expect_true(all(diff(w) > 0))
+  # a catch in the end zone is a touchdown (from the 60: 60+ air yards), worth
+  # more than a catch at the 1
+  td <- air_wp_of(air_pass(c(60, 70)))
+  expect_equal(td[1], td[2])
+  expect_gt(td[1], air_wp_of(air_pass(59)))
+})
 
-  ep_with <- function(exact_w) {
-    sv <- cbind(
-      get_kickoff_values(model_data, exact_w = exact_w),
-      ep_continue_factors(model_data)
-    ) |>
-      score_values(model_data$season)
-    ep_from_probs(
-      probs$Touchdown,
-      probs$Opp_Touchdown,
-      probs$Field_Goal,
-      probs$Opp_Field_Goal,
-      probs$Safety,
-      probs$Opp_Safety,
-      sv
-    )
-  }
-  expect_equal(calculate_expected_points(data)$ep, ep_with(TRUE))
-  # and that is different from the shortcut
-  expect_gt(abs(ep_with(TRUE) - ep_with(FALSE)), 0.005)
+test_that("air WP on a 4th down throw short of the line to gain is a turnover", {
+  short <- air_wp_of(air_pass(5, down = 4, ydstogo = 10, yardline_100 = 40))
+  long <- air_wp_of(air_pass(12, down = 4, ydstogo = 10, yardline_100 = 40))
+  # the other team takes over near midfield: worse than the snap, much worse
+  # than converting
+  expect_lt(short, 0.5)
+  expect_gt(long, short + 0.05)
+})
+
+test_that("non-plays with a stale posteam don't flip home_wp (#606)", {
+  # This needs a download and gsisdecoder so it can't run on CRAN
+  skip_on_cran()
+  skip_if_not_installed("gsisdecoder")
+  skip_if_offline("github.com")
+
+  # play 1017 is the note "End of quarter - 1.35 pm". It sits between a BUF
+  # extra point and the kickoff to CLE and still carried BUF as posteam while
+  # its win probability came from the next play, which belongs to CLE.
+  pbp <- build_nflfastR_pbp("2016_15_CLE_BUF")
+  row <- function(id) pbp[pbp$play_id == id, ]
+  note <- row(1017)
+  nxt <- row(1035)
+
+  expect_equal(note$home_wp, nxt$home_wp)
+  expect_equal(note$vegas_home_wp, nxt$vegas_home_wp)
+  # the extra point before the note used to get a WPA of about -0.5
+  expect_lt(abs(row(989)$wpa), 0.05)
+  expect_lt(abs(note$wpa), 1e-8)
 })

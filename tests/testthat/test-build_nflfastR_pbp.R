@@ -26,6 +26,24 @@ test_that("build_nflfastR_pbp is quiet with option nflfastR.verbose = FALSE", {
   )
 })
 
+test_that("build_nflfastR_pbp() shows warnings of the build steps", {
+  local_mocked_bindings(
+    add_cp = function(pbp) {
+      warning("a warning of add_cp()")
+      pbp
+    }
+  )
+  g <- readRDS(file.path(test_dir, "games.rds"))
+  expect_warning(
+    suppressMessages(build_nflfastR_pbp(
+      "2019_01_GB_CHI",
+      dir = test_dir,
+      games = g
+    )),
+    "a warning of add_cp"
+  )
+})
+
 test_that("build_nflfastR_pbp skips xyac with add_xyac = FALSE", {
   g <- readRDS(file.path(test_dir, "games.rds"))
   pbp <- build_nflfastR_pbp(
