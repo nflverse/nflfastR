@@ -31,11 +31,20 @@ test_that("the patch file has the fields each action needs", {
 test_that("set patches of the patch file fit the parser", {
   patches <- read_pbp_patches()
   patches <- patches[patches$action == "set"]
-  pbp <- suppressMessages(get_pbp_nfl("2019_01_GB_CHI", dir = test_dir))
-  expect_in(patches$column, names(pbp))
+  # the data as each pass of set patches sees it
+  passes <- list()
+  local_mocked_bindings(patch_set_values = function(pbp, id, late = FALSE) {
+    passes[[if (late) "late" else "early"]] <<- data.table::copy(pbp)
+    invisible(pbp)
+  })
+  suppressMessages(get_pbp_nfl("2019_01_GB_CHI", dir = test_dir))
+  late <- patches$column %chin% late_patch_columns
+  expect_in(patches$column[!late], names(passes$early))
+  expect_in(patches$column[late], names(passes$late))
   # from and to convert to the class of the column and differ
   same <- character()
   for (i in seq_len(nrow(patches))) {
+    pbp <- if (late[i]) passes$late else passes$early
     column <- pbp[[patches$column[i]]]
     from <- expect_no_error(patch_value(patches$from[i], column, "", ""))
     to <- expect_no_error(patch_value(patches$to[i], column, "", ""))
