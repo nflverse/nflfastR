@@ -87,10 +87,11 @@ There are three possible ways to run code, listed in rough order of desirability
 ### Test style
 
 - Tests for `R/{name}.R` go in `tests/testthat/test-{name}.R`.
-- All new code should have an accompanying test.
-- If there are existing tests, place new tests next to similar existing tests.
+- New behavior needs a test only if no existing test would fail when it breaks. Check first: the regression tests of `build_nflfastR_pbp()` and `calculate_stats()` cover most of the parser and the stats, and the tests of `R/{name}.R` are in `test-{name}.R`.
+- Extend an existing test of the same function before adding a new one, and put a new test next to similar ones. Write one test per behavior, not one per edge case or bug fix.
+- Don't compute the expected value with the formula of the code under test (the test passes even if the formula is wrong). Use known values or properties (ordering, bounds, invariants).
 - Strive to keep your tests minimal with few comments.
-- Never put code in a `test-{name}.R` file outside of a `test_that()` block. Instead, use `tests/testthat/helper.R` or `tests/testthat/helper-{name}.R`.
+- Never put code in a `test-{name}.R` file outside of a `test_that()` block. Instead, use `tests/testthat/helpers.R` or `tests/testthat/helper-{name}.R`.
 - Avoid `expect_true()` and `expect_false()` in favor of a specific expectation with a better failure message. A few expectations in newer releases that you might not know about are `expect_all_true()`, `expect_all_equal()`, and `expect_r6_class()`.
 - When testing errors and warnings:
   - Only use `expect_error()` or `expect_warning()` if the error or warning has a known class.
